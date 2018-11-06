@@ -14,57 +14,58 @@ import fmg.swing.img.Animator;
 
 /** Диалог отображения чемпионов */
 public class ChampionDlg extends ReportDlg {
-   private static final long serialVersionUID = 1L;
 
-   private final ChampionsModel champions;
+    private static final long serialVersionUID = 1L;
 
-   public ChampionDlg(Main parent, boolean modal, ChampionsModel champions) {
-      super(parent, modal);
-      this.champions = champions;
-   }
+    private final ChampionsModel champions;
 
-   @Override
-   protected void updateModel(ESkillLevel eSkill) {
-      setTitle("Champions - " + getSelectedMosaicType().getDescription(false));
-      super.updateModel(eSkill);
-   }
+    public ChampionDlg(Main parent, boolean modal, ChampionsModel champions) {
+        super(parent, modal);
+        this.champions = champions;
+    }
 
-   @Override
-   protected ReportTableModel createTableModel(EMosaic mosaic) {
-      return new ChampionTblModel(champions, mosaic);
-   }
+    @Override
+    protected void updateModel(ESkillLevel eSkill) {
+        setTitle("Champions - " + getSelectedMosaicType().getDescription(false));
+        super.updateModel(eSkill);
+    }
 
-   @Override
-   protected int getTableCellHorizontalAlignment(int row, int column) {
-      if (column == 0)
-         return SwingConstants.LEFT;
-      return super.getTableCellHorizontalAlignment(row, column);
-   }
+    @Override
+    protected ReportTableModel createTableModel(EMosaic mosaic) {
+        return new ChampionTblModel(champions, mosaic);
+    }
 
-   @Override
-   protected Dimension getPreferredScrollPaneSize() {
-      return new Dimension(300, 10*getTableRowHeigt() + getTableHeaderHeigt() + 7);
-   }
+    @Override
+    protected int getTableCellHorizontalAlignment(int row, int column) {
+        if (column == 0)
+            return SwingConstants.LEFT;
+        return super.getTableCellHorizontalAlignment(row, column);
+    }
 
-   @Override
-   protected boolean isOneLineSkillLevelButtons() { return false; }
+    @Override
+    protected Dimension getPreferredScrollPaneSize() {
+        return new Dimension(300, 10*getTableRowHeigt() + getTableHeaderHeigt() + 7);
+    }
 
-   public void showData(ESkillLevel eSkill, EMosaic eMosaic) {
-      // найдёт позицию первого вхождения пользователя...
-      int pos = champions.getPos((parent==null) ? null : parent.getActiveUserId(), eMosaic, eSkill);
-      // ...на этой позиции и фокусируюсь
-      super.showData(eSkill, eMosaic, pos);
-   }
+    @Override
+    protected boolean isOneLineSkillLevelButtons() { return false; }
 
-   //////////////////////////////////////////////////
-   // TEST
-   public static void main(String[] args) {
-      ChampionsModel champions = new ChampionsModel(null);
-      champions.Load();
-      try (ChampionDlg dlg = new ChampionDlg(null, true, champions)) {
-         dlg.showData(ESkillLevel.eBeginner, EMosaic.eMosaicSquare1);
-      }
-      Animator.getSingleton().close();
-   }
+    public void showData(ESkillLevel eSkill, EMosaic eMosaic) {
+        // найдёт позицию первого вхождения пользователя...
+        int pos = champions.getPos((parent==null) ? null : parent.getActiveUserId(), eMosaic, eSkill);
+        // ...на этой позиции и фокусируюсь
+        super.showData(eSkill, eMosaic, pos);
+    }
+
+    //////////////////////////////////////////////////
+    // TEST
+    public static void main(String[] args) {
+        ChampionsModel champions = new ChampionsModel(null);
+        champions.Load();
+        try (ChampionDlg dlg = new ChampionDlg(null, true, champions)) {
+            dlg.showData(ESkillLevel.eBeginner, EMosaic.eMosaicSquare1);
+        }
+        Animator.getSingleton().close();
+    }
 
 }

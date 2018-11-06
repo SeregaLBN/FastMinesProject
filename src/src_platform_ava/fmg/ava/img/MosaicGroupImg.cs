@@ -12,105 +12,105 @@ using fmg.ava.utils;
 
 namespace fmg.ava.img {
 
-   /// <summary> Representable <see cref="EMosaicGroup"/> as image.
-   /// <br/>
-   /// Avalonia impl
-   /// </summary>
-   public static class MosaicGroupImg {
+    /// <summary> Representable <see cref="EMosaicGroup"/> as image.
+    /// <br/>
+    /// Avalonia impl
+    /// </summary>
+    public static class MosaicGroupImg {
 
-      /// <summary> Representable <see cref="EMosaicGroup"/> as image: common implementation part </summary>
-      public abstract class View<TImage> : MosaicSkillOrGroupView<TImage, MosaicGroupModel>
-         where TImage : class
-      {
+        /// <summary> Representable <see cref="EMosaicGroup"/> as image: common implementation part </summary>
+        public abstract class View<TImage> : MosaicSkillOrGroupView<TImage, MosaicGroupModel>
+            where TImage : class
+        {
 
-         /// <param name="group">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
-         protected View(EMosaicGroup? group)
-            : base(new MosaicGroupModel(group))
-         { }
+            /// <param name="group">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
+            protected View(EMosaicGroup? group)
+                : base(new MosaicGroupModel(group))
+            { }
 
-         /// <summary> get paint information of drawing basic image model </summary>
-         protected override IEnumerable<Tuple<fmg.common.Color, IEnumerable<PointDouble>>> Coords { get => Model.Coords; }
+            /// <summary> get paint information of drawing basic image model </summary>
+            protected override IEnumerable<Tuple<fmg.common.Color, IEnumerable<PointDouble>>> Coords { get => Model.Coords; }
 
-         protected override void Disposing() {
-            Model.Dispose();
-            base.Disposing();
-         }
+            protected override void Disposing() {
+                Model.Dispose();
+                base.Disposing();
+            }
 
-      }
+        }
 
 
-      /////////////////////////////////////////////////////////////////////////////////////////////////////
-      //    custom implementations
-      /////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        //    custom implementations
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-      /// <summary> MosaicsGroup image view implementation over <see cref="RenderTargetBitmap"/> </summary>
-      public class RenderTargetBmp : View<RenderTargetBitmap> {
+        /// <summary> MosaicsGroup image view implementation over <see cref="RenderTargetBitmap"/> </summary>
+        public class RenderTargetBmp : View<RenderTargetBitmap> {
 
-         private IVisualBrushRenderer _vbr;
+            private IVisualBrushRenderer _vbr;
 
-         /// <param name="group">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
-         public RenderTargetBmp(EMosaicGroup? group, IControl ctrl)
-            : base(group)
-         {
-            _vbr = new ImmediateRenderer(ctrl);
-         }
+            /// <param name="group">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
+            public RenderTargetBmp(EMosaicGroup? group, IControl ctrl)
+                : base(group)
+            {
+                _vbr = new ImmediateRenderer(ctrl);
+            }
 
-         protected override RenderTargetBitmap CreateImage() {
-            //var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-            return new RenderTargetBitmap((int)Size.Width, (int)Size.Height);
-         }
+            protected override RenderTargetBitmap CreateImage() {
+                //var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
+                return new RenderTargetBitmap((int)Size.Width, (int)Size.Height);
+            }
 
-         protected override void DrawBody() {
-            using (var dc = Image.CreateDrawingContext(_vbr)) {
-               using (var dc1 = new DrawingContext(dc)) {
-                  DrawBody(dc1);
-               }
+            protected override void DrawBody() {
+                using (var dc = Image.CreateDrawingContext(_vbr)) {
+                    using (var dc1 = new DrawingContext(dc)) {
+                        DrawBody(dc1);
+                    }
+                }
+            }
+
+            protected override void Disposing() {
+                (_vbr as IDisposable)?.Dispose();
+                _vbr = null;
             }
          }
 
-         protected override void Disposing() {
-            (_vbr as IDisposable)?.Dispose();
-            _vbr = null;
-         }
-      }
+        ///// <summary> Representable <see cref="EMosaicGroup"/> as image.
+        ///// <br/>
+        ///// Canvas impl
+        ///// </summary>
+        //public class CanvasImgSrc : CommonImpl<Canvas> {
+        //
+        //    /// <param name="group">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
+        //    public CanvasImgSrc(EMosaicGroup? group)
+        //        : base(group)
+        //    { }
+        //
+        //    protected override Canvas CreateImage() {
+        //        return new Canvas {
+        //            Width = Size.Width,
+        //            Height = Size.Height
+        //        };
+        //    }
+        //
+        //    protected override void DrawBody() {
+        //        DrawBody(Image, true);
+        //    }
+        //}
 
-      //   /// <summary> Representable <see cref="EMosaicGroup"/> as image.
-      //   /// <br/>
-      //   /// Canvas impl
-      //   /// </summary>
-      //   public class CanvasImgSrc : CommonImpl<Canvas> {
-      //
-      //      /// <param name="group">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
-      //      public CanvasImgSrc(EMosaicGroup? group)
-      //         : base(group)
-      //      { }
-      //
-      //      protected override Canvas CreateImage() {
-      //         return new Canvas {
-      //            Width = Size.Width,
-      //            Height = Size.Height
-      //         };
-      //      }
-      //
-      //      protected override void DrawBody() {
-      //         DrawBody(Image, true);
-      //      }
-      //   }
+        // <summary> MosaicsGroup image controller implementation for <see cref="Canvas"/> </summary>
+        public class ControllerRenderTargetBmp : MosaicGroupController<RenderTargetBitmap, MosaicGroupImg.RenderTargetBmp> {
 
-      /** MosaicsGroup image controller implementation for <see cref="Canvas"/> */
-      public class ControllerRenderTargetBmp : MosaicGroupController<RenderTargetBitmap, MosaicGroupImg.RenderTargetBmp> {
+            public ControllerRenderTargetBmp(EMosaicGroup? group, IControl ctrl)
+                : base(!group.HasValue, new MosaicGroupImg.RenderTargetBmp(group, ctrl))
+            { }
 
-         public ControllerRenderTargetBmp(EMosaicGroup? group, IControl ctrl)
-            : base(!group.HasValue, new MosaicGroupImg.RenderTargetBmp(group, ctrl))
-         { }
+            protected override void Disposing() {
+                View.Dispose();
+                base.Disposing();
+            }
 
-         protected override void Disposing() {
-            View.Dispose();
-            base.Disposing();
-         }
+        }
 
-      }
-
-   }
+    }
 
 }

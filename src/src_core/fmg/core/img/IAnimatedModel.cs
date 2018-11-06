@@ -1,21 +1,21 @@
 namespace fmg.core.img {
 
-   /// <summary>
-   /// Image MVC: model.
-   /// Model of animated image data/properties/characteristics
-   /// </summary>
-   public interface IAnimatedModel : IImageModel {
+    /// <summary>
+    /// Image MVC: model.
+    /// Model of animated image data/properties/characteristics
+    /// </summary>
+    public interface IAnimatedModel : IImageModel {
 
-      bool Animated { get; set; }
+        bool Animated { get; set; }
 
-      /** Overall animation period (in milliseconds) */
-      long AnimatePeriod { get; set; }
+        /// <summary>Overall animation period (in milliseconds) </summary>
+        long AnimatePeriod { get; set; }
 
-      /** Total frames of the animated period (animate iterations) */
-      int TotalFrames { get; set; }
+        /// <summary>Total frames of the animated period (animate iterations) </summary>
+        int TotalFrames { get; set; }
 
-      int CurrentFrame { get; set; }
+        int CurrentFrame { get; set; }
 
-   }
+    }
 
 }

@@ -9,69 +9,68 @@ using fmg.uwp.utils;
 
 namespace fmg.uwp.img.wbmp {
 
-   /// <summary> MVC: view. Abstract UWP representable <see cref="fmg.core.types.ESkillLevel"/> or <see cref="fmg.core.types.EMosaicGroup"/> as image.
-   /// WriteableBitmap impl
-   /// </summary>
-   /// <typeparam name="TImageModel"><see cref="MosaicsSkillModel"/> or <see cref="MosaicsGroupModel"/></typeparam>
-   public abstract class MosaicSkillOrGroupView<TImageModel> : WithBurgerMenuView<WriteableBitmap, TImageModel>
-      where TImageModel : AnimatedImageModel
-   {
+    /// <summary> MVC: view. Abstract UWP representable <see cref="fmg.core.types.ESkillLevel"/> or <see cref="fmg.core.types.EMosaicGroup"/> as image.
+    /// WriteableBitmap impl
+    /// </summary>
+    /// <typeparam name="TImageModel"><see cref="MosaicsSkillModel"/> or <see cref="MosaicsGroupModel"/></typeparam>
+    public abstract class MosaicSkillOrGroupView<TImageModel> : WithBurgerMenuView<WriteableBitmap, TImageModel>
+        where TImageModel : AnimatedImageModel
+    {
 
-      private WriteableBitmap _bmp;
+        private WriteableBitmap _bmp;
 
-      static MosaicSkillOrGroupView() {
-         StaticInitializer.Init();
-      }
+        static MosaicSkillOrGroupView() {
+            StaticInitializer.Init();
+        }
 
-      protected MosaicSkillOrGroupView(TImageModel imageModel)
-         : base(imageModel)
-      { }
+        protected MosaicSkillOrGroupView(TImageModel imageModel)
+            : base(imageModel)
+        { }
 
-      protected override WriteableBitmap CreateImage() {
-         var s = Model.Size;
-         _bmp = new WriteableBitmap((int)s.Width, (int)s.Height);
-         return _bmp;
-      }
+        protected override WriteableBitmap CreateImage() {
+            var s = Model.Size;
+            _bmp = new WriteableBitmap((int)s.Width, (int)s.Height);
+            return _bmp;
+        }
 
-      /// <summary> get paint information of drawing basic image model </summary>
-      protected abstract IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords { get; }
+        /// <summary> get paint information of drawing basic image model </summary>
+        protected abstract IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords { get; }
 
-      protected override void DrawBody() {
-         TImageModel m = Model;
-         var bmp = Image;
+        protected override void DrawBody() {
+            TImageModel m = Model;
+            var bmp = Image;
 
-         bmp.Clear(m.BackgroundColor.ToWinColor());
+            bmp.Clear(m.BackgroundColor.ToWinColor());
 
-         var bw = m.BorderWidth;
-         var needDrawPerimeterBorder = (!m.BorderColor.IsTransparent && (bw > 0));
-         var borderColor = m.BorderColor.ToWinColor();
-         var shapes = Coords;
-         foreach (var data in shapes) {
-            var points = data.Item2.PointsAsXyxyxySequence(true).ToArray();
-            if (!data.Item1.IsTransparent)
-               bmp.FillPolygon(points, data.Item1.ToWinColor());
+            var bw = m.BorderWidth;
+            var needDrawPerimeterBorder = (!m.BorderColor.IsTransparent && (bw > 0));
+            var borderColor = m.BorderColor.ToWinColor();
+            var shapes = Coords;
+            foreach (var data in shapes) {
+                var points = data.Item2.PointsAsXyxyxySequence(true).ToArray();
+                if (!data.Item1.IsTransparent)
+                    bmp.FillPolygon(points, data.Item1.ToWinColor());
 
-            // draw perimeter border
-            if (needDrawPerimeterBorder) {
-               for (var i = 0; i < points.Length - 2; i += 2)
-                  try {
-                     bmp.DrawLineAa(points[i], points[i + 1], points[i + 2], points[i + 3], borderColor, (int)bw);
-                  } catch (IndexOutOfRangeException ex) {
-                     System.Diagnostics.Debug.WriteLine("WTF! " + ex);
-                     bmp.DrawLine(points[i], points[i + 1], points[i + 2], points[i + 3], borderColor);
-                  }
+                // draw perimeter border
+                if (needDrawPerimeterBorder)
+                    for (var i = 0; i < points.Length - 2; i += 2)
+                        try {
+                            bmp.DrawLineAa(points[i], points[i + 1], points[i + 2], points[i + 3], borderColor, (int)bw);
+                        } catch (IndexOutOfRangeException ex) {
+                            System.Diagnostics.Debug.WriteLine("WTF! " + ex);
+                            bmp.DrawLine(points[i], points[i + 1], points[i + 2], points[i + 3], borderColor);
+                        }
             }
-         }
 
-         foreach (var li in BurgerMenuModel.Coords)
-            try {
-               bmp.DrawLineAa((int)li.from.X, (int)li.from.Y, (int)li.to.X, (int)li.to.Y, li.clr.ToWinColor(), (int)li.penWidht);
-            } catch (IndexOutOfRangeException ex) {
-               System.Diagnostics.Debug.WriteLine("WTF! " + ex);
-               bmp.DrawLine((int)li.from.X, (int)li.from.Y, (int)li.to.X, (int)li.to.Y, li.clr.ToWinColor());
-            }
-         }
+            foreach (var li in BurgerMenuModel.Coords)
+                try {
+                    bmp.DrawLineAa((int)li.from.X, (int)li.from.Y, (int)li.to.X, (int)li.to.Y, li.clr.ToWinColor(), (int)li.penWidht);
+                } catch (IndexOutOfRangeException ex) {
+                    System.Diagnostics.Debug.WriteLine("WTF! " + ex);
+                    bmp.DrawLine((int)li.from.X, (int)li.from.Y, (int)li.to.X, (int)li.to.Y, li.clr.ToWinColor());
+                }
+        }
 
-   }
+    }
 
 }

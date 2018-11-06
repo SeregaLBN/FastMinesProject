@@ -30,154 +30,154 @@ using fmg.core.mosaic.cells;
 
 namespace fmg.core.mosaic {
 
-   /// <summary> MVC: game model of mosaic field. Default implementation </summary>
-   public class MosaicGameModel : IMosaic, INotifyPropertyChanged, IDisposable {
+    /// <summary> MVC: game model of mosaic field. Default implementation </summary>
+    public class MosaicGameModel : IMosaic, INotifyPropertyChanged, IDisposable {
 
-   #region Members
+    #region Members
 
-      private BaseCell.BaseAttribute _cellAttr;
-      /// <summary> Matrix of cells, is represented as a vector <see cref="IList<BaseCell>"/>.
-      /// Матрица ячеек, представленная(развёрнута) в виде вектора </summary>
-      private readonly IList<BaseCell> _matrix = new List<BaseCell>();
-      /// <summary> Field size in cells </summary>
-      private Matrisize _sizeField = new Matrisize(10, 10);
-      /// <summary> из каких фигур состоит мозаика поля </summary>
-      private EMosaic _mosaicType = EMosaic.eMosaicSquare1;
+        private BaseCell.BaseAttribute _cellAttr;
+        /// <summary> Matrix of cells, is represented as a vector <see cref="IList<BaseCell>"/>.
+        /// Матрица ячеек, представленная(развёрнута) в виде вектора </summary>
+        private readonly IList<BaseCell> _matrix = new List<BaseCell>();
+        /// <summary> Field size in cells </summary>
+        private Matrisize _sizeField = new Matrisize(10, 10);
+        /// <summary> из каких фигур состоит мозаика поля </summary>
+        private EMosaic _mosaicType = EMosaic.eMosaicSquare1;
 
-      protected bool Disposed { get; private set; }
-      public event PropertyChangedEventHandler PropertyChanged;
-      protected readonly NotifyPropertyChanged _notifier;
+        protected bool Disposed { get; private set; }
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected readonly NotifyPropertyChanged _notifier;
 
-   #endregion
+    #endregion
 
-      public MosaicGameModel() {
-         _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
-      }
+        public MosaicGameModel() {
+            _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
+        }
 
-      public BaseCell.BaseAttribute CellAttr {
-         get {
-            if (_cellAttr == null) {
-               _cellAttr = MosaicHelper.CreateAttributeInstance(MosaicType);
-               _cellAttr.PropertyChanged += OnCellAttributePropertyChanged;
+        public BaseCell.BaseAttribute CellAttr {
+            get {
+                if (_cellAttr == null) {
+                    _cellAttr = MosaicHelper.CreateAttributeInstance(MosaicType);
+                    _cellAttr.PropertyChanged += OnCellAttributePropertyChanged;
+                }
+                return _cellAttr;
             }
-            return _cellAttr;
-         }
-         set {
-            if (_cellAttr == null)
-               return;
-            if (value != null)
-               throw new ArgumentException("Bad argument - support only null value!");
-            _cellAttr.PropertyChanged -= OnCellAttributePropertyChanged;
-            _cellAttr = null;
-            _matrix.Clear();
-            _notifier.OnPropertyChanged();
-            _notifier.OnPropertyChanged(nameof(this.Matrix));
-         }
-      }
-
-      /// <summary> площадь ячеек </summary>
-      public double Area {
-         get { return CellAttr.Area; }
-         set {
-            System.Diagnostics.Debug.Assert(value >= 1);
-            CellAttr.Area = value;
-         }
-      }
-
-      public IList<BaseCell> Matrix {
-         get {
-            if (!_matrix.Any()) {
-               var attr = CellAttr;
-               var size = SizeField;
-               var mosaicType = MosaicType;
-               //_matrix = new List<BaseCell>(size.width * size.height);
-               for (var i=0; i < size.m; i++)
-                  for (var j=0; j < size.n; j++) {
-                     var cell = MosaicHelper.CreateCellInstance(attr, mosaicType, new Coord(i, j));
-                     _matrix.Add(/* i*_size.n + j, */ cell);
-                  }
+            set {
+                if (_cellAttr == null)
+                    return;
+                if (value != null)
+                    throw new ArgumentException("Bad argument - support only null value!");
+                _cellAttr.PropertyChanged -= OnCellAttributePropertyChanged;
+                _cellAttr = null;
+                _matrix.Clear();
+                _notifier.OnPropertyChanged();
+                _notifier.OnPropertyChanged(nameof(this.Matrix));
             }
-            return _matrix;
-         }
-      }
+        }
 
-      /// <summary> размер поля в ячейках </summary>
-      public Matrisize SizeField {
-         get { return _sizeField; }
-         set {
-            var old = this._sizeField;
-            if (old == value)
-               return;
+        /// <summary> площадь ячеек </summary>
+        public double Area {
+            get { return CellAttr.Area; }
+            set {
+                System.Diagnostics.Debug.Assert(value >= 1);
+                CellAttr.Area = value;
+            }
+        }
 
-            _matrix.Clear();
-            this._sizeField = value;
+        public IList<BaseCell> Matrix {
+            get {
+                if (!_matrix.Any()) {
+                    var attr = CellAttr;
+                    var size = SizeField;
+                    var mosaicType = MosaicType;
+                    //_matrix = new List<BaseCell>(size.width * size.height);
+                    for (var i=0; i < size.m; i++)
+                        for (var j=0; j < size.n; j++) {
+                            var cell = MosaicHelper.CreateCellInstance(attr, mosaicType, new Coord(i, j));
+                            _matrix.Add(/* i*_size.n + j, */ cell);
+                        }
+                }
+                return _matrix;
+            }
+        }
 
-            _notifier.OnPropertyChanged(old, value);
-            _notifier.OnPropertyChanged(nameof(this.Matrix));
-         }
-      }
+        /// <summary> размер поля в ячейках </summary>
+        public Matrisize SizeField {
+            get { return _sizeField; }
+            set {
+                var old = this._sizeField;
+                if (old == value)
+                    return;
 
-      /// <summary> тип мозаики (из каких фигур состоит мозаика поля) </summary>
-      public EMosaic MosaicType {
-         get { return _mosaicType; }
-         set {
-            EMosaic old = this._mosaicType;
-            if (old == value)
-               return;
+                _matrix.Clear();
+                this._sizeField = value;
 
-            double saveArea = Area; // save
+                _notifier.OnPropertyChanged(old, value);
+                _notifier.OnPropertyChanged(nameof(this.Matrix));
+            }
+        }
 
-            this._mosaicType = value;
-            CellAttr = null;
+        /// <summary> тип мозаики (из каких фигур состоит мозаика поля) </summary>
+        public EMosaic MosaicType {
+            get { return _mosaicType; }
+            set {
+                EMosaic old = this._mosaicType;
+                if (old == value)
+                    return;
 
-            Area = saveArea; // restore
+                double saveArea = Area; // save
 
-            _notifier.OnPropertyChanged(old, value);
-         }
-      }
+                this._mosaicType = value;
+                CellAttr = null;
 
-      /// <summary> доступ к заданной ячейке </summary>
-      public BaseCell getCell(int x, int y) { return Matrix[x*_sizeField.n + y]; }
-      /// <summary> доступ к заданной ячейке </summary>
-      public BaseCell getCell(Coord coord) { return getCell(coord.x, coord.y); }
+                Area = saveArea; // restore
 
-      protected virtual void OnCellAttributePropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, CellAttr));
+                _notifier.OnPropertyChanged(old, value);
+            }
+        }
 
-         if (ev.PropertyName == nameof(BaseCell.BaseAttribute.Area)) {
-            foreach (var cell in Matrix)
-               cell.Init();
-            _notifier.OnPropertyChanged<double>(ev, nameof(this.Area)); // ! rethrow event - notify parent class
-         }
-         _notifier.OnPropertyChanged(nameof(this.CellAttr));
-      }
+        /// <summary> доступ к заданной ячейке </summary>
+        public BaseCell GetCell(int x, int y) { return Matrix[x*_sizeField.n + y]; }
+        /// <summary> доступ к заданной ячейке </summary>
+        public BaseCell GetCell(Coord coord) { return GetCell(coord.x, coord.y); }
 
-      /** off notifier */
-      protected virtual IDisposable Hold() {
-         var a1 = _notifier.Hold();
-         var a2 = CellAttr.Hold();
-         return new PlainFree() {
-             _onDispose = () => {
-                a1.Dispose();
-                a2.Dispose();
-             }
-         };
-      }
+        protected virtual void OnCellAttributePropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, CellAttr));
 
-      // <summary>  Dispose managed resources </summary>/
-      protected virtual void Disposing() {
-         _notifier.Dispose();
-         CellAttr = null; // call setter - unsubscribe & dispose
-      }
+            if (ev.PropertyName == nameof(BaseCell.BaseAttribute.Area)) {
+                foreach (var cell in Matrix)
+                    cell.Init();
+                _notifier.OnPropertyChanged<double>(ev, nameof(this.Area)); // ! rethrow event - notify parent class
+            }
+            _notifier.OnPropertyChanged(nameof(this.CellAttr));
+        }
 
-      public void Dispose() {
-         if (Disposed)
-            return;
-         Disposed = true;
-         Disposing();
-         GC.SuppressFinalize(this);
-      }
+        /** off notifier */
+        protected virtual IDisposable Hold() {
+            var a1 = _notifier.Hold();
+            var a2 = CellAttr.Hold();
+            return new PlainFree() {
+                _onDispose = () => {
+                    a1.Dispose();
+                    a2.Dispose();
+                }
+            };
+        }
 
-   }
+        // <summary>  Dispose managed resources </summary>/
+        protected virtual void Disposing() {
+            _notifier.Dispose();
+            CellAttr = null; // call setter - unsubscribe & dispose
+        }
+
+        public void Dispose() {
+            if (Disposed)
+                return;
+            Disposed = true;
+            Disposing();
+            GC.SuppressFinalize(this);
+        }
+
+    }
 
 }

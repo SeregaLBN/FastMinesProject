@@ -7,21 +7,21 @@ import java.awt.Toolkit;
 
 public final class ScreenResolutionHelper {
 
-   /** get current display size */
-   public static Dimension getScreenSize() {
-      return Toolkit.getDefaultToolkit().getScreenSize();
-   }
+    /** get current display size */
+    public static Dimension getScreenSize() {
+        return Toolkit.getDefaultToolkit().getScreenSize();
+    }
 
-   public static Insets getScreenPadding(GraphicsConfiguration gc) {
-      return Toolkit.getDefaultToolkit().getScreenInsets(gc);
-   }
+    public static Insets getScreenPadding(GraphicsConfiguration gc) {
+        return Toolkit.getDefaultToolkit().getScreenInsets(gc);
+    }
 
-   public static Dimension getDesktopSize(GraphicsConfiguration gc) {
-      Dimension screenSize = getScreenSize();
-      Insets screenPadding = getScreenPadding(gc);
-      return new Dimension(
-         screenSize.width - (screenPadding.left + screenPadding.right),
-         screenSize.height - (screenPadding.top + screenPadding.bottom));
-   }
+    public static Dimension getDesktopSize(GraphicsConfiguration gc) {
+        Dimension screenSize = getScreenSize();
+        Insets screenPadding = getScreenPadding(gc);
+        return new Dimension(
+            screenSize.width - (screenPadding.left + screenPadding.right),
+            screenSize.height - (screenPadding.top + screenPadding.bottom));
+    }
 
 }

@@ -10,152 +10,154 @@ import fmg.core.types.draw.EShowElement;
 
 /** Данные проекта, записываемые/считываемые в/из файл(а) */
 public class SerializeProjData implements Externalizable {
-   private static final long version = 2;
 
-   private SerializeMosaicData mosaicData;
+    private static final long version = 2;
 
-   private UUID activeUserId;
-   private boolean doNotAskStartup; // manage dialog
+    private SerializeMosaicData mosaicData;
 
-   private boolean[] eShowElements;
-   private boolean zoomAlwaysMax;
-   private boolean useUnknown;
-   private boolean usePause;
-   private Point location;
-   private boolean systemTheme;
+    private UUID activeUserId;
+    private boolean doNotAskStartup; // manage dialog
 
-   public SerializeProjData() { setDefaults(); }
+    private boolean[] eShowElements;
+    private boolean zoomAlwaysMax;
+    private boolean useUnknown;
+    private boolean usePause;
+    private Point location;
+    private boolean systemTheme;
 
-   private void setDefaults() {
-      mosaicData = new SerializeMosaicData();
+    public SerializeProjData() { setDefaults(); }
 
-      activeUserId = null;
-      doNotAskStartup = true;
+    private void setDefaults() {
+        mosaicData = new SerializeMosaicData();
 
-      if (eShowElements == null)
-         eShowElements = new boolean[EShowElement.values().length];
-      for (EShowElement se: EShowElement.values())
-         eShowElements[se.ordinal()] = true;
+        activeUserId = null;
+        doNotAskStartup = true;
 
-      zoomAlwaysMax = false;
-      useUnknown = true;
-      usePause = true;
+        if (eShowElements == null)
+            eShowElements = new boolean[EShowElement.values().length];
+        for (EShowElement se: EShowElement.values())
+            eShowElements[se.ordinal()] = true;
 
-      if (location == null)
-         location = new Point(0, 0);
-      else
-         location.x = location.y = 0;
+        zoomAlwaysMax = false;
+        useUnknown = true;
+        usePause = true;
 
-      systemTheme = true;
-   }
+        if (location == null)
+            location = new Point(0, 0);
+        else
+            location.x = location.y = 0;
 
-   @Override
-   public void writeExternal(ObjectOutput out) throws IOException {
-      out.writeLong(version);
+        systemTheme = true;
+    }
 
-      mosaicData.writeExternal(out);
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeLong(version);
 
-      out.writeBoolean(activeUserId != null);
-      if (activeUserId != null)
-         out.writeUTF(activeUserId.toString());
-      out.writeBoolean(doNotAskStartup);
+        mosaicData.writeExternal(out);
 
-      out.writeBoolean(systemTheme);
-      for (boolean eShowElement : eShowElements)
-         out.writeBoolean(eShowElement);
-      out.writeBoolean(zoomAlwaysMax);
-      out.writeBoolean(useUnknown);
-      out.writeBoolean(usePause);
-      out.writeInt(location.x);
-      out.writeInt(location.y);
-   }
+        out.writeBoolean(activeUserId != null);
+        if (activeUserId != null)
+            out.writeUTF(activeUserId.toString());
+        out.writeBoolean(doNotAskStartup);
 
-   @Override
-   public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-      if (version != in.readLong())
-         throw new RuntimeException("Unknown version!");
+        out.writeBoolean(systemTheme);
+        for (boolean eShowElement : eShowElements)
+            out.writeBoolean(eShowElement);
+        out.writeBoolean(zoomAlwaysMax);
+        out.writeBoolean(useUnknown);
+        out.writeBoolean(usePause);
+        out.writeInt(location.x);
+        out.writeInt(location.y);
+    }
 
-      mosaicData.readExternal(in);
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        if (version != in.readLong())
+            throw new RuntimeException("Unknown version!");
 
-      if (in.readBoolean())
-         activeUserId = UUID.fromString(in.readUTF());
-      doNotAskStartup = in.readBoolean();
+        mosaicData.readExternal(in);
 
-      systemTheme = in.readBoolean();
-      for (int i=0; i<eShowElements.length; i++)
-         eShowElements[i] = in.readBoolean();
-      zoomAlwaysMax = in.readBoolean();
-      useUnknown = in.readBoolean();
-      usePause = in.readBoolean();
-      location.x = in.readInt();
-      location.y = in.readInt();
-   }
+        if (in.readBoolean())
+            activeUserId = UUID.fromString(in.readUTF());
+        doNotAskStartup = in.readBoolean();
 
-   /**
-    * Load ini data from file
-    * @return <b>true</b> - successful read; <b>false</b> - not exist or fail read, and set to defaults
-    */
-   public boolean Load() {
-      File file = getIniFile();
-      if (!file.exists()) {
-         setDefaults();
-         return false;
-      }
+        systemTheme = in.readBoolean();
+        for (int i=0; i<eShowElements.length; i++)
+            eShowElements[i] = in.readBoolean();
+        zoomAlwaysMax = in.readBoolean();
+        useUnknown = in.readBoolean();
+        usePause = in.readBoolean();
+        location.x = in.readInt();
+        location.y = in.readInt();
+    }
 
-      try {
-         ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
-         this.readExternal(in);
-         return true;
-      } catch (Exception ex) {
-         ex.printStackTrace();
-         setDefaults();
-         return false;
-      }
-   }
+    /**
+     * Load ini data from file
+     * @return <b>true</b> - successful read; <b>false</b> - not exist or fail read, and set to defaults
+     */
+    public boolean Load() {
+        File file = getIniFile();
+        if (!file.exists()) {
+            setDefaults();
+            return false;
+        }
 
-   public void Save() throws FileNotFoundException, IOException {
-      ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(getIniFile()));
-      this.writeExternal(out);
-      out.flush();
-   }
+        try {
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
+            this.readExternal(in);
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            setDefaults();
+            return false;
+        }
+    }
 
-   public static File getIniFile() {
-      return new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "Mines.dat");
-   }
+    public void Save() throws FileNotFoundException, IOException {
+        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(getIniFile()));
+        this.writeExternal(out);
+        out.flush();
+    }
 
-   public Matrisize getSizeField() { return mosaicData.getSizeField(); }
-   public void setSizeField(Matrisize sizeField) { mosaicData.setSizeField(sizeField); }
+    public static File getIniFile() {
+        return new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "Mines.dat");
+    }
 
-   public EMosaic getMosaicType() { return mosaicData.getMosaicType(); }
-   public void setMosaicType(EMosaic mosaicType) { mosaicData.setMosaicType(mosaicType); }
+    public Matrisize getSizeField() { return mosaicData.getSizeField(); }
+    public void setSizeField(Matrisize sizeField) { mosaicData.setSizeField(sizeField); }
 
-   public int getMinesCount() { return mosaicData.getMinesCount(); }
-   public void setMinesCount(int minesCount) { mosaicData.setMinesCount(minesCount); }
+    public EMosaic getMosaicType() { return mosaicData.getMosaicType(); }
+    public void setMosaicType(EMosaic mosaicType) { mosaicData.setMosaicType(mosaicType); }
 
-   public double getArea() { return mosaicData.getArea(); }
-   public void setArea(double area) { mosaicData.setArea(area); }
+    public int getMinesCount() { return mosaicData.getMinesCount(); }
+    public void setMinesCount(int minesCount) { mosaicData.setMinesCount(minesCount); }
 
-   public boolean getShowElement(EShowElement key) { return eShowElements[key.ordinal()]; }
-   public void setShowElement(EShowElement key, boolean val) { this.eShowElements[key.ordinal()] = val; }
+    public double getArea() { return mosaicData.getArea(); }
+    public void setArea(double area) { mosaicData.setArea(area); }
 
-   public boolean isZoomAlwaysMax() { return zoomAlwaysMax; }
-   public void setZoomAlwaysMax(boolean zoomAlwaysMax) { this.zoomAlwaysMax = zoomAlwaysMax; }
+    public boolean getShowElement(EShowElement key) { return eShowElements[key.ordinal()]; }
+    public void setShowElement(EShowElement key, boolean val) { this.eShowElements[key.ordinal()] = val; }
 
-   public boolean isUseUnknown() { return useUnknown; }
-   public void setUseUnknown(boolean useUnknown) { this.useUnknown = useUnknown; }
+    public boolean isZoomAlwaysMax() { return zoomAlwaysMax; }
+    public void setZoomAlwaysMax(boolean zoomAlwaysMax) { this.zoomAlwaysMax = zoomAlwaysMax; }
 
-   public boolean isUsePause() { return usePause; }
-   public void setUsePause(boolean usePause) { this.usePause = usePause; }
+    public boolean isUseUnknown() { return useUnknown; }
+    public void setUseUnknown(boolean useUnknown) { this.useUnknown = useUnknown; }
 
-   public Point getLocation() { return location; }
-   public void setLocation(Point location) { this.location = location; }
+    public boolean isUsePause() { return usePause; }
+    public void setUsePause(boolean usePause) { this.usePause = usePause; }
 
-   public boolean isSystemTheme() { return systemTheme; }
-   public void setSystemTheme(boolean systemTheme) { this.systemTheme = systemTheme; }
+    public Point getLocation() { return location; }
+    public void setLocation(Point location) { this.location = location; }
 
-   public UUID getActiveUserId() { return activeUserId; }
-   public void setActiveUserId(UUID activeUserId) { this.activeUserId = activeUserId; }
+    public boolean isSystemTheme() { return systemTheme; }
+    public void setSystemTheme(boolean systemTheme) { this.systemTheme = systemTheme; }
 
-   public boolean isDoNotAskStartup() { return doNotAskStartup; }
-   public void setDoNotAskStartup(boolean doNotAskStartup) { this.doNotAskStartup = doNotAskStartup; }
+    public UUID getActiveUserId() { return activeUserId; }
+    public void setActiveUserId(UUID activeUserId) { this.activeUserId = activeUserId; }
+
+    public boolean isDoNotAskStartup() { return doNotAskStartup; }
+    public void setDoNotAskStartup(boolean doNotAskStartup) { this.doNotAskStartup = doNotAskStartup; }
+
 }

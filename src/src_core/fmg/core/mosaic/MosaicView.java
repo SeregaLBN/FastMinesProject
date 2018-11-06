@@ -17,63 +17,63 @@ import fmg.core.types.draw.PenBorder;
 public abstract class MosaicView<TImage,
                                  TImageInner,
                                  TMosaicModel extends MosaicDrawModel<TImageInner>>
-                extends ImageView<TImage, TMosaicModel>
-                implements IMosaicView<TImage, TImageInner, TMosaicModel>
+               extends ImageView<TImage, TMosaicModel>
+          implements IMosaicView<TImage, TImageInner, TMosaicModel>
 {
 
-   protected MosaicView(TMosaicModel mosaicModel) {
-      super(mosaicModel);
-   }
+    protected MosaicView(TMosaicModel mosaicModel) {
+        super(mosaicModel);
+    }
 
-   public static boolean _DEBUG_DRAW_FLOW = false;
-   private final Collection<BaseCell> _modifiedCells = new HashSet<>();
+    public static boolean _DEBUG_DRAW_FLOW = false;
+    private final Collection<BaseCell> _modifiedCells = new HashSet<>();
 
-   @Override
-   public void invalidate(Collection<BaseCell> modifiedCells) {
-      if (modifiedCells == null) // mark NULL if all mosaic is changed
-         _modifiedCells.clear();
-      else
-         _modifiedCells.addAll(modifiedCells);
-      if (_DEBUG_DRAW_FLOW)
-         System.out.println("MosaicView.invalidate: " + ((modifiedCells==null) ? "all" : ("cnt=" + modifiedCells.size()) + ": " + modifiedCells.stream().limit(5).collect(Collectors.toList())));
-      invalidate();
-   }
+    @Override
+    public void invalidate(Collection<BaseCell> modifiedCells) {
+        if (modifiedCells == null) // mark NULL if all mosaic is changed
+            _modifiedCells.clear();
+        else
+            _modifiedCells.addAll(modifiedCells);
+        if (_DEBUG_DRAW_FLOW)
+            System.out.println("MosaicView.invalidate: " + ((modifiedCells==null) ? "all" : ("cnt=" + modifiedCells.size()) + ": " + modifiedCells.stream().limit(5).collect(Collectors.toList())));
+        invalidate();
+    }
 
-   /** Draw modified mosaic cells
-    * @param requiredCells Cells to be redrawn. NULL - redraw the full mosaic.
-    */
-   protected abstract void drawModified(Collection<BaseCell> requiredCells);
+    /** Draw modified mosaic cells
+     * @param requiredCells Cells to be redrawn. NULL - redraw the full mosaic.
+     */
+    protected abstract void drawModified(Collection<BaseCell> requiredCells);
 
-   /** repaint all */
-   @Override
-   protected void drawBody() {
-      if (_DEBUG_DRAW_FLOW)
-         System.out.println("MosaicView.drawBody: " + (_modifiedCells.isEmpty() ? "all" : ("cnt=" + _modifiedCells.size()) + ": " + _modifiedCells.stream().limit(5).collect(Collectors.toList())));
-      drawModified(_modifiedCells.isEmpty() ? null : _modifiedCells);
-      _modifiedCells.clear();
-   }
+    /** repaint all */
+    @Override
+    protected void drawBody() {
+        if (_DEBUG_DRAW_FLOW)
+            System.out.println("MosaicView.drawBody: " + (_modifiedCells.isEmpty() ? "all" : ("cnt=" + _modifiedCells.size()) + ": " + _modifiedCells.stream().limit(5).collect(Collectors.toList())));
+        drawModified(_modifiedCells.isEmpty() ? null : _modifiedCells);
+        _modifiedCells.clear();
+    }
 
-   @Override
-   protected void onPropertyModelChanged(Object oldValue, Object newValue, String propertyName) {
-      super.onPropertyModelChanged(oldValue, newValue, propertyName);
-      switch (propertyName) {
-      case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
-         changeFontSize();
-         break;
-      case MosaicGameModel.PROPERTY_AREA:
-         changeFontSize();
-         break;
-      case MosaicDrawModel.PROPERTY_PEN_BORDER:
-         changeFontSize();
-         break;
-      }
-   }
+    @Override
+    protected void onPropertyModelChanged(Object oldValue, Object newValue, String propertyName) {
+        super.onPropertyModelChanged(oldValue, newValue, propertyName);
+        switch (propertyName) {
+        case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
+            changeFontSize();
+            break;
+        case MosaicGameModel.PROPERTY_AREA:
+            changeFontSize();
+            break;
+        case MosaicDrawModel.PROPERTY_PEN_BORDER:
+            changeFontSize();
+            break;
+        }
+    }
 
-   /** пересчитать и установить новую высоту шрифта */
-   private void changeFontSize() {
-      TMosaicModel model = getModel();
-      PenBorder penBorder = model.getPenBorder();
-      model.getFontInfo().setSize(model.getCellAttr().getSq((int)penBorder.getWidth()));
-   }
+    /** пересчитать и установить новую высоту шрифта */
+    private void changeFontSize() {
+        TMosaicModel model = getModel();
+        PenBorder penBorder = model.getPenBorder();
+        model.getFontInfo().setSize(model.getCellAttr().getSq((int)penBorder.getWidth()));
+    }
 
 }

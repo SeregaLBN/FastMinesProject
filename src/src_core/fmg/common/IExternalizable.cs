@@ -1,12 +1,11 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace fmg.common {
 
-   //[Obsolete]
-   public interface IExternalizable : ISerializable {
-      void writeExternal(BinaryWriter output);
-      void readExternal(BinaryReader input);
-   }
+    //[Obsolete]
+    public interface IExternalizable : ISerializable {
+        void writeExternal(BinaryWriter output);
+        void readExternal(BinaryReader input);
+    }
 
 }

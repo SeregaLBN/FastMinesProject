@@ -1,9 +1,9 @@
 #if WINDOWS_RT || WINDOWS_UWP
 using System;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
-using System.Runtime.InteropServices.WindowsRuntime;
 #elif WINDOWS_FORMS
 using System;
 using System.Text;
@@ -12,87 +12,87 @@ using System.Security.Cryptography;
 
 namespace fmg.common.crypt {
 
-   public interface I3DES {
-      // TODO
-      byte[] Encrypt(byte[] data);
-      byte[] Decrypt(byte[] data);
-   }
+    public interface I3DES {
+        // TODO
+        byte[] Encrypt(byte[] data);
+        byte[] Decrypt(byte[] data);
+    }
 
 #if WINDOWS_RT || WINDOWS_UWP
-   public class TripleDESOperations {
+    public class TripleDESOperations {
 
-      public BinaryStringEncoding Encoding { get; set; }
-      /// <summary> Symmetric algorithm name </summary>
-      public string Algorithm { get; set; }
+        public BinaryStringEncoding Encoding { get; set; }
+        /// <summary> Symmetric algorithm name </summary>
+        public string Algorithm { get; set; }
 
-      public IBuffer DataBuf { get; set; }
-      /// <summary> Data to encription or decription </summary>
-      public byte[] Data { get { return DataBuf?.ToArray(); } set { DataBuf = value?.AsBuffer(); } }
-      public string DataStr { set { DataBuf = CryptographicBuffer.ConvertStringToBinary(value, Encoding); } }
-      public string DataB64 { set { DataBuf = CryptographicBuffer.DecodeFromBase64String(value); } }
-      public string DataHex { set { DataBuf = CryptographicBuffer.DecodeFromHexString(value); } }
+        public IBuffer DataBuf { get; set; }
+        /// <summary> Data to encription or decription </summary>
+        public byte[] Data { get { return DataBuf?.ToArray(); } set { DataBuf = value?.AsBuffer(); } }
+        public string DataStr { set { DataBuf = CryptographicBuffer.ConvertStringToBinary(value, Encoding); } }
+        public string DataB64 { set { DataBuf = CryptographicBuffer.DecodeFromBase64String(value); } }
+        public string DataHex { set { DataBuf = CryptographicBuffer.DecodeFromHexString(value); } }
 
-      public IBuffer InitVectorBuf { get; set; }
-      public byte[] InitVector { get { return InitVectorBuf?.ToArray(); } set { InitVectorBuf = value?.AsBuffer(); } }
+        public IBuffer InitVectorBuf { get; set; }
+        public byte[] InitVector { get { return InitVectorBuf?.ToArray(); } set { InitVectorBuf = value?.AsBuffer(); } }
 
-      public Func<BinaryStringEncoding, string, byte[]> SecKeyBinTransformer { get; set; }
-      public IBuffer SecurityKeyBuf { get; set; }
-      public byte[] SecurityKey { get { return (SecurityKeyBuf == null) ? null : SecurityKeyBuf.ToArray(); } set { SecurityKeyBuf = value?.AsBuffer(); } }
-      public string SecurityKeyBinStr { set { SecurityKeyBuf = CryptographicBuffer.ConvertStringToBinary(value, Encoding); } }
-      public string SecurityKeyB64 { set { SecurityKeyBuf = CryptographicBuffer.DecodeFromBase64String(value); } }
-      public string SecurityKeyHex { set { SecurityKeyBuf = CryptographicBuffer.DecodeFromHexString(value); } }
-      public string SecurityKeyStr { set { SecurityKey = SecKeyBinTransformer(Encoding, value); } }
+        public Func<BinaryStringEncoding, string, byte[]> SecKeyBinTransformer { get; set; }
+        public IBuffer SecurityKeyBuf { get; set; }
+        public byte[] SecurityKey { get { return (SecurityKeyBuf == null) ? null : SecurityKeyBuf.ToArray(); } set { SecurityKeyBuf = value?.AsBuffer(); } }
+        public string SecurityKeyBinStr { set { SecurityKeyBuf = CryptographicBuffer.ConvertStringToBinary(value, Encoding); } }
+        public string SecurityKeyB64 { set { SecurityKeyBuf = CryptographicBuffer.DecodeFromBase64String(value); } }
+        public string SecurityKeyHex { set { SecurityKeyBuf = CryptographicBuffer.DecodeFromHexString(value); } }
+        public string SecurityKeyStr { set { SecurityKey = SecKeyBinTransformer(Encoding, value); } }
 
-      public TripleDESOperations() {
-         Encoding = BinaryStringEncoding.Utf8;
-         Algorithm = SymmetricAlgorithmNames.TripleDesEcbPkcs7;
-         SecKeyBinTransformer = MD5HashTransformer;
-      }
+        public TripleDESOperations() {
+            Encoding = BinaryStringEncoding.Utf8;
+            Algorithm = SymmetricAlgorithmNames.TripleDesEcbPkcs7;
+            SecKeyBinTransformer = MD5HashTransformer;
+        }
 
-      public IBuffer EncryptBuf() {
-         var algProvider = SymmetricKeyAlgorithmProvider.OpenAlgorithm(Algorithm);
+        public IBuffer EncryptBuf() {
+            var algProvider = SymmetricKeyAlgorithmProvider.OpenAlgorithm(Algorithm);
 
-         IBuffer data = DataBuf;
-         if (!Algorithm.Contains("PKCS7"))
-            if ((data.Length % algProvider.BlockLength) != 0)
-               throw new Exception("Message buffer length must be multiple of block length.");
+            IBuffer data = DataBuf;
+            if (!Algorithm.Contains("PKCS7"))
+                if ((data.Length % algProvider.BlockLength) != 0)
+                    throw new Exception("Message buffer length must be multiple of block length.");
 
-         var key = algProvider.CreateSymmetricKey(SecurityKeyBuf);
+            var key = algProvider.CreateSymmetricKey(SecurityKeyBuf);
 
-         if ((InitVectorBuf == null) && Algorithm.Contains("CBC"))
-            InitVectorBuf = CryptographicBuffer.GenerateRandom(algProvider.BlockLength);
+            if ((InitVectorBuf == null) && Algorithm.Contains("CBC"))
+                InitVectorBuf = CryptographicBuffer.GenerateRandom(algProvider.BlockLength);
 
-         return CryptographicEngine.Encrypt(key, DataBuf, InitVectorBuf);
-      }
-      public byte[] Encrypt() { return EncryptBuf().ToArray(); }
-      public string EncryptB64() { return CryptographicBuffer.EncodeToBase64String(EncryptBuf()); }
-      public string EncryptBin() { return CryptographicBuffer.ConvertBinaryToString(Encoding, EncryptBuf()); }
-      public string EncryptHex() { return CryptographicBuffer.EncodeToHexString(EncryptBuf()); }
+            return CryptographicEngine.Encrypt(key, DataBuf, InitVectorBuf);
+        }
+        public byte[] Encrypt() { return EncryptBuf().ToArray(); }
+        public string EncryptB64() { return CryptographicBuffer.EncodeToBase64String(EncryptBuf()); }
+        public string EncryptBin() { return CryptographicBuffer.ConvertBinaryToString(Encoding, EncryptBuf()); }
+        public string EncryptHex() { return CryptographicBuffer.EncodeToHexString(EncryptBuf()); }
 
-      public IBuffer DecryptBuf() {
-         var algProvider = SymmetricKeyAlgorithmProvider.OpenAlgorithm(Algorithm);
-         var key = algProvider.CreateSymmetricKey(SecurityKeyBuf);
-         return CryptographicEngine.Decrypt(key, DataBuf, InitVectorBuf);
-      }
-      public byte[] Decrypt() { return DecryptBuf().ToArray(); }
-      public string DecryptStr() { return CryptographicBuffer.ConvertBinaryToString(Encoding, DecryptBuf()); }
-      public string DecryptHex() { return CryptographicBuffer.EncodeToHexString(DecryptBuf()); }
+        public IBuffer DecryptBuf() {
+            var algProvider = SymmetricKeyAlgorithmProvider.OpenAlgorithm(Algorithm);
+            var key = algProvider.CreateSymmetricKey(SecurityKeyBuf);
+            return CryptographicEngine.Decrypt(key, DataBuf, InitVectorBuf);
+        }
+        public byte[] Decrypt() { return DecryptBuf().ToArray(); }
+        public string DecryptStr() { return CryptographicBuffer.ConvertBinaryToString(Encoding, DecryptBuf()); }
+        public string DecryptHex() { return CryptographicBuffer.EncodeToHexString(DecryptBuf()); }
 
-      public static byte[] MD5HashTransformer(BinaryStringEncoding encoding, string data) {
-         IBuffer buff = CryptographicBuffer.ConvertStringToBinary(data, encoding);
-         var algProvider = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5);
+        public static byte[] MD5HashTransformer(BinaryStringEncoding encoding, string data) {
+            IBuffer buff = CryptographicBuffer.ConvertStringToBinary(data, encoding);
+            var algProvider = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5);
 
-         IBuffer buffHash16 = algProvider.HashData(buff);
-         IBuffer buffHash24 = (new byte[24]).AsBuffer();
-         buffHash16.CopyTo(0, buffHash24, 0, 16);
-         return buffHash24.ToArray();
-      }
+            IBuffer buffHash16 = algProvider.HashData(buff);
+            IBuffer buffHash24 = (new byte[24]).AsBuffer();
+            buffHash16.CopyTo(0, buffHash24, 0, 16);
+            return buffHash24.ToArray();
+        }
 
-      public static IBuffer GenerateKeyBuf() { return CryptographicBuffer.GenerateRandom(16); }
-      public static byte[] GenerateKey() { return GenerateKeyBuf().ToArray(); }
-      public static IBuffer GenerateInitVectorBuf() { return CryptographicBuffer.GenerateRandom(8); }
-      public static byte[] GenerateInitVector() { return GenerateInitVectorBuf().ToArray(); }
-   }
+        public static IBuffer GenerateKeyBuf() { return CryptographicBuffer.GenerateRandom(16); }
+        public static byte[] GenerateKey() { return GenerateKeyBuf().ToArray(); }
+        public static IBuffer GenerateInitVectorBuf() { return CryptographicBuffer.GenerateRandom(8); }
+        public static byte[] GenerateInitVector() { return GenerateInitVectorBuf().ToArray(); }
+    }
 
 #elif WINDOWS_FORMS
 

@@ -12,40 +12,40 @@ public abstract class AnimatedImgController<TImage,
              extends        ImageController<TImage, TImageView, TImageModel>
              implements IAnimatedController<TImage, TImageView, TImageModel>
 {
-   private final AnimatedInnerController<TImage, TImageView, TImageModel> _innerController;
+    private final AnimatedInnerController<TImage, TImageView, TImageModel> _innerController;
 
-   protected AnimatedImgController(TImageView imageView) {
-      super(imageView);
-      _innerController = new AnimatedInnerController<>(getModel());
-   }
+    protected AnimatedImgController(TImageView imageView) {
+        super(imageView);
+        _innerController = new AnimatedInnerController<>(getModel());
+    }
 
-   @Override
-   public void addModelTransformer(IModelTransformer transformer) {
-      _innerController.addModelTransformer(transformer);
-   }
-   @Override
-   public void removeModelTransformer(Class<? extends IModelTransformer> transformerClass) {
-      _innerController.removeModelTransformer(transformerClass);
-   }
+    @Override
+    public void addModelTransformer(IModelTransformer transformer) {
+        _innerController.addModelTransformer(transformer);
+    }
+    @Override
+    public void removeModelTransformer(Class<? extends IModelTransformer> transformerClass) {
+        _innerController.removeModelTransformer(transformerClass);
+    }
 
-   public void useRotateTransforming(boolean enable) {
-      if (enable)
-         addModelTransformer(new RotateTransformer());
-      else
-         removeModelTransformer(RotateTransformer.class);
-   }
+    public void useRotateTransforming(boolean enable) {
+        if (enable)
+            addModelTransformer(new RotateTransformer());
+        else
+            removeModelTransformer(RotateTransformer.class);
+    }
 
-   public void usePolarLightFgTransforming(boolean enable) {
-      if (enable)
-         addModelTransformer(new PolarLightFgTransformer());
-      else
-         removeModelTransformer(PolarLightFgTransformer.class);
-   }
+    public void usePolarLightFgTransforming(boolean enable) {
+        if (enable)
+            addModelTransformer(new PolarLightFgTransformer());
+        else
+            removeModelTransformer(PolarLightFgTransformer.class);
+    }
 
-   @Override
-   public void close() {
-      _innerController.close();
-      super.close();
-   }
+    @Override
+    public void close() {
+        _innerController.close();
+        super.close();
+    }
 
 }

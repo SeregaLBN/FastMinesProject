@@ -2,37 +2,37 @@ using System.ComponentModel;
 
 namespace fmg.core.img {
 
-   /// <summary> MVC: view of images with burger menu (where burger menu its secondary model) </summary>
-   /// <typeparam name="TImage">platform specific image</typeparam>
-   /// <typeparam name="TImageModel">general model of image (not burger menu model)</typeparam>
-   public abstract class WithBurgerMenuView<TImage, TImageModel> : ImageView<TImage, TImageModel>
-      where TImage : class
-      where TImageModel : AnimatedImageModel
-   {
+    /// <summary> MVC: view of images with burger menu (where burger menu its secondary model) </summary>
+    /// <typeparam name="TImage">platform specific image</typeparam>
+    /// <typeparam name="TImageModel">general model of image (not burger menu model)</typeparam>
+    public abstract class WithBurgerMenuView<TImage, TImageModel>
+                                 : ImageView<TImage, TImageModel>
+        where TImage : class
+        where TImageModel : AnimatedImageModel
+    {
+        /// <summary> the second model of image </summary>
+        private readonly BurgerMenuModel _burgerMenuModel;
 
-      /// <summary> the second model of image </summary>
-      private readonly BurgerMenuModel _burgerMenuModel;
+        protected WithBurgerMenuView(TImageModel imageModel)
+            : base(imageModel)
+        {
+            _burgerMenuModel = new BurgerMenuModel(imageModel);
+            _burgerMenuModel.PropertyChanged += OnPropertyBurgerMenuModelChanged;
+        }
 
-      protected WithBurgerMenuView(TImageModel imageModel)
-         : base(imageModel)
-      {
-         _burgerMenuModel = new BurgerMenuModel(imageModel);
-         _burgerMenuModel.PropertyChanged += OnPropertyBurgerMenuModelChanged;
-      }
+        public BurgerMenuModel BurgerMenuModel => _burgerMenuModel;
 
-      public BurgerMenuModel BurgerMenuModel => _burgerMenuModel;
+        protected void OnPropertyBurgerMenuModelChanged(object sender, PropertyChangedEventArgs ev) {
+            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _burgerMenuModel));
+            Invalidate();
+        }
 
-      protected void OnPropertyBurgerMenuModelChanged(object sender, PropertyChangedEventArgs ev) {
-         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _burgerMenuModel));
-         Invalidate();
-      }
+        protected override void Disposing() {
+            _burgerMenuModel.PropertyChanged -= OnPropertyBurgerMenuModelChanged;
+            _burgerMenuModel.Dispose();
+            base.Disposing();
+        }
 
-      protected override void Disposing() {
-         _burgerMenuModel.PropertyChanged -= OnPropertyBurgerMenuModelChanged;
-         _burgerMenuModel.Dispose();
-         base.Disposing();
-      }
-
-   }
+    }
 
 }

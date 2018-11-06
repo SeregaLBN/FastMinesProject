@@ -9,13 +9,13 @@ import fmg.common.notyfier.INotifyPropertyChanged;
  */
 public interface IImageModel extends INotifyPropertyChanged, AutoCloseable {
 
-   public static final String PROPERTY_SIZE = "Size";
+    public static final String PROPERTY_SIZE = "Size";
 
-   /** width and height of the displayed part in pixels */
-   SizeDouble getSize();
-   void setSize(SizeDouble value);
+    /** width and height of the displayed part in pixels */
+    SizeDouble getSize();
+    void setSize(SizeDouble value);
 
-   @Override
-   void close(); // hide throws Exception
+    @Override
+    void close(); // hide throws Exception
 
 }

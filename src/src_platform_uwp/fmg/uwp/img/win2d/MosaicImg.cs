@@ -73,7 +73,7 @@ namespace fmg.uwp.img.win2d {
         public class CanvasBmp : MosaicImgView<CanvasBitmap> {
 
             public CanvasBmp(ICanvasResourceCreator resourceCreator)
-               : base(resourceCreator)
+                : base(resourceCreator)
             { }
 
             protected override CanvasBitmap CreateImage() {
@@ -97,7 +97,7 @@ namespace fmg.uwp.img.win2d {
         public class CanvasImgSrc : MosaicImgView<CanvasImageSource> {
 
             public CanvasImgSrc(ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
-               : base(resourceCreator)
+                : base(resourceCreator)
             { }
 
             protected override CanvasImageSource CreateImage() {
@@ -121,7 +121,7 @@ namespace fmg.uwp.img.win2d {
         public class ControllerBitmap : MosaicImageController<CanvasBitmap, MosaicImg.CanvasBmp> {
 
             public ControllerBitmap(ICanvasResourceCreator resourceCreator)
-               : base(new MosaicImg.CanvasBmp(resourceCreator))
+                : base(new MosaicImg.CanvasBmp(resourceCreator))
             { }
 
             protected override void Disposing() {
@@ -135,7 +135,7 @@ namespace fmg.uwp.img.win2d {
         public class ControllerImgSrc : MosaicImageController<CanvasImageSource, MosaicImg.CanvasImgSrc> {
 
             public ControllerImgSrc(ICanvasResourceCreator resourceCreator)
-               : base(new MosaicImg.CanvasImgSrc(resourceCreator))
+                : base(new MosaicImg.CanvasImgSrc(resourceCreator))
             { }
 
             protected override void Disposing() {

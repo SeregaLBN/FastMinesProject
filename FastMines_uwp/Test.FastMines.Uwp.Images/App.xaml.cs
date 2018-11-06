@@ -22,26 +22,25 @@ using fmg.common;
 using fmg.uwp.utils;
 using fmg.uwp.mosaic.wbmp;
 
-namespace Test.FastMines.Uwp.Images
-{
+namespace Test.FastMines.Uwp.Images {
+
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
-    sealed partial class App : Application
-    {
+    sealed partial class App : Application {
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
-        public App()
-        {
+        public App() {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
         }
 
-         private async Task RegisterResource() {
-             await BitmapFont.RegisterFonts();
-         }
+        private async Task RegisterResource() {
+            await BitmapFont.RegisterFonts();
+        }
 
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
@@ -49,47 +48,46 @@ namespace Test.FastMines.Uwp.Images
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs e) {
-         /**/
-         Action<Windows.UI.Color> applyColor = null;
+        /**/
+        Action<Windows.UI.Color> applyColor = null;
 
-         //PC customization
-         if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView")) {
+        //PC customization
+        if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView")) {
             var titleBar = ApplicationView.GetForCurrentView().TitleBar;
             if (titleBar != null) {
-               //titleBar.ButtonBackgroundColor = Colors.DarkBlue;
-               //titleBar.ButtonForegroundColor = Colors.White;
-               //titleBar.BackgroundColor = Colors.Blue;
-               //titleBar.ForegroundColor = Colors.White;
-               applyColor = clr => titleBar.ButtonBackgroundColor = clr;
+                //titleBar.ButtonBackgroundColor = Colors.DarkBlue;
+                //titleBar.ButtonForegroundColor = Colors.White;
+                //titleBar.BackgroundColor = Colors.Blue;
+                //titleBar.ForegroundColor = Colors.White;
+                applyColor = clr => titleBar.ButtonBackgroundColor = clr;
             }
-         }
-         //Mobile customization
-         if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar")) {
+        }
+        //Mobile customization
+        if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar")) {
             var statusBar = StatusBar.GetForCurrentView();
             if (statusBar != null) {
-               //statusBar.BackgroundOpacity = 1;
-               //statusBar.BackgroundColor = Colors.DarkBlue;
-               //statusBar.ForegroundColor = Colors.White;
-               applyColor = clr => statusBar.BackgroundColor = clr;
+                //statusBar.BackgroundOpacity = 1;
+                //statusBar.BackgroundColor = Colors.DarkBlue;
+                //statusBar.ForegroundColor = Colors.White;
+                applyColor = clr => statusBar.BackgroundColor = clr;
             }
-         }
-         // you need to add a reference to the correspondent Extension:
-         //  * Windows Mobile Extensions for the UWP
-         //  * Windows Desktop Extensions for the UWP
+        }
+        // you need to add a reference to the correspondent Extension:
+        //  * Windows Mobile Extensions for the UWP
+        //  * Windows Desktop Extensions for the UWP
 
-         if (applyColor != null) {
+        if (applyColor != null) {
             HSV hsv = Colors.DarkBlue.ToHsvColor();
             Action run = () => {
-               hsv.h += 10;
-               applyColor(hsv.ToWinColor());
+                hsv.h += 10;
+                applyColor(hsv.ToWinColor());
             };
             run.RepeatNoWait(TimeSpan.FromMilliseconds(100), () => false);
-         }
-         /**/
+        }
+        /**/
 
 #if DEBUG
-            if (System.Diagnostics.Debugger.IsAttached)
-            {
+            if (System.Diagnostics.Debugger.IsAttached) {
                 this.DebugSettings.EnableFrameRateCounter = true;
             }
 #endif
@@ -101,15 +99,13 @@ namespace Test.FastMines.Uwp.Images
 
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
-            if (rootFrame == null)
-            {
+            if (rootFrame == null) {
                 // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame = new Frame();
 
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
-                {
+                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated) {
                     //TODO: Load state from previously suspended application
                 }
 
@@ -128,11 +124,11 @@ namespace Test.FastMines.Uwp.Images
                 Window.Current.Activate();
             }
 
-         Window.Current.VisibilityChanged += (sender, ev) => {
-            var currFrame = Window.Current.Content as Frame;
-            var demoPage = currFrame?.Content as DemoPage;
-            demoPage?.Animation(ev.Visible);
-         };
+            Window.Current.VisibilityChanged += (sender, ev) => {
+                var currFrame = Window.Current.Content as Frame;
+                var demoPage = currFrame?.Content as DemoPage;
+                demoPage?.Animation(ev.Visible);
+            };
         }
 
         /// <summary>
@@ -156,5 +152,7 @@ namespace Test.FastMines.Uwp.Images
             //TODO: Save application state and stop any background activity
             deferral.Complete();
         }
+
     }
+
 }

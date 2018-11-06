@@ -6,32 +6,32 @@
 <body>
 <table border="0" style='width: 100%; height: 98%;'>
 <tbody>
-   <tr style='height: 15%;'>
-      <td rowspan="3" style='vertical-align: top; width: 1%; visibility: hidden;'>
+    <tr style='height: 15%;'>
+        <td rowspan="3" style='vertical-align: top; width: 1%; visibility: hidden;'>
 <svg xmlns='http://www.w3.org/2000/svg' version='1.1'
      style='border: solid 1px red;'
      preserveAspectRatio='none'
      onload='initSvg(evt)' />
 </svg>
-      </td>
-      <td>
-         <strong>SVG source</strong>
-         <textarea id="svgSource" style='width: 100%; height: 97%; font-size: 7px'></textarea>
-      </td>
-   </tr>
-   <tr style='height: 75%;'>
-      <td>
-         <strong>XSLT to vector</strong>
-         <textarea id="xsltSource" style="width: 100%; height: 97%; font-size: 10px" ></textarea>
-         <button onclick='tryTransform()' style='float: right;'>Transform</button>
-      </td>
-   </tr>
-   <tr>
-      <td>
-         <strong>Vector source</strong>
-         <textarea id="vectorSource" style="width: 100%; height: 97%; font-size: 8px" ></textarea>
-      </td>
-   </tr>
+        </td>
+        <td>
+            <strong>SVG source</strong>
+            <textarea id="svgSource" style='width: 100%; height: 97%; font-size: 7px'></textarea>
+        </td>
+    </tr>
+    <tr style='height: 75%;'>
+        <td>
+            <strong>XSLT to vector</strong>
+            <textarea id="xsltSource" style="width: 100%; height: 97%; font-size: 10px" ></textarea>
+            <button onclick='tryTransform()' style='float: right;'>Transform</button>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <strong>Vector source</strong>
+            <textarea id="vectorSource" style="width: 100%; height: 97%; font-size: 8px" ></textarea>
+        </td>
+    </tr>
 </tbody>
 </table>
 <!--
@@ -56,248 +56,249 @@ delta HSV.h=<input id='hsv_h' type='number' name='quantity' min='0' max='359' on
 /** common settings this SVG */
 var Settings = { };
 Promise.resolve().then(function() {
-   Settings = {
-      width: 108,  // view width
-      height: 108, // view height
-      pad: 108*10/2020, // padding
+    Settings = {
+        width: 108,  // view width
+        height: 108, // view height
+        pad: 108*10/2020, // padding
 
-      testedImageType: 0, // 0 - Logo image ; 1-MosaicSkill image
+        testedImageType: 0, // 0 - Logo image ; 1-MosaicSkill image
 
-      animated: !true,
-      animeDirection: true, // clockwise: ↻ or ↺
-      animatePeriod: 2000, // rotate period in msec
-      /** the number of parts of which the one turn */
-      totalFrames: 30, // animate iterations
+        animated: !true,
+        animeDirection: true, // clockwise: ↻ or ↺
+        animatePeriod: 2000, // rotate period in msec
+        /** the number of parts of which the one turn */
+        totalFrames: 30, // animate iterations
 
-      borderWidth: 0,
-      backgroundColor: Color.Transparent,
-      foregroundAlpha: 200,  // 0..255 - foreground alpha-chanel color
+        borderWidth: 0,
+        backgroundColor: Color.Transparent,
+        foregroundAlpha: 200,  // 0..255 - foreground alpha-chanel color
 
-      /** ESkillLevel */
-      mosaicSkill: null, // ESkillLevel.eBeginner eAmateur eProfi eCrazy eCustom
+        /** ESkillLevel */
+        mosaicSkill: null, // ESkillLevel.eBeginner eAmateur eProfi eCrazy eCustom
 
-      showBurgerMenu: true,
+        showBurgerMenu: true,
 
-      useGradientFill: true, // for Logo
+        useGradientFill: true, // for Logo
 
-      useRotateTransforming: true,
-      usePolarLightFgTransforming: true,
+        useRotateTransforming: true,
+        usePolarLightFgTransforming: true,
 
-      useRandom: !true
-   };
+        useRandom: !true
+    };
 
-   if (Settings.useRandom) {
+    if (Settings.useRandom) {
 
-      var b = function() { return (Math.random() < 0.5); }; // random boolean
+        var b = function() { return (Math.random() < 0.5); }; // random boolean
 
-      Settings.width = Settings.height = 100 + random(100);
-      Settings.pad = 5 + random(10);
-      Settings.borderWidth = !random(3) ? 0: (0.3 + 2 * Math.random()),
-      Settings.backgroundColor = !random(5) ? Color.Transparent : Color.RandomColor.brighter(0.4),
-      Settings.foregroundAlpha = 150 + random(255-150), // 200  // 0..255 - foreground alpha-chanel color
-      Settings.testedImageType = random(2);
-      Settings.mosaicSkill = (function() {
-            switch (random(6)) {
-            case 0: return ESkillLevel.eBeginner;
-            case 1: return ESkillLevel.eAmateur ;
-            case 2: return ESkillLevel.eProfi   ;
-            case 3: return ESkillLevel.eCrazy   ;
-            case 4: return ESkillLevel.eCustom  ;
-            case 5: return null;
-            default: throw new Error('Bad value');
+        Settings.width = Settings.height = 100 + random(100);
+        Settings.pad = 5 + random(10);
+        Settings.borderWidth = !random(3) ? 0: (0.3 + 2 * Math.random()),
+        Settings.backgroundColor = !random(5) ? Color.Transparent : Color.RandomColor.brighter(0.4),
+        Settings.foregroundAlpha = 150 + random(255-150), // 200  // 0..255 - foreground alpha-chanel color
+        Settings.testedImageType = random(2);
+        Settings.mosaicSkill = (function() {
+                switch (random(6)) {
+                case 0: return ESkillLevel.eBeginner;
+                case 1: return ESkillLevel.eAmateur ;
+                case 2: return ESkillLevel.eProfi   ;
+                case 3: return ESkillLevel.eCrazy   ;
+                case 4: return ESkillLevel.eCustom  ;
+                case 5: return null;
+                default: throw new Error('Bad value');
+                }
+            })();
+        Settings.showBurgerMenu = b();
+        Settings.useGradientFill = b();
+
+        Settings.animated = b();
+        if (Settings.animated) {
+            Settings.animeDirection = b();
+            Settings.animatePeriod = 1500 + random(2500);
+            if (Settings.testedImageType == 1) {
+                Settings.totalFrames = (Settings.mosaicSkill==null)
+                    ? 120 // что бы при calcMode='discrete' не 'дёргалось'
+                    : 30;
             }
-         })();
-      Settings.showBurgerMenu = b();
-      Settings.useGradientFill = b();
 
-      Settings.animated = b();
-      if (Settings.animated) {
-         Settings.animeDirection = b();
-         Settings.animatePeriod = 1500 + random(2500);
-         if (Settings.testedImageType == 1) {
-            Settings.totalFrames = (Settings.mosaicSkill==null)
-               ? 120 // что бы при calcMode='discrete' не 'дёргалось'
-               : 30;
-         }
-
-         Settings.useRotateTransforming = b();
-         if (!Settings.useRotateTransforming)
-            Settings.usePolarLightFgTransforming = true; // при анимації мусить бути хоча б один трансформер, інакше не буде анімації
-         else
-            Settings.usePolarLightFgTransforming = b();
-      }
-   }
+            Settings.useRotateTransforming = b();
+            if (!Settings.useRotateTransforming)
+                Settings.usePolarLightFgTransforming = true; // при анимації мусить бути хоча б один трансформер, інакше не буде анімації
+            else
+                Settings.usePolarLightFgTransforming = b();
+        }
+    }
 
 });
 
 const svgNS = 'http://www.w3.org/2000/svg';
 
 function random(upDiapazon) {
-   return Math.floor(Math.random() * upDiapazon);
+    return Math.floor(Math.random() * upDiapazon);
 }
 function isNumeric(n) {
-   return !isNaN(parseFloat(n)) && isFinite(n);
+    return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
 const dpPnt = 4; // round decimal points for point
 const dpClr = 4; // round decimal points for color
 const dpTm  = 4; // round decimal points for time
 function round(n, decimalPoints) {
-   if (arguments.length < 2)
-   decimalPoints = 2;
-   var multiplicator = Math.pow(10, decimalPoints);
-   n = parseFloat((n * multiplicator).toFixed(11));
-   var test = Math.round(n) / multiplicator;
-   return +(test.toFixed(decimalPoints));
+    if (arguments.length < 2)
+        decimalPoints = 2;
+    var multiplicator = Math.pow(10, decimalPoints);
+    n = parseFloat((n * multiplicator).toFixed(11));
+    var test = Math.round(n) / multiplicator;
+    return +(test.toFixed(decimalPoints));
 }
 var hasMinDiff = function(double1, double2) {
-   return Math.abs(double1 - double2) < 0.0001;
+    return Math.abs(double1 - double2) < 0.0001;
 };
 function toInt (value) {
-   return value | 0;
-//   var intvalue = Math.floor( floatvalue );
-//   var intvalue = Math.ceil( floatvalue );
-//   var intvalue = Math.round( floatvalue );
-//   var intvalue = Math.trunc( floatvalue ); // `Math.trunc` was added in ECMAScript 6
+    return value | 0;
+//    var intvalue = Math.floor( floatvalue );
+//    var intvalue = Math.ceil( floatvalue );
+//    var intvalue = Math.round( floatvalue );
+//    var intvalue = Math.trunc( floatvalue ); // `Math.trunc` was added in ECMAScript 6
 }
 
 // setTimeout as Promise
 var onTimer = function(milliseconds) {
-   return new Promise(function(resolve, reject) {
-      var timerId = setTimeout( function() { resolve(timerId); }, milliseconds);
-   })
-   .then(function(timerId) {
-      clearTimeout(timerId);
-   });
+    return new Promise(function(resolve, reject) {
+        var timerId = setTimeout( function() { resolve(timerId); }, milliseconds);
+    })
+    .then(function(timerId) {
+        clearTimeout(timerId);
+    });
 };
 
 
 /** RGBA color */
 class Color {
 
-   static get Black      () { return new Color(0xFF000000); }
-   static get White      () { return new Color(0xFFFFFFFF); }
-   static get Transparent() { return new Color(0x00FFFFFF); }
-   static get Orchid     () { return new Color(0xFFDA70D6); }
-   static get DarkOrange () { return new Color(0xFFFF8C00); }
-   static get Maroon     () { return new Color(0xFF800000); }
-   static get Gray       () { return new Color(0xFF808080); }
+    static get Black      () { return new Color(0xFF000000); }
+    static get White      () { return new Color(0xFFFFFFFF); }
+    static get Transparent() { return new Color(0x00FFFFFF); }
+    static get Orchid     () { return new Color(0xFFDA70D6); }
+    static get DarkOrange () { return new Color(0xFFFF8C00); }
+    static get Maroon     () { return new Color(0xFF800000); }
+    static get Gray       () { return new Color(0xFF808080); }
 
-   static /*int*/ check(/*int*/ v, /*String*/ name) {
-      if (v<0 || v>255) throw new Error('Bad '+name+' argument');
-      return v;
-   }
-   static /*int*/ checkA(/*int*/ a) { return Color.check(a, 'ALPHA'); }
-   static /*int*/ checkR(/*int*/ r) { return Color.check(r, 'RED'); }
-   static /*int*/ checkG(/*int*/ g) { return Color.check(g, 'GREEN'); }
-   static /*int*/ checkB(/*int*/ b) { return Color.check(b, 'BLUE'); }
+    static /*int*/ check(/*int*/ v, /*String*/ name) {
+        if (v<0 || v>255)
+            throw new Error('Bad '+name+' argument');
+        return v;
+    }
+    static /*int*/ checkA(/*int*/ a) { return Color.check(a, 'ALPHA'); }
+    static /*int*/ checkR(/*int*/ r) { return Color.check(r, 'RED'); }
+    static /*int*/ checkG(/*int*/ g) { return Color.check(g, 'GREEN'); }
+    static /*int*/ checkB(/*int*/ b) { return Color.check(b, 'BLUE'); }
 
-   constructor4(a, r, g, b) {
-      this.a = Color.checkA(a);
-      this.r = Color.checkR(r);
-      this.g = Color.checkG(g);
-      this.b = Color.checkB(b);
-   }
-   constructor3(r, g, b) {
-      this.constructor4(255, r, g, b);
-   }
-   constructor1(OxAARRGGBB__or__colorCopy) {
-      if (OxAARRGGBB__or__colorCopy instanceof Color) {
-         var copy = OxAARRGGBB__or__colorCopy;
-         this.constructor4(copy.a, copy.r, copy.g, copy.b);
-         return;
-      }
-      var OxAARRGGBB = OxAARRGGBB__or__colorCopy;
-      this.constructor4((OxAARRGGBB >> 24) & 0xFF,
-                        (OxAARRGGBB >> 16) & 0xFF,
-                        (OxAARRGGBB >>  8) & 0xFF,
-                        (OxAARRGGBB >>  0) & 0xFF);
-   }
-   constructor(args/*, ...*/) {
-      switch (arguments.length) {
-      case 1: return this.constructor1(arguments[0]);
-      case 3: return this.constructor3(arguments[0], arguments[1], arguments[2]);
-      case 4: return this.constructor4(arguments[0], arguments[1], arguments[2], arguments[3]);
-      }
-      throw new Error();
-   }
+    constructor4(a, r, g, b) {
+        this.a = Color.checkA(a);
+        this.r = Color.checkR(r);
+        this.g = Color.checkG(g);
+        this.b = Color.checkB(b);
+    }
+    constructor3(r, g, b) {
+        this.constructor4(255, r, g, b);
+    }
+    constructor1(OxAARRGGBB__or__colorCopy) {
+        if (OxAARRGGBB__or__colorCopy instanceof Color) {
+            var copy = OxAARRGGBB__or__colorCopy;
+            this.constructor4(copy.a, copy.r, copy.g, copy.b);
+            return;
+        }
+        var OxAARRGGBB = OxAARRGGBB__or__colorCopy;
+        this.constructor4((OxAARRGGBB >> 24) & 0xFF,
+                          (OxAARRGGBB >> 16) & 0xFF,
+                          (OxAARRGGBB >>  8) & 0xFF,
+                          (OxAARRGGBB >>  0) & 0xFF);
+    }
+    constructor(args/*, ...*/) {
+        switch (arguments.length) {
+        case 1: return this.constructor1(arguments[0]);
+        case 3: return this.constructor3(arguments[0], arguments[1], arguments[2]);
+        case 4: return this.constructor4(arguments[0], arguments[1], arguments[2], arguments[3]);
+        }
+        throw new Error();
+    }
 
-   equals(obj) {
-      if (!(obj instanceof Color))
-         return false;
-      return (obj.a==this.a) && (obj.r==this.r) && (obj.g==this.g) && (obj.b==this.b);
-   }
+    equals(obj) {
+        if (!(obj instanceof Color))
+            return false;
+        return (obj.a==this.a) && (obj.r==this.r) && (obj.g==this.g) && (obj.b==this.b);
+    }
 
-   toString() {
-      return 'argb[' + this.asHexString + ']';
-   }
+    toString() {
+        return 'argb[' + this.asHexString + ']';
+    }
 
-   get asNumber() {
-      return (this.a << 24) & 0xFF000000
-          |  (this.r << 16) & 0x00FF0000
-          |  (this.g <<  8) & 0x0000FF00
-          |  (this.b <<  0) & 0x000000FF;
-   }
+    get asNumber() {
+        return (this.a << 24) & 0xFF000000
+            |  (this.r << 16) & 0x00FF0000
+            |  (this.g <<  8) & 0x0000FF00
+            |  (this.b <<  0) & 0x000000FF;
+    }
 
-   get asHexString() {
-      var h = function(v) {
-         var s = (+v).toString(16);
-         if (s.length < 2) s = '0' + s;
-         return s.toUpperCase();
-      };
-      return h(this.a) + h(this.r) + h(this.g) + h(this.b);
-   }
+    get asHexString() {
+        var h = function(v) {
+            var s = (+v).toString(16);
+            if (s.length < 2) s = '0' + s;
+            return s.toUpperCase();
+        };
+        return h(this.a) + h(this.r) + h(this.g) + h(this.b);
+    }
 
-   clone() { return new Color(this.a, this.r, this.g, this.b); }
+    clone() { return new Color(this.a, this.r, this.g, this.b); }
 
-   get isOpaque()      { return this.a == 255; }
-   get isTransparent() { return this.a == 0; }
+    get isOpaque()      { return this.a == 255; }
+    get isTransparent() { return this.a == 0; }
 
-   static get RandomColor() {
-      return new Color(random(256), random(256), random(256));
-   }
+    static get RandomColor() {
+        return new Color(random(256), random(256), random(256));
+    }
 
-   // Creates grayscale version of this Color
-   grayscale() { return new Color(this.a, toInt(this.r * 0.2126), toInt(this.g * 0.7152), toInt(this.b * 0.0722)); }
+    // Creates grayscale version of this Color
+    grayscale() { return new Color(this.a, toInt(this.r * 0.2126), toInt(this.g * 0.7152), toInt(this.b * 0.0722)); }
 
-   /**
-    * Creates brighter version of this Color
-    * @param percent - 0.0 - as is; 1 - WHITE
-    * @return
-    */
-   brighter(/*double*/ percent) {
-      if (arguments.length == 0)
-         percent = 0.7;
-      if ((percent < 0) || (percent > 1))
-         throw new Error('Bad \'percent\' argument');
-      var tmp = new Color(this.a, 0xFF - this.r, 0xFF - this.g, 0xFF - this.b);
-      tmp = tmp.darker(percent);
-      return new Color(tmp.a, 0xFF - tmp.r, 0xFF - tmp.g, 0xFF - tmp.b);
-      //HSV hsv = new HSV(this);
-      //hsv.s *= 1 - percent;
-      //hsv.v = 100 - hsv.v * ( 1 - percent);
-      //return hsv.toColor();
-   }
+    /**
+     * Creates brighter version of this Color
+     * @param percent - 0.0 - as is; 1 - WHITE
+     * @return
+     */
+    brighter(/*double*/ percent) {
+        if (arguments.length == 0)
+            percent = 0.7;
+        if ((percent < 0) || (percent > 1))
+            throw new Error('Bad \'percent\' argument');
+        var tmp = new Color(this.a, 0xFF - this.r, 0xFF - this.g, 0xFF - this.b);
+        tmp = tmp.darker(percent);
+        return new Color(tmp.a, 0xFF - tmp.r, 0xFF - tmp.g, 0xFF - tmp.b);
+        //HSV hsv = new HSV(this);
+        //hsv.s *= 1 - percent;
+        //hsv.v = 100 - hsv.v * ( 1 - percent);
+        //return hsv.toColor();
+    }
 
-   /**
-    * Creates darker version of this Color
-    * @param percent - 0.0 - as is; 1 - BLACK
-    * @return
-    */
-   darker(/*double*/ percent) {
-      if (arguments.length == 0)
-         percent = 0.7;
-      if ((percent < 0) || (percent > 1))
-         throw new Error('Bad \'percent\' argument');
-      var tmp = 1 - Math.min(1.0, Math.max(0, percent));
-      return new Color(this.a,
-         toInt(this.r * tmp),
-         toInt(this.g * tmp),
-         toInt(this.b * tmp));
-      //HSV hsv = new HSV(this);
-      //hsv.v *= 1 - percent;
-      //return hsv.toColor();
-   }
+    /**
+     * Creates darker version of this Color
+     * @param percent - 0.0 - as is; 1 - BLACK
+     * @return
+     */
+    darker(/*double*/ percent) {
+        if (arguments.length == 0)
+            percent = 0.7;
+        if ((percent < 0) || (percent > 1))
+            throw new Error('Bad \'percent\' argument');
+        var tmp = 1 - Math.min(1.0, Math.max(0, percent));
+        return new Color(this.a,
+            toInt(this.r * tmp),
+            toInt(this.g * tmp),
+            toInt(this.b * tmp));
+        //HSV hsv = new HSV(this);
+        //hsv.v *= 1 - percent;
+        //return hsv.toColor();
+    }
 
 }
 
@@ -334,877 +335,877 @@ class HSV {
 //    /** Alpha chanel: 0..255 */
 //    a: 0xFF,
 
-   constructor0() {
-      this.h = 0;
-      this.s = 100;
-      this.v = 100;
-      this.a = 0xFF;
-   }
-   constructor3(/*int*/ h, /*int*/ s, /*int*/ v) {
-      this.h = h;
-      this.s = s;
-      this.v = v;
-      this.a = 0xFF;
+    constructor0() {
+        this.h = 0;
+        this.s = 100;
+        this.v = 100;
+        this.a = 0xFF;
+    }
+    constructor3(/*int*/ h, /*int*/ s, /*int*/ v) {
+        this.h = h;
+        this.s = s;
+        this.v = v;
+        this.a = 0xFF;
 
-      this.fix();
-   }
-   constructor4(/*int*/ h, /*int*/ s, /*int*/ v, /*int*/ a) {
-      this.h = h;
-      this.s = s;
-      this.v = v;
-      this.a = Color.checkA(a);
+        this.fix();
+    }
+    constructor4(/*int*/ h, /*int*/ s, /*int*/ v, /*int*/ a) {
+        this.h = h;
+        this.s = s;
+        this.v = v;
+        this.a = Color.checkA(a);
 
-      this.fix();
-   }
-   constructor1(/*Color*/ clr) {
-      this.a = clr.a;
-      this.fromColorDouble(clr.r, clr.g, clr.b);
-   }
-   constructor(args/*, ...*/) {
-      switch (arguments.length) {
-      case 0: return this.constructor0();
-      case 1: return this.constructor1(arguments[0]);
-      case 3: return this.constructor3(arguments[0], arguments[1], arguments[2]);
-      case 4: return this.constructor4(arguments[0], arguments[1], arguments[2], arguments[3]);
-      }
-      throw new Error();
-   }
+        this.fix();
+    }
+    constructor1(/*Color*/ clr) {
+        this.a = clr.a;
+        this.fromColorDouble(clr.r, clr.g, clr.b);
+    }
+    constructor(args/*, ...*/) {
+        switch (arguments.length) {
+        case 0: return this.constructor0();
+        case 1: return this.constructor1(arguments[0]);
+        case 3: return this.constructor3(arguments[0], arguments[1], arguments[2]);
+        case 4: return this.constructor4(arguments[0], arguments[1], arguments[2], arguments[3]);
+        }
+        throw new Error();
+    }
 
-   addHue(/*double*/ addonH) {
-      this.h += addonH;
-      this.fix();
-      return this;
-   }
+    addHue(/*double*/ addonH) {
+        this.h += addonH;
+        this.fix();
+        return this;
+    }
 
-   fromColorDouble(/*double*/ r, /*double*/ g, /*double*/ b) {
-      var max = Math.max(Math.max(r, g), b);
-      var min = Math.min(Math.min(r, g), b);
+    fromColorDouble(/*double*/ r, /*double*/ g, /*double*/ b) {
+        var max = Math.max(Math.max(r, g), b);
+        var min = Math.min(Math.min(r, g), b);
 
-      { // calc H
-         if (hasMinDiff(max, min))
-            this.h = 0;
-         else if (hasMinDiff(max, r))
-            this.h = 60 * (g - b) / (max - min) + ((g < b) ? 360 : 0);
-         else if (hasMinDiff(max, g))
-            this.h = 60 * (b - r) / (max - min) + 120;
-         else if (hasMinDiff(max, b))
-            this.h = 60 * (r - g) / (max - min) + 240;
-         else
-            throw new Error(';(');
-      }
-      this.s = hasMinDiff(max, 0) ? 0 : 100*(1 - min/max);
-      this.v = max*100/255;
+        { // calc H
+            if (hasMinDiff(max, min))
+                this.h = 0;
+            else if (hasMinDiff(max, r))
+                this.h = 60 * (g - b) / (max - min) + ((g < b) ? 360 : 0);
+            else if (hasMinDiff(max, g))
+                this.h = 60 * (b - r) / (max - min) + 120;
+            else if (hasMinDiff(max, b))
+                this.h = 60 * (r - g) / (max - min) + 240;
+            else
+                throw new Error(';(');
+        }
+        this.s = hasMinDiff(max, 0) ? 0 : 100*(1 - min/max);
+        this.v = max*100/255;
 
-      this.fix();
-   }
+        this.fix();
+    }
 
-   toColor() {
-      var rgb = this.toColorDouble();
-      var r = rgb[0];
-      var g = rgb[1];
-      var b = rgb[2];
-      return new Color(this.a, toInt(r*255/100), toInt(g*255/100), toInt(b*255/100));
-   }
+    toColor() {
+        var rgb = this.toColorDouble();
+        var r = rgb[0];
+        var g = rgb[1];
+        var b = rgb[2];
+        return new Color(this.a, toInt(r*255/100), toInt(g*255/100), toInt(b*255/100));
+    }
 
-   toColorDouble() {
-      this.fix();
+    toColorDouble() {
+        this.fix();
 
-      var vMin = (100 - this.s) * this.v / 100;
-      var delta = (this.v - vMin) * ((this.h % 60) / 60.0);
-      var vInc = vMin + delta;
-      var vDec = this.v - delta;
+        var vMin = (100 - this.s) * this.v / 100;
+        var delta = (this.v - vMin) * ((this.h % 60) / 60.0);
+        var vInc = vMin + delta;
+        var vDec = this.v - delta;
 
-      var r, g, b;
-      switch (toInt(this.h / 60) % 6) {
-      case 0:
-         r = this.v; g = vInc; b = vMin;
-         break;
-      case 1:
-         r = vDec; g = this.v; b = vMin;
-         break;
-      case 2:
-         r = vMin; g = this.v; b = vInc;
-         break;
-      case 3:
-         r = vMin; g = vDec; b = this.v;
-         break;
-      case 4:
-         r = vInc; g = vMin; b = this.v;
-         break;
-      case 5:
-         r = this.v; g = vMin; b = vDec;
-         break;
-      default:
-         throw new Error(':( to Color double');
-      }
-      return [ r, g, b ];
-   }
+        var r, g, b;
+        switch (toInt(this.h / 60) % 6) {
+        case 0:
+            r = this.v; g = vInc; b = vMin;
+            break;
+        case 1:
+            r = vDec; g = this.v; b = vMin;
+            break;
+        case 2:
+            r = vMin; g = this.v; b = vInc;
+            break;
+        case 3:
+            r = vMin; g = vDec; b = this.v;
+            break;
+        case 4:
+            r = vInc; g = vMin; b = this.v;
+            break;
+        case 5:
+            r = this.v; g = vMin; b = vDec;
+            break;
+        default:
+            throw new Error(':( to Color double');
+        }
+        return [ r, g, b ];
+    }
 
-   /** Update HSV to grayscale */
-   grayscale() {
-      var rgb = this.toColorDouble();
-      var r = rgb[0] * 0.2126;
-      var g = rgb[1] * 0.7152;
-      var b = rgb[2] * 0.0722;
-      this.fromColorDouble(r, g, b);
-   }
+    /** Update HSV to grayscale */
+    grayscale() {
+        var rgb = this.toColorDouble();
+        var r = rgb[0] * 0.2126;
+        var g = rgb[1] * 0.7152;
+        var b = rgb[2] * 0.0722;
+        this.fromColorDouble(r, g, b);
+    }
 
-   fix() {
-      if (this.h < 0) {
-         this.h %= 360;
-         this.h += 360;
-      } else {
-         if (this.h >= 360)
+    fix() {
+        if (this.h < 0) {
             this.h %= 360;
-      }
+            this.h += 360;
+        } else {
+            if (this.h >= 360)
+                this.h %= 360;
+        }
 
-      if (this.s < 0) {
-         this.s = 0;
-      } else {
-         if (this.s > 100)
-            this.s = 100;
-      }
+        if (this.s < 0) {
+            this.s = 0;
+        } else {
+            if (this.s > 100)
+                this.s = 100;
+        }
 
-      if (this.v < 0) {
-         this.v = 0;
-      } else {
-         if (this.v >= 100)
-            this.v = 100;
-      }
+        if (this.v < 0) {
+            this.v = 0;
+        } else {
+            if (this.v >= 100)
+                this.v = 100;
+        }
 
-      if (this.a < 0) {
-         this.a = 0;
-      } else {
-         if (this.a > 255)
-            this.a = 255;
-      }
-   }
+        if (this.a < 0) {
+            this.a = 0;
+        } else {
+            if (this.a > 255)
+                this.a = 255;
+        }
+    }
 
-   toString() {
-      //return 'HSV[h=' + h + ', s=' + s + '%, v=' + v + '%, a=' + a + ']';
-      return (this.a == 255)
+    toString() {
+        //return 'HSV[h=' + h + ', s=' + s + '%, v=' + v + '%, a=' + a + ']';
+        return (this.a == 255)
             ? 'HSV[h=' + round(this.h, dpClr) + ', s=' + round(this.s, dpClr) + '%, v=' + round(this.v, dpClr) + '%]'
             : 'HSV[h=' + round(this.h, dpClr) + ', s=' + round(this.s, dpClr) + '%, v=' + round(this.v, dpClr) + '%, a=' + this.a + ']';
-   }
+    }
 }
 
 const FigureHelper = {
-   toRadian: function(/*double*/ degreesAngle) {
-      return (degreesAngle * Math.PI) / 180; // to radians
-   },
-   toDegrees: function(/*double*/ radianAngle) {
-      return radianAngle * 180 / Math.PI;
-   },
-   getPointOnCircleRadian: function(/*double*/ radius, /*double*/ radAngle, /*Point{x,y}*/ center) {
-      return { x: radius * Math.sin(radAngle) + center.x, y: -radius * Math.cos(radAngle) + center.y };
-   },
-   getPointOnCircle(/*double*/ radius, /*double*/ degreesAngle, /*Point*/ center) {
-      return FigureHelper.getPointOnCircleRadian(radius, FigureHelper.toRadian(degreesAngle), center);
-   },
-   getRegularPolygonCoords: function(/*int*/ n, /*double*/ radius, /*Point{x,y}*/ center, /*double*/ offsetAngle) {
-      var angle = (2 * Math.PI)/n; // 360° / n
-      var offsetAngle2 = FigureHelper.toRadian(offsetAngle);
-      var polygon = [];
-      for (var i=0; i<n; ++i) {
-         var a = (i * angle) + offsetAngle2;
-         polygon[i] = FigureHelper.getPointOnCircleRadian(radius, a, center);
-      }
-      return polygon;
-   },
-   getRegularStarCoords: function(/*int*/ rays, /*double*/ radiusOut, /*double*/ radiusIn, /*Point*/ center, /*double*/ offsetAngle) {
-      var pointsExternal = FigureHelper.getRegularPolygonCoords(rays, radiusOut, center, offsetAngle);
-      var pointsInternal = FigureHelper.getRegularPolygonCoords(rays, radiusIn, center, offsetAngle + (180.0/rays));
-      var polygon = [];
-      for (var i=0; i<rays; ++i) {
-         polygon[i*2+0] = pointsExternal[i];
-         polygon[i*2+1] = pointsInternal[i];
-      }
-      return polygon;
-   },
+    toRadian: function(/*double*/ degreesAngle) {
+        return (degreesAngle * Math.PI) / 180; // to radians
+    },
+    toDegrees: function(/*double*/ radianAngle) {
+        return radianAngle * 180 / Math.PI;
+    },
+    getPointOnCircleRadian: function(/*double*/ radius, /*double*/ radAngle, /*Point{x,y}*/ center) {
+        return { x: radius * Math.sin(radAngle) + center.x, y: -radius * Math.cos(radAngle) + center.y };
+    },
+    getPointOnCircle(/*double*/ radius, /*double*/ degreesAngle, /*Point*/ center) {
+        return FigureHelper.getPointOnCircleRadian(radius, FigureHelper.toRadian(degreesAngle), center);
+    },
+    getRegularPolygonCoords: function(/*int*/ n, /*double*/ radius, /*Point{x,y}*/ center, /*double*/ offsetAngle) {
+        var angle = (2 * Math.PI)/n; // 360° / n
+        var offsetAngle2 = FigureHelper.toRadian(offsetAngle);
+        var polygon = [];
+        for (var i=0; i<n; ++i) {
+            var a = (i * angle) + offsetAngle2;
+            polygon[i] = FigureHelper.getPointOnCircleRadian(radius, a, center);
+        }
+        return polygon;
+    },
+    getRegularStarCoords: function(/*int*/ rays, /*double*/ radiusOut, /*double*/ radiusIn, /*Point*/ center, /*double*/ offsetAngle) {
+        var pointsExternal = FigureHelper.getRegularPolygonCoords(rays, radiusOut, center, offsetAngle);
+        var pointsInternal = FigureHelper.getRegularPolygonCoords(rays, radiusIn, center, offsetAngle + (180.0/rays));
+        var polygon = [];
+        for (var i=0; i<rays; ++i) {
+            polygon[i*2+0] = pointsExternal[i];
+            polygon[i*2+1] = pointsInternal[i];
+        }
+        return polygon;
+    },
 
-   /** rotate around the center coordinates. !!Modify existed collection!!
-    * @param coords coordinates for transformation
-    * @param angle angle of rotation: -360° .. 0° .. +360°
-    * @param center центр фигуры
-    */
-   rotateCollection(/*TCollection*/ coords, /*double*/ angle, /*Point*/ center) {
-      angle = FigureHelper.toRadian(angle);
-      var cos = Math.cos(angle);
-      var sin = Math.sin(angle);
-      coords.forEach(function(p) {
-         p.x -= center.x;
-         p.y -= center.y;
-         var x = (p.x * cos) - (p.y * sin);
-         var y = (p.x * sin) + (p.y * cos);
-         p.x = x + center.x;
-         p.y = y + center.y;
-      });
-      return coords;
-   }
+    /** rotate around the center coordinates. !!Modify existed collection!!
+     * @param coords coordinates for transformation
+     * @param angle angle of rotation: -360° .. 0° .. +360°
+     * @param center центр фигуры
+     */
+    rotateCollection(/*TCollection*/ coords, /*double*/ angle, /*Point*/ center) {
+        angle = FigureHelper.toRadian(angle);
+        var cos = Math.cos(angle);
+        var sin = Math.sin(angle);
+        coords.forEach(function(p) {
+            p.x -= center.x;
+            p.y -= center.y;
+            var x = (p.x * cos) - (p.y * sin);
+            var y = (p.x * sin) + (p.y * cos);
+            p.x = x + center.x;
+            p.y = y + center.y;
+        });
+        return coords;
+    }
 
 };
 
 const /* enum */ ESkillLevel = {
-   eBeginner: { ordinal: 0 },
-   eAmateur : { ordinal: 1 },
-   eProfi   : { ordinal: 2 },
-   eCrazy   : { ordinal: 3 },
-   eCustom  : { ordinal: 4 },
+    eBeginner: { ordinal: 0 },
+    eAmateur : { ordinal: 1 },
+    eProfi   : { ordinal: 2 },
+    eCrazy   : { ordinal: 3 },
+    eCustom  : { ordinal: 4 },
 
-   getName: function(/* ESkillLevel */ skill) {
-      if (skill == null)
-         return 'typeESkillLevel';
-      for (var e in ESkillLevel) {
-         var val = ESkillLevel[e];
-         if (val === skill)
-            return e;
-      }
-      throw new Error('Bad argument skill: value is ' + skill);
-   }
+    getName: function(/* ESkillLevel */ skill) {
+        if (skill == null)
+            return 'typeESkillLevel';
+        for (var e in ESkillLevel) {
+            var val = ESkillLevel[e];
+            if (val === skill)
+                return e;
+        }
+        throw new Error('Bad argument skill: value is ' + skill);
+    }
 
 };
 
 class Point {
 
-   constructorXY(x, y) {
-      this.x = x;
-      this.y = y;
-   }
-   constructorPoint(pointFrom) {
-      this.x = pointFrom.x;
-      this.y = pointFrom.y;
-   }
-   constructor(args/*, ...*/) {
-      switch (arguments.length) {
-      case 0: return this.constructorXY(0, 0);
-      case 1: return this.constructorPoint(arguments[0]);
-      case 2: return this.constructorXY(arguments[0], arguments[1]);
-      }
-      throw new Error();
-   }
+    constructorXY(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+    constructorPoint(pointFrom) {
+        this.x = pointFrom.x;
+        this.y = pointFrom.y;
+    }
+    constructor(args/*, ...*/) {
+        switch (arguments.length) {
+        case 0: return this.constructorXY(0, 0);
+        case 1: return this.constructorPoint(arguments[0]);
+        case 2: return this.constructorXY(arguments[0], arguments[1]);
+        }
+        throw new Error();
+    }
 
-   toString() {
-      return '{x: ' + round(this.x, dpPnt)
-          + ', y: ' + round(this.y, dpPnt)
-          + '}';
-   }
+    toString() {
+        return '{x: ' + round(this.x, dpPnt)
+            + ', y: ' + round(this.y, dpPnt)
+            + '}';
+    }
 
 }
 
 class Size {
 
-   constructorWH(w, h) {
-      this.width  = w;
-      this.height = h;
-   }
-   constructorSize(sizeFrom) {
-      this.width  = sizeFrom.width;
-      this.height = sizeFrom.height;
-   }
-   constructor(args/*, ...*/) {
-      switch (arguments.length) {
-      case 0: return this.constructorWH(0, 0);
-      case 1: return this.constructorSize(arguments[0]);
-      case 2: return this.constructorWH(arguments[0], arguments[1]);
-      }
-      throw new Error();
-   }
+    constructorWH(w, h) {
+        this.width  = w;
+        this.height = h;
+    }
+    constructorSize(sizeFrom) {
+        this.width  = sizeFrom.width;
+        this.height = sizeFrom.height;
+    }
+    constructor(args/*, ...*/) {
+        switch (arguments.length) {
+        case 0: return this.constructorWH(0, 0);
+        case 1: return this.constructorSize(arguments[0]);
+        case 2: return this.constructorWH(arguments[0], arguments[1]);
+        }
+        throw new Error();
+    }
 
-   toString() {
-      return '{w: ' + round(this.width , dpPnt)
-          + ', h: ' + round(this.height, dpPnt)
-          + '}';
-   }
+    toString() {
+        return '{w: ' + round(this.width , dpPnt)
+            + ', h: ' + round(this.height, dpPnt)
+            + '}';
+    }
 
 }
 
 class Rect {
 
-   constructor(/* double */ x, /* double */ y, /* double */ w, /* double */ h) {
-      this._x = x;
-      this._y = y;
-      this._width = w;
-      this._height = h;
-   }
+    constructor(/* double */ x, /* double */ y, /* double */ w, /* double */ h) {
+        this._x = x;
+        this._y = y;
+        this._width = w;
+        this._height = h;
+    }
 
-   get left  () { return this._x; }
-   get right () { return this._x + this._width; }
-   get top   () { return this._y; }
-   get bottom() { return this._y + this._height; }
-   set left  (/* double */ v) { this._x      = v; }
-   set right (/* double */ v) { this._width  = v - this._x; }
-   set top   (/* double */ v) { this._y      = v; }
-   set bottom(/* double */ v) { this._height = v - this._y; }
+    get left  () { return this._x; }
+    get right () { return this._x + this._width; }
+    get top   () { return this._y; }
+    get bottom() { return this._y + this._height; }
+    set left  (/* double */ v) { this._x      = v; }
+    set right (/* double */ v) { this._width  = v - this._x; }
+    set top   (/* double */ v) { this._y      = v; }
+    set bottom(/* double */ v) { this._height = v - this._y; }
 
-   get width () { return this._width; }
-   set width (/* double */ w) { this._width  = w; }
-   get height() { return this._height; }
-   set height(/* double */ h) { this._height = h; }
+    get width () { return this._width; }
+    set width (/* double */ w) { this._width  = w; }
+    get height() { return this._height; }
+    set height(/* double */ h) { this._height = h; }
 
 }
 
 class Bound {
 
-   constructor1(/* bound or double */ arg) {
-      if (isNumeric(arg)) {
-         var bound = arg;
-         this.left = this.top = this.right = this.bottom = bound;
-      } else {
-         var copy = arg;
-         this.left = copy.left; this.top = copy.top; this.right = copy.right; this.bottom = copy.bottom;
-      }
-   }
-   constructor4(/*double*/ left, /*double*/ top, /*double*/ right, /*double*/ bottom) {
-      this.left = left;
-      this.top = top;
-      this.right = right;
-      this.bottom = bottom;
-   }
-   constructor(args/*, ...*/) {
-      switch (arguments.length) {
-      case 1: return this.constructor1(arguments[0]);
-      case 4: return this.constructor4(arguments[0], arguments[1], arguments[2], arguments[3]);
-      }
-      throw new Error();
-   }
+    constructor1(/* bound or double */ arg) {
+        if (isNumeric(arg)) {
+            var bound = arg;
+            this.left = this.top = this.right = this.bottom = bound;
+        } else {
+            var copy = arg;
+            this.left = copy.left; this.top = copy.top; this.right = copy.right; this.bottom = copy.bottom;
+        }
+    }
+    constructor4(/*double*/ left, /*double*/ top, /*double*/ right, /*double*/ bottom) {
+        this.left = left;
+        this.top = top;
+        this.right = right;
+        this.bottom = bottom;
+    }
+    constructor(args/*, ...*/) {
+        switch (arguments.length) {
+        case 1: return this.constructor1(arguments[0]);
+        case 4: return this.constructor4(arguments[0], arguments[1], arguments[2], arguments[3]);
+        }
+        throw new Error();
+    }
 
-   get leftAndRight() { return this.left + this.right; }
-   get topAndBottom() { return this.top + this.bottom; }
+    get leftAndRight() { return this.left + this.right; }
+    get topAndBottom() { return this.top + this.bottom; }
 
-   toString() {
-       return '{left: '    + round(this.left  , dpPnt)
+    toString() {
+        return '{left: '    + round(this.left  , dpPnt)
             + ', right: '  + round(this.right , dpPnt)
             + ', top: '    + round(this.top   , dpPnt)
             + ', bottom: ' + round(this.bottom, dpPnt)
             + '}';
-   }
+    }
 
 }
 
 /** MVC: inner model. Animated image characteristics. */
 class AnimatedInnerModel {
 
-   constructor() {
-      /** Image is animated? */
-      this._animated = null;
-      /** Overall animation period (in milliseconds) */
-      this._animatePeriod = 3000;
-      /** Total frames of the animated period */
-      this._totalFrames = 30;
-      this._currentFrame = 0;
-   }
+    constructor() {
+        /** Image is animated? */
+        this._animated = null;
+        /** Overall animation period (in milliseconds) */
+        this._animatePeriod = 3000;
+        /** Total frames of the animated period */
+        this._totalFrames = 30;
+        this._currentFrame = 0;
+    }
 
-   /** Image is animated? */
-   get animated() { return this._animated; }
-   set animated(/*boolean*/ value) { this._animated = value; }
+    /** Image is animated? */
+    get animated() { return this._animated; }
+    set animated(/*boolean*/ value) { this._animated = value; }
 
-   /** Overall animation period (in milliseconds) */
-   get animatePeriod() { return this._animatePeriod; }
-   /** Overall animation period (in milliseconds) */
-   set animatePeriod(/* long */ value) { this._animatePeriod = value; }
+    /** Overall animation period (in milliseconds) */
+    get animatePeriod() { return this._animatePeriod; }
+    /** Overall animation period (in milliseconds) */
+    set animatePeriod(/* long */ value) { this._animatePeriod = value; }
 
-   /** Total frames of the animated period */
-   get totalFrames() { return this._totalFrames; }
-   set totalFrames(/*int*/ value) {
-      this._totalFrames = value;
-      this.currentFrame = 0;
-   }
+    /** Total frames of the animated period */
+    get totalFrames() { return this._totalFrames; }
+    set totalFrames(/*int*/ value) {
+        this._totalFrames = value;
+        this.currentFrame = 0;
+    }
 
-   get currentFrame() { return this._currentFrame; }
-   set currentFrame(/*int*/ value) { this._currentFrame = value; }
+    get currentFrame() { return this._currentFrame; }
+    set currentFrame(/*int*/ value) { this._currentFrame = value; }
 
 }
 
 /** MVC: model. Common animated image characteristics. */
 class AnimatedImageModel {
 
-   constructor() {
-      var defaultImageSize = 100;
-      /** width and height in pixel */
-      this._size = new Size(defaultImageSize, defaultImageSize);
+    constructor() {
+        var defaultImageSize = 100;
+        /** width and height in pixel */
+        this._size = new Size(defaultImageSize, defaultImageSize);
 
-      var defaultPadding = defaultImageSize * 0.05; // 5%
-      /** inside padding. Автоматически пропорционально регулирую при измениях размеров */
-      this._padding = new Bound(defaultPadding);
-      this._foregroundColor = Color.Orchid;
-      /** background fill color */
-      this._backgroundColor = Color.DarkOrange;
-      this._borderColor = Color.Maroon.darker(0.5);
-      this._borderWidth = 3;
-      /** 0° .. +360° */
-      this._rotateAngle = 0;
-      /** animation of polar lights */
-      this._polarLights = true;
-      /** animation direction (example: clockwise or counterclockwise for simple rotation) */
-      this._animeDirection = true;
-      this._innerModel = new AnimatedInnerModel();
-   }
+        var defaultPadding = defaultImageSize * 0.05; // 5%
+        /** inside padding. Автоматически пропорционально регулирую при измениях размеров */
+        this._padding = new Bound(defaultPadding);
+        this._foregroundColor = Color.Orchid;
+        /** background fill color */
+        this._backgroundColor = Color.DarkOrange;
+        this._borderColor = Color.Maroon.darker(0.5);
+        this._borderWidth = 3;
+        /** 0° .. +360° */
+        this._rotateAngle = 0;
+        /** animation of polar lights */
+        this._polarLights = true;
+        /** animation direction (example: clockwise or counterclockwise for simple rotation) */
+        this._animeDirection = true;
+        this._innerModel = new AnimatedInnerModel();
+    }
 
-   get size() { return this._size; }
-   set size(value) {
-      var old = this._size;
-      if (isNumeric(value))
-         this._size = new Size(value, value);
-      else
-         this._size = new Size(value);
-      this.recalcPadding(old);
-   }
+    get size() { return this._size; }
+    set size(value) {
+        var old = this._size;
+        if (isNumeric(value))
+            this._size = new Size(value, value);
+        else
+            this._size = new Size(value);
+        this.recalcPadding(old);
+    }
 
-   /** inside padding */
-   get padding() { return this._padding; }
-   set padding(/*double or Bound*/ value) {
-      if (isNumeric(value))
-         value = new Bound(value);
-      if (value.leftAndRight >= this.size.width)
-         throw new Error('IllegalArgumentException: Padding size is very large. Should be less than Width.');
-      if (value.topAndBottom >= this.size.height)
-         throw new Error('IllegalArgumentException: Padding size is very large. Should be less than Height.');
-      var paddingNew = new Bound(value.left, value.top, value.right, value.bottom);
-      this._padding = paddingNew;
-   }
-   static recalcPadding(/*Bound*/ padding, /*Size*/ current, /*Size*/ old) {
-      return new Bound(padding.left   * current.width  / old.width,
-                       padding.top    * current.height / old.height,
-                       padding.right  * current.width  / old.width,
-                       padding.bottom * current.height / old.height);
-   }
-   recalcPadding(/*Size*/ old) {
-      var paddingNew = ImageModel.recalcPadding(_padding, _size, old);
-      this._padding = paddingNew;
-   }
+    /** inside padding */
+    get padding() { return this._padding; }
+    set padding(/*double or Bound*/ value) {
+        if (isNumeric(value))
+            value = new Bound(value);
+        if (value.leftAndRight >= this.size.width)
+            throw new Error('IllegalArgumentException: Padding size is very large. Should be less than Width.');
+        if (value.topAndBottom >= this.size.height)
+            throw new Error('IllegalArgumentException: Padding size is very large. Should be less than Height.');
+        var paddingNew = new Bound(value.left, value.top, value.right, value.bottom);
+        this._padding = paddingNew;
+    }
+    static recalcPadding(/*Bound*/ padding, /*Size*/ current, /*Size*/ old) {
+        return new Bound(padding.left   * current.width  / old.width,
+                         padding.top    * current.height / old.height,
+                         padding.right  * current.width  / old.width,
+                         padding.bottom * current.height / old.height);
+    }
+    recalcPadding(/*Size*/ old) {
+        var paddingNew = ImageModel.recalcPadding(_padding, _size, old);
+        this._padding = paddingNew;
+    }
 
-   get foregroundColor() { return this._foregroundColor; }
-   set foregroundColor(/*Color*/ value) {
-      this._foregroundColor = value;
-   }
+    get foregroundColor() { return this._foregroundColor; }
+    set foregroundColor(/*Color*/ value) {
+        this._foregroundColor = value;
+    }
 
-   /** background fill color */
-   get backgroundColor() { return this._backgroundColor; }
-   set backgroundColor(/*Color*/ value) {
-      this._backgroundColor = value;
-   }
+    /** background fill color */
+    get backgroundColor() { return this._backgroundColor; }
+    set backgroundColor(/*Color*/ value) {
+        this._backgroundColor = value;
+    }
 
-   get borderColor() { return this._borderColor; }
-   set borderColor(/*Color*/ value) {
-      this._borderColor = value;
-   }
+    get borderColor() { return this._borderColor; }
+    set borderColor(/*Color*/ value) {
+        this._borderColor = value;
+    }
 
-   get borderWidth() { return this._borderWidth; }
-   set borderWidth(/*double*/ value) {
-      this._borderWidth = value;
-   }
+    get borderWidth() { return this._borderWidth; }
+    set borderWidth(/*double*/ value) {
+        this._borderWidth = value;
+    }
 
-   /** 0° .. +360° */
-   get rotateAngle() { return this._rotateAngle; }
-   set rotateAngle(/*double*/ value) {
-      this._rotateAngle = AnimatedImageModel.fixAngle(value);
-   }
+    /** 0° .. +360° */
+    get rotateAngle() { return this._rotateAngle; }
+    set rotateAngle(/*double*/ value) {
+        this._rotateAngle = AnimatedImageModel.fixAngle(value);
+    }
 
-   /** to diapason (0° .. +360°] */
-   static /* double */ fixAngle(/* double */ value) {
-      return (value >= 360)
-         ?              (value % 360)
-         :   (value < 0)
-            ?           (value % 360) + 360
-            :            value;
-   }
+    /** to diapason (0° .. +360°] */
+    static /* double */ fixAngle(/* double */ value) {
+        return (value >= 360)
+            ?              (value % 360)
+            :  (value < 0)
+                ?          (value % 360) + 360
+                :           value;
+    }
 
-   /** Image is animated? */
-   get animated() { return this._innerModel.animated; }
-   set animated(/*boolean*/ value) { this._innerModel.animated = value; }
+    /** Image is animated? */
+    get animated() { return this._innerModel.animated; }
+    set animated(/*boolean*/ value) { this._innerModel.animated = value; }
 
-   /** Overall animation period (in milliseconds) */
-   get animatePeriod() { return this._innerModel.animatePeriod; }
-   set animatePeriod(/*long*/ value) { this._innerModel.animatePeriod = value; }
+    /** Overall animation period (in milliseconds) */
+    get animatePeriod() { return this._innerModel.animatePeriod; }
+    set animatePeriod(/*long*/ value) { this._innerModel.animatePeriod = value; }
 
-   /** Total frames of the animated period */
-   get totalFrames() { return this._innerModel.totalFrames; }
-   set totalFrames(/*int*/ value) { this._innerModel.totalFrames = value; }
+    /** Total frames of the animated period */
+    get totalFrames() { return this._innerModel.totalFrames; }
+    set totalFrames(/*int*/ value) { this._innerModel.totalFrames = value; }
 
-   get currentFrame() { return this._innerModel.currentFrame; }
-   set currentFrame(/*int*/ value) { this._innerModel.currentFrame = value; }
+    get currentFrame() { return this._innerModel.currentFrame; }
+    set currentFrame(/*int*/ value) { this._innerModel.currentFrame = value; }
 
-   get polarLights() { return this._polarLights; }
-   set polarLights(/*boolean*/ polarLights) { this._polarLights = polarLights; }
+    get polarLights() { return this._polarLights; }
+    set polarLights(/*boolean*/ polarLights) { this._polarLights = polarLights; }
 
-   get animeDirection() { return this._animeDirection; }
-   set animeDirection(/*boolean*/ animeDirection) { this._animeDirection = animeDirection; }
+    get animeDirection() { return this._animeDirection; }
+    set animeDirection(/*boolean*/ animeDirection) { this._animeDirection = animeDirection; }
 
 }
 
 /** MVC: model for FastMines logo image */
 class LogoModel extends AnimatedImageModel {
 
-   static get /* enum */ ERotateMode() {
-      return {
-         /** rotate image */
-         classic: { ordinal: 0 },
-         /** rotate color Palette */
-         color  : { ordinal: 1 },
-         /** {@link #color} + {@link #classic} */
-         combi  : { ordinal: 2 }
-      };
-   }
+    static get /* enum */ ERotateMode() {
+        return {
+            /** rotate image */
+            classic: { ordinal: 0 },
+            /** rotate color Palette */
+            color  : { ordinal: 1 },
+            /** {@link #color} + {@link #classic} */
+            combi  : { ordinal: 2 }
+        };
+    }
 
 
-   constructor() {
-      super();
-      this._palette = [ new HSV(  0, 100, 100), new HSV( 45, 100, 100), new HSV( 90, 100, 100), new HSV(135, 100, 100),
-                        new HSV(180, 100, 100), new HSV(225, 100, 100), new HSV(270, 100, 100), new HSV(315, 100, 100) ];
-      this._useGradient = false;
-      this._rotateMode = LogoModel.ERotateMode.combi;
-      /** owner rays points */
-      this._rays = [];
-      /** inner octahedron */
-      this._inn = [];
-      /** central octahedron */
-      this._oct = [];
+    constructor() {
+        super();
+        this._palette = [ new HSV(  0, 100, 100), new HSV( 45, 100, 100), new HSV( 90, 100, 100), new HSV(135, 100, 100),
+                            new HSV(180, 100, 100), new HSV(225, 100, 100), new HSV(270, 100, 100), new HSV(315, 100, 100) ];
+        this._useGradient = false;
+        this._rotateMode = LogoModel.ERotateMode.combi;
+        /** owner rays points */
+        this._rays = [];
+        /** inner octahedron */
+        this._inn = [];
+        /** central octahedron */
+        this._oct = [];
 
-      this._backgroundColor = Color.Transparent;
-   }
+        this._backgroundColor = Color.Transparent;
+    }
 
 
-   get palette() { return this._palette; }
+    get palette() { return this._palette; }
 
-   static toMineModel(/*LogoModel*/ m) {
-      m.useGradient = false;
-      m.palette.forEach(function(item) {
-         item.grayscale();
-      });
+    static toMineModel(/*LogoModel*/ m) {
+        m.useGradient = false;
+        m.palette.forEach(function(item) {
+            item.grayscale();
+        });
 
-   }
+    }
 
-   get useGradient() { return this._useGradient; }
-   set useGradient(/*bool*/ value) { this._useGradient = value; }
+    get useGradient() { return this._useGradient; }
+    set useGradient(/*bool*/ value) { this._useGradient = value; }
 
-   get rotateMode() { return this._rotateMode; }
-   set rotateMode(/*ERotateMode*/ value) { this._rotateMode = value; }
+    get rotateMode() { return this._rotateMode; }
+    set rotateMode(/*ERotateMode*/ value) { this._rotateMode = value; }
 
-   get zoomX() { return (this.size.width  - this.padding.leftAndRight) / 200.0; }
-   get zoomY() { return (this.size.height - this.padding.topAndBottom) / 200.0; }
+    get zoomX() { return (this.size.width  - this.padding.leftAndRight) / 200.0; }
+    get zoomY() { return (this.size.height - this.padding.topAndBottom) / 200.0; }
 
-   get rays() {
-      if (this._rays.length == 0) {
-         var pl = this.padding.left;
-         var pt = this.padding.top;
-         var zx = this.zoomX;
-         var zy = this.zoomY;
+    get rays() {
+        if (this._rays.length == 0) {
+            var pl = this.padding.left;
+            var pt = this.padding.top;
+            var zx = this.zoomX;
+            var zy = this.zoomY;
 
-         this._rays.push(new Point(pl + 100.0000*zx, pt + 200.0000*zy));
-         this._rays.push(new Point(pl + 170.7107*zx, pt +  29.2893*zy));
-         this._rays.push(new Point(pl +   0.0000*zx, pt + 100.0000*zy));
-         this._rays.push(new Point(pl + 170.7107*zx, pt + 170.7107*zy));
-         this._rays.push(new Point(pl + 100.0000*zx, pt +   0.0000*zy));
-         this._rays.push(new Point(pl +  29.2893*zx, pt + 170.7107*zy));
-         this._rays.push(new Point(pl + 200.0000*zx, pt + 100.0000*zy));
-         this._rays.push(new Point(pl +  29.2893*zx, pt +  29.2893*zy));
-      }
-      return this._rays;
-   }
+            this._rays.push(new Point(pl + 100.0000*zx, pt + 200.0000*zy));
+            this._rays.push(new Point(pl + 170.7107*zx, pt +  29.2893*zy));
+            this._rays.push(new Point(pl +   0.0000*zx, pt + 100.0000*zy));
+            this._rays.push(new Point(pl + 170.7107*zx, pt + 170.7107*zy));
+            this._rays.push(new Point(pl + 100.0000*zx, pt +   0.0000*zy));
+            this._rays.push(new Point(pl +  29.2893*zx, pt + 170.7107*zy));
+            this._rays.push(new Point(pl + 200.0000*zx, pt + 100.0000*zy));
+            this._rays.push(new Point(pl +  29.2893*zx, pt +  29.2893*zy));
+        }
+        return this._rays;
+    }
 
-   get inn() {
-      if (this._inn.length == 0) {
-         var pl = this.padding.left;
-         var pt = this.padding.top;
-         var zx = this.zoomX;
-         var zy = this.zoomY;
+    get inn() {
+        if (this._inn.length == 0) {
+            var pl = this.padding.left;
+            var pt = this.padding.top;
+            var zx = this.zoomX;
+            var zy = this.zoomY;
 
-         this._inn.push(new Point(pl + 100.0346*zx, pt + 141.4070*zy));
-         this._inn.push(new Point(pl + 129.3408*zx, pt +  70.7320*zy));
-         this._inn.push(new Point(pl +  58.5800*zx, pt + 100.0000*zy));
-         this._inn.push(new Point(pl + 129.2500*zx, pt + 129.2500*zy));
-         this._inn.push(new Point(pl +  99.9011*zx, pt +  58.5377*zy));
-         this._inn.push(new Point(pl +  70.7233*zx, pt + 129.3198*zy));
-         this._inn.push(new Point(pl + 141.4167*zx, pt + 100.0000*zy));
-         this._inn.push(new Point(pl +  70.7500*zx, pt +  70.7500*zy));
-      }
-      return this._inn;
-   }
+            this._inn.push(new Point(pl + 100.0346*zx, pt + 141.4070*zy));
+            this._inn.push(new Point(pl + 129.3408*zx, pt +  70.7320*zy));
+            this._inn.push(new Point(pl +  58.5800*zx, pt + 100.0000*zy));
+            this._inn.push(new Point(pl + 129.2500*zx, pt + 129.2500*zy));
+            this._inn.push(new Point(pl +  99.9011*zx, pt +  58.5377*zy));
+            this._inn.push(new Point(pl +  70.7233*zx, pt + 129.3198*zy));
+            this._inn.push(new Point(pl + 141.4167*zx, pt + 100.0000*zy));
+            this._inn.push(new Point(pl +  70.7500*zx, pt +  70.7500*zy));
+        }
+        return this._inn;
+    }
 
-   get oct() {
-      if (this._oct.length == 0) {
-         var pl = this.padding.left;
-         var pt = this.padding.top;
-         var zx = this.zoomX;
-         var zy = this.zoomY;
+    get oct() {
+        if (this._oct.length == 0) {
+            var pl = this.padding.left;
+            var pt = this.padding.top;
+            var zx = this.zoomX;
+            var zy = this.zoomY;
 
-         this._oct.push(new Point(pl + 120.7053*zx, pt + 149.9897*zy));
-         this._oct.push(new Point(pl + 120.7269*zx, pt +  50.0007*zy));
-         this._oct.push(new Point(pl +  50.0034*zx, pt + 120.7137*zy));
-         this._oct.push(new Point(pl + 150.0000*zx, pt + 120.6950*zy));
-         this._oct.push(new Point(pl +  79.3120*zx, pt +  50.0007*zy));
-         this._oct.push(new Point(pl +  79.2624*zx, pt + 149.9727*zy));
-         this._oct.push(new Point(pl + 150.0000*zx, pt +  79.2737*zy));
-         this._oct.push(new Point(pl +  50.0034*zx, pt +  79.3093*zy));
-      }
-      return this._oct;
-   }
+            this._oct.push(new Point(pl + 120.7053*zx, pt + 149.9897*zy));
+            this._oct.push(new Point(pl + 120.7269*zx, pt +  50.0007*zy));
+            this._oct.push(new Point(pl +  50.0034*zx, pt + 120.7137*zy));
+            this._oct.push(new Point(pl + 150.0000*zx, pt + 120.6950*zy));
+            this._oct.push(new Point(pl +  79.3120*zx, pt +  50.0007*zy));
+            this._oct.push(new Point(pl +  79.2624*zx, pt + 149.9727*zy));
+            this._oct.push(new Point(pl + 150.0000*zx, pt +  79.2737*zy));
+            this._oct.push(new Point(pl +  50.0034*zx, pt +  79.3093*zy));
+        }
+        return this._oct;
+    }
 
 }
 
 /** MVC: model of representable menu as horizontal or vertical lines */
 class BurgerMenuModel {
 
-   /**
-    * @param generalModel another basic model
-    */
-   constructor(/*AnimatedImageModel*/ generalModel) {
-      this._generalModel = generalModel;
-      this._show = true;
-      this._horizontal = true;
-      this._layers = 3;
-      this._padding;
-      // _generalModelListener = event -> {
-      //    assert event.getSource() == _generalModel; // by reference
-      //    if (IImageModel.PROPERTY_SIZE.equals(event.getPropertyName()))
-      //       recalcPadding((SizeDouble)event.getOldValue());
-      // };
-   }
+    /**
+     * @param generalModel another basic model
+     */
+    constructor(/*AnimatedImageModel*/ generalModel) {
+        this._generalModel = generalModel;
+        this._show = true;
+        this._horizontal = true;
+        this._layers = 3;
+        this._padding;
+        // _generalModelListener = event -> {
+        //    assert event.getSource() == _generalModel; // by reference
+        //    if (IImageModel.PROPERTY_SIZE.equals(event.getPropertyName()))
+        //       recalcPadding((SizeDouble)event.getOldValue());
+        // };
+    }
 
-   /** image width and height in pixel */
-   get size() { return this._generalModel.size; }
-   set size(value) { this._generalModel.size = value; }
+    /** image width and height in pixel */
+    get size() { return this._generalModel.size; }
+    set size(value) { this._generalModel.size = value; }
 
-   get show() { return this._show; }
-   set show(/*boolean*/ value) { this._show = value; }
+    get show() { return this._show; }
+    set show(/*boolean*/ value) { this._show = value; }
 
-   get horizontal() { return this._horizontal; }
-   set horizontal(/*boolean*/ value) { this._horizontal = value; }
+    get horizontal() { return this._horizontal; }
+    set horizontal(/*boolean*/ value) { this._horizontal = value; }
 
-   get layers() { return this._layers; }
-   set layers(/*int*/ value) { this._layers = value; }
+    get layers() { return this._layers; }
+    set layers(/*int*/ value) { this._layers = value; }
 
-   /** inside padding */
-   get padding() {
-      if (this._padding == null)
-         this.recalcPadding(null);
-      return this._padding;
-   }
-   set padding(/*Bound*/ value) {
-      if (value.leftAndRight >= this.size.width)
-         throw new Error('IllegalArgumentException: Padding size is very large. Should be less than Width.');
-      if (value.topAndBottom >= this.size.height)
-         throw new Error('IllegalArgumentException: Padding size is very large. Should be less than Height.');
-      var paddingNew = new Bound(value.left, value.top, value.right, value.bottom);
-      this._padding = paddingNew;
-   }
-   recalcPadding(/*Size*/ old) {
-      var size = this.size;
-      var paddingNew = (this._padding == null)
-            ? new Bound(size.width / 2,
-                        size.height / 2,
-                        this._generalModel.padding.right,
-                        this._generalModel.padding.bottom)
-            : AnimatedImageModel.recalcPadding(this._padding, size, old);
-      this._padding = paddingNew;
-   }
+    /** inside padding */
+    get padding() {
+        if (this._padding == null)
+            this.recalcPadding(null);
+        return this._padding;
+    }
+    set padding(/*Bound*/ value) {
+        if (value.leftAndRight >= this.size.width)
+            throw new Error('IllegalArgumentException: Padding size is very large. Should be less than Width.');
+        if (value.topAndBottom >= this.size.height)
+            throw new Error('IllegalArgumentException: Padding size is very large. Should be less than Height.');
+        var paddingNew = new Bound(value.left, value.top, value.right, value.bottom);
+        this._padding = paddingNew;
+    }
+    recalcPadding(/*Size*/ old) {
+        var size = this.size;
+        var paddingNew = (this._padding == null)
+                ? new Bound(size.width / 2,
+                            size.height / 2,
+                            this._generalModel.padding.right,
+                            this._generalModel.padding.bottom)
+                : AnimatedImageModel.recalcPadding(this._padding, size, old);
+        this._padding = paddingNew;
+    }
 
-   // public static class LineInfo {
-   //    public Color clr;
-   //    public double penWidht;
-   //    public PointDouble from; // start coord
-   //    public PointDouble to;   // end   coord
-   // }
+    //public static class LineInfo {
+    //    public Color clr;
+    //    public double penWidht;
+    //    public PointDouble from; // start coord
+    //    public PointDouble to;   // end   coord
+    //}
 
-   /** get paint information of drawing burger menu model image */
-   getCoords() {
-      if (!this.show)
-         return [];
+    /** get paint information of drawing burger menu model image */
+    getCoords() {
+        if (!this.show)
+            return [];
 
-      var horizontal = this.horizontal;
-      var layers = this.layers;
-      var pad = this.padding;
-      var rc = new Rect(pad.left,
-                        pad.top,
-                        this.size.width  - pad.leftAndRight,
-                        this.size.height - pad.topAndBottom);
-      var penWidth = Math.max(1, (horizontal ? rc.height : rc.width) / (2.0 * layers));
-      var rotateAngle = this._generalModel.rotateAngle;
-      var stepAngle = 360.0 / layers;
+        var horizontal = this.horizontal;
+        var layers = this.layers;
+        var pad = this.padding;
+        var rc = new Rect(pad.left,
+                          pad.top,
+                          this.size.width  - pad.leftAndRight,
+                          this.size.height - pad.topAndBottom);
+        var penWidth = Math.max(1, (horizontal ? rc.height : rc.width) / (2.0 * layers));
+        var rotateAngle = this._generalModel.rotateAngle;
+        var stepAngle = 360.0 / layers;
 
-      var res = [];
-      for (var layerNum=0; layerNum<layers; ++layerNum) {
-         var layerAlignmentAngle = AnimatedImageModel.fixAngle(layerNum*stepAngle + rotateAngle);
-         var offsetTop  = !horizontal ? 0 : layerAlignmentAngle*rc.height/360;
-         var offsetLeft =  horizontal ? 0 : layerAlignmentAngle*rc.width /360;
-         var start = new Point(rc.left + offsetLeft,
-                               rc.top  + offsetTop);
-         var end   = new Point((horizontal ? rc.right : rc.left) + offsetLeft,
-                               (horizontal ? rc.top : rc.bottom) + offsetTop);
+        var res = [];
+        for (var layerNum=0; layerNum<layers; ++layerNum) {
+            var layerAlignmentAngle = AnimatedImageModel.fixAngle(layerNum*stepAngle + rotateAngle);
+            var offsetTop  = !horizontal ? 0 : layerAlignmentAngle*rc.height/360;
+            var offsetLeft =  horizontal ? 0 : layerAlignmentAngle*rc.width /360;
+            var start = new Point(rc.left + offsetLeft,
+                                  rc.top  + offsetTop);
+            var end   = new Point((horizontal ? rc.right : rc.left) + offsetLeft,
+                                  (horizontal ? rc.top : rc.bottom) + offsetTop);
 
-         var hsv = new HSV(Color.Gray);
-         hsv.v *= Math.sin(layerNum*stepAngle / layers);
+            var hsv = new HSV(Color.Gray);
+            hsv.v *= Math.sin(layerNum*stepAngle / layers);
 
-         var li = { // new LineInfo();
-            clr: hsv.toColor(),
-            penWidht: penWidth,
-            from: start,
-            to: end
-         };
-         res.push(li);
-      }
-      return res;
-   }
+            var li = { // new LineInfo();
+                clr: hsv.toColor(),
+                penWidht: penWidth,
+                from: start,
+                to: end
+            };
+            res.push(li);
+        }
+        return res;
+    }
 
 }
 
 /** MVC model of {@link ESkillLevel} representable as image */
 class MosaicSkillModel extends AnimatedImageModel {
 
-   //private ESkillLevel _mosaicSkill;
+    //private ESkillLevel _mosaicSkill;
 
-   constructor(/*ESkillLevel*/ mosaicSkill) { super(); this._mosaicSkill = mosaicSkill; }
+    constructor(/*ESkillLevel*/ mosaicSkill) { super(); this._mosaicSkill = mosaicSkill; }
 
-   get mosaicSkill() { return this._mosaicSkill; }
-   set mosaicSkill(/*ESkillLevel*/ value) { this._mosaicSkill = value; }
+    get mosaicSkill() { return this._mosaicSkill; }
+    set mosaicSkill(/*ESkillLevel*/ value) { this._mosaicSkill = value; }
 
 
-   getCoords() {
-      return (this.mosaicSkill == null)
-            ? this.getCoords_SkillLevelAsType()
-            : this.getCoords_SkillLevelAsValue();
-   }
+    getCoords() {
+        return (this.mosaicSkill == null)
+                ? this.getCoords_SkillLevelAsType()
+                : this.getCoords_SkillLevelAsValue();
+    }
 
-   getCoords_SkillLevelAsType() {
-      const bigMaxStar = !true; // true - большая звезда - вне картинки; false - большая звезда - внутри картинки.
-      const accelerateRevert = !true; // ускорение под конец анимации, иначе - в начале...
+    getCoords_SkillLevelAsType() {
+        const bigMaxStar = !true; // true - большая звезда - вне картинки; false - большая звезда - внутри картинки.
+        const accelerateRevert = !true; // ускорение под конец анимации, иначе - в начале...
 
-      var rays = 5;
-      var stars = bigMaxStar ? 6 : 8;
-      var angle = this.rotateAngle;
+        var rays = 5;
+        var stars = bigMaxStar ? 6 : 8;
+        var angle = this.rotateAngle;
 
-      var size = this.size;
-      var pad = this.padding;
-      var sqMax = Math.min( // размер квадрата куда будет вписана звезда при 0°
-                           size.width  - pad.leftAndRight,
-                           size.height - pad.topAndBottom);
-      var sqMin = 1;//sqMax / (bigMaxStar ? 17 : 7); // размер квадрата куда будет вписана звезда при 360°
-      var sqExt = sqMax * 3;
+        var size = this.size;
+        var pad = this.padding;
+        var sqMax = Math.min( // размер квадрата куда будет вписана звезда при 0°
+                            size.width  - pad.leftAndRight,
+                            size.height - pad.topAndBottom);
+        var sqMin = 1;//sqMax / (bigMaxStar ? 17 : 7); // размер квадрата куда будет вписана звезда при 360°
+        var sqExt = sqMax * 3;
 
-      var centerMax = new Point(pad.left + (size.width  - pad.leftAndRight) / 2.0,
-                                pad.top  + (size.height - pad.topAndBottom) / 2.0);
-      var centerMin = new Point(pad.left + sqMin/2, pad.top + sqMin/2);
-      var centerExt = new Point(size.width * 1.5, size.height * 1.5);
+        var centerMax = new Point(pad.left + (size.width  - pad.leftAndRight) / 2.0,
+                                  pad.top  + (size.height - pad.topAndBottom) / 2.0);
+        var centerMin = new Point(pad.left + sqMin/2, pad.top + sqMin/2);
+        var centerExt = new Point(size.width * 1.5, size.height * 1.5);
 
-      return this.getCoords_SkillLevelAsType_2(true , bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMin, sqMax, centerMin, centerMax)
-          .concat(
-             this.getCoords_SkillLevelAsType_2(false, bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMax, sqExt, centerMax, centerExt));
-      // return this.getCoords_SkillLevelAsType_2(false, bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMin, sqMax, centerMin, centerMax); // old
-   }
-   getCoords_SkillLevelAsType_2(
-      /* bool */ accumulative,
-      /* bool */ bigMaxStar,
-      /* bool */ accelerateRevert,
-      /* int */ rays,
-      /* int */ stars,
-      /* double */ angle,
-      /* double */ sqMin,
-      /* double */ sqMax,
-      /* Point */ centerMin,
-      /* Point */ centerMax
-   ) {
-      var angleAccumulative = angle;
-      var anglePart = 360.0 / stars;
-      var sqDiff = sqMax - sqMin;
-      var centerDiff = new Point(centerMax.x - centerMin.x, centerMax.y - centerMin.y);
-      var fgClr = this.foregroundColor;
-      var pl = this.polarLights;
+        return this.getCoords_SkillLevelAsType_2(true , bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMin, sqMax, centerMin, centerMax)
+            .concat(
+                this.getCoords_SkillLevelAsType_2(false, bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMax, sqExt, centerMax, centerExt));
+        // return this.getCoords_SkillLevelAsType_2(false, bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMin, sqMax, centerMin, centerMax); // old
+    }
+    getCoords_SkillLevelAsType_2(
+        /* bool */ accumulative,
+        /* bool */ bigMaxStar,
+        /* bool */ accelerateRevert,
+        /* int */ rays,
+        /* int */ stars,
+        /* double */ angle,
+        /* double */ sqMin,
+        /* double */ sqMax,
+        /* Point */ centerMin,
+        /* Point */ centerMax
+    ) {
+        var angleAccumulative = angle;
+        var anglePart = 360.0 / stars;
+        var sqDiff = sqMax - sqMin;
+        var centerDiff = new Point(centerMax.x - centerMin.x, centerMax.y - centerMin.y);
+        var fgClr = this.foregroundColor;
+        var pl = this.polarLights;
 
-      var res = []; // array of Pair<Color bkColor, Point[] polygonCoords >
-      for (var starNum=0; starNum < stars; ++starNum) {
-         var angleStar = AnimatedImageModel.fixAngle(angle + starNum * anglePart);
-         if (accumulative)
-            angleAccumulative = Math.sin(FigureHelper.toRadian(angle/4)) * angleAccumulative; // accelerate / ускоряшка..
+        var res = []; // array of Pair<Color bkColor, Point[] polygonCoords >
+        for (var starNum=0; starNum < stars; ++starNum) {
+            var angleStar = AnimatedImageModel.fixAngle(angle + starNum * anglePart);
+            if (accumulative)
+                angleAccumulative = Math.sin(FigureHelper.toRadian(angle/4)) * angleAccumulative; // accelerate / ускоряшка..
 
-         var sq = angleStar * sqDiff / 360;
-         // (un)comment next line to view result changes...
-         sq = Math.sin(FigureHelper.toRadian(angleStar/4))*sq; // accelerate / ускоряшка..
-         sq = accelerateRevert
-               ? sqMin + sq
-               : sqMax - sq;
+            var sq = angleStar * sqDiff / 360;
+            // (un)comment next line to view result changes...
+            sq = Math.sin(FigureHelper.toRadian(angleStar/4))*sq; // accelerate / ускоряшка..
+            sq = accelerateRevert
+                    ? sqMin + sq
+                    : sqMax - sq;
 
-         var r1 = bigMaxStar ? sq*2.2 : sq/2; // external radius
-         var r2 = r1/2.6; // internal radius
+            var r1 = bigMaxStar ? sq*2.2 : sq/2; // external radius
+            var r2 = r1/2.6; // internal radius
 
-         var centerStar = new Point(angleStar * centerDiff.x / 360,
-                                    angleStar * centerDiff.y / 360);
-         // (un)comment next 2 lines to view result changes...
-         centerStar.x = Math.sin(FigureHelper.toRadian(angleStar/4))*centerStar.x; // accelerate / ускоряшка..
-         centerStar.y = Math.sin(FigureHelper.toRadian(angleStar/4))*centerStar.y; // accelerate / ускоряшка..
-         centerStar.x = accelerateRevert
-               ? centerMin.x + centerStar.x
-               : centerMax.x - centerStar.x;
-         centerStar.y = accelerateRevert
-               ? centerMin.y + centerStar.y
-               : centerMax.y - centerStar.y;
+            var centerStar = new Point(angleStar * centerDiff.x / 360,
+                                       angleStar * centerDiff.y / 360);
+            // (un)comment next 2 lines to view result changes...
+            centerStar.x = Math.sin(FigureHelper.toRadian(angleStar/4))*centerStar.x; // accelerate / ускоряшка..
+            centerStar.y = Math.sin(FigureHelper.toRadian(angleStar/4))*centerStar.y; // accelerate / ускоряшка..
+            centerStar.x = accelerateRevert
+                    ? centerMin.x + centerStar.x
+                    : centerMax.x - centerStar.x;
+            centerStar.y = accelerateRevert
+                    ? centerMin.y + centerStar.y
+                    : centerMax.y - centerStar.y;
 
-         var clr = !pl
-               ? fgClr
-               : new HSV(fgClr).addHue(+angleStar).toColor();// try: -angleStar
+            var clr = !pl
+                    ? fgClr
+                    : new HSV(fgClr).addHue(+angleStar).toColor();// try: -angleStar
 
-         res.push( { priority: sq,
-                     clrAndPoly: {
-                       color: clr,
-                       polygon: FigureHelper.getRegularStarCoords(rays,
-                                                                  r1, r2,
-                                                                  bigMaxStar ? centerMax : centerStar,
-                                                                  accumulative ? angleAccumulative : 0
-                                                                )} } );
-      }
-      var saveColorSequence = res.map(function(x) { return x.clrAndPoly.color; });
-      res.sort(function(o1, o2) {
-         if (o1.priority < o2.priority) return bigMaxStar ?  1 : -1;
-         if (o1.priority > o2.priority) return bigMaxStar ? -1 :  1;
-         return 0;
-      });
-      for (var i=0; i<res.length; ++i)
-         res[i].clrAndPoly.color = saveColorSequence[i]; // restore color sequence; only for SVG
-      return res.map(function(x) { return x.clrAndPoly; });
-   }
+            res.push( { priority: sq,
+                        clrAndPoly: {
+                          color: clr,
+                          polygon: FigureHelper.getRegularStarCoords(rays,
+                                                                     r1, r2,
+                                                                     bigMaxStar ? centerMax : centerStar,
+                                                                     accumulative ? angleAccumulative : 0
+                                                                   )} } );
+        }
+        var saveColorSequence = res.map(function(x) { return x.clrAndPoly.color; });
+        res.sort(function(o1, o2) {
+            if (o1.priority < o2.priority) return bigMaxStar ?  1 : -1;
+            if (o1.priority > o2.priority) return bigMaxStar ? -1 :  1;
+            return 0;
+        });
+        for (var i=0; i<res.length; ++i)
+            res[i].clrAndPoly.color = saveColorSequence[i]; // restore color sequence; only for SVG
+        return res.map(function(x) { return x.clrAndPoly; });
+    }
 
-   getCoords_SkillLevelAsValue() {
-      var size = this.size;
-      var pad = this.padding;
-      var sq = Math.min( // size inner square
-                        size.width  - pad.leftAndRight,
-                        size.height - pad.topAndBottom);
-      var r1 = sq/7; // external radius
-      var r2 = sq/12; // internal radius
+    getCoords_SkillLevelAsValue() {
+        var size = this.size;
+        var pad = this.padding;
+        var sq = Math.min( // size inner square
+                          size.width  - pad.leftAndRight,
+                          size.height - pad.topAndBottom);
+        var r1 = sq/7; // external radius
+        var r2 = sq/12; // internal radius
 
-      var skill = this.mosaicSkill;
-      var ordinal = skill.ordinal;
-      var rays = 5 + ordinal; // rays count
-      var stars = 4 + ordinal; // number of stars on the perimeter of the circle
+        var skill = this.mosaicSkill;
+        var ordinal = skill.ordinal;
+        var rays = 5 + ordinal; // rays count
+        var stars = 4 + ordinal; // number of stars on the perimeter of the circle
 
-      var angle = this.rotateAngle;
-      var angleAccumulative = angle;
-      var anglePart = 360.0/stars;
+        var angle = this.rotateAngle;
+        var angleAccumulative = angle;
+        var anglePart = 360.0/stars;
 
-      var center = new Point(size.width / 2.0, size.height / 2.0);
-      var zero = new Point(0, 0);
-      var fgClr = this.foregroundColor;
-      var pl = this.polarLights;
-      var res = []; // array of Pair<Color bkColor, Point[] polygonCoords >
-      for (var starNum=0; starNum < stars; ++starNum) {
-         // (un)comment next line to view result changes...
-         angleAccumulative = Math.sin(FigureHelper.toRadian(angleAccumulative/4))*angleAccumulative; // accelerate / ускоряшка..
+        var center = new Point(size.width / 2.0, size.height / 2.0);
+        var zero = new Point(0, 0);
+        var fgClr = this.foregroundColor;
+        var pl = this.polarLights;
+        var res = []; // array of Pair<Color bkColor, Point[] polygonCoords >
+        for (var starNum=0; starNum < stars; ++starNum) {
+            // (un)comment next line to view result changes...
+            angleAccumulative = Math.sin(FigureHelper.toRadian(angleAccumulative/4))*angleAccumulative; // accelerate / ускоряшка..
 
-         // adding offset
-         var offset = FigureHelper.getPointOnCircle(sq / 3, angleAccumulative + starNum * anglePart, zero);
-         var centerStar = new Point(center.x + offset.x, center.y + offset.y);
+            // adding offset
+            var offset = FigureHelper.getPointOnCircle(sq / 3, angleAccumulative + starNum * anglePart, zero);
+            var centerStar = new Point(center.x + offset.x, center.y + offset.y);
 
-         var clr = !pl
-               ? fgClr
-               : new HSV(fgClr).addHue(starNum * anglePart).toColor();
+            var clr = !pl
+                    ? fgClr
+                    : new HSV(fgClr).addHue(starNum * anglePart).toColor();
 
-         res.push({ color: clr,
-                    polygon: (skill == ESkillLevel.eCustom)
-                                 ? FigureHelper.getRegularPolygonCoords(3 + starNum % 4, r1, centerStar, -angleAccumulative)
-                                 : FigureHelper.getRegularStarCoords(rays, r1, r2, centerStar, -angleAccumulative) });
-      }
-      res.reverse(); // reverse stars, to draw the first star of the latter. (pseudo Z-order). (un)comment line to view result changes...
-      return res;
-   }
+            res.push({ color: clr,
+                       polygon: (skill == ESkillLevel.eCustom)
+                                    ? FigureHelper.getRegularPolygonCoords(3 + starNum % 4, r1, centerStar, -angleAccumulative)
+                                    : FigureHelper.getRegularStarCoords(rays, r1, r2, centerStar, -angleAccumulative) });
+        }
+        res.reverse(); // reverse stars, to draw the first star of the latter. (pseudo Z-order). (un)comment line to view result changes...
+        return res;
+    }
 
 }
 
@@ -1217,399 +1218,397 @@ class MosaicSkillModel extends AnimatedImageModel {
  **/
 class ImageView {
 
-   static get /* enum */ EInvalidate() {
-      return {
-         needRedraw: { ordinal: 0 },
-         redrawing : { ordinal: 1 },
-         redrawed  : { ordinal: 2 }
-      };
-   }
+    static get /* enum */ EInvalidate() {
+        return {
+            needRedraw: { ordinal: 0 },
+            redrawing : { ordinal: 1 },
+            redrawed  : { ordinal: 2 }
+        };
+    }
 
-   /** @param imageModel base of #ImageModel */
-   constructor(/*TImageModel*/ imageModel) {
-      this._imageModel = imageModel;
-      this._image = null;
-      this._invalidate = ImageView.EInvalidate.needRedraw;
-   }
+    /** @param imageModel base of #ImageModel */
+    constructor(/*TImageModel*/ imageModel) {
+        this._imageModel = imageModel;
+        this._image = null;
+        this._invalidate = ImageView.EInvalidate.needRedraw;
+    }
 
-   get Model() { return this._imageModel; }
+    get Model() { return this._imageModel; }
 
-   /** width and height in pixel */
-   get size() { return this.Model.size; }
-   set size(/*double or Size*/ value) { this.Model.size = value; }
+    /** width and height in pixel */
+    get size() { return this.Model.size; }
+    set size(/*double or Size*/ value) { this.Model.size = value; }
 
-   createImage() { throw new Error('Abstract method'); return null; }
+    createImage() { throw new Error('Abstract method'); return null; }
 
-   get image() {
-      if (this._image == null) {
-         this.image = this.createImage();
-         this._invalidate = ImageView.EInvalidate.needRedraw;
-      }
-      if (this._invalidate.ordinal == ImageView.EInvalidate.needRedraw.ordinal)
-         this.draw();
-      return this._image;
-   }
-   set image(/*TImage*/ value) {
-      this._image = value;
-   }
+    get image() {
+        if (this._image == null) {
+            this.image = this.createImage();
+            this._invalidate = ImageView.EInvalidate.needRedraw;
+        }
+        if (this._invalidate.ordinal == ImageView.EInvalidate.needRedraw.ordinal)
+            this.draw();
+        return this._image;
+    }
+    set image(/*TImage*/ value) {
+        this._image = value;
+    }
 
-   invalidate() {
-      if (this._invalidate.ordinal == ImageView.EInvalidate.redrawing.ordinal)
-         return;
-      //if (this._invalidate.ordinal == ImageView.EInvalidate.needRedraw.ordinal)
-      //   return;
-      this._invalidate = ImageView.EInvalidate.needRedraw;
-   }
+    invalidate() {
+        if (this._invalidate.ordinal == ImageView.EInvalidate.redrawing.ordinal)
+            return;
+        //if (this._invalidate.ordinal == ImageView.EInvalidate.needRedraw.ordinal)
+        //   return;
+        this._invalidate = ImageView.EInvalidate.needRedraw;
+    }
 
-   draw() {
-      this.drawBegin();
-      this.drawBody();
-      this.drawEnd();
-   }
+    draw() {
+        this.drawBegin();
+        this.drawBody();
+        this.drawEnd();
+    }
 
-   drawBegin() { this._invalidate = ImageView.EInvalidate.redrawing; }
-   drawBody()  { throw new Error('Abstract method'); }
-   drawEnd()   { this._invalidate = ImageView.EInvalidate.redrawed; }
+    drawBegin() { this._invalidate = ImageView.EInvalidate.redrawing; }
+    drawBody()  { throw new Error('Abstract method'); }
+    drawEnd()   { this._invalidate = ImageView.EInvalidate.redrawed; }
 
 }
 
 /** Main logos image - base Logo image view implementation */
 class Logo extends ImageView {
 
-   constructor() {
-      super(new LogoModel());
-   }
+    constructor() {
+        super(new LogoModel());
+    }
 
-   drawIntoContext(/* DrawContext */ cnxt, /* own SVG */ svg, /* SVG document */ svgDoc) {
-      var m = this.Model;
-      var keyTime = m.currentFrame / m.totalFrames; // 0..1;
-      var duration  = m.animatePeriod;
-      var borderWidth = m.borderWidth;
-      var backgroundColor = m.backgroundColor;
-      var size = m.size;
-      var zoomAverage = (m.zoomX + m.zoomY)/2;
-      var animated = m.animated;
-      var useGradient = m.useGradient;
+    drawIntoContext(/* DrawContext */ cnxt, /* own SVG */ svg, /* SVG document */ svgDoc) {
+        var m = this.Model;
+        var keyTime = m.currentFrame / m.totalFrames; // 0..1;
+        var duration  = m.animatePeriod;
+        var borderWidth = m.borderWidth;
+        var backgroundColor = m.backgroundColor;
+        var size = m.size;
+        var zoomAverage = (m.zoomX + m.zoomY)/2;
+        var animated = m.animated;
+        var useGradient = m.useGradient;
 
-      var rays = m.rays;
-      var inn  = m.inn;
-      var oct  = m.oct;
-      var center = new Point(size.width/2.0, size.height/2.0);
+        var rays = m.rays;
+        var inn  = m.inn;
+        var oct  = m.oct;
+        var center = new Point(size.width/2.0, size.height/2.0);
 
-      var hsvPalette = m.palette;
-      var palette = hsvPalette.map(function(hsv) { return hsv.toColor(); });
+        var hsvPalette = m.palette;
+        var palette = hsvPalette.map(function(hsv) { return hsv.toColor(); });
 
-      if (!cnxt.background && !backgroundColor.isTransparent) { // fill background
-         // example: <rect x='0' y='0' width='100' height='100' fill='hsla(112.71, 50.95%, 82.35%, 1)' />
-         // один раз (самий перший за всі малювання) створюю ноду для фонової заливки
-         var rcNode = cnxt.background = svgDoc.createElementNS(svgNS, 'rect');
-         rcNode.setAttributeNS(null, 'x'     , 0);
-         rcNode.setAttributeNS(null, 'y'     , 0);
-         rcNode.setAttributeNS(null, 'width' , size.width);
-         rcNode.setAttributeNS(null, 'height', size.height);
-         var bc = new HSV(backgroundColor);
-         rcNode.setAttributeNS(null, 'fill'  , 'hsla(' + round(bc.h, dpClr) + ', ' + round(bc.s, dpClr) + '%, ' + round(bc.v, dpClr) + '%, ' + round(bc.a/255.0, dpClr) + ')');
-         svg.appendChild(rcNode);
-      }
+        if (!cnxt.background && !backgroundColor.isTransparent) { // fill background
+            // example: <rect x='0' y='0' width='100' height='100' fill='hsla(112.71, 50.95%, 82.35%, 1)' />
+            // один раз (самий перший за всі малювання) створюю ноду для фонової заливки
+            var rcNode = cnxt.background = svgDoc.createElementNS(svgNS, 'rect');
+            rcNode.setAttributeNS(null, 'x'     , 0);
+            rcNode.setAttributeNS(null, 'y'     , 0);
+            rcNode.setAttributeNS(null, 'width' , size.width);
+            rcNode.setAttributeNS(null, 'height', size.height);
+            var bc = new HSV(backgroundColor);
+            rcNode.setAttributeNS(null, 'fill'  , 'hsla(' + round(bc.h, dpClr) + ', ' + round(bc.s, dpClr) + '%, ' + round(bc.v, dpClr) + '%, ' + round(bc.a/255.0, dpClr) + ')');
+            svg.appendChild(rcNode);
+        }
 
-      const useKeyTimes = false;
+        const useKeyTimes = false;
 
-      var addAttributeValue = MosaicSkillOrGroupView.addAttributeValue;
-      var createAnimeteNode = MosaicSkillOrGroupView.createAnimeteNode;
+        var addAttributeValue = MosaicSkillOrGroupView.addAttributeValue;
+        var createAnimeteNode = MosaicSkillOrGroupView.createAnimeteNode;
 
-      // один раз створюю необхідні ноди
-      if (!cnxt.ownRays) {
-         var names = ['ownRays', 'innerTr'];
-         if (useGradient)
-            names = [...names, 'ownRays1', 'ownRays2'];
-         for (var name of names) {
-            cnxt[name] = [];
-            for (var i=0; i<8; ++i) {
-               var pathNode = svgDoc.createElementNS(svgNS, 'path');
-            //pathNode.setAttributeNS(null, 'fill-opacity'  , round(foregroundColor.a/255.0, dpClr));
-               if (useGradient)
-                  pathNode.setAttributeNS(null, 'fill', 'url(#' + name + i + ')');
-
-               if (animated) {
-                  // examples: <animate attributeName='d' dur='2000ms' repeatCount='indefinite' calcMode='linear' ... />
-                  pathNode.appendChild(createAnimeteNode(svgDoc, 'd', duration, useKeyTimes ? null : 'linear'));
-
-                  if (!useGradient)
-                     // examples: <animate attributeName='fill' dur='2000ms' repeatCount='indefinite' calcMode='linear' ...>
-                     pathNode.appendChild(createAnimeteNode(svgDoc, 'fill', duration, useKeyTimes ? null : 'linear'));
-               }
-
-               svg.appendChild(pathNode);
-               cnxt[name].push(pathNode);
-            }
-         }
-
-         if (borderWidth > 0) {
-            cnxt.perim = []
-            for (var i=0; i<8; ++i) {
-               var lineNode = svgDoc.createElementNS(svgNS, 'line');
-               lineNode.setAttributeNS(null, 'stroke-width', zoomAverage*borderWidth);
-               lineNode.setAttributeNS(null, 'stroke-linecap', 'round');
-               if (animated) {
-                  lineNode.appendChild(createAnimeteNode(svgDoc, 'stroke', duration, useKeyTimes ? null : 'linear'));
-                  lineNode.appendChild(createAnimeteNode(svgDoc, 'x1'    , duration, useKeyTimes ? null : 'linear'));
-                  lineNode.appendChild(createAnimeteNode(svgDoc, 'y1'    , duration, useKeyTimes ? null : 'linear'));
-                  lineNode.appendChild(createAnimeteNode(svgDoc, 'x2'    , duration, useKeyTimes ? null : 'linear'));
-                  lineNode.appendChild(createAnimeteNode(svgDoc, 'y2'    , duration, useKeyTimes ? null : 'linear'));
-               }
-
-               svg.appendChild(lineNode);
-               cnxt.perim.push(lineNode);
-            }
-         }
-
-         if (useGradient) {
-            var defsNode = svgDoc.createElementNS(svgNS, 'defs');
-            svg.appendChild(defsNode);
-
+        // один раз створюю необхідні ноди
+        if (!cnxt.ownRays) {
             var names = ['ownRays', 'innerTr'];
             if (useGradient)
-               names = [...names, 'ownRays1', 'ownRays2'];
+                names = [...names, 'ownRays1', 'ownRays2'];
             for (var name of names) {
-               cnxt.gradient[name] = [];
-               for (var i=0; i<8; ++i) {
-                  var linearGradientNode = svgDoc.createElementNS(svgNS, 'linearGradient');
-                  linearGradientNode.setAttributeNS(null, 'id', name + i);
+                cnxt[name] = [];
+                for (var i=0; i<8; ++i) {
+                    var pathNode = svgDoc.createElementNS(svgNS, 'path');
+                  //pathNode.setAttributeNS(null, 'fill-opacity'  , round(foregroundColor.a/255.0, dpClr));
+                    if (useGradient)
+                        pathNode.setAttributeNS(null, 'fill', 'url(#' + name + i + ')');
 
-                  var stopNodeRun = svgDoc.createElementNS(svgNS, 'stop');
-                  var stopNodeEnd = svgDoc.createElementNS(svgNS, 'stop');
-                  stopNodeRun.setAttributeNS(null, 'offset', '0%');
-                  stopNodeEnd.setAttributeNS(null, 'offset', '100%');
-                  linearGradientNode.appendChild(stopNodeRun);
-                  linearGradientNode.appendChild(stopNodeEnd);
-                  linearGradientNode.setAttributeNS(null, 'gradientUnits', 'userSpaceOnUse');
+                    if (animated) {
+                        // examples: <animate attributeName='d' dur='2000ms' repeatCount='indefinite' calcMode='linear' ... />
+                        pathNode.appendChild(createAnimeteNode(svgDoc, 'd', duration, useKeyTimes ? null : 'linear'));
 
-                  if (animated) {
-                     linearGradientNode.appendChild(createAnimeteNode(svgDoc, 'x1'        , duration, useKeyTimes ? null : 'linear'));
-                     linearGradientNode.appendChild(createAnimeteNode(svgDoc, 'y1'        , duration, useKeyTimes ? null : 'linear'));
-                     linearGradientNode.appendChild(createAnimeteNode(svgDoc, 'x2'        , duration, useKeyTimes ? null : 'linear'));
-                     linearGradientNode.appendChild(createAnimeteNode(svgDoc, 'y2'        , duration, useKeyTimes ? null : 'linear'));
-                     stopNodeRun       .appendChild(createAnimeteNode(svgDoc, 'stop-color', duration, useKeyTimes ? null : 'linear'));
-                     stopNodeEnd       .appendChild(createAnimeteNode(svgDoc, 'stop-color', duration, useKeyTimes ? null : 'linear'));
-                  }
+                        if (!useGradient)
+                            // examples: <animate attributeName='fill' dur='2000ms' repeatCount='indefinite' calcMode='linear' ...>
+                            pathNode.appendChild(createAnimeteNode(svgDoc, 'fill', duration, useKeyTimes ? null : 'linear'));
+                    }
 
-                  defsNode.appendChild(linearGradientNode);
-                  cnxt.gradient[name].push(linearGradientNode);
-               }
-            }
-         }
-      }
-
-      var setFill = function(/*Node*/ pathNode, /*Color*/ fillColor) {
-         var pathFillColor = '#' + fillColor.asHexString.substr(2);
-         if (!animated) {
-            pathNode.setAttributeNS(null, 'fill', pathFillColor);
-         } else {
-            var animateNodeFill = [...pathNode.childNodes].find(function(x) { return x.getAttribute('attributeName') === 'fill'; });
-            addAttributeValue(animateNodeFill, 'values', pathFillColor);
-         }
-      };
-      var setGradientFill = function(/*linearGradient id*/ idName, /* int */ i, /*Point*/ start, /*Color*/ startClr, /*Point*/ end, /*Color*/ endClr) {
-         var linearGradientNode = cnxt.gradient[idName][i];
-         var childNodes = [...linearGradientNode.childNodes];
-         var stopNodeRun = childNodes.find(function(x) { return x.getAttribute('offset') === '0%'; });
-         var stopNodeEnd = childNodes.find(function(x) { return x.getAttribute('offset') === '100%'; });
-         if (!startClr.isOpaque)
-            stopNodeRun.setAttributeNS(null, 'stop-opacity', round(startClr.a/255.0, dpClr));
-         if (!endClr.isOpaque)
-            stopNodeEnd.setAttributeNS(null, 'stop-opacity', round(endClr.a/255.0, dpClr));
-         if (!animated) {
-            linearGradientNode.setAttributeNS(null, 'x1', round(start.x, dpPnt));
-            linearGradientNode.setAttributeNS(null, 'y1', round(start.y, dpPnt));
-            linearGradientNode.setAttributeNS(null, 'x2', round(end.x  , dpPnt));
-            linearGradientNode.setAttributeNS(null, 'y2', round(end.y  , dpPnt));
-
-            stopNodeRun.setAttributeNS(null, 'stop-color', '#' + startClr.asHexString.substr(2));
-            stopNodeEnd.setAttributeNS(null, 'stop-color', '#' +   endClr.asHexString.substr(2));
-         } else {
-            var animateNodeX1       =                 childNodes .find(function(x) { return x.getAttribute('attributeName') === 'x1'; });
-            var animateNodeY1       =                 childNodes .find(function(x) { return x.getAttribute('attributeName') === 'y1'; });
-            var animateNodeX2       =                 childNodes .find(function(x) { return x.getAttribute('attributeName') === 'x2'; });
-            var animateNodeY2       =                 childNodes .find(function(x) { return x.getAttribute('attributeName') === 'y2'; });
-            var animateNodeRunColor = [...stopNodeRun.childNodes].find(function(x) { return x.getAttribute('attributeName') === 'stop-color'; });
-            var animateNodeEndColor = [...stopNodeEnd.childNodes].find(function(x) { return x.getAttribute('attributeName') === 'stop-color'; });
-
-            // shape coordinates
-            addAttributeValue(animateNodeX1      , 'values', round(start.x, dpPnt));
-            addAttributeValue(animateNodeY1      , 'values', round(start.y, dpPnt));
-            addAttributeValue(animateNodeX2      , 'values', round(end.x  , dpPnt));
-            addAttributeValue(animateNodeY2      , 'values', round(end.y  , dpPnt));
-            addAttributeValue(animateNodeRunColor, 'values', '#' + startClr.asHexString.substr(2));
-            addAttributeValue(animateNodeEndColor, 'values', '#' +   endClr.asHexString.substr(2));
-
-            if (useKeyTimes) { // time stamps
-               addAttributeValue(animateNodeX1      , 'keyTimes', round(keyTime, dpTm));
-               addAttributeValue(animateNodeY1      , 'keyTimes', round(keyTime, dpTm));
-               addAttributeValue(animateNodeX2      , 'keyTimes', round(keyTime, dpTm));
-               addAttributeValue(animateNodeY2      , 'keyTimes', round(keyTime, dpTm));
-               addAttributeValue(animateNodeRunColor, 'keyTimes', round(keyTime, dpTm));
-               addAttributeValue(animateNodeEndColor, 'keyTimes', round(keyTime, dpTm));
-            }
-         }
-         // g.setFill(new LinearGradient(start.getX(), start.getY(),
-         //                            end  .getX(), end  .getY(),
-         //                            false,
-         //                            CycleMethod.NO_CYCLE,
-         //                            new Stop[] {
-         //                               new Stop(0, startClr),
-         //                               new Stop(1, endClr)
-         //                            }));
-      };
-
-      var drawPolygon = function(/*string*/ name, /*int*/ i, /*Point[]*/ ...polygon) {
-         var pathNode = cnxt[name][i];
-
-         var pathD = 'M' + polygon.map(function(p) { return round(p.x, dpPnt) + ' ' + round(p.y, dpPnt); }).join(' L')  + ' Z';
-         if (!animated) {
-            pathNode.setAttributeNS(null, 'd', pathD);
-         } else {
-            var animateNodeD = [...pathNode.childNodes].find(function(x) { return x.getAttribute('attributeName') === 'd'; });
-            addAttributeValue(animateNodeD, 'values', pathD); // shape coordinates
-
-            if (useKeyTimes)
-               addAttributeValue(animateNodeD, 'keyTimes', round(keyTime, dpTm)); // time stamps
-         }
-
-         return pathNode;
-      };
-
-      // paint owner gradient rays
-      for (var i=0; i<8; i++) {
-         var shape = drawPolygon('ownRays', i, rays[i], oct[i], inn[i], oct[(i+5)%8]);
-         if (!useGradient) {
-            setFill(shape, hsvPalette[i].toColor().darker());
-         } else {
-            // emulate triangle gradient (see BmpLogo.cpp C++ source code)
-            // over linear gragients
-
-            setGradientFill('ownRays', i, rays[i], palette[(i+1)%8], inn[i], palette[(i+6)%8]);
-
-            var p1 = oct[i];
-            var p2 = oct[(i+5)%8];
-            var p = new Point((p1.x+p2.x)/2, (p1.y+p2.y)/2); // середина линии oct[i]-oct[(i+5)%8]. По факту - пересечение линий rays[i]-inn[i] и oct[i]-oct[(i+5)%8]
-
-            var clr = Color.Transparent; // new Color(0); //
-            if (true) {
-               // var hsv_h = 1 * window.document.getElementById('hsv_h').value;
-               // var hsv_s = 1 * window.document.getElementById('hsv_s').value;
-               // var hsv_v = 1 * window.document.getElementById('hsv_v').value;
-               switch (0) {
-               case 0:
-                  {
-                     var c1 = hsvPalette[(i+1)%8];
-                     var c2 = hsvPalette[(i+6)%8];
-                     var diff = c1.h - c2.h;
-                     var cP = new HSV(c1.toColor());
-                     cP.h += diff/2; // цвет в точке p (пересечений линий...)
-                     cP.a = 0;
-                     // cP.h += hsv_h;
-                     // cP.s = (hsv_s + cP.s) % 255;
-                     // cP.v = (hsv_v + cP.v) % 255;
-                     clr = cP.toColor();
-                  }
-                  break;
-               case 1:
-                   {
-                     var c1 = hsvPalette[(i+1)%8];
-                     var c2 = hsvPalette[(i+6)%8];
-                     var diff = c1.h - c2.h;
-
-                     var xDeltaInnRays = (inn[i].x + rays[i].x)/2;
-                     var yDeltaInnRays = (inn[i].y + rays[i].y)/2;
-                     var lenInnRays = Math.sqrt(xDeltaInnRays*xDeltaInnRays + yDeltaInnRays*yDeltaInnRays);
-
-                     var xDeltaInnP = (inn[i].x + p.x)/2;
-                     var yDeltaInnP = (inn[i].y + p.y)/2;
-                     var lenInnP = Math.sqrt(xDeltaInnP*xDeltaInnP + yDeltaInnP*yDeltaInnP);
-
-                     //   lenInnRays/100%  ==  lenInnP/???%
-                     var z = lenInnP/lenInnRays; // 0..1
-                     var cZ = new HSV(hsvPalette[(i+6)%8].toColor());
-                     cZ.h += diff*z;
-                     cZ.a = 0;
-                     // cZ.h += hsv_h;
-                     // cZ.s = (hsv_s + cZ.s) % 255;
-                     // cZ.v = (hsv_v + cZ.v) % 255;
-
-                     clr = cZ.toColor();
-                  }
-                  break;
-               case 2: {
-                     clr = palette[(i+6)%8];
-                     clr = new Color(0, clr.r, clr.g, clr.b);
-                  }
-                  break;
-               }
+                    svg.appendChild(pathNode);
+                    cnxt[name].push(pathNode);
+                }
             }
 
-            drawPolygon('ownRays1', i, rays[i], oct[i], inn[i]);
-            setGradientFill('ownRays1', i, oct[i], palette[(i+3)%8], p, clr);
+            if (borderWidth > 0) {
+                cnxt.perim = []
+                for (var i=0; i<8; ++i) {
+                    var lineNode = svgDoc.createElementNS(svgNS, 'line');
+                    lineNode.setAttributeNS(null, 'stroke-width', zoomAverage*borderWidth);
+                    lineNode.setAttributeNS(null, 'stroke-linecap', 'round');
+                    if (animated) {
+                        lineNode.appendChild(createAnimeteNode(svgDoc, 'stroke', duration, useKeyTimes ? null : 'linear'));
+                        lineNode.appendChild(createAnimeteNode(svgDoc, 'x1'    , duration, useKeyTimes ? null : 'linear'));
+                        lineNode.appendChild(createAnimeteNode(svgDoc, 'y1'    , duration, useKeyTimes ? null : 'linear'));
+                        lineNode.appendChild(createAnimeteNode(svgDoc, 'x2'    , duration, useKeyTimes ? null : 'linear'));
+                        lineNode.appendChild(createAnimeteNode(svgDoc, 'y2'    , duration, useKeyTimes ? null : 'linear'));
+                    }
 
-            drawPolygon('ownRays2', i, rays[i], oct[(i+5)%8], inn[i]);
-            setGradientFill('ownRays2', i, oct[(i+5)%8], palette[(i+0)%8], p, clr);
-         }
-      }
+                    svg.appendChild(lineNode);
+                    cnxt.perim.push(lineNode);
+                }
+            }
 
-      // paint star perimeter
-      if (borderWidth > 0) {
-         for (var i=0; i<8; i++) {
-            var p1 = rays[(i + 7)%8];
-            var p2 = rays[i];
-            var lineNode = cnxt.perim[i];
-            // g.setStroke(palette[i].darker());
-            // g.strokeLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());
-            var strokeColor = '#' + palette[i].darker().asHexString.substr(2);
+            if (useGradient) {
+                var defsNode = svgDoc.createElementNS(svgNS, 'defs');
+                svg.appendChild(defsNode);
+
+                var names = ['ownRays', 'innerTr'];
+                if (useGradient)
+                    names = [...names, 'ownRays1', 'ownRays2'];
+                for (var name of names) {
+                    cnxt.gradient[name] = [];
+                    for (var i=0; i<8; ++i) {
+                        var linearGradientNode = svgDoc.createElementNS(svgNS, 'linearGradient');
+                        linearGradientNode.setAttributeNS(null, 'id', name + i);
+
+                        var stopNodeRun = svgDoc.createElementNS(svgNS, 'stop');
+                        var stopNodeEnd = svgDoc.createElementNS(svgNS, 'stop');
+                        stopNodeRun.setAttributeNS(null, 'offset', '0%');
+                        stopNodeEnd.setAttributeNS(null, 'offset', '100%');
+                        linearGradientNode.appendChild(stopNodeRun);
+                        linearGradientNode.appendChild(stopNodeEnd);
+                        linearGradientNode.setAttributeNS(null, 'gradientUnits', 'userSpaceOnUse');
+
+                        if (animated) {
+                            linearGradientNode.appendChild(createAnimeteNode(svgDoc, 'x1'        , duration, useKeyTimes ? null : 'linear'));
+                            linearGradientNode.appendChild(createAnimeteNode(svgDoc, 'y1'        , duration, useKeyTimes ? null : 'linear'));
+                            linearGradientNode.appendChild(createAnimeteNode(svgDoc, 'x2'        , duration, useKeyTimes ? null : 'linear'));
+                            linearGradientNode.appendChild(createAnimeteNode(svgDoc, 'y2'        , duration, useKeyTimes ? null : 'linear'));
+                            stopNodeRun       .appendChild(createAnimeteNode(svgDoc, 'stop-color', duration, useKeyTimes ? null : 'linear'));
+                            stopNodeEnd       .appendChild(createAnimeteNode(svgDoc, 'stop-color', duration, useKeyTimes ? null : 'linear'));
+                        }
+
+                        defsNode.appendChild(linearGradientNode);
+                        cnxt.gradient[name].push(linearGradientNode);
+                    }
+                }
+            }
+        }
+
+        var setFill = function(/*Node*/ pathNode, /*Color*/ fillColor) {
+            var pathFillColor = '#' + fillColor.asHexString.substr(2);
             if (!animated) {
-               lineNode.setAttributeNS(null, 'stroke', strokeColor);
-               lineNode.setAttributeNS(null, 'x1', p1.x);
-               lineNode.setAttributeNS(null, 'y1', p1.y);
-               lineNode.setAttributeNS(null, 'x2', p2.x);
-               lineNode.setAttributeNS(null, 'y2', p2.y);
+                pathNode.setAttributeNS(null, 'fill', pathFillColor);
             } else {
-               var childNodes = [...lineNode.childNodes];
-               var animateNodeStroke = childNodes.find(function(x) { return x.getAttribute('attributeName') === 'stroke'; });
-               var animateNodeX1     = childNodes.find(function(x) { return x.getAttribute('attributeName') === 'x1'; });
-               var animateNodeY1     = childNodes.find(function(x) { return x.getAttribute('attributeName') === 'y1'; });
-               var animateNodeX2     = childNodes.find(function(x) { return x.getAttribute('attributeName') === 'x2'; });
-               var animateNodeY2     = childNodes.find(function(x) { return x.getAttribute('attributeName') === 'y2'; });
-               addAttributeValue(animateNodeStroke, 'values', strokeColor);
-               addAttributeValue(animateNodeX1    , 'values', p1.x);
-               addAttributeValue(animateNodeY1    , 'values', p1.y);
-               addAttributeValue(animateNodeX2    , 'values', p2.x);
-               addAttributeValue(animateNodeY2    , 'values', p2.y);
-               if (useKeyTimes) {
-                  // time stamps
-                  addAttributeValue(animateNodeStroke, 'keyTimes', round(keyTime, dpTm));
-                  addAttributeValue(animateNodeX1    , 'keyTimes', round(keyTime, dpTm));
-                  addAttributeValue(animateNodeY1    , 'keyTimes', round(keyTime, dpTm));
-                  addAttributeValue(animateNodeX2    , 'keyTimes', round(keyTime, dpTm));
-                  addAttributeValue(animateNodeY2    , 'keyTimes', round(keyTime, dpTm));
-               }
+                var animateNodeFill = [...pathNode.childNodes].find(function(x) { return x.getAttribute('attributeName') === 'fill'; });
+                addAttributeValue(animateNodeFill, 'values', pathFillColor);
             }
-         }
-      }
+        };
+        var setGradientFill = function(/*linearGradient id*/ idName, /* int */ i, /*Point*/ start, /*Color*/ startClr, /*Point*/ end, /*Color*/ endClr) {
+            var linearGradientNode = cnxt.gradient[idName][i];
+            var childNodes = [...linearGradientNode.childNodes];
+            var stopNodeRun = childNodes.find(function(x) { return x.getAttribute('offset') === '0%'; });
+            var stopNodeEnd = childNodes.find(function(x) { return x.getAttribute('offset') === '100%'; });
+            if (!startClr.isOpaque)
+                stopNodeRun.setAttributeNS(null, 'stop-opacity', round(startClr.a/255.0, dpClr));
+            if (!endClr.isOpaque)
+                stopNodeEnd.setAttributeNS(null, 'stop-opacity', round(endClr.a/255.0, dpClr));
+            if (!animated) {
+                linearGradientNode.setAttributeNS(null, 'x1', round(start.x, dpPnt));
+                linearGradientNode.setAttributeNS(null, 'y1', round(start.y, dpPnt));
+                linearGradientNode.setAttributeNS(null, 'x2', round(end.x  , dpPnt));
+                linearGradientNode.setAttributeNS(null, 'y2', round(end.y  , dpPnt));
 
-      // paint inner gradient triangles
-      for (var i=0; i<8; i++) {
-         var shape = drawPolygon('innerTr', i, inn[(i + 0)%8], inn[(i + 3)%8], center);
-         if (useGradient) {
-            var p1 = inn[(i+0)%8];
-            var p2 = inn[(i+3)%8];
-            var p = new Point((p1.x+p2.x)/2, (p1.y+p2.y)/2); // center line of p1-p2
-            setGradientFill('innerTr', i,
-                  p, palette[(i+6)%8],
-                  center, ((i & 1) == 1) ? Color.Black : Color.White);
-         } else {
-            setFill(shape, ((i & 1) == 1)
-                  ? hsvPalette[(i + 6)%8].toColor().brighter()
-                  : hsvPalette[(i + 6)%8].toColor().darker());
-         }
-      }
+                stopNodeRun.setAttributeNS(null, 'stop-color', '#' + startClr.asHexString.substr(2));
+                stopNodeEnd.setAttributeNS(null, 'stop-color', '#' +   endClr.asHexString.substr(2));
+            } else {
+                var animateNodeX1       =                 childNodes .find(function(x) { return x.getAttribute('attributeName') === 'x1'; });
+                var animateNodeY1       =                 childNodes .find(function(x) { return x.getAttribute('attributeName') === 'y1'; });
+                var animateNodeX2       =                 childNodes .find(function(x) { return x.getAttribute('attributeName') === 'x2'; });
+                var animateNodeY2       =                 childNodes .find(function(x) { return x.getAttribute('attributeName') === 'y2'; });
+                var animateNodeRunColor = [...stopNodeRun.childNodes].find(function(x) { return x.getAttribute('attributeName') === 'stop-color'; });
+                var animateNodeEndColor = [...stopNodeEnd.childNodes].find(function(x) { return x.getAttribute('attributeName') === 'stop-color'; });
+
+                // shape coordinates
+                addAttributeValue(animateNodeX1      , 'values', round(start.x, dpPnt));
+                addAttributeValue(animateNodeY1      , 'values', round(start.y, dpPnt));
+                addAttributeValue(animateNodeX2      , 'values', round(end.x  , dpPnt));
+                addAttributeValue(animateNodeY2      , 'values', round(end.y  , dpPnt));
+                addAttributeValue(animateNodeRunColor, 'values', '#' + startClr.asHexString.substr(2));
+                addAttributeValue(animateNodeEndColor, 'values', '#' +   endClr.asHexString.substr(2));
+
+                if (useKeyTimes) { // time stamps
+                    addAttributeValue(animateNodeX1      , 'keyTimes', round(keyTime, dpTm));
+                    addAttributeValue(animateNodeY1      , 'keyTimes', round(keyTime, dpTm));
+                    addAttributeValue(animateNodeX2      , 'keyTimes', round(keyTime, dpTm));
+                    addAttributeValue(animateNodeY2      , 'keyTimes', round(keyTime, dpTm));
+                    addAttributeValue(animateNodeRunColor, 'keyTimes', round(keyTime, dpTm));
+                    addAttributeValue(animateNodeEndColor, 'keyTimes', round(keyTime, dpTm));
+                }
+            }
+            //g.setFill(new LinearGradient(start.getX(), start.getY(),
+            //                             end  .getX(), end  .getY(),
+            //                             false,
+            //                             CycleMethod.NO_CYCLE,
+            //                             new Stop[] {
+            //                                 new Stop(0, startClr),
+            //                                 new Stop(1, endClr)
+            //                             }));
+        };
+
+        var drawPolygon = function(/*string*/ name, /*int*/ i, /*Point[]*/ ...polygon) {
+            var pathNode = cnxt[name][i];
+
+            var pathD = 'M' + polygon.map(function(p) { return round(p.x, dpPnt) + ' ' + round(p.y, dpPnt); }).join(' L')  + ' Z';
+            if (!animated) {
+                pathNode.setAttributeNS(null, 'd', pathD);
+            } else {
+                var animateNodeD = [...pathNode.childNodes].find(function(x) { return x.getAttribute('attributeName') === 'd'; });
+                addAttributeValue(animateNodeD, 'values', pathD); // shape coordinates
+
+                if (useKeyTimes)
+                    addAttributeValue(animateNodeD, 'keyTimes', round(keyTime, dpTm)); // time stamps
+            }
+
+            return pathNode;
+        };
+
+        // paint owner gradient rays
+        for (var i=0; i<8; i++) {
+            var shape = drawPolygon('ownRays', i, rays[i], oct[i], inn[i], oct[(i+5)%8]);
+            if (!useGradient) {
+                setFill(shape, hsvPalette[i].toColor().darker());
+            } else {
+                // emulate triangle gradient (see BmpLogo.cpp C++ source code)
+                // over linear gragients
+
+                setGradientFill('ownRays', i, rays[i], palette[(i+1)%8], inn[i], palette[(i+6)%8]);
+
+                var p1 = oct[i];
+                var p2 = oct[(i+5)%8];
+                var p = new Point((p1.x+p2.x)/2, (p1.y+p2.y)/2); // середина линии oct[i]-oct[(i+5)%8]. По факту - пересечение линий rays[i]-inn[i] и oct[i]-oct[(i+5)%8]
+
+                var clr = Color.Transparent; // new Color(0); //
+                if (true) {
+                    // var hsv_h = 1 * window.document.getElementById('hsv_h').value;
+                    // var hsv_s = 1 * window.document.getElementById('hsv_s').value;
+                    // var hsv_v = 1 * window.document.getElementById('hsv_v').value;
+                    switch (0) {
+                    case 0: {
+                           var c1 = hsvPalette[(i+1)%8];
+                           var c2 = hsvPalette[(i+6)%8];
+                           var diff = c1.h - c2.h;
+                           var cP = new HSV(c1.toColor());
+                           cP.h += diff/2; // цвет в точке p (пересечений линий...)
+                           cP.a = 0;
+                           // cP.h += hsv_h;
+                           // cP.s = (hsv_s + cP.s) % 255;
+                           // cP.v = (hsv_v + cP.v) % 255;
+                           clr = cP.toColor();
+                        }
+                        break;
+                    case 1: {
+                           var c1 = hsvPalette[(i+1)%8];
+                           var c2 = hsvPalette[(i+6)%8];
+                           var diff = c1.h - c2.h;
+
+                           var xDeltaInnRays = (inn[i].x + rays[i].x)/2;
+                           var yDeltaInnRays = (inn[i].y + rays[i].y)/2;
+                           var lenInnRays = Math.sqrt(xDeltaInnRays*xDeltaInnRays + yDeltaInnRays*yDeltaInnRays);
+
+                           var xDeltaInnP = (inn[i].x + p.x)/2;
+                           var yDeltaInnP = (inn[i].y + p.y)/2;
+                           var lenInnP = Math.sqrt(xDeltaInnP*xDeltaInnP + yDeltaInnP*yDeltaInnP);
+
+                           //   lenInnRays/100%  ==  lenInnP/???%
+                           var z = lenInnP/lenInnRays; // 0..1
+                           var cZ = new HSV(hsvPalette[(i+6)%8].toColor());
+                           cZ.h += diff*z;
+                           cZ.a = 0;
+                           // cZ.h += hsv_h;
+                           // cZ.s = (hsv_s + cZ.s) % 255;
+                           // cZ.v = (hsv_v + cZ.v) % 255;
+
+                           clr = cZ.toColor();
+                        }
+                        break;
+                    case 2: {
+                            clr = palette[(i+6)%8];
+                            clr = new Color(0, clr.r, clr.g, clr.b);
+                        }
+                        break;
+                    }
+                }
+
+                drawPolygon('ownRays1', i, rays[i], oct[i], inn[i]);
+                setGradientFill('ownRays1', i, oct[i], palette[(i+3)%8], p, clr);
+
+                drawPolygon('ownRays2', i, rays[i], oct[(i+5)%8], inn[i]);
+                setGradientFill('ownRays2', i, oct[(i+5)%8], palette[(i+0)%8], p, clr);
+            }
+        }
+
+        // paint star perimeter
+        if (borderWidth > 0) {
+            for (var i=0; i<8; i++) {
+                var p1 = rays[(i + 7)%8];
+                var p2 = rays[i];
+                var lineNode = cnxt.perim[i];
+                // g.setStroke(palette[i].darker());
+                // g.strokeLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());
+                var strokeColor = '#' + palette[i].darker().asHexString.substr(2);
+                if (!animated) {
+                    lineNode.setAttributeNS(null, 'stroke', strokeColor);
+                    lineNode.setAttributeNS(null, 'x1', p1.x);
+                    lineNode.setAttributeNS(null, 'y1', p1.y);
+                    lineNode.setAttributeNS(null, 'x2', p2.x);
+                    lineNode.setAttributeNS(null, 'y2', p2.y);
+                } else {
+                    var childNodes = [...lineNode.childNodes];
+                    var animateNodeStroke = childNodes.find(function(x) { return x.getAttribute('attributeName') === 'stroke'; });
+                    var animateNodeX1     = childNodes.find(function(x) { return x.getAttribute('attributeName') === 'x1'; });
+                    var animateNodeY1     = childNodes.find(function(x) { return x.getAttribute('attributeName') === 'y1'; });
+                    var animateNodeX2     = childNodes.find(function(x) { return x.getAttribute('attributeName') === 'x2'; });
+                    var animateNodeY2     = childNodes.find(function(x) { return x.getAttribute('attributeName') === 'y2'; });
+                    addAttributeValue(animateNodeStroke, 'values', strokeColor);
+                    addAttributeValue(animateNodeX1    , 'values', p1.x);
+                    addAttributeValue(animateNodeY1    , 'values', p1.y);
+                    addAttributeValue(animateNodeX2    , 'values', p2.x);
+                    addAttributeValue(animateNodeY2    , 'values', p2.y);
+                    if (useKeyTimes) {
+                        // time stamps
+                        addAttributeValue(animateNodeStroke, 'keyTimes', round(keyTime, dpTm));
+                        addAttributeValue(animateNodeX1    , 'keyTimes', round(keyTime, dpTm));
+                        addAttributeValue(animateNodeY1    , 'keyTimes', round(keyTime, dpTm));
+                        addAttributeValue(animateNodeX2    , 'keyTimes', round(keyTime, dpTm));
+                        addAttributeValue(animateNodeY2    , 'keyTimes', round(keyTime, dpTm));
+                    }
+                }
+            }
+        }
+
+        // paint inner gradient triangles
+        for (var i=0; i<8; i++) {
+            var shape = drawPolygon('innerTr', i, inn[(i + 0)%8], inn[(i + 3)%8], center);
+            if (useGradient) {
+                var p1 = inn[(i+0)%8];
+                var p2 = inn[(i+3)%8];
+                var p = new Point((p1.x+p2.x)/2, (p1.y+p2.y)/2); // center line of p1-p2
+                setGradientFill('innerTr', i,
+                                p, palette[(i+6)%8],
+                                center, ((i & 1) == 1) ? Color.Black : Color.White);
+            } else {
+                setFill(shape, ((i & 1) == 1)
+                                    ? hsvPalette[(i + 6)%8].toColor().brighter()
+                                    : hsvPalette[(i + 6)%8].toColor().darker());
+            }
+        }
    }
 
 }
@@ -1617,38 +1616,38 @@ class Logo extends ImageView {
 /** Logo image view implementation over SVG */
 class LogoSvg extends Logo {
 
-   /** @param skill - may be null. if Null - representable image of ESkillLevel.class */
-   constructor(/* own SVG */ svg, /* SVG document */ svgDoc) {
-      super();
-      this._drawContext = null;
-      this._svg    = svg;
-      this._svgDoc = svgDoc;
-   }
+    /** @param skill - may be null. if Null - representable image of ESkillLevel.class */
+    constructor(/* own SVG */ svg, /* SVG document */ svgDoc) {
+        super();
+        this._drawContext = null;
+        this._svg    = svg;
+        this._svgDoc = svgDoc;
+    }
 
-   createImage() {
-      return this._drawContext = {
-         // nodes
-         background: null, // node example: <rect ...
-         ownRays   : null, // nodes examples: <path ...
-         ownRays1  : null,
-         ownRays2  : null,
-         perim     : null, // star lines perimeter
-         innerTr   : null, // inner triangles
-         gradient: {
-            ownRays : null,
-            ownRays1: null,
-            ownRays2: null,
-            innerTr : null
-         }
-      };
-   }
+    createImage() {
+        return this._drawContext = {
+            // nodes
+            background: null, // node example: <rect ...
+            ownRays   : null, // nodes examples: <path ...
+            ownRays1  : null,
+            ownRays2  : null,
+            perim     : null, // star lines perimeter
+            innerTr   : null, // inner triangles
+            gradient: {
+                ownRays : null,
+                ownRays1: null,
+                ownRays2: null,
+                innerTr : null
+            }
+        };
+    }
 
-   drawBody() {
-      this.drawIntoContext(this._drawContext, this._svg, this._svgDoc);
-   }
+    drawBody() {
+        this.drawIntoContext(this._drawContext, this._svg, this._svgDoc);
+    }
 
 
-   getSvgContent() { return getSvgContent(this._svg); }
+    getSvgContent() { return getSvgContent(this._svg); }
 
 }
 
@@ -1659,12 +1658,12 @@ class LogoSvg extends Logo {
  */
 class WithBurgerMenuView extends ImageView {
 
-   constructor(/*TImageModel*/ imageModel) {
-      super(imageModel);
-      this._burgerMenuModel = new BurgerMenuModel(imageModel);
-   }
+    constructor(/*TImageModel*/ imageModel) {
+        super(imageModel);
+        this._burgerMenuModel = new BurgerMenuModel(imageModel);
+    }
 
-   get burgerMenuModel() { return this._burgerMenuModel; }
+    get burgerMenuModel() { return this._burgerMenuModel; }
 
 }
 
@@ -1675,149 +1674,149 @@ class WithBurgerMenuView extends ImageView {
  */
 class MosaicSkillOrGroupView extends WithBurgerMenuView {
 
-   constructor(/*TImageModel*/ imageModel) {
-      super(imageModel);
-   }
+    constructor(/*TImageModel*/ imageModel) {
+        super(imageModel);
+    }
 
-   /** get paint information of drawing basic image model */
-   getCoords() { throw new Error('Abstract method'); }
+    /** get paint information of drawing basic image model */
+    getCoords() { throw new Error('Abstract method'); }
 
-   drawIntoContext(/* DrawContext */ cnxt, /* own SVG */ svg, /* SVG document */ svgDoc) {
-      var m = this.Model;
-      var keyTime = m.currentFrame / m.totalFrames; // 0..1;
-      var duration  = m.animatePeriod;
-      var borderWidth = m.borderWidth;
-      var borderColor = m.borderColor;
-      var backgroundColor = m.backgroundColor;
-      var foregroundColor = m.foregroundColor;
-      var skill = m.mosaicSkill;
-      var size = m.size;
-      var animated = m.animated;
+    drawIntoContext(/* DrawContext */ cnxt, /* own SVG */ svg, /* SVG document */ svgDoc) {
+        var m = this.Model;
+        var keyTime = m.currentFrame / m.totalFrames; // 0..1;
+        var duration  = m.animatePeriod;
+        var borderWidth = m.borderWidth;
+        var borderColor = m.borderColor;
+        var backgroundColor = m.backgroundColor;
+        var foregroundColor = m.foregroundColor;
+        var skill = m.mosaicSkill;
+        var size = m.size;
+        var animated = m.animated;
 
-      if (!cnxt.background && !backgroundColor.isTransparent) { // fill background
-         // example: <rect x='0' y='0' width='100' height='100' fill='hsla(112.71, 50.95%, 82.35%, 1)' />
-         // один раз (самий перший за всі малювання) створюю ноду для фонової заливки
-         var rcNode = cnxt.background = svgDoc.createElementNS(svgNS, 'rect');
-         rcNode.setAttributeNS(null, 'x'     , 0);
-         rcNode.setAttributeNS(null, 'y'     , 0);
-         rcNode.setAttributeNS(null, 'width' , size.width);
-         rcNode.setAttributeNS(null, 'height', size.height);
-         var bc = new HSV(backgroundColor);
-         rcNode.setAttributeNS(null, 'fill'  , 'hsla(' + round(bc.h, dpClr) + ', ' + round(bc.s, dpClr) + '%, ' + round(bc.v, dpClr) + '%, ' + round(bc.a/255.0, dpClr) + ')');
-         svg.appendChild(rcNode);
-      }
+        if (!cnxt.background && !backgroundColor.isTransparent) { // fill background
+            // example: <rect x='0' y='0' width='100' height='100' fill='hsla(112.71, 50.95%, 82.35%, 1)' />
+            // один раз (самий перший за всі малювання) створюю ноду для фонової заливки
+            var rcNode = cnxt.background = svgDoc.createElementNS(svgNS, 'rect');
+            rcNode.setAttributeNS(null, 'x'     , 0);
+            rcNode.setAttributeNS(null, 'y'     , 0);
+            rcNode.setAttributeNS(null, 'width' , size.width);
+            rcNode.setAttributeNS(null, 'height', size.height);
+            var bc = new HSV(backgroundColor);
+            rcNode.setAttributeNS(null, 'fill'  , 'hsla(' + round(bc.h, dpClr) + ', ' + round(bc.s, dpClr) + '%, ' + round(bc.v, dpClr) + '%, ' + round(bc.a/255.0, dpClr) + ')');
+            svg.appendChild(rcNode);
+        }
 
-      var shapes = this.getCoords();
+        var shapes = this.getCoords();
 
-      const useKeyTimes = false;
+        const useKeyTimes = false;
 
-      var addAttributeValue = MosaicSkillOrGroupView.addAttributeValue;
-      var createAnimeteNode = MosaicSkillOrGroupView.createAnimeteNode;
+        var addAttributeValue = MosaicSkillOrGroupView.addAttributeValue;
+        var createAnimeteNode = MosaicSkillOrGroupView.createAnimeteNode;
 
-      if (!cnxt.shapes) {
-         // один раз (самий перший за всі малювання) створюю ноди для фігур з піднодами анімацій
-         cnxt.shapes = []; // examples: <path stroke='#400000' stroke-width='0.7' fill-opacity='0.92'> .... </path>
-         shapes.forEach(function(_) {
-            var pathNode = svgDoc.createElementNS(svgNS, 'path');
-            pathNode.setAttributeNS(null, 'stroke'        , '#' + borderColor.asHexString.substr(2));
-            pathNode.setAttributeNS(null, 'stroke-width'  , borderWidth);
-          //pathNode.setAttributeNS(null, 'stroke-opacity', round(borderColor.a/255.0, dpClr));
-            pathNode.setAttributeNS(null, 'fill-opacity'  , round(foregroundColor.a/255.0, dpClr));
+        if (!cnxt.shapes) {
+            // один раз (самий перший за всі малювання) створюю ноди для фігур з піднодами анімацій
+            cnxt.shapes = []; // examples: <path stroke='#400000' stroke-width='0.7' fill-opacity='0.92'> .... </path>
+            shapes.forEach(function(_) {
+                var pathNode = svgDoc.createElementNS(svgNS, 'path');
+                pathNode.setAttributeNS(null, 'stroke'        , '#' + borderColor.asHexString.substr(2));
+                pathNode.setAttributeNS(null, 'stroke-width'  , borderWidth);
+            //pathNode.setAttributeNS(null, 'stroke-opacity', round(borderColor.a/255.0, dpClr));
+                pathNode.setAttributeNS(null, 'fill-opacity'  , round(foregroundColor.a/255.0, dpClr));
 
-            if (animated) {
-               // examples: <animate attributeName='d' dur='2000ms' repeatCount='indefinite' calcMode='linear' ... />
-               pathNode.appendChild(createAnimeteNode(svgDoc, 'd', duration, useKeyTimes ? null : (skill==null) ? 'discrete' : 'linear'));
+                if (animated) {
+                    // examples: <animate attributeName='d' dur='2000ms' repeatCount='indefinite' calcMode='linear' ... />
+                    pathNode.appendChild(createAnimeteNode(svgDoc, 'd', duration, useKeyTimes ? null : (skill==null) ? 'discrete' : 'linear'));
 
-               // examples: <animate attributeName='fill' dur='2000ms' repeatCount='indefinite' calcMode='linear' ...>
-               pathNode.appendChild(createAnimeteNode(svgDoc, 'fill', duration, useKeyTimes ? null : (skill==null) ? 'discrete' : 'linear'));
+                    // examples: <animate attributeName='fill' dur='2000ms' repeatCount='indefinite' calcMode='linear' ...>
+                    pathNode.appendChild(createAnimeteNode(svgDoc, 'fill', duration, useKeyTimes ? null : (skill==null) ? 'discrete' : 'linear'));
+                }
+
+                svg.appendChild(pathNode);
+                cnxt.shapes.push(pathNode);
+            });
+        }
+
+        // set values of shapes - coordinates and colors
+        for (var i=0; i<shapes.length; ++i) {
+            var pathNode = cnxt.shapes[i];
+            var polygon = shapes[i].polygon;
+            var color = shapes[i].color;
+            var pathD = 'M' + polygon.map(function(p) { return round(p.x, dpPnt) + ' ' + round(p.y, dpPnt); }).join(' L')  + ' Z';
+            var pathFillColor = '#' + color.asHexString.substr(2);
+            if (!animated) {
+                pathNode.setAttributeNS(null, 'd', pathD);
+                pathNode.setAttributeNS(null, 'fill', pathFillColor);
+            } else {
+                var childNodes = [...pathNode.childNodes];
+                var animateNodeD    = childNodes.find(function(x) { return x.getAttribute('attributeName') === 'd'; });
+                var animateNodeFill = childNodes.find(function(x) { return x.getAttribute('attributeName') === 'fill'; });
+
+                addAttributeValue(animateNodeD   , 'values', pathD); // shape coordinates
+                addAttributeValue(animateNodeFill, 'values', pathFillColor); // shape colors
+
+                // time stamps
+                if (useKeyTimes) {
+                    addAttributeValue(animateNodeD   , 'keyTimes', round(keyTime, dpTm));
+                    addAttributeValue(animateNodeFill, 'keyTimes', round(keyTime, dpTm));
+                }
             }
+        }
 
-            svg.appendChild(pathNode);
-            cnxt.shapes.push(pathNode);
-         });
-      }
+        var menuShapes = this.burgerMenuModel.getCoords()
+        if (menuShapes.length && !cnxt.menus) { // fill background
+            cnxt.menus = [];
+            menuShapes.forEach(function(li) {
+                var pathNode = svgDoc.createElementNS(svgNS, 'path');
+                pathNode.setAttributeNS(null, 'stroke'        , '#' + li.clr.asHexString.substr(2));
+                pathNode.setAttributeNS(null, 'stroke-width'  , li.penWidht);
+                //pathNode.setAttributeNS(null, 'stroke-opacity', round(li.clr.a/255.0, dpClr));
+                //pathNode.setAttributeNS(null, 'fill-opacity'  , round(li.clr.a/255.0, dpClr));
 
-      // set values of shapes - coordinates and colors
-      for (var i=0; i<shapes.length; ++i) {
-         var pathNode = cnxt.shapes[i];
-         var polygon = shapes[i].polygon;
-         var color = shapes[i].color;
-         var pathD = 'M' + polygon.map(function(p) { return round(p.x, dpPnt) + ' ' + round(p.y, dpPnt); }).join(' L')  + ' Z';
-         var pathFillColor = '#' + color.asHexString.substr(2);
-         if (!animated) {
-            pathNode.setAttributeNS(null, 'd', pathD);
-            pathNode.setAttributeNS(null, 'fill', pathFillColor);
-         } else {
-            var childNodes = [...pathNode.childNodes];
-            var animateNodeD    = childNodes.find(function(x) { return x.getAttribute('attributeName') === 'd'; });
-            var animateNodeFill = childNodes.find(function(x) { return x.getAttribute('attributeName') === 'fill'; });
+                if (animated) {
+                    // examples: <animate attributeName='d' dur='2000ms' repeatCount='indefinite' calcMode='discrete' ... />
+                    pathNode.appendChild(createAnimeteNode(svgDoc, 'd', duration, useKeyTimes ? null : 'discrete'));
+                }
 
-            addAttributeValue(animateNodeD   , 'values', pathD); // shape coordinates
-            addAttributeValue(animateNodeFill, 'values', pathFillColor); // shape colors
-
-            // time stamps
-            if (useKeyTimes) {
-               addAttributeValue(animateNodeD   , 'keyTimes', round(keyTime, dpTm));
-               addAttributeValue(animateNodeFill, 'keyTimes', round(keyTime, dpTm));
+                svg.appendChild(pathNode);
+                cnxt.menus.push(pathNode);
+            });
+        }
+        // set values of shapes - coordinates and colors
+        for (var i=0; i<menuShapes.length; ++i) {
+            var pathNode = cnxt.menus[i];
+            var from = menuShapes[i].from;
+            var to   = menuShapes[i].to;
+            var pathD = 'M ' + round(from.x, dpPnt) + ' ' + round(from.y, dpPnt) + ' L ' + round(to.x, dpPnt) + ' ' + round(to.y, dpPnt);
+            if (!animated) {
+                pathNode.setAttributeNS(null, 'd', pathD);
+            } else {
+                var animateNodeD = [...pathNode.childNodes].find(function(x) { return x.getAttribute('attributeName') === 'd'; });
+                addAttributeValue(animateNodeD, 'values', pathD); // shape coordinates
+                if (useKeyTimes)
+                    addAttributeValue(animateNodeD, 'keyTimes', round(keyTime, dpTm)); // time stamps
             }
-         }
-      }
+        }
 
-      var menuShapes = this.burgerMenuModel.getCoords()
-      if (menuShapes.length && !cnxt.menus) { // fill background
-         cnxt.menus = [];
-         menuShapes.forEach(function(li) {
-            var pathNode = svgDoc.createElementNS(svgNS, 'path');
-            pathNode.setAttributeNS(null, 'stroke'        , '#' + li.clr.asHexString.substr(2));
-            pathNode.setAttributeNS(null, 'stroke-width'  , li.penWidht);
-          //pathNode.setAttributeNS(null, 'stroke-opacity', round(li.clr.a/255.0, dpClr));
-          //pathNode.setAttributeNS(null, 'fill-opacity'  , round(li.clr.a/255.0, dpClr));
+    }
 
-            if (animated) {
-               // examples: <animate attributeName='d' dur='2000ms' repeatCount='indefinite' calcMode='discrete' ... />
-               pathNode.appendChild(createAnimeteNode(svgDoc, 'd', duration, useKeyTimes ? null : 'discrete'));
-            }
+    static createAnimeteNode(svgDoc, attributeName, duration, calcMode) {
+        var animateNodeD = svgDoc.createElementNS(svgNS, 'animate');
+        animateNodeD.setAttributeNS(null, 'attributeName', attributeName);
+        animateNodeD.setAttributeNS(null, 'dur'          , duration + 'ms');
+        animateNodeD.setAttributeNS(null, 'repeatCount'  , 'indefinite');
+        if (calcMode)
+            animateNodeD.setAttributeNS(null, 'calcMode'  , calcMode); // discrete linear paced spline
+        return animateNodeD;
+    }
 
-            svg.appendChild(pathNode);
-            cnxt.menus.push(pathNode);
-         });
-      }
-      // set values of shapes - coordinates and colors
-      for (var i=0; i<menuShapes.length; ++i) {
-         var pathNode = cnxt.menus[i];
-         var from = menuShapes[i].from;
-         var to   = menuShapes[i].to;
-         var pathD = 'M ' + round(from.x, dpPnt) + ' ' + round(from.y, dpPnt) + ' L ' + round(to.x, dpPnt) + ' ' + round(to.y, dpPnt);
-         if (!animated) {
-            pathNode.setAttributeNS(null, 'd', pathD);
-         } else {
-            var animateNodeD = [...pathNode.childNodes].find(function(x) { return x.getAttribute('attributeName') === 'd'; });
-            addAttributeValue(animateNodeD, 'values', pathD); // shape coordinates
-            if (useKeyTimes)
-               addAttributeValue(animateNodeD, 'keyTimes', round(keyTime, dpTm)); // time stamps
-         }
-      }
-
-   }
-
-   static createAnimeteNode(svgDoc, attributeName, duration, calcMode) {
-      var animateNodeD = svgDoc.createElementNS(svgNS, 'animate');
-      animateNodeD.setAttributeNS(null, 'attributeName', attributeName);
-      animateNodeD.setAttributeNS(null, 'dur'          , duration + 'ms');
-      animateNodeD.setAttributeNS(null, 'repeatCount'  , 'indefinite');
-      if (calcMode)
-         animateNodeD.setAttributeNS(null, 'calcMode'  , calcMode); // discrete linear paced spline
-      return animateNodeD;
-   }
-
-   static addAttributeValue(node, attributeName, addonValue) {
-      var addAttributeValue = node.getAttribute(attributeName);
-      if (!addAttributeValue)
-         addAttributeValue = addonValue;
-      else
-         addAttributeValue += ';' + addonValue;
-      node.setAttributeNS(null, attributeName, addAttributeValue);
-   }
+    static addAttributeValue(node, attributeName, addonValue) {
+        var addAttributeValue = node.getAttribute(attributeName);
+        if (!addAttributeValue)
+            addAttributeValue = addonValue;
+        else
+            addAttributeValue += ';' + addonValue;
+        node.setAttributeNS(null, attributeName, addAttributeValue);
+    }
 
 }
 
@@ -1830,38 +1829,38 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
  **/
 class MosaicSkillImg extends MosaicSkillOrGroupView {
 
-   /** @param skill - may be null. if Null - representable image of ESkillLevel.class */
-   constructor(/*ESkillLevel*/ skill) { super(new MosaicSkillModel(skill)); }
+    /** @param skill - may be null. if Null - representable image of ESkillLevel.class */
+    constructor(/*ESkillLevel*/ skill) { super(new MosaicSkillModel(skill)); }
 
-   getCoords() { return this.Model.getCoords(); }
+    getCoords() { return this.Model.getCoords(); }
 
 }
 
 /** MosaicsSkill image view implementation over SVG */
 class MosaicSkillImgSvg extends MosaicSkillImg {
 
-   /** @param skill - may be null. if Null - representable image of ESkillLevel.class */
-   constructor(/*ESkillLevel*/ skill, /* own SVG */ svg, /* SVG document */ svgDoc) {
-      super(skill);
-      this._drawContext = null;
-      this._svg    = svg;
-      this._svgDoc = svgDoc;
-   }
+    /** @param skill - may be null. if Null - representable image of ESkillLevel.class */
+    constructor(/*ESkillLevel*/ skill, /* own SVG */ svg, /* SVG document */ svgDoc) {
+        super(skill);
+        this._drawContext = null;
+        this._svg    = svg;
+        this._svgDoc = svgDoc;
+    }
 
-   createImage() {
-      return this._drawContext = {
-         // nodes
-         background: null, // node example: <rect x='0' y='0' width='100' height='100' fill='hsla(112.71, 50.95%, 82.35%, 1)' />
-         shapes    : null, // nodes examples: <path stroke='#400000' stroke-width='0.7' fill-opacity='0.92'> .... </path>
-         menus     : null  // TODO...
-      };
-   }
+    createImage() {
+        return this._drawContext = {
+            // nodes
+            background: null, // node example: <rect x='0' y='0' width='100' height='100' fill='hsla(112.71, 50.95%, 82.35%, 1)' />
+            shapes    : null, // nodes examples: <path stroke='#400000' stroke-width='0.7' fill-opacity='0.92'> .... </path>
+            menus     : null  // TODO...
+        };
+    }
 
-   drawBody() {
-      this.drawIntoContext(this._drawContext, this._svg, this._svgDoc);
-   }
+    drawBody() {
+        this.drawIntoContext(this._drawContext, this._svg, this._svgDoc);
+    }
 
-   getSvgContent() { return getSvgContent(this._svg); }
+    getSvgContent() { return getSvgContent(this._svg); }
 
 }
 
@@ -1875,110 +1874,110 @@ class MosaicSkillImgSvg extends MosaicSkillImg {
  */
 class ImageController {
 
-   constructor(/*TImageView*/ imageView) {
-      /** MVC: view */
-      this._imageView = imageView;
-   }
+    constructor(/*TImageView*/ imageView) {
+        /** MVC: view */
+        this._imageView = imageView;
+    }
 
-   get View()  { return this._imageView; }
-   get Model() { return this.View.Model; }
-   get image() { return this.View.image; }
-   get size()  { return this.View.size; }
+    get View()  { return this._imageView; }
+    get Model() { return this.View.Model; }
+    get image() { return this.View.image; }
+    get size()  { return this.View.size; }
 
 }
 
 /** Transforming image model data. Usage for image animations. */
 class IModelTransformer {
 
-   get className() { throw new Error('Abstract method'); }
+    get className() { throw new Error('Abstract method'); }
 
-   /** The handler for the frame change event */
-   execute(/*IImageModel*/ model) { throw new Error('Abstract method'); }
+    /** The handler for the frame change event */
+    execute(/*IImageModel*/ model) { throw new Error('Abstract method'); }
 
 }
 
 /** Transforming of rotate angle */
 class RotateTransformer extends IModelTransformer {
 
-   static get className() { return 'RotateTransformer'; }
-   get className() { return RotateTransformer.className; }
+    static get className() { return 'RotateTransformer'; }
+    get className() { return RotateTransformer.className; }
 
-   execute(/*IImageModel*/ model) {
-      var am = model;
+    execute(/*IImageModel*/ model) {
+        var am = model;
 
-      var rotateAngleDelta = 360.0 / am.totalFrames; // 360° / TotalFrames
-      if (!am.animeDirection)
-         rotateAngleDelta = -rotateAngleDelta;
-      var rotateAngle = am.currentFrame * rotateAngleDelta;
-      am.rotateAngle = rotateAngle;
-   }
+        var rotateAngleDelta = 360.0 / am.totalFrames; // 360° / TotalFrames
+        if (!am.animeDirection)
+            rotateAngleDelta = -rotateAngleDelta;
+        var rotateAngle = am.currentFrame * rotateAngleDelta;
+        am.rotateAngle = rotateAngle;
+    }
 
 }
 
 /** Transforming of foreground color (rotation of foreground color) */
 class PolarLightFgTransformer extends IModelTransformer {
 
-   static get className() { return 'PolarLightFgTransformer'; }
-   get className() { return PolarLightFgTransformer.className; }
+    static get className() { return 'PolarLightFgTransformer'; }
+    get className() { return PolarLightFgTransformer.className; }
 
-   execute(/*IImageModel*/ model) {
-      var am = model;
-      if (!am.polarLights)
-         return;
+    execute(/*IImageModel*/ model) {
+        var am = model;
+        if (!am.polarLights)
+            return;
 
-      var rotateAngleDelta = 360.0 / am.totalFrames; // 360° / TotalFrames
-      if (!am.animeDirection)
-         rotateAngleDelta = -rotateAngleDelta;
+        var rotateAngleDelta = 360.0 / am.totalFrames; // 360° / TotalFrames
+        if (!am.animeDirection)
+            rotateAngleDelta = -rotateAngleDelta;
 
-      var hsv = new HSV(am.foregroundColor);
-      hsv.h += rotateAngleDelta;
-      am.foregroundColor = hsv.toColor();
-   }
+        var hsv = new HSV(am.foregroundColor);
+        hsv.h += rotateAngleDelta;
+        am.foregroundColor = hsv.toColor();
+    }
 
 }
 
 /** Transforming of logo rays */
 class RotateLogoTransformer extends IModelTransformer {
 
-   static get className() { return 'RotateLogoTransformer'; }
-   get className() { return RotateLogoTransformer.className; }
+    static get className() { return 'RotateLogoTransformer'; }
+    get className() { return RotateLogoTransformer.className; }
 
-   execute(/*IImageModel*/ model) {
-      var lm = model;
+    execute(/*IImageModel*/ model) {
+        var lm = model;
 
-      lm.rays.length = 0;
-      lm.inn .length = 0;
-      lm.oct .length = 0;
+        lm.rays.length = 0;
+        lm.inn .length = 0;
+        lm.oct .length = 0;
 
-      var size = lm.size;
-      var center = new Point(size.width/2.0, size.height/2.0);
-      var ra = lm.rotateAngle;
-      FigureHelper.rotateCollection(lm.rays, ra, center);
-      FigureHelper.rotateCollection(lm.inn , ra, center);
-      FigureHelper.rotateCollection(lm.oct , ra, center);
-   }
+        var size = lm.size;
+        var center = new Point(size.width/2.0, size.height/2.0);
+        var ra = lm.rotateAngle;
+        FigureHelper.rotateCollection(lm.rays, ra, center);
+        FigureHelper.rotateCollection(lm.inn , ra, center);
+        FigureHelper.rotateCollection(lm.oct , ra, center);
+    }
 
 }
 
 /** Transforming of logo palette */
 class PolarLightLogoTransformer extends IModelTransformer {
 
-   static get className() { return 'PolarLightLogoTransformer'; }
-   get className() { return PolarLightLogoTransformer.className; }
+    static get className() { return 'PolarLightLogoTransformer'; }
+    get className() { return PolarLightLogoTransformer.className; }
 
-   execute(/*IImageModel*/ model) {
-      var lm = model;
+    execute(/*IImageModel*/ model) {
+        var lm = model;
 
-      if (!lm.polarLights)
-         return;
+        if (!lm.polarLights)
+            return;
 
-      var rotateAngleDelta = 360.0 / lm.totalFrames; // 360° / TotalFrames
-      if (!lm.animeDirection)
-         rotateAngleDelta = -rotateAngleDelta;
-      var palette = lm.palette;
-      for (var i = 0; i < palette.length; ++i)
-         palette[i].h += rotateAngleDelta;
-   }
+        var rotateAngleDelta = 360.0 / lm.totalFrames; // 360° / TotalFrames
+        if (!lm.animeDirection)
+            rotateAngleDelta = -rotateAngleDelta;
+        var palette = lm.palette;
+        for (var i = 0; i < palette.length; ++i)
+            palette[i].h += rotateAngleDelta;
+    }
 
 }
 
@@ -1989,28 +1988,28 @@ class PolarLightLogoTransformer extends IModelTransformer {
  * @param <TImageView> MVC view
  * @param <TImageModel> MVC model
  */
- class AnimatedInnerController {
+class AnimatedInnerController {
 
-   constructor(/*TImageModel*/ model) {
-      this._model = model;
-      this._transformers = new Map();
-   }
+    constructor(/*TImageModel*/ model) {
+        this._model = model;
+        this._transformers = new Map();
+    }
 
-   addModelTransformer(/*IModelTransformer*/ transformer) {
-      if (!this._transformers.has(transformer.className))
-         this._transformers.set(transformer.className, transformer);
-   }
-   removeModelTransformer(/*string*/ transformerClassName) {
-      if (this._transformers.has(transformerClassName))
-         this._transformers.delete(transformerClassName);
-   }
+    addModelTransformer(/*IModelTransformer*/ transformer) {
+        if (!this._transformers.has(transformer.className))
+            this._transformers.set(transformer.className, transformer);
+    }
+    removeModelTransformer(/*string*/ transformerClassName) {
+        if (this._transformers.has(transformerClassName))
+            this._transformers.delete(transformerClassName);
+    }
 
-   executeTransformers() {
-      var self = this;
-      this._transformers.forEach(function(v,k) {
-         v.execute(self._model);
-      });
-   }
+    executeTransformers() {
+        var self = this;
+        this._transformers.forEach(function(v,k) {
+            v.execute(self._model);
+        });
+    }
 
 }
 
@@ -2022,34 +2021,34 @@ class PolarLightLogoTransformer extends IModelTransformer {
  */
 class AnimatedImgController extends ImageController {
 
-   constructor(/*TImageView*/ imageView) {
-      super(imageView);
-      this._innerController = new AnimatedInnerController(this.Model);
-   }
+    constructor(/*TImageView*/ imageView) {
+        super(imageView);
+        this._innerController = new AnimatedInnerController(this.Model);
+    }
 
-   addModelTransformer(/*IModelTransformer*/ transformer) {
-      this._innerController.addModelTransformer(transformer);
-   }
-   removeModelTransformer(/*string*/ transformerClassName) {
-      this._innerController.removeModelTransformer(transformerClassName);
-   }
-   executeTransformers() {
-      this._innerController.executeTransformers();
-   }
+    addModelTransformer(/*IModelTransformer*/ transformer) {
+        this._innerController.addModelTransformer(transformer);
+    }
+    removeModelTransformer(/*string*/ transformerClassName) {
+        this._innerController.removeModelTransformer(transformerClassName);
+    }
+    executeTransformers() {
+        this._innerController.executeTransformers();
+    }
 
-   useRotateTransforming(/*bool*/ enable) {
-      if (enable)
-         this.addModelTransformer(new RotateTransformer());
-      else
-         this.removeModelTransformer(RotateTransformer.className);
-   }
+    useRotateTransforming(/*bool*/ enable) {
+        if (enable)
+            this.addModelTransformer(new RotateTransformer());
+        else
+            this.removeModelTransformer(RotateTransformer.className);
+    }
 
-   usePolarLightFgTransforming(/*bool*/ enable) {
-      if (enable)
-         this.addModelTransformer(new PolarLightFgTransformer());
-      else
-         this.removeModelTransformer(PolarLightFgTransformer.className);
-   }
+    usePolarLightFgTransforming(/*bool*/ enable) {
+        if (enable)
+            this.addModelTransformer(new PolarLightFgTransformer());
+        else
+            this.removeModelTransformer(PolarLightFgTransformer.className);
+    }
 
 }
 
@@ -2061,44 +2060,44 @@ class AnimatedImgController extends ImageController {
  */
 class LogoController extends AnimatedImgController {
 
-   constructor(/*TImageView*/ imageView) {
-      super(imageView);
-   }
+    constructor(/*TImageView*/ imageView) {
+        super(imageView);
+    }
 
-   useRotateTransforming(/*bool*/ enable) {
-      super.useRotateTransforming(enable);
-      if (enable)
-         this.addModelTransformer(new RotateLogoTransformer());
-      else
-         this.removeModelTransformer(RotateLogoTransformer.className);
-   }
+    useRotateTransforming(/*bool*/ enable) {
+        super.useRotateTransforming(enable);
+        if (enable)
+            this.addModelTransformer(new RotateLogoTransformer());
+        else
+            this.removeModelTransformer(RotateLogoTransformer.className);
+    }
 
-   usePolarLightFgTransforming(/*bool*/ enable) {
-      //super.usePolarLightFgTransforming(enable); // hide super implementation!
-      if (enable)
-         this.addModelTransformer(new PolarLightLogoTransformer());
-      else
-         this.removeModelTransformer(PolarLightLogoTransformer.className);
-   }
+    usePolarLightFgTransforming(/*bool*/ enable) {
+        //super.usePolarLightFgTransforming(enable); // hide super implementation!
+        if (enable)
+            this.addModelTransformer(new PolarLightLogoTransformer());
+        else
+            this.removeModelTransformer(PolarLightLogoTransformer.className);
+    }
 
 }
 
 /** Logo image controller implementation for {@link LogoSvg} */
 class LogoControllerSvg extends LogoController {
 
-   constructor(/* own SVG */ svg, /* SVG document */ svgDoc) { super(new LogoSvg(svg, svgDoc)); }
+    constructor(/* own SVG */ svg, /* SVG document */ svgDoc) { super(new LogoSvg(svg, svgDoc)); }
 
-   getFileName() {
-      var m = this.Model;
-      var res = 'Logo';
-      res += '.' + m.size.width + 'x' + m.size.height;
-      if (m.animated) {
-         res += '.' + m.totalFrames + 'frames';
-         res += '.' + round(m.animatePeriod/1000, 2) + 'sec';
-         res += '.' + (m.animeDirection ? 'clockwise' : 'counterclockwise');
-      }
-      return res;
-   }
+    getFileName() {
+        var m = this.Model;
+        var res = 'Logo';
+        res += '.' + m.size.width + 'x' + m.size.height;
+        if (m.animated) {
+            res += '.' + m.totalFrames + 'frames';
+            res += '.' + round(m.animatePeriod/1000, 2) + 'sec';
+            res += '.' + (m.animeDirection ? 'clockwise' : 'counterclockwise');
+        }
+        return res;
+    }
 
 }
 
@@ -2111,256 +2110,252 @@ class LogoControllerSvg extends LogoController {
  */
 class MosaicSkillController extends AnimatedImgController {
 
-   constructor(/*bool*/ showBurgerMenu, /*TImageView*/ imageView) {
-      super(imageView);
+    constructor(/*bool*/ showBurgerMenu, /*TImageView*/ imageView) {
+        super(imageView);
 
-      this.View.burgerMenuModel.show = showBurgerMenu;
+        this.View.burgerMenuModel.show = showBurgerMenu;
 
-      this.usePolarLightFgTransforming(true);
-      this.useRotateTransforming(true);
-   }
+        this.usePolarLightFgTransforming(true);
+        this.useRotateTransforming(true);
+    }
 
 }
 
 /** MosaicsSkill image controller implementation for {@link MosaicSkillImgSvg} */
 class MosaicSkillImgControllerSvg extends MosaicSkillController {
 
-   constructor(/*ESkillLevel*/ skill, /* own SVG */ svg, /* SVG document */ svgDoc) {
-      super(skill == null, new MosaicSkillImgSvg(skill, svg, svgDoc));
-   }
+    constructor(/*ESkillLevel*/ skill, /* own SVG */ svg, /* SVG document */ svgDoc) {
+        super(skill == null, new MosaicSkillImgSvg(skill, svg, svgDoc));
+    }
 
-   getFileName() {
-      var m = this.Model;
-      var res = 'MosaicSkillImg.' + ESkillLevel.getName(m.mosaicSkill);
-      res += '.' + m.size.width + 'x' + m.size.height;
-      if (m.animated) {
-         res += '.' + m.totalFrames + 'frames';
-         res += '.' + round(m.animatePeriod/1000, 2) + 'sec';
-         res += '.' + (m.animeDirection ? 'clockwise' : 'counterclockwise');
-      }
-      return res;
-   }
+    getFileName() {
+        var m = this.Model;
+        var res = 'MosaicSkillImg.' + ESkillLevel.getName(m.mosaicSkill);
+        res += '.' + m.size.width + 'x' + m.size.height;
+        if (m.animated) {
+            res += '.' + m.totalFrames + 'frames';
+            res += '.' + round(m.animatePeriod/1000, 2) + 'sec';
+            res += '.' + (m.animeDirection ? 'clockwise' : 'counterclockwise');
+        }
+        return res;
+    }
 
 }
 
 function initSvg(evt) {
-   if (!window.svgDoc)
-      window.svgDoc = evt.target.ownerDocument;
-   var svg = evt.target;
-   Promise.resolve().then(function() { work(svg, window.svgDoc); } )
+    if (!window.svgDoc)
+        window.svgDoc = evt.target.ownerDocument;
+    var svg = evt.target;
+    Promise.resolve().then(function() { work(svg, window.svgDoc); } )
 }
 
 function work(svg, svgDoc) {
-   /** /
-   {
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>');
-      var hsv = new HSV();
-      for (var i=0; i<=360; ++i) {
-         hsv.h = i;
-         console.log('<item android:color="#' + hsv.toColor().asHexString + '" android:offset="' + round(i/360, 4) + '" />');
-      }
-      console.log('<<<<<<<<<<<<<<<<<<<<<<<');
-   }
-   /**/
+    /** /
+    {
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>');
+        var hsv = new HSV();
+        for (var i=0; i<=360; ++i) {
+            hsv.h = i;
+            console.log('<item android:color="#' + hsv.toColor().asHexString + '" android:offset="' + round(i/360, 4) + '" />');
+        }
+        console.log('<<<<<<<<<<<<<<<<<<<<<<<');
+    }
+    /**/
 
-   svg.setAttributeNS(null, 'viewBox', '0 0 ' + Settings.width + ' ' + Settings.height);
-   svg.setAttributeNS(null, 'width'  , Settings.width);
-   svg.setAttributeNS(null, 'height' , Settings.height);
+    svg.setAttributeNS(null, 'viewBox', '0 0 ' + Settings.width + ' ' + Settings.height);
+    svg.setAttributeNS(null, 'width'  , Settings.width);
+    svg.setAttributeNS(null, 'height' , Settings.height);
 
 
-   var cntrllr;
+    var cntrllr;
 
-   switch (Settings.testedImageType) {
-   case 0:
-      cntrllr = new LogoControllerSvg(svg, svgDoc);
-      break;
-   case 1:
-      cntrllr = new MosaicSkillImgControllerSvg(Settings.mosaicSkill, svg, svgDoc);
-      break;
-   }
-   Settings.currentImageController = cntrllr;
+    switch (Settings.testedImageType) {
+    case 0:
+        cntrllr = new LogoControllerSvg(svg, svgDoc);
+        break;
+    case 1:
+        cntrllr = new MosaicSkillImgControllerSvg(Settings.mosaicSkill, svg, svgDoc);
+        break;
+    }
+    Settings.currentImageController = cntrllr;
 
-   cntrllr.useRotateTransforming(Settings.useRotateTransforming);
-   cntrllr.usePolarLightFgTransforming(Settings.usePolarLightFgTransforming);
+    cntrllr.useRotateTransforming(Settings.useRotateTransforming);
+    cntrllr.usePolarLightFgTransforming(Settings.usePolarLightFgTransforming);
 
-   // 1. configure image from settings
-   var model = cntrllr.Model;
-   model.size.width  = Settings.width;
-   model.size.height = Settings.height;
-   model.padding = Settings.pad;
-   if (model instanceof AnimatedImageModel) {
-      model.mosaicSkill       = Settings.mosaicSkill;
-      model.borderWidth       = Settings.borderWidth;
-      model.backgroundColor   = Settings.backgroundColor;
-      model.foregroundColor.a = Settings.foregroundAlpha;
-      model.animated          = Settings.animated;
-      model.animeDirection    = Settings.animeDirection;
-      model.animatePeriod     = Settings.animatePeriod;
-      model.totalFrames       = Settings.totalFrames;
-      // if (cntrllr.View instanceof WithBurgerMenuView) {
-      //    cntrllr.View.burgerMenuModel.show = Settings.showBurgerMenu;
-      // }
-      if (model instanceof LogoModel) {
-         model.useGradient = Settings.useGradientFill;
-      }
-   } else {
-      throw new Error('implement me...');
-   }
+    // 1. configure image from settings
+    var model = cntrllr.Model;
+    model.size.width  = Settings.width;
+    model.size.height = Settings.height;
+    model.padding = Settings.pad;
+    if (model instanceof AnimatedImageModel) {
+        model.mosaicSkill       = Settings.mosaicSkill;
+        model.borderWidth       = Settings.borderWidth;
+        model.backgroundColor   = Settings.backgroundColor;
+        model.foregroundColor.a = Settings.foregroundAlpha;
+        model.animated          = Settings.animated;
+        model.animeDirection    = Settings.animeDirection;
+        model.animatePeriod     = Settings.animatePeriod;
+        model.totalFrames       = Settings.totalFrames;
+        // if (cntrllr.View instanceof WithBurgerMenuView) {
+        //    cntrllr.View.burgerMenuModel.show = Settings.showBurgerMenu;
+        // }
+        if (model instanceof LogoModel) {
+            model.useGradient = Settings.useGradientFill;
+        }
+    } else {
+        throw new Error('implement me...');
+    }
 
-   if (model.animated)
-      // 2. run image animation
-      for (var i=0; i<model.totalFrames+1; ++i) {
-         model.currentFrame = i;
-         cntrllr.executeTransformers();
-         cntrllr.View.invalidate();
-         cntrllr.image; // call draw
-      }
-   else
-      cntrllr.image; // call draw
+    if (model.animated)
+        // 2. run image animation
+        for (var i=0; i<model.totalFrames+1; ++i) {
+            model.currentFrame = i;
+            cntrllr.executeTransformers();
+            cntrllr.View.invalidate();
+            cntrllr.image; // call draw
+        }
+    else
+        cntrllr.image; // call draw
 
-   var svgContent = cntrllr.View.getSvgContent();
-   console.log(cntrllr.getFileName() + '.svg' + '\n' + svgContent);
-   document.getElementById('svgSource').value = svgContent;
+    var svgContent = cntrllr.View.getSvgContent();
+    console.log(cntrllr.getFileName() + '.svg' + '\n' + svgContent);
+    document.getElementById('svgSource').value = svgContent;
 
-   onLoadXmlDoc('logo_svg_to_vector_android.xsl')
-      .then(
-         function(resp) {
-            document.getElementById('xsltSource').value = resp.xml;
+    onLoadXmlDoc('logo_svg_to_vector_android.xsl')
+        .then(
+            function(resp) {
+                document.getElementById('xsltSource').value = resp.xml;
 
-            var xsl = resp.xmlDoc;
-            var xml = parseXml(svgContent);
-            var xmlOut = xslTransform(xml, xsl);
+                var xsl = resp.xmlDoc;
+                var xml = parseXml(svgContent);
+                var xmlOut = xslTransform(xml, xsl);
 
-            document.getElementById('vectorSource').value = new XMLSerializer().serializeToString(xmlOut);
-         },
-         function(err) {
-            document.getElementById('xsltSource').value = JSON.stringify(err, null, 3);
-         }
-      ).catch(function(err) {
-         document.getElementById('vectorSource').value = err.toString();
-         console.error(err);
-      });
+                document.getElementById('vectorSource').value = new XMLSerializer().serializeToString(xmlOut);
+            },
+            function(err) {
+                document.getElementById('xsltSource').value = JSON.stringify(err, null, 3);
+            }
+        ).catch(function(err) {
+            document.getElementById('vectorSource').value = err.toString();
+            console.error(err);
+        });
 }
 
 function tryTransform() {
-   try {
-      var xsl = parseXml(document.getElementById('xsltSource').value);
-      var xml = parseXml(document.getElementById('svgSource').value);
-      var xmlOut = xslTransform(xml, xsl);
+    try {
+        var xsl = parseXml(document.getElementById('xsltSource').value);
+        var xml = parseXml(document.getElementById('svgSource').value);
+        var xmlOut = xslTransform(xml, xsl);
 
-      document.getElementById('vectorSource').value = new XMLSerializer().serializeToString(xmlOut);
-   } catch(ex) {
-      document.getElementById('vectorSource').value = ex.toString();
-   }
+        document.getElementById('vectorSource').value = new XMLSerializer().serializeToString(xmlOut);
+    } catch(ex) {
+        document.getElementById('vectorSource').value = ex.toString();
+    }
 }
 
 function makeSnapshot() {
-   var svg = document.querySelector('svg');
-   var html = svg.parentNode.innerHTML;
-   var imgsrc = 'data:image/svg+xml;base64,' + btoa(html);
+    var svg = document.querySelector('svg');
+    var html = svg.parentNode.innerHTML;
+    var imgsrc = 'data:image/svg+xml;base64,' + btoa(html);
 
-   var canvas = document.createElement('canvas');
-   svg.parentNode.appendChild(canvas);
-   var context = canvas.getContext('2d');
-   canvas.setAttribute('width' , Settings.width);
-   canvas.setAttribute('height', Settings.height);
+    var canvas = document.createElement('canvas');
+    svg.parentNode.appendChild(canvas);
+    var context = canvas.getContext('2d');
+    canvas.setAttribute('width' , Settings.width);
+    canvas.setAttribute('height', Settings.height);
 
     var image = new Image();
     image.src = imgsrc;
     image.onload = function() {
-      context.drawImage(image, 0, 0);
-      var canvasdata = canvas.toDataURL('image/png');
+        context.drawImage(image, 0, 0);
+        var canvasdata = canvas.toDataURL('image/png');
 
-      var a = document.getElementById('savePng');
-      a.href = canvasdata;
-      a.download = !Settings.currentImageController
-                        ? 'export_' + Date.now()                        + '.png'
-                        : Settings.currentImageController.getFileName() + '.png';
-      a.hidden = false;
-      //canvas.parentNode.removeChild(canvas);
-    };
+        var a = document.getElementById('savePng');
+        a.href = canvasdata;
+        a.download = !Settings.currentImageController
+                          ? 'export_' + Date.now()                        + '.png'
+                          : Settings.currentImageController.getFileName() + '.png';
+        a.hidden = false;
+        //canvas.parentNode.removeChild(canvas);
+     };
 }
 
 function onDeltaHsvChanged() {
-   reloadSvg();
+    reloadSvg();
 }
 function reloadSvg() {
-   var svg = document.querySelector('svg');
-   [...svg.childNodes].forEach(function(n) { svg.removeChild(n); } );
-   Promise.resolve().then(function() { work(svg, window.document); } )
+    var svg = document.querySelector('svg');
+    [...svg.childNodes].forEach(function(n) { svg.removeChild(n); } );
+    Promise.resolve().then(function() { work(svg, window.document); } )
 }
 
 function getSvgContent(svg) {
-   var clean = function() {
-      svg.removeAttribute('onload');
-      svg.removeAttribute('style');
-      return svg;
-   }
+    var clean = function() {
+        svg.removeAttribute('onload');
+        svg.removeAttribute('style');
+        return svg;
+    }
 
-   var format = function(node, value) {
-      var indentBefore = new Array(value++ + 1).join('  '),
-         indentAfter  = new Array(value - 1).join('  '),
-         textNode, childNode;
-      for (var i = 0; i < node.children.length; i++) {
-         textNode = document.createTextNode('\n' + indentBefore);
-         childNode = node.children[i];
-         node.insertBefore(textNode, childNode);
-         format(childNode, value);
-         if (node.lastElementChild == childNode) {
-            textNode = document.createTextNode('\n' + indentAfter);
-            node.appendChild(textNode);
-         }
-      }
-      textNode = childNode = null;
-      return node;
-   }
+    var format = function(node, value) {
+        var indentBefore = new Array(value++ + 1).join('  '),
+            indentAfter  = new Array(value - 1).join('  '),
+            textNode, childNode;
+        for (var i = 0; i < node.children.length; i++) {
+            textNode = document.createTextNode('\n' + indentBefore);
+            childNode = node.children[i];
+            node.insertBefore(textNode, childNode);
+            format(childNode, value);
+            if (node.lastElementChild == childNode) {
+                textNode = document.createTextNode('\n' + indentAfter);
+                node.appendChild(textNode);
+            }
+        }
+        textNode = childNode = null;
+        return node;
+    }
 
-   return format(clean(), 1).outerHTML;
+    return format(clean(), 1).outerHTML;
 }
 
 function parseXml(xmlStr) {
-   return new window.DOMParser().parseFromString(xmlStr, "text/xml");
+    return new window.DOMParser().parseFromString(xmlStr, "text/xml");
 }
 
 function onLoadXmlDoc(filename) {
-   return new Promise(function(resolve, reject) {
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', filename);
-      //try {xhr.responseType = "msxml-document"} catch(err) {} // Helping IE11
-      xhr.addEventListener("error", function(ev) {
-         reject(
-               {
-                  failed           : true,
-                  requestReadyState: xhr.readyState,
-                  httpStatus       : xhr.status,
-                  httpStatusText   : xhr.statusText,
-                  responseHeaders  : xhr.getAllResponseHeaders(),
-                  response         : xhr.response
-               });
-      });
-      xhr.addEventListener("load", function(ev) {
-         var contentType = xhr.getResponseHeader("Content-Type");
-         resolve(
-               {
-                  failed             : false,
-                  requestReadyState  : xhr.readyState,
-                  httpStatus         : xhr.status,
-                  httpStatusText     : xhr.statusText,
-                  responseHeaders    : xhr.getAllResponseHeaders(),
-                  responseContentType: contentType,
-                  response           : xhr.response,
-                  xml                : (contentType === 'text/xml') ? xhr.responseText : null,
-                  xmlDoc             : (contentType === 'text/xml') ? xhr.responseXML  : null
-               });
-      });
-      xhr.send();
-   });
+    return new Promise(function(resolve, reject) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', filename);
+        //try {xhr.responseType = "msxml-document"} catch(err) {} // Helping IE11
+        xhr.addEventListener("error", function(ev) {
+            reject({failed           : true,
+                    requestReadyState: xhr.readyState,
+                    httpStatus       : xhr.status,
+                    httpStatusText   : xhr.statusText,
+                    responseHeaders  : xhr.getAllResponseHeaders(),
+                    response         : xhr.response
+                  });
+        });
+        xhr.addEventListener("load", function(ev) {
+            var contentType = xhr.getResponseHeader("Content-Type");
+            resolve({failed             : false,
+                     requestReadyState  : xhr.readyState,
+                     httpStatus         : xhr.status,
+                     httpStatusText     : xhr.statusText,
+                     responseHeaders    : xhr.getAllResponseHeaders(),
+                     responseContentType: contentType,
+                     response           : xhr.response,
+                     xml                : (contentType === 'text/xml') ? xhr.responseText : null,
+                     xmlDoc             : (contentType === 'text/xml') ? xhr.responseXML  : null
+                   });
+        });
+        xhr.send();
+    });
 }
 
 function xslTransform(xml, xsl) {
-   var xsltProcessor = new XSLTProcessor();
-   xsltProcessor.importStylesheet(xsl);
-   return xsltProcessor.transformToFragment(xml, document);
+    var xsltProcessor = new XSLTProcessor();
+    xsltProcessor.importStylesheet(xsl);
+    return xsltProcessor.transformToFragment(xml, document);
 }
 
 </script>

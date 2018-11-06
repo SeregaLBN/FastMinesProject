@@ -3,25 +3,24 @@ using System.Runtime.CompilerServices;
 
 namespace fmg.common.notyfier {
 
-   public interface IPropertyChangedExEventArgs<out T> {
+    public interface IPropertyChangedExEventArgs<out T> {
 
-      T OldValue { get; }
-      T NewValue { get; }
+        T OldValue { get; }
+        T NewValue { get; }
 
-   }
+    }
 
-   public class PropertyChangedExEventArgs<T> : PropertyChangedEventArgs, IPropertyChangedExEventArgs<T> {
+    public class PropertyChangedExEventArgs<T> : PropertyChangedEventArgs, IPropertyChangedExEventArgs<T> {
 
-      public PropertyChangedExEventArgs(T oldValue, T newValue, [CallerMemberName] string propertyName = null) :
-         base(propertyName)
-      {
-         OldValue = oldValue;
-         NewValue = newValue;
-      }
+        public PropertyChangedExEventArgs(T oldValue, T newValue, [CallerMemberName] string propertyName = null) :
+           base(propertyName) {
+            OldValue = oldValue;
+            NewValue = newValue;
+        }
 
-      public T OldValue { get; }
-      public T NewValue { get; }
+        public T OldValue { get; }
+        public T NewValue { get; }
 
-   }
+    }
 
 }
