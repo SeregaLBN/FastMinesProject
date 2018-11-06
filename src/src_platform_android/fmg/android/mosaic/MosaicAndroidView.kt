@@ -95,7 +95,7 @@ abstract class MosaicAndroidView<TImage, TImageInner: Any, TMosaicModel : Mosaic
             // ...when the cells and update region intersect
             {
                 ++tmp
-                val rcInner = cell.getRcInner(pen.width)
+                val rcInner = cell.getRcInner(pen.width).moveXY(offset)
                 val poly = RegionDouble.moveXY(cell.region, offset).toPolygon()
 
                 //if (!isIconicMode)
@@ -125,23 +125,20 @@ abstract class MosaicAndroidView<TImage, TImageInner: Any, TMosaicModel : Mosaic
                     //g.drawRect((int)rcInner.x, (int)rcInner.y, (int)rcInner.width, (int)rcInner.height);
 
                     val paintImage = Consumer<TImageInner> { img ->
-                        if (img is android.graphics.Bitmap) {
-                            val x = (rcInner.x + offset.width ).toFloat()
-                            val y = (rcInner.y + offset.height).toFloat()
-                            g.drawBitmap(img as android.graphics.Bitmap, x, y, null)
-                        } else {
+                        if (img is android.graphics.Bitmap)
+                            g.drawBitmap(img as android.graphics.Bitmap, (rcInner.x + offset.width ).toInt(), (rcInner.y + offset.height).toInt(), null)
+                        else
                             throw RuntimeException("Unsupported image type " + img.javaClass.simpleName)
-                        }
                     }
 
                     // 2.1.2. output pictures
                     if (model.imgFlag != null &&
                             cell.state.status == EState._Close &&
-                            cell.state.close == EClose._Flag) {
+                            cell.state.close  == EClose._Flag) {
                         paintImage.accept(model.imgFlag)
                     } else if (model.imgMine != null &&
                             cell.state.status == EState._Open &&
-                            cell.state.open == EOpen._Mine) {
+                            cell.state.open   == EOpen._Mine) {
                         paintImage.accept(model.imgMine)
                     } else
                     // 2.1.3. output text
@@ -157,7 +154,6 @@ abstract class MosaicAndroidView<TImage, TImageInner: Any, TMosaicModel : Mosaic
                             szCaption = cell.state.open.toCaption()
                         }
                         if (szCaption != null && szCaption.isNotEmpty()) {
-                            rcInner.moveXY(offset.width, offset.height)
                             if (cell.state.isDown)
                                 rcInner.moveXY(1.0, 1.0)
                             drawText(g, szCaption, rcInner)

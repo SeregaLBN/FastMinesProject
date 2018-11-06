@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Numerics;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
@@ -8,7 +9,7 @@ using fmg.common.geom;
 using fmg.common.geom.util;
 using fmg.uwp.utils;
 
-namespace fmg.uwp.draw.mosaic.win2d {
+namespace fmg.uwp.mosaic.win2d {
 
    public static class CanvasExt {
 
@@ -45,15 +46,10 @@ namespace fmg.uwp.draw.mosaic.win2d {
          };
       }
 
-      public static CanvasGeometry CreatePolygon(this ICanvasResourceCreator resourceCreator, RegionDouble region, BoundDouble? padding = null) {
-         var x = padding?.Left;
-         var y = padding?.Top;
-         var points = new Vector2[region.CountPoints];
-         for (var i = 0; i < region.CountPoints; ++i) {
-            var p = region.GetPoint(i);
-            points[i] = new Vector2((float)(p.X + x), (float)(p.Y + y));
-         }
-         return CanvasGeometry.CreatePolygon(resourceCreator, points);
+      public static CanvasGeometry CreatePolygon(this ICanvasResourceCreator resourceCreator, RegionDouble region, SizeDouble? offset = null) {
+         var x = offset?.Width;
+         var y = offset?.Height;
+         return CanvasGeometry.CreatePolygon(resourceCreator, region.Points.Select(p => new Vector2((float)(p.X + x), (float)(p.Y + y))).ToArray());
       }
 
       public static CanvasGeometry BuildArc(this ICanvasResourceCreator resourceCreator, double x, double y, double width, double height, double startAngle, double arcAngle, bool clockwise, bool loopClosed) {
