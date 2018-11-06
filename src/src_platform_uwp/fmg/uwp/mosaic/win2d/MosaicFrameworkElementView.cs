@@ -8,7 +8,7 @@ namespace fmg.uwp.mosaic.win2d {
 #if false
 
     /// summary> MVC: view. UWP Win2D implementation. Base implementation View located into control <see cref="Windows.UI.Xaml.FrameworkElement"/> */
-    public abstract class AMosaicViewInControl<TControl> : AMosaicViewWin2D
+    public abstract class MosaicFrameworkElementView<TControl> : AMosaicViewWin2D
         where TControl : FrameworkElement
     {
         protected TControl _control;
