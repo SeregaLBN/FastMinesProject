@@ -78,8 +78,8 @@ namespace fmg.core.mosaic {
         }
 
         /// <summary>Draw modified mosaic cells</summary>
-        /// <param name="requiredCells">Cells to be redrawn. NULL - redraw the full mosaic.</param>
-        protected abstract void DrawModified(ICollection<BaseCell> requiredCells);
+        /// <param name="modifiedCells">Cells to be redrawn. NULL - redraw the full mosaic.</param>
+        protected abstract void DrawModified(ICollection<BaseCell> modifiedCells);
 
         /// <summary> repaint all </summary>
         protected override void DrawBody() {

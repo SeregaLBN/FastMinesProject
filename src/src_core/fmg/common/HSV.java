@@ -63,8 +63,8 @@ public class HSV {
     }
 
     public HSV(Color rgba) {
-        this.a = rgba.a;
-        fromColorDouble(rgba.r, rgba.g, rgba.b);
+        this.a = rgba.getA();
+        fromColorDouble(rgba.getR(), rgba.getG(), rgba.getB());
     }
 
     public HSV addHue(double addonH) {

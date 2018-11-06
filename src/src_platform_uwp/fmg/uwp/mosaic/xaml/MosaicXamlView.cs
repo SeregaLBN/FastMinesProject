@@ -83,14 +83,14 @@ namespace fmg.uwp.mosaic.xaml {
             return _brushCacheMap[clr];
         }
 
-        protected override void DrawModified(ICollection<BaseCell> requiredCells) {
+        protected override void DrawModified(ICollection<BaseCell> modifiedCells) {
             var container = Control;
 
             //System.Diagnostics.Debug.Assert(container != null);
             if (container == null)
                 return;
 
-            DrawOverXaml(requiredCells, true);
+            DrawOverXaml(modifiedCells, true);
         }
 
         private void DrawOverXaml(IEnumerable<BaseCell> modifiedCells, bool drawBk) {
@@ -114,7 +114,7 @@ namespace fmg.uwp.mosaic.xaml {
             var margin = m.Margin;
             var offset = new SizeDouble(margin.Left + padding.Left,
                                         margin.Top + padding.Top);
-            var isIconicMode = pen.ColorLight == pen.ColorShadow;
+            var isSimpleDraw = pen.ColorLight == pen.ColorShadow;
 
             // 2. paint all cells
             var xamlBinder = MapCellToShape;
@@ -128,7 +128,7 @@ namespace fmg.uwp.mosaic.xaml {
                { // 2.1. paint component
                     { // 2.1.1. paint cell background
                         Color clr;
-                        if (isIconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
+                        if (isSimpleDraw) // когда русуется иконка, а не игровое поле, - делаю попроще...
                             clr = m.BackgroundColor;
                         else
                             clr = cell.GetBackgroundFillColor(

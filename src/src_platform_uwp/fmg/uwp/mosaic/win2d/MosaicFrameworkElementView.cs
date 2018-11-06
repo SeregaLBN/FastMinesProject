@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Windows.UI.Xaml;
 using Microsoft.Graphics.Canvas;
 using fmg.core.mosaic;
@@ -46,6 +47,16 @@ namespace fmg.uwp.mosaic.win2d {
                 if (_imgFlag == null)
                     _imgFlag = new Flag.ControllerBitmap(_resourceCreator);
                 return _imgFlag;
+            }
+        }
+
+        protected override void OnPropertyModelChanged(object sender, PropertyChangedEventArgs ev) {
+            base.OnPropertyModelChanged(sender, ev);
+            switch (ev.PropertyName) {
+            case nameof(MosaicGameModel.MosaicType):
+            case nameof(MosaicGameModel.Area):
+                ChangeSizeImagesMineFlag();
+                break;
             }
         }
 

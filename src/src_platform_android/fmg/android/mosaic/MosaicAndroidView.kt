@@ -69,7 +69,7 @@ abstract class MosaicAndroidView<TImage, TImageInner: Any, TMosaicModel : Mosaic
         val margin = model.margin
         val offset = SizeDouble(margin.left + padding.left,
                 margin.top + padding.top)
-        val isIconicMode = pen.colorLight == pen.colorShadow
+        val isSimpleDraw = pen.colorLight == pen.colorShadow
         val bkFill = model.backgroundFill
 
         if (MosaicView._DEBUG_DRAW_FLOW)
@@ -80,7 +80,7 @@ abstract class MosaicAndroidView<TImage, TImageInner: Any, TMosaicModel : Mosaic
             val rcInner = cell.getRcInner(pen.width).moveXY(offset)
             val poly = RegionDouble.moveXY(cell.region, offset).toPolygon()
 
-            //if (!isIconicMode)
+            //if (!isSimpleDraw)
             run {
                 g.save()
                 // ограничиваю рисование только границами своей фигуры
@@ -92,7 +92,7 @@ abstract class MosaicAndroidView<TImage, TImageInner: Any, TMosaicModel : Mosaic
 
 
                 // 2.1.1. paint cell background
-                //if (!isIconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
+                //if (!isSimpleDraw) // когда русуется иконка, а не игровое поле, - делаю попроще...
                 run {
                     val bkClrCell = cell.getBackgroundFillColor(bkFill.mode,
                             bkClr,
@@ -160,7 +160,7 @@ abstract class MosaicAndroidView<TImage, TImageInner: Any, TMosaicModel : Mosaic
                     pen.colorLight
                 else
                     pen.colorShadow).toColor()
-                if (isIconicMode) {
+                if (isSimpleDraw) {
                     g.drawPath(poly, paintStroke)
                 } else {
                     val s = cell.shiftPointBorderIndex
@@ -188,7 +188,7 @@ abstract class MosaicAndroidView<TImage, TImageInner: Any, TMosaicModel : Mosaic
                 //g.drawRect(rcInner.x.toFloat(), rcInner.y.toFloat(), rcInner.width.toFloat(), rcInner.height.toFloat());
             }
 
-            //if (!isIconicMode)
+            //if (!isSimpleDraw)
             run {
                 g.restore()
             }

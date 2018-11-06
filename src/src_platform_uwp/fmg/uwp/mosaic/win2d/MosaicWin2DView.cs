@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.ComponentModel;
 using System.Collections.Generic;
 using Windows.UI.Text;
@@ -13,7 +12,6 @@ using fmg.core.types;
 using fmg.core.mosaic;
 using fmg.core.mosaic.cells;
 using fmg.uwp.utils;
-using fmg.uwp.utils.win2d;
 
 namespace fmg.uwp.mosaic.win2d {
 
@@ -60,7 +58,7 @@ namespace fmg.uwp.mosaic.win2d {
             var margin = model.Margin;
             var offset = new SizeDouble(margin.Left + padding.Left,
                                         margin.Top  + padding.Top);
-            bool isIconicMode = (pen.ColorLight == pen.ColorShadow);
+            bool isSimpleDraw = (pen.ColorLight == pen.ColorShadow);
             var bkFill = model.BkFill;
             var font = Font;
             var cssBL = CssBorderLine;
@@ -78,15 +76,15 @@ namespace fmg.uwp.mosaic.win2d {
                 var bkClrCell = cell.GetBackgroundFillColor(bkFill.Mode,
                                                             bkClr,
                                                             bkFill.GetColor);
-                using (var polygon =  isIconicMode ? null : ds.CreatePolygon(region, offset))
-                using (var geom    = (isIconicMode || drawBk || (bkClrCell != bkClr)) ? ds.BuildLines(region, offset) : null)
+                using (var polygon =  isSimpleDraw ? null : ds.CreatePolygon(region, offset))
+                using (var geom    = (isSimpleDraw || drawBk || (bkClrCell != bkClr)) ? ds.BuildLines(region, offset) : null)
                 {
                     // ограничиваю рисование только границами своей фигуры
-                    using (var layer = isIconicMode ? null : ds.CreateLayer(1, polygon)) {
+                    using (var layer = isSimpleDraw ? null : ds.CreateLayer(1, polygon)) {
 
                         { // 2.1. paint component
                             // 2.1.1. paint cell background
-                            //if (!isIconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
+                            //if (!isSimpleDraw) // когда русуется иконка, а не игровое поле, - делаю попроще...
                             {
                                 if (drawBk || (bkClrCell != bkClr))
                                     ds.FillGeometry(geom, bkClrCell.ToWinColor());
@@ -139,7 +137,7 @@ namespace fmg.uwp.mosaic.win2d {
 
                                 var down = cell.State.Down || (cell.State.Status == EState._Open);
                                 var color = (down ? pen.ColorLight : pen.ColorShadow).ToWinColor();
-                                if (isIconicMode) {
+                                if (isSimpleDraw) {
                                     ds.DrawGeometry(geom, color, (float)pen.Width);
                                 } else {
                                     var s = cell.GetShiftPointBorderIndex();

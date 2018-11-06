@@ -24,6 +24,8 @@ using fmg.core.types;
 using fmg.core.mosaic;
 using fmg.uwp.utils;
 using fmg.uwp.mosaic.xaml;
+using Win2dMosaicCanvasSwapController = fmg.uwp.mosaic.win2d.MosaicCanvasSwapChainPanelController;
+using Win2dMosaicCanvasSwapView       = fmg.uwp.mosaic.win2d.MosaicCanvasSwapChainPanelView;
 using Win2dMosaicCanvasVirtController = fmg.uwp.mosaic.win2d.MosaicCanvasVirtualControlController;
 using Win2dMosaicCanvasVirtView       = fmg.uwp.mosaic.win2d.MosaicCanvasVirtualControlView;
 using Win2dMosaicImg                  = fmg.uwp.img.win2d.MosaicImg;
@@ -218,12 +220,24 @@ namespace Test.FastMines.Uwp.Images {
             return mosaicController;
         }
 
+        private void TestWin2dMosaicsCanvasSwapControl(ICanvasResourceCreator resourceCreator) {
+#if DEBUG
+            Win2dMosaicCanvasSwapView._DEBUG_DRAW_FLOW = true;
+#endif
+            TestApp<CanvasSwapChainPanel, CanvasBitmap, Win2dMosaicCanvasSwapController, Win2dMosaicCanvasSwapView, DummyView<CanvasSwapChainPanel>, MosaicDrawModel<CanvasBitmap>, DummyModel>(
+                () => new Win2dMosaicCanvasSwapController[] {
+                  //TuneMosaicGameController<CanvasSwapChainPanel, CanvasBitmap, Win2dMosaicCanvasSwapController, Win2dMosaicCanvasSwapView, MosaicDrawModel<CanvasBitmap>>(new Win2dMosaicCanvasSwapController(resourceCreator)),
+                    TuneMosaicGameController<CanvasSwapChainPanel, CanvasBitmap, Win2dMosaicCanvasSwapController, Win2dMosaicCanvasSwapView, MosaicDrawModel<CanvasBitmap>>(new Win2dMosaicCanvasSwapController(resourceCreator))
+            });
+        }
+
         private void TestWin2dMosaicsCanvasVirtualControl(ICanvasResourceCreator resourceCreator) {
 #if DEBUG
             Win2dMosaicCanvasVirtView._DEBUG_DRAW_FLOW = true;
 #endif
             TestApp<CanvasVirtualControl, CanvasBitmap, Win2dMosaicCanvasVirtController, Win2dMosaicCanvasVirtView, DummyView<CanvasVirtualControl>, MosaicDrawModel<CanvasBitmap>, DummyModel>(
                 () => new Win2dMosaicCanvasVirtController[] {
+                  //TuneMosaicGameController<CanvasVirtualControl, CanvasBitmap, Win2dMosaicCanvasVirtController, Win2dMosaicCanvasVirtView, MosaicDrawModel<CanvasBitmap>>(new Win2dMosaicCanvasVirtController(resourceCreator)),
                     TuneMosaicGameController<CanvasVirtualControl, CanvasBitmap, Win2dMosaicCanvasVirtController, Win2dMosaicCanvasVirtView, MosaicDrawModel<CanvasBitmap>>(new Win2dMosaicCanvasVirtController(resourceCreator))
             });
         }
@@ -303,6 +317,7 @@ namespace Test.FastMines.Uwp.Images {
 
             var device = CanvasDevice.GetSharedDevice();
             _onCreateImages = new Action[] {
+                () => TestWin2dMosaicsCanvasSwapControl(device),
                 () => TestWin2dMosaicsCanvasVirtualControl(device),
                 TestXamlMosaicControl,
                 TestWBmpMosaicControl,
@@ -382,6 +397,8 @@ namespace Test.FastMines.Uwp.Images {
             bool imgIsControl = typeof(FrameworkElement).GetTypeInfo().IsAssignableFrom(typeof(TImage).GetTypeInfo());
 
             void onCellTilingHandler(bool applySettings, bool createImgControls, bool resized) {
+                if (images.Count == 1)      // if one image...
+                    applySettings = false;  // ... then test as is
                 resized = resized || createImgControls || applySettings;
 
                 if (applySettings) {
@@ -427,8 +444,8 @@ namespace Test.FastMines.Uwp.Images {
                                     Mode = BindingMode.OneWay
                                 });
                             } else
-                   #endregion
-                   #region CanvasBitmap
+                    #endregion
+                    #region CanvasBitmap
                             if (typeof(TImage) == typeof(CanvasBitmap)) {
                                 var cnvsCtrl = new CanvasControl {
                                     //ClearColor = ColorExt.RandomColor(_td.GetRandom).Brighter().ToWinColor(),
@@ -464,7 +481,7 @@ namespace Test.FastMines.Uwp.Images {
                                     cnvsCtrl.Draw -= onDraw;
                                 };
                             } else
-                   #endregion
+                    #endregion
                             {
                                 throw new Exception("Unsupported image type");
                             }

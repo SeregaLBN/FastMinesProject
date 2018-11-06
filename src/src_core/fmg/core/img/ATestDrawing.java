@@ -50,7 +50,7 @@ public abstract class ATestDrawing {
             aim.setPadding(10);
             aim.setBorderWidth(0);
             aim.setBackgroundColor(testTransparent ? new Color(0xC8FFFFFF) : Color.White());
-            aim.getForegroundColor().setA(200); // 0..255 - foreground alpha-chanel color
+            aim.setForegroundColor(aim.getForegroundColor().updateA(200)); // 0..255 - foreground alpha-chanel color
         }
         if (model instanceof BurgerMenuModel) {
             BurgerMenuModel bmm = (BurgerMenuModel)model;
@@ -99,7 +99,7 @@ public abstract class ATestDrawing {
 
         Color bkClr = Color.RandomColor();
         if (testTransparent)
-            bkClr.setA(50 + r(10));
+            bkClr = bkClr.updateA(50 + r(10));
 
         if (model instanceof AnimatedImageModel) {
             AnimatedImageModel aim = (AnimatedImageModel)model;
@@ -116,9 +116,9 @@ public abstract class ATestDrawing {
                 // test transparent
                 Color clr = aim.getForegroundColor();
                 if ((aim.getBorderWidth() > 0) && (r(4) == 0)) {
-                    clr.setA(Color.Transparent().getA());
+                    clr = clr.updateA(Color.Transparent().getA());
                 } else {
-                    clr.setA(150 + r(255-150));
+                    clr = clr.updateA(150 + r(255-150));
                 }
                 aim.setForegroundColor(clr);
             }
