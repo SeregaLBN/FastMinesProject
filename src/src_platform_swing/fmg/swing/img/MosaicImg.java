@@ -14,7 +14,7 @@ import fmg.swing.mosaic.MosaicSwingView;
 /**
  * Representable {@link fmg.core.types.EMosaic} as image
  * <br>
- * base SWING impl
+ * base SWING implementation
  *
  * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon}
  */

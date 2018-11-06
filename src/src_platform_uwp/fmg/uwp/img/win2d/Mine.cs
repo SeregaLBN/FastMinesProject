@@ -3,7 +3,7 @@ using fmg.core.img;
 
 namespace fmg.uwp.img.win2d {
 
-   /// <summary> Mine image on the playing field </summary>
+   /// <summary> Mine image on the playing field. Win2D implementation </summary>
    public sealed class Mine {
 
       /// <summary> Mine image controller implementation for <see cref="Logo.CanvasBmp"/> </summary>

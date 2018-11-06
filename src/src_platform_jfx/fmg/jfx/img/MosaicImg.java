@@ -14,7 +14,7 @@ import fmg.jfx.mosaic.MosaicJfxView;
 /**
  * Representable {@link fmg.core.types.EMosaic} as image
  * <br>
- * base JavaFX impl
+ * base JavaFX implementation
  *
  * @param <TImage> JFX specific image: {@link javafx.scene.image.Image} or {@link javafx.scene.canvas.Canvas}
  */

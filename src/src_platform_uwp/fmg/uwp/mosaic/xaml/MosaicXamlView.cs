@@ -95,7 +95,7 @@ namespace fmg.uwp.mosaic.xaml {
          return _brushCacheMap[clr];
       }
 
-      protected override void DrawModified(IEnumerable<BaseCell> requiredCells) {
+      protected override void DrawModified(ICollection<BaseCell> requiredCells) {
          var container = GetControl();
 
          //System.Diagnostics.Debug.Assert(container != null);

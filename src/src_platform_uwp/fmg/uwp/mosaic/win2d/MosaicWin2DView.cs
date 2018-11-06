@@ -45,7 +45,7 @@ namespace fmg.uwp.mosaic.win2d {
 
         private class DummyDisposable : IDisposable { public void Dispose() { } };
 
-        protected void DrawWin2D(CanvasDrawingSession ds, ICollection<BaseCell> modifiedCells, RectDouble clipRegion, bool drawBk) {
+        protected void DrawWin2D(CanvasDrawingSession ds, ICollection<BaseCell> modifiedCells, RectDouble? clipRegion, bool drawBk) {
             System.Diagnostics.Debug.Assert(!_alreadyPainted);
             _alreadyPainted = true;
 
@@ -74,7 +74,7 @@ namespace fmg.uwp.mosaic.win2d {
 
 #if DEBUG
             if (_DEBUG_DRAW_FLOW) {
-                LoggerSimple.Put("> MosaicSwingView.draw: " + (redrawAll ? "all" : ("cnt=" + modifiedCells.Count))
+                LoggerSimple.Put("> MosaicWin2DView.Draw: " + (redrawAll ? "all" : ("cnt=" + modifiedCells.Count))
                                                               + "; clipReg=" + clipRegion
                                                               + "; drawBk=" + drawBk);
             }
@@ -84,14 +84,16 @@ namespace fmg.uwp.mosaic.win2d {
                 // redraw only when needed...
                 if (redrawAll ||
                     ((modifiedCells != null) && modifiedCells.Contains(cell)) || // ..when the cell is explicitly specified
-                    ((clipRegion != null) && cell.getRcOuter().MoveXY(offset.Width, offset.Height).Intersection(clipRegion))) // ...when the cells and update region intersect
+                    ((clipRegion != null) && cell.getRcOuter().MoveXY(offset.Width, offset.Height).Intersection(clipRegion.Value))) // ...when the cells and update region intersect
                 {
 #if DEBUG
                     ++tmp;
 #endif
                     var rcInner = cell.getRcInner(pen.Width).MoveXY(offset);
                     var region = cell.getRegion();
-                    using (var polygon = ds.CreatePolygon(region, offset)) {
+                    using (var polygon = ds.CreatePolygon(region, offset))
+                    using (var geom    = ds.BuildLines(region, offset))
+                    {
                         // ограничиваю рисование только границами своей фигуры
                         IDisposable NewLayer() {
                             return isIconicMode
@@ -107,10 +109,8 @@ namespace fmg.uwp.mosaic.win2d {
                                     var bkClrCell = cell.getBackgroundFillColor(bkFill.Mode,
                                                                                 bkClr,
                                                                                 bkFill.GetColor);
-                                    using (var geom = ds.BuildLines(cell.getRegion())) {
-                                        if (!drawBk || (bkClrCell != bkClr))
-                                            ds.FillGeometry(geom, offset.ToVector2(), bkClrCell.ToWinColor());
-                                    }
+                                    if (!drawBk || (bkClrCell != bkClr))
+                                        ds.FillGeometry(geom, bkClrCell.ToWinColor());
                                 }
 
                                 void paintImage(TImageInner img) {
@@ -161,9 +161,7 @@ namespace fmg.uwp.mosaic.win2d {
                                     var down = cell.State.Down || (cell.State.Status == EState._Open);
                                     var color = (down ? pen.ColorLight : pen.ColorShadow).ToWinColor();
                                     if (isIconicMode) {
-                                        using (var geom = ds.BuildLines(region)) {
-                                            ds.DrawGeometry(geom, offset.ToVector2(), color, (float)pen.Width);
-                                        }
+                                        ds.DrawGeometry(geom, color, (float)pen.Width);
                                     } else {
                                         var s = cell.getShiftPointBorderIndex();
                                         var v = cell.Attr.GetVertexNumber(cell.getDirection());
@@ -190,7 +188,7 @@ namespace fmg.uwp.mosaic.win2d {
 
 #if DEBUG
             if (_DEBUG_DRAW_FLOW) {
-                LoggerSimple.Put("< MosaicSwingView.draw: cnt=" + tmp);
+                LoggerSimple.Put("< MosaicWin2DView.Draw: cnt=" + tmp);
                 LoggerSimple.Put("-------------------------------");
             }
 #endif

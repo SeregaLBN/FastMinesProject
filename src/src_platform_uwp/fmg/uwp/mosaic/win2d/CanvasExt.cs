@@ -24,11 +24,13 @@ namespace fmg.uwp.mosaic.win2d {
          }
       }
 
-      public static CanvasGeometry BuildLines(this ICanvasResourceCreator resourceCreator, RegionDouble region) {
+      public static CanvasGeometry BuildLines(this ICanvasResourceCreator resourceCreator, RegionDouble region, SizeDouble? offset = null) {
+         var x = offset?.Width;
+         var y = offset?.Height;
          using (var builder = new CanvasPathBuilder(resourceCreator)) {
-            builder.BeginFigure((float)region.GetPoint(0).X, (float)region.GetPoint(0).Y);
+            builder.BeginFigure((float)(region.GetPoint(0).X + x), (float)(region.GetPoint(0).Y + y));
             for (var i = 1; i < region.CountPoints; ++i) {
-               builder.AddLine((float)region.GetPoint(i).X, (float)region.GetPoint(i).Y);
+               builder.AddLine((float)(region.GetPoint(i).X + x), (float)(region.GetPoint(i).Y + y));
             }
             builder.EndFigure(CanvasFigureLoop.Closed);
             return CanvasGeometry.CreatePath(builder);

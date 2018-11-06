@@ -23,21 +23,14 @@ using fmg.core.img;
 using fmg.core.types;
 using fmg.core.mosaic;
 using fmg.uwp.utils;
-using fmg.uwp.img.win2d;
-using fmg.uwp.img.wbmp;
-using fmg.uwp.mosaic.win2d;
-using fmg.uwp.mosaic.wbmp;
 using fmg.uwp.mosaic.xaml;
+using Win2dMosaicImg      = fmg.uwp.img.win2d.MosaicImg;
 using Win2dMosaicSkillImg = fmg.uwp.img.win2d.MosaicSkillImg;
 using Win2dMosaicGroupImg = fmg.uwp.img.win2d.MosaicGroupImg;
 using Win2dLogo           = fmg.uwp.img.win2d.Logo;
 using Win2dMine           = fmg.uwp.img.win2d.Mine;
 using Win2dSmile          = fmg.uwp.img.win2d.Smile;
 using Win2dFlag           = fmg.uwp.img.win2d.Flag;
-#if false
-using MosaicsCanvasBmp = fmg.uwp.img.win2d.MosaicsImg.CanvasBmp;
-using MosaicsCanvasImg = fmg.uwp.img.win2d.MosaicsImg.CanvasImgSrc;
-#endif
 using WBmpMosaicImageController = fmg.uwp.mosaic.wbmp.MosaicImageController;
 using WBmpMosaicImageView       = fmg.uwp.mosaic.wbmp.MosaicImageView;
 using WBmpMosaicImg             = fmg.uwp.img.wbmp.MosaicImg;
@@ -165,40 +158,20 @@ namespace Test.FastMines.Uwp.Images {
                                     new Win2dMosaicGroupImg.ControllerImgSrc(e, resourceCreator) })
                                  .SelectMany(m => m)));
       }
-#if false
-      public void TestWin2dMosaicsImg1(ICanvasResourceCreator resourceCreator) {
-         var rnd = ThreadLocalRandom.Current;
-         TestAppCanvasBmp(() =>
-            // test all
-            EMosaicEx.GetValues().Select(e => new MosaicsCanvasBmp(resourceCreator) {
-               MosaicType = e,
-               SizeField = new Matrisize(3 + rnd.Next(4), 4 + rnd.Next(3))
-            })
-            
-            //// test single
-            //new List<MosaicsCanvasBmp>() { new MosaicsCanvasBmp(resourceCreator) {
-            //   MosaicType = EMosaic.eMosaicPentagonT24,
-            //   SizeField = new Matrisize(3, 7)
-            //} }
-         );
-      }
-      public void TestWin2dMosaicsImg2(ICanvasResourceCreator resourceCreator) {
-         var rnd = ThreadLocalRandom.Current;
-         TestAppCanvasImg(() =>
-            // test all
-            EMosaicEx.GetValues().Select(e => new MosaicsCanvasImg(resourceCreator) {
-               MosaicType = e,
-               SizeField = new Matrisize(3 + rnd.Next(4), 4 + rnd.Next(3))
-            })
-
-            //// test single
-            //new List<MosaicsCanvasImg>() { new MosaicsCanvasImg(resourceCreator) {
-            //   MosaicType = EMosaic.eMosaicPentagonT24,
-            //   SizeField = new Matrisize(3, 7)
-            //} }
-         );
-      }
-#endif
+        private void TestWin2dMosaicsImg1(ICanvasResourceCreator resourceCreator) {
+            Win2dMosaicImg.CanvasBmp._DEBUG_DRAW_FLOW = true;
+            TestAppMosaicWin2dImage1(() =>
+                  //new List<Win2dMosaicImg.ControllerBitmap>() { new Win2dMosaicImg.ControllerBitmap(resourceCreator) { MosaicType = EMosaic.eMosaicSquare1 } }
+                  EMosaicEx.GetValues().Select(e => new Win2dMosaicImg.ControllerBitmap(resourceCreator) { MosaicType = e })
+            );
+        }
+        private void TestWin2dMosaicsImg2(ICanvasResourceCreator resourceCreator) {
+            Win2dMosaicImg.CanvasImgSrc._DEBUG_DRAW_FLOW = true;
+            TestAppMosaicWin2dImage2(() =>
+                  //new List<Win2dMosaicImg.ControllerImgSrc>() { new Win2dMosaicImg.ControllerImgSrc(resourceCreator) { MosaicType = EMosaic.eMosaicSquare1 } }
+                  EMosaicEx.GetValues().Select(e => new Win2dMosaicImg.ControllerImgSrc(resourceCreator) { MosaicType = e })
+            );
+        }
       public void TestWin2dFlag1(ICanvasResourceCreator resourceCreator) { TestAppSimple<CanvasBitmap     , Win2dFlag.ControllerBitmap, Win2dFlag.CanvasBmp   , FlagModel>(() => new Win2dFlag.ControllerBitmap[] { new Win2dFlag.ControllerBitmap(resourceCreator) }); }
       public void TestWin2dFlag2(ICanvasResourceCreator resourceCreator) { TestAppSimple<CanvasImageSource, Win2dFlag.ControllerImgSrc, Win2dFlag.CanvasImgSrc, FlagModel>(() => new Win2dFlag.ControllerImgSrc[] { new Win2dFlag.ControllerImgSrc(resourceCreator) }); }
       public void TestWin2dSmile1(ICanvasResourceCreator resourceCreator) {
@@ -249,6 +222,7 @@ namespace Test.FastMines.Uwp.Images {
          });
       }
       private void TestWBmpMosaicsImg() {
+         WBmpMosaicImg._DEBUG_DRAW_FLOW = true;
          TestAppMosaicWBmpImage(() =>
              //new List<MosaicWBmpImg.Controller>() { new MosaicWBmpImg.Controller() { MosaicType = EMosaic.eMosaicSquare1 } }
                EMosaicEx.GetValues().Select(e => new WBmpMosaicImg.Controller() { MosaicType = e })
@@ -301,6 +275,8 @@ namespace Test.FastMines.Uwp.Images {
 
          var device = CanvasDevice.GetSharedDevice();
          _onCreateImages = new Action[] {
+            () => TestWin2dMosaicsImg1    (device),
+            () => TestWin2dMosaicsImg2    (device),
             () => TestWin2dMosaicSkillImg1(device),
             () => TestWin2dMosaicSkillImg2(device),
             () => TestWin2dMosaicGroupImg1(device),
@@ -311,10 +287,6 @@ namespace Test.FastMines.Uwp.Images {
             () => TestWin2dMine2          (device),
             () => TestWin2dSmile1         (device),
             () => TestWin2dSmile2         (device),
-#if false
-            () => TestMosaicsImg1     (device),
-            () => TestMosaicsImg2     (device),
-#endif
             () => TestWin2dFlag1      (device),
             () => TestWin2dFlag2      (device),
             TestXamlMosaicControl,
@@ -360,6 +332,14 @@ namespace Test.FastMines.Uwp.Images {
          where TImageModel      : IAnimatedModel
       {
          TestApp<TImage, DummyMosaicImageType, TImageController, TImageView, TImageView, TImageModel, TImageModel>(funcGetImages);
+      }
+
+      void TestAppMosaicWin2dImage1(Func<IEnumerable<Win2dMosaicImg.ControllerBitmap>> funcGetImages) {
+         TestApp<CanvasBitmap, Nothing, Win2dMosaicImg.ControllerBitmap, Win2dMosaicImg.CanvasBmp, Win2dMosaicImg.CanvasBmp, MosaicAnimatedModel<Nothing>, MosaicAnimatedModel<Nothing>>(funcGetImages);
+      }
+
+      void TestAppMosaicWin2dImage2(Func<IEnumerable<Win2dMosaicImg.ControllerImgSrc>> funcGetImages) {
+         TestApp<CanvasImageSource, Nothing, Win2dMosaicImg.ControllerImgSrc, Win2dMosaicImg.CanvasImgSrc, Win2dMosaicImg.CanvasImgSrc, MosaicAnimatedModel<Nothing>, MosaicAnimatedModel<Nothing>>(funcGetImages);
       }
 
       void TestAppMosaicWBmpImage(Func<IEnumerable<WBmpMosaicImg.Controller>> funcGetImages) {
