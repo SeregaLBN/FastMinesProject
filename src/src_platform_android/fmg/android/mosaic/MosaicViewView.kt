@@ -36,11 +36,7 @@ class MosaicViewView(private val _owner: Activity) : MosaicAndroidView<View, Bit
                         val clipBounds = canvas.clipBounds
 
                         this@MosaicViewView.drawAndroid(canvas,
-                                if (_modifiedCells.isEmpty())
-                                    null
-                                else
-                                    _modifiedCells,
-                                clipBounds?.toRectDouble(),
+                                toDrawCells(clipBounds?.toRectDouble()),
                                 true/*_modifiedCells.isEmpty() || (_modifiedCells.size() == getModel().getMatrix().size())*/)
                         _modifiedCells.clear()
                     }
@@ -94,7 +90,13 @@ class MosaicViewView(private val _owner: Activity) : MosaicAndroidView<View, Bit
             }
             if (MosaicView._DEBUG_DRAW_FLOW)
                 println("MosaicViewAndroid.draw: repaint={" + minX.toInt() + "," + minY.toInt() + "," + (maxX - minX).toInt() + "," + (maxY - minY).toInt() + "}")
-            control.invalidate(minX.toInt(), minY.toInt(), (maxX - minX).toInt(), (maxY - minY).toInt())
+
+            var model = Model;
+            var padding = model.Padding;
+            var margin = model.Margin;
+            var offset = SizeDouble(margin.left + padding.left,
+                                    margin.top  + padding.top);
+            control.invalidate((minX + offset.width).toInt(), (minY + offset.height).toInt(), (maxX - minX).toInt(), (maxY - minY).toInt())
         }
     }
 

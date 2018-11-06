@@ -7,6 +7,7 @@ import java.util.HashSet;
 import javax.swing.Icon;
 import javax.swing.JPanel;
 
+import fmg.common.geom.BoundDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicDrawModel;
@@ -106,7 +107,13 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
             }
             if (_DEBUG_DRAW_FLOW)
                 System.out.println("MosaicViewSwing.draw: repaint={" + (int)minX +","+ (int)minY +","+ (int)(maxX-minX) +","+ (int)(maxY-minY) + "}");
-            control.repaint((int)minX, (int)minY, (int)(maxX-minX), (int)(maxY-minY));
+
+            MosaicDrawModel<?> model = getModel();
+            BoundDouble padding = model.getPadding();
+            BoundDouble margin = model.getMargin();
+            SizeDouble offset = new SizeDouble(margin.left + padding.left,
+                                               margin.top  + padding.top);
+            control.repaint((int)(minX + offset.width), (int)(minY + offset.height), (int)(maxX-minX), (int)(maxY-minY));
         }
         //control.invalidate();
     }

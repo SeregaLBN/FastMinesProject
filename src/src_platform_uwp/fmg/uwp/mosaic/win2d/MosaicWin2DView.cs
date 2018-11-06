@@ -149,7 +149,12 @@ namespace fmg.uwp.mosaic.win2d {
                                         var p2 = (i != (v - 1)) ? region.GetPoint(i + 1) : region.GetPoint(0);
                                         if (i == s)
                                             color = (down ? pen.ColorShadow : pen.ColorLight).ToWinColor();
-                                        ds.DrawLine(p1.ToVector2(), p2.ToVector2(), color, (float)pen.Width, cssBL);
+                                        ds.DrawLine(
+                                            (float)(p1.X + offset.Width),
+                                            (float)(p1.Y + offset.Height),
+                                            (float)(p2.X + offset.Width),
+                                            (float)(p2.Y + offset.Height),
+                                            color, (float)pen.Width, cssBL);
                                     }
                                 }
 
