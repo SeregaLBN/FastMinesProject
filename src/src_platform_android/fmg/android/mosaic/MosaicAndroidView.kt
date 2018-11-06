@@ -37,7 +37,7 @@ abstract class MosaicAndroidView<TImage, TImageInner: Any, TMosaicModel : Mosaic
     }
 
 
-    protected fun drawAndroid(g: Canvas, modifiedCells: Collection<BaseCell>?, clipRegion: RectDouble?, drawBk: Boolean) {
+    protected fun drawAndroid(g: Canvas, toDrawCells: Collection<BaseCell>?, drawBk: Boolean) {
         assert(!_alreadyPainted)
         _alreadyPainted = true
 
@@ -58,10 +58,7 @@ abstract class MosaicAndroidView<TImage, TImageInner: Any, TMosaicModel : Mosaic
                 g.drawColor(android.graphics.Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
             if (!bkClr.isTransparent) {
                 paintFill.color = bkClr.toColor()
-                if (clipRegion == null)
-                    g.drawColor(bkClr.toColor())//, PorterDuff.Mode.CLEAR);
-                else
-                    g.drawRect(clipRegion.x.toFloat(), clipRegion.y.toFloat(), clipRegion.width.toFloat(), clipRegion.height.toFloat(), paintFill)
+                g.drawColor(bkClr.toColor())//, PorterDuff.Mode.CLEAR);
             }
         }
 
@@ -75,137 +72,125 @@ abstract class MosaicAndroidView<TImage, TImageInner: Any, TMosaicModel : Mosaic
         val isIconicMode = pen.colorLight == pen.colorShadow
         val bkFill = model.backgroundFill
 
-        val redrawAll = modifiedCells == null || modifiedCells.isEmpty() || modifiedCells.size >= model.matrix.size
-        val recheckAll = clipRegion != null // check to redraw all mosaic cells
-        val toCheck = if (redrawAll || recheckAll) model.matrix else modifiedCells
-
-        if (MosaicView._DEBUG_DRAW_FLOW) {
-            println("> MosaicAndroidView.draw: " + (if (redrawAll) "all" else "cnt=" + modifiedCells!!.size)
-                    + "; clipReg=" + clipRegion
+        if (MosaicView._DEBUG_DRAW_FLOW)
+            println("> MosaicAndroidView.drawAndroid: " + (if (toDrawCells==null) "all" else "cnt=" + toDrawCells!!.size)
                     + "; drawBk=" + drawBk)
-        }
-        var tmp = 0
 
-        for (cell in toCheck!!) {
-            // redraw only when needed...
-            if (redrawAll ||
-                    modifiedCells != null && modifiedCells.contains(cell) || // ..when the cell is explicitly specified
+        for (cell in toDrawCells!!) {
+            val rcInner = cell.getRcInner(pen.width).moveXY(offset)
+            val poly = RegionDouble.moveXY(cell.region, offset).toPolygon()
 
-                    clipRegion != null && cell.rcOuter.moveXY(offset.width, offset.height).intersection(clipRegion))
-            // ...when the cells and update region intersect
-            {
-                ++tmp
-                val rcInner = cell.getRcInner(pen.width).moveXY(offset)
-                val poly = RegionDouble.moveXY(cell.region, offset).toPolygon()
+            //if (!isIconicMode)
+            run {
+                g.save()
+                // ограничиваю рисование только границами своей фигуры
+                g.clipPath(poly)
+            }
 
-                //if (!isIconicMode)
+            // 2.1. paint component
+            run {
+
+
+                // 2.1.1. paint cell background
+                //if (!isIconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
                 run {
-                    g.save()
-                    // ограничиваю рисование только границами своей фигуры
-                    g.clipPath(poly)
+                    val bkClrCell = cell.getBackgroundFillColor(bkFill.mode,
+                            bkClr,
+                            bkFill.colors)
+                    if (!drawBk || bkClrCell != bkClr) {
+                        paintFill.color = bkClrCell.toColor()
+                        g.drawPath(poly, paintFill)
+                    }
                 }
 
-                run {
-                    // 2.1. paint component
+                //g.setColor(java.awt.Color.MAGENTA);
+                //g.drawRect((int)rcInner.x, (int)rcInner.y, (int)rcInner.width, (int)rcInner.height);
 
-
-                    // 2.1.1. paint cell background
-                    //if (!isIconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
-                    run {
-                        val bkClrCell = cell.getBackgroundFillColor(bkFill.mode,
-                                bkClr,
-                                bkFill.colors)
-                        if (!drawBk || bkClrCell != bkClr) {
-                            paintFill.color = bkClrCell.toColor()
-                            g.drawPath(poly, paintFill)
-                        }
-                    }
-
-                    //g.setColor(java.awt.Color.MAGENTA);
-                    //g.drawRect((int)rcInner.x, (int)rcInner.y, (int)rcInner.width, (int)rcInner.height);
-
-                    val paintImage = Consumer<TImageInner> { img ->
-                        if (img is android.graphics.Bitmap)
-                            g.drawBitmap(img as android.graphics.Bitmap, (rcInner.x + offset.width ).toInt(), (rcInner.y + offset.height).toInt(), null)
-                        else
-                            throw RuntimeException("Unsupported image type " + img.javaClass.simpleName)
-                    }
-
-                    // 2.1.2. output pictures
-                    if (model.imgFlag != null &&
-                            cell.state.status == EState._Close &&
-                            cell.state.close  == EClose._Flag) {
-                        paintImage.accept(model.imgFlag)
-                    } else if (model.imgMine != null &&
-                            cell.state.status == EState._Open &&
-                            cell.state.open   == EOpen._Mine) {
-                        paintImage.accept(model.imgMine)
-                    } else
-                    // 2.1.3. output text
-                    {
-                        val szCaption: String?
-                        if (cell.state.status == EState._Close) {
-                            _textPaint.color = model.colorText.getColorClose(cell.state.close.ordinal).toColor()
-                            szCaption = cell.state.close.toCaption()
-                            //szCaption = cell.getCoord().x + ";" + cell.getCoord().y; // debug
-                            //szCaption = ""+cell.getDirection(); // debug
-                        } else {
-                            _textPaint.color = model.colorText.getColorOpen(cell.state.open.ordinal).toColor()
-                            szCaption = cell.state.open.toCaption()
-                        }
-                        if (szCaption != null && szCaption.isNotEmpty()) {
-                            if (cell.state.isDown)
-                                rcInner.moveXY(1.0, 1.0)
-                            drawText(g, szCaption, rcInner)
-                            //{ // test
-                            //   java.awt.Color clrOld = g.getColor(); // test
-                            //   g.setColor(java.awt.Color.red);
-                            //   g.drawRect((int)rcInner.x, (int)rcInner.y, (int)rcInner.width, (int)rcInner.height);
-                            //   g.setColor(clrOld);
-                            //}
-                        }
-                    }
-
-                }
-
-                // 2.2. paint border
-                run {
-                    // draw border lines
-                    val down = cell.state.isDown || cell.state.status == EState._Open
-                    paintStroke.color = (if (down)
-                        pen.colorLight
+                val paintImage = Consumer<TImageInner> { img ->
+                    if (img is android.graphics.Bitmap)
+                        g.drawBitmap(img as android.graphics.Bitmap, (rcInner.x + offset.width ).toInt(), (rcInner.y + offset.height).toInt(), null)
                     else
-                        pen.colorShadow).toColor()
-                    if (isIconicMode) {
-                        g.drawPath(poly, paintStroke)
-                    } else {
-                        val s = cell.shiftPointBorderIndex
-                        val v = cell.attr.getVertexNumber(cell.direction)
-                        for (i in 0 until v) {
-                            val p1 = cell.region.getPoint(i)
-                            val p2 = if (i != v - 1)
-                                cell.region.getPoint(i + 1)
-                            else
-                                cell.region.getPoint(0)
-                            if (i == s)
-                                paintStroke.color = (if (down)
-                                    pen.colorShadow
-                                else
-                                    pen.colorLight).toColor()
-                            g.drawLine((p1.x + offset.width ).toFloat(),
-                                       (p1.y + offset.height).toFloat(),
-                                       (p2.x + offset.width ).toFloat(),
-                                       (p2.y + offset.height).toFloat(), paintStroke)
-                        }
-                    }
-
-                    // debug - визуально проверяю верность вписанного квадрата (проверять при ширине пера около 21)
-                    //g.setColor(java.awt.Color.MAGENTA);
-                    //g.drawRect((int)rcInner.x, (int)rcInner.y, (int)rcInner.width, (int)rcInner.height);
+                        throw RuntimeException("Unsupported image type " + img.javaClass.simpleName)
                 }
 
-                //if (!isIconicMode)
-                run { g.restore() }
+                // 2.1.2. output pictures
+                if (model.imgFlag != null &&
+                    cell.state.status == EState._Close &&
+                    cell.state.close  == EClose._Flag)
+                {
+                    paintImage.accept(model.imgFlag)
+                } else if (model.imgMine != null &&
+                    cell.state.status == EState._Open &&
+                    cell.state.open   == EOpen._Mine)
+                {
+                    paintImage.accept(model.imgMine)
+                } else
+                // 2.1.3. output text
+                {
+                    val szCaption: String?
+                    if (cell.state.status == EState._Close) {
+                        _textPaint.color = model.colorText.getColorClose(cell.state.close.ordinal).toColor()
+                        szCaption = cell.state.close.toCaption()
+                        //szCaption = cell.getCoord().x + ";" + cell.getCoord().y; // debug
+                        //szCaption = ""+cell.getDirection(); // debug
+                    } else {
+                        _textPaint.color = model.colorText.getColorOpen(cell.state.open.ordinal).toColor()
+                        szCaption = cell.state.open.toCaption()
+                    }
+                    if (szCaption != null && szCaption.isNotEmpty()) {
+                        if (cell.state.isDown)
+                            rcInner.moveXY(1.0, 1.0)
+                        drawText(g, szCaption, rcInner)
+                        //{ // test
+                        //   java.awt.Color clrOld = g.getColor(); // test
+                        //   g.setColor(java.awt.Color.red);
+                        //   g.drawRect((int)rcInner.x, (int)rcInner.y, (int)rcInner.width, (int)rcInner.height);
+                        //   g.setColor(clrOld);
+                        //}
+                    }
+                }
+
+            }
+
+            // 2.2. paint border
+            run {
+                // draw border lines
+                val down = cell.state.isDown || cell.state.status == EState._Open
+                paintStroke.color = (if (down)
+                    pen.colorLight
+                else
+                    pen.colorShadow).toColor()
+                if (isIconicMode) {
+                    g.drawPath(poly, paintStroke)
+                } else {
+                    val s = cell.shiftPointBorderIndex
+                    val v = cell.attr.getVertexNumber(cell.direction)
+                    for (i in 0 until v) {
+                        val p1 = cell.region.getPoint(i)
+                        val p2 = if (i != v - 1)
+                            cell.region.getPoint(i + 1)
+                        else
+                            cell.region.getPoint(0)
+                        if (i == s)
+                            paintStroke.color = (if (down)
+                                pen.colorShadow
+                            else
+                                pen.colorLight).toColor()
+                        g.drawLine((p1.x + offset.width ).toFloat(),
+                                   (p1.y + offset.height).toFloat(),
+                                   (p2.x + offset.width ).toFloat(),
+                                   (p2.y + offset.height).toFloat(), paintStroke)
+                    }
+                }
+
+                // debug - визуально проверяю верность вписанного квадрата (проверять при ширине пера около 21)
+                //g.setColor(java.awt.Color.MAGENTA);
+                //g.drawRect((int)rcInner.x, (int)rcInner.y, (int)rcInner.width, (int)rcInner.height);
+            }
+
+            //if (!isIconicMode)
+            run {
+                g.restore()
             }
         }
 
@@ -237,10 +222,8 @@ abstract class MosaicAndroidView<TImage, TImageInner: Any, TMosaicModel : Mosaic
          * }
          * / */
 
-        if (MosaicView._DEBUG_DRAW_FLOW) {
-            println("< MosaicAndroidView.draw: cnt=$tmp")
+        if (MosaicView._DEBUG_DRAW_FLOW)
             println("-------------------------------")
-        }
 
         // restore
         g.restore()

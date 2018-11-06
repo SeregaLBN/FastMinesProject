@@ -49,12 +49,9 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
 
                     Rectangle clipBounds = g.getClipBounds();
                     MosaicJPanelView.this.drawSwing(g2d,
-                                                    _modifiedCells.isEmpty()
-                                                        ? null
-                                                        : _modifiedCells,
                                                     (clipBounds==null)
                                                         ? null
-                                                        : Cast.toRectDouble(clipBounds),
+                                                        : toDrawCells(Cast.toRectDouble(clipBounds)),
                                                     true/*_modifiedCells.isEmpty() || (_modifiedCells.size() == getModel().getMatrix().size())*/);
                     _modifiedCells.clear();
                 }

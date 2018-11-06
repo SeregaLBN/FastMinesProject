@@ -4,6 +4,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
+import fmg.common.LoggerSimple;
+import fmg.common.geom.BoundDouble;
+import fmg.common.geom.DoubleExt;
+import fmg.common.geom.RectDouble;
+import fmg.common.geom.SizeDouble;
 import fmg.core.img.ImageView;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.draw.PenBorder;
@@ -27,6 +32,38 @@ public abstract class MosaicView<TImage,
 
     public static boolean _DEBUG_DRAW_FLOW = false;
     private final Collection<BaseCell> _modifiedCells = new HashSet<>();
+
+    protected Collection<BaseCell> toDrawCells(RectDouble invalidatedRect) {
+        if (_DEBUG_DRAW_FLOW)
+            LoggerSimple.put("<>MosaicView.toDrawCells: invalidatedRect=" + (invalidatedRect==null ? "null" : invalidatedRect.toString()));
+
+        if (invalidatedRect == null)
+            return null; // equals Model.Matrix
+
+        // check to redraw all mosaic cells
+        TMosaicModel model = getModel();
+        if (DoubleExt.hasMinDiff(invalidatedRect.x, 0) && DoubleExt.hasMinDiff(invalidatedRect.y, 0)) {
+            SizeDouble size = model.getSize();
+            if (DoubleExt.hasMinDiff(invalidatedRect.width, size.width) && DoubleExt.hasMinDiff(invalidatedRect.height, size.height))
+                return null; // equals Model.Matrix
+        }
+
+        BoundDouble padding = model.getPadding();
+        BoundDouble margin = model.getMargin();
+        SizeDouble offset = new SizeDouble(margin.left + padding.left,
+                                           margin.top  + padding.top);
+
+        // redraw only when needed...
+        Collection<BaseCell> toDrawCells = model.getMatrix().stream()
+            .filter(cell -> cell.getRcOuter()
+                               .moveXY(offset.width, offset.height)
+                               .intersection(invalidatedRect)) // ...when the cells and update region intersect
+            .collect(Collectors.toList());
+
+        if (_DEBUG_DRAW_FLOW)
+            LoggerSimple.put("< MosaicView.toDrawCells: cnt=" + toDrawCells.size());
+        return toDrawCells;
+    }
 
     @Override
     public void invalidate(Collection<BaseCell> modifiedCells) {

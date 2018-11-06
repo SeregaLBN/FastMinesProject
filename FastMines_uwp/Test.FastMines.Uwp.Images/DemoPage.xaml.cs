@@ -24,13 +24,15 @@ using fmg.core.types;
 using fmg.core.mosaic;
 using fmg.uwp.utils;
 using fmg.uwp.mosaic.xaml;
-using Win2dMosaicImg      = fmg.uwp.img.win2d.MosaicImg;
-using Win2dMosaicSkillImg = fmg.uwp.img.win2d.MosaicSkillImg;
-using Win2dMosaicGroupImg = fmg.uwp.img.win2d.MosaicGroupImg;
-using Win2dLogo           = fmg.uwp.img.win2d.Logo;
-using Win2dMine           = fmg.uwp.img.win2d.Mine;
-using Win2dSmile          = fmg.uwp.img.win2d.Smile;
-using Win2dFlag           = fmg.uwp.img.win2d.Flag;
+using Win2dMosaicCanvasVirtController = fmg.uwp.mosaic.win2d.MosaicCanvasVirtualControlController;
+using Win2dMosaicCanvasVirtView       = fmg.uwp.mosaic.win2d.MosaicCanvasVirtualControlView;
+using Win2dMosaicImg                  = fmg.uwp.img.win2d.MosaicImg;
+using Win2dMosaicSkillImg             = fmg.uwp.img.win2d.MosaicSkillImg;
+using Win2dMosaicGroupImg             = fmg.uwp.img.win2d.MosaicGroupImg;
+using Win2dLogo                       = fmg.uwp.img.win2d.Logo;
+using Win2dMine                       = fmg.uwp.img.win2d.Mine;
+using Win2dSmile                      = fmg.uwp.img.win2d.Smile;
+using Win2dFlag                       = fmg.uwp.img.win2d.Flag;
 using WBmpMosaicImageController = fmg.uwp.mosaic.wbmp.MosaicImageController;
 using WBmpMosaicImageView       = fmg.uwp.mosaic.wbmp.MosaicImageView;
 using WBmpMosaicImg             = fmg.uwp.img.wbmp.MosaicImg;
@@ -82,6 +84,7 @@ namespace Test.FastMines.Uwp.Images {
             public void Dispose()    { throw new NotImplementedException(); }
             public void Invalidate() { throw new NotImplementedException(); }
         }
+
         private void TestWin2dLogo1(ICanvasResourceCreator resourceCreator) {
             TestAppAnimated<CanvasBitmap, Win2dLogo.ControllerBitmap, Win2dLogo.CanvasBmp, LogoModel>(() =>
                 new Win2dLogo.ControllerBitmap[] { new Win2dLogo.ControllerBitmap(resourceCreator)
@@ -213,6 +216,15 @@ namespace Test.FastMines.Uwp.Images {
             return mosaicController;
         }
 
+        private void TestWin2dMosaicsCanvasVirtualControl(ICanvasResourceCreator resourceCreator) {
+#if DEBUG
+            Win2dMosaicCanvasVirtView._DEBUG_DRAW_FLOW = true;
+#endif
+            TestAppMosaicWin2dCanvasVirtController(() => new Win2dMosaicCanvasVirtController[] {
+                TuneMosaicGameController<CanvasVirtualControl, CanvasBitmap, Win2dMosaicCanvasVirtController, Win2dMosaicCanvasVirtView, MosaicDrawModel<CanvasBitmap>>(new Win2dMosaicCanvasVirtController(resourceCreator))
+            });
+        }
+
         private void TestXamlMosaicControl()  {
 #if DEBUG
             MosaicXamlView._DEBUG_DRAW_FLOW = true;
@@ -234,8 +246,8 @@ namespace Test.FastMines.Uwp.Images {
             WBmpMosaicImg._DEBUG_DRAW_FLOW = !true;
 #endif
             TestAppMosaicWBmpImage(() =>
-                //new List<MosaicWBmpImg.Controller>() { new MosaicWBmpImg.Controller() { MosaicType = EMosaic.eMosaicSquare1 } }
-                    EMosaicEx.GetValues().Select(e => new WBmpMosaicImg.Controller() { MosaicType = e })
+              //new List<MosaicWBmpImg.Controller>() { new MosaicWBmpImg.Controller() { MosaicType = EMosaic.eMosaicSquare1 } }
+                EMosaicEx.GetValues().Select(e => new WBmpMosaicImg.Controller() { MosaicType = e })
             );
         }
         private void TestWBmpLogo() {
@@ -285,6 +297,7 @@ namespace Test.FastMines.Uwp.Images {
 
             var device = CanvasDevice.GetSharedDevice();
             _onCreateImages = new Action[] {
+                () => TestWin2dMosaicsCanvasVirtualControl(device),
                 TestXamlMosaicControl,
                 TestWBmpMosaicControl,
                 () => TestWin2dMosaicsImg1    (device),
@@ -342,6 +355,10 @@ namespace Test.FastMines.Uwp.Images {
             where TImageModel      : IAnimatedModel
         {
             TestApp<TImage, DummyMosaicImageType, TImageController, TImageView, TImageView, TImageModel, TImageModel>(funcGetImages);
+        }
+
+        void TestAppMosaicWin2dCanvasVirtController(Func<IEnumerable<Win2dMosaicCanvasVirtController>> funcGetImages) {
+            TestApp<CanvasVirtualControl, CanvasBitmap, Win2dMosaicCanvasVirtController, Win2dMosaicCanvasVirtView, DummyView<CanvasVirtualControl>, MosaicDrawModel<CanvasBitmap>, DummyModel>(funcGetImages);
         }
 
         void TestAppMosaicWin2dImage1(Func<IEnumerable<Win2dMosaicImg.ControllerBitmap>> funcGetImages) {

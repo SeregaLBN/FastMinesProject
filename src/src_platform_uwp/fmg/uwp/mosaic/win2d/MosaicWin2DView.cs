@@ -43,12 +43,11 @@ namespace fmg.uwp.mosaic.win2d {
             StaticInitializer.Init();
         }
 
-        protected void DrawWin2D(CanvasDrawingSession ds, ICollection<BaseCell> modifiedCells, RectDouble? clipRegion, bool drawBk) {
+        protected void DrawWin2D(CanvasDrawingSession ds, ICollection<BaseCell> toDrawCells, bool drawBk) {
             System.Diagnostics.Debug.Assert(!_alreadyPainted);
             _alreadyPainted = true;
 
             TMosaicModel model = Model;
-            //SizeDouble size = model.Size;
 
             // 1. background color
             var bkClr = model.BackgroundColor;
@@ -60,119 +59,105 @@ namespace fmg.uwp.mosaic.win2d {
             var padding = model.Padding;
             var margin = model.Margin;
             var offset = new SizeDouble(margin.Left + padding.Left,
-                                        margin.Top + padding.Top);
+                                        margin.Top  + padding.Top);
             bool isIconicMode = (pen.ColorLight == pen.ColorShadow);
             var bkFill = model.BkFill;
             var font = Font;
             var cssBL = CssBorderLine;
 
-            bool redrawAll = (modifiedCells == null) || !modifiedCells.Any() || (modifiedCells.Count() >= model.Matrix.Count);
-            bool recheckAll = (clipRegion != null); // check to redraw all mosaic cells
-            ICollection<BaseCell> toCheck = (redrawAll || recheckAll) ? model.Matrix : modifiedCells;
-
 #if DEBUG
-            if (_DEBUG_DRAW_FLOW) {
-                LoggerSimple.Put("> MosaicWin2DView.Draw: " + (redrawAll ? "all" : ("cnt=" + modifiedCells.Count))
-                                                              + "; clipReg=" + clipRegion
-                                                              + "; drawBk=" + drawBk);
-            }
-            int tmp = 0;
+            if (_DEBUG_DRAW_FLOW)
+                LoggerSimple.Put("MosaicWin2DView.Draw: " + (toDrawCells == null ? "all" : ("cnt=" + toDrawCells.Count))
+                                                          + "; drawBk=" + drawBk);
 #endif
-            foreach (BaseCell cell in toCheck) {
-                // redraw only when needed...
-                if (redrawAll ||
-                    ((modifiedCells != null) && modifiedCells.Contains(cell)) || // ..when the cell is explicitly specified
-                    ((clipRegion != null) && cell.GetRcOuter().MoveXY(offset.Width, offset.Height).Intersection(clipRegion.Value))) // ...when the cells and update region intersect
+            if (toDrawCells == null)
+                toDrawCells = model.Matrix;
+            foreach (BaseCell cell in toDrawCells) {
+                var rcInner = cell.GetRcInner(pen.Width).MoveXY(offset);
+                var region = cell.GetRegion();
+                var bkClrCell = cell.GetBackgroundFillColor(bkFill.Mode,
+                                                            bkClr,
+                                                            bkFill.GetColor);
+                using (var polygon =  isIconicMode ? null : ds.CreatePolygon(region, offset))
+                using (var geom    = (isIconicMode || drawBk || (bkClrCell != bkClr)) ? ds.BuildLines(region, offset) : null)
                 {
-#if DEBUG
-                    ++tmp;
-#endif
-                    var rcInner = cell.GetRcInner(pen.Width).MoveXY(offset);
-                    var region = cell.GetRegion();
-                    var bkClrCell = cell.GetBackgroundFillColor(bkFill.Mode,
-                                                                bkClr,
-                                                                bkFill.GetColor);
-                    using (var polygon =  isIconicMode ? null : ds.CreatePolygon(region, offset))
-                    using (var geom    = (isIconicMode || drawBk || (bkClrCell != bkClr)) ? ds.BuildLines(region, offset) : null)
-                    {
-                        // ограничиваю рисование только границами своей фигуры
-                        using (var layer = isIconicMode ? null : ds.CreateLayer(1, polygon)) {
+                    // ограничиваю рисование только границами своей фигуры
+                    using (var layer = isIconicMode ? null : ds.CreateLayer(1, polygon)) {
 
-                            { // 2.1. paint component
-                                // 2.1.1. paint cell background
-                                //if (!isIconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
-                                {
-                                    if (!drawBk || (bkClrCell != bkClr))
-                                        ds.FillGeometry(geom, bkClrCell.ToWinColor());
-                                }
+                        { // 2.1. paint component
+                            // 2.1.1. paint cell background
+                            //if (!isIconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
+                            {
+                                if (drawBk || (bkClrCell != bkClr))
+                                    ds.FillGeometry(geom, bkClrCell.ToWinColor());
+                            }
 
-                                void paintImage(TImageInner img) {
-                                    if (img is CanvasBitmap bmp)
-                                        ds.DrawImage(bmp, rcInner.ToWinRect(), new Windows.Foundation.Rect(0, 0, bmp.Size.Width, bmp.Size.Height));
-                                    else
-                                        throw new Exception("Unsupported image type " + img.GetType().Name);
-                                }
-                                // 2.1.2. output pictures
-                                if ((model.ImgFlag != null) &&
-                                    (cell.State.Status == EState._Close) &&
-                                    (cell.State.Close == EClose._Flag)) {
-                                    paintImage(model.ImgFlag);
-                                } else if ((model.ImgMine != null) &&
-                                           (cell.State.Status == EState._Open) &&
-                                           (cell.State.Open == EOpen._Mine)) {
-                                    paintImage(model.ImgMine);
-                                } else
-                                // 2.1.3. output text
-                                {
-                                    string szCaption;
-                                    Color txtColor;
-                                    if (cell.State.Status == EState._Close) {
-                                        txtColor = model.ColorText.GetColorClose((int)cell.State.Close.Ordinal());
-                                        szCaption = cell.State.Close.ToCaption();
+                            void paintImage(TImageInner img) {
+                                if (img is CanvasBitmap bmp)
+                                    ds.DrawImage(bmp, rcInner.ToWinRect(), new Windows.Foundation.Rect(0, 0, bmp.Size.Width, bmp.Size.Height));
+                                else
+                                    throw new Exception("Unsupported image type " + img.GetType().Name);
+                            }
+                            // 2.1.2. output pictures
+                            if ((model.ImgFlag != null) &&
+                                (cell.State.Status == EState._Close) &&
+                                (cell.State.Close == EClose._Flag)) {
+                                paintImage(model.ImgFlag);
+                            } else if ((model.ImgMine != null) &&
+                                        (cell.State.Status == EState._Open) &&
+                                        (cell.State.Open == EOpen._Mine)) {
+                                paintImage(model.ImgMine);
+                            } else
+                            // 2.1.3. output text
+                            {
+                                string szCaption;
+                                Color txtColor;
+                                if (cell.State.Status == EState._Close) {
+                                    txtColor = model.ColorText.GetColorClose((int)cell.State.Close.Ordinal());
+                                    szCaption = cell.State.Close.ToCaption();
 #if DEBUG
-                                        //szCaption = cell.getCoord().x + ";" + cell.getCoord().y; // debug
-                                        //szCaption = ""+cell.getDirection(); // debug
+                                    //szCaption = cell.getCoord().x + ";" + cell.getCoord().y; // debug
+                                    //szCaption = ""+cell.getDirection(); // debug
 #endif
-                                    } else {
-                                        txtColor = model.ColorText.GetColorOpen((int)cell.State.Open.Ordinal());
-                                        szCaption = cell.State.Open.ToCaption();
+                                } else {
+                                    txtColor = model.ColorText.GetColorOpen((int)cell.State.Open.Ordinal());
+                                    szCaption = cell.State.Open.ToCaption();
+                                }
+                                if (!string.IsNullOrWhiteSpace(szCaption)) {
+                                    if (cell.State.Down)
+                                        rcInner.MoveXY(1, 1);
+                                    ds.DrawText(szCaption, rcInner.ToWinRect(), txtColor.ToWinColor(), font);
+#if DEBUG
+                                    //ds.DrawRectangle(rcInner.ToWinRect(), Color.Red.ToWinColor()); // debug
+#endif
+                                }
+                            }
+
+                            // 2.2. paint border
+                            {
+                                // draw border lines
+
+                                var down = cell.State.Down || (cell.State.Status == EState._Open);
+                                var color = (down ? pen.ColorLight : pen.ColorShadow).ToWinColor();
+                                if (isIconicMode) {
+                                    ds.DrawGeometry(geom, color, (float)pen.Width);
+                                } else {
+                                    var s = cell.GetShiftPointBorderIndex();
+                                    var v = cell.Attr.GetVertexNumber(cell.GetDirection());
+                                    for (var i = 0; i < v; i++) {
+                                        var p1 = region.GetPoint(i);
+                                        var p2 = (i != (v - 1)) ? region.GetPoint(i + 1) : region.GetPoint(0);
+                                        if (i == s)
+                                            color = (down ? pen.ColorShadow : pen.ColorLight).ToWinColor();
+                                        ds.DrawLine(p1.ToVector2(), p2.ToVector2(), color, (float)pen.Width, cssBL);
                                     }
-                                    if (!string.IsNullOrWhiteSpace(szCaption)) {
-                                        if (cell.State.Down)
-                                            rcInner.MoveXY(1, 1);
-                                        ds.DrawText(szCaption, rcInner.ToWinRect(), txtColor.ToWinColor(), font);
-#if DEBUG
-                                        //ds.DrawRectangle(rcInner.ToWinRect(), Color.Red.ToWinColor()); // debug
-#endif
-                                    }
                                 }
 
-                                // 2.2. paint border
-                                {
-                                    // draw border lines
-
-                                    var down = cell.State.Down || (cell.State.Status == EState._Open);
-                                    var color = (down ? pen.ColorLight : pen.ColorShadow).ToWinColor();
-                                    if (isIconicMode) {
-                                        ds.DrawGeometry(geom, color, (float)pen.Width);
-                                    } else {
-                                        var s = cell.GetShiftPointBorderIndex();
-                                        var v = cell.Attr.GetVertexNumber(cell.GetDirection());
-                                        for (var i = 0; i < v; i++) {
-                                            var p1 = region.GetPoint(i);
-                                            var p2 = (i != (v - 1)) ? region.GetPoint(i + 1) : region.GetPoint(0);
-                                            if (i == s)
-                                                color = (down ? pen.ColorShadow : pen.ColorLight).ToWinColor();
-                                            ds.DrawLine(p1.ToVector2(), p2.ToVector2(), color, (float)pen.Width, cssBL);
-                                        }
-                                    }
-
 #if DEBUG
-                                    // debug - визуально проверяю верность вписанного квадрата (проверять при ширине пера около 21)
-                                    //var rcInner = cell.getRcInner(paintContext.PenBorder.Width);
-                                    //paint.DrawingSession.DrawRectangle(rcInner.ToWinRect(), Color.Magenta.ToWinColor(), 21);
+                                // debug - визуально проверяю верность вписанного квадрата (проверять при ширине пера около 21)
+                                //var rcInner = cell.getRcInner(paintContext.PenBorder.Width);
+                                //paint.DrawingSession.DrawRectangle(rcInner.ToWinRect(), Color.Magenta.ToWinColor(), 21);
 #endif
-                                }
                             }
                         }
                     }
@@ -180,10 +165,8 @@ namespace fmg.uwp.mosaic.win2d {
             }
 
 #if DEBUG
-            if (_DEBUG_DRAW_FLOW) {
-                LoggerSimple.Put("< MosaicWin2DView.Draw: cnt=" + tmp);
+            if (_DEBUG_DRAW_FLOW)
                 LoggerSimple.Put("-------------------------------");
-            }
 #endif
 
             _alreadyPainted = false;

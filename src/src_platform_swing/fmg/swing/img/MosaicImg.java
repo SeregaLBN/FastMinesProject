@@ -70,7 +70,7 @@ public abstract class MosaicImg<TImage>
 
         @Override
         protected void drawModified(Collection<BaseCell> modifiedCells) {
-            drawSwing(ico.getGraphics(), modifiedCells, null, _useBackgroundColor);
+            drawSwing(ico.getGraphics(), modifiedCells, _useBackgroundColor);
         }
 
         @Override
@@ -92,7 +92,7 @@ public abstract class MosaicImg<TImage>
 
         @Override
         protected void drawModified(Collection<BaseCell> modifiedCells) {
-            img.drawWrapper(g -> drawSwing(g, modifiedCells, null, _useBackgroundColor));
+            img.drawWrapper(g -> drawSwing(g, modifiedCells, _useBackgroundColor));
         }
 
     }
