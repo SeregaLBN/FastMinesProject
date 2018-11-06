@@ -55,7 +55,7 @@ abstract class MosaicImg<TImage> protected constructor() : MosaicAndroidView<TIm
         }
 
         override fun drawModified(modifiedCells: Collection<BaseCell>) {
-            drawAndroid(wrap.canvas, modifiedCells, null, _useBackgroundColor)
+            drawAndroid(wrap.canvas, modifiedCells, _useBackgroundColor)
         }
 
         override fun close() {

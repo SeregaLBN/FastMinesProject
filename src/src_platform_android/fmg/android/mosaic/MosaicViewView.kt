@@ -141,9 +141,9 @@ class MosaicViewView(private val _owner: Activity) : MosaicAndroidView<View, Bit
             model.setImgMine(_imgMine.image)
         } else {
             _imgFlag.model.setSize(max.toDouble())
-            model.imgFlag = _imgFlag.image.zoom(sq, sq)
+            model.imgFlag = _imgFlag.image.zoom(sq.toInt(), sq.toInt())
             _imgMine.model.setSize(max.toDouble())
-            model.setImgMine(_imgMine.image.zoom(sq, sq))
+            model.setImgMine(_imgMine.image.zoom(sq.toInt(), sq.toInt()))
         }
     }
 
