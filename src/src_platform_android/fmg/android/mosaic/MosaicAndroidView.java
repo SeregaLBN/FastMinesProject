@@ -118,11 +118,11 @@ public abstract class MosaicAndroidView<TImage,
                 }
 
               //g.setColor(java.awt.Color.MAGENTA);
-              //g.drawRect((int)rcInner.x, (int)rcInner.y, (int)rcInner.width, (int)rcInner.height);
+              //g.drawRect((float)rcInner.x, (float)rcInner.y, (float)rcInner.width, (float)rcInner.height);
 
                 Consumer<TImageInner> paintImage = img -> {
                     if (img instanceof android.graphics.Bitmap)
-                        g.drawBitmap((android.graphics.Bitmap)img, (int)rcInner.x, (int)rcInner.y, null);
+                        g.drawBitmap((android.graphics.Bitmap)img, (float)rcInner.x, (float)rcInner.y, null);
                     else
                         throw new RuntimeException("Unsupported image type " + img.getClass().getSimpleName());
                 };
@@ -159,7 +159,7 @@ public abstract class MosaicAndroidView<TImage,
                       //{ // test
                       //    java.awt.Color clrOld = g.getColor(); // test
                       //    g.setColor(java.awt.Color.red);
-                      //    g.drawRect((int)rcInner.x, (int)rcInner.y, (int)rcInner.width, (int)rcInner.height);
+                      //    g.drawRect((float)rcInner.x, (float)rcInner.y, (float)rcInner.width, (float)rcInner.height);
                       //    g.setColor(clrOld);
                       //}
                     }
@@ -188,13 +188,13 @@ public abstract class MosaicAndroidView<TImage,
                             paintStroke.setColor(Cast.toColor(down
                                                     ? pen.getColorShadow()
                                                     : pen.getColorLight()));
-                        g.drawLine((int)(p1.x+offset.width), (int)(p1.y+offset.height), (int)(p2.x+offset.width), (int)(p2.y+offset.height), paintStroke);
+                        g.drawLine((float)(p1.x+offset.width), (float)(p1.y+offset.height), (float)(p2.x+offset.width), (float)(p2.y+offset.height), paintStroke);
                     }
                 }
 
                 // debug - визуально проверяю верность вписанного квадрата (проверять при ширине пера около 21)
               //g.setColor(java.awt.Color.MAGENTA);
-              //g.drawRect((int)rcInner.x, (int)rcInner.y, (int)rcInner.width, (int)rcInner.height);
+              //g.drawRect((float)rcInner.x, (float)rcInner.y, (float)rcInner.width, (float)rcInner.height);
             }
 
             //if (!isSimpleDraw)
@@ -214,20 +214,20 @@ public abstract class MosaicAndroidView<TImage,
             Color clr = Color.DarkRed.clone();
             clr.setA(120);
             g.setColor(Cast.toColor(clr));
-            g.drawRect((int)padding.left,
-                       (int)padding.top,
-                       (int)(size.width  - padding.getLeftAndRight()),
-                       (int)(size.height - padding.getTopAndBottom()));
+            g.drawRect((float)padding.left,
+                       (float)padding.top,
+                       (float)(size.width  - padding.getLeftAndRight()),
+                       (float)(size.height - padding.getTopAndBottom()));
 
             // test margin
             g.setStroke(new BasicStroke(3));
             clr = Color.DarkGreen.clone();
             clr.setA(120);
             g.setColor(Cast.toColor(clr));
-            g.drawRect((int)(padding.left + margin.left),
-                       (int)(padding.top  + margin.top),
-                       (int)(size.width  - padding.getLeftAndRight() - margin.getLeftAndRight()),
-                       (int)(size.height - padding.getTopAndBottom() - margin.getTopAndBottom()));
+            g.drawRect((float)(padding.left + margin.left),
+                       (float)(padding.top  + margin.top),
+                       (float)(size.width  - padding.getLeftAndRight() - margin.getLeftAndRight()),
+                       (float)(size.height - padding.getTopAndBottom() - margin.getTopAndBottom()));
         }
         /**/
 
@@ -260,7 +260,7 @@ public abstract class MosaicAndroidView<TImage,
 //        { // test
 //            java.awt.Color clrOld = g.getColor();
 //            g.setColor(java.awt.Color.BLUE);
-//            g.fillRect((int)rc.x, (int)rc.y, (int)rc.width, (int)rc.height);
+//            g.fillRect((float)rc.x, (float)rc.y, (float)rc.width, (float)rc.height);
 //            g.setColor(clrOld);
 //        }
         g.drawText(text, (float)(rc.x       +(rc.width -bnd.width )/2.),
