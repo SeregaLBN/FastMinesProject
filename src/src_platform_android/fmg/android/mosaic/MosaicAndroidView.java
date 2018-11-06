@@ -84,7 +84,7 @@ public abstract class MosaicAndroidView<TImage,
         BoundDouble margin  = model.getMargin();
         SizeDouble offset = new SizeDouble(margin.left + padding.left,
                                             margin.top  + padding.top);
-        boolean isIconicMode = pen.getColorLight().equals(pen.getColorShadow());
+        boolean isSimpleDraw = pen.getColorLight().equals(pen.getColorShadow());
         BackgroundFill bkFill = model.getBackgroundFill();
 
         if (_DEBUG_DRAW_FLOW)
@@ -96,7 +96,7 @@ public abstract class MosaicAndroidView<TImage,
             RectDouble rcInner = cell.getRcInner(pen.getWidth()).moveXY(offset);
             Path poly = Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), offset));
 
-            //if (!isIconicMode)
+            //if (!isSimpleDraw)
             {
                 g.save();
                 // ограничиваю рисование только границами своей фигуры
@@ -106,7 +106,7 @@ public abstract class MosaicAndroidView<TImage,
             { // 2.1. paint component
 
                 // 2.1.1. paint cell background
-                //if (!isIconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
+                //if (!isSimpleDraw) // когда русуется иконка, а не игровое поле, - делаю попроще...
                 {
                     Color bkClrCell = cell.getBackgroundFillColor(bkFill.getMode(),
                                                                     bkClr,
@@ -174,7 +174,7 @@ public abstract class MosaicAndroidView<TImage,
                 paintStroke.setColor(Cast.toColor(down
                                         ? pen.getColorLight()
                                         : pen.getColorShadow()));
-                if (isIconicMode) {
+                if (isSimpleDraw) {
                     g.drawPath(poly, paintStroke);
                 } else {
                     int s = cell.getShiftPointBorderIndex();
@@ -197,7 +197,7 @@ public abstract class MosaicAndroidView<TImage,
               //g.drawRect((int)rcInner.x, (int)rcInner.y, (int)rcInner.width, (int)rcInner.height);
             }
 
-            //if (!isIconicMode)
+            //if (!isSimpleDraw)
             {
                 g.restore();
             }

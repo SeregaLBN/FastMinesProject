@@ -92,7 +92,7 @@ public abstract class MosaicJfxView<TImage,
         BoundDouble margin  = model.getMargin();
         SizeDouble offset = new SizeDouble(margin.left + padding.left,
                                            margin.top  + padding.top);
-        boolean isIconicMode = pen.getColorLight().equals(pen.getColorShadow());
+        boolean isSimpleDraw = pen.getColorLight().equals(pen.getColorShadow());
         BackgroundFill bkFill = model.getBackgroundFill();
 
         if (_DEBUG_DRAW_FLOW)
@@ -101,7 +101,7 @@ public abstract class MosaicJfxView<TImage,
 
         /** HINT: Using the {@link GraphicsContext#clip} method slows down drawing (animation).
             * Especially noticeable at startup demo {@link MosaicCanvasController#main} */
-        boolean useClip = !isIconicMode;
+        boolean useClip = !isSimpleDraw;
 
         if (toDrawCells == null)
             toDrawCells = model.getMatrix();
@@ -213,7 +213,7 @@ public abstract class MosaicJfxView<TImage,
                 g.setStroke(Cast.toColor(down
                                            ? pen.getColorLight()
                                            : pen.getColorShadow()));
-                if (isIconicMode) {
+                if (isSimpleDraw) {
                     if (polyX == null)
                         polyX = Cast.toPolygon(poly, true);
                     if (polyY == null)

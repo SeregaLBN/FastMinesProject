@@ -79,7 +79,7 @@ public abstract class MosaicSwingView<TImage,
         BoundDouble margin  = model.getMargin();
         SizeDouble offset = new SizeDouble(margin.left + padding.left,
                                            margin.top  + padding.top);
-        boolean isIconicMode = pen.getColorLight().equals(pen.getColorShadow());
+        boolean isSimpleDraw = pen.getColorLight().equals(pen.getColorShadow());
         BackgroundFill bkFill = model.getBackgroundFill();
 
         if (_DEBUG_DRAW_FLOW)
@@ -174,7 +174,7 @@ public abstract class MosaicSwingView<TImage,
                 g.setColor(Cast.toColor(down
                                            ? pen.getColorLight()
                                            : pen.getColorShadow()));
-                if (isIconicMode) {
+                if (isSimpleDraw) {
                     g.drawPolygon(poly);
                 } else {
                     int s = cell.getShiftPointBorderIndex();

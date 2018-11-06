@@ -56,7 +56,7 @@ namespace fmg.uwp.mosaic.wbmp {
             var margin = model.Margin;
             var offset = new SizeDouble(margin.Left + padding.Left,
                                         margin.Top  + padding.Top);
-            var isIconicMode = (pen.ColorLight == pen.ColorShadow);
+            var isSimpleDraw = (pen.ColorLight == pen.ColorShadow);
             var bkFill = model.BkFill;
 
 #if DEBUG
@@ -78,7 +78,7 @@ namespace fmg.uwp.mosaic.wbmp {
                 { // 2.1. paint component
 
                     // 2.1.1. paint background
-                    //if (!isIconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
+                    //if (!isSimpleDraw) // когда русуется иконка, а не игровое поле, - делаю попроще...
                     {
                         var bkClrCell = cell.GetBackgroundFillColor(bkFill.Mode,
                                                                     bkClr,
@@ -135,7 +135,7 @@ namespace fmg.uwp.mosaic.wbmp {
                     // draw border lines
                     var down = cell.State.Down || (cell.State.Status == EState._Open);
                     var color = (down ? pen.ColorLight : pen.ColorShadow).ToWinColor();
-                    if (isIconicMode) {
+                    if (isSimpleDraw) {
 
                         if (pen.Width.HasMinDiff(1))
                             wbmp.DrawPolyline(poly, color);
