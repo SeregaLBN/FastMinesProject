@@ -26,7 +26,7 @@ namespace fmg.uwp.mosaic.win2d {
                                           TImageInner,
                                           TMosaicModel>
                         : MosaicView<TImage, TImageInner, TMosaicModel>
-        where TImage       : DependencyObject, ICanvasResourceCreator
+        where TImage       : DependencyObject//, ICanvasResourceCreator
         where TImageInner  : class
         where TMosaicModel : MosaicDrawModel<TImageInner>
     {
@@ -48,7 +48,7 @@ namespace fmg.uwp.mosaic.win2d {
             _alreadyPainted = true;
 
             TMosaicModel model = Model;
-            SizeDouble size = model.Size;
+            //SizeDouble size = model.Size;
 
             // 1. background color
             var bkClr = model.BackgroundColor;

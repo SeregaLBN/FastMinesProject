@@ -125,7 +125,7 @@ class MosaicViewView(private val _owner: Activity) : MosaicAndroidView<View, Bit
     /** переустанавливаю заного размер мины/флага для мозаики  */
     protected fun changeSizeImagesMineFlag() {
         val model = model
-        var sq = model.cellAttr.getSq(model.penBorder.width).toInt()
+        var sq = model.cellAttr.getSq(model.penBorder.width)
         if (sq <= 0) {
             System.err.println("Error: too thick pen! There is no area for displaying the flag/mine image...")
             sq = 3 // ат балды...

@@ -285,6 +285,8 @@ namespace Test.FastMines.Uwp.Images {
 
             var device = CanvasDevice.GetSharedDevice();
             _onCreateImages = new Action[] {
+                TestXamlMosaicControl,
+                TestWBmpMosaicControl,
                 () => TestWin2dMosaicsImg1    (device),
                 () => TestWin2dMosaicsImg2    (device),
                 () => TestWin2dMosaicSkillImg1(device),
@@ -299,8 +301,6 @@ namespace Test.FastMines.Uwp.Images {
                 () => TestWin2dSmile2         (device),
                 () => TestWin2dFlag1      (device),
                 () => TestWin2dFlag2      (device),
-                TestXamlMosaicControl,
-                TestWBmpMosaicControl,
                 TestWBmpLogo,
                 TestWBmpMine,
                 TestWBmpMosaicSkillImg,

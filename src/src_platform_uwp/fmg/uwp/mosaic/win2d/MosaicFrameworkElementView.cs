@@ -1,88 +1,82 @@
 using Windows.UI.Xaml;
 using Microsoft.Graphics.Canvas;
-using fmg.common.geom;
 using fmg.core.mosaic;
-using fmg.uwp.mosaic;
+using fmg.uwp.img.win2d;
 
 namespace fmg.uwp.mosaic.win2d {
-#if false
 
     /// summary> MVC: view. UWP Win2D implementation. Base implementation View located into control <see cref="Windows.UI.Xaml.FrameworkElement"/> */
-    public abstract class MosaicFrameworkElementView<TControl> : AMosaicViewWin2D
+    public abstract class MosaicFrameworkElementView<TControl> : MosaicWin2DView<TControl, CanvasBitmap, MosaicDrawModel<CanvasBitmap>>
         where TControl : FrameworkElement
     {
         protected TControl _control;
-        private MineCanvasBmp _mineImage;
-        private FlagCanvasBmp _flagImage;
+        protected readonly ICanvasResourceCreator _resourceCreator;
+        private Mine.ControllerBitmap _imgMine;
+        private Flag.ControllerBitmap _imgFlag;
 
-        public virtual TControl Control {
+        protected MosaicFrameworkElementView(TControl control, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
+            : base(new MosaicDrawModel<CanvasBitmap>())
+        {
+            _resourceCreator = resourceCreator;
+            Control = control;
+            ChangeSizeImagesMineFlag();
+        }
+
+        protected override TControl CreateImage() {
+            return Control;
+        }
+
+        public TControl Control {
             get { return _control; }
-            set { _control = value; }
-        }
-
-        protected virtual CanvasDevice GetCanvasDevice() {
-            return CanvasDevice.GetSharedDevice();
-        }
-
-        private MineCanvasBmp MineImg {
-            get {
-                if (_mineImage == null)
-                    _mineImage = new MineCanvasBmp(GetCanvasDevice());
-                return _mineImage;
+            private set {
+                _control = value;
             }
         }
 
-        private FlagCanvasBmp FlagImg {
+        private Mine.ControllerBitmap ImgMine {
             get {
-                if (_flagImage == null)
-                    _flagImage = new FlagCanvasBmp(GetCanvasDevice());
-                return _flagImage;
+                if (_imgMine == null)
+                    _imgMine = new Mine.ControllerBitmap(_resourceCreator);
+                return _imgMine;
             }
         }
 
-        public override SizeDouble Size {
+        private Flag.ControllerBitmap ImgFlag {
             get {
-                // TODO: return getController().WindowSize
-                return new SizeDouble(Control?.Width ?? 0, Control?.Height ?? 0);
+                if (_imgFlag == null)
+                    _imgFlag = new Flag.ControllerBitmap(_resourceCreator);
+                return _imgFlag;
             }
         }
 
         /// <summary> переустанавливаю заного размер мины/флага для мозаики </summary>
-        protected override void ChangeSizeImagesMineFlag() {
+        protected void ChangeSizeImagesMineFlag() {
             // PS: картинки не зависят от размера ячейки...
-            PaintUwpContext<CanvasBitmap> pc = PaintContext;
-            int sq = (int)Mosaic.CellAttr.GetSq(pc.PenBorder.Width);
+            MosaicDrawModel<CanvasBitmap> model = Model;
+            var sq = model.CellAttr.GetSq(model.PenBorder.Width);
             if (sq <= 0) {
                 System.Diagnostics.Debug.Assert(false, "Error: слишком толстое перо! Нет области для вывода картиники флага/мины...");
                 sq = 3; // ат балды...
             }
-            //MineImg = null;
-            //FlagImg = null;
+            //model.ImgFlag = null;
+            //model.ImgMine = null;
 
             if (sq >= 50) { // ignore small sizes
-                MineImg.Size = new Size(sq, sq);
+                ImgFlag.Model.SetSize(sq);
+                ImgMine.Model.SetSize(sq);
             }
-            pc.ImgMine = MineImg.Image;
-            pc.ImgFlag = FlagImg.Image;
+            model.ImgFlag = ImgFlag.Image;
+            model.ImgMine = ImgMine.Image;
         }
 
-        protected override void Dispose(bool disposing) {
-            if (Disposed)
-                return;
-
-            base.Dispose(disposing);
-
-            if (disposing) {
-                MineImg.Dispose();
-                FlagImg.Dispose();
-                _mineImage = null;
-                _flagImage = null;
-
-                Control = null;
-            }
+        protected override void Disposing() {
+            _control = null;
+            _imgFlag?.Dispose();
+            _imgMine?.Dispose();
+            _imgFlag = null;
+            _imgMine = null;
         }
 
     }
 
-#endif
 }

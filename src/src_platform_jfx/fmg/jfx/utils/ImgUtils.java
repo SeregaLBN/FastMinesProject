@@ -15,7 +15,7 @@ public final class ImgUtils {
         return self.snapshot(params, null);
     }
 
-    public static Image zoom(Image img, int newWidth, int newHeight) {
+    public static Image zoom(Image img, double newWidth, double newHeight) {
         ImageView imageView = new ImageView(img);
         imageView.setPreserveRatio(true);
         imageView.setFitWidth(newWidth);

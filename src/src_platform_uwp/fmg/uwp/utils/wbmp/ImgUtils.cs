@@ -95,12 +95,12 @@ namespace fmg.uwp.utils.wbmp {
         }
 
         /// <summary> change image size </summary>
-        public static WriteableBitmap Zoom(WriteableBitmap img, int newWidth, int newHeight) {
+        public static WriteableBitmap Zoom(WriteableBitmap img, double newWidth, double newHeight) {
             if (img == null)
                 return null;
             if ((newWidth < 1) || (newHeight < 1))
                 return img;
-            var tmp = new WriteableBitmap(newWidth, newHeight);
+            var tmp = new WriteableBitmap((int)newWidth, (int)newHeight);
             tmp.Blit(new Rect(0, 0, newWidth, newHeight), img, new Rect(0, 0, img.PixelWidth, img.PixelHeight));
             return tmp;
         }

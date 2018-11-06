@@ -2,9 +2,11 @@ using Windows.Devices.Input;
 using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using fmg.common;
 using fmg.common.geom;
+using fmg.common.Converters;
 using fmg.core.mosaic;
 using fmg.core.types;
 using fmg.core.types.click;
@@ -17,7 +19,8 @@ namespace fmg.uwp.mosaic {
     /// <typeparam name="TImageAsFrameworkElement">image-control based of <see cref="FrameworkElement"/></typeparam>
     /// <typeparam name="TImageInner">image type of flag/mine into mosaic field</typeparam>
     /// <typeparam name="TMosaicView">mosaic view</typeparam>
-    public abstract class MosaicFrameworkElementController<TImageAsFrameworkElement, TImageInner, TMosaicView> : MosaicController<TImageAsFrameworkElement, TImageInner, TMosaicView, MosaicDrawModel<TImageInner>>
+    public abstract class MosaicFrameworkElementController<TImageAsFrameworkElement, TImageInner, TMosaicView>
+                                        : MosaicController<TImageAsFrameworkElement, TImageInner, TMosaicView, MosaicDrawModel<TImageInner>>
         where TImageAsFrameworkElement : FrameworkElement
         where TImageInner : class
         where TMosaicView : IMosaicView<TImageAsFrameworkElement, TImageInner, MosaicDrawModel<TImageInner>>
@@ -25,15 +28,14 @@ namespace fmg.uwp.mosaic {
 
         private readonly ClickInfo _clickInfo = new ClickInfo();
 
-        public MosaicFrameworkElementController(TMosaicView view)
+        protected MosaicFrameworkElementController(TMosaicView view)
             : base(view)
         {
-            SubscribeToViewControl();
+            SubscribeToControl();
+            SetBinding();
         }
 
-        public TImageAsFrameworkElement GetViewControl() {
-            return View.Image;
-        }
+        public abstract TImageAsFrameworkElement Control { get; }
 
         bool ClickHandler(ClickResult clickResult) {
             if (clickResult == null)
@@ -64,7 +66,7 @@ namespace fmg.uwp.mosaic {
             //using (new fmg.common.Tracer("MosaicFEC.OnTapped", () => "handled=" + ev.Handled))
             {
                 if (ev.PointerDeviceType != PointerDeviceType.Mouse) {
-                    ev.Handled = OnClick(ev.GetPosition(GetViewControl()), true, false);
+                    ev.Handled = OnClick(ev.GetPosition(Control), true, false);
                 }
             }
         }
@@ -72,7 +74,7 @@ namespace fmg.uwp.mosaic {
         protected void OnDoubleTapped(object sender, DoubleTappedRoutedEventArgs ev) {
             //using (new fmg.common.Tracer("MosaicFEC.OnDoubleTapped", () => "handled=" + ev.Handled))
             {
-                var imgControl = GetViewControl();
+                var imgControl = Control;
                 var rcImage = new Windows.Foundation.Rect(0, 0, imgControl.Width, imgControl.Height);
                 if (rcImage.Contains(ev.GetPosition(imgControl))) {
                     if (this.GameStatus == EGameStatus.eGSEnd) {
@@ -98,7 +100,7 @@ namespace fmg.uwp.mosaic {
                     OnClick(new Windows.Foundation.Point(-1, -1), true, false);
 
                     // 2. make right click - up & down
-                    var imgControl = GetViewControl();
+                    var imgControl = Control;
                     var pos = ev.GetPosition(imgControl);
                     var handled1 = OnClick(pos, false, true);
                     var handled2 = OnClick(pos, false, false);
@@ -110,7 +112,7 @@ namespace fmg.uwp.mosaic {
         protected void OnPointerPressed(object sender, PointerRoutedEventArgs ev) {
             //using (new fmg.common.Tracer("MosaicFEC.OnPointerPressed", () => "handled=" + ev.Handled))
             {
-                var imgControl = GetViewControl();
+                var imgControl = Control;
                 var currPoint = ev.GetCurrentPoint(imgControl);
 
                 //_clickInfo.PointerDevice = pointerPoint.PointerDevice.PointerDeviceType;
@@ -141,7 +143,7 @@ namespace fmg.uwp.mosaic {
         protected void OnPointerReleased(object sender, PointerRoutedEventArgs ev) {
             //using (new fmg.common.Tracer("MosaicFEC.OnPointerReleased", () => "handled="+ ev.Handled))
             {
-                var imgControl = GetViewControl();
+                var imgControl = Control;
                 var currPoint = ev.GetCurrentPoint(imgControl);
                 //if (_manipulationStarted)
                 if (ev.Pointer.PointerDeviceType == PointerDeviceType.Mouse) {
@@ -165,7 +167,7 @@ namespace fmg.uwp.mosaic {
         protected void OnPointerCaptureLost(object sender, PointerRoutedEventArgs ev) {
             //using (new fmg.common.Tracer("MosaicFEC.OnPointerCaptureLost", () => "handled=" + ev.Handled))
             {
-                var imgControl = GetViewControl();
+                var imgControl = Control;
                 var currPoint = ev.GetCurrentPoint(imgControl);
                 if (!_clickInfo.Released) {
                     LoggerSimple.Put("ã OnPointerCaptureLost: forced left release click...");
@@ -183,8 +185,24 @@ namespace fmg.uwp.mosaic {
             return false;
         }
 
-        private void SubscribeToViewControl() {
-            var imgControl = this.GetViewControl();
+        protected virtual void SetBinding() {
+            var control = Control;
+            control.SetBinding(FrameworkElement.WidthProperty, new Binding {
+                Source = this.View,
+                Path = new PropertyPath(nameof(Size)),
+                Mode = BindingMode.OneWay,
+                Converter = new SizeToWidthConverter()
+            });
+            control.SetBinding(FrameworkElement.HeightProperty, new Binding {
+                Source = this.View,
+                Path = new PropertyPath(nameof(Size)),
+                Mode = BindingMode.OneWay,
+                Converter = new SizeToHeightConverter()
+            });
+        }
+
+        protected void SubscribeToControl() {
+            var imgControl = Control;
             imgControl.Tapped += OnTapped;
             imgControl.DoubleTapped += OnDoubleTapped;
             imgControl.RightTapped += OnRightTapped;
@@ -194,8 +212,8 @@ namespace fmg.uwp.mosaic {
             imgControl.LostFocus += OnFocusLost;
         }
 
-        private void UnsubscribeToViewControl() {
-            var imgControl = this.GetViewControl();
+        protected void UnsubscribeToControl() {
+            var imgControl = Control;
             imgControl.Tapped += OnTapped;
             imgControl.DoubleTapped -= OnDoubleTapped;
             imgControl.RightTapped -= OnRightTapped;
@@ -206,12 +224,12 @@ namespace fmg.uwp.mosaic {
         }
 
         protected override void Disposing() {
-            UnsubscribeToViewControl();
+            UnsubscribeToControl();
             base.Disposing();
         }
 
         private PointDouble ToImagePoint(Windows.Foundation.Point pagePoint) {
-            var imgControl = this.GetViewControl();
+            //var imgControl = Control;
             var point = pagePoint.ToFmPointDouble(); // imgControl.TransformToVisual(imgControl).TransformPoint(pagePoint).ToFmPointDouble();
             //var o = GetOffset();
             //var point2 = new PointDouble(pagePoint.X - o.Left, pagePoint.Y - o.Top);

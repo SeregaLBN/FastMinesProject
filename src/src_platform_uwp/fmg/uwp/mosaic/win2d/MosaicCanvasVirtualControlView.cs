@@ -1,19 +1,27 @@
 using System.Linq;
 using System.Collections.Generic;
+using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
 using fmg.common.geom;
-using fmg.core.mosaic;
 using fmg.core.mosaic.cells;
 using fmg.uwp.utils;
 
 namespace fmg.uwp.mosaic.win2d {
-#if false
 
     /// summary> MVC: view. UWP Win2D implementation. View located into control <see cref="CanvasVirtualControl"/> */
-    public class MosaicViewInCanvasVirtualControl : AMosaicViewInControl<CanvasVirtualControl> {
+    public class MosaicCanvasVirtualControlView : MosaicFrameworkElementView<CanvasVirtualControl> {
 
-        public override void Invalidate(IEnumerable<BaseCell> modifiedCells = null) {
+        public MosaicCanvasVirtualControlView(CanvasVirtualControl control, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
+            : base(control, resourceCreator)
+        {
+        }
+
+        protected override void DrawModified(ICollection<BaseCell> requiredCells) {
+            Invalidate(requiredCells);
+        }
+
+        public override void Invalidate(ICollection<BaseCell> modifiedCells) {
             System.Diagnostics.Debug.Assert((modifiedCells == null) || modifiedCells.Any());
             using (new Tracer()) {
                 var canvasVirtualControl = Control;
@@ -37,8 +45,8 @@ namespace fmg.uwp.mosaic.win2d {
                 var tmp = new Windows.Foundation.Rect(0, 0, size.Width, size.Height);
 #endif
 
-                foreach (var cell in modifiedCells ?? Mosaic.Matrix) {
-                    var rc = cell.getRcOuter();
+                foreach (var cell in modifiedCells ?? Model.Matrix) {
+                    var rc = cell.GetRcOuter();
 #if DEBUG
                     var containsLT = tmp.Contains(rc.PointLT().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Left()) && tmp.Top.HasMinDiff(rc.Top()));
                     var containsLB = tmp.Contains(rc.PointLB().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Left()) && tmp.Top.HasMinDiff(rc.Bottom()));
@@ -56,17 +64,17 @@ namespace fmg.uwp.mosaic.win2d {
         }
 
         bool _alreadyPainted2 = false;
-        public void OnRegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs ev) {
+        internal void OnRegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs ev) {
             using (new Tracer()) {
-                System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _control));
+                System.Diagnostics.Debug.Assert(ReferenceEquals(sender, Control));
                 System.Diagnostics.Debug.Assert(!_alreadyPainted2);
 
                 _alreadyPainted2 = true;
                 foreach (var region in ev.InvalidatedRegions) {
                     using (var ds = sender.CreateDrawingSession(region)) {
-                        Paintable = ds;
-                        Repaint(null, region.ToFmRectDouble());
-                        Paintable = null;
+                        ICollection<BaseCell> modifiedCells = null;
+                        bool drawBk = false;
+                        DrawWin2D(ds, modifiedCells, region.ToFmRectDouble(), drawBk);
                     }
                 }
                 _alreadyPainted2 = false;
@@ -75,5 +83,4 @@ namespace fmg.uwp.mosaic.win2d {
 
     }
 
-#endif
 }
