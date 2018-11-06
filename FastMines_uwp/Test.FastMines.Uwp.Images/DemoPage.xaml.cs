@@ -466,7 +466,9 @@ namespace Test.FastMines.Uwp.Images {
                         void onDraw(CanvasControl s, CanvasDrawEventArgs ev) {
                            //if (imgObj.Disposed)
                            //   return;
-                           ev.DrawingSession.DrawImage(imgObj.Image as CanvasBitmap, new Windows.Foundation.Rect(0, 0, cnvsCtrl.Width, cnvsCtrl.Height));
+                           if (!(imgObj.Image is CanvasBitmap cb))
+                              return; // already disposed?
+                           ev.DrawingSession.DrawImage(cb, new Windows.Foundation.Rect(0, 0, cnvsCtrl.Width, cnvsCtrl.Height));
                         };
                         cnvsCtrl.Draw += onDraw;
                         cnvsCtrl.Unloaded += (s, ev) => {
