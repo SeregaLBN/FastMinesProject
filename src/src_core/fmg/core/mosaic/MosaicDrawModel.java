@@ -192,6 +192,11 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
          return _colors;
       }
 
+      /** off notifier */
+      public AutoCloseable hold() {
+         return _notifier.hold();
+      }
+
       @Override
       public void close() {
          _notifier.close();
@@ -345,6 +350,23 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
          _notifier.onPropertyChanged(PROPERTY_SIZE);
          break;
       }
+   }
+
+   /** off notifier */
+   @Override
+   protected AutoCloseable hold() {
+      AutoCloseable a0 = super.hold();
+      AutoCloseable a1 = getColorText().hold();
+      AutoCloseable a2 = getPenBorder().hold();
+      AutoCloseable a3 = getFontInfo().hold();
+      AutoCloseable a4 = getBackgroundFill().hold();
+      return () -> {
+         a0.close();
+         a1.close();
+         a2.close();
+         a3.close();
+         a4.close();
+      };
    }
 
    @Override

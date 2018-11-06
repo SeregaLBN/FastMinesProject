@@ -15,8 +15,8 @@ import fmg.core.types.draw.PenBorder;
  * @param <TMosaicModel> mosaic data model
  */
 public abstract class MosaicView<TImage,
-                                  TImageInner,
-                                  TMosaicModel extends MosaicDrawModel<TImageInner>>
+                                 TImageInner,
+                                 TMosaicModel extends MosaicDrawModel<TImageInner>>
                 extends ImageView<TImage, TMosaicModel>
                 implements IMosaicView<TImage, TImageInner, TMosaicModel>
 {

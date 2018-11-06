@@ -156,6 +156,16 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
       _notifier.onPropertyChanged(PROPERTY_CELL_ATTR);
    }
 
+   /** off notifier */
+   protected AutoCloseable hold() {
+      AutoCloseable a1 = _notifier.hold();
+      AutoCloseable a2 = getCellAttr().hold();
+      return () -> {
+         a1.close();
+         a2.close();
+      };
+   }
+
    @Override
    public void close() {
       _notifier.close();

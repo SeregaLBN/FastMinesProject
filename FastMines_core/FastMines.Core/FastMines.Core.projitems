@@ -78,6 +78,9 @@
     <Compile Include="..\..\src\src_core\fmg\common\Nothing.cs">
       <Link>src_fmg.common\Nothing.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\src_core\fmg\common\PlainFree.cs">
+      <Link>src_fmg.common\PlainFree.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\src_core\fmg\common\crypt\DES.cs">
       <Link>src_fmg.common\crypt\DES.cs</Link>
     </Compile>

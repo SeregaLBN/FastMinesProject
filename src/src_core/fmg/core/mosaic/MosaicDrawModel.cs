@@ -170,6 +170,11 @@ namespace fmg.core.mosaic {
             return res;
          }
 
+         /// <summary> off notifer </summary>
+         public IDisposable Hold() {
+             return _notifier.Hold();
+         }
+
          public void Dispose() {
             _notifier.Dispose();
             _colors.Clear();
@@ -310,6 +315,24 @@ namespace fmg.core.mosaic {
             _notifier.OnPropertyChanged(nameof(this.Size));
             break;
          }
+      }
+
+      /** off notifier */
+      protected override IDisposable Hold() {
+         var a0 = base.Hold();
+         var a1 = ColorText.Hold();
+         var a2 = PenBorder.Hold();
+         var a3 = FontInfo.Hold();
+         var a4 = BkFill.Hold();
+         return new PlainFree() {
+             _onDispose = () => {
+                a0.Dispose();
+                a1.Dispose();
+                a2.Dispose();
+                a3.Dispose();
+                a4.Dispose();
+             }
+         };
       }
 
       protected override void Disposing() {

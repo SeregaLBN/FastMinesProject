@@ -61,6 +61,11 @@ namespace fmg.core.types.draw {
          return string.Format("FontInfo={{name={0}, bold={1}, size={2}}}", _name, _bold, _size);
       }
 
+      /// <summary> off notifer </summary>
+      public IDisposable Hold() {
+          return _notifier.Hold();
+      }
+
       public void Dispose() {
          _notifier.Dispose();
          GC.SuppressFinalize(this);
