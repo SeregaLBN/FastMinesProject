@@ -31,7 +31,7 @@ namespace fmg.core.mosaic {
         protected ICollection<BaseCell> ToDrawCells(RectDouble? invalidatedRect) {
 #if DEBUG
             if (_DEBUG_DRAW_FLOW)
-                LoggerSimple.Put("<>MosaicView.ToDrawCells: invalidatedRect=" + (invalidatedRect==null ? "null" : invalidatedRect.ToString()));
+                LoggerSimple.Put("> MosaicView.ToDrawCells: invalidatedRect=" + (invalidatedRect==null ? "null" : invalidatedRect.ToString()));
 #endif
 
             if (invalidatedRect == null)

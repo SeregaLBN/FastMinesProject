@@ -77,16 +77,16 @@ namespace fmg.uwp.mosaic.win2d {
                                                             bkClr,
                                                             bkFill.GetColor);
                 using (var polygon =  isSimpleDraw ? null : ds.CreatePolygon(region, offset))
-                using (var geom    = (isSimpleDraw || drawBk || (bkClrCell != bkClr)) ? ds.BuildLines(region, offset) : null)
+                using (var geom    = (isSimpleDraw || !drawBk || (bkClrCell != bkClr)) ? ds.BuildLines(region, offset) : null)
                 {
                     // ограничиваю рисование только границами своей фигуры
-                    using (var layer = isSimpleDraw ? null : ds.CreateLayer(1, polygon)) {
+                    using (var layer = (polygon==null) ? null : ds.CreateLayer(1, polygon)) {
 
                         { // 2.1. paint component
                             // 2.1.1. paint cell background
                             //if (!isSimpleDraw) // когда русуется иконка, а не игровое поле, - делаю попроще...
                             {
-                                if (drawBk || (bkClrCell != bkClr))
+                                if (geom != null) // eq   if (!drawBk || (bkClrCell != bkClr))
                                     ds.FillGeometry(geom, bkClrCell.ToWinColor());
                             }
 
