@@ -107,7 +107,7 @@ abstract class MosaicAndroidView<TImage, TImageInner: Any, TMosaicModel : Mosaic
 
                 val paintImage = Consumer<TImageInner> { img ->
                     if (img is android.graphics.Bitmap)
-                        g.drawBitmap(img as android.graphics.Bitmap, (rcInner.x + offset.width ).toFloat(), (rcInner.y + offset.height).toFloat(), null)
+                        g.drawBitmap(img as android.graphics.Bitmap, rcInner.x.toFloat(), rcInner.y.toFloat(), null)
                     else
                         throw RuntimeException("Unsupported image type " + img.javaClass.simpleName)
                 }
