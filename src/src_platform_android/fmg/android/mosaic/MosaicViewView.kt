@@ -91,9 +91,9 @@ class MosaicViewView(private val _owner: Activity) : MosaicAndroidView<View, Bit
             if (MosaicView._DEBUG_DRAW_FLOW)
                 println("MosaicViewAndroid.draw: repaint={" + minX.toInt() + "," + minY.toInt() + "," + (maxX - minX).toInt() + "," + (maxY - minY).toInt() + "}")
 
-            var model = Model;
-            var padding = model.Padding;
-            var margin = model.Margin;
+            var model = this.model;
+            var padding = model.padding;
+            var margin = model.margin;
             var offset = SizeDouble(margin.left + padding.left,
                                     margin.top  + padding.top);
             control.invalidate((minX + offset.width).toInt(), (minY + offset.height).toInt(), (maxX - minX).toInt(), (maxY - minY).toInt())
@@ -130,7 +130,7 @@ class MosaicViewView(private val _owner: Activity) : MosaicAndroidView<View, Bit
         var sq = model.cellAttr.getSq(model.penBorder.width)
         if (sq <= 0) {
             System.err.println("Error: too thick pen! There is no area for displaying the flag/mine image...")
-            sq = 3 // ат балды...
+            sq = 3.0 // ат балды...
         }
 
         val max = 30

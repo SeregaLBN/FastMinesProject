@@ -75,8 +75,7 @@ abstract class MosaicAndroidView<TImage, TImageInner: Any, TMosaicModel : Mosaic
         if (MosaicView._DEBUG_DRAW_FLOW)
             println("> MosaicAndroidView.drawAndroid: " + (if (toDrawCells==null) "all" else "cnt=" + toDrawCells!!.size)
                     + "; drawBk=" + drawBk)
-
-        for (cell in toDrawCells!!) {
+        for (cell in (if (toDrawCells == null) model.matrix else toDrawCells!!)) {
             val rcInner = cell.getRcInner(pen.width).moveXY(offset)
             val poly = RegionDouble.moveXY(cell.region, offset).toPolygon()
 
@@ -85,7 +84,7 @@ abstract class MosaicAndroidView<TImage, TImageInner: Any, TMosaicModel : Mosaic
                 g.save()
                 // ограничиваю рисование только границами своей фигуры
                 g.clipPath(poly)
-            }
+            }.
 
             // 2.1. paint component
             run {
@@ -199,7 +198,7 @@ abstract class MosaicAndroidView<TImage, TImageInner: Any, TMosaicModel : Mosaic
         run {
             g.setClip(oldShape);
             //g.setComposite(AlphaComposite.SrcOver);
-            
+
             // test padding
             g.setStroke(new BasicStroke(5));
             Color clr = Color.DarkRed.clone();
@@ -210,7 +209,7 @@ abstract class MosaicAndroidView<TImage, TImageInner: Any, TMosaicModel : Mosaic
                 padding.top.toFloat(),
                 (size.width  - padding.getLeftAndRight()).toFloat(),
                 (size.height - padding.getTopAndBottom()).toFloat());
-            
+
             // test margin
             g.setStroke(new BasicStroke(3));
             clr = Color.DarkGreen.clone();
@@ -222,7 +221,7 @@ abstract class MosaicAndroidView<TImage, TImageInner: Any, TMosaicModel : Mosaic
                 (size.width  - padding.getLeftAndRight() - margin.getLeftAndRight()).toFloat(),
                 (size.height - padding.getTopAndBottom() - margin.getTopAndBottom()).toFloat());
         }
-        /**/
+        / **/
 
         if (MosaicView._DEBUG_DRAW_FLOW)
             println("-------------------------------")
