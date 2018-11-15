@@ -20,7 +20,6 @@ namespace fmg.uwp.mosaic.win2d {
         private CanvasSwapChain _swapChain;
         private readonly CanvasRenderTarget[] _doubleBuffer = new CanvasRenderTarget[2];
         private int _bufferIndex = 0;
-        private bool _needResizeFirstBuffer = true, _needResizeSecondBuffer = true;
 
         public MosaicCanvasSwapChainPanelView(ICanvasResourceCreator resourceCreator, CanvasSwapChainPanel control = null)
             : base(resourceCreator, control)
@@ -44,15 +43,15 @@ namespace fmg.uwp.mosaic.win2d {
             case nameof(MosaicGameModel.MosaicType):
             case nameof(MosaicGameModel.Area):
             case nameof(MosaicGameModel.SizeField):
-                _needResizeFirstBuffer = _needResizeSecondBuffer = true;
+                ResetBuffers();
                 break;
             }
         }
 
-        public SizeDouble Offset { get; set; }
+        //public SizeDouble Offset { get; set; }
         //public Func<SizeDouble> GetterMosaicWindowSize { get; set; }
         //public void OnMosaicWindowSizeChanged() {
-        //    _needResizeFirstBuffer = _needResizeSecondBuffer = true;
+        //    ResetBuffers();
         //}
 
         private CanvasSwapChain SwapChain {
@@ -96,15 +95,6 @@ namespace fmg.uwp.mosaic.win2d {
                 System.Diagnostics.Debug.Assert(!Disposed);
 
                 var i = _bufferIndex;
-                if ((i == 0) ? _needResizeFirstBuffer : _needResizeSecondBuffer) {
-                    _doubleBuffer[i]?.Dispose();
-                    _doubleBuffer[i] = null;
-                    if (i == 0)
-                        _needResizeFirstBuffer = false;
-                    else
-                        _needResizeSecondBuffer = false;
-                }
-
                 if (_doubleBuffer[i] == null) {
                     var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
                     var size = Model.Size; // GetterMosaicWindowSize();
@@ -149,20 +139,19 @@ namespace fmg.uwp.mosaic.win2d {
             using (var tr = new Tracer()) {
                 SwapDrawBuffer();
                 var ab = ActualBuffer;
+                var bb = BackBuffer;
+                if (bb == null) {
+                    modifiedCells = null; // force redraw all
+                    tr.Put("BackBuffer is null: force set modifiedCells as null");
+                }
+                bool needRedrawAll = (modifiedCells == null);
                 using (var ds = ab.CreateDrawingSession()) {
-
-                    bool needRedrawAll = (modifiedCells == null);
-                    if (!needRedrawAll) {
-                        if (BackBuffer == null) {
-                            ds.Clear(Colors.Transparent);
-                            LoggerSimple.Put("{0} BackBuffer is null: ds.Clear(Colors.Transparent): modifiedCells={1}", _bufferIndex, modifiedCells == null ? "null" : modifiedCells.Count().ToString());
-                        } else {
-                            ds.DrawImage(BackBuffer);
-                            LoggerSimple.Put("{0} BackBuffer != null: ds.DrawImage(BackBuffer): modifiedCells={1}", _bufferIndex, modifiedCells == null ? "null" : modifiedCells.Count().ToString());
-                        }
+                    if (bb != null) {
+                        ds.DrawImage(bb);
+                        tr.Put("{0} BackBuffer != null: ds.DrawImage(BackBuffer): modifiedCells={1}", _bufferIndex, modifiedCells == null ? "null" : modifiedCells.Count().ToString());
                     }
 
-                    bool drawBk = false;
+                    bool drawBk = needRedrawAll;
                     DrawWin2D(ds, modifiedCells, drawBk);
                 }
                 RepaintOffsetInternal(ab);
@@ -191,19 +180,25 @@ namespace fmg.uwp.mosaic.win2d {
 
         private void RepaintOffsetInternal(CanvasRenderTarget actualBuffer) {
             var sc = SwapChain;
-            var o = Offset;
+            //var o = Offset;
             using (var ds = sc.CreateDrawingSession(Colors.Transparent)) {
-                ds.DrawImage(actualBuffer, (float)o.Width, (float)o.Height);
+                //ds.DrawImage(actualBuffer, (float)o.Width, (float)o.Height);
+                ds.DrawImage(actualBuffer);
             }
             //AsyncRunner.InvokeFromUiLater(() => { // TODO: Removes blink artifacts when zooming.  Need remove....
             sc.Present();
             //}, Windows.UI.Core.CoreDispatcherPriority.High);
         }
 
-        protected override void Disposing() {
-            SwapChain = null; // call setter
+        private void ResetBuffers() {
             _doubleBuffer[0]?.Dispose();
             _doubleBuffer[1]?.Dispose();
+            _doubleBuffer[0] = _doubleBuffer[1] = null;
+        }
+
+        protected override void Disposing() {
+            SwapChain = null; // call setter
+            ResetBuffers();
             base.Disposing();
         }
 

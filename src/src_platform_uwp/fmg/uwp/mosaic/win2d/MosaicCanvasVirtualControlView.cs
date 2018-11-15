@@ -1,10 +1,12 @@
 using System;
 using System.Linq;
+using System.ComponentModel;
 using System.Collections.Generic;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
 using fmg.common.geom;
+using fmg.core.mosaic;
 using fmg.core.mosaic.cells;
 using fmg.uwp.utils;
 
@@ -14,6 +16,8 @@ namespace fmg.uwp.mosaic.win2d {
     public class MosaicCanvasVirtualControlView : MosaicFrameworkElementView<CanvasVirtualControl> {
 
         private bool _isInnerControl;
+        private readonly bool _useClearColor = true;
+        private readonly bool _accumulateInvalidate = true;
 
         public MosaicCanvasVirtualControlView(ICanvasResourceCreator resourceCreator, CanvasVirtualControl control = null)
             : base(resourceCreator, control)
@@ -24,6 +28,8 @@ namespace fmg.uwp.mosaic.win2d {
                 var ctrl = base.Control;
                 if (ctrl == null) {
                     ctrl = new CanvasVirtualControl();
+                    if (_useClearColor)
+                        ctrl.ClearColor = Model.BackgroundColor.ToWinColor();
                     ctrl.RegionsInvalidated += OnRegionsInvalidated;
                     base.Control = ctrl;
                     _isInnerControl = true;
@@ -71,7 +77,7 @@ namespace fmg.uwp.mosaic.win2d {
                 var margin = model.Margin;
                 var offset = new SizeDouble(margin.Left + padding.Left,
                                             margin.Top  + padding.Top);
-                if (false) {
+                if (!_accumulateInvalidate) {
                     foreach (var cell in modifiedCells) {
                         var rc = cell.GetRcOuter();
                         rc.X += offset.Width;
@@ -122,11 +128,20 @@ namespace fmg.uwp.mosaic.win2d {
                 _alreadyPainted2 = true;
                 foreach (var region in ev.InvalidatedRegions) {
                     using (var ds = sender.CreateDrawingSession(region)) {
-                        bool drawBk = true;
+                        bool drawBk = !_useClearColor;
                         DrawWin2D(ds, ToDrawCells(region.ToFmRectDouble()), drawBk);
                     }
                 }
                 _alreadyPainted2 = false;
+            }
+        }
+
+        protected override void OnPropertyModelChanged(object sender, PropertyChangedEventArgs ev) {
+            base.OnPropertyModelChanged(sender, ev);
+            switch (ev.PropertyName) {
+            case nameof(MosaicDrawModel<CanvasBitmap>.BackgroundColor):
+                Control.ClearColor = Model.BackgroundColor.ToWinColor();
+                break;
             }
         }
 
