@@ -138,6 +138,10 @@ namespace fmg {
         /// <summary> get margin around mosaic control </summary>
         Bound GetMosaicMargin() {
             // @TODO: not implemented...
+            // window caption
+            // menu
+            // toolbar
+            // staus-bar
             return new Bound();
         }
 

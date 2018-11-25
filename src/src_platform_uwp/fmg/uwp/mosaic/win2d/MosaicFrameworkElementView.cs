@@ -10,7 +10,6 @@ namespace fmg.uwp.mosaic.win2d {
     public abstract class MosaicFrameworkElementView<TControl> : MosaicWin2DView<TControl, CanvasBitmap, MosaicDrawModel<CanvasBitmap>>
         where TControl : FrameworkElement
     {
-        protected TControl _control;
         protected readonly ICanvasResourceCreator _resourceCreator;
         private Mine.ControllerBitmap _imgMine;
         private Flag.ControllerBitmap _imgFlag;
@@ -27,12 +26,7 @@ namespace fmg.uwp.mosaic.win2d {
             return Control;
         }
 
-        public virtual TControl Control {
-            get { return _control; }
-            protected set {
-                _control = value;
-            }
-        }
+        public virtual TControl Control { get;  protected set; }
 
         private Mine.ControllerBitmap ImgMine {
             get {

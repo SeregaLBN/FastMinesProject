@@ -56,7 +56,7 @@ namespace fmg.uwp.mosaic.win2d {
 
         private CanvasSwapChain SwapChain {
             get {
-                System.Diagnostics.Debug.Assert(_control != null);
+                System.Diagnostics.Debug.Assert(Control != null);
                 System.Diagnostics.Debug.Assert(!Disposed);
                 var cw = Control.Width;
                 var ch = Control.Height;
@@ -91,7 +91,7 @@ namespace fmg.uwp.mosaic.win2d {
         private CanvasRenderTarget   BackBuffer { get { return _doubleBuffer[1 - _bufferIndex]; } }
         private CanvasRenderTarget ActualBuffer {
             get {
-                System.Diagnostics.Debug.Assert(_control != null);
+                System.Diagnostics.Debug.Assert(Control != null);
                 System.Diagnostics.Debug.Assert(!Disposed);
 
                 var i = _bufferIndex;

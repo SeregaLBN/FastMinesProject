@@ -15,8 +15,7 @@ namespace fmg.uwp.mosaic.win2d {
     /// summary> MVC: view. UWP Win2D implementation. View located into control <see cref="CanvasVirtualControl"/> */
     public class MosaicCanvasVirtualControlView : MosaicFrameworkElementView<CanvasVirtualControl> {
 
-        private bool _isInnerControl;
-        private readonly bool _useClearColor = true;
+        private readonly bool _useClearColor = true; // TODO при true проявляются артефакты в рисовании ;-\
         private readonly bool _accumulateInvalidate = true;
 
         public MosaicCanvasVirtualControlView(ICanvasResourceCreator resourceCreator, CanvasVirtualControl control = null)
@@ -25,22 +24,21 @@ namespace fmg.uwp.mosaic.win2d {
 
         public override CanvasVirtualControl Control {
             get {
-                var ctrl = base.Control;
-                if (ctrl == null) {
-                    ctrl = new CanvasVirtualControl();
-                    if (_useClearColor)
-                        ctrl.ClearColor = Model.BackgroundColor.ToWinColor();
-                    ctrl.RegionsInvalidated += OnRegionsInvalidated;
-                    base.Control = ctrl;
-                    _isInnerControl = true;
-                }
-                return ctrl;
+                if (base.Control == null)
+                    this.Control = new CanvasVirtualControl(); // call this setter
+                return base.Control;
             }
             protected set {
-                if (_isInnerControl)
-                    base.Control.RegionsInvalidated -= OnRegionsInvalidated;
+                var old = base.Control;
+                if (old != null)
+                    old.RegionsInvalidated -= OnRegionsInvalidated;
+
                 base.Control = value;
-                _isInnerControl = false;
+                if (value != null) {
+                    value.RegionsInvalidated += OnRegionsInvalidated;
+                    if (_useClearColor)
+                        value.ClearColor = Model.BackgroundColor.ToWinColor();
+                }
             }
         }
 

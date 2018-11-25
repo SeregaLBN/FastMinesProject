@@ -31,6 +31,7 @@ namespace fmg.uwp.utils {
 
         public static Bound GetScreenPadding() {
             // @TODO: not implemented...
+            // need exclude bottom (default in Windows) toolbar (taskbar)
             return new Bound();
         }
 

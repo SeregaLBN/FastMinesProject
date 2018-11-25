@@ -317,8 +317,8 @@ namespace Test.FastMines.Uwp.Images {
 
             var device = CanvasDevice.GetSharedDevice();
             _onCreateImages = new Action[] {
-                () => TestWin2dMosaicsCanvasSwapControl(device),
                 () => TestWin2dMosaicsCanvasVirtualControl(device),
+                () => TestWin2dMosaicsCanvasSwapControl(device),
                 TestXamlMosaicControl,
                 TestWBmpMosaicControl,
                 () => TestWin2dMosaicsImg1    (device),
@@ -475,7 +475,7 @@ namespace Test.FastMines.Uwp.Images {
                                     if (!(imgObj.Image is CanvasBitmap cb))
                                         return; // already disposed?
                                     ev.DrawingSession.DrawImage(cb, new Windows.Foundation.Rect(0, 0, cnvsCtrl.Width, cnvsCtrl.Height));
-                                };
+                                }
                                 cnvsCtrl.Draw += onDraw;
                                 cnvsCtrl.Unloaded += (s, ev) => {
                                     cnvsCtrl.Draw -= onDraw;
@@ -504,13 +504,13 @@ namespace Test.FastMines.Uwp.Images {
 
             void onSizeChanged(object s, SizeChangedEventArgs ev) {
                 onCellTilingHandler(false, false, true);
-            };
+            }
             void onPointerPressed(object sender, PointerRoutedEventArgs ev) {
                 //onCellTilingHandler(true, false, false);
-            };
+            }
             void onTapped(object sender, TappedRoutedEventArgs ev) {
                 onCellTilingHandler(true, false, false);
-            };
+            }
             _panel.SizeChanged += onSizeChanged;
             if (imgIsControl)
                 _panel.PointerPressed += onPointerPressed;

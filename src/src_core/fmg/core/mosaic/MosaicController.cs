@@ -17,7 +17,7 @@ namespace fmg.core.mosaic {
     /// <typeparam name="TMosaicView">mosaic view</typeparam>
     /// <typeparam name="TMosaicModel">mosaic model</typeparam>
     public abstract class MosaicController<TImage, TImageInner, TMosaicView, TMosaicModel>
-                        : ImageController<TImage,              TMosaicView, TMosaicModel>
+                         : ImageController<TImage,              TMosaicView, TMosaicModel>
         where TImage : class
         where TImageInner : class
         where TMosaicView : IMosaicView<TImage, TImageInner, TMosaicModel>
