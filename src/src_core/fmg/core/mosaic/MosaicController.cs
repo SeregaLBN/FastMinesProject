@@ -492,7 +492,7 @@ namespace fmg.core.mosaic {
         public bool IsVictory => (GameStatus == EGameStatus.eGSEnd) && (0 == CountMinesLeft);
 
 
-        protected void OnModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+        protected virtual void OnModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             switch (ev.PropertyName) {
             case nameof(Model.SizeField):
                 CellDown = null; // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...

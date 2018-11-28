@@ -1,0 +1,24 @@
+1. C#  fix all   CA2214: Do not call overridable methods in constructors
+
+2. ? Rename 
+    xxxImageYyy
+        (example
+            IImageModel
+            IImageView
+            IImageController
+            genecic TImage
+        )
+   to
+    xxxDrawableYyy
+
+3. Restore SVG
+      ./FastMines_SVG/FastMinesImages.html
+   -> 
+      ./FastMines_SVG/FastMinesImages.svg
+
+4. C#. Change namespase names
+   fmg.bla.bla -> FMG.Bla.Bla
+
+5. ? Change base name of namespace/package
+   from fmg (FastMinesGame)
+   to   fmp (FastMinesProject)

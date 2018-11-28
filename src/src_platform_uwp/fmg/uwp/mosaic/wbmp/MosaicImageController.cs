@@ -16,6 +16,7 @@ namespace fmg.uwp.mosaic.wbmp {
         public override Image Control => View.Control;
 
         protected override void SetBinding() {
+            base.SetBinding();
             var control = Control;
             control.SetBinding(Image.SourceProperty, new Binding {
                 Source = View,
