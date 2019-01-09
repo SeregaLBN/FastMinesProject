@@ -2,6 +2,7 @@ package fmg.core.img;
 
 import java.beans.PropertyChangeListener;
 
+import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
@@ -47,21 +48,31 @@ public class SmileModel implements IImageModel {
     public static final String PROPERTY_FACE_TYPE = "FaceType";
 
     private EFaceType _faceType;
-    private SizeDouble _size;
+    private SizeDouble _size = new SizeDouble(AnimatedImageModel.DefaultImageSize, AnimatedImageModel.DefaultImageSize);
+    private BoundDouble padding = new BoundDouble(AnimatedImageModel.DefaultPadding);
     protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
 
     public SmileModel(EFaceType faceType) {
         _faceType = faceType;
-        _size = new SizeDouble(40, 40);
     }
 
     /** width and height in pixel */
     @Override
     public SizeDouble getSize() { return _size; }
-    public void setSize(double widht, double height) { setSize(new SizeDouble(widht, height)) ; }
     @Override
     public void setSize(SizeDouble size) {
-        _notifier.setProperty(_size, size, PROPERTY_SIZE);
+        IImageModel.checkSize(size);
+        SizeDouble oldSize = _size;
+        if (_notifier.setProperty(_size, size, PROPERTY_SIZE))
+            setPadding(IImageModel.recalcPadding(getPadding(), getSize(), oldSize));
+    }
+
+    @Override
+    public BoundDouble getPadding() { return padding; }
+    @Override
+    public void setPadding(BoundDouble padding) {
+        IImageModel.checkPadding(this, padding);
+        _notifier.setProperty(this.padding, new BoundDouble(padding), PROPERTY_PADDING);
     }
 
     public EFaceType getFaceType() {

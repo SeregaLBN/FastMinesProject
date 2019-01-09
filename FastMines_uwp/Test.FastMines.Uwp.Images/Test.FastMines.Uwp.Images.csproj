@@ -121,18 +121,29 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Properties\Default.rd.xml" />
-    <Content Include="Assets\LockScreenLogo.scale-200.png" />
-    <Content Include="Assets\SplashScreen.scale-200.png" />
-    <Content Include="Assets\Square150x150Logo.scale-200.png" />
-    <Content Include="Assets\Square44x44Logo.scale-200.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-    <Content Include="Assets\StoreLogo.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="..\..\res\Font\NirmalaUI_30.xml">
       <Link>res\Font\NirmalaUI_30.xml</Link>
     </Content>
     <Content Include="..\..\res\Font\NirmalaUI_30.png">
       <Link>res\Font\NirmalaUI_30.png</Link>
+    </Content>
+    <Content Include="..\..\res\Logo\UWP\SplashScreen\Logo.scale-200.png">
+      <Link>res\Logo\UWP\SplashScreen\Logo.scale-200.png</Link>
+    </Content>
+    <Content Include="..\..\res\Logo\UWP\StoreTile\Logo.scale-100.png">
+      <Link>res\Logo\UWP\StoreTile\Logo.scale-100.png</Link>
+    </Content>
+    <Content Include="..\..\res\Logo\UWP\TileSq150\Logo.scale-200.png">
+      <Link>res\Logo\UWP\TileSq150\Logo.scale-200.png</Link>
+    </Content>
+    <Content Include="..\..\res\Logo\UWP\TileSq44\Logo.scale-200.png">
+      <Link>res\Logo\UWP\TileSq44\Logo.scale-200.png</Link>
+    </Content>
+    <Content Include="..\..\res\Logo\UWP\TileSq44\Logo.targetsize-24_altform-unplated.png">
+      <Link>res\Logo\UWP\TileSq44\Logo.targetsize-24_altform-unplated.png</Link>
+    </Content>
+    <Content Include="..\..\res\Logo\UWP\WideTile\Logo.scale-200.png">
+      <Link>res\Logo\UWP\WideTile\Logo.scale-200.png</Link>
     </Content>
   </ItemGroup>
   <ItemGroup>
@@ -179,6 +190,10 @@
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>rd /s /q $(ProjectDir)res
+mklink /j $(ProjectDir)res $(SolutionDir)res</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

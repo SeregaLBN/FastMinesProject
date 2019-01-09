@@ -1,5 +1,6 @@
 package fmg.android.mosaic;
 
+import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -99,18 +100,15 @@ public class MosaicViewView extends MosaicAndroidView<View, Bitmap, MosaicDrawMo
                 System.out.println("MosaicViewAndroid.draw: repaint={" + (int)minX +","+ (int)minY +","+ (int)(maxX-minX) +","+ (int)(maxY-minY) + "}");
 
             MosaicDrawModel<?> model = getModel();
-            BoundDouble padding = model.getPadding();
-            BoundDouble margin = model.getMargin();
-            SizeDouble offset = new SizeDouble(margin.left + padding.left,
-                                               margin.top  + padding.top);
+            SizeDouble offset = model.getMosaicOffset();
             control.invalidate((int)(minX + offset.width), (int)(minY + offset.height), (int)(maxX-minX), (int)(maxY-minY));
         }
     }
 
     @Override
-    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
-        super.onPropertyChanged(oldValue, newValue, propertyName);
-        switch (propertyName) {
+    protected void onPropertyChanged(PropertyChangeEvent ev) {
+        super.onPropertyChanged(ev);
+        switch (ev.getPropertyName()) {
         case PROPERTY_IMAGE:
             getImage(); // implicit call draw() -> drawBegin() -> drawModified() -> control.repaint() -> View.paintComponent -> drawAndroid()
             break;
@@ -118,7 +116,7 @@ public class MosaicViewView extends MosaicAndroidView<View, Bitmap, MosaicDrawMo
             ViewGroup.LayoutParams lp = _control.getLayoutParams();
             if (lp == null)
                 break;
-            SizeDouble s = (SizeDouble)newValue;
+            SizeDouble s = (SizeDouble)ev.getNewValue();
             if (s == null)
                 s = getModel().getSize();
             lp.width  = (int)s.width;
@@ -128,9 +126,9 @@ public class MosaicViewView extends MosaicAndroidView<View, Bitmap, MosaicDrawMo
     }
 
     @Override
-    protected void onPropertyModelChanged(Object oldValue, Object newValue, String propertyName) {
-        super.onPropertyModelChanged(oldValue, newValue, propertyName);
-        switch (propertyName) {
+    protected void onPropertyModelChanged(PropertyChangeEvent ev) {
+        super.onPropertyModelChanged(ev);
+        switch (ev.getPropertyName()) {
         case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
         case MosaicGameModel.PROPERTY_AREA:
             changeSizeImagesMineFlag();
@@ -149,14 +147,14 @@ public class MosaicViewView extends MosaicAndroidView<View, Bitmap, MosaicDrawMo
 
         final int max = 30;
         if (sq > max) {
-            _imgFlag.getModel().setSize(sq);
-            _imgMine.getModel().setSize(sq);
+            _imgFlag.getModel().setSize(new SizeDouble(sq, sq));
+            _imgMine.getModel().setSize(new SizeDouble(sq, sq));
             model.setImgFlag(_imgFlag.getImage());
             model.setImgMine(_imgMine.getImage());
         } else {
-            _imgFlag.getModel().setSize(max);
+            _imgFlag.getModel().setSize(new SizeDouble(max, max));
             model.setImgFlag(ImgUtils.zoom(_imgFlag.getImage(), (int)sq, (int)sq));
-            _imgMine.getModel().setSize(max);
+            _imgMine.getModel().setSize(new SizeDouble(max, max));
             model.setImgMine(ImgUtils.zoom(_imgMine.getImage(), (int)sq, (int)sq));
         }
     }

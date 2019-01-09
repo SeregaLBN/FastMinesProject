@@ -10,9 +10,9 @@ public class BoundDouble {
     public BoundDouble(BoundDouble copy) { this.left = copy.left; this.top = copy.top; this.right = copy.right; this.bottom = copy.bottom; }
     public BoundDouble(double bound) { left = top = right = bottom = bound; }
     public BoundDouble(double left, double top, double right, double bottom) {
-        this.left = left;
-        this.top = top;
-        this.right = right;
+        this.left   = left;
+        this.top    = top;
+        this.right  = right;
         this.bottom = bottom;
     }
 

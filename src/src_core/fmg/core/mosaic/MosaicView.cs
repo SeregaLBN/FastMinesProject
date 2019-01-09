@@ -19,8 +19,8 @@ namespace fmg.core.mosaic {
           where TImageInner : class
           where TMosaicModel : MosaicDrawModel<TImageInner>
     {
-        protected MosaicView(TMosaicModel mosaicModel)
-            : base(mosaicModel)
+        protected MosaicView(TMosaicModel mosaicModel, bool deferredNotifications = true)
+            : base(mosaicModel, deferredNotifications)
         { }
 
 #if DEBUG
@@ -46,10 +46,7 @@ namespace fmg.core.mosaic {
                     return null; // equals Model.Matrix
             }
 
-            var padding = model.Padding;
-            var margin = model.Margin;
-            var offset = new SizeDouble(margin.Left + padding.Left,
-                                        margin.Top  + padding.Top);
+            var offset = model.MosaicOffset;
 
             // redraw only when needed...
             var toDrawCells = model.Matrix

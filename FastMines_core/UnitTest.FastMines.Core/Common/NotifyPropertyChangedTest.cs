@@ -10,8 +10,8 @@ namespace fmg.common.notyfier {
 
     public class NotifyPropertyChangedTest {
 
-        [SetUp]
-        public void Setup() { }
+        //[SetUp]
+        //public void Setup() { }
 
         [Test]
         public void NotifyPropertyChangedSyncTest() {
@@ -42,7 +42,7 @@ namespace fmg.common.notyfier {
                 ++countReceivedEvents;
                 firedValue = (ev as PropertyChangedExEventArgs<string>).NewValue;
             }
-            const string prefix = " Value ";
+            const string prefix = "Value ";
             using (var notifier = new NotifyPropertyChanged(null, listener, true)) {
                 for (int i=0; i<countFiredEvents; ++i)
                     notifier.OnPropertyChanged(null, prefix + i, "propertyName");

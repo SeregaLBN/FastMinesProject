@@ -9,6 +9,8 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EtchedBorder;
 
+import fmg.common.geom.BoundDouble;
+import fmg.common.geom.SizeDouble;
 import fmg.core.img.LogoModel;
 import fmg.core.img.SmileModel;
 import fmg.swing.img.Animator;
@@ -116,8 +118,8 @@ public class AboutDlg extends JDialog implements AutoCloseable {
             _logo = new Logo.ControllerIcon();
         LogoModel lm = _logo.getModel();
         lm.setUseGradient(true);
-        lm.setSize(icoSize);
-        lm.setPadding(1);
+        lm.setSize(new SizeDouble(icoSize, icoSize));
+        lm.setPadding(new BoundDouble(1));
         lm.setRotateMode(LogoModel.ERotateMode.color);
         _logo.usePolarLightFgTransforming(true);
         lm.setAnimated(true);
@@ -132,7 +134,7 @@ public class AboutDlg extends JDialog implements AutoCloseable {
         });
 
         _smile = new Smile.ControllerIcon(SmileModel.EFaceType.Face_Disappointed);
-        _smile.getModel().setSize(icoSize, icoSize);
+        _smile.getModel().setSize(new SizeDouble(icoSize, icoSize));
         btnLogo.setPressedIcon(ImgUtils.zoom(_smile.getImage(), constSize, constSize));
         btnLogo.setFocusable(false);
 

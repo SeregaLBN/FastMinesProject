@@ -12,7 +12,7 @@ namespace fmg.core.img {
     /// <typeparam name="TImage">platform specific view/image/picture or other display context/canvas/window/panel</typeparam>
     /// <typeparam name="TImageModel">model data for display</typeparam>
     public abstract class ImageView<TImage, TImageModel>
-                       : IImageView<TImage, TImageModel>, INotifyPropertyChanged
+                       : IImageView<TImage, TImageModel>
             where TImage : class
             where TImageModel : IImageModel
     {
@@ -27,14 +27,17 @@ namespace fmg.core.img {
         private TImage _image;
         private EInvalidate _invalidate = EInvalidate.needRedraw;
         protected bool Disposed { get; private set; }
-        public event PropertyChangedEventHandler PropertyChanged;
+        private event PropertyChangedEventHandler PropertyChangedSync;
+        public  event PropertyChangedEventHandler PropertyChanged/*Async*/;
         protected readonly NotifyPropertyChanged _notifier;
+        private   readonly NotifyPropertyChanged _notifierAsync;
 
-        protected ImageView(TImageModel imageModel) {
-            _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
+        protected ImageView(TImageModel imageModel, bool deferredNotifications = false) {
             Model = imageModel;
-            this.PropertyChanged += OnPropertyChanged;
-            Model.PropertyChanged += OnPropertyModelChanged;
+            _notifier      =                                new NotifyPropertyChanged(this, ev => PropertyChangedSync?.Invoke(this, ev), false);
+            _notifierAsync = deferredNotifications ? null : new NotifyPropertyChanged(this, ev => PropertyChanged    ?.Invoke(this, ev), true);
+            this .PropertyChangedSync += OnPropertyChanged;
+            Model.PropertyChanged     += OnPropertyModelChanged;
         }
 
         /// <summary> width and height in pixel </summary>
@@ -95,6 +98,9 @@ namespace fmg.core.img {
         protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             System.Diagnostics.Debug.Assert(ReferenceEquals(sender, this));
             //LoggerSimple.Put(GetType().Name + ".OnPropertyChanged: PropertyName=" + ev.PropertyName);
+
+            // refire as async event
+            _notifierAsync?.OnPropertyChanged(ev);
         }
         protected virtual void OnPropertyModelChanged(object sender, PropertyChangedEventArgs ev) {
             System.Diagnostics.Debug.Assert(ReferenceEquals(sender, Model));
@@ -112,7 +118,8 @@ namespace fmg.core.img {
         // <summary>  Dispose managed resources </summary>/
         protected virtual void Disposing() {
             _notifier.Dispose();
-            this.PropertyChanged -= OnPropertyChanged;
+            _notifierAsync?.Dispose();
+            this .PropertyChanged -= OnPropertyChanged;
             Model.PropertyChanged -= OnPropertyModelChanged;
             Image = null;
         }

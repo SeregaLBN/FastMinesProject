@@ -27,7 +27,7 @@ namespace fmg.uwp.utils {
         }
 
         public async static Task RunWithDelay(this Action run, TimeSpan delay) {
-            await Task.Delay(delay);
+            await Task.Delay(delay);//.ContinueWith(t => run());
             run();
         }
 

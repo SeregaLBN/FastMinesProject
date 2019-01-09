@@ -25,99 +25,133 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
     /** Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера. Переопределяется одним из MVC-наследником. */
     public static Color DefaultBkColor = Color.Gray().brighter();
 
-    private TImageInner    _imgMine, _imgFlag;
+    /** Fit the area/padding to the size.
+     *
+     * <ul>При autoFit = true
+     * <li> При любом изменении Size, Padding меняется пропорционально Size
+     * <li> При любом изменении Size / FieldType / FieldSize / Padding,
+     *      Мозаика равномерно вписывается во внутреннюю область {@link #getInnerSize()}
+     * <li> Area напрямую не устанавливается. А если устанавливается, то {@link #getMosaicSize()} + {@link #getPadding()}
+     *      будут определять новый {@link #getSize()}
+     * </ul>
+     *
+     * <ul>При autoFit = false
+     * <li> <ol>При любом изменении Size / FieldType / FieldSize:
+     *      <li> Мозаика равномерно вписывается во вcю область {@link #getSize()}
+     *      <li> при этом Padding заного перерасчитывается с нуля
+     *      </ol>
+     * <li> при изменении Offset меняется Padding так, чтобы InnerSize остался прежним
+     * <li> Padding напрямую не устанавливается (меняется через установку Offset).
+     *      А если меняется, то перерасчитывается Area, так что бы мозаика вписывалась внутрь нового InnerSize.
+     * <li> Area меняется явно. При этом Size и Offset не меняются, но при этом меняется Padding.left и Padding.bottom.
+     * </ul>
+     **/
+    private boolean        _autoFit = true;
+    private SizeDouble     _size;
+    private BoundDouble    _padding = new BoundDouble(0);
+    private TImageInner    _imgMine;
+    private TImageInner    _imgFlag;
+    private TImageInner    _imgBckgrnd;
     private ColorText      _colorText;
     private PenBorder      _penBorder;
     private FontInfo       _fontInfo;
-    /** автоматически регулирую при явной установке размера */
-    private BoundDouble    _margin  = new BoundDouble(0, 0, 0, 0);
-    private BoundDouble    _padding = new BoundDouble(0, 0, 0, 0);
     private BackgroundFill _backgroundFill;
     private Color          _backgroundColor;
-    private TImageInner    _imgBckgrnd;
-
-    private final PropertyChangeListener           _selfListener = ev ->               onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
-    private final PropertyChangeListener       _fontInfoListener = ev ->       onFontInfoPropertyChanged(ev);
-    private final PropertyChangeListener _backgroundFillListener = ev -> onBackgroundFillPropertyChanged(ev);
-    private final PropertyChangeListener      _colorTextListener = ev ->      onColorTextPropertyChanged(ev);
-    private final PropertyChangeListener      _penBorderListener = ev ->      onPenBorderPropertyChanged(ev);
 
     public MosaicDrawModel() {
-        _notifier.addListener(_selfListener);
+        _notifier.addListener(this::onPropertyChanged);
     }
 
-    public static final String PROPERTY_SIZE             = "Size";
-    public static final String PROPERTY_MARGIN           = "Margin";
-    public static final String PROPERTY_PADDING          = "Padding";
+    public static final String PROPERTY_AUTO_FIT         = "AutoFit";
     public static final String PROPERTY_IMG_MINE         = "ImgMine";
     public static final String PROPERTY_IMG_FLAG         = "ImgFlag";
+    public static final String PROPERTY_IMG_BCKGRND      = "ImgBckgrnd";
     public static final String PROPERTY_COLOR_TEXT       = "ColorText";
     public static final String PROPERTY_PEN_BORDER       = "PenBorder";
     public static final String PROPERTY_BACKGROUND_FILL  = "BackgroundFill";
     public static final String PROPERTY_FONT_INFO        = "FontInfo";
     public static final String PROPERTY_BACKGROUND_COLOR = "BackgroundColor";
-    public static final String PROPERTY_IMG_BCKGRND      = "ImgBckgrnd";
 
-    /** размер в пикселях поля мозаики. Inner, т.к. снаружи есть ещё padding и margin */
-    public SizeDouble getInnerSize() {
+    public boolean getAutoFit() { return _autoFit; }
+    public void setAutoFit(boolean autoFit) {
+        _notifier.setProperty(this._autoFit, autoFit, PROPERTY_AUTO_FIT);
+    }
+
+    /** размер в пикселях поля мозаики */
+    public SizeDouble getMosaicSize() {
         return getCellAttr().getSize(getSizeField());
+    }
+    /** размер внутренней области в пикселях, куда равномерно вписана мозаика. Inner, т.к. снаружи есть ещё padding */
+    private SizeDouble getInnerSize() {
+        BoundDouble pad = getPadding();
+        SizeDouble s = getSize();
+        return new SizeDouble(s.width - pad.getLeftAndRight(), s.height - pad.getTopAndBottom());
     }
     /** общий размер в пискелях */
     @Override
     public SizeDouble getSize() {
-        SizeDouble size = getInnerSize();
-        BoundDouble m = getMargin();
-        BoundDouble p = getPadding();
-        size.width  += m.getLeftAndRight() + p.getLeftAndRight();
-        size.height += m.getTopAndBottom() + p.getTopAndBottom();
-        return size;
+        if ((_size == null) ||
+            (_size.width <= 0) ||
+            (_size.height <= 0))
+        {
+            SizeDouble s = getMosaicSize();
+            BoundDouble p = getPadding();
+            s.width  += p.getLeftAndRight();
+            s.height += p.getTopAndBottom();
+            setSize(s);
+        }
+        return _size;
     }
     @Override
     public void setSize(SizeDouble size) {
-        if (size.width < 1)
-            throw new IllegalArgumentException("Size value widht must be > 1");
-        if (size.height < 1)
-            throw new IllegalArgumentException("Size value height must be > 1");
-
-        SizeDouble oldSize = getSize();
-        BoundDouble oldPadding = getPadding();
-        BoundDouble newPadding = new BoundDouble(oldPadding.left   * size.width  / oldSize.width,
-                                                 oldPadding.top    * size.height / oldSize.height,
-                                                 oldPadding.right  * size.width  / oldSize.width,
-                                                 oldPadding.bottom * size.height / oldSize.height);
-        SizeDouble toCalc = new SizeDouble(size.width  - newPadding.getLeftAndRight(),
-                                           size.height - newPadding.getTopAndBottom());
-        SizeDouble out = new SizeDouble();
-        double area = MosaicHelper.findAreaBySize(getMosaicType(), getSizeField(), toCalc, out);
-        BoundDouble margin = new BoundDouble(0);
-        margin.left = margin.right  = (size.width  - newPadding.getLeftAndRight() - out.width ) / 2;
-        margin.top  = margin.bottom = (size.height - newPadding.getTopAndBottom() - out.height) / 2;
-
-        setArea(area);
-        setMargin(margin);
-        setPaddingInternal(newPadding);
+        IImageModel.checkSize(size);
+        _notifier.setProperty(this._size, size, PROPERTY_SIZE);
     }
 
-    public TImageInner getImgMine() {
-        return _imgMine;
+    @Override
+    public BoundDouble getPadding() { return _padding; }
+    @Override
+    public void setPadding(BoundDouble padding) {
+        IImageModel.checkPadding(this, padding);
+        _notifier.setProperty(this._padding, new BoundDouble(padding), PROPERTY_PADDING);
     }
+
+    /** Offset to mosaic.
+     * Определяется Padding'ом  и, дополнительно, смещением к мозаике (т.к. мозаика равномерно вписана в InnerSize) */
+    public SizeDouble getMosaicOffset() {
+        BoundDouble pad = getPadding();
+        SizeDouble offset     = new SizeDouble(pad.left, pad.top);
+        SizeDouble mosaicSize = getMosaicSize();
+        SizeDouble innerSize  = getInnerSize();
+        if (mosaicSize.equals(innerSize))
+            return offset;
+        double dx = innerSize.width - mosaicSize.width;
+        double dy = innerSize.width - mosaicSize.width;
+        return new SizeDouble(offset.width + dx / 2, offset.height + dy / 2);
+    }
+
+    /** set offset to mosaic */
+    public void setMosaicOffset(SizeDouble offset) {
+        BoundDouble pad = getPadding();
+        SizeDouble oldOffset = new SizeDouble(pad.left, pad.top);
+        double dx = offset.width  - oldOffset.width;
+        double dy = offset.height - oldOffset.height;
+        BoundDouble padNew = new BoundDouble(pad);
+        padNew.left   += dx;
+        padNew.top    += dy;
+        padNew.right  -= dx;
+        padNew.bottom -= dy;
+        setPadding(padNew);
+    }
+
+    public TImageInner getImgMine() { return _imgMine; }
     public void setImgMine(TImageInner img) {
-        Object old = this._imgMine;
-        if (old != img) { // references compare
-            this._imgMine = img;
-            onPropertyChanged(old, img, PROPERTY_IMG_MINE);
-        }
+        _notifier.setProperty(this._imgMine, img, PROPERTY_IMG_MINE);
     }
 
-    public TImageInner getImgFlag() {
-        return _imgFlag;
-    }
+    public TImageInner getImgFlag() { return _imgFlag; }
     public void setImgFlag(TImageInner img) {
-        Object old = this._imgFlag;
-        if (old != img) { // references compare
-            this._imgFlag = img;
-            onPropertyChanged(old, img, PROPERTY_IMG_FLAG);
-        }
+        _notifier.setProperty(this._imgFlag, img, PROPERTY_IMG_FLAG);
     }
 
     public ColorText getColorText() {
@@ -129,9 +163,9 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
         ColorText old = this._colorText;
         if (_notifier.setProperty(old, colorText, PROPERTY_COLOR_TEXT)) {
             if (old != null)
-                old.removeListener(_colorTextListener);
+                old.removeListener(this::onColorTextPropertyChanged);
             if (colorText != null)
-                colorText.addListener(_colorTextListener);
+                colorText.addListener(this::onColorTextPropertyChanged);
         }
     }
 
@@ -144,9 +178,9 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
         PenBorder old = this._penBorder;
         if (_notifier.setProperty(old, penBorder, PROPERTY_PEN_BORDER)) {
             if (old != null)
-                old.removeListener(_penBorderListener);
+                old.removeListener(this::onPenBorderPropertyChanged);
             if (penBorder != null)
-                penBorder.addListener(_penBorderListener);
+                penBorder.addListener(this::onPenBorderPropertyChanged);
         }
     }
 
@@ -223,71 +257,10 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
         BackgroundFill old = this._backgroundFill;
         if (_notifier.setProperty(old, backgroundFill, PROPERTY_BACKGROUND_FILL)) {
             if (old != null)
-                old.removeListener(_backgroundFillListener);
+                old.removeListener(this::onBackgroundFillPropertyChanged);
             if (backgroundFill != null)
-                backgroundFill.addListener(_backgroundFillListener);
+                backgroundFill.addListener(this::onBackgroundFillPropertyChanged);
         }
-    }
-
-    public BoundDouble getMargin() {
-        return _margin;
-    }
-    /** is only set when resizing. */
-    private void setMargin(BoundDouble margin) {
-        if (margin.left < 0)
-            throw new IllegalArgumentException("Margin left value must be > 0");
-        if (margin.top < 0)
-            throw new IllegalArgumentException("Margin top value must be > 0");
-        if (margin.right < 0)
-            throw new IllegalArgumentException("Margin right value must be > 0");
-        if (margin.bottom < 0)
-            throw new IllegalArgumentException("Margin bottom value must be > 0");
-
-        _notifier.setProperty(_margin, margin, PROPERTY_MARGIN);
-    }
-
-    public BoundDouble getPadding() {
-        return _padding;
-    }
-    public void setPadding(double bound) { setPadding(new BoundDouble(bound)); }
-    public void setPadding(BoundDouble padding) {
-        if (padding.left < 0)
-            throw new IllegalArgumentException("Padding left value must be > 0");
-        if (padding.top < 0)
-            throw new IllegalArgumentException("Padding top value must be > 0");
-        if (padding.right < 0)
-            throw new IllegalArgumentException("Padding right value must be > 0");
-        if (padding.bottom < 0)
-            throw new IllegalArgumentException("Padding bottom value must be > 0");
-
-        SizeDouble size = getSize();
-        if ((size.width - padding.getLeftAndRight()) < 1)
-            throw new IllegalArgumentException("The left and right padding are very large");
-        if ((size.height - padding.getTopAndBottom()) < 1)
-            throw new IllegalArgumentException("The top and bottom padding are very large");
-
-        SizeDouble toCalc = new SizeDouble(size.width  - padding.getLeftAndRight(),
-                                           size.height - padding.getTopAndBottom());
-        SizeDouble out = new SizeDouble();
-        double area = MosaicHelper.findAreaBySize(getMosaicType(), getSizeField(), toCalc, out);
-        BoundDouble margin = new BoundDouble(0);
-        margin.left = margin.right  = (size.width  - padding.getLeftAndRight() - out.width ) / 2;
-        margin.top  = margin.bottom = (size.height - padding.getTopAndBottom() - out.height) / 2;
-
-        setArea(area);
-        setMargin(margin);
-        setPaddingInternal(padding);
-    }
-    private void setPaddingInternal(BoundDouble padding) {
-        //String stack = Stream.of(new Exception().getStackTrace())
-        //      .skip(1)
-        //      .map(st -> st.getLineNumber()
-        //                 + " " + Stream.of(st.getClassName().split("\\.")).reduce((first, second) -> second).get()
-        //                 + "." + st.getMethodName())
-        //      .limit(3)
-        //      .collect(Collectors.joining("\n\t "));
-        //System.out.println("setPaddingInternal(" + padding + ") call from: " + stack);
-        _notifier.setProperty(_padding, padding, PROPERTY_PADDING);
     }
 
     public FontInfo getFontInfo() {
@@ -299,9 +272,9 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
         FontInfo old = this._fontInfo;
         if (_notifier.setProperty(old, fontInfo, PROPERTY_FONT_INFO)) {
             if (old != null)
-                old.removeListener(_fontInfoListener);
+                old.removeListener(this::onFontInfoPropertyChanged);
             if (fontInfo != null)
-                fontInfo.addListener(_fontInfoListener);
+                fontInfo.addListener(this::onFontInfoPropertyChanged);
         }
     }
 
@@ -315,16 +288,9 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
         _notifier.setProperty(_backgroundColor, color, PROPERTY_BACKGROUND_COLOR);
     }
 
-    public TImageInner getImgBckgrnd() {
-        return _imgBckgrnd;
-    }
-
+    public TImageInner getImgBckgrnd() { return _imgBckgrnd; }
     public void setImgBckgrnd(TImageInner imgBckgrnd) {
-        Object old = this._imgBckgrnd;
-        if (old == imgBckgrnd) // references compare
-            return;
-        this._imgBckgrnd = imgBckgrnd;
-        onPropertyChanged(old, imgBckgrnd, PROPERTY_IMG_BCKGRND);
+        _notifier.setProperty(this._imgBckgrnd, imgBckgrnd, PROPERTY_IMG_BCKGRND);
     }
 
     private void onFontInfoPropertyChanged(PropertyChangeEvent ev) {
@@ -340,15 +306,81 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
         _notifier.onPropertyChanged(null, ev.getSource(), PROPERTY_PEN_BORDER);
     }
 
-    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
-        switch (propertyName) {
-        case PROPERTY_AREA:
-        case PROPERTY_SIZE_FIELD:
-        case PROPERTY_MOSAIC_TYPE:
-        case PROPERTY_PADDING:
-        case PROPERTY_MARGIN:
-            _notifier.onPropertyChanged(PROPERTY_SIZE);
-            break;
+    private boolean lockChanging = false;
+    @Override
+    protected void onPropertyChanged(PropertyChangeEvent ev) {
+        super.onPropertyChanged(ev);
+
+        if (lockChanging)
+            return;
+
+        lockChanging = true;
+
+        // @see javadoc {@link #autoFit}
+        try {
+            if (getAutoFit()) {
+                // recalc padding
+                if (PROPERTY_SIZE.equals(ev.getPropertyName())) {
+                    SizeDouble oldSize = (SizeDouble)ev.getOldValue();
+                    if (oldSize != null)
+                        setPadding(IImageModel.recalcPadding(getPadding(), getSize(), oldSize));
+                }
+
+                // recalc area
+                switch (ev.getPropertyName()) {
+                case PROPERTY_SIZE:
+                case PROPERTY_SIZE_FIELD:
+                case PROPERTY_MOSAIC_TYPE:
+                case PROPERTY_PADDING:
+                    setArea(MosaicHelper.findAreaBySize(getMosaicType(), getSizeField(), getInnerSize(), new SizeDouble()));
+                    break;
+                default:
+                    // none
+                }
+
+                // recalc size
+                if (PROPERTY_AREA.equals(ev.getPropertyName())) {
+                    System.err.println("При autoFit==true, Area напрямую не устанавливается!");
+
+                    SizeDouble sm = getMosaicSize();
+                    BoundDouble p = getPadding();
+                    setSize(new SizeDouble(sm.width + p.getLeftAndRight(), sm.height + p.getTopAndBottom()));
+                }
+            } else {
+                // recalc area / padding
+                switch (ev.getPropertyName()) {
+                case PROPERTY_SIZE:
+                case PROPERTY_SIZE_FIELD:
+                case PROPERTY_MOSAIC_TYPE:
+                    SizeDouble realInnerSize = new SizeDouble();
+                    SizeDouble s = getSize();
+                    setArea(MosaicHelper.findAreaBySize(getMosaicType(), getSizeField(), s, realInnerSize));
+                    double padX = (s.width  - realInnerSize.width ) / 2;
+                    double padY = (s.height - realInnerSize.height) / 2;
+                    setPadding(new BoundDouble(padX, padY, padX, padY));
+                    break;
+                default:
+                    // none
+                }
+
+                // recalc area
+                if (PROPERTY_PADDING.equals(ev.getPropertyName())) {
+                    System.err.println("При autoFit==false, Padding напрямую не устанавливается.");
+                    setArea(MosaicHelper.findAreaBySize(getMosaicType(), getSizeField(), getInnerSize(), new SizeDouble()));
+                }
+
+                // recalc size
+                if (PROPERTY_AREA.equals(ev.getPropertyName())) {
+                    SizeDouble sm = getMosaicSize();
+                    BoundDouble p = getPadding();
+                    SizeDouble s = getSize();
+                    setPadding(new BoundDouble(p.left, p.top,
+                                               s.width  - sm.width  - p.left,
+                                               s.height - sm.height - p.top));
+                }
+            }
+        } finally {
+            lockChanging = false;
         }
     }
 
@@ -371,7 +403,7 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
 
     @Override
     public void close() {
-        _notifier.removeListener(_selfListener);
+        _notifier.removeListener(this::onPropertyChanged);
         getBackgroundFill().close();
         super.close();
         // unsubscribe from local notifications

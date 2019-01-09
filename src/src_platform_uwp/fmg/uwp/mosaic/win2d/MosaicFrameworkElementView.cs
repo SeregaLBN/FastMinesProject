@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using Windows.UI.Xaml;
 using Microsoft.Graphics.Canvas;
+using fmg.common.geom;
 using fmg.core.mosaic;
 using fmg.uwp.img.win2d;
 
@@ -67,8 +68,8 @@ namespace fmg.uwp.mosaic.win2d {
             //model.ImgMine = null;
 
             if (sq >= 50) { // ignore small sizes
-                ImgFlag.Model.SetSize(sq);
-                ImgMine.Model.SetSize(sq);
+                ImgFlag.Model.Size = new SizeDouble(sq, sq);
+                ImgMine.Model.Size = new SizeDouble(sq, sq);
             }
             model.ImgFlag = ImgFlag.Image;
             model.ImgMine = ImgMine.Image;

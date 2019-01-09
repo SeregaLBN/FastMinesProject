@@ -1,5 +1,6 @@
 package fmg.core.img;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -13,14 +14,13 @@ import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
 /** MVC: model of representable menu as horizontal or vertical lines */
-public final class BurgerMenuModel implements IImageModel {
+public final class BurgerMenuModel implements IAnimatedModel {
 
     private AnimatedImageModel _generalModel;
     private boolean _show = true;
     private boolean _horizontal = true;
     private int     _layers = 3;
     private BoundDouble _padding;
-    private PropertyChangeListener _generalModelListener;
     private NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
 
     /**
@@ -28,24 +28,39 @@ public final class BurgerMenuModel implements IImageModel {
      */
     protected BurgerMenuModel(AnimatedImageModel generalModel) {
         _generalModel = generalModel;
-        _generalModelListener = event -> {
-            assert event.getSource() == _generalModel; // by reference
-            if (IImageModel.PROPERTY_SIZE.equals(event.getPropertyName()))
-                recalcPadding((SizeDouble)event.getOldValue());
-        };
-        _generalModel.addListener(_generalModelListener);
+        _generalModel.addListener(this::onGeneralModelPropertyChanged);
     }
 
     public static final String PROPERTY_SHOW       = "Show";
     public static final String PROPERTY_HORIZONTAL = "Horizontal";
     public static final String PROPERTY_LAYERS     = "Layers";
-    public static final String PROPERTY_PADDING    = "Padding";
 
     /** image width and height in pixel */
     @Override
     public SizeDouble getSize() { return _generalModel.getSize(); }
     @Override
     public void setSize(SizeDouble size) { _generalModel.setSize(size); }
+
+    @Override
+    public boolean isAnimated() { return _generalModel.isAnimated(); }
+    @Override
+    public void setAnimated(boolean value) { _generalModel.setAnimated(value); }
+
+    @Override
+    public long getAnimatePeriod() { return _generalModel.getAnimatePeriod(); }
+    @Override
+    public void setAnimatePeriod(long value) { _generalModel.setAnimatePeriod(value); }
+
+    @Override
+    public int getTotalFrames() { return _generalModel.getTotalFrames(); }
+    @Override
+    public void setTotalFrames(int value) { _generalModel.setTotalFrames(value); }
+
+    @Override
+    public int getCurrentFrame() { return _generalModel.getCurrentFrame(); }
+    @Override
+    public void setCurrentFrame(int value) { _generalModel.setCurrentFrame(value); }
+
 
     public boolean isShow() { return _show; }
     public void   setShow(boolean value) { _notifier.setProperty(_show, value, PROPERTY_SHOW); }
@@ -57,18 +72,16 @@ public final class BurgerMenuModel implements IImageModel {
     public void setLayers(int value) { _notifier.setProperty(_layers, value, PROPERTY_LAYERS); }
 
     /** inside padding */
+    @Override
     public BoundDouble getPadding() {
         if (_padding == null)
             recalcPadding(null);
         return _padding;
     }
-    public void setPadding(BoundDouble value) {
-        if (value.getLeftAndRight() >= getSize().width)
-            throw new IllegalArgumentException("Padding size is very large. Should be less than Width.");
-        if (value.getTopAndBottom() >= getSize().height)
-            throw new IllegalArgumentException("Padding size is very large. Should be less than Height.");
-        BoundDouble paddingNew = new BoundDouble(value.left, value.top, value.right, value.bottom);
-        _notifier.setProperty(_padding, paddingNew, PROPERTY_PADDING);
+    @Override
+    public void setPadding(BoundDouble padding) {
+        IImageModel.checkPadding(this, padding);
+        _notifier.setProperty(_padding, new BoundDouble(padding), PROPERTY_PADDING);
     }
     private void recalcPadding(SizeDouble old) {
         SizeDouble size = getSize();
@@ -77,7 +90,7 @@ public final class BurgerMenuModel implements IImageModel {
                                   size.height / 2,
                                   _generalModel.getPadding().right,
                                   _generalModel.getPadding().bottom)
-                : AnimatedImageModel.recalcPadding(_padding, size, old);
+                : IImageModel.recalcPadding(_padding, size, old);
         _notifier.setProperty(_padding, paddingNew, PROPERTY_PADDING);
     }
 
@@ -126,11 +139,16 @@ public final class BurgerMenuModel implements IImageModel {
             });
     }
 
+    private void onGeneralModelPropertyChanged(PropertyChangeEvent ev) {
+        assert ev.getSource() == _generalModel; // by reference
+        if (IImageModel.PROPERTY_SIZE.equals(ev.getPropertyName()))
+            recalcPadding((SizeDouble)ev.getOldValue());
+    }
+
     @Override
     public void close() {
-        _generalModel.removeListener(_generalModelListener);
+        _generalModel.removeListener(this::onGeneralModelPropertyChanged);
         _notifier.close();
-        _generalModelListener = null;
         _generalModel = null;
     }
 
@@ -142,5 +160,4 @@ public final class BurgerMenuModel implements IImageModel {
     public void removeListener(PropertyChangeListener listener) {
         _notifier.removeListener(listener);
     }
-
 }

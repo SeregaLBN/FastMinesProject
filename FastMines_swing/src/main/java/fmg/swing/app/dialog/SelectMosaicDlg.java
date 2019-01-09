@@ -10,6 +10,7 @@ import java.beans.PropertyChangeEvent;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 
+import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.MosaicAnimatedModel;
 import fmg.core.types.EMosaic;
@@ -262,7 +263,7 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
             mosaicsImg.setSizeField(mosaicType.sizeIcoField(true));
             MosaicAnimatedModel<?> imgModel = mosaicsImg.getModel();
             imgModel.setSize(new SizeDouble(ImgSize*ImgZoomQuality, ImgSize*ImgZoomQuality));
-            imgModel.setPadding(10);
+            imgModel.setPadding(new BoundDouble(10));
             imgModel.setBackgroundColor(Cast.toColor(bkTabBkColor));
             int redrawInterval = 50;
             double rotateAngleDelta = 3.5;
@@ -270,7 +271,7 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
             imgModel.setAnimatePeriod((int)(totalFrames * redrawInterval));
             imgModel.setTotalFrames((int)totalFrames);
             imgModel.setAnimated(true);
-            mosaicsImg.addListener(ev -> onMosaicsImgPropertyChanged(ev));
+            mosaicsImg.addListener(this::onMosaicsImgPropertyChanged);
         } else {
             mosaicsImg.setMosaicType(mosaicType);
         }
@@ -282,7 +283,7 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
             mosaicsImgRollover.setSizeField(mosaicType.sizeIcoField(true));
             MosaicAnimatedModel<?> imgModel = mosaicsImg.getModel();
             imgModel.setSize(new SizeDouble(ImgSize*ImgZoomQuality, ImgSize*ImgZoomQuality));
-            imgModel.setPadding(3);
+            imgModel.setPadding(new BoundDouble(3));
             imgModel.setBackgroundColor(Cast.toColor(bkTabBkColorSelected));
         } else {
             mosaicsImgRollover.setMosaicType(mosaicType);
@@ -317,8 +318,7 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
     }
 
     private EMosaic getSelectedMosaicType() {
-        EMosaic item = EMosaic.fromDescription(cmbxMosaicTypes.getSelectedItem().toString());
-        return item;
+        return EMosaic.fromDescription(cmbxMosaicTypes.getSelectedItem().toString());
     }
 
     /** данные не из модели, а из редактора */

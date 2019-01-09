@@ -5,6 +5,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common.notyfier;
+using fmg.common.geom;
 using fmg.core.mosaic;
 using fmg.core.mosaic.cells;
 using fmg.uwp.img.wbmp;
@@ -108,14 +109,14 @@ namespace fmg.uwp.mosaic.wbmp {
 
             const int max = 30;
             if (sq > max) {
-                _imgFlag.Model.SetSize(sq);
-                _imgMine.Model.SetSize(sq);
+                _imgFlag.Model.Size = new SizeDouble(sq, sq);
+                _imgMine.Model.Size = new SizeDouble(sq, sq);
                 model.ImgFlag = _imgFlag.Image;
                 model.ImgMine = _imgMine.Image;
             } else {
-                _imgFlag.Model.SetSize(max);
+                _imgFlag.Model.Size = new SizeDouble(max, max);
                 model.ImgFlag = ImgUtils.Zoom(_imgFlag.Image, sq, sq);
-                _imgMine.Model.SetSize(max);
+                _imgMine.Model.Size = new SizeDouble(max, max);
                 model.ImgMine = ImgUtils.Zoom(_imgMine.Image, sq, sq);
             }
         }

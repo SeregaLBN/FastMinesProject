@@ -71,10 +71,7 @@ namespace fmg.uwp.mosaic.win2d {
 #endif
 
                 var model = Model;
-                var padding = model.Padding;
-                var margin = model.Margin;
-                var offset = new SizeDouble(margin.Left + padding.Left,
-                                            margin.Top  + padding.Top);
+                var offset = model.MosaicOffset;
                 if (!_accumulateInvalidate) {
                     foreach (var cell in modifiedCells) {
                         var rc = cell.GetRcOuter();

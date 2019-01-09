@@ -17,6 +17,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
 import fmg.common.Color;
+import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.MosaicAnimatedModel;
 import fmg.core.types.EMosaic;
@@ -100,7 +101,7 @@ abstract class ReportDlg extends JDialog implements AutoCloseable {
                 imgModel.setMosaicType(eMosaic);
                 imgModel.setSizeField(eMosaic.sizeIcoField(true));
                 imgModel.setSize(new SizeDouble(ImgSize*ImgZoomQuality, ImgSize*ImgZoomQuality));
-                imgModel.setPadding(5 * ImgZoomQuality);
+                imgModel.setPadding(new BoundDouble(5 * ImgZoomQuality));
                 imgModel.setBackgroundColor(bkTabBkColor);
                 int redrawInterval = 50;
                 double rotateAngleDelta = 3.5;

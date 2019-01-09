@@ -69,6 +69,7 @@ namespace Test.FastMines.Uwp.Images {
             public int TotalFrames    { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
             public int CurrentFrame   { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
             public SizeDouble Size    { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+            public BoundDouble Padding{ get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 #pragma warning disable CS0067 // warning CS0067: The event is never used
             public event PropertyChangedEventHandler PropertyChanged; // TODO unusable
 #pragma warning restore CS0067

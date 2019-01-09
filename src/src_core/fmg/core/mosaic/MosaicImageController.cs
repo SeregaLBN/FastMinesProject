@@ -13,7 +13,7 @@ namespace fmg.core.mosaic {
     {
         private readonly AnimatedInnerController<TImage, TMosaicView, MosaicAnimatedModel<Nothing>> _innerController;
 
-        public MosaicImageController(TMosaicView view)
+        protected MosaicImageController(TMosaicView view)
             : base(view)
         {
             var model = Model;

@@ -2,6 +2,7 @@ package fmg.core.img;
 
 import java.beans.PropertyChangeListener;
 
+import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
@@ -20,10 +21,15 @@ final class AnimatedInnerModel implements IAnimatedModel {
 
     // #region: begin unusable code
     @Override
-    public SizeDouble getSize()           { throw new UnsupportedOperationException(); }
+    public SizeDouble getSize()                 { throw new UnsupportedOperationException(); }
     @Override
-    public void setSize(SizeDouble value) { throw new UnsupportedOperationException(); }
-    // #region: end unusable code
+    public void setSize(SizeDouble value)       { throw new UnsupportedOperationException(); }
+
+    @Override
+    public BoundDouble getPadding()             { throw new UnsupportedOperationException(); }
+    @Override
+    public void setPadding(BoundDouble padding) { throw new UnsupportedOperationException(); }
+// #region: end unusable code
 
     /** Image is animated? */
     @Override

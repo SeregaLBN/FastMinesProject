@@ -11,7 +11,7 @@ import fmg.common.Pair;
 import fmg.common.ui.Factory;
 
 /** Notifies owner clients that a owner property value has changed */
-public final class NotifyPropertyChanged implements AutoCloseable //, INotifyPropertyChanged
+public final class NotifyPropertyChanged implements AutoCloseable//, INotifyPropertyChanged
 {
     private final INotifyPropertyChanged _owner;
     private final PropertyChangeSupport _propertyChanges;
@@ -90,7 +90,7 @@ public final class NotifyPropertyChanged implements AutoCloseable //, INotifyPro
         onPropertyChanged(null, null, propertyName);
     }
 
-    public void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
+    public <T> void onPropertyChanged(T oldValue, T newValue, String propertyName) {
         if (_disposed || isHolded())
             return;
 

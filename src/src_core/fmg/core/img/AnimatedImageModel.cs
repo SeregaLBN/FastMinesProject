@@ -20,7 +20,7 @@ namespace fmg.core.img {
 
         /// <summary> width and height in pixel </summary>
         private SizeDouble _size = new SizeDouble(AnimatedImageModelConsts.DefaultImageSize, AnimatedImageModelConsts.DefaultImageSize);
-        /// <summary> inside padding. Автоматически пропорционально регулирую при измениях размеров </summary>
+        /// <summary> inside padding </summary>
         private BoundDouble _padding = new BoundDouble(AnimatedImageModelConsts.DefaultPadding);
         private Color _foregroundColor = AnimatedImageModelConsts.DefaultForegroundColor;
         /// <summary> background fill color </summary>
@@ -40,7 +40,7 @@ namespace fmg.core.img {
         public event PropertyChangedEventHandler PropertyChanged;
         protected readonly NotifyPropertyChanged _notifier;
 
-        public AnimatedImageModel() {
+        protected AnimatedImageModel() {
             _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
             _innerModel.PropertyChanged += OnInnerModelPropertyChanged;
         }
@@ -49,34 +49,20 @@ namespace fmg.core.img {
         public SizeDouble Size {
             get { return _size; }
             set {
-                SizeDouble old = _size;
+                this.CheckSize(value);
+                var old = _size;
                 if (_notifier.SetProperty(ref _size, value))
-                    RecalcPadding(old);
+                    Padding = this.RecalcPadding(_padding, _size, old);
             }
         }
-        public void SetSize(double widhtAndHeight) { Size = new SizeDouble(widhtAndHeight, widhtAndHeight); }
 
         /// <summary> inside padding </summary>
-        public virtual BoundDouble Padding {
+        public BoundDouble Padding {
             get { return _padding; }
             set {
-                if (value.LeftAndRight >= Size.Width)
-                    throw new ArgumentException("Padding size is very large. Should be less than Width.");
-                if (value.TopAndBottom >= Size.Height)
-                    throw new ArgumentException("Padding size is very large. Should be less than Height.");
+                this.CheckPadding(value);
                 _notifier.SetProperty(ref _padding, value);
             }
-        }
-        public void SetPadding(double bound) { Padding = new BoundDouble(bound); }
-
-        internal static BoundDouble RecalcPadding(BoundDouble padding, SizeDouble current, SizeDouble old) {
-            return new BoundDouble(padding.Left * current.Width / old.Width,
-                                   padding.Top * current.Height / old.Height,
-                                   padding.Right * current.Width / old.Width,
-                                   padding.Bottom * current.Height / old.Height);
-        }
-        private void RecalcPadding(SizeDouble old) {
-            Padding = RecalcPadding(_padding, _size, old);
         }
 
         public Color ForegroundColor {

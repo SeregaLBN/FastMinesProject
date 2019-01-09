@@ -492,15 +492,15 @@ public abstract class MosaicController<TImage, TImageInner,
         int iMaxMines = sizeFld.m*sizeFld.n-iMustFreeCell;
         return Math.max(1, iMaxMines);
     }
-    /** размер в пикселях для указанных параметров */
-    public SizeDouble getInnerSize(Matrisize sizeField, double area) {
+    /** размер мозаики в пикселях для указанных параметров */
+    public SizeDouble getMosaicSize(Matrisize sizeField, double area) {
         return DoubleExt.hasMinDiff(area, getArea())
             ? getModel().getCellAttr().getSize(sizeField)
             : MosaicHelper.getSize(getMosaicType(), area, sizeField);
     }
-    /** размер в пикселях */
-    public SizeDouble getInnerSize() {
-        return getModel().getInnerSize();
+    /** размер мозаики в пикселях */
+    public SizeDouble getMosaicSize() {
+        return getModel().getMosaicSize();
     }
     /** узнать max количество соседей для текущей мозаики */
     public int getMaxNeighborNumber() {
@@ -526,9 +526,9 @@ public abstract class MosaicController<TImage, TImageInner,
             recheckMinesCount();
             gameNew();
             break;
-        case MosaicGameModel.PROPERTY_AREA:
-            invalidateView(getModel().getMatrix());
-            break;
+      //case MosaicGameModel.PROPERTY_AREA: // TODO при изменении модели итак все перерисовывается...
+      //    invalidateView(getModel().getMatrix());
+      //    break;
         default:
             break;
         }
@@ -553,7 +553,8 @@ public abstract class MosaicController<TImage, TImageInner,
         if (point == null)
             return null;
         TMosaicModel m = getModel();
-        point = new PointDouble(point.x - m.getPadding().left - m.getMargin().left, point.y - m.getPadding().top - m.getMargin().top);
+        SizeDouble offset = m.getMosaicOffset();
+        point = new PointDouble(point.x - offset.width, point.y - offset.height);
         for (BaseCell cell: m.getMatrix())
             //if (cell.getRcOuter().contains(point)) // пох.. - тормозов нет..  (измерить время на макс размерах поля...) в принципе, проверка не нужная...
                 if (cell.pointInRegion(point))

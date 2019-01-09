@@ -1,11 +1,11 @@
 package fmg.jfx.mosaic;
 
+import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
 
-import fmg.common.geom.BoundDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicDrawModel;
@@ -60,10 +60,7 @@ public class MosaicCanvasView extends MosaicJfxView<Canvas, Image, MosaicDrawMod
             }
         }
         MosaicDrawModel<?> model = getModel();
-        BoundDouble padding = model.getPadding();
-        BoundDouble margin = model.getMargin();
-        SizeDouble offset = new SizeDouble(margin.left + padding.left,
-                                           margin.top  + padding.top);
+        SizeDouble offset = model.getMosaicOffset();
         RectDouble rcClip = new RectDouble(minX + offset.width, minY + offset.height, maxX-minX, maxY-minY);
 //        if (_DEBUG_DRAW_FLOW)
 //            System.out.println("MosaicViewJfx.draw: repaint=" + rcClip);
@@ -71,20 +68,22 @@ public class MosaicCanvasView extends MosaicJfxView<Canvas, Image, MosaicDrawMod
     }
 
     @Override
-    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
-        super.onPropertyChanged(oldValue, newValue, propertyName);
-        if (propertyName.equals(PROPERTY_IMAGE))
+    protected void onPropertyChanged(PropertyChangeEvent ev) {
+        super.onPropertyChanged(ev);
+        if (PROPERTY_IMAGE.equals(ev.getPropertyName()))
             getImage(); // implicit call draw() -> drawBegin() -> drawModified() -> drawJfx()
     }
 
     @Override
-    protected void onPropertyModelChanged(Object oldValue, Object newValue, String propertyName) {
-        super.onPropertyModelChanged(oldValue, newValue, propertyName);
-        switch (propertyName) {
+    protected void onPropertyModelChanged(PropertyChangeEvent ev) {
+        super.onPropertyModelChanged(ev);
+        switch (ev.getPropertyName()) {
         case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
         case MosaicGameModel.PROPERTY_AREA:
             changeSizeImagesMineFlag();
             break;
+        default:
+            // none
         }
     }
 
@@ -99,13 +98,13 @@ public class MosaicCanvasView extends MosaicJfxView<Canvas, Image, MosaicDrawMod
 
         final int max = 30;
         if (sq > max) {
-            _imgFlag.getModel().setSize(sq);
-            _imgMine.getModel().setSize(sq);
+            _imgFlag.getModel().setSize(new SizeDouble(sq, sq));
+            _imgMine.getModel().setSize(new SizeDouble(sq, sq));
             model.setImgFlag(_imgFlag.getImage());
             model.setImgMine(_imgMine.getImage());
         } else {
-            _imgFlag.getModel().setSize(max);
-            _imgMine.getModel().setSize(max);
+            _imgFlag.getModel().setSize(new SizeDouble(max, max));
+            _imgMine.getModel().setSize(new SizeDouble(max, max));
             model.setImgFlag(ImgUtils.zoom(_imgFlag.getImage(), sq, sq));
             model.setImgMine(ImgUtils.zoom(_imgMine.getImage(), sq, sq));
         }

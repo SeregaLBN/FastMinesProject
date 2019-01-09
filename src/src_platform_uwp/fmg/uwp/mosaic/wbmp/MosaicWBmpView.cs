@@ -52,10 +52,7 @@ namespace fmg.uwp.mosaic.wbmp {
 
             // 2. paint cells
             var pen = model.PenBorder;
-            var padding = model.Padding;
-            var margin = model.Margin;
-            var offset = new SizeDouble(margin.Left + padding.Left,
-                                        margin.Top  + padding.Top);
+            var offset = model.MosaicOffset;
             var isSimpleDraw = (pen.ColorLight == pen.ColorShadow);
             var bkFill = model.BkFill;
 

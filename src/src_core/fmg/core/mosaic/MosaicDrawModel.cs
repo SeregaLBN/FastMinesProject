@@ -22,13 +22,39 @@ namespace fmg.core.mosaic {
         where TImageInner : class
     {
 
+        /// <summary> Fit the area/padding to the size.
+        /// <br/>
+        /// При autoFit = true:
+        /// <list type="number">
+        /// <item><description>При любом изменении Size, Padding меняется пропорционально Size</description></item>
+        /// <item><description>При любом изменении Size / FieldType / FieldSize / Padding,
+        ///                    Мозаика равномерно вписывается во внутреннюю область {@link #getInnerSize()}</description></item>
+        /// <item><description>Area напрямую не устанавливается. А если устанавливается, то {@link #getMosaicSize()} + {@link #getPadding()}
+        ///                    будут определять новый {@link #getSize()}</description></item>
+        /// </list>
+        ///
+        /// <br/>
+        /// При autoFit = false:
+        /// <list type="number">
+        /// <item><description>При любом изменении Size / FieldType / FieldSize:
+        ///     <list type="bullet">
+        ///     <item><description>Мозаика равномерно вписывается во вcю область {@link #getSize()} </description></item>
+        ///     <item><description>при этом Padding заного перерасчитывается с нуля </description></item>
+        ///     </list>
+        /// </description></item>
+        /// <item> <description>при изменении Offset меняется Padding так, чтобы InnerSize остался прежним </description></item>
+        /// <item> <description>Padding напрямую не устанавливается (меняется через установку Offset).
+        ///                     А если меняется, то перерасчитывается Area, так что бы мозаика вписывалась внутрь нового InnerSize. </description></item>
+        /// <item> <description>Area меняется явно. При этом Size и Offset не меняются, но при этом меняется Padding.left и Padding.bottom. </description></item>
+        /// </list>
+        /// </summary>
+        private bool           _autoFit = true;
+        private SizeDouble     _size;
+        private BoundDouble    _padding = new BoundDouble(0);
         private TImageInner    _imgMine, _imgFlag;
         private ColorText      _colorText;
         private PenBorder      _penBorder;
         private FontInfo       _fontInfo;
-        /// <summary> автоматически регулирую при явной установке размера </summary>
-        private BoundDouble    _margin  = new BoundDouble(0, 0, 0, 0);
-        private BoundDouble    _padding = new BoundDouble(0, 0, 0, 0);
         private BackgroundFill _backgroundFill;
         private Color          _backgroundColor = MosaicDrawModelConst.DefaultBkColor;
         private TImageInner    _imgBckgrnd;
@@ -37,64 +63,86 @@ namespace fmg.core.mosaic {
             this.PropertyChanged += OnPropertyChanged;
         }
 
-        /// <summary> размер в пикселях поля мозаики. Inner, т.к. снаружи есть ещё padding и margin </summary>
-        public SizeDouble InnerSize => CellAttr.GetSize(SizeField);
+        public bool AutoFit {
+            get => _autoFit;
+            set { _notifier.SetProperty(ref this._autoFit, value); }
+        }
+
+        /// <summary> размер в пикселях поля мозаики </summary>
+        public SizeDouble MosaicSize => CellAttr.GetSize(SizeField);
+
+        /// <summary> размер внутренней области в пикселях, куда равномерно вписана мозаика. Inner, т.к. снаружи есть ещё padding </summary>
+        private SizeDouble InnerSize {
+            get {
+                var pad = Padding;
+                var s = Size;
+                return new SizeDouble(s.Width - pad.LeftAndRight, s.Height - pad.TopAndBottom);
+            }
+        }
 
         /// <summary> общий размер в пискелях </summary>
         public SizeDouble Size {
             get {
-                var size = InnerSize;
-                var m = Margin;
-                var p = Padding;
-                size.Width  += m.LeftAndRight + p.LeftAndRight;
-                size.Height += m.TopAndBottom + p.TopAndBottom;
-                return size;
+                if ((_size.Width <= 0) || (_size.Height <= 0)) {
+                    var s = MosaicSize;
+                    var p = Padding;
+                    s.Width  += p.LeftAndRight;
+                    s.Height += p.TopAndBottom;
+                    Size = s;
+                }
+                return _size;
             }
             set {
-                if (value.Width < 1)
-                    throw new ArgumentException("Size value widht must be > 1");
-                if (value.Height < 1)
-                    throw new ArgumentException("Size value height must be > 1");
-
-                var oldSize = Size;
-                var oldPadding = Padding;
-                var newPadding = new BoundDouble(oldPadding.Left   * value.Width  / oldSize.Width,
-                                                 oldPadding.Top    * value.Height / oldSize.Height,
-                                                 oldPadding.Right  * value.Width  / oldSize.Width,
-                                                 oldPadding.Bottom * value.Height / oldSize.Height);
-                var toCalc = new SizeDouble(value.Width  - newPadding.LeftAndRight,
-                                            value.Height - newPadding.TopAndBottom);
-                var area = MosaicHelper.FindAreaBySize(MosaicType, SizeField, ref toCalc);
-                BoundDouble margin = new BoundDouble(0);
-                margin.Left = margin.Right  = (value.Width  - newPadding.LeftAndRight - toCalc.Width ) / 2;
-                margin.Top  = margin.Bottom = (value.Height - newPadding.TopAndBottom - toCalc.Height) / 2;
-
-                Area = area;
-                Margin = margin;
-                SetPaddingInternal(newPadding);
+                this.CheckSize(value);
+                _notifier.SetProperty(ref this._size, value);
             }
         }
 
-        public TImageInner ImgMine {
-            get { return _imgMine; }
+        public BoundDouble Padding {
+            get => _padding;
             set {
-                object old = this._imgMine;
-                if (old != value) { // references compare
-                    this._imgMine = value;
-                    _notifier.OnPropertyChanged(old, value);
-                }
+                this.CheckPadding(value);
+                _notifier.SetProperty(ref this._padding, value);
             }
+        }
+
+        /// <summary> Offset to mosaic.
+        /// Определяется Padding'ом  и, дополнительно, смещением к мозаике (т.к. мозаика равномерно вписана в InnerSize) </summary>
+        public SizeDouble MosaicOffset {
+            get {
+                var pad = Padding;
+                var offset     = new SizeDouble(pad.Left, pad.Top);
+                var mosaicSize = MosaicSize;
+                var innerSize  = InnerSize;
+                if (mosaicSize == innerSize)
+                    return offset;
+                var dx = innerSize.Width - mosaicSize.Width;
+                var dy = innerSize.Width - mosaicSize.Width;
+                return new SizeDouble(offset.Width + dx / 2, offset.Height + dy / 2);
+            }
+            set {
+                var pad = Padding;
+                var oldOffset = new SizeDouble(pad.Left, pad.Top);
+                var dx = value.Width  - oldOffset.Width;
+                var dy = value.Height - oldOffset.Height;
+                var padNew = new BoundDouble(pad);
+                padNew.Left   += dx;
+                padNew.Top    += dy;
+                padNew.Right  -= dx;
+                padNew.Bottom -= dy;
+                Padding = padNew;
+            }
+    }
+
+
+        public TImageInner ImgMine {
+            get => _imgMine;
+            set => _notifier.SetProperty(ref _imgMine, value);
         }
 
         public TImageInner ImgFlag {
-            get { return _imgFlag; }
-            set {
-                object old = this._imgFlag;
-                if (!ReferenceEquals(old, value)) { // references compare
-                    this._imgFlag = value;
-                    _notifier.OnPropertyChanged(old, value);
-                }
-            }
+            get => _imgFlag;
+            set =>_notifier.SetProperty(ref _imgFlag, value);
         }
 
         public ColorText ColorText {
@@ -148,58 +196,6 @@ namespace fmg.core.mosaic {
             }
         }
 
-        public BoundDouble Margin {
-            get { return _margin; }
-            /// <summary> is only set when resizing. </summary>
-            private set {
-                if (value.Left < 0)
-                    throw new ArgumentException("Margin left value must be > 0");
-                if (value.Top < 0)
-                    throw new ArgumentException("Margin top value must be > 0");
-                if (value.Right < 0)
-                    throw new ArgumentException("Margin right value must be > 0");
-                if (value.Bottom < 0)
-                    throw new ArgumentException("Margin bottom value must be > 0");
-
-                _notifier.SetProperty(ref _margin, value);
-            }
-        }
-
-        public BoundDouble Padding {
-            get { return _padding; }
-            set {
-                if (value.Left < 0)
-                    throw new ArgumentException("Padding left value must be > 0");
-                if (value.Top < 0)
-                    throw new ArgumentException("Padding top value must be > 0");
-                if (value.Right < 0)
-                    throw new ArgumentException("Padding right value must be > 0");
-                if (value.Bottom < 0)
-                    throw new ArgumentException("Padding bottom value must be > 0");
-
-                var size = Size;
-                if ((size.Width - value.LeftAndRight) < 1)
-                    throw new ArgumentException("The left and right padding are very large");
-                if ((size.Height - value.TopAndBottom) < 1)
-                    throw new ArgumentException("The top and bottom padding are very large");
-
-                var toCalc = new SizeDouble(size.Width  - value.LeftAndRight,
-                                            size.Height - value.TopAndBottom);
-                var area = MosaicHelper.FindAreaBySize(MosaicType, SizeField, ref toCalc);
-                BoundDouble margin = new BoundDouble(0);
-                margin.Left = margin.Right  = (size.Width  - value.LeftAndRight - toCalc.Width ) / 2;
-                margin.Top  = margin.Bottom = (size.Height - value.TopAndBottom - toCalc.Height) / 2;
-
-                Area = area;
-                Margin = margin;
-                SetPaddingInternal(value);
-            }
-        }
-        public void SetPadding(double bound) { Padding = new BoundDouble(bound); }
-        private void SetPaddingInternal(BoundDouble newBound) {
-            _notifier.SetProperty(ref _padding, newBound, nameof(this.Padding));
-        }
-
         public FontInfo FontInfo {
             get {
                 if (_fontInfo == null)
@@ -227,14 +223,8 @@ namespace fmg.core.mosaic {
         }
 
         public TImageInner ImgBckgrnd {
-            get { return _imgBckgrnd; }
-            set {
-                object old = this._imgBckgrnd;
-                if (ReferenceEquals(old, value))
-                    return;
-                this._imgBckgrnd = value;
-                _notifier.OnPropertyChanged(old, value);
-            }
+            get => _imgBckgrnd;
+            set => _notifier.SetProperty(ref _imgBckgrnd, value);
         }
 
         private void OnFontInfoPropertyChanged(object sender, PropertyChangedEventArgs ev) {
@@ -250,15 +240,81 @@ namespace fmg.core.mosaic {
             _notifier.OnPropertyChanged(nameof(this.PenBorder));
         }
 
-        protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            switch (ev.PropertyName) {
-            case nameof(this.Area):
-            case nameof(this.SizeField):
-            case nameof(this.MosaicType):
-            case nameof(this.Padding):
-            case nameof(this.Margin):
-                _notifier.OnPropertyChanged(nameof(this.Size));
-                break;
+        private bool lockChanging = false;
+        protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            base.OnPropertyChanged(sender, ev);
+
+            if (lockChanging)
+                return;
+
+            lockChanging = true;
+
+            // see doc for member autoFit
+            try {
+                if (AutoFit) {
+                    // recalc padding
+                    if (ev.PropertyName == nameof(this.Size)) {
+                        var evEx = ev as PropertyChangedExEventArgs<SizeDouble>;
+                        var oldSize = evEx.OldValue;
+                        if (oldSize != default(SizeDouble))
+                            Padding = this.RecalcPadding(Padding, Size, oldSize);
+                    }
+
+                    // recalc area
+                    switch (ev.PropertyName) {
+                    case nameof(this.Size):
+                    case nameof(this.SizeField):
+                    case nameof(this.MosaicType):
+                    case nameof(this.Padding):
+                        var innerSize = InnerSize;
+                        Area = MosaicHelper.FindAreaBySize(MosaicType, SizeField, ref innerSize);
+                        break;
+                    }
+
+                    // recalc size
+                    if (ev.PropertyName == nameof(this.Area)) {
+                        //System.Diagnostics.Debug.Assert(false, "При autoFit==true, Area напрямую не устанавливается!");
+                        LoggerSimple.Put("При autoFit==true, Area напрямую не устанавливается!");
+
+                        var sm = MosaicSize;
+                        var p = Padding;
+                        Size = new SizeDouble(sm.Width + p.LeftAndRight, sm.Height + p.TopAndBottom);
+                    }
+                } else {
+                    // recalc area / padding
+                    switch (ev.PropertyName) {
+                    case nameof(this.Size):
+                    case nameof(this.SizeField):
+                    case nameof(this.MosaicType):
+                        var s = Size;
+                        var realInnerSize = s;
+                        Area = MosaicHelper.FindAreaBySize(MosaicType, SizeField, ref realInnerSize);
+                        var padX = (s.Width  - realInnerSize.Width ) / 2;
+                        var padY = (s.Height - realInnerSize.Height) / 2;
+                        Padding = new BoundDouble(padX, padY, padX, padY);
+                        break;
+                    }
+
+                    // recalc area
+                    if (ev.PropertyName == nameof(this.Padding)) {
+                        //System.Diagnostics.Debug.Assert(false, "При autoFit==false, Padding напрямую не устанавливается.");
+                        LoggerSimple.Put("При autoFit==false, Padding напрямую не устанавливается.");
+                        var innerSize = InnerSize;
+                        Area = MosaicHelper.FindAreaBySize(MosaicType, SizeField, ref innerSize);
+                    }
+
+                    // recalc size
+                    if (ev.PropertyName == nameof(this.Area)) {
+                        var sm = MosaicSize;
+                        var p = Padding;
+                        var s = Size;
+                        Padding = new BoundDouble(p.Left, p.Top,
+                                                s.Width  - sm.Width  - p.Left,
+                                                s.Height - sm.Height - p.Top);
+                    }
+                }
+            } finally {
+                lockChanging = false;
             }
         }
 

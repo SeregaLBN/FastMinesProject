@@ -24,6 +24,10 @@ namespace fmg.core.img {
             get { throw new NotImplementedException(); }
             set { throw new NotImplementedException(); }
         }
+        public BoundDouble Padding {
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
+        }
         #endregion: end unusable code
 
         public AnimatedInnerModel() {

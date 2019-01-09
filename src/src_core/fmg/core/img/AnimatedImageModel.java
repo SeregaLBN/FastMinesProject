@@ -10,7 +10,7 @@ import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
 /** MVC: model. Common animated image characteristics. */
-public class AnimatedImageModel implements IAnimatedModel {
+public abstract class AnimatedImageModel implements IAnimatedModel {
 
     public static final Color DefaultBkColor         = Color.DarkOrange();
     public static final Color DefaultForegroundColor = Color.Orchid();
@@ -20,7 +20,7 @@ public class AnimatedImageModel implements IAnimatedModel {
 
     /** width and height in pixel */
     private SizeDouble _size = new SizeDouble(DefaultImageSize, DefaultImageSize);
-    /** inside padding. Автоматически пропорционально регулирую при измениях размеров */
+    /** inside padding */
     private BoundDouble _padding = new BoundDouble(DefaultPadding);
     private Color _foregroundColor = DefaultForegroundColor;
     /** background fill color */
@@ -34,14 +34,12 @@ public class AnimatedImageModel implements IAnimatedModel {
     /** animation direction (example: clockwise or counterclockwise for simple rotation) */
     private boolean _animeDirection = true;
     private final AnimatedInnerModel _innerModel = new AnimatedInnerModel();
-    private PropertyChangeListener innerModelListener = ev -> onInnerModelPropertyChanged(ev);
     protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
 
-    public AnimatedImageModel() {
-        _innerModel.addListener(innerModelListener);
+    protected AnimatedImageModel() {
+        _innerModel.addListener(this::onInnerModelPropertyChanged);
     }
 
-    public static final String PROPERTY_PADDING          = "Padding";
     public static final String PROPERTY_BACKGROUND_COLOR = "BackgroundColor";
     public static final String PROPERTY_BORDER_COLOR     = "BorderColor";
     public static final String PROPERTY_BORDER_WIDTH     = "BorderWidth";
@@ -53,33 +51,21 @@ public class AnimatedImageModel implements IAnimatedModel {
     /** width and height in pixel */
     @Override
     public SizeDouble getSize() { return _size; }
-    public void setSize(double widhtAndHeight) { setSize(new SizeDouble(widhtAndHeight, widhtAndHeight)); }
     @Override
-    public void setSize(SizeDouble value) {
+    public void setSize(SizeDouble size) {
+        IImageModel.checkSize(size);
         SizeDouble old = _size;
-        if (_notifier.setProperty(_size, value, PROPERTY_SIZE))
-            recalcPadding(old);
+        if (_notifier.setProperty(_size, size, PROPERTY_SIZE))
+            setPadding(IImageModel.recalcPadding(_padding, _size, old));
     }
 
     /** inside padding */
+    @Override
     public BoundDouble getPadding() { return _padding; }
-    public void setPadding(double bound) { setPadding(new BoundDouble(bound)); }
-    public void setPadding(BoundDouble value) {
-        if (value.getLeftAndRight() >= getSize().width)
-            throw new IllegalArgumentException("Padding size is very large. Should be less than Width.");
-        if (value.getTopAndBottom() >= getSize().height)
-            throw new IllegalArgumentException("Padding size is very large. Should be less than Height.");
-        BoundDouble paddingNew = new BoundDouble(value.left, value.top, value.right, value.bottom);
-        _notifier.setProperty(_padding, paddingNew, PROPERTY_PADDING);
-    }
-    static BoundDouble recalcPadding(BoundDouble padding, SizeDouble current, SizeDouble old) {
-        return new BoundDouble(padding.left   * current.width  / old.width,
-                               padding.top    * current.height / old.height,
-                               padding.right  * current.width  / old.width,
-                               padding.bottom * current.height / old.height);
-    }
-    private void recalcPadding(SizeDouble old) {
-        setPadding(recalcPadding(_padding, _size, old));
+    @Override
+    public void setPadding(BoundDouble padding) {
+        IImageModel.checkPadding(this, padding);
+        _notifier.setProperty(_padding, new BoundDouble(padding), PROPERTY_PADDING);
     }
 
     public Color getForegroundColor() { return _foregroundColor; }
@@ -163,7 +149,7 @@ public class AnimatedImageModel implements IAnimatedModel {
 
     @Override
     public void close() {
-        _innerModel.removeListener(innerModelListener);
+        _innerModel.removeListener(this::onInnerModelPropertyChanged);
         _notifier.close();
     }
 

@@ -1,7 +1,6 @@
 package fmg.core.img;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,10 +37,9 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
     private final List<Double /* angle offset */ > _prepareList = new ArrayList<>();
     private final List<RotatedCellContext> _rotatedElements = new ArrayList<>();
     private final AnimatedInnerModel _innerModel = new AnimatedInnerModel();
-    private PropertyChangeListener innerModelListener = ev -> onInnerModelPropertyChanged(ev);
 
     public MosaicAnimatedModel() {
-        _innerModel.addListener(innerModelListener);
+        _innerModel.addListener(this::onInnerModelPropertyChanged);
     }
 
     public static final String PROPERTY_ROTATE_ANGLE     = "RotateAngle";
@@ -83,14 +81,16 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
     public List<RotatedCellContext> getRotatedElements() { return _rotatedElements; }
 
     @Override
-    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
-        super.onPropertyChanged(oldValue, newValue, propertyName);
-        switch (propertyName) {
+    protected void onPropertyChanged(PropertyChangeEvent ev) {
+        super.onPropertyChanged(ev);
+        switch (ev.getPropertyName()) {
         case PROPERTY_ROTATE_MODE:
         case PROPERTY_SIZE_FIELD:
             if (getRotateMode() == ERotateMode.someCells)
                 randomRotateElemenIndex();
             break;
+        default:
+            // none
         }
     }
 
@@ -343,7 +343,7 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
 
     @Override
     public void close() {
-        _innerModel.removeListener(innerModelListener);
+        _innerModel.removeListener(this::onInnerModelPropertyChanged);
         super.close();
     }
 

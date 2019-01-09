@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
+  <Identity Name="SeregaLBN.UnitTest.FastMines.Uwp" Publisher="CN=Serega" Version="1.0.0.0" />
+  <mp:PhoneIdentity PhoneProductId="7de2b0c3-64e4-49c5-b32e-d950b17cd8bf" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
+  <Properties>
+    <DisplayName>UnitTest.FastMines.Uwp</DisplayName>
+    <PublisherDisplayName>Serega</PublisherDisplayName>
+    <Logo>res\Logo\UWP\StoreTile\Logo.png</Logo>
+  </Properties>
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
+  </Dependencies>
+  <Resources>
+    <Resource Language="x-generate" />
+  </Resources>
+  <Applications>
+    <Application Id="vstest.executionengine.universal.App" Executable="$targetnametoken$.exe" EntryPoint="UnitTest.FastMines.Uwp.App">
+      <uap:VisualElements DisplayName="UnitTest.FastMines.Uwp" Square150x150Logo="res\Logo\UWP\TileSq150\Logo.png" Square44x44Logo="res\Logo\UWP\TileSq44\Logo.png" Description="UnitTest.FastMines.Uwp" BackgroundColor="lightPink">
+        <uap:DefaultTile Wide310x150Logo="res\Logo\UWP\WideTile\Logo.png" ShortName="UnitTest.FastMines.Uwp">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square150x150Logo" />
+            <uap:ShowOn Tile="wide310x150Logo" />
+          </uap:ShowNameOnTiles>
+        </uap:DefaultTile>
+        <uap:SplashScreen Image="res\Logo\UWP\SplashScreen\Logo.png" BackgroundColor="violet" />
+      </uap:VisualElements>
+    </Application>
+  </Applications>
+</Package>

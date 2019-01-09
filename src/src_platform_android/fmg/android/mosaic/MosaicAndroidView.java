@@ -7,11 +7,11 @@ import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 
+import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 import java.util.function.Consumer;
 
 import fmg.common.Color;
-import fmg.common.geom.BoundDouble;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.RegionDouble;
@@ -80,10 +80,7 @@ public abstract class MosaicAndroidView<TImage,
         // 2. paint cells
         PenBorder pen = model.getPenBorder();
         paintStroke.setStrokeWidth((float)pen.getWidth());
-        BoundDouble padding = model.getPadding();
-        BoundDouble margin  = model.getMargin();
-        SizeDouble offset = new SizeDouble(margin.left + padding.left,
-                                            margin.top  + padding.top);
+        SizeDouble offset = model.getMosaicOffset();
         boolean isSimpleDraw = pen.getColorLight().equals(pen.getColorShadow());
         BackgroundFill bkFill = model.getBackgroundFill();
 
@@ -268,9 +265,9 @@ public abstract class MosaicAndroidView<TImage,
     }
 
     @Override
-    protected void onPropertyModelChanged(Object oldValue, Object newValue, String propertyName) {
-        super.onPropertyModelChanged(oldValue, newValue, propertyName);
-        if (MosaicDrawModel.PROPERTY_FONT_INFO.equals(propertyName)) {
+    protected void onPropertyModelChanged(PropertyChangeEvent ev) {
+        super.onPropertyModelChanged(ev);
+        if (MosaicDrawModel.PROPERTY_FONT_INFO.equals(ev.getPropertyName())) {
             FontInfo fi = getModel().getFontInfo();
             Typeface tf;
             try {

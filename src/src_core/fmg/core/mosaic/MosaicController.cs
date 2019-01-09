@@ -469,14 +469,14 @@ namespace fmg.core.mosaic {
             return Math.Max(1, iMaxMines);
         }
 
-        /// <summary> размер в пикселях для указанных параметров </summary>
-        public SizeDouble GetInnerSize(Matrisize sizeField, double area) {
+        /// <summary> размер мозаики в пикселях для указанных параметров </summary>
+        public SizeDouble GetMosaicSize(Matrisize sizeField, double area) {
             return area.HasMinDiff(Area)
                 ? Model.CellAttr.GetSize(sizeField)
                 : MosaicHelper.GetSize(MosaicType, area, sizeField);
         }
-        /// <summary> размер в пикселях </summary>
-        public SizeDouble InnerSize => Model.InnerSize;
+        /// <summary> размер мозаики в пикселях </summary>
+        public SizeDouble MosaicSize => Model.MosaicSize;
 
         /// <summary> узнать max количество соседей для текущей мозаики </summary>
         public int MaxNeighborNumber {
@@ -491,7 +491,6 @@ namespace fmg.core.mosaic {
         /// <summary> действительно лишь когда gameStatus == gsEnd </summary>
         public bool IsVictory => (GameStatus == EGameStatus.eGSEnd) && (0 == CountMinesLeft);
 
-
         protected virtual void OnModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             switch (ev.PropertyName) {
             case nameof(Model.SizeField):
@@ -503,11 +502,9 @@ namespace fmg.core.mosaic {
                 RecheckMinesCount();
                 GameNew();
                 break;
-            case nameof(Model.Area):
-                InvalidateView(Model.Matrix);
-                break;
-            default:
-                break;
+            //case nameof(Model.Area): // TODO при изменении модели итак все перерисовывается...
+            //    InvalidateView(Model.Matrix);
+            //    break;
             }
         }
 
@@ -526,10 +523,11 @@ namespace fmg.core.mosaic {
 
         /// <summary> преобразовать экранные координаты в ячейку поля мозаики </summary>
         private BaseCell CursorPointToCell(PointDouble point) {
-            if (point == null)
-                return null;
+            //if (point == null)
+            //    return null;
             var m = Model;
-            point = new PointDouble(point.X - m.Padding.Left - m.Margin.Left, point.Y - m.Padding.Top - m.Margin.Top);
+            var offset = m.MosaicOffset;
+            point = new PointDouble(point.X - offset.Width, point.Y - offset.Height);
             return m.Matrix.FirstOrDefault(cell =>
                 //cell.getRcOuter().Contains(point) && // пох.. - тормозов нет..  (измерить время на макс размерах поля...) в принципе, проверка не нужная...
                 cell.PointInRegion(point));
@@ -586,7 +584,7 @@ namespace fmg.core.mosaic {
             base.Disposing();
         }
 
-        static string GetCallerName([System.Runtime.CompilerServices.CallerMemberName] string callerName = null) { return "MosaicContrllr::" + callerName; }
+        protected string GetCallerName([System.Runtime.CompilerServices.CallerMemberName] string callerName = null) { return this.GetType().Name + '.' + callerName; }
 
     }
 

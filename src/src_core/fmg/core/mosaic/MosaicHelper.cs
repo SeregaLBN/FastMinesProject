@@ -6,6 +6,9 @@ using fmg.core.mosaic.cells;
 namespace fmg.core.mosaic {
 
     public static class MosaicHelper {
+
+        public const double AreaPrecision = 0.001;
+
         private static string GetPackageName() { return typeof(MosaicHelper).Namespace; }
 
         /// <summary>Создать экземпляр атрибута для конкретного типа мозаики</summary>
@@ -59,7 +62,7 @@ namespace fmg.core.mosaic {
         /// <param name="baseDelta">начало дельты приращения</param>
         /// <param name="comparable">ф-ция сравнения</param>
         /// <returns>что найдено</returns>
-        private static int Finder(int baseDelta, Func<int, int> comparable) {
+        private static int FinderI(int baseDelta, Func<int, int> comparable) {
             double res = baseDelta;
             double d = baseDelta;
             bool deltaUp = true;
@@ -94,7 +97,7 @@ namespace fmg.core.mosaic {
             return (int)res;
         }
 
-        private static double Finder(double baseDelta, Func<double, double> comparable) {
+        private static double FinderD(double baseDelta, Func<double, double> comparable) {
             double res = baseDelta;
             double d = baseDelta;
             bool deltaUp = true;
@@ -112,7 +115,7 @@ namespace fmg.core.mosaic {
                 //  iter 5: cmp=+1; d=d/2=100; res=res+d=1000 - finded!!!
                 if (cmp.HasMinDiff(0))
                     break;
-                if ((d < 1) && cmp.HasMinDiff(-1))
+                if ((d < AreaPrecision) && cmp.HasMinDiff(-1))
                     break;
 
                 var resultUp = (cmp < 0);
@@ -139,12 +142,15 @@ namespace fmg.core.mosaic {
         private static double FindAreaBySize(BaseCell.BaseAttribute cellAttr, Matrisize mosaicSizeField, ref SizeDouble sizeClient) {
             // сделал приватным, т.к. неявно меняет свойства параметра 'cellAttr'
 
+            if (Double.IsNaN(sizeClient.Height) || Double.IsNaN(sizeClient.Width))
+                throw new ArgumentException("sizeClient must be defined");
+
             if (sizeClient.Height <= 0 || sizeClient.Width <= 0)
                 throw new ArgumentException("sizeClient must be positive");
 
             var sizeClientCopy = sizeClient;
             var sizeIter = new SizeDouble();
-            var res = Finder(2000,
+            var res = FinderD(2000,
                 area => {
                     cellAttr.Area = area;
                     sizeIter = cellAttr.GetSize(mosaicSizeField);
@@ -168,10 +174,16 @@ namespace fmg.core.mosaic {
         /// <param name="sizeClient">размер окна/области (в пикселях) в которую должна вписаться мозаика</param>
         /// <returns>размер поля мозаики</returns>
         public static Matrisize FindSizeByArea(EMosaic mosaicType, double area, SizeDouble sizeClient) {
+            if (Double.IsNaN(sizeClient.Height) || Double.IsNaN(sizeClient.Width))
+                throw new ArgumentException("sizeClient must be defined");
+
+            if (sizeClient.Height <= 0 || sizeClient.Width <= 0)
+                throw new ArgumentException("sizeClient must be positive");
+
             var cellAttr = CreateAttributeInstance(mosaicType);
             cellAttr.Area = area;
             var result = new Matrisize();
-            Finder(2000, newWidth => {
+            FinderI(2000, newWidth => {
                 result.m = newWidth;
                 var sizeWnd = cellAttr.GetSize(result);
                 if (sizeWnd.Width.HasMinDiff(sizeClient.Width))
@@ -180,7 +192,7 @@ namespace fmg.core.mosaic {
                     return -1;
                 return +1;
             });
-            Finder(2000, newHeight => {
+            FinderI(2000, newHeight => {
                 result.n = newHeight;
                 var sizeWnd = cellAttr.GetSize(result);
                 if (sizeWnd.Height.HasMinDiff(sizeClient.Height))

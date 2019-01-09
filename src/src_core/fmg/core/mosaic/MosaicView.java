@@ -1,11 +1,11 @@
 package fmg.core.mosaic;
 
+import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
 import fmg.common.LoggerSimple;
-import fmg.common.geom.BoundDouble;
 import fmg.common.geom.DoubleExt;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
@@ -27,7 +27,10 @@ public abstract class MosaicView<TImage,
 {
 
     protected MosaicView(TMosaicModel mosaicModel) {
-        super(mosaicModel);
+        this(mosaicModel, true);
+    }
+    protected MosaicView(TMosaicModel mosaicModel, boolean deferredNotifications) {
+        super(mosaicModel, deferredNotifications);
     }
 
     public static boolean _DEBUG_DRAW_FLOW = false;
@@ -48,10 +51,7 @@ public abstract class MosaicView<TImage,
                 return null; // equals Model.Matrix
         }
 
-        BoundDouble padding = model.getPadding();
-        BoundDouble margin = model.getMargin();
-        SizeDouble offset = new SizeDouble(margin.left + padding.left,
-                                           margin.top  + padding.top);
+        SizeDouble offset = model.getMosaicOffset();
 
         // redraw only when needed...
         Collection<BaseCell> toDrawCells = model.getMatrix().stream()
@@ -91,9 +91,9 @@ public abstract class MosaicView<TImage,
     }
 
     @Override
-    protected void onPropertyModelChanged(Object oldValue, Object newValue, String propertyName) {
-        super.onPropertyModelChanged(oldValue, newValue, propertyName);
-        switch (propertyName) {
+    protected void onPropertyModelChanged(PropertyChangeEvent ev) {
+        super.onPropertyModelChanged(ev);
+        switch (ev.getPropertyName()) {
         case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
             changeFontSize();
             break;
@@ -103,6 +103,8 @@ public abstract class MosaicView<TImage,
         case MosaicDrawModel.PROPERTY_PEN_BORDER:
             changeFontSize();
             break;
+        default:
+            // none
         }
     }
 

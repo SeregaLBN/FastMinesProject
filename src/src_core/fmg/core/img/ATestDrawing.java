@@ -36,6 +36,7 @@ public abstract class ATestDrawing {
 
         IImageModel model = ctrller.getModel();
         //model.setSize(new SizeDouble(600, 600));
+        model.setPadding(new BoundDouble(10));
 
         if (model instanceof IAnimatedModel) {
             IAnimatedModel am = (IAnimatedModel)model;
@@ -47,7 +48,6 @@ public abstract class ATestDrawing {
         }
         if (model instanceof AnimatedImageModel) {
             AnimatedImageModel aim = (AnimatedImageModel)model;
-            aim.setPadding(10);
             aim.setBorderWidth(0);
             aim.setBackgroundColor(testTransparent ? new Color(0xC8FFFFFF) : Color.White());
             aim.setForegroundColor(aim.getForegroundColor().updateA(200)); // 0..255 - foreground alpha-chanel color
@@ -107,7 +107,7 @@ public abstract class ATestDrawing {
             aim.setBorderWidth(r(3));
 
             double pad = Math.min(aim.getSize().height/3, aim.getSize().width/3);
-            aim.setPadding(-pad/4 + r((int)pad));
+            model.setPadding(new BoundDouble(-pad/4 + r((int)pad)));
 
             aim.setBackgroundColor(bkClr);
 

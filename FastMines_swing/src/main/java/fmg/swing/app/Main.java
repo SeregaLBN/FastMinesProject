@@ -3,7 +3,6 @@ package fmg.swing.app;
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.PrintStream;
 import java.util.*;
 import java.util.List;
@@ -18,6 +17,7 @@ import javax.swing.border.EmptyBorder;
 
 import fmg.common.Color;
 import fmg.common.Pair;
+import fmg.common.geom.BoundDouble;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.Rect;
 import fmg.common.geom.SizeDouble;
@@ -64,9 +64,6 @@ public class Main extends JFrame {
     private AboutDlg        _aboutDialog;
     private SelectMosaicDlg _selectMosaicDialog;
     private CustomSkillDlg  _customSkillDialog;
-
-    private final PropertyChangeListener _mosaicControllerListener = ev -> onMosaicControllerPropertyChanged(ev);
-    private final PropertyChangeListener _mosaicModelListener      = ev -> onMosaicModelPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
 
     private ManageDlg getPlayerManageDlg() {
         if (_playerManageDialog == null)
@@ -174,7 +171,8 @@ public class Main extends JFrame {
 
                         MosaicSkillImg.ControllerIcon img = new MosaicSkillImg.ControllerIcon(val);
                         MosaicSkillModel imgModel = img.getModel();
-                        imgModel.setSize(MenuHeightWithIcon*ZoomQualityFactor);
+                        double sq = MenuHeightWithIcon*ZoomQualityFactor;
+                        imgModel.setSize(new SizeDouble(sq, sq));
                         skillLevelImages.put(val, img);
                         imgModel.setBorderWidth(1); // *ZoomQualityFactor);
                         imgModel.setBorderColor(Color.RandomColor().darker(0.4));
@@ -272,7 +270,8 @@ public class Main extends JFrame {
 //                        menuItem.setMnemonic(Main.KeyCombo.getMnemonic_MenuMosaicGroup(val));
                         MosaicGroupImg.ControllerIcon img = new MosaicGroupImg.ControllerIcon(val);
                         MosaicGroupModel imgModel = img.getModel();
-                        imgModel.setSize(MenuHeightWithIcon*ZoomQualityFactor);
+                        double sq = MenuHeightWithIcon*ZoomQualityFactor;
+                        imgModel.setSize(new SizeDouble(sq, sq));
                         mosaicsGroupImages.put(val, img);
                         imgModel.setPolarLights(true);
                         imgModel.setBorderWidth(1*ZoomQualityFactor);
@@ -680,7 +679,7 @@ public class Main extends JFrame {
 
         private Icon getSmileIco(SmileModel.EFaceType smileType, int size) {
             try (Smile.ControllerIcon img = new Smile.ControllerIcon(smileType)) {
-                img.getModel().setSize(300, 300);//size, size);
+                img.getModel().setSize(new SizeDouble(300, 300));//size, size);
 //                return smileImages.get(key).getImage();
                 return ImgUtils.zoom(img.getImage(), size, size);
             }
@@ -877,7 +876,7 @@ public class Main extends JFrame {
                 _logo = new Logo.ControllerIcon();
                 LogoModel model = _logo.getModel();
                 model.setUseGradient(true);
-                model.setPadding(3);
+                model.setPadding(new BoundDouble(3));
                 model.setRotateMode(LogoModel.ERotateMode.color);
                 model.setAnimatePeriod(12500);
                 model.setTotalFrames(250);
@@ -897,7 +896,8 @@ public class Main extends JFrame {
         protected void paintComponent(Graphics g) {
             Dimension sizeOutward = this.getSize();
             Logo.ControllerIcon logo = getLogo();
-            logo.getModel().setSize((int)Math.min(sizeOutward.getWidth(), sizeOutward.getHeight()));
+            double sq = Math.min(sizeOutward.getWidth(), sizeOutward.getHeight());
+            logo.getModel().setSize(new SizeDouble(sq, sq));
 
             logo.getImage().paintIcon(this, g,
                                       (int)((sizeOutward.width -logo.getModel().getSize().width)/2),
@@ -984,15 +984,16 @@ public class Main extends JFrame {
     /** mosaic controller */
     private void setMosaicController(MosaicJPanelController mosaicController) {
         if (_mosaicController != null) {
-            _mosaicController.getModel().removeListener(_mosaicModelListener);
-            _mosaicController.removeListener(_mosaicControllerListener);
+            _mosaicController.getModel().removeListener(this::onMosaicModelPropertyChanged);
+            _mosaicController.removeListener(this::onMosaicControllerPropertyChanged);
         }
         _mosaicController = mosaicController;
         if (_mosaicController != null) {
             MosaicDrawModel<?> model = mosaicController.getModel();
+            model.setPadding(new BoundDouble(0));
             model.setBackgroundColor(model.getBackgroundColor().darker(0.2));
-            model.addListener(_mosaicModelListener);
-            _mosaicController.addListener(_mosaicControllerListener);
+            model.addListener(this::onMosaicModelPropertyChanged);
+            _mosaicController.addListener(this::onMosaicControllerPropertyChanged);
         }
     }
     /** mosaic controller */
@@ -1132,8 +1133,8 @@ public class Main extends JFrame {
         this._logo = new Logo.ControllerImage();
         LogoModel logoModel = this._logo.getModel();
         logoModel.setUseGradient(true);
-        logoModel.setSize(128);
-        logoModel.setPadding(1);
+        logoModel.setSize(new SizeDouble(128, 128));
+        logoModel.setPadding(new BoundDouble(1));
         logoModel.setBackgroundColor(Color.Transparent());//ImageProperties.DefaultBkColor);
         logoModel.setRotateMode(LogoModel.ERotateMode.combi);
         logoModel.setAnimatePeriod(25000);
@@ -2485,22 +2486,26 @@ public class Main extends JFrame {
         return getPlayers().getUser(userId);
     }
 
-    private void onMosaicModelPropertyChanged(Object oldValue, Object newValue, String propertyName) {
-        switch (propertyName) {
+    private void onMosaicModelPropertyChanged(PropertyChangeEvent ev) {
+        switch (ev.getPropertyName()) {
         case MosaicGameModel.PROPERTY_AREA:
         case MosaicGameModel.PROPERTY_SIZE_FIELD:
         case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
             recheckLocation();
             break;
+        default:
+            // none
         }
 
-        switch (propertyName) {
+        switch (ev.getPropertyName()) {
         case MosaicGameModel.PROPERTY_SIZE_FIELD:
             getMenu().getGame().recheckSelectedSkillLevel();
             break;
         case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
             getMenu().getMosaics().recheckSelectedMosaicType();
             break;
+        default:
+            // none
         }
     }
     private void onMosaicControllerPropertyChanged(PropertyChangeEvent ev) {

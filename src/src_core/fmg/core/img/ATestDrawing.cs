@@ -44,6 +44,7 @@ namespace fmg.core.img {
             #region manual settings
             {
                 //model.Size = new SizeDouble(600, 600);
+                model.Padding = new BoundDouble(10);
 
                 if (model is IAnimatedModel am) {
                     am.Animated = true;
@@ -53,7 +54,6 @@ namespace fmg.core.img {
                     }
                 }
                 if (model is AnimatedImageModel aim) {
-                    aim.SetPadding(10);
                     aim.BorderWidth = 0;
                     aim.BackgroundColor = testTransparent ? new Color(0xC8FFFFFF) : Color.White;
                     aim.ForegroundColor = new Color(aim.ForegroundColor).UpdateA(200); // 0..255 - foreground alpha-chanel color
@@ -107,7 +107,7 @@ namespace fmg.core.img {
                     aim.BorderWidth = R(3);
 
                     double pad = Math.Min(aim.Size.Height / 3, aim.Size.Width / 3);
-                    aim.SetPadding(-pad / 4 + R((int)pad));
+                    model.Padding = new BoundDouble(-pad / 4 + R((int)pad));
 
                     aim.BackgroundColor = bkClr;
 

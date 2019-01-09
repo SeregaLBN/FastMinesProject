@@ -11,8 +11,7 @@ namespace fmg.common.notyfier {
     [Windows.Foundation.Metadata.WebHostHidden]
 #endif
     public sealed class NotifyPropertyChanged : IDisposable //, INotifyPropertyChanged
-   {
-
+    {
         private readonly INotifyPropertyChanged _owner;
         private readonly Action<PropertyChangedEventArgs> _fireOwnerEvent;
         public bool DeferredNotifications { get; set; }
@@ -20,9 +19,7 @@ namespace fmg.common.notyfier {
         private bool _disposed;
         private int _holded;
 
-        public NotifyPropertyChanged(INotifyPropertyChanged owner, Action<PropertyChangedEventArgs> fireOwnerEvent)
-            : this(owner, fireOwnerEvent, false) { }
-        public NotifyPropertyChanged(INotifyPropertyChanged owner, Action<PropertyChangedEventArgs> fireOwnerEvent, bool deferredNotifications) {
+        public NotifyPropertyChanged(INotifyPropertyChanged owner, Action<PropertyChangedEventArgs> fireOwnerEvent, bool deferredNotifications = false) {
             _owner = owner;
             _fireOwnerEvent = fireOwnerEvent;
             DeferredNotifications = deferredNotifications;

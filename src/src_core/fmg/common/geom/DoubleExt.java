@@ -8,7 +8,7 @@ public final class DoubleExt {
     }
 
     public static boolean equalsPrecision(double value1, double value2, double precision) {
-        return Math.abs(value1 - value1) <= precision;
+        return Math.abs(value1 - value2) <= precision;
     }
 
     /** @return value1 == value2 */

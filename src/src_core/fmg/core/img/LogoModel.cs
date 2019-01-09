@@ -36,15 +36,13 @@ namespace fmg.core.img {
             PropertyChanged += OnPropertyChanged;
         }
 
-        public override BoundDouble Padding {
+        public BoundDouble InnerPadding {
             get {
                 var pad = base.Padding;
                 var s = Size;
                 double innerX = s.Width - pad.LeftAndRight;
                 double innerY = s.Height - pad.TopAndBottom;
-                if (innerX == innerY) {
-                    // none
-                } else {
+                if (innerX != innerY) {
                     double add = (innerX - innerY) / 2;
                     if (innerX > innerY) {
                         pad.Left  += add;
@@ -77,14 +75,15 @@ namespace fmg.core.img {
             set { _notifier.SetProperty(ref _rotateMode, value); }
         }
 
-        public double ZoomX => (Size.Width - Padding.LeftAndRight) / 200.0;
-        public double ZoomY => (Size.Height - Padding.TopAndBottom) / 200.0;
+        public double ZoomX => (Size.Width  - InnerPadding.LeftAndRight) / 200.0;
+        public double ZoomY => (Size.Height - InnerPadding.TopAndBottom) / 200.0;
 
         public IList<PointDouble> Rays {
             get {
                 if (!_rays.Any()) {
-                    var pl = Padding.Left;
-                    var pt = Padding.Top;
+                    var pad = InnerPadding;
+                    var pl = pad.Left;
+                    var pt = pad.Top;
                     var zx = ZoomX;
                     var zy = ZoomY;
 
@@ -104,8 +103,9 @@ namespace fmg.core.img {
         public IList<PointDouble> Inn {
             get {
                 if (!_inn.Any()) {
-                    var pl = Padding.Left;
-                    var pt = Padding.Top;
+                    var pad = InnerPadding;
+                    var pl = pad.Left;
+                    var pt = pad.Top;
                     var zx = ZoomX;
                     var zy = ZoomY;
 
@@ -125,8 +125,9 @@ namespace fmg.core.img {
         public IList<PointDouble> Oct {
             get {
                 if (!_oct.Any()) {
-                    var pl = Padding.Left;
-                    var pt = Padding.Top;
+                    var pad = InnerPadding;
+                    var pl = pad.Left;
+                    var pt = pad.Top;
                     var zx = ZoomX;
                     var zy = ZoomY;
 
@@ -156,6 +157,7 @@ namespace fmg.core.img {
 
         protected override void Disposing() {
             PropertyChanged -= OnPropertyChanged;
+            base.Disposing();
         }
 
     }

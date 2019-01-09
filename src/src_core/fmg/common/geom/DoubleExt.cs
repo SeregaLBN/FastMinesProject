@@ -4,12 +4,12 @@ namespace fmg.common.geom {
 
     public static class DoubleExt {
 
-        /** Equals N digit precision */
+        /// <summary> Equals N digit precision </summary>
         public static bool EqualsPrecision(this double value1, double value2, double precision = 0.00001) {
-            return Math.Abs(value1 - value1) <= precision;
+            return Math.Abs(value1 - value2) <= precision;
         }
 
-        /// <summary> Минимально различны? Has minimal differences
+        /// <summary> Has minimal differences?
         /// https://msdn.microsoft.com/en-us/library/ya2zha7s%28v=vs.110%29.aspx </summary>
         public static bool HasMinDiff(this double value1, double value2, uint units = 1) {
             //return Math.Abs(value1 - value2) <= (1.0/ (10 * units));

@@ -45,8 +45,8 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
     /** из каких фигур состоит мозаика поля */
     private EMosaic _mosaicType = EMosaic.eMosaicSquare1;
 
-    protected final NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
-    private final PropertyChangeListener _cellAttrListener = ev -> onCellAttributePropertyChanged(ev);
+    protected final NotifyPropertyChanged _notifier      = new NotifyPropertyChanged(this, false);
+    private   final NotifyPropertyChanged _notifierAsync = new NotifyPropertyChanged(this, true);
 
     public static final String PROPERTY_AREA        = BaseCell.BaseAttribute.PROPERTY_AREA;
     public static final String PROPERTY_CELL_ATTR   = "CellAttr";
@@ -54,11 +54,15 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
     public static final String PROPERTY_MATRIX      = "Matrix";
     public static final String PROPERTY_MOSAIC_TYPE = "MosaicType";
 
+    public MosaicGameModel() {
+        _notifier.addListener(this::onPropertyChanged);
+    }
+
     @Override
     public BaseCell.BaseAttribute getCellAttr() {
         if (_cellAttr == null) {
             _cellAttr = MosaicHelper.createAttributeInstance(getMosaicType());
-            _cellAttr.addListener(_cellAttrListener);
+            _cellAttr.addListener(this::onCellAttributePropertyChanged);
         }
         return _cellAttr;
     }
@@ -67,7 +71,7 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
             return;
         if (newValue != null)
             throw new IllegalArgumentException("Bad argument - support only null value!");
-        _cellAttr.removeListener(_cellAttrListener);
+        _cellAttr.removeListener(this::onCellAttributePropertyChanged);
         _cellAttr = null;
         _matrix.clear();
         _notifier.onPropertyChanged(PROPERTY_CELL_ATTR);
@@ -81,9 +85,10 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
     }
     /** установить новую площадь ячеек */
     @Override
-    public void setArea(double newArea) {
-        assert (newArea >= 1);
-        getCellAttr().setArea(newArea);
+    public void setArea(double area) {
+        if (area <= 0)
+            throw new IllegalArgumentException("Area must be positive");
+        getCellAttr().setArea(area);
     }
 
     @Override
@@ -149,11 +154,16 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
     protected void onCellAttributePropertyChanged(PropertyChangeEvent ev) {
         String propName = ev.getPropertyName();
         if (BaseCell.BaseAttribute.PROPERTY_AREA.equals(propName)) {
-            getMatrix().forEach(cell -> cell.init());
+            getMatrix().forEach(BaseCell::init);
 
             _notifier.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_AREA); // ! rethrow event - notify parent class
         }
         _notifier.onPropertyChanged(PROPERTY_CELL_ATTR);
+    }
+
+    protected void onPropertyChanged(PropertyChangeEvent ev) {
+        // refire as async event
+        _notifierAsync.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
     }
 
     /** off notifier */
@@ -168,17 +178,19 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
 
     @Override
     public void close() {
+        _notifier.removeListener(this::onPropertyChanged);
         _notifier.close();
+        _notifierAsync.close();
         setCellAttr(null);
     }
 
     @Override
     public void addListener(PropertyChangeListener listener) {
-        _notifier.addListener(listener);
+        _notifierAsync.addListener(listener);
     }
     @Override
     public void removeListener(PropertyChangeListener listener) {
-        _notifier.removeListener(listener);
+        _notifierAsync.removeListener(listener);
     }
 
 }

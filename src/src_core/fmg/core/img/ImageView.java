@@ -1,5 +1,6 @@
 package fmg.core.img;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import fmg.common.geom.SizeDouble;
@@ -25,15 +26,18 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
     private final TImageModel _model;
     private TImage _image;
     private EInvalidate _invalidate = EInvalidate.needRedraw;
-    private final PropertyChangeListener _selfListener  = ev -> onPropertyChanged(     ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
-    private final PropertyChangeListener _modelListener = ev -> onPropertyModelChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
-    protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
+    protected final NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this, false);
+    private   final NotifyPropertyChanged _notifierAsync;
     protected boolean _isDisposed;
 
     protected ImageView(TImageModel imageModel) {
+        this(imageModel, false);
+    }
+    protected ImageView(TImageModel imageModel, boolean deferredNotifications) {
         _model = imageModel;
-        this.addListener(_selfListener);
-        _model.addListener(_modelListener);
+        _notifierAsync = deferredNotifications ? null : new NotifyPropertyChanged(this, true);
+        this  .addListener(this::onPropertyChanged);
+        _model.addListener(this::onPropertyModelChanged);
     }
 
     @Override
@@ -101,14 +105,18 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
     protected abstract void drawBody();
     protected final void drawEnd() { _invalidate = EInvalidate.redrawed; }
 
-    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) { }
+    protected void onPropertyChanged(PropertyChangeEvent ev) {
+        // refire as async event
+        if (_notifierAsync != null)
+            _notifierAsync.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+    }
 
-    protected void onPropertyModelChanged(Object oldValue, Object newValue, String propertyName) {
+    protected void onPropertyModelChanged(PropertyChangeEvent ev) {
         _notifier.onPropertyChanged(null, getModel(), PROPERTY_MODEL);
-        if (IImageModel.PROPERTY_SIZE.equals(propertyName)) {
+        if (IImageModel.PROPERTY_SIZE.equals(ev.getPropertyName())) {
             setImage(null);
 //            invalidate();
-            _notifier.onPropertyChanged(oldValue, newValue, PROPERTY_SIZE);
+            _notifier.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_SIZE);
             _notifier.onPropertyChanged(PROPERTY_IMAGE);
         } else {
             invalidate();
@@ -118,19 +126,30 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
     @Override
     public void close() {
         _isDisposed = true;
-        this.removeListener(_selfListener);
-        _model.removeListener(_modelListener);
+
+        this  .removeListener(this::onPropertyChanged);
+        _model.removeListener(this::onPropertyModelChanged);
+
         _notifier.close();
+        if (_notifierAsync != null)
+            _notifierAsync.close();
+
         setImage(null);
     }
 
     @Override
     public void addListener(PropertyChangeListener listener) {
-        _notifier.addListener(listener);
+        (_notifierAsync != null
+            ? _notifierAsync
+            : _notifier
+        ).addListener(listener);
     }
     @Override
     public void removeListener(PropertyChangeListener listener) {
-        _notifier.removeListener(listener);
+        (_notifierAsync != null
+            ? _notifierAsync
+            : _notifier
+        ).removeListener(listener);
     }
 
 }

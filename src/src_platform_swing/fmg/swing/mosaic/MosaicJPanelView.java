@@ -1,13 +1,13 @@
 package fmg.swing.mosaic;
 
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 import java.util.HashSet;
 
 import javax.swing.Icon;
 import javax.swing.JPanel;
 
-import fmg.common.geom.BoundDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicDrawModel;
@@ -109,30 +109,29 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
                 System.out.println("MosaicViewSwing.draw: repaint={" + (int)minX +","+ (int)minY +","+ (int)(maxX-minX) +","+ (int)(maxY-minY) + "}");
 
             MosaicDrawModel<?> model = getModel();
-            BoundDouble padding = model.getPadding();
-            BoundDouble margin = model.getMargin();
-            SizeDouble offset = new SizeDouble(margin.left + padding.left,
-                                               margin.top  + padding.top);
+            SizeDouble offset = model.getMosaicOffset();
             control.repaint((int)(minX + offset.width), (int)(minY + offset.height), (int)(maxX-minX), (int)(maxY-minY));
         }
         //control.invalidate();
     }
 
     @Override
-    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
-        super.onPropertyChanged(oldValue, newValue, propertyName);
-        if (propertyName.equals(PROPERTY_IMAGE))
+    protected void onPropertyChanged(PropertyChangeEvent ev) {
+        super.onPropertyChanged(ev);
+        if (PROPERTY_IMAGE.equals(ev.getPropertyName()))
             getImage(); // implicit call draw() -> drawBegin() -> drawModified() -> control.repaint() -> JPanel.paintComponent -> drawSwing()
     }
 
     @Override
-    protected void onPropertyModelChanged(Object oldValue, Object newValue, String propertyName) {
-        super.onPropertyModelChanged(oldValue, newValue, propertyName);
-        switch (propertyName) {
+    protected void onPropertyModelChanged(PropertyChangeEvent ev) {
+        super.onPropertyModelChanged(ev);
+        switch (ev.getPropertyName()) {
         case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
         case MosaicGameModel.PROPERTY_AREA:
             changeSizeImagesMineFlag();
             break;
+        default:
+            // none
         }
     }
 
@@ -147,14 +146,14 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
 
         final int max = 30;
         if (sq > max) {
-            _imgFlag.getModel().setSize(sq);
-            _imgMine.getModel().setSize(sq);
+            _imgFlag.getModel().setSize(new SizeDouble(sq, sq));
+            _imgMine.getModel().setSize(new SizeDouble(sq, sq));
             model.setImgFlag(_imgFlag.getImage());
             model.setImgMine(_imgMine.getImage());
         } else {
-            _imgFlag.getModel().setSize(max);
+            _imgFlag.getModel().setSize(new SizeDouble(max, max));
             model.setImgFlag(ImgUtils.zoom(_imgFlag.getImage(), (int)sq, (int)sq));
-            _imgMine.getModel().setSize(max);
+            _imgMine.getModel().setSize(new SizeDouble(max, max));
             model.setImgMine(ImgUtils.zoom(_imgMine.getImage(), (int)sq, (int)sq));
         }
     }

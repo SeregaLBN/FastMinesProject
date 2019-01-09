@@ -33,7 +33,7 @@ namespace fmg.uwp.mosaic {
     {
 
         private readonly ClickInfo _clickInfo = new ClickInfo();
-        private bool _extendedManipulation = !true;
+        private bool _extendedManipulation = true;
         #region if _extendedManipulation
         /// <summary> мин отступ от краев экрана для мозаики </summary>
         private const double MinIndent = 30;
@@ -66,8 +66,8 @@ namespace fmg.uwp.mosaic {
 
         protected virtual void SetBinding() {
             var control = Control;
-            if (_extendedManipulation)
-                return;
+            //if (_extendedManipulation)
+            //    return;
             control.SetBinding(FrameworkElement.WidthProperty, new Binding {
                 Source = this.View,
                 Path = new PropertyPath(nameof(Size)),
@@ -234,7 +234,7 @@ namespace fmg.uwp.mosaic {
             _deferredArea *= scaleMul;
             _deferredArea = Math.Min(Math.Max(MosaicInitData.AREA_MINIMUM, _deferredArea), CalcMaxArea()); // recheck
 
-            var deferredViewSize = GetInnerSize(Model.SizeField, _deferredArea);
+            var deferredViewSize = GetMosaicSize(Model.SizeField, _deferredArea);
             var currentViewSize = Size;
 
             if (_mouseDevicePosition_AreaChanging.HasValue) {
@@ -289,10 +289,6 @@ namespace fmg.uwp.mosaic {
             case nameof(Model.Area):
                 OnChangedArea(ev as PropertyChangedExEventArgs<double>);
                 break;
-            case nameof(Model.Padding):
-            case nameof(Model.Margin):
-                System.Diagnostics.Debug.Assert(!_extendedManipulation, "Предполагаю, что не буду использовать изменения отступов в модели...");
-                break;
             }
         }
 
@@ -303,7 +299,7 @@ namespace fmg.uwp.mosaic {
                 var newViewSize = Size;
                 if (_mouseDevicePosition_AreaChanging.HasValue) {
                     var devicePos = _mouseDevicePosition_AreaChanging.Value;
-                    var oldViewSize = GetInnerSize(Model.SizeField, ev.OldValue);
+                    var oldViewSize = GetMosaicSize(Model.SizeField, ev.OldValue);
 
                     // точка над игровым полем со старой площадью ячеек
                     var pointOld = ToImagePoint(devicePos);
@@ -786,7 +782,6 @@ namespace fmg.uwp.mosaic {
             _scaleTransform = null;
         }
 
-        string GetCallerName([System.Runtime.CompilerServices.CallerMemberName] string callerName = null) { return this.GetType().Name + '.' + callerName; }
 
         class ClickInfo {
             public BaseCell CellDown { get; set; }

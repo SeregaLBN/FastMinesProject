@@ -9,7 +9,7 @@ using fmg.common.notyfier;
 namespace fmg.core.img {
 
     /// <summary> MVC: model of representable menu as horizontal or vertical lines </summary>
-    public sealed class BurgerMenuModel : IImageModel {
+    public sealed class BurgerMenuModel : IAnimatedModel {
 
         private AnimatedImageModel _generalModel;
         private bool _show = true;
@@ -26,24 +26,15 @@ namespace fmg.core.img {
         internal BurgerMenuModel(AnimatedImageModel generalModel) {
             _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
             _generalModel = generalModel;
-            _generalModel.PropertyChanged += OnPropertyGeneralModelChanged;
-        }
-
-        private void OnPropertyGeneralModelChanged(object sender, PropertyChangedEventArgs ev) {
-            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _generalModel));
-            if (nameof(IImageModel.Size) == ev.PropertyName) {
-                if (ev is PropertyChangedExEventArgs<SizeDouble> evEx)
-                    RecalcPadding(evEx.OldValue);
-                else
-                    throw new Exception();
-            }
+            _generalModel.PropertyChanged += OnGeneralModelPropertyChanged;
         }
 
         /// <summary> image width and height in pixel </summary>
-        public SizeDouble Size {
-            get { return _generalModel.Size; }
-            set { _generalModel.Size = value; }
-        }
+        public SizeDouble Size          { get => _generalModel.Size         ; set => _generalModel.Size          = value; }
+        public bool       Animated      { get => _generalModel.Animated     ; set => _generalModel.Animated      = value; }
+        public long       AnimatePeriod { get => _generalModel.AnimatePeriod; set => _generalModel.AnimatePeriod = value; }
+        public int        TotalFrames   { get => _generalModel.TotalFrames  ; set => _generalModel.TotalFrames   = value; }
+        public int        CurrentFrame  { get => _generalModel.CurrentFrame ; set => _generalModel.CurrentFrame  = value; }
 
         public bool Show {
             get { return _show; }
@@ -68,12 +59,8 @@ namespace fmg.core.img {
                 return _padding.Value;
             }
             set {
-                if (value.LeftAndRight >= Size.Width)
-                    throw new ArgumentException("Padding size is very large. Should be less than Width.");
-                if (value.TopAndBottom >= Size.Height)
-                    throw new ArgumentException("Padding size is very large. Should be less than Height.");
-                var paddingNew = new BoundDouble(value.Left, value.Top, value.Right, value.Bottom);
-                _notifier.SetProperty(ref _padding, paddingNew);
+                this.CheckPadding(value);
+                _notifier.SetProperty(ref _padding, value);
             }
         }
         private void RecalcPadding(SizeDouble? old) {
@@ -83,7 +70,7 @@ namespace fmg.core.img {
                                     size.Height / 2,
                                     _generalModel.Padding.Right,
                                     _generalModel.Padding.Bottom)
-                  : AnimatedImageModel.RecalcPadding(_padding.Value, size, old.Value);
+                  : this.RecalcPadding(_padding.Value, size, old.Value);
             _notifier.SetProperty(ref _padding, paddingNew, nameof(this.Padding));
         }
 
@@ -135,12 +122,22 @@ namespace fmg.core.img {
             }
         }
 
+        private void OnGeneralModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _generalModel));
+            if (nameof(IImageModel.Size) == ev.PropertyName) {
+                if (ev is PropertyChangedExEventArgs<SizeDouble> evEx)
+                    RecalcPadding(evEx.OldValue);
+                else
+                    throw new Exception();
+            }
+        }
+
         public void Dispose() {
             if (_disposed)
                 return;
             _disposed = true;
 
-            _generalModel.PropertyChanged -= OnPropertyGeneralModelChanged;
+            _generalModel.PropertyChanged -= OnGeneralModelPropertyChanged;
             _notifier.Dispose();
             _generalModel = null;
 

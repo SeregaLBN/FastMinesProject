@@ -110,10 +110,7 @@ namespace fmg.uwp.mosaic.xaml {
                 modifiedCells = m.Matrix;
 
             var pen = m.PenBorder;
-            var padding = m.Padding;
-            var margin = m.Margin;
-            var offset = new SizeDouble(margin.Left + padding.Left,
-                                        margin.Top + padding.Top);
+            var offset = m.MosaicOffset;
             var isSimpleDraw = pen.ColorLight == pen.ColorShadow;
 
             // 2. paint all cells

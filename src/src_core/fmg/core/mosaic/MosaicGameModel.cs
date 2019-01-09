@@ -45,13 +45,16 @@ namespace fmg.core.mosaic {
         private EMosaic _mosaicType = EMosaic.eMosaicSquare1;
 
         protected bool Disposed { get; private set; }
-        public event PropertyChangedEventHandler PropertyChanged;
+        private event PropertyChangedEventHandler PropertyChangedSync;
+        public  event PropertyChangedEventHandler PropertyChanged/*Async*/;
         protected readonly NotifyPropertyChanged _notifier;
-
+        private   readonly NotifyPropertyChanged _notifierAsync;
     #endregion
 
         public MosaicGameModel() {
-            _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
+            _notifier      = new NotifyPropertyChanged(this, ev => PropertyChangedSync?.Invoke(this, ev), false);
+            _notifierAsync = new NotifyPropertyChanged(this, ev => PropertyChanged    ?.Invoke(this, ev), true);
+            this.PropertyChangedSync += OnPropertyChanged;
         }
 
         public BaseCell.BaseAttribute CellAttr {
@@ -79,7 +82,8 @@ namespace fmg.core.mosaic {
         public double Area {
             get { return CellAttr.Area; }
             set {
-                System.Diagnostics.Debug.Assert(value >= 1);
+                if (value <= 0)
+                    throw new ArgumentException("Area must be positive");
                 CellAttr.Area = value;
             }
         }
@@ -152,7 +156,12 @@ namespace fmg.core.mosaic {
             _notifier.OnPropertyChanged(nameof(this.CellAttr));
         }
 
-        /** off notifier */
+        protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            // refire as async event
+            _notifierAsync.OnPropertyChanged(ev);
+        }
+
+        /// <summary> off notifier </summary>
         protected virtual IDisposable Hold() {
             var a1 = _notifier.Hold();
             var a2 = CellAttr.Hold();
@@ -164,9 +173,11 @@ namespace fmg.core.mosaic {
             };
         }
 
-        // <summary>  Dispose managed resources </summary>/
+        /// <summary>  Dispose managed resources </summary>/
         protected virtual void Disposing() {
+            this.PropertyChangedSync -= OnPropertyChanged;
             _notifier.Dispose();
+            _notifierAsync.Dispose();
             CellAttr = null; // call setter - unsubscribe & dispose
         }
 

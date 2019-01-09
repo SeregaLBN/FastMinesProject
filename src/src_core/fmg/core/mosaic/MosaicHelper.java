@@ -12,6 +12,10 @@ import fmg.core.types.EMosaic;
 
 public final class MosaicHelper {
 
+    private MosaicHelper() {}
+
+    public static final double AreaPrecision = 0.001;
+
     private static final String getPackageName() {
         Package pkg = MosaicHelper.class.getPackage();
         if (pkg != null)
@@ -118,7 +122,7 @@ public final class MosaicHelper {
      * @param func - ф-ция сравнения
      * @return что найдено
      */
-    static int Finder(int baseDelta, Comparable<Integer> func) {
+    static int FinderI(int baseDelta, Comparable<Integer> func) {
         double res = baseDelta;
         double d = baseDelta;
         boolean deltaUp = true;
@@ -158,7 +162,7 @@ public final class MosaicHelper {
      * @param func - ф-ция сравнения
      * @return что найдено
      */
-    static double Finder(double baseDelta, Comparable<Double> func) {
+    static double FinderD(double baseDelta, Comparable<Double> func) {
         double res = baseDelta;
         double d = baseDelta;
         boolean deltaUp = true;
@@ -166,7 +170,7 @@ public final class MosaicHelper {
             double cmp = func.compareTo(res);
             if (DoubleExt.hasMinDiff(cmp, 0))
                 break;
-            if ((d < 1) && DoubleExt.hasMinDiff(cmp, -1))
+            if ((d < AreaPrecision) && DoubleExt.hasMinDiff(cmp, -1))
                 break;
 
             boolean resultUp = (cmp < 0);
@@ -192,11 +196,13 @@ public final class MosaicHelper {
     private static double findAreaBySize(BaseCell.BaseAttribute cellAttr, final Matrisize mosaicSizeField, final SizeDouble sizeClientIn, SizeDouble sizeClientOut) {
         // сделал приватным, т.к. неявно меняет свойства параметра 'cellAttr'
 
+        if (Double.isNaN(sizeClientIn.height) || Double.isNaN(sizeClientIn.width))
+            throw new IllegalArgumentException("sizeClient must be defined");
         if (sizeClientIn.height <= 0 || sizeClientIn.width <= 0)
             throw new InvalidParameterException("sizeClientIn must be positive");
 
         final SizeDouble sizeIter = new SizeDouble();
-        double res = Finder(2000, (Comparable<Double>)area -> {
+        double res = FinderD(2000, (Comparable<Double>)area -> {
             cellAttr.setArea(area);
             SizeDouble tmp = cellAttr.getSize(mosaicSizeField);
             sizeIter.width = tmp.width;
@@ -224,10 +230,16 @@ public final class MosaicHelper {
      * @return размер поля мозаики
      */
     public static Matrisize findSizeByArea(EMosaic mosaicType, double area, SizeDouble sizeClient) {
+        if (Double.isNaN(sizeClient.height) || Double.isNaN(sizeClient.width))
+            throw new IllegalArgumentException("sizeClient must be defined");
+
+        if (sizeClient.height <= 0 || sizeClient.width <= 0)
+            throw new IllegalArgumentException("sizeClient must be positive");
+
         BaseCell.BaseAttribute cellAttr = createAttributeInstance(mosaicType);
         cellAttr.setArea(area);
         final Matrisize result = new Matrisize();
-        Finder(2000, (Comparable<Integer>)newWidth -> {
+        FinderI(2000, (Comparable<Integer>)newWidth -> {
             result.m = newWidth;
             SizeDouble sizeWnd = cellAttr.getSize(result);
             if (DoubleExt.hasMinDiff(sizeWnd.width, sizeClient.width))
@@ -236,7 +248,7 @@ public final class MosaicHelper {
                 return -1;
             return +1;
         });
-        Finder(2000, (Comparable<Integer>)newHeight -> {
+        FinderI(2000, (Comparable<Integer>)newHeight -> {
             result.n = newHeight;
             SizeDouble sizeWnd = cellAttr.getSize(result);
             if (DoubleExt.hasMinDiff(sizeWnd.height, sizeClient.height))

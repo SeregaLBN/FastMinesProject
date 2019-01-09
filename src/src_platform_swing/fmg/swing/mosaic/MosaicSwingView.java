@@ -4,13 +4,17 @@ import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
+import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
 import fmg.common.Color;
-import fmg.common.geom.*;
+import fmg.common.geom.PointDouble;
+import fmg.common.geom.RectDouble;
+import fmg.common.geom.RegionDouble;
+import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.mosaic.MosaicDrawModel.BackgroundFill;
 import fmg.core.mosaic.MosaicView;
@@ -75,10 +79,7 @@ public abstract class MosaicSwingView<TImage,
         g.setFont(getFont());
         PenBorder pen = model.getPenBorder();
         g.setStroke(new BasicStroke((float)pen.getWidth()));
-        BoundDouble padding = model.getPadding();
-        BoundDouble margin  = model.getMargin();
-        SizeDouble offset = new SizeDouble(margin.left + padding.left,
-                                           margin.top  + padding.top);
+        SizeDouble offset = model.getMosaicOffset();
         boolean isSimpleDraw = pen.getColorLight().equals(pen.getColorShadow());
         BackgroundFill bkFill = model.getBackgroundFill();
 
@@ -272,9 +273,9 @@ public abstract class MosaicSwingView<TImage,
     }
 
     @Override
-    protected void onPropertyModelChanged(Object oldValue, Object newValue, String propertyName) {
-        super.onPropertyModelChanged(oldValue, newValue, propertyName);
-        if (MosaicDrawModel.PROPERTY_FONT_INFO.equals(propertyName)) {
+    protected void onPropertyModelChanged(PropertyChangeEvent ev) {
+        super.onPropertyModelChanged(ev);
+        if (MosaicDrawModel.PROPERTY_FONT_INFO.equals(ev.getPropertyName())) {
             _font = null;
             _mapTextLayout.clear();
         }

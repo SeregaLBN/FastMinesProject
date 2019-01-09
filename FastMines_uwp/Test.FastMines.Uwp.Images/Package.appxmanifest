@@ -1,49 +1,29 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<Package
-  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
-  xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
-  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
-  IgnorableNamespaces="uap mp">
-
-  <Identity
-    Name="6d381991-3090-4419-865f-5de5a4ce6392"
-    Publisher="CN=SeregaLBN"
-    Version="1.0.0.0" />
-
-  <mp:PhoneIdentity PhoneProductId="6d381991-3090-4419-865f-5de5a4ce6392" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
+  <Identity Name="SeregaLBN.Test.FastMines.Uwp.Images" Publisher="CN=SeregaLBN" Version="1.0.0.0" />
+  <mp:PhoneIdentity PhoneProductId="6d381991-3090-4419-865f-5de5a4ce6392" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Test.FastMines.Uwp.Images</DisplayName>
     <PublisherDisplayName>SeregaLBN</PublisherDisplayName>
-    <Logo>Assets\StoreLogo.png</Logo>
+    <Logo>res\Logo\UWP\StoreTile\Logo.png</Logo>
   </Properties>
-
   <Dependencies>
     <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
   </Dependencies>
-
   <Resources>
-    <Resource Language="x-generate"/>
+    <Resource Language="x-generate" />
   </Resources>
-
   <Applications>
-    <Application Id="App"
-      Executable="$targetnametoken$.exe"
-      EntryPoint="Test.FastMines.Uwp.Images.App">
-      <uap:VisualElements
-        DisplayName="Test.FastMines.Uwp.Images"
-        Square150x150Logo="Assets\Square150x150Logo.png"
-        Square44x44Logo="Assets\Square44x44Logo.png"
-        Description="Test.FastMines.Uwp.Images"
-        BackgroundColor="transparent">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"/>
-        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="Test.FastMines.Uwp.Images.App">
+      <uap:VisualElements DisplayName="Test.FastMines.Uwp.Images" Square150x150Logo="res\Logo\UWP\TileSq150\Logo.png" Square44x44Logo="res\Logo\UWP\TileSq44\Logo.png" Description="Test.FastMines.Uwp.Images" BackgroundColor="steelBlue">
+        <uap:DefaultTile Wide310x150Logo="res\Logo\UWP\WideTile\Logo.png" ShortName="Test.FastMines.Uwp.Images">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square150x150Logo" />
+            <uap:ShowOn Tile="wide310x150Logo" />
+          </uap:ShowNameOnTiles>
+        </uap:DefaultTile>
+        <uap:SplashScreen Image="res\Logo\UWP\SplashScreen\Logo.png" BackgroundColor="skyBlue" />
       </uap:VisualElements>
     </Application>
   </Applications>
-
-  <Capabilities>
-    <Capability Name="internetClient" />
-  </Capabilities>
 </Package>

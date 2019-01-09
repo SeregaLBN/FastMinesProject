@@ -1,6 +1,6 @@
 package fmg.core.img;
 
-import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,27 +35,21 @@ public class LogoModel extends AnimatedImageModel {
     /** central octahedron */
     private final List<PointDouble> _oct = new ArrayList<>();
 
-    private final PropertyChangeListener _selfListener = ev -> onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
-
     public static final String PROPERTY_USE_GRADIENT = "UseGradient";
     public static final String PROPERTY_ROTATE_MODE  = "RotateMode";
 
 
     public LogoModel() {
         setBackgroundColor(Color.Transparent());
-        _notifier.addListener(_selfListener);
+        _notifier.addListener(this::onPropertyChanged);
     }
 
-    @Override
-    public BoundDouble getPadding() {
-        BoundDouble from = super.getPadding();
-        BoundDouble pad = new BoundDouble(from.left, from.top, from.right, from.bottom);
+    public BoundDouble getInnerPadding() {
+        BoundDouble pad = new BoundDouble(super.getPadding());
         SizeDouble s = getSize();
         double innerX = s.width  - pad.getLeftAndRight();
         double innerY = s.height - pad.getTopAndBottom();
-        if (innerX == innerY) {
-            // none
-        } else {
+        if (innerX != innerY) {
             double add = (innerX - innerY) / 2;
             if (innerX > innerY) {
                 pad.left   += add;
@@ -89,12 +83,12 @@ public class LogoModel extends AnimatedImageModel {
         _notifier.setProperty(_rotateMode, value, PROPERTY_ROTATE_MODE);
     }
 
-    public double getZoomX() { return (getSize().width  - getPadding().getLeftAndRight()) / 200.0; }
-    public double getZoomY() { return (getSize().height - getPadding().getTopAndBottom()) / 200.0; }
+    public double getZoomX() { return (getSize().width  - getInnerPadding().getLeftAndRight()) / 200.0; }
+    public double getZoomY() { return (getSize().height - getInnerPadding().getTopAndBottom()) / 200.0; }
 
     public List<PointDouble> getRays() {
         if (_rays.isEmpty()) {
-            BoundDouble pad = getPadding();
+            BoundDouble pad = getInnerPadding();
             double pl = pad.left;
             double pt = pad.top;
             double zx = getZoomX();
@@ -114,7 +108,7 @@ public class LogoModel extends AnimatedImageModel {
 
     public List<PointDouble> getInn() {
         if (_inn.isEmpty()) {
-            BoundDouble pad = getPadding();
+            BoundDouble pad = getInnerPadding();
             double pl = pad.left;
             double pt = pad.top;
             double zx = getZoomX();
@@ -134,7 +128,7 @@ public class LogoModel extends AnimatedImageModel {
 
     public List<PointDouble> getOct() {
         if (_oct.isEmpty()) {
-            BoundDouble pad = getPadding();
+            BoundDouble pad = getInnerPadding();
             double pl = pad.left;
             double pt = pad.top;
             double zx = getZoomX();
@@ -152,20 +146,22 @@ public class LogoModel extends AnimatedImageModel {
         return _oct;
     }
 
-    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
-        switch (propertyName) {
+    protected void onPropertyChanged(PropertyChangeEvent ev) {
+        switch (ev.getPropertyName()) {
         case PROPERTY_SIZE:
         case PROPERTY_PADDING:
             _rays.clear();
             _inn.clear();
             _oct.clear();
             break;
+        default:
+            // none
         }
     }
 
     @Override
     public void close() {
-        _notifier.removeListener(_selfListener);
+        _notifier.removeListener(this::onPropertyChanged);
         super.close();
     }
 

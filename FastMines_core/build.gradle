@@ -16,12 +16,6 @@ jar {
     }
 }
 
-/*
-dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-}
-*/
-
 sourceSets {
     main {
         java {
@@ -29,6 +23,20 @@ sourceSets {
             include '**/*.java'
         }
     }
+    test {
+        java {
+            srcDir '../src/test_core'
+            include '**/*.java'
+        }
+    }
+}
+
+dependencies {
+    //implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // Use JUnit test framework
+    testImplementation 'junit:junit:4.12'
+    testCompile 'org.awaitility:awaitility:3.1.5'
 }
 
 jar {

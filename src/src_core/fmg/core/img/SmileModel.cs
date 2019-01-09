@@ -45,23 +45,34 @@ namespace fmg.core.img {
         }
 
         private EFaceType _faceType;
-        private SizeDouble _size;
+        private SizeDouble _size = new SizeDouble(AnimatedImageModelConsts.DefaultImageSize, AnimatedImageModelConsts.DefaultImageSize);
+        private BoundDouble padding = new BoundDouble(AnimatedImageModelConsts.DefaultPadding);
         public event PropertyChangedEventHandler PropertyChanged;
         protected readonly NotifyPropertyChanged _notifier;
 
         public SmileModel(EFaceType faceType) {
             _faceType = faceType;
-            _size = new SizeDouble(40, 40);
             _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
         }
 
         /// <summary> width and height in pixel </summary>
         public SizeDouble Size {
             get { return _size; }
-            set { _notifier.SetProperty(ref _size, value); }
+            set {
+                this.CheckSize(value);
+                var oldSize = _size;
+                if (_notifier.SetProperty(ref _size, value))
+                    Padding = this.RecalcPadding(Padding, Size, oldSize);
+            }
         }
-        public void SetSize(double widht, double height) { Size = new SizeDouble(widht, height); }
 
+        public BoundDouble Padding{
+            get { return padding; }
+            set {
+                this.CheckPadding(value);
+                _notifier.SetProperty(ref padding, value);
+            }
+        }
         public EFaceType FaceType {
             get { return _faceType; }
             set { _notifier.SetProperty(ref _faceType, value); }

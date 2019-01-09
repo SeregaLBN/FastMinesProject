@@ -15,8 +15,8 @@ using fmg.uwp.utils;
 
 namespace fmg.uwp.mosaic.win2d {
 
-    // <summary> Class for drawing cell into (ower <see cref="CanvasBitmap"/>) </summary>
-    /// <summary> MVC: view. Abstract UWP Win2D implementation </summary>
+    /// <summary> Class for drawing cell into (ower <see cref="CanvasBitmap"/>).
+    /// MVC: view. Abstract UWP Win2D implementation </summary>
     /// <typeparam name="TImage">platform specific view/image/picture or other display context/canvas/window/panel</typeparam>
     /// <typeparam name="TImageInner">image type of flag/mine into mosaic field</typeparam>
     /// <typeparam name="TMosaicModel"> mosaic data model </typeparam>
@@ -54,10 +54,7 @@ namespace fmg.uwp.mosaic.win2d {
 
             // 2. paint cells
             var pen = model.PenBorder;
-            var padding = model.Padding;
-            var margin = model.Margin;
-            var offset = new SizeDouble(margin.Left + padding.Left,
-                                        margin.Top  + padding.Top);
+            var offset = model.MosaicOffset;
             bool isSimpleDraw = (pen.ColorLight == pen.ColorShadow);
             var bkFill = model.BkFill;
             var font = Font;
@@ -99,11 +96,14 @@ namespace fmg.uwp.mosaic.win2d {
                             // 2.1.2. output pictures
                             if ((model.ImgFlag != null) &&
                                 (cell.State.Status == EState._Close) &&
-                                (cell.State.Close == EClose._Flag)) {
+                                (cell.State.Close == EClose._Flag))
+                            {
                                 paintImage(model.ImgFlag);
-                            } else if ((model.ImgMine != null) &&
-                                        (cell.State.Status == EState._Open) &&
-                                        (cell.State.Open == EOpen._Mine)) {
+                            } else
+                            if ((model.ImgMine != null) &&
+                                (cell.State.Status == EState._Open) &&
+                                (cell.State.Open == EOpen._Mine))
+                            {
                                 paintImage(model.ImgMine);
                             } else
                             // 2.1.3. output text
