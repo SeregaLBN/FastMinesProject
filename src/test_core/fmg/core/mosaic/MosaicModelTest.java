@@ -17,10 +17,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import fmg.common.LoggerSimple;
+import fmg.common.geom.BoundDouble;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.Factory;
 import fmg.core.img.IImageModel;
+import fmg.core.types.EMosaic;
 import io.reactivex.Flowable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.PublishSubject;
@@ -29,6 +31,8 @@ import io.reactivex.subjects.Subject;
 public class MosaicModelTest {
 
     static class DummyMosaicImageType extends Object {}
+
+    static class MosaicTestModel extends MosaicDrawModel<DummyMosaicImageType> {}
 
     static class Signal {
         private final CountDownLatch signal = new CountDownLatch(1);
@@ -98,7 +102,7 @@ public class MosaicModelTest {
     public void mosaicDrawModelPropertyChangedTest() {
         LoggerSimple.put("> mosaicDrawModelPropertyChangedTest");
 
-        try (MosaicDrawModel<DummyMosaicImageType> model = new MosaicDrawModel<>()) {
+        try (MosaicTestModel model = new MosaicTestModel()) {
             Subject<PropertyChangeEvent> subject = PublishSubject.create();
 
             Map<String /* property name */, Integer /* count */> modifiedProperties = new HashMap<>();
@@ -136,8 +140,52 @@ public class MosaicModelTest {
 
     @Test
     public void mosaicDrawModelAsIsTest() {
-        try (MosaicDrawModel<DummyMosaicImageType> model = new MosaicDrawModel<>()) {
+        try (MosaicTestModel model = new MosaicTestModel()) {
             Assert.assertEquals(model.getCellAttr().getSize(model.getSizeField()), model.getSize());
+        }
+    }
+
+    @Test
+    public void autoFitTrueCheckModifySizeAffectsToPaddingTest() {
+        try (MosaicTestModel model = new MosaicTestModel()) {
+            // set property
+            model.setAutoFit(true);
+            model.setSize(new SizeDouble(1000, 1000));
+            model.setPadding(new BoundDouble(100));
+
+            // change poperty
+            model.setSize(new SizeDouble(500, 700));
+
+            // check dependency
+            Assert.assertEquals(50.0, model.getPadding().left  , 0);
+            Assert.assertEquals(50.0, model.getPadding().right , 0);
+            Assert.assertEquals(70.0, model.getPadding().top   , 0);
+            Assert.assertEquals(70.0, model.getPadding().bottom, 0);
+        }
+    }
+
+    @Test
+    public void autoFitTrueCheckModifySizeOrFieldTypeOrFieldSizeOrPaddingAffectsToMosaicSizeTest() {
+        try (MosaicTestModel model = new MosaicTestModel()) {
+            Assert.assertEquals(EMosaic.eMosaicSquare1, model.getMosaicType());
+
+            // set property
+            model.setAutoFit(true);
+            model.setSize(new SizeDouble(1000, 1000));
+
+            // check dependency (evenly expanded)
+            SizeDouble mosaicSize = model.getMosaicSize();
+            Assert.assertEquals(1000, mosaicSize.width , 0);
+            Assert.assertEquals(1000, mosaicSize.height, 0);
+
+            // change poperty
+            model.setSize(new SizeDouble(500, 700));
+
+            // check dependency (evenly expanded)
+            mosaicSize = model.getMosaicSize();
+            Assert.assertEquals(500, mosaicSize.width , 0);
+            Assert.assertEquals(500, mosaicSize.height, 0);
+
         }
     }
 

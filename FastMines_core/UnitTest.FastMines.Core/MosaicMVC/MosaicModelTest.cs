@@ -9,8 +9,10 @@ using NUnit.Framework;
 using fmg.common;
 using fmg.common.geom;
 using fmg.common.ui;
+using fmg.core.types;
 using fmg.core.img;
-using DummyMosaicImageType = System.Object;
+//using DummyMosaicImageType = System.Object;
+using MosaicTestModel = fmg.core.mosaic.MosaicDrawModel<System.Object>;
 
 namespace fmg.core.mosaic {
 
@@ -52,7 +54,7 @@ namespace fmg.core.mosaic {
 
         [Test]
         public async Task MosaicDrawModelPropertyChangedTest() {
-            using (var model = new MosaicDrawModel<DummyMosaicImageType>()) {
+            using (var model = new MosaicTestModel()) {
                 var subject = new Subject<PropertyChangedEventArgs>();
 
                 var modifiedProperties = new Dictionary<string /* property name */, int /* count */>();
@@ -95,8 +97,53 @@ namespace fmg.core.mosaic {
 
         [Test]
         public void MosaicDrawModelAsIsTest() {
-            using (var model = new MosaicDrawModel<DummyMosaicImageType>()) {
+            using (var model = new MosaicTestModel()) {
                 Assert.AreEqual(model.CellAttr.GetSize(model.SizeField), model.Size);
+            }
+        }
+
+
+        [Test]
+        public void AutoFitTrueCheckModifySizeAffectsToPaddingTest() {
+            using (var model = new MosaicTestModel()) {
+                // set property
+                model.AutoFit = true;
+                model.Size = new SizeDouble(1000, 1000);
+                model.Padding = new BoundDouble(100);
+
+                // change poperty
+                model.Size = new SizeDouble(500, 700);
+
+                // check dependency
+                Assert.AreEqual(50.0, model.Padding.Left);
+                Assert.AreEqual(50.0, model.Padding.Right);
+                Assert.AreEqual(70.0, model.Padding.Top);
+                Assert.AreEqual(70.0, model.Padding.Bottom);
+            }
+        }
+
+        [Test]
+        public void autoFitTrueCheckModifySizeOrFieldTypeOrFieldSizeOrPaddingAffectsToMosaicSizeTest() {
+            using (var model = new MosaicTestModel()) {
+                Assert.AreEqual(EMosaic.eMosaicSquare1, model.MosaicType);
+
+                // set property
+                model.AutoFit = true;
+                model.Size = new SizeDouble(1000, 1000);
+
+                // check dependency (evenly expanded)
+                var mosaicSize = model.MosaicSize;
+                Assert.AreEqual(1000, mosaicSize.Width);
+                Assert.AreEqual(1000, mosaicSize.Height);
+
+                // change poperty
+                model.Size = new SizeDouble(500, 700);
+
+                // check dependency (evenly expanded)
+                mosaicSize = model.MosaicSize;
+                Assert.AreEqual(500, mosaicSize.Width);
+                Assert.AreEqual(500, mosaicSize.Height);
+
             }
         }
 
