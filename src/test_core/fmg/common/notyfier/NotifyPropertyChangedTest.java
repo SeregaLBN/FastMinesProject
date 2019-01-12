@@ -7,6 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import fmg.common.ui.Factory;
@@ -22,6 +23,14 @@ public class NotifyPropertyChangedTest {
         public void addListener(PropertyChangeListener listener) { }
 
     };
+
+    static ExecutorService scheduler;
+
+    @BeforeClass
+    public static void setup() {
+        scheduler = Executors.newScheduledThreadPool(1);
+        Factory.DEFERR_INVOKER = scheduler::execute;
+    }
 
     @Test
     public void NotifyPropertyChangedSyncTest() {
@@ -42,8 +51,6 @@ public class NotifyPropertyChangedTest {
 
     @Test
     public void NotifyPropertyChangedAsyncTest() throws InterruptedException {
-        ExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        Factory.DEFERR_INVOKER = r -> scheduler.execute(r);
         try (NotifyPropertyChanged notifier = new NotifyPropertyChanged(_dummy, true)) {
 
             int countFiredEvents = 3 + ThreadLocalRandom.current().nextInt(10);

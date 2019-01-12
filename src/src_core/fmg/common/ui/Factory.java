@@ -8,7 +8,7 @@ import fmg.core.img.IAnimator;
 /** Factory of UI timers/animators/deffer invokers */
 public final class Factory {
 
-    /** Delayed execution in the current thread of the user interface. */
+    /** Delayed execution in the thread of the user interface. */
     public static Consumer<Runnable> DEFERR_INVOKER = run -> {
         throw new UnsupportedOperationException("Not implemented...");
 //        System.out.println("need redefine!");

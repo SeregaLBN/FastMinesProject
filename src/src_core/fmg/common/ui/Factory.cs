@@ -6,7 +6,7 @@ namespace fmg.common.ui {
     /// <summary> Factory of UI timers/animators/deffer invokers </summary>
     public static class Factory {
 
-        /// <summary> Delayed execution in the current thread of the user interface. </summary>
+        /// <summary> Delayed execution in the thread of the user interface. </summary>
         public static Action<Action> DEFERR_INVOKER = doRun => {
             throw new NotImplementedException();
             //System.Diagnostics.Debug.WriteLine("need redefine!");
