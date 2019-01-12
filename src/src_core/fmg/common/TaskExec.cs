@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 
 namespace fmg.common {
 
+    [Obsolete]
     public static class TaskExec {
 
         //public static Task InNewTask(Action action, bool longRunning = false) {

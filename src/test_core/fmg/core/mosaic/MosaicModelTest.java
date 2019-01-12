@@ -26,9 +26,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
-public class MosaicGameModelTest {
+public class MosaicModelTest {
 
-    static final int MagicDelayMlsc = 50;
     static class DummyMosaicImageType extends Object {}
 
     static class Signal {
@@ -112,7 +111,7 @@ public class MosaicGameModelTest {
             model.addListener(onModelPropertyChanged);
 
             Signal signal = new Signal();
-            Disposable dis = subject.timeout(MagicDelayMlsc, TimeUnit.MILLISECONDS)
+            Disposable dis = subject.timeout(50, TimeUnit.MILLISECONDS)
                     .subscribe(ev -> {
                         LoggerSimple.put("onNext: ev=" + ev);
                     }, ex -> {
@@ -136,7 +135,7 @@ public class MosaicGameModelTest {
     }
 
     @Test
-    public void mosaicDrawModelTest() {
+    public void mosaicDrawModelAsIsTest() {
         try (MosaicDrawModel<DummyMosaicImageType> model = new MosaicDrawModel<>()) {
             Assert.assertEquals(model.getCellAttr().getSize(model.getSizeField()), model.getSize());
         }
