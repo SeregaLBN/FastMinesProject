@@ -58,10 +58,6 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
     private BackgroundFill _backgroundFill;
     private Color          _backgroundColor;
 
-    public MosaicDrawModel() {
-        _notifier.addListener(this::onPropertyChanged);
-    }
-
     public static final String PROPERTY_AUTO_FIT         = "AutoFit";
     public static final String PROPERTY_IMG_MINE         = "ImgMine";
     public static final String PROPERTY_IMG_FLAG         = "ImgFlag";
@@ -403,7 +399,6 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
 
     @Override
     public void close() {
-        _notifier.removeListener(this::onPropertyChanged);
         getBackgroundFill().close();
         super.close();
         // unsubscribe from local notifications

@@ -59,10 +59,6 @@ namespace fmg.core.mosaic {
         private Color          _backgroundColor = MosaicDrawModelConst.DefaultBkColor;
         private TImageInner    _imgBckgrnd;
 
-        public MosaicDrawModel() {
-            this.PropertyChanged += OnPropertyChanged;
-        }
-
         public bool AutoFit {
             get => _autoFit;
             set { _notifier.SetProperty(ref this._autoFit, value); }
@@ -337,7 +333,6 @@ namespace fmg.core.mosaic {
         }
 
         protected override void Disposing() {
-            this.PropertyChanged -= OnPropertyChanged;
             BkFill.Dispose();
             base.Disposing();
             // unsubscribe from local notifications

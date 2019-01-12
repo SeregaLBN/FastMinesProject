@@ -2,7 +2,9 @@ package fmg.core.mosaic;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -100,10 +102,11 @@ public class MosaicGameModelTest {
         try (MosaicDrawModel<DummyMosaicImageType> model = new MosaicDrawModel<>()) {
             Subject<PropertyChangeEvent> subject = PublishSubject.create();
 
-            List<String> modifiedProperties = new ArrayList<>();
+            Map<String /* property name */, Integer /* count */> modifiedProperties = new HashMap<>();
             PropertyChangeListener onModelPropertyChanged = ev -> {
-                LoggerSimple.put("  mosaicDrawModelPropertyChangedTest: onModelPropertyChanged: ev.name=" + ev.getPropertyName());
-                modifiedProperties.add(ev.getPropertyName());
+                String name = ev.getPropertyName();
+                LoggerSimple.put("  mosaicDrawModelPropertyChangedTest: onModelPropertyChanged: ev.name=" + name);
+                modifiedProperties.put(name, 1 + (modifiedProperties.containsKey(name) ? modifiedProperties.get(name) : 0));
                 subject.onNext(ev);
             };
             model.addListener(onModelPropertyChanged);
@@ -120,10 +123,12 @@ public class MosaicGameModelTest {
             modifiedProperties.clear();
             model.setSize(new SizeDouble(123, 456));
 
-            Assert.assertTrue(signal.await(5000));
+            Assert.assertTrue(signal.await(1000));
 
             LoggerSimple.put("  mosaicDrawModelPropertyChangedTest: checking...");
-            Assert.assertTrue(modifiedProperties.contains(IImageModel.PROPERTY_SIZE));
+            Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(IImageModel.PROPERTY_SIZE));
+            Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(MosaicGameModel.PROPERTY_AREA));
+            Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(MosaicGameModel.PROPERTY_CELL_ATTR));
 
             model.removeListener(onModelPropertyChanged);
             dis.dispose();
