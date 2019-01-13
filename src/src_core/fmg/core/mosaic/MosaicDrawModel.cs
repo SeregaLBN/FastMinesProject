@@ -64,10 +64,10 @@ namespace fmg.core.mosaic {
             set { _notifier.SetProperty(ref this._autoFit, value); }
         }
 
-        /// <summary> размер в пикселях поля мозаики </summary>
+        /// <summary> get mosaic size in pixels </summary>
         public SizeDouble MosaicSize => CellAttr.GetSize(SizeField);
 
-        /// <summary> размер внутренней области в пикселях, куда равномерно вписана мозаика. Inner, т.к. снаружи есть ещё padding </summary>
+        /// <summary> get inner size in pixels, куда равномерно вписана мозаика. Inner, т.к. снаружи есть ещё padding </summary>
         private SizeDouble InnerSize {
             get {
                 var pad = Padding;
@@ -76,7 +76,7 @@ namespace fmg.core.mosaic {
             }
         }
 
-        /// <summary> общий размер в пискелях </summary>
+        /// <summary> common size in pixels </summary>
         public SizeDouble Size {
             get {
                 if ((_size.Width <= 0) || (_size.Height <= 0)) {

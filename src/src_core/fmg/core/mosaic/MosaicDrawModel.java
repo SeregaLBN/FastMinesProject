@@ -73,17 +73,17 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
         _notifier.setProperty(this._autoFit, autoFit, PROPERTY_AUTO_FIT);
     }
 
-    /** размер в пикселях поля мозаики */
+    /** get mosaic size in pixels */
     public SizeDouble getMosaicSize() {
         return getCellAttr().getSize(getSizeField());
     }
-    /** размер внутренней области в пикселях, куда равномерно вписана мозаика. Inner, т.к. снаружи есть ещё padding */
+    /** get inner size in pixels, куда равномерно вписана мозаика. Inner, т.к. снаружи есть ещё padding */
     private SizeDouble getInnerSize() {
         BoundDouble pad = getPadding();
         SizeDouble s = getSize();
         return new SizeDouble(s.width - pad.getLeftAndRight(), s.height - pad.getTopAndBottom());
     }
-    /** общий размер в пискелях */
+    /** common size in pixels */
     @Override
     public SizeDouble getSize() {
         if ((_size == null) ||

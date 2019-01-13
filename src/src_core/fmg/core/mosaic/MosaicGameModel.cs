@@ -105,7 +105,7 @@ namespace fmg.core.mosaic {
             }
         }
 
-        /// <summary> размер поля в ячейках </summary>
+        /// <summary> mosaic field size in cells </summary>
         public Matrisize SizeField {
             get { return _sizeField; }
             set {
@@ -121,7 +121,7 @@ namespace fmg.core.mosaic {
             }
         }
 
-        /// <summary> тип мозаики (из каких фигур состоит мозаика поля) </summary>
+        /// <summary> mosaic type (из каких фигур состоит мозаика поля) </summary>
         public EMosaic MosaicType {
             get { return _mosaicType; }
             set {
@@ -129,13 +129,8 @@ namespace fmg.core.mosaic {
                 if (old == value)
                     return;
 
-                double saveArea = Area; // save
-
                 this._mosaicType = value;
                 CellAttr = null;
-
-                Area = saveArea; // restore
-
                 _notifier.OnPropertyChanged(old, value);
             }
         }

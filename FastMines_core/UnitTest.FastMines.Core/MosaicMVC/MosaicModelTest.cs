@@ -98,13 +98,15 @@ namespace fmg.core.mosaic {
         [Test]
         public void MosaicDrawModelAsIsTest() {
             using (var model = new MosaicTestModel()) {
+                Assert.AreEqual(EMosaic.eMosaicSquare1, model.MosaicType);
+                Assert.AreEqual(new Matrisize(10, 10), model.SizeField);
                 Assert.AreEqual(model.CellAttr.GetSize(model.SizeField), model.Size);
             }
         }
 
 
         [Test]
-        public void AutoFitTrueCheckModifySizeAffectsToPaddingTest() {
+        public void AutoFitTrueCheckAffectsToPaddingTest() {
             using (var model = new MosaicTestModel()) {
                 // set property
                 model.AutoFit = true;
@@ -123,10 +125,8 @@ namespace fmg.core.mosaic {
         }
 
         [Test]
-        public void autoFitTrueCheckModifySizeOrFieldTypeOrFieldSizeOrPaddingAffectsToMosaicSizeTest() {
+        public void AutoFitTrueCheckAffectsToMosaicSizeTest() {
             using (var model = new MosaicTestModel()) {
-                Assert.AreEqual(EMosaic.eMosaicSquare1, model.MosaicType);
-
                 // set property
                 model.AutoFit = true;
                 model.Size = new SizeDouble(1000, 1000);
@@ -136,14 +136,32 @@ namespace fmg.core.mosaic {
                 Assert.AreEqual(1000, mosaicSize.Width);
                 Assert.AreEqual(1000, mosaicSize.Height);
 
+
                 // change poperty
                 model.Size = new SizeDouble(500, 700);
 
                 // check dependency (evenly expanded)
                 mosaicSize = model.MosaicSize;
-                Assert.AreEqual(500, mosaicSize.Width);
-                Assert.AreEqual(500, mosaicSize.Height);
+                Assert.AreEqual(500, mosaicSize.Width , 0.001);
+                Assert.AreEqual(500, mosaicSize.Height, 0.001);
 
+
+                // change poperty
+                model.MosaicType = EMosaic.eMosaicSquare2;
+
+                // check dependency (evenly expanded)
+                mosaicSize = model.MosaicSize;
+                Assert.AreEqual(525, mosaicSize.Width , 0.001);
+                Assert.AreEqual(500, mosaicSize.Height, 0.001);
+
+
+                // change poperty
+                model.SizeField = new Matrisize(10, 15);
+
+                // check dependency (evenly expanded)
+                mosaicSize = model.MosaicSize;
+                Assert.AreEqual(350, mosaicSize.Width , 0.001);
+                Assert.AreEqual(500, mosaicSize.Height, 0.001);
             }
         }
 

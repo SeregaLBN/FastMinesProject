@@ -107,10 +107,10 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
         return _matrix;
     }
 
-    /** размер поля в ячейках */
+    /** get mosaic field size in cells */
     @Override
     public Matrisize getSizeField() { return _sizeField; }
-    /** размер поля в ячейках */
+    /** set mosaic field size in cells */
     @Override
     public void setSizeField(Matrisize newSizeField) {
         Matrisize old = this._sizeField;
@@ -124,24 +124,19 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
         _notifier.onPropertyChanged(PROPERTY_MATRIX);
     }
 
-    /** узнать тип мозаики
+    /** get mosaic type
       * (из каких фигур состоит мозаика поля) */
     @Override
     public EMosaic getMosaicType() { return _mosaicType; }
-    /** установить тип мозаики */
+    /** set mosaic type */
     @Override
     public void setMosaicType(EMosaic newMosaicType) {
         EMosaic old = this._mosaicType;
         if (old == newMosaicType)
             return;
 
-        double saveArea = getArea(); // save
-
         this._mosaicType = newMosaicType;
         setCellAttr(null);
-
-        setArea(saveArea); // restore
-
         _notifier.onPropertyChanged(old, newMosaicType, PROPERTY_MOSAIC_TYPE);
     }
 

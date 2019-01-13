@@ -141,12 +141,14 @@ public class MosaicModelTest {
     @Test
     public void mosaicDrawModelAsIsTest() {
         try (MosaicTestModel model = new MosaicTestModel()) {
+            Assert.assertEquals(EMosaic.eMosaicSquare1, model.getMosaicType());
+            Assert.assertEquals(new Matrisize(10, 10), model.getSizeField());
             Assert.assertEquals(model.getCellAttr().getSize(model.getSizeField()), model.getSize());
         }
     }
 
     @Test
-    public void autoFitTrueCheckModifySizeAffectsToPaddingTest() {
+    public void autoFitTrueCheckAffectsToPaddingTest() {
         try (MosaicTestModel model = new MosaicTestModel()) {
             // set property
             model.setAutoFit(true);
@@ -165,10 +167,8 @@ public class MosaicModelTest {
     }
 
     @Test
-    public void autoFitTrueCheckModifySizeOrFieldTypeOrFieldSizeOrPaddingAffectsToMosaicSizeTest() {
+    public void autoFitTrueCheckAffectsToMosaicSizeTest() {
         try (MosaicTestModel model = new MosaicTestModel()) {
-            Assert.assertEquals(EMosaic.eMosaicSquare1, model.getMosaicType());
-
             // set property
             model.setAutoFit(true);
             model.setSize(new SizeDouble(1000, 1000));
@@ -178,14 +178,32 @@ public class MosaicModelTest {
             Assert.assertEquals(1000, mosaicSize.width , 0);
             Assert.assertEquals(1000, mosaicSize.height, 0);
 
+
             // change poperty
-            model.setSize(new SizeDouble(500, 700));
+            model.setSize(new SizeDouble(700, 500));
 
             // check dependency (evenly expanded)
             mosaicSize = model.getMosaicSize();
-            Assert.assertEquals(500, mosaicSize.width , 0);
-            Assert.assertEquals(500, mosaicSize.height, 0);
+            Assert.assertEquals(500, mosaicSize.width , 0.001);
+            Assert.assertEquals(500, mosaicSize.height, 0.001);
 
+
+            // change poperty
+            model.setMosaicType(EMosaic.eMosaicSquare2);
+
+            // check dependency (evenly expanded)
+            mosaicSize = model.getMosaicSize();
+            Assert.assertEquals(525, mosaicSize.width , 0.001);
+            Assert.assertEquals(500, mosaicSize.height, 0.001);
+
+
+            // change poperty
+            model.setSizeField(new Matrisize(10, 15));
+
+            // check dependency (evenly expanded)
+            mosaicSize = model.getMosaicSize();
+            Assert.assertEquals(350, mosaicSize.width , 0.001);
+            Assert.assertEquals(500, mosaicSize.height, 0.001);
         }
     }
 
