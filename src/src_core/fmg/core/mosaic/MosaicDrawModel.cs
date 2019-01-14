@@ -269,12 +269,23 @@ namespace fmg.core.mosaic {
 
                     // recalc size
                     if (ev.PropertyName == nameof(this.Area)) {
-                        //System.Diagnostics.Debug.Assert(false, "При autoFit==true, Area напрямую не устанавливается!");
-                        LoggerSimple.Put("При autoFit==true, Area напрямую не устанавливается!");
-
-                        var sm = MosaicSize;
-                        var p = Padding;
-                        Size = new SizeDouble(sm.Width + p.LeftAndRight, sm.Height + p.TopAndBottom);
+                        var err = "При autoFit==true, Area напрямую не устанавливается!";
+                      //System.Diagnostics.Debug.Assert(false, err);
+                        LoggerSimple.Put(err);
+                        if (!true) {
+                            throw new InvalidOperationException(err);
+                        } else {
+                            var ms = MosaicSize;
+                            var p = Padding;
+                            if (((ms.Width  + p.LeftAndRight) <= 0) ||
+                                ((ms.Height + p.TopAndBottom) <= 0))
+                            {
+                                // reset padding
+                                p = new BoundDouble(0);
+                                Padding = p;
+                            }
+                            Size = new SizeDouble(ms.Width + p.LeftAndRight, ms.Height + p.TopAndBottom);
+                        }
                     }
                 } else {
                     // recalc area / padding

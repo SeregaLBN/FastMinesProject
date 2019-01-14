@@ -336,11 +336,22 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
 
                 // recalc size
                 if (PROPERTY_AREA.equals(ev.getPropertyName())) {
-                    System.err.println("При autoFit==true, Area напрямую не устанавливается!");
-
-                    SizeDouble sm = getMosaicSize();
-                    BoundDouble p = getPadding();
-                    setSize(new SizeDouble(sm.width + p.getLeftAndRight(), sm.height + p.getTopAndBottom()));
+                    String err = "При autoFit==true, Area напрямую не устанавливается!";
+                    System.err.println(err);
+                    if (!true) {
+                        throw new UnsupportedOperationException(err);
+                    } else {
+                        SizeDouble ms = getMosaicSize();
+                        BoundDouble p = getPadding();
+                        if (((ms.width  + p.getLeftAndRight()) <= 0) ||
+                            ((ms.height + p.getTopAndBottom()) <= 0))
+                        {
+                            // reset padding
+                            p = new BoundDouble(0);
+                            setPadding(p);
+                        }
+                        setSize(new SizeDouble(ms.width + p.getLeftAndRight(), ms.height + p.getTopAndBottom()));
+                    }
                 }
             } else {
                 // recalc area / padding
