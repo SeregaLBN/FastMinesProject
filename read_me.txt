@@ -9,7 +9,7 @@
          subprojects in subdirectories:
             ./FastMines_core                    - C#
                 ./FastMines.Core
-                ./Test.FastMines.Common
+                ./UnitTest.FastMines.Core
             ./FastMines_uwp                     - C#
                 ./FastMines.Uwp.Main
                 ./FastMines.Uwp.Shared
@@ -28,7 +28,7 @@
 
 
 FastMines_xxx - projects of a specific language implementation, for a specific UI platform:
-   FastMines_core     - shared project libraries 
+   FastMines_core     - shared project libraries
    FastMines_android  - (  demo  ) - Java Android tablet/mobile application                          (open from Android Studio)
    FastMines_swing    - ( stable ) - Java desktop SWING project (multiplatform)                      (open from the Eclipse workspace / IDEA / VSCode)
    FastMines_jfx      - (  demo  ) - Java FX desktop project                                         (open from the Eclipse workspace / IDEA / VSCode)

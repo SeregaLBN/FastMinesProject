@@ -18,9 +18,21 @@ namespace fmg.core.mosaic {
 
     public class MosaicModelTest {
 
-        [SetUp]
+        [OneTimeSetUp]
         public void Setup() {
             Factory.DEFERR_INVOKER = doRun => Task.Delay(10).ContinueWith(t => doRun());
+            LoggerSimple.Put("Setup " + nameof(MosaicModelTest));
+        }
+
+        [OneTimeTearDown]
+        public void Closed() {
+            LoggerSimple.Put("======================================================");
+            LoggerSimple.Put("Closed " + nameof(MosaicModelTest));
+        }
+
+        [SetUp]
+        public void Before() {
+            LoggerSimple.Put("======================================================");
         }
 
         [Test]
@@ -53,6 +65,7 @@ namespace fmg.core.mosaic {
         }
 
         [Test]
+      //[Retry(100)]
         public async Task MosaicDrawModelPropertyChangedTest() {
             using (var model = new MosaicTestModel()) {
                 var subject = new Subject<PropertyChangedEventArgs>();
@@ -148,7 +161,7 @@ namespace fmg.core.mosaic {
 
 
                 // change property
-                model.Size = new SizeDouble(500, 700);
+                model.Size = new SizeDouble(700, 500);
 
                 // check dependency (evenly expanded)
                 mosaicSize = model.MosaicSize;
