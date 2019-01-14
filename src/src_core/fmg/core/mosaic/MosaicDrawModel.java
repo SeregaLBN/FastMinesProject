@@ -29,14 +29,14 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
      *
      * <ul>При autoFit = true
      * <li> При любом изменении Size, Padding меняется пропорционально Size
-     * <li> При любом изменении Size / FieldType / FieldSize / Padding,
+     * <li> При любом изменении Size / MosaicType / SizeField / Padding,
      *      Мозаика равномерно вписывается во внутреннюю область {@link #getInnerSize()}
      * <li> Area напрямую не устанавливается. А если устанавливается, то {@link #getMosaicSize()} + {@link #getPadding()}
      *      будут определять новый {@link #getSize()}
      * </ul>
      *
      * <ul>При autoFit = false
-     * <li> <ol>При любом изменении Size / FieldType / FieldSize:
+     * <li> <ol>При любом изменении Size / MosaicType / SizeField:
      *      <li> Мозаика равномерно вписывается во вcю область {@link #getSize()}
      *      <li> при этом Padding заного перерасчитывается с нуля
      *      </ol>
@@ -121,8 +121,8 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
         SizeDouble innerSize  = getInnerSize();
         if (mosaicSize.equals(innerSize))
             return offset;
-        double dx = innerSize.width - mosaicSize.width;
-        double dy = innerSize.width - mosaicSize.width;
+        double dx = innerSize.width  - mosaicSize.width;
+        double dy = innerSize.height - mosaicSize.height;
         return new SizeDouble(offset.width + dx / 2, offset.height + dy / 2);
     }
 

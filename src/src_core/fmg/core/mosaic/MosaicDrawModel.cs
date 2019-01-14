@@ -27,7 +27,7 @@ namespace fmg.core.mosaic {
         /// При autoFit = true:
         /// <list type="number">
         /// <item><description>При любом изменении Size, Padding меняется пропорционально Size</description></item>
-        /// <item><description>При любом изменении Size / FieldType / FieldSize / Padding,
+        /// <item><description>При любом изменении Size / MosaicType / SizeField / Padding,
         ///                    Мозаика равномерно вписывается во внутреннюю область {@link #getInnerSize()}</description></item>
         /// <item><description>Area напрямую не устанавливается. А если устанавливается, то {@link #getMosaicSize()} + {@link #getPadding()}
         ///                    будут определять новый {@link #getSize()}</description></item>
@@ -36,7 +36,7 @@ namespace fmg.core.mosaic {
         /// <br/>
         /// При autoFit = false:
         /// <list type="number">
-        /// <item><description>При любом изменении Size / FieldType / FieldSize:
+        /// <item><description>При любом изменении Size / MosaicType / SizeField:
         ///     <list type="bullet">
         ///     <item><description>Мозаика равномерно вписывается во вcю область {@link #getSize()} </description></item>
         ///     <item><description>при этом Padding заного перерасчитывается с нуля </description></item>
@@ -112,8 +112,8 @@ namespace fmg.core.mosaic {
                 var innerSize  = InnerSize;
                 if (mosaicSize == innerSize)
                     return offset;
-                var dx = innerSize.Width - mosaicSize.Width;
-                var dy = innerSize.Width - mosaicSize.Width;
+                var dx = innerSize.Width  - mosaicSize.Width;
+                var dy = innerSize.Height - mosaicSize.Height;
                 return new SizeDouble(offset.Width + dx / 2, offset.Height + dy / 2);
             }
             set {

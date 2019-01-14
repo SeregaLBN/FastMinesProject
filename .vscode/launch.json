@@ -17,18 +17,18 @@
     // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
     "version": "0.2.0",
     "configurations": [
-      {
-        "name": "C# NUnit: test FastMinest NUnitTests - .NET Core Launch (console)",
-        "type": "coreclr",
-        "request": "launch",
-        "preLaunchTask": "test UnitTest.FastMines.Core",
-        "program": "${workspaceFolder}/FastMines_core/Test.FastMines.Core/bin/Debug/netcoreapp2.0/UnitTest.FastMines.Core.dll",
-        "args": [],
-        "cwd": "${workspaceFolder}/FastMines_core/UnitTest.FastMines.Core",
-        "console": "internalConsole",
-        "stopAtEntry": false,
-        "internalConsoleOptions": "openOnSessionStart"
-      },
+        {
+            "name": "C# NUnit: test FastMinest NUnitTests - .NET Core Launch (console)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build UnitTest.FastMines.Core",
+            "program": "${workspaceFolder}/FastMines_core/UnitTest.FastMines.Core/bin/Debug/netcoreapp2.0/UnitTest.FastMines.Core.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/FastMines_core/UnitTest.FastMines.Core",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
         {
             "name": "C# Avalonia: test Images - .NET Core Launch (console)",
             "type": "coreclr",

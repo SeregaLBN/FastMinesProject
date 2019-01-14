@@ -54,7 +54,7 @@ public class MosaicModelTest {
     public static void setup() {
         ExecutorService scheduler = Executors.newScheduledThreadPool(1);
         Factory.DEFERR_INVOKER = scheduler::execute;
-        Flowable.just("Hello world").subscribe(LoggerSimple::put);
+        Flowable.just("UI factory inited...").subscribe(LoggerSimple::put);
     }
 
     @Before
@@ -155,7 +155,7 @@ public class MosaicModelTest {
             model.setSize(new SizeDouble(1000, 1000));
             model.setPadding(new BoundDouble(100));
 
-            // change poperty
+            // change property
             model.setSize(new SizeDouble(500, 700));
 
             // check dependency
@@ -178,8 +178,18 @@ public class MosaicModelTest {
             Assert.assertEquals(1000, mosaicSize.width , 0);
             Assert.assertEquals(1000, mosaicSize.height, 0);
 
+            SizeDouble mosaicOffset = model.getMosaicOffset();
+            Assert.assertEquals(0, mosaicOffset.width , 0);
+            Assert.assertEquals(0, mosaicOffset.height, 0);
 
-            // change poperty
+            BoundDouble padding = model.getPadding();
+            Assert.assertEquals(0, padding.left  , 0);
+            Assert.assertEquals(0, padding.top   , 0);
+            Assert.assertEquals(0, padding.right , 0);
+            Assert.assertEquals(0, padding.bottom, 0);
+
+
+            // change property
             model.setSize(new SizeDouble(700, 500));
 
             // check dependency (evenly expanded)
@@ -187,8 +197,18 @@ public class MosaicModelTest {
             Assert.assertEquals(500, mosaicSize.width , 0.001);
             Assert.assertEquals(500, mosaicSize.height, 0.001);
 
+            mosaicOffset = model.getMosaicOffset();
+            Assert.assertEquals(100, mosaicOffset.width , 0.001);
+            Assert.assertEquals(  0, mosaicOffset.height, 0.001);
 
-            // change poperty
+            padding = model.getPadding();
+            Assert.assertEquals(0, padding.left  , 0.001);
+            Assert.assertEquals(0, padding.top   , 0.001);
+            Assert.assertEquals(0, padding.right , 0.001);
+            Assert.assertEquals(0, padding.bottom, 0.001);
+
+
+            // change property
             model.setMosaicType(EMosaic.eMosaicSquare2);
 
             // check dependency (evenly expanded)
@@ -196,14 +216,72 @@ public class MosaicModelTest {
             Assert.assertEquals(525, mosaicSize.width , 0.001);
             Assert.assertEquals(500, mosaicSize.height, 0.001);
 
+            mosaicOffset = model.getMosaicOffset();
+            Assert.assertEquals(87.5, mosaicOffset.width , 0.001);
+            Assert.assertEquals(   0, mosaicOffset.height, 0.001);
 
-            // change poperty
+            padding = model.getPadding();
+            Assert.assertEquals(0, padding.left  , 0.001);
+            Assert.assertEquals(0, padding.top   , 0.001);
+            Assert.assertEquals(0, padding.right , 0.001);
+            Assert.assertEquals(0, padding.bottom, 0.001);
+
+
+            // change property
             model.setSizeField(new Matrisize(10, 15));
 
             // check dependency (evenly expanded)
             mosaicSize = model.getMosaicSize();
             Assert.assertEquals(350, mosaicSize.width , 0.001);
             Assert.assertEquals(500, mosaicSize.height, 0.001);
+
+            mosaicOffset = model.getMosaicOffset();
+            Assert.assertEquals(175, mosaicOffset.width , 0.001);
+            Assert.assertEquals(  0, mosaicOffset.height, 0.001);
+
+            padding = model.getPadding();
+            Assert.assertEquals(0, padding.left  , 0.001);
+            Assert.assertEquals(0, padding.top   , 0.001);
+            Assert.assertEquals(0, padding.right , 0.001);
+            Assert.assertEquals(0, padding.bottom, 0.001);
+
+
+            // change property
+            model.setPadding(new BoundDouble(150, 75, 50, 25));
+
+            // check dependency (evenly expanded)
+            mosaicSize = model.getMosaicSize();
+            Assert.assertEquals(280, mosaicSize.width , 0.001);
+            Assert.assertEquals(400, mosaicSize.height, 0.001);
+
+            mosaicOffset = model.getMosaicOffset();
+            Assert.assertEquals(260, mosaicOffset.width , 0.001);
+            Assert.assertEquals( 75, mosaicOffset.height, 0.001);
+
+            padding = model.getPadding();
+            Assert.assertEquals(150, padding.left  , 0.001);
+            Assert.assertEquals( 75, padding.top   , 0.001);
+            Assert.assertEquals( 50, padding.right , 0.001);
+            Assert.assertEquals( 25, padding.bottom, 0.001);
+
+
+            // change property
+            model.setPadding(new BoundDouble(-150, -75, -50, -25));
+
+            // check dependency (evenly expanded)
+            mosaicSize = model.getMosaicSize();
+            Assert.assertEquals(420, mosaicSize.width , 0.001);
+            Assert.assertEquals(600, mosaicSize.height, 0.001);
+
+            mosaicOffset = model.getMosaicOffset();
+            Assert.assertEquals( 90, mosaicOffset.width , 0.001);
+            Assert.assertEquals(-75, mosaicOffset.height, 0.001);
+
+            padding = model.getPadding();
+            Assert.assertEquals(-150, padding.left  , 0.001);
+            Assert.assertEquals(- 75, padding.top   , 0.001);
+            Assert.assertEquals(- 50, padding.right , 0.001);
+            Assert.assertEquals(- 25, padding.bottom, 0.001);
         }
     }
 
