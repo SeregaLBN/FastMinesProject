@@ -18,7 +18,8 @@ namespace fmg.core.mosaic {
 
     public class MosaicModelTest {
 
-        private const double P = 0.001; // double precision
+        /// <summary> double precision </summary>
+        private const double P = 0.001;
 
         [OneTimeSetUp]
         public void Setup() {
@@ -141,7 +142,7 @@ namespace fmg.core.mosaic {
 
         [Test]
         public void AutoFitTrueCheckAffectsTest() {
-            MosaicTestModel getTestModel() {
+            MosaicTestModel createTestModel() {
                 var model = new MosaicTestModel {
                     // set property
                     AutoFit = true,
@@ -170,7 +171,7 @@ namespace fmg.core.mosaic {
                 return model;
             }
 
-            using (MosaicTestModel model = getTestModel()) {
+            using (MosaicTestModel model = createTestModel()) {
                 // change property
                 model.Size = new SizeDouble(700, 500);
 
@@ -194,7 +195,7 @@ namespace fmg.core.mosaic {
                 Assert.AreEqual(0, padding.Bottom, P);
             }
 
-            using (MosaicTestModel model = getTestModel()) {
+            using (MosaicTestModel model = createTestModel()) {
                 // change property
                 model.Padding = new BoundDouble(150, 75, 50, 25);
                 model.Size = new SizeDouble(700, 500);
@@ -219,7 +220,7 @@ namespace fmg.core.mosaic {
                 Assert.AreEqual(12.5, padding.Bottom, P);
             }
 
-            using (MosaicTestModel model = getTestModel()) {
+            using (MosaicTestModel model = createTestModel()) {
                 // change property
                 model.Size = new SizeDouble(700, 500);
                 model.MosaicType = EMosaic.eMosaicSquare2;
@@ -244,7 +245,7 @@ namespace fmg.core.mosaic {
                 Assert.AreEqual(0, padding.Bottom, P);
             }
 
-            using (MosaicTestModel model = getTestModel()) {
+            using (MosaicTestModel model = createTestModel()) {
                 // change property
                 model.Size = new SizeDouble(700, 500);
                 model.MosaicType = EMosaic.eMosaicSquare2;
@@ -270,7 +271,7 @@ namespace fmg.core.mosaic {
                 Assert.AreEqual(0, padding.Bottom, P);
             }
 
-            using (MosaicTestModel model = getTestModel()) {
+            using (MosaicTestModel model = createTestModel()) {
                 // change property
                 model.Size = new SizeDouble(700, 500);
                 model.MosaicType = EMosaic.eMosaicSquare2;
@@ -297,7 +298,7 @@ namespace fmg.core.mosaic {
                 Assert.AreEqual( 25, padding.Bottom, P);
             }
 
-            using (MosaicTestModel model = getTestModel()) {
+            using (MosaicTestModel model = createTestModel()) {
                 // change property
                 model.Size = new SizeDouble(700, 500);
                 model.MosaicType = EMosaic.eMosaicSquare2;
@@ -324,7 +325,7 @@ namespace fmg.core.mosaic {
                 Assert.AreEqual(- 25, padding.Bottom, P);
             }
 
-            using (MosaicTestModel model = getTestModel()) {
+            using (MosaicTestModel model = createTestModel()) {
                 // change property
                 model.Size = new SizeDouble(700, 500);
                 model.MosaicType = EMosaic.eMosaicSquare2;
@@ -352,7 +353,7 @@ namespace fmg.core.mosaic {
                 Assert.AreEqual(0, padding.Bottom, P);
             }
 
-            using (MosaicTestModel model = getTestModel()) {
+            using (MosaicTestModel model = createTestModel()) {
                 // change property
                 model.Size = new SizeDouble(700, 500);
                 model.MosaicType = EMosaic.eMosaicSquare2;
@@ -381,6 +382,221 @@ namespace fmg.core.mosaic {
             }
         }
 
+
+        [Test]
+        public void AutoFitFalseCheckAffectsTest() {
+            MosaicTestModel createTestModel() {
+                MosaicTestModel model = new MosaicTestModel();
+                // set property
+                model.AutoFit = false;
+                model.Size = new SizeDouble(1000, 1000);
+
+                // default check
+                var size = model.Size;
+                Assert.AreEqual(1000, size.Width , P);
+                Assert.AreEqual(1000, size.Height, P);
+
+                var mosaicSize = model.MosaicSize;
+                Assert.AreEqual(1000, mosaicSize.Width , P);
+                Assert.AreEqual(1000, mosaicSize.Height, P);
+
+                var mosaicOffset = model.MosaicOffset;
+                Assert.AreEqual(0, mosaicOffset.Width , P);
+                Assert.AreEqual(0, mosaicOffset.Height, P);
+
+                var padding = model.Padding;
+                Assert.AreEqual(0, padding.Left  , P);
+                Assert.AreEqual(0, padding.Top   , P);
+                Assert.AreEqual(0, padding.Right , P);
+                Assert.AreEqual(0, padding.Bottom, P);
+
+                return model;
+            }
+
+            using (MosaicTestModel model = createTestModel()) {
+                // change property
+                model.MosaicOffset = new SizeDouble(200, 300);
+
+                // check dependency (evenly expanded)
+                var size = model.Size;
+                Assert.AreEqual(1000, size.Width , P);
+                Assert.AreEqual(1000, size.Height, P);
+
+                var mosaicSize = model.MosaicSize;
+                Assert.AreEqual(1000, mosaicSize.Width , P);
+                Assert.AreEqual(1000, mosaicSize.Height, P);
+
+                var mosaicOffset = model.MosaicOffset;
+                Assert.AreEqual(200, mosaicOffset.Width , P);
+                Assert.AreEqual(300, mosaicOffset.Height, P);
+
+                var padding = model.Padding;
+                Assert.AreEqual( 200, padding.Left  , P);
+                Assert.AreEqual( 300, padding.Top   , P);
+                Assert.AreEqual(-200, padding.Right , P);
+                Assert.AreEqual(-300, padding.Bottom, P);
+            }
+
+            using (MosaicTestModel model = createTestModel()) {
+                // change property
+                model.MosaicOffset = new SizeDouble(10, 15);
+                model.Size = new SizeDouble(700, 500);
+
+                // check dependency (evenly expanded)
+                var size = model.Size;
+                Assert.AreEqual(700, size.Width , P);
+                Assert.AreEqual(500, size.Height, P);
+
+                var mosaicSize = model.MosaicSize;
+                Assert.AreEqual(500, mosaicSize.Width , P);
+                Assert.AreEqual(500, mosaicSize.Height, P);
+
+                var mosaicOffset = model.MosaicOffset;
+                Assert.AreEqual(100, mosaicOffset.Width , P);
+                Assert.AreEqual(  0, mosaicOffset.Height, P);
+
+                var padding = model.Padding;
+                Assert.AreEqual(100, padding.Left  , P);
+                Assert.AreEqual(  0, padding.Top   , P);
+                Assert.AreEqual(100, padding.Right , P);
+                Assert.AreEqual(  0, padding.Bottom, P);
+            }
+
+            using (MosaicTestModel model = createTestModel()) {
+                // change property
+                model.Size = new SizeDouble(700, 500);
+                model.MosaicType = EMosaic.eMosaicSquare2;
+
+                // check dependency (evenly expanded)
+                var size = model.Size;
+                Assert.AreEqual(700, size.Width , P);
+                Assert.AreEqual(500, size.Height, P);
+
+                var mosaicSize = model.MosaicSize;
+                Assert.AreEqual(525, mosaicSize.Width , P);
+                Assert.AreEqual(500, mosaicSize.Height, P);
+
+                var mosaicOffset = model.MosaicOffset;
+                Assert.AreEqual(87.5, mosaicOffset.Width , P);
+                Assert.AreEqual(   0, mosaicOffset.Height, P);
+
+                var padding = model.Padding;
+                Assert.AreEqual(87.5, padding.Left  , P);
+                Assert.AreEqual(   0, padding.Top   , P);
+                Assert.AreEqual(87.5, padding.Right , P);
+                Assert.AreEqual(   0, padding.Bottom, P);
+            }
+
+            using (MosaicTestModel model = createTestModel()) {
+                // change property
+                model.Size = new SizeDouble(700, 500);
+                model.MosaicType = EMosaic.eMosaicSquare2;
+                model.SizeField = new Matrisize(10, 15);
+
+                // check dependency (evenly expanded)
+                var size = model.Size;
+                Assert.AreEqual(700, size.Width , P);
+                Assert.AreEqual(500, size.Height, P);
+
+                var mosaicSize = model.MosaicSize;
+                Assert.AreEqual(350, mosaicSize.Width , P);
+                Assert.AreEqual(500, mosaicSize.Height, P);
+
+                var mosaicOffset = model.MosaicOffset;
+                Assert.AreEqual(175, mosaicOffset.Width , P);
+                Assert.AreEqual(  0, mosaicOffset.Height, P);
+
+                var padding = model.Padding;
+                Assert.AreEqual(175, padding.Left  , P);
+                Assert.AreEqual(  0, padding.Top   , P);
+                Assert.AreEqual(175, padding.Right , P);
+                Assert.AreEqual(  0, padding.Bottom, P);
+            }
+
+            using (MosaicTestModel model = createTestModel()) {
+                // change property
+                model.Size = new SizeDouble(700, 500);
+                model.MosaicType = EMosaic.eMosaicSquare2;
+                model.SizeField = new Matrisize(10, 15);
+                model.MosaicOffset = new SizeDouble(-15, -40);
+
+                // check dependency (evenly expanded)
+                var size = model.Size;
+                Assert.AreEqual(700, size.Width , P);
+                Assert.AreEqual(500, size.Height, P);
+
+                var mosaicSize = model.MosaicSize;
+                Assert.AreEqual(350, mosaicSize.Width , P);
+                Assert.AreEqual(500, mosaicSize.Height, P);
+
+                var mosaicOffset = model.MosaicOffset;
+                Assert.AreEqual(-15, mosaicOffset.Width , P);
+                Assert.AreEqual(-40, mosaicOffset.Height, P);
+
+                var padding = model.Padding;
+                Assert.AreEqual(-15, padding.Left  , P);
+                Assert.AreEqual(-40, padding.Top   , P);
+                Assert.AreEqual(365, padding.Right , P);
+                Assert.AreEqual( 40, padding.Bottom, P);
+            }
+
+            using (MosaicTestModel model = createTestModel()) {
+                // change property
+                model.Size = new SizeDouble(700, 500);
+                model.MosaicType = EMosaic.eMosaicSquare2;
+                model.SizeField = new Matrisize(10, 15);
+                model.MosaicOffset = new SizeDouble(-15, -40);
+                model.Area = 225;
+
+                // check dependency (evenly expanded)
+                var size = model.Size;
+                Assert.AreEqual(700, size.Width , P);
+                Assert.AreEqual(500, size.Height, P);
+
+                var mosaicSize = model.MosaicSize;
+                Assert.AreEqual(157.5, mosaicSize.Width , P);
+                Assert.AreEqual(225  , mosaicSize.Height, P);
+
+                var mosaicOffset = model.MosaicOffset;
+                Assert.AreEqual(-15, mosaicOffset.Width , P);
+                Assert.AreEqual(-40, mosaicOffset.Height, P);
+
+                var padding = model.Padding;
+                Assert.AreEqual(-15  , padding.Left  , P);
+                Assert.AreEqual(-40  , padding.Top   , P);
+                Assert.AreEqual(557.5, padding.Right , P);
+                Assert.AreEqual(315  , padding.Bottom, P);
+            }
+
+            using (MosaicTestModel model = createTestModel()) {
+                // change property
+                model.Size = new SizeDouble(700, 500);
+                model.MosaicType = EMosaic.eMosaicSquare2;
+                model.SizeField = new Matrisize(10, 15);
+                model.MosaicOffset = new SizeDouble(-15, -40);
+                model.Area = 225;
+                model.Padding = new BoundDouble(150, 75, 50, 25);
+
+                // check dependency (evenly expanded)
+                var size = model.Size;
+                Assert.AreEqual(700, size.Width , P);
+                Assert.AreEqual(500, size.Height, P);
+
+                var mosaicSize = model.MosaicSize;
+                Assert.AreEqual(280, mosaicSize.Width , P);
+                Assert.AreEqual(400, mosaicSize.Height, P);
+
+                var mosaicOffset = model.MosaicOffset;
+                Assert.AreEqual(260, mosaicOffset.Width , P);
+                Assert.AreEqual( 75, mosaicOffset.Height, P);
+
+                var padding = model.Padding;
+                Assert.AreEqual(150, padding.Left  , P);
+                Assert.AreEqual( 75, padding.Top   , P);
+                Assert.AreEqual( 50, padding.Right , P);
+                Assert.AreEqual( 25, padding.Bottom, P);
+            }
+        }
     }
 
 }

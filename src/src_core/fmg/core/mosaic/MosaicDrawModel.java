@@ -57,6 +57,7 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
     private FontInfo       _fontInfo;
     private BackgroundFill _backgroundFill;
     private Color          _backgroundColor;
+    private boolean lockChanging = false;
 
     public static final String PROPERTY_AUTO_FIT         = "AutoFit";
     public static final String PROPERTY_IMG_MINE         = "ImgMine";
@@ -137,7 +138,15 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
         padNew.top    += dy;
         padNew.right  -= dx;
         padNew.bottom -= dy;
-        setPadding(padNew);
+
+        boolean locked = lockChanging;
+        try {
+            lockChanging = true;
+            setPadding(padNew);
+        } finally {
+            if (!locked)
+                lockChanging = false;
+        }
     }
 
     public TImageInner getImgMine() { return _imgMine; }
@@ -302,7 +311,6 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
         _notifier.onPropertyChanged(null, ev.getSource(), PROPERTY_PEN_BORDER);
     }
 
-    private boolean lockChanging = false;
     @Override
     protected void onPropertyChanged(PropertyChangeEvent ev) {
         super.onPropertyChanged(ev);
@@ -372,8 +380,13 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
 
                 // recalc area
                 if (PROPERTY_PADDING.equals(ev.getPropertyName())) {
-                    System.err.println("При autoFit==false, Padding напрямую не устанавливается.");
-                    setArea(MosaicHelper.findAreaBySize(getMosaicType(), getSizeField(), getInnerSize(), new SizeDouble()));
+                    String err = "При autoFit==false, Padding напрямую не устанавливается!";
+                    System.err.println(err);
+                    if (!true) {
+                        throw new UnsupportedOperationException(err);
+                    } else {
+                        setArea(MosaicHelper.findAreaBySize(getMosaicType(), getSizeField(), getInnerSize(), new SizeDouble()));
+                    }
                 }
 
                 // recalc size

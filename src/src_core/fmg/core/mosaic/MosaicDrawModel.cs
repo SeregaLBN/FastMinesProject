@@ -58,6 +58,7 @@ namespace fmg.core.mosaic {
         private BackgroundFill _backgroundFill;
         private Color          _backgroundColor = MosaicDrawModelConst.DefaultBkColor;
         private TImageInner    _imgBckgrnd;
+        private bool lockChanging = false;
 
         public bool AutoFit {
             get => _autoFit;
@@ -126,7 +127,15 @@ namespace fmg.core.mosaic {
                 padNew.Top    += dy;
                 padNew.Right  -= dx;
                 padNew.Bottom -= dy;
-                Padding = padNew;
+
+                bool locked = lockChanging;
+                try {
+                    lockChanging = true;
+                    Padding = padNew;
+                } finally {
+                    if (!locked)
+                        lockChanging = false;
+                }
             }
     }
 
@@ -236,7 +245,6 @@ namespace fmg.core.mosaic {
             _notifier.OnPropertyChanged(nameof(this.PenBorder));
         }
 
-        private bool lockChanging = false;
         protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             base.OnPropertyChanged(sender, ev);
 

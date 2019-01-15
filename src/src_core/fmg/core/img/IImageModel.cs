@@ -34,9 +34,10 @@ namespace fmg.core.img {
         }
 
         public static void CheckPadding(this IImageModel self, BoundDouble padding) {
-            if (padding.LeftAndRight >= self.Size.Width)
+            var size = self.Size;
+            if (padding.LeftAndRight >= size.Width)
                 throw new ArgumentException("Padding size is very large. Should be less than Width.");
-            if (padding.TopAndBottom >= self.Size.Height)
+            if (padding.TopAndBottom >= size.Height)
                 throw new ArgumentException("Padding size is very large. Should be less than Height.");
         }
 

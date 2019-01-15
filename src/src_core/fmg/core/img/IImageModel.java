@@ -45,9 +45,10 @@ public interface IImageModel extends INotifyPropertyChanged, AutoCloseable {
     static void checkPadding(IImageModel self, BoundDouble padding) {
         if (padding == null)
             throw new IllegalArgumentException("Padding must be defined.");
-        if (padding.getLeftAndRight() >= self.getSize().width)
+        SizeDouble size = self.getSize();
+        if (padding.getLeftAndRight() >= size.width)
             throw new IllegalArgumentException("Padding size is very large. Should be less than Width.");
-        if (padding.getTopAndBottom() >= self.getSize().height)
+        if (padding.getTopAndBottom() >= size.height)
             throw new IllegalArgumentException("Padding size is very large. Should be less than Height.");
     }
 
