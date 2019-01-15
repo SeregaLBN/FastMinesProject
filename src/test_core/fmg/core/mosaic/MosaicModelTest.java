@@ -1,4 +1,5 @@
 package fmg.core.mosaic;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -12,10 +13,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import org.awaitility.Awaitility;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import fmg.common.LoggerSimple;
 import fmg.common.geom.BoundDouble;
@@ -29,30 +27,28 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
+class DummyImage extends Object {}
+class MosaicTestModel extends MosaicDrawModel<DummyImage> {}
+
+class Signal {
+    private final CountDownLatch signal = new CountDownLatch(1);
+    /** set signal */
+    public void set() { signal.countDown(); }
+    /** <summary> wait for signal */
+    public boolean await(long timeoutMs) {
+        try {
+            return signal.await(timeoutMs, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+}
+
 public class MosaicModelTest {
-
-    static class DummyMosaicImageType extends Object {}
-
-    static class MosaicTestModel extends MosaicDrawModel<DummyMosaicImageType> {}
 
     /** double precision */
     private final double P = 0.001;
-
-    static class Signal {
-        private final CountDownLatch signal = new CountDownLatch(1);
-        /** set signal */
-        public void set() { signal.countDown(); }
-        /** <summary> wait for signal */
-        public boolean await(long timeoutMs) {
-            try {
-                return signal.await(timeoutMs, TimeUnit.MILLISECONDS);
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-                return false;
-            }
-        }
-    }
-
 
     @BeforeClass
     public static void setup() {
@@ -63,6 +59,10 @@ public class MosaicModelTest {
 
     @Before
     public void before() {
+        LoggerSimple.put("======================================================");
+    }
+    @After
+    public void after() {
         LoggerSimple.put("======================================================");
     }
 
@@ -79,7 +79,6 @@ public class MosaicModelTest {
                 LoggerSimple.put("  mosaicGameModelPropertyChangedTest: onModelPropertyChanged: ev.name=" + ev.getPropertyName());
                 modifiedProperties.add(ev.getPropertyName());
             };
-
             model.addListener(onModelPropertyChanged);
 
             modifiedProperties.clear();

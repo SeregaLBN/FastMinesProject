@@ -34,8 +34,8 @@ namespace fmg.core.img {
 
         protected ImageView(TImageModel imageModel, bool deferredNotifications = false) {
             Model = imageModel;
-            _notifier      =                                new NotifyPropertyChanged(this, ev => PropertyChangedSync?.Invoke(this, ev), false);
-            _notifierAsync = deferredNotifications ? null : new NotifyPropertyChanged(this, ev => PropertyChanged    ?.Invoke(this, ev), true);
+            _notifier      =                         new NotifyPropertyChanged(this, ev => PropertyChangedSync?.Invoke(this, ev), false);
+            _notifierAsync = deferredNotifications ? new NotifyPropertyChanged(this, ev => PropertyChanged    ?.Invoke(this, ev), true) : null;
             this .PropertyChangedSync += OnPropertyChanged;
             Model.PropertyChanged     += OnPropertyModelChanged;
         }

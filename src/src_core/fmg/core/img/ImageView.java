@@ -35,7 +35,7 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
     }
     protected ImageView(TImageModel imageModel, boolean deferredNotifications) {
         _model = imageModel;
-        _notifierAsync = deferredNotifications ? null : new NotifyPropertyChanged(this, true);
+        _notifierAsync = deferredNotifications ? new NotifyPropertyChanged(this, true) : null;
         this  .addListener(this::onPropertyChanged);
         _model.addListener(this::onPropertyModelChanged);
     }

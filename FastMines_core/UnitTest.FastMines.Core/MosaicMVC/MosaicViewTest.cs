@@ -11,34 +11,22 @@ using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.mosaic.cells;
 using DummyImage = System.Object;
+using MosaicTestModel = fmg.core.mosaic.MosaicDrawModel<object>;
 
 namespace fmg.core.mosaic {
 
-    using MosaicModel = MosaicDrawModel<DummyImage>;
-
-    class TestMosaicView : MosaicView<DummyImage, DummyImage, MosaicModel> {
-        internal TestMosaicView(bool deferredNotifications) : base(new MosaicModel(), deferredNotifications) { }
-        protected override object CreateImage() { return new DummyImage(); }
+    class MosaicTestView : MosaicView<DummyImage, DummyImage, MosaicTestModel> {
+        internal MosaicTestView(bool deferredNotifications) : base(new MosaicTestModel(), deferredNotifications) { }
+        protected override DummyImage CreateImage() { return new DummyImage(); }
         internal int DrawCount { get; private set; }
         protected override void DrawModified(ICollection<BaseCell> modifiedCells) {
-            System.Diagnostics.Debug.WriteLine(nameof(TestMosaicView) + "::DrawModified");
+            LoggerSimple.Put(nameof(MosaicTestView) + "::DrawModified");
             ++DrawCount;
         }
         protected override void Disposing() {
             base.Disposing();
             Model.Dispose();
         }
-    }
-
-    class Signal : IDisposable {
-        private readonly SemaphoreSlim signal = new SemaphoreSlim(0, 1);
-        /// <summary> set signal </summary>
-        public void Set() { signal.Release(); }
-        ///// <summary> unset signal </summary>
-        //public void Reset() { signal.Dispose(); signal = new SemaphoreSlim(0, 1); }
-        /// <summary> wait for signal </summary>
-        public async Task<bool> Wait(TimeSpan ts) { return await signal.WaitAsync(ts); }
-        public void Dispose() { signal.Dispose(); }
     }
 
     public class MosaicViewTest {
@@ -53,7 +41,7 @@ namespace fmg.core.mosaic {
 
         [Test]
         public void PropertyChangedTest() {
-            using (var view = new TestMosaicView(false)) {
+            using (var view = new MosaicTestView(false)) {
                 var modifiedProperties = new List<string>();
                 void onViewPropertyChanged(object sender, PropertyChangedEventArgs ev) {
                     modifiedProperties.Add(ev.PropertyName);
@@ -72,7 +60,7 @@ namespace fmg.core.mosaic {
 
         [Test]
         public void ReadinessAtTheStartTest() {
-            using (var view = new TestMosaicView(false)) {
+            using (var view = new MosaicTestView(false)) {
                 Assert.AreEqual(0, view.DrawCount);
                 Assert.NotNull(view.Image);
                 Assert.AreEqual(1, view.DrawCount);
@@ -81,7 +69,7 @@ namespace fmg.core.mosaic {
 
         [Test]
         public void MultipleChangeModelOneDrawViewTest() {
-            using (var view = new TestMosaicView(false)) {
+            using (var view = new MosaicTestView(false)) {
                 Assert.AreEqual(0, view.DrawCount);
 
                 var m = view.Model;
@@ -99,7 +87,7 @@ namespace fmg.core.mosaic {
             }
         }
 
-        private void ChangeModel(MosaicModel m) {
+        private void ChangeModel(MosaicTestModel m) {
             m.MosaicType = EMosaic.eMosaicQuadrangle1;
             m.SizeField = new Matrisize(22, 33);
             m.Size = new SizeDouble(345, 678);
@@ -115,7 +103,7 @@ namespace fmg.core.mosaic {
 
         [Test]
         public void MultiNotificationOfImageChangedTest() {
-            using (var view = new TestMosaicView(false)) {
+            using (var view = new MosaicTestView(false)) {
                 var imgChangeCount = 0;
                 void onViewPropertyChanged(object sender, PropertyChangedEventArgs ev) {
                     System.Diagnostics.Debug.WriteLine(ev.PropertyName);
@@ -135,7 +123,7 @@ namespace fmg.core.mosaic {
 
         [Test]
         public async Task OneNotificationOfImageChangedTest() {
-            using (var view = new TestMosaicView(true)) {
+            using (var view = new MosaicTestView(true)) {
                 var imgChangeCount = 0;
 
                 using (var signal = new Signal()) {
