@@ -352,8 +352,8 @@ namespace fmg.core.mosaic {
         }
 
         protected override void Disposing() {
-            BkFill.Dispose();
             base.Disposing();
+            _backgroundFill?.Dispose();
             // unsubscribe from local notifications
             FontInfo = null;
             BkFill = null;

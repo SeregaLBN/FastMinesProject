@@ -23,7 +23,7 @@ namespace fmg.core.mosaic {
         protected override object CreateImage() { return new DummyImage(); }
         internal int DrawCount { get; private set; }
         protected override void DrawModified(ICollection<BaseCell> modifiedCells) {
-            System.Diagnostics.Debug.WriteLine(nameof(TestMosaicView) + "::DrawModified");
+            System.Diagnostics.Debug.WriteLine(nameof(TestMosaicView) + "::" + nameof(DrawModified));
             ++DrawCount;
         }
         protected override void Disposing() {
@@ -56,6 +56,7 @@ namespace fmg.core.mosaic {
             using (var view = new TestMosaicView(false)) {
                 var modifiedProperties = new List<string>();
                 void onViewPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+                    LoggerSimple.Put("  MosaicTestView::PropertyChangedTest: onViewPropertyChanged: ev.name=" + ev.PropertyName);
                     modifiedProperties.Add(ev.PropertyName);
                 }
                 view.PropertyChanged += onViewPropertyChanged;

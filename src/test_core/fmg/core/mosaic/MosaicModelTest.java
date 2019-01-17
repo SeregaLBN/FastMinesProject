@@ -13,7 +13,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import org.awaitility.Awaitility;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import fmg.common.LoggerSimple;
 import fmg.common.geom.BoundDouble;
@@ -61,10 +64,10 @@ public class MosaicModelTest {
     public void before() {
         LoggerSimple.put("======================================================");
     }
-    @After
-    public void after() {
-        LoggerSimple.put("======================================================");
-    }
+//    @AfterClass
+//    public static void after() {
+//        LoggerSimple.put("======================================================");
+//    }
 
     @Test
     public void mosaicGameModelPropertyChangedTest() {

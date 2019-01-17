@@ -3,8 +3,9 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.*;
 
@@ -33,8 +34,14 @@ public class MosaicViewTest {
 
     @BeforeClass
     public static void setup() {
-        ExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        Factory.DEFERR_INVOKER = scheduler::execute;
+        LoggerSimple.put("MosaicViewTest::setup");
+
+//        ExecutorService scheduler = Executors.newScheduledThreadPool(1);
+//        Factory.DEFERR_INVOKER = scheduler::execute;
+
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        Factory.DEFERR_INVOKER = run -> scheduler.schedule(run, 10, TimeUnit.MILLISECONDS);
+
         Flowable.just("UI factory inited...").subscribe(LoggerSimple::put);
     }
 

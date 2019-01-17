@@ -40,15 +40,18 @@ namespace fmg.core.mosaic {
         }
 
         [Test]
-        public void PropertyChangedTest() {
+        public async Task PropertyChangedTest() {
             using (var view = new MosaicTestView(false)) {
                 var modifiedProperties = new List<string>();
                 void onViewPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+                    LoggerSimple.Put("  MosaicTestView::PropertyChangedTest: onViewPropertyChanged: ev.name=" + ev.PropertyName);
                     modifiedProperties.Add(ev.PropertyName);
                 }
                 view.PropertyChanged += onViewPropertyChanged;
 
                 view.Model.Size = new SizeDouble(123, 456);
+
+                await Task.Delay(200);
 
                 Assert.IsTrue(modifiedProperties.Contains(nameof(view.Model)));
                 Assert.IsTrue(modifiedProperties.Contains(nameof(view.Size)));

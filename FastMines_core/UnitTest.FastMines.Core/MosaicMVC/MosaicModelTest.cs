@@ -35,8 +35,8 @@ namespace fmg.core.mosaic {
 
         [OneTimeSetUp]
         public void Setup() {
+            LoggerSimple.Put(nameof(Setup) + "::" + nameof(MosaicModelTest));
             Factory.DEFERR_INVOKER = doRun => Task.Delay(10).ContinueWith(t => doRun());
-            LoggerSimple.Put("Setup " + nameof(MosaicModelTest));
         }
 
         [OneTimeTearDown]
@@ -88,7 +88,9 @@ namespace fmg.core.mosaic {
                 var modifiedProperties = new Dictionary<string /* property name */, int /* count */>();
                 void onModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
                     var name = ev.PropertyName;
-                    LoggerSimple.Put("  MosaicDrawModelPropertyChangedTest: onModelPropertyChanged: ev.name=" + name);
+                    LoggerSimple.Put("  " + nameof(MosaicDrawModelPropertyChangedTest) +
+                                     ": " + nameof(onModelPropertyChanged) +
+                                     ": ev.name=" + name);
                     modifiedProperties[name] = 1 + (modifiedProperties.ContainsKey(name) ? modifiedProperties[name] : 0);
                     subject.OnNext(ev);
                 }
@@ -109,7 +111,7 @@ namespace fmg.core.mosaic {
 
                         signalWait = await signal.Wait(TimeSpan.FromSeconds(1));
 
-                        LoggerSimple.Put("  MosaicDrawModelPropertyChangedTest: checking...");
+                        LoggerSimple.Put("  " + nameof(MosaicDrawModelPropertyChangedTest) + ": checking...");
                     }
                 }
 
@@ -398,10 +400,11 @@ namespace fmg.core.mosaic {
         [Test]
         public void AutoFitFalseCheckAffectsTest() {
             MosaicTestModel createTestModel() {
-                MosaicTestModel model = new MosaicTestModel();
-                // set property
-                model.AutoFit = false;
-                model.Size = new SizeDouble(1000, 1000);
+                var model = new MosaicTestModel {
+                    // set property
+                    AutoFit = false,
+                    Size = new SizeDouble(1000, 1000)
+                };
 
                 // default check
                 var size = model.Size;

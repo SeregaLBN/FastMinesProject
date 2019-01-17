@@ -36,7 +36,7 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
     protected ImageView(TImageModel imageModel, boolean deferredNotifications) {
         _model = imageModel;
         _notifierAsync = deferredNotifications ? new NotifyPropertyChanged(this, true) : null;
-        this  .addListener(this::onPropertyChanged);
+        _notifier.addListener(this::onPropertyChanged);
         _model.addListener(this::onPropertyModelChanged);
     }
 
@@ -112,6 +112,7 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
     }
 
     protected void onPropertyModelChanged(PropertyChangeEvent ev) {
+//        LoggerSimple.put("  ImageView::onPropertyModelChanged: ev.name=" + ev.getPropertyName());
         _notifier.onPropertyChanged(null, getModel(), PROPERTY_MODEL);
         if (IImageModel.PROPERTY_SIZE.equals(ev.getPropertyName())) {
             setImage(null);

@@ -423,8 +423,9 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
 
     @Override
     public void close() {
-        getBackgroundFill().close();
         super.close();
+        if (_backgroundFill != null)
+            getBackgroundFill().close();
         // unsubscribe from local notifications
         setFontInfo(null);
         setBackgroundFill(null);
