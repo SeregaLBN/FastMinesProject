@@ -1,8 +1,7 @@
 package fmg.core.mosaic;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -10,16 +9,15 @@ import java.util.concurrent.TimeUnit;
 import org.awaitility.Awaitility;
 import org.junit.*;
 
-import fmg.common.Color;
 import fmg.common.LoggerSimple;
-import fmg.common.geom.BoundDouble;
-import fmg.common.geom.Matrisize;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.Factory;
 import fmg.core.img.IImageView;
 import fmg.core.mosaic.cells.BaseCell;
-import fmg.core.types.EMosaic;
 import io.reactivex.Flowable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 
 class MosaicTestView extends MosaicView<DummyImage, DummyImage, MosaicTestModel> {
     MosaicTestView(boolean deferredNotifications) { super(new MosaicTestModel(), deferredNotifications); }
@@ -37,8 +35,8 @@ class MosaicTestView extends MosaicView<DummyImage, DummyImage, MosaicTestModel>
 
 public class MosaicViewTest {
 
-    static final int TEST_SIZE_W = 456;
-    static final int TEST_SIZE_H = 789;
+    static final int TEST_SIZE_W = MosaicModelTest.TEST_SIZE_W;
+    static final int TEST_SIZE_H = MosaicModelTest.TEST_SIZE_H;
 
     @BeforeClass
     public static void setup() {
@@ -117,7 +115,7 @@ public class MosaicViewTest {
             Assert.assertEquals(0, view.DrawCount);
 
             MosaicTestModel m = view.getModel();
-            changeModel(m);
+            MosaicModelTest.changeModel(m);
             DummyImage img = view.getImage();
             Assert.assertNotNull(img);
             Assert.assertEquals(1, view.DrawCount);
@@ -135,17 +133,43 @@ public class MosaicViewTest {
         }
     }
 
-    private void changeModel(MosaicTestModel m) {
-        m.setMosaicType(EMosaic.eMosaicQuadrangle1);
-        m.setSizeField(new Matrisize(22, 33));
-        m.setSize(new SizeDouble(TEST_SIZE_W, TEST_SIZE_H));
-        m.setPadding(new BoundDouble(10));
-        m.setBackgroundColor(Color.DimGray());
-        m.getBackgroundFill().setMode(1);
-        m.getColorText().setColorClose(1, Color.LightSalmon());
-        m.getColorText().setColorOpen(2, Color.MediumSeaGreen());
-        m.getPenBorder().setColorLight(Color.MediumPurple());
-        m.getPenBorder().setWidth(2);
+    @Test
+    public void oneNotificationOfImageChangedTest() {
+        try (MosaicTestView view = new MosaicTestView(true)) {
+            Map<String /* property name */, Integer /* count */> modifiedProperties = new HashMap<>();
+
+            Subject<PropertyChangeEvent> subject = PublishSubject.create();
+            PropertyChangeListener onViewPropertyChanged = ev -> {
+                String name = ev.getPropertyName();
+                LoggerSimple.put("  oneNotificationOfImageChangedTest: onViewPropertyChanged: ev.name=" + name);
+                modifiedProperties.put(name, 1 + (modifiedProperties.containsKey(name) ? modifiedProperties.get(name) : 0));
+                subject.onNext(ev);
+            };
+            view.addListener(onViewPropertyChanged);
+
+            Signal signal = new Signal();
+            Disposable dis = subject.timeout(50, TimeUnit.MILLISECONDS)
+                    .subscribe(ev -> {
+                        LoggerSimple.put("onNext: ev=" + ev);
+                    }, ex -> {
+                        LoggerSimple.put("onError: " + ex);
+                        signal.set();
+                    });
+
+            modifiedProperties.clear();
+            MosaicModelTest.changeModel(view.getModel());
+
+            Assert.assertTrue(signal.await(1000));
+
+            LoggerSimple.put("  mosaicDrawModelPropertyChangedTest: checking...");
+            Assert.assertTrue(1 <= modifiedProperties.get(IImageView.PROPERTY_IMAGE)); // TODO must be assertEquals(1, modifiedProperties.get(IImageView.PROPERTY_IMAGE).intValue());
+            Assert.assertEquals(0, view.DrawCount);
+            view.getImage(); // call the implicit draw method
+            Assert.assertEquals(1, view.DrawCount);
+
+            view.removeListener(onViewPropertyChanged);
+            dis.dispose();
+        }
     }
 
 }

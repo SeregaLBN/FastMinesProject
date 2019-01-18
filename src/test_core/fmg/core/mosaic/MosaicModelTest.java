@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
@@ -18,6 +18,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import fmg.common.Color;
 import fmg.common.LoggerSimple;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.Matrisize;
@@ -51,13 +52,22 @@ class Signal {
 public class MosaicModelTest {
 
     /** double precision */
-    private final double P = 0.001;
+    static final double P = 0.001;
+
+    static final int TEST_SIZE_W = 456;
+    static final int TEST_SIZE_H = 789;
 
     @BeforeClass
     public static void setup() {
-        ExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        Factory.DEFERR_INVOKER = scheduler::execute;
-        Flowable.just("UI factory inited...").subscribe(LoggerSimple::put);
+        LoggerSimple.put("MosaicModelTest::setup");
+
+//      ExecutorService scheduler = Executors.newScheduledThreadPool(1);
+//      Factory.DEFERR_INVOKER = scheduler::execute;
+
+      ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+      Factory.DEFERR_INVOKER = run -> scheduler.schedule(run, 10, TimeUnit.MILLISECONDS);
+
+      Flowable.just("UI factory inited...").subscribe(LoggerSimple::put);
     }
 
     @Before
@@ -130,7 +140,8 @@ public class MosaicModelTest {
                     });
 
             modifiedProperties.clear();
-            model.setSize(new SizeDouble(123, 456));
+//            model.setSize(new SizeDouble(123, 456));
+            changeModel(model);
 
             Assert.assertTrue(signal.await(1000));
 
@@ -138,6 +149,12 @@ public class MosaicModelTest {
             Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(IImageModel.PROPERTY_SIZE));
             Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(MosaicGameModel.PROPERTY_AREA));
             Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(MosaicGameModel.PROPERTY_CELL_ATTR));
+            Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(MosaicGameModel.PROPERTY_MOSAIC_TYPE));
+            Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(MosaicGameModel.PROPERTY_MATRIX));
+            Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(MosaicDrawModel.PROPERTY_BACKGROUND_COLOR));
+            Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(MosaicDrawModel.PROPERTY_BACKGROUND_FILL));
+            Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(MosaicDrawModel.PROPERTY_COLOR_TEXT));
+            Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(MosaicDrawModel.PROPERTY_PEN_BORDER));
 
             model.removeListener(onModelPropertyChanged);
             dis.dispose();
@@ -650,6 +667,19 @@ public class MosaicModelTest {
             Assert.assertEquals( 50, padding.right , P);
             Assert.assertEquals( 25, padding.bottom, P);
         }
+    }
+
+    static void changeModel(MosaicTestModel m) {
+        m.setMosaicType(EMosaic.eMosaicQuadrangle1);
+        m.setSizeField(new Matrisize(22, 33));
+        m.setSize(new SizeDouble(TEST_SIZE_W, TEST_SIZE_H));
+        m.setPadding(new BoundDouble(10));
+        m.setBackgroundColor(Color.DimGray());
+        m.getBackgroundFill().setMode(1);
+        m.getColorText().setColorClose(1, Color.LightSalmon());
+        m.getColorText().setColorOpen(2, Color.MediumSeaGreen());
+        m.getPenBorder().setColorLight(Color.MediumPurple());
+        m.getPenBorder().setWidth(2);
     }
 
 }
