@@ -19,7 +19,7 @@ namespace fmg.core.mosaic {
     using MosaicModel = MosaicDrawModel<DummyImage>;
 
     class TestMosaicView : MosaicView<DummyImage, DummyImage, MosaicModel> {
-        internal TestMosaicView(bool deferredNotifications) : base(new MosaicModel(), deferredNotifications) { }
+        internal TestMosaicView() : base(new MosaicModel()) { }
         protected override object CreateImage() { return new DummyImage(); }
         internal int DrawCount { get; private set; }
         protected override void DrawModified(ICollection<BaseCell> modifiedCells) {
@@ -53,7 +53,7 @@ namespace fmg.core.mosaic {
 
         [TestMethod]
         public void PropertyChangedTest() {
-            using (var view = new TestMosaicView(false)) {
+            using (var view = new TestMosaicView()) {
                 var modifiedProperties = new List<string>();
                 void onViewPropertyChanged(object sender, PropertyChangedEventArgs ev) {
                     LoggerSimple.Put("  MosaicTestView::PropertyChangedTest: onViewPropertyChanged: ev.name=" + ev.PropertyName);
@@ -73,7 +73,7 @@ namespace fmg.core.mosaic {
 
         [TestMethod]
         public void ReadinessAtTheStartTest() {
-            using (var view = new TestMosaicView(false)) {
+            using (var view = new TestMosaicView()) {
                 Assert.AreEqual(0, view.DrawCount);
                 Assert.IsNotNull(view.Image);
                 Assert.AreEqual(1, view.DrawCount);
@@ -82,7 +82,7 @@ namespace fmg.core.mosaic {
 
         [TestMethod]
         public void MultipleChangeModelOneDrawViewTest() {
-            using (var view = new TestMosaicView(false)) {
+            using (var view = new TestMosaicView()) {
                 Assert.AreEqual(0, view.DrawCount);
 
                 var m = view.Model;
@@ -116,7 +116,7 @@ namespace fmg.core.mosaic {
 
         [TestMethod]
         public void MultiNotificationOfImageChangedTest() {
-            using (var view = new TestMosaicView(false)) {
+            using (var view = new TestMosaicView()) {
                 var imgChangeCount = 0;
                 void onViewPropertyChanged(object sender, PropertyChangedEventArgs ev) {
                     System.Diagnostics.Debug.WriteLine(ev.PropertyName);
@@ -159,7 +159,7 @@ namespace fmg.core.mosaic {
                 CoreDispatcherPriority.High,
                 async () => {
                     LoggerSimple.Put("UI thread");
-                    using (var view = new TestMosaicView(true)) {
+                    using (var view = new TestMosaicView()) {
 
                         using (var signal = new Signal()) {
                             var ob = Observable

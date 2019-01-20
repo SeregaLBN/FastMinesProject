@@ -26,16 +26,12 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
     private final TImageModel _model;
     private TImage _image;
     private EInvalidate _invalidate = EInvalidate.needRedraw;
-    protected final NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this, false);
-    private   final NotifyPropertyChanged _notifierAsync;
+    protected final NotifyPropertyChanged _notifier/*Sync*/ = new NotifyPropertyChanged(this, false);
+    private   final NotifyPropertyChanged _notifierAsync    = new NotifyPropertyChanged(this, true);
     protected boolean _isDisposed;
 
     protected ImageView(TImageModel imageModel) {
-        this(imageModel, false);
-    }
-    protected ImageView(TImageModel imageModel, boolean deferredNotifications) {
         _model = imageModel;
-        _notifierAsync = deferredNotifications ? new NotifyPropertyChanged(this, true) : null;
         _notifier.addListener(this::onPropertyChanged);
         _model.addListener(this::onPropertyModelChanged);
     }
@@ -107,8 +103,7 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
 
     protected void onPropertyChanged(PropertyChangeEvent ev) {
         // refire as async event
-        if (_notifierAsync != null)
-            _notifierAsync.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+        _notifierAsync.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
     }
 
     protected void onPropertyModelChanged(PropertyChangeEvent ev) {
@@ -132,25 +127,18 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
         _model.removeListener(this::onPropertyModelChanged);
 
         _notifier.close();
-        if (_notifierAsync != null)
-            _notifierAsync.close();
+        _notifierAsync.close();
 
         setImage(null);
     }
 
     @Override
     public void addListener(PropertyChangeListener listener) {
-        (_notifierAsync != null
-            ? _notifierAsync
-            : _notifier
-        ).addListener(listener);
+        _notifierAsync.addListener(listener);
     }
     @Override
     public void removeListener(PropertyChangeListener listener) {
-        (_notifierAsync != null
-            ? _notifierAsync
-            : _notifier
-        ).removeListener(listener);
+        _notifierAsync.removeListener(listener);
     }
 
 }

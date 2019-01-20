@@ -11,7 +11,7 @@ namespace fmg.uwp.img.wbmp {
         private WriteableBitmap _bmp;
 
         public Smile(SmileModel.EFaceType faceType)
-            : base(new SmileModel(faceType), false)
+            : base(new SmileModel(faceType))
         { }
 
         static Smile() {

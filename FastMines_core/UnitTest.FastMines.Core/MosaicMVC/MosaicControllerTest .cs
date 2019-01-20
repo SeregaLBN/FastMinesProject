@@ -10,7 +10,7 @@ using DummyImage = System.Object;
 namespace fmg.core.mosaic {
 
     class TestMosaicController : MosaicController<DummyImage, DummyImage, MosaicTestView, MosaicDrawModel<DummyImage>> {
-        internal TestMosaicController() : base(new MosaicTestView(false)) { }
+        internal TestMosaicController() : base(new MosaicTestView()) { }
         protected override void Disposing() {
             base.Disposing();
             View.Dispose();

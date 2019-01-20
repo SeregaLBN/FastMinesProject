@@ -19,8 +19,8 @@ namespace fmg.core.mosaic {
           where TImageInner : class
           where TMosaicModel : MosaicDrawModel<TImageInner>
     {
-        protected MosaicView(TMosaicModel mosaicModel, bool deferredNotifications = true)
-            : base(mosaicModel, deferredNotifications)
+        protected MosaicView(TMosaicModel mosaicModel)
+            : base(mosaicModel)
         { }
 
 #if DEBUG

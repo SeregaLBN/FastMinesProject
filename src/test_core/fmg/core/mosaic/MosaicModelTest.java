@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -23,6 +22,7 @@ import fmg.common.LoggerSimple;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.SizeDouble;
+import fmg.common.notyfier.Signal;
 import fmg.common.ui.Factory;
 import fmg.core.img.IImageModel;
 import fmg.core.types.EMosaic;
@@ -33,21 +33,6 @@ import io.reactivex.subjects.Subject;
 
 class DummyImage extends Object {}
 class MosaicTestModel extends MosaicDrawModel<DummyImage> {}
-
-class Signal {
-    private final CountDownLatch signal = new CountDownLatch(1);
-    /** set signal */
-    public void set() { signal.countDown(); }
-    /** <summary> wait for signal */
-    public boolean await(long timeoutMs) {
-        try {
-            return signal.await(timeoutMs, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
-            return false;
-        }
-    }
-}
 
 public class MosaicModelTest {
 
@@ -65,7 +50,7 @@ public class MosaicModelTest {
 //      Factory.DEFERR_INVOKER = scheduler::execute;
 
       ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-      Factory.DEFERR_INVOKER = run -> scheduler.schedule(run, 10, TimeUnit.MILLISECONDS);
+      Factory.DEFERR_INVOKER = run -> scheduler.schedule(run, 20, TimeUnit.MILLISECONDS);
 
       Flowable.just("UI factory inited...").subscribe(LoggerSimple::put);
     }

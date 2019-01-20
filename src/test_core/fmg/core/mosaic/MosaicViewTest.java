@@ -11,6 +11,7 @@ import org.junit.*;
 
 import fmg.common.LoggerSimple;
 import fmg.common.geom.SizeDouble;
+import fmg.common.notyfier.Signal;
 import fmg.common.ui.Factory;
 import fmg.core.img.IImageView;
 import fmg.core.mosaic.cells.BaseCell;
@@ -20,7 +21,7 @@ import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
 class MosaicTestView extends MosaicView<DummyImage, DummyImage, MosaicTestModel> {
-    MosaicTestView(boolean deferredNotifications) { super(new MosaicTestModel(), deferredNotifications); }
+    MosaicTestView() { super(new MosaicTestModel()); }
     @Override protected DummyImage createImage() { return new DummyImage(); }
     int DrawCount;// { get; private set; }
     @Override protected void drawModified(Collection<BaseCell> modifiedCells) {
@@ -68,24 +69,7 @@ public class MosaicViewTest {
             modifiedProperties.add(ev.getPropertyName());
         };
 
-        try (MosaicTestView view = new MosaicTestView(false)) {
-            view.addListener(onViewPropertyChanged);
-
-            view.getModel().setSize(new SizeDouble(123, 456));
-
-            Awaitility.await().atMost(200, TimeUnit.MILLISECONDS).until(() ->
-                modifiedProperties.contains(IImageView.PROPERTY_MODEL) &&
-                modifiedProperties.contains(IImageView.PROPERTY_SIZE)  &&
-                modifiedProperties.contains(IImageView.PROPERTY_IMAGE)
-            );
-
-            view.removeListener(onViewPropertyChanged);
-        }
-
-        LoggerSimple.put("------------------------------------------------------");
-
-        modifiedProperties.clear();
-        try (MosaicTestView view = new MosaicTestView(true)) {
+        try (MosaicTestView view = new MosaicTestView()) {
             view.addListener(onViewPropertyChanged);
 
             view.getModel().setSize(new SizeDouble(123, 456));
@@ -102,7 +86,7 @@ public class MosaicViewTest {
 
     @Test
     public void readinessAtTheStartTest() {
-        try (MosaicTestView view = new MosaicTestView(false)) {
+        try (MosaicTestView view = new MosaicTestView()) {
             Assert.assertEquals(0, view.DrawCount);
             Assert.assertNotNull(view.getImage());
             Assert.assertEquals(1, view.DrawCount);
@@ -111,7 +95,7 @@ public class MosaicViewTest {
 
     @Test
     public void multipleChangeModelOneDrawViewTest() throws InterruptedException {
-        try (MosaicTestView view = new MosaicTestView(false)) {
+        try (MosaicTestView view = new MosaicTestView()) {
             Assert.assertEquals(0, view.DrawCount);
 
             MosaicTestModel m = view.getModel();
@@ -135,7 +119,7 @@ public class MosaicViewTest {
 
     @Test
     public void oneNotificationOfImageChangedTest() {
-        try (MosaicTestView view = new MosaicTestView(true)) {
+        try (MosaicTestView view = new MosaicTestView()) {
             Map<String /* property name */, Integer /* count */> modifiedProperties = new HashMap<>();
 
             Subject<PropertyChangeEvent> subject = PublishSubject.create();

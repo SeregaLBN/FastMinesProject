@@ -11,6 +11,7 @@ import org.junit.*;
 
 import fmg.common.LoggerSimple;
 import fmg.common.geom.SizeDouble;
+import fmg.common.notyfier.Signal;
 import fmg.common.ui.Factory;
 import fmg.core.img.IImageController;
 import io.reactivex.Flowable;
@@ -19,7 +20,7 @@ import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
 class MosaicTestController extends MosaicController<DummyImage, DummyImage, MosaicTestView, MosaicTestModel> {
-    MosaicTestController() { super(new MosaicTestView(false)); }
+    MosaicTestController() { super(new MosaicTestView()); }
     @Override public void close() {
         super.close();
         getView().close();

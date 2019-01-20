@@ -32,10 +32,10 @@ namespace fmg.core.img {
         protected readonly NotifyPropertyChanged _notifier;
         private   readonly NotifyPropertyChanged _notifierAsync;
 
-        protected ImageView(TImageModel imageModel, bool deferredNotifications = false) {
+        protected ImageView(TImageModel imageModel) {
             Model = imageModel;
-            _notifier      =                         new NotifyPropertyChanged(this, ev => PropertyChangedSync?.Invoke(this, ev), false);
-            _notifierAsync = deferredNotifications ? new NotifyPropertyChanged(this, ev => PropertyChanged    ?.Invoke(this, ev), true) : null;
+            _notifier      = new NotifyPropertyChanged(this, ev => PropertyChangedSync?.Invoke(this, ev), false);
+            _notifierAsync = new NotifyPropertyChanged(this, ev => PropertyChanged    ?.Invoke(this, ev), true);
             this .PropertyChangedSync += OnPropertyChanged;
             Model.PropertyChanged     += OnPropertyModelChanged;
         }
@@ -100,7 +100,7 @@ namespace fmg.core.img {
             //LoggerSimple.Put(GetType().Name + ".OnPropertyChanged: PropertyName=" + ev.PropertyName);
 
             // refire as async event
-            _notifierAsync?.OnPropertyChanged(ev);
+            _notifierAsync.OnPropertyChanged(ev);
         }
         protected virtual void OnPropertyModelChanged(object sender, PropertyChangedEventArgs ev) {
             System.Diagnostics.Debug.Assert(ReferenceEquals(sender, Model));
@@ -118,7 +118,7 @@ namespace fmg.core.img {
         // <summary>  Dispose managed resources </summary>/
         protected virtual void Disposing() {
             _notifier.Dispose();
-            _notifierAsync?.Dispose();
+            _notifierAsync.Dispose();
             this .PropertyChanged -= OnPropertyChanged;
             Model.PropertyChanged -= OnPropertyModelChanged;
             Image = null;

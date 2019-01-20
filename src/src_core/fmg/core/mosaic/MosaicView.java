@@ -27,10 +27,7 @@ public abstract class MosaicView<TImage,
 {
 
     protected MosaicView(TMosaicModel mosaicModel) {
-        this(mosaicModel, true);
-    }
-    protected MosaicView(TMosaicModel mosaicModel, boolean deferredNotifications) {
-        super(mosaicModel, deferredNotifications);
+        super(mosaicModel);
     }
 
     public static boolean _DEBUG_DRAW_FLOW = false;
