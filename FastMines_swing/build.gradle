@@ -40,6 +40,8 @@ sourceSets {
     test {
         java {
             srcDir 'src/test/java'
+            srcDir '../src/test_swing'
+            include '**/*.java'
         }
     }
 }
@@ -50,6 +52,8 @@ dependencies {
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
+    testCompile 'org.awaitility:awaitility:3.1.5'
+    testCompile 'io.reactivex.rxjava2:rxjava:2.2.5'
 }
 
 //jar {

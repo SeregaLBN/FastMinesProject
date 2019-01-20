@@ -9,6 +9,8 @@ import fmg.swing.img.Animator;
 
 public final class StaticInitializer {
 
+    private StaticInitializer() {}
+
     static {
         Factory.DEFERR_INVOKER = javax.swing.SwingUtilities::invokeLater;
         Factory.GET_ANIMATOR = Animator::getSingleton;
