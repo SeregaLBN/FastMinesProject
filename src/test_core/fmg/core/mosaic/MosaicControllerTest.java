@@ -69,7 +69,7 @@ public class MosaicControllerTest {
             ctrlr.addListener(onCtrlPropertyChanged);
 
             Signal signal = new Signal();
-            Disposable dis = subject.timeout(50, TimeUnit.MILLISECONDS)
+            Disposable dis = subject.timeout(100, TimeUnit.MILLISECONDS)
                     .subscribe(ev -> {
                         LoggerSimple.put("onNext: ev=" + ev);
                     }, ex -> {

@@ -115,7 +115,7 @@ namespace fmg.core.mosaic {
 
                 var signalWait = false;
                 using (var signal = new Signal()) {
-                    using (subject.Timeout(TimeSpan.FromMilliseconds(50))
+                    using (subject.Timeout(TimeSpan.FromMilliseconds(100))
                         .Subscribe(ev => {
                             LoggerSimple.Put("OnNext: ev=" + ev);
                         }, ex => {
