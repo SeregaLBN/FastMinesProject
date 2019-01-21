@@ -13,7 +13,7 @@ using fmg.common.ui;
 using fmg.core.types;
 using fmg.core.img;
 //using DummyImage = System.Object;
-using MosaicTestModel = fmg.core.mosaic.MosaicDrawModel<System.Object>;
+using MosaicTestModel = fmg.core.mosaic.MosaicDrawModel<object>;
 
 namespace fmg.core.mosaic {
 
@@ -31,18 +31,24 @@ namespace fmg.core.mosaic {
     public class MosaicModelTest {
 
         /// <summary> double precision </summary>
-        private const double P = 0.001;
+        internal const double P = 0.001;
 
-        [OneTimeSetUp]
-        public void Setup() {
-            LoggerSimple.Put(nameof(Setup) + "::" + nameof(MosaicModelTest));
+        internal const int TEST_SIZE_W = 456;
+        internal const int TEST_SIZE_H = 789;
+
+        internal static void StaticInitializer() {
+            //Factory.DEFERR_INVOKER = doRun => Task.Run(doRun);
             Factory.DEFERR_INVOKER = doRun => Task.Delay(10).ContinueWith(t => doRun());
         }
 
-        [OneTimeTearDown]
-        public void Closed() {
-            LoggerSimple.Put("======================================================");
-            LoggerSimple.Put("Closed " + nameof(MosaicModelTest));
+        [OneTimeSetUp]
+        public void Setup() {
+            LoggerSimple.Put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            LoggerSimple.Put(">" + nameof(MosaicModelTest) + "::" + nameof(Setup));
+
+            StaticInitializer();
+
+            //Observable.Just("UI factory inited...").Subscribe(LoggerSimple.Put);
         }
 
         [SetUp]
@@ -50,17 +56,26 @@ namespace fmg.core.mosaic {
             LoggerSimple.Put("======================================================");
         }
 
+        [OneTimeTearDown]
+        public void After() {
+            LoggerSimple.Put("======================================================");
+            LoggerSimple.Put("< " + nameof(MosaicModelTest) + " closed");
+            LoggerSimple.Put("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        }
+
         [Test]
         public async Task MosaicGameModelPropertyChangedTest() {
+            LoggerSimple.Put("> MosaicGameModelPropertyChangedTest");
+
             using (var model = new MosaicGameModel()) {
                 Assert.IsTrue(model.Matrix.Any());
                 Assert.IsTrue(ReferenceEquals(model.CellAttr, model.Matrix.First().Attr));
 
                 var modifiedProperties = new List<string>();
                 void onModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+                    LoggerSimple.Put("  MosaicGameModelPropertyChangedTest: onModelPropertyChanged: ev.name=" + ev.PropertyName);
                     modifiedProperties.Add(ev.PropertyName);
                 }
-
                 model.PropertyChanged += onModelPropertyChanged;
 
                 modifiedProperties.Clear();
@@ -82,6 +97,8 @@ namespace fmg.core.mosaic {
         [Test]
       //[Retry(100)]
         public async Task MosaicDrawModelPropertyChangedTest() {
+            LoggerSimple.Put("> mosaicDrawModelPropertyChangedTest");
+
             using (var model = new MosaicTestModel()) {
                 var subject = new Subject<PropertyChangedEventArgs>();
 
@@ -107,19 +124,25 @@ namespace fmg.core.mosaic {
                         }))
                     {
                         modifiedProperties.Clear();
-                        model.Size = new SizeDouble(123, 456);
+                        Factory.DEFERR_INVOKER(() => ChangeModel(model));
 
                         signalWait = await signal.Wait(TimeSpan.FromSeconds(1));
 
-                        LoggerSimple.Put("  " + nameof(MosaicDrawModelPropertyChangedTest) + ": checking...");
                     }
                 }
 
                 Assert.IsTrue(signalWait);
 
-                Assert.AreEqual(1, modifiedProperties[nameof(IImageModel.Size)]);
+                LoggerSimple.Put("  " + nameof(MosaicDrawModelPropertyChangedTest) + ": checking...");
+                Assert.AreEqual(true, 1 <= modifiedProperties[nameof(IImageModel.Size)]);
                 Assert.AreEqual(1, modifiedProperties[nameof(MosaicGameModel.Area)]);
                 Assert.AreEqual(1, modifiedProperties[nameof(MosaicGameModel.CellAttr)]);
+                Assert.AreEqual(1, modifiedProperties[nameof(MosaicGameModel.MosaicType)]);
+                Assert.AreEqual(1, modifiedProperties[nameof(MosaicGameModel.Matrix)]);
+                Assert.AreEqual(1, modifiedProperties[nameof(MosaicTestModel.BackgroundColor)]);
+                Assert.AreEqual(1, modifiedProperties[nameof(MosaicTestModel.BkFill)]);
+                Assert.AreEqual(1, modifiedProperties[nameof(MosaicTestModel.ColorText)]);
+                Assert.AreEqual(1, modifiedProperties[nameof(MosaicTestModel.PenBorder)]);
 
                 model.PropertyChanged -= onModelPropertyChanged;
             }
@@ -133,7 +156,6 @@ namespace fmg.core.mosaic {
                 Assert.AreEqual(model.CellAttr.GetSize(model.SizeField), model.Size);
             }
         }
-
 
         [Test]
         public void AutoFitTrueCheckAffectsToPaddingTest() {
@@ -185,7 +207,7 @@ namespace fmg.core.mosaic {
                 return model;
             }
 
-            using (MosaicTestModel model = createTestModel()) {
+            using (var model = createTestModel()) {
                 // change property
                 model.Size = new SizeDouble(700, 500);
 
@@ -209,7 +231,7 @@ namespace fmg.core.mosaic {
                 Assert.AreEqual(0, padding.Bottom, P);
             }
 
-            using (MosaicTestModel model = createTestModel()) {
+            using (var model = createTestModel()) {
                 // change property
                 model.Padding = new BoundDouble(150, 75, 50, 25);
                 model.Size = new SizeDouble(700, 500);
@@ -234,7 +256,7 @@ namespace fmg.core.mosaic {
                 Assert.AreEqual(12.5, padding.Bottom, P);
             }
 
-            using (MosaicTestModel model = createTestModel()) {
+            using (var model = createTestModel()) {
                 // change property
                 model.Size = new SizeDouble(700, 500);
                 model.MosaicType = EMosaic.eMosaicSquare2;
@@ -259,7 +281,7 @@ namespace fmg.core.mosaic {
                 Assert.AreEqual(0, padding.Bottom, P);
             }
 
-            using (MosaicTestModel model = createTestModel()) {
+            using (var model = createTestModel()) {
                 // change property
                 model.Size = new SizeDouble(700, 500);
                 model.MosaicType = EMosaic.eMosaicSquare2;
@@ -285,7 +307,7 @@ namespace fmg.core.mosaic {
                 Assert.AreEqual(0, padding.Bottom, P);
             }
 
-            using (MosaicTestModel model = createTestModel()) {
+            using (var model = createTestModel()) {
                 // change property
                 model.Size = new SizeDouble(700, 500);
                 model.MosaicType = EMosaic.eMosaicSquare2;
@@ -312,7 +334,7 @@ namespace fmg.core.mosaic {
                 Assert.AreEqual( 25, padding.Bottom, P);
             }
 
-            using (MosaicTestModel model = createTestModel()) {
+            using (var model = createTestModel()) {
                 // change property
                 model.Size = new SizeDouble(700, 500);
                 model.MosaicType = EMosaic.eMosaicSquare2;
@@ -339,7 +361,7 @@ namespace fmg.core.mosaic {
                 Assert.AreEqual(- 25, padding.Bottom, P);
             }
 
-            using (MosaicTestModel model = createTestModel()) {
+            using (var model = createTestModel()) {
                 // change property
                 model.Size = new SizeDouble(700, 500);
                 model.MosaicType = EMosaic.eMosaicSquare2;
@@ -367,7 +389,7 @@ namespace fmg.core.mosaic {
                 Assert.AreEqual(0, padding.Bottom, P);
             }
 
-            using (MosaicTestModel model = createTestModel()) {
+            using (var model = createTestModel()) {
                 // change property
                 model.Size = new SizeDouble(700, 500);
                 model.MosaicType = EMosaic.eMosaicSquare2;
@@ -394,8 +416,32 @@ namespace fmg.core.mosaic {
                 Assert.AreEqual( 50, padding.Right , P);
                 Assert.AreEqual( 25, padding.Bottom, P);
             }
-        }
 
+
+            using (var model = createTestModel()) {
+                // change property
+                model.MosaicOffset = new SizeDouble(200, 300);
+
+                // check dependency (evenly expanded)
+                var size = model.Size;
+                Assert.AreEqual(1000, size.Width , P);
+                Assert.AreEqual(1000, size.Height, P);
+
+                var mosaicSize = model.MosaicSize;
+                Assert.AreEqual(1000, mosaicSize.Width , P);
+                Assert.AreEqual(1000, mosaicSize.Height, P);
+
+                var mosaicOffset = model.MosaicOffset;
+                Assert.AreEqual(200, mosaicOffset.Width , P);
+                Assert.AreEqual(300, mosaicOffset.Height, P);
+
+                var padding = model.Padding;
+                Assert.AreEqual( 200, padding.Left  , P);
+                Assert.AreEqual( 300, padding.Top   , P);
+                Assert.AreEqual(-200, padding.Right , P);
+                Assert.AreEqual(-300, padding.Bottom, P);
+            }
+        }
 
         [Test]
         public void AutoFitFalseCheckAffectsTest() {
@@ -428,7 +474,7 @@ namespace fmg.core.mosaic {
                 return model;
             }
 
-            using (MosaicTestModel model = createTestModel()) {
+            using (var model = createTestModel()) {
                 // change property
                 model.MosaicOffset = new SizeDouble(200, 300);
 
@@ -452,7 +498,7 @@ namespace fmg.core.mosaic {
                 Assert.AreEqual(-300, padding.Bottom, P);
             }
 
-            using (MosaicTestModel model = createTestModel()) {
+            using (var model = createTestModel()) {
                 // change property
                 model.MosaicOffset = new SizeDouble(10, 15);
                 model.Size = new SizeDouble(700, 500);
@@ -477,7 +523,7 @@ namespace fmg.core.mosaic {
                 Assert.AreEqual(  0, padding.Bottom, P);
             }
 
-            using (MosaicTestModel model = createTestModel()) {
+            using (var model = createTestModel()) {
                 // change property
                 model.Size = new SizeDouble(700, 500);
                 model.MosaicType = EMosaic.eMosaicSquare2;
@@ -502,7 +548,7 @@ namespace fmg.core.mosaic {
                 Assert.AreEqual(   0, padding.Bottom, P);
             }
 
-            using (MosaicTestModel model = createTestModel()) {
+            using (var model = createTestModel()) {
                 // change property
                 model.Size = new SizeDouble(700, 500);
                 model.MosaicType = EMosaic.eMosaicSquare2;
@@ -528,7 +574,7 @@ namespace fmg.core.mosaic {
                 Assert.AreEqual(  0, padding.Bottom, P);
             }
 
-            using (MosaicTestModel model = createTestModel()) {
+            using (var model = createTestModel()) {
                 // change property
                 model.Size = new SizeDouble(700, 500);
                 model.MosaicType = EMosaic.eMosaicSquare2;
@@ -555,7 +601,7 @@ namespace fmg.core.mosaic {
                 Assert.AreEqual( 40, padding.Bottom, P);
             }
 
-            using (MosaicTestModel model = createTestModel()) {
+            using (var model = createTestModel()) {
                 // change property
                 model.Size = new SizeDouble(700, 500);
                 model.MosaicType = EMosaic.eMosaicSquare2;
@@ -583,7 +629,7 @@ namespace fmg.core.mosaic {
                 Assert.AreEqual(315  , padding.Bottom, P);
             }
 
-            using (MosaicTestModel model = createTestModel()) {
+            using (var model = createTestModel()) {
                 // change property
                 model.Size = new SizeDouble(700, 500);
                 model.MosaicType = EMosaic.eMosaicSquare2;
@@ -612,6 +658,49 @@ namespace fmg.core.mosaic {
                 Assert.AreEqual( 25, padding.Bottom, P);
             }
         }
+
+        internal static void ChangeModel(MosaicTestModel m) {
+            m.MosaicType = EMosaic.eMosaicQuadrangle1;
+            m.SizeField = new Matrisize(22, 33);
+            m.Size = new SizeDouble(TEST_SIZE_W, TEST_SIZE_H);
+          //m.Area = 1234;
+            m.Padding = new BoundDouble(10);
+            m.BackgroundColor = Color.DimGray;
+            m.BkFill.Mode = 1;
+            m.ColorText.SetColorClose(1, Color.LightSalmon);
+            m.ColorText.SetColorOpen(2, Color.MediumSeaGreen);
+            m.PenBorder.ColorLight = Color.MediumPurple;
+            m.PenBorder.Width = 2;
+        }
+
+        [Test]
+        public async Task MosaicNoChangedTest() {
+            LoggerSimple.Put("> MosaicNoChangedTest");
+
+            using (var model = new MosaicTestModel()) {
+                var size = model.Size; // implicit call setter Size
+                Assert.IsNotNull(size);
+                await Task.Delay(TimeSpan.FromMilliseconds(50));
+
+                var modifiedProperties = new List<string>();
+                void onModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+                    LoggerSimple.Put("  MosaicNoChangedTest: onModelPropertyChanged: ev.name=" + ev.PropertyName);
+                    modifiedProperties.Add(ev.PropertyName);
+                }
+                model.PropertyChanged += onModelPropertyChanged;
+
+                model.Size = model.Size;
+                model.Area = model.Area;
+                model.SizeField = model.SizeField;
+                model.Padding = model.Padding;
+
+                await Task.Delay(TimeSpan.FromMilliseconds(200));
+                Assert.IsFalse(modifiedProperties.Any());
+
+                model.PropertyChanged -= onModelPropertyChanged;
+            }
+        }
+
     }
 
 }

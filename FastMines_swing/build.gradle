@@ -27,7 +27,7 @@ sourceSets {
          include '**/*.java'
       }
       resources {
-         srcDir 'src/test/resources'
+         //srcDir 'src/test/resources'
 //         srcDir '../res'
 //         exclude '**/*~*'
 //         include '**/*.gif'

@@ -2,17 +2,32 @@ package fmg.core.mosaic;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.*;
 
+import fmg.common.LoggerSimple;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.SizeDouble;
 import fmg.core.types.EMosaic;
 
 public class MosaicHelperTest {
 
-    //@BeforeClass
-    //public static void setup() { }
+    @BeforeClass
+    public static void setup() {
+        LoggerSimple.put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        LoggerSimple.put("> MosaicHelperTest::setup");
+    }
+
+    @Before
+    public void before() {
+        LoggerSimple.put("======================================================");
+    }
+    @AfterClass
+    public static void after() {
+        LoggerSimple.put("======================================================");
+        LoggerSimple.put("< MosaicHelperTest closed");
+        LoggerSimple.put("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+    }
+
 
     @Test
     public void findSizeByArea_eMosaicSquare1_Test() {

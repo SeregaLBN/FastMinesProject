@@ -12,10 +12,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import org.awaitility.Awaitility;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import fmg.common.Color;
 import fmg.common.LoggerSimple;
@@ -42,27 +39,35 @@ public class MosaicModelTest {
     static final int TEST_SIZE_W = 456;
     static final int TEST_SIZE_H = 789;
 
+    public static void StaticInitializer() {
+//        ExecutorService scheduler = Executors.newScheduledThreadPool(1);
+//        Factory.DEFERR_INVOKER = scheduler::execute;
+
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        Factory.DEFERR_INVOKER = run -> scheduler.schedule(run, 10, TimeUnit.MILLISECONDS);
+    }
+
     @BeforeClass
     public static void setup() {
-        LoggerSimple.put("MosaicModelTest::setup");
+        LoggerSimple.put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        LoggerSimple.put("> MosaicModelTest::setup");
 
-//      ExecutorService scheduler = Executors.newScheduledThreadPool(1);
-//      Factory.DEFERR_INVOKER = scheduler::execute;
+        StaticInitializer();
 
-      ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-      Factory.DEFERR_INVOKER = run -> scheduler.schedule(run, 20, TimeUnit.MILLISECONDS);
-
-      Flowable.just("UI factory inited...").subscribe(LoggerSimple::put);
+        Flowable.just("UI factory inited...").subscribe(LoggerSimple::put);
     }
 
     @Before
     public void before() {
         LoggerSimple.put("======================================================");
     }
-//    @AfterClass
-//    public static void after() {
-//        LoggerSimple.put("======================================================");
-//    }
+
+    @AfterClass
+    public static void after() {
+        LoggerSimple.put("======================================================");
+        LoggerSimple.put("< MosaicModelTest closed");
+        LoggerSimple.put("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+    }
 
     @Test
     public void mosaicGameModelPropertyChangedTest() {
@@ -80,7 +85,7 @@ public class MosaicModelTest {
             model.addListener(onModelPropertyChanged);
 
             modifiedProperties.clear();
-            model.setSizeField(new Matrisize(15, 10));
+            Factory.DEFERR_INVOKER.accept(() -> model.setSizeField(new Matrisize(15, 10)));
             Awaitility.await().atMost(200, TimeUnit.MILLISECONDS).until(() -> {
                 LoggerSimple.put("  mosaicGameModelPropertyChangedTest: pooling1...");
                 return modifiedProperties.contains(MosaicGameModel.PROPERTY_SIZE_FIELD) &&
@@ -88,7 +93,7 @@ public class MosaicModelTest {
             });
 
             modifiedProperties.clear();
-            model.setArea(12345);
+            Factory.DEFERR_INVOKER.accept(() -> model.setArea(12345));
             Awaitility.await().atMost(200, TimeUnit.MILLISECONDS).until(() -> {
                 LoggerSimple.put("  mosaicGameModelPropertyChangedTest: pooling2...");
                 return modifiedProperties.contains(MosaicGameModel.PROPERTY_AREA) &&
@@ -125,8 +130,7 @@ public class MosaicModelTest {
                     });
 
             modifiedProperties.clear();
-//            model.setSize(new SizeDouble(123, 456));
-            changeModel(model);
+            Factory.DEFERR_INVOKER.accept(() -> changeModel(model));
 
             Assert.assertTrue(signal.await(1000));
 
@@ -658,6 +662,7 @@ public class MosaicModelTest {
         m.setMosaicType(EMosaic.eMosaicQuadrangle1);
         m.setSizeField(new Matrisize(22, 33));
         m.setSize(new SizeDouble(TEST_SIZE_W, TEST_SIZE_H));
+      //m.setArea(1234);
         m.setPadding(new BoundDouble(10));
         m.setBackgroundColor(Color.DimGray());
         m.getBackgroundFill().setMode(1);
@@ -665,6 +670,34 @@ public class MosaicModelTest {
         m.getColorText().setColorOpen(2, Color.MediumSeaGreen());
         m.getPenBorder().setColorLight(Color.MediumPurple());
         m.getPenBorder().setWidth(2);
+    }
+
+    @Test
+    public void mosaicNoChangedTest() throws InterruptedException {
+        LoggerSimple.put("> mosaicNoChangedTest");
+
+        try (MosaicTestModel model = new MosaicTestModel()) {
+            SizeDouble size = model.getSize(); // implicit call setter Size
+            Assert.assertNotNull(size);
+            Thread.sleep(20); // TODO replace sleep
+
+            List<String> modifiedProperties = new ArrayList<>();
+            PropertyChangeListener onModelPropertyChanged = ev -> {
+                LoggerSimple.put("  MosaicNoChangedTest: onModelPropertyChanged: ev.name=" + ev.getPropertyName());
+                modifiedProperties.add(ev.getPropertyName());
+            };
+            model.addListener(onModelPropertyChanged);
+
+            model.setSize(new SizeDouble(model.getSize()));
+            model.setArea(model.getArea());
+            model.setSizeField(new Matrisize(model.getSizeField()));
+            model.setPadding(model.getPadding()==null ? null : new BoundDouble(model.getPadding()));
+
+            Thread.sleep(200); // TODO replace sleep
+            Assert.assertTrue(modifiedProperties.isEmpty());
+
+            model.removeListener(onModelPropertyChanged);
+        }
     }
 
 }

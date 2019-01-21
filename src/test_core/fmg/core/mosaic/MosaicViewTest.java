@@ -2,8 +2,6 @@ package fmg.core.mosaic;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.awaitility.Awaitility;
@@ -23,10 +21,11 @@ import io.reactivex.subjects.Subject;
 class MosaicTestView extends MosaicView<DummyImage, DummyImage, MosaicTestModel> {
     MosaicTestView() { super(new MosaicTestModel()); }
     @Override protected DummyImage createImage() { return new DummyImage(); }
-    int DrawCount;// { get; private set; }
+    private int drawCount;
+    int getDrawCount() { return drawCount; }
     @Override protected void drawModified(Collection<BaseCell> modifiedCells) {
         LoggerSimple.put("MosaicTestView::drawModified");
-        ++DrawCount;
+        ++drawCount;
     }
     @Override public void close() {
         super.close();
@@ -41,13 +40,10 @@ public class MosaicViewTest {
 
     @BeforeClass
     public static void setup() {
-        LoggerSimple.put("MosaicViewTest::setup");
+        LoggerSimple.put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        LoggerSimple.put("> MosaicViewTest::setup");
 
-//        ExecutorService scheduler = Executors.newScheduledThreadPool(1);
-//        Factory.DEFERR_INVOKER = scheduler::execute;
-
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        Factory.DEFERR_INVOKER = run -> scheduler.schedule(run, 10, TimeUnit.MILLISECONDS);
+        MosaicModelTest.StaticInitializer();
 
         Flowable.just("UI factory inited...").subscribe(LoggerSimple::put);
     }
@@ -59,6 +55,8 @@ public class MosaicViewTest {
     @AfterClass
     public static void after() {
         LoggerSimple.put("======================================================");
+        LoggerSimple.put("< MosaicViewTest closed");
+        LoggerSimple.put("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     }
 
     @Test
@@ -72,7 +70,7 @@ public class MosaicViewTest {
         try (MosaicTestView view = new MosaicTestView()) {
             view.addListener(onViewPropertyChanged);
 
-            view.getModel().setSize(new SizeDouble(123, 456));
+            Factory.DEFERR_INVOKER.accept(() -> view.getModel().setSize(new SizeDouble(TEST_SIZE_W, TEST_SIZE_H)));
 
             Awaitility.await().atMost(200, TimeUnit.MILLISECONDS).until(() ->
                 modifiedProperties.contains(IImageView.PROPERTY_MODEL) &&
@@ -87,31 +85,37 @@ public class MosaicViewTest {
     @Test
     public void readinessAtTheStartTest() {
         try (MosaicTestView view = new MosaicTestView()) {
-            Assert.assertEquals(0, view.DrawCount);
+            Assert.assertEquals(0, view.getDrawCount());
             Assert.assertNotNull(view.getImage());
-            Assert.assertEquals(1, view.DrawCount);
+            Assert.assertEquals(1, view.getDrawCount());
         }
     }
 
     @Test
     public void multipleChangeModelOneDrawViewTest() throws InterruptedException {
         try (MosaicTestView view = new MosaicTestView()) {
-            Assert.assertEquals(0, view.DrawCount);
+            Assert.assertEquals(0, view.getDrawCount());
 
             MosaicTestModel m = view.getModel();
-            MosaicModelTest.changeModel(m);
+            Factory.DEFERR_INVOKER.accept(() -> MosaicModelTest.changeModel(m));
+
+            Thread.sleep(100); // TODO replace sleep
+
             DummyImage img = view.getImage();
             Assert.assertNotNull(img);
-            Assert.assertEquals(1, view.DrawCount);
+            Assert.assertEquals(1, view.getDrawCount());
 
-            m.setSize(new SizeDouble(TEST_SIZE_W, TEST_SIZE_H));
+            // test no change
+            Factory.DEFERR_INVOKER.accept(() -> m.setSize(new SizeDouble(TEST_SIZE_W, TEST_SIZE_H)));
+            Thread.sleep(100); // TODO replace sleep
             Assert.assertEquals(img, view.getImage());
-            Assert.assertEquals(1, view.DrawCount);
+            Assert.assertEquals(1, view.getDrawCount());
 
-            m.setSize(new SizeDouble(TEST_SIZE_W + 1, TEST_SIZE_H));
+            // test change
+            Factory.DEFERR_INVOKER.accept(() -> m.setSize(new SizeDouble(TEST_SIZE_W + 1, TEST_SIZE_H)));
             Awaitility.await().atMost(200, TimeUnit.MILLISECONDS).until(() ->
                 !img.equals(view.getImage()) &&
-                (view.DrawCount == 2)
+                (view.getDrawCount() == 2)
             );
             Assert.assertNotNull(view.getImage());
         }
@@ -141,15 +145,15 @@ public class MosaicViewTest {
                     });
 
             modifiedProperties.clear();
-            MosaicModelTest.changeModel(view.getModel());
+            Factory.DEFERR_INVOKER.accept(() -> MosaicModelTest.changeModel(view.getModel()));
 
             Assert.assertTrue(signal.await(1000));
 
-            LoggerSimple.put("  mosaicDrawModelPropertyChangedTest: checking...");
+            LoggerSimple.put("  oneNotificationOfImageChangedTest: checking...");
             Assert.assertTrue(1 <= modifiedProperties.get(IImageView.PROPERTY_IMAGE)); // TODO must be assertEquals(1, modifiedProperties.get(IImageView.PROPERTY_IMAGE).intValue());
-            Assert.assertEquals(0, view.DrawCount);
+            Assert.assertEquals(0, view.getDrawCount());
             view.getImage(); // call the implicit draw method
-            Assert.assertEquals(1, view.DrawCount);
+            Assert.assertEquals(1, view.getDrawCount());
 
             view.removeListener(onViewPropertyChanged);
             dis.dispose();

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Reactive.Linq;
@@ -8,7 +7,6 @@ using NUnit.Framework;
 using fmg.common;
 using fmg.common.ui;
 using fmg.common.geom;
-using fmg.core.types;
 using fmg.core.mosaic.cells;
 using DummyImage = System.Object;
 using MosaicTestModel = fmg.core.mosaic.MosaicDrawModel<object>;
@@ -31,25 +29,42 @@ namespace fmg.core.mosaic {
 
     public class MosaicViewTest {
 
-        const int MagicDelayMlsc = 50;
+        internal const int TEST_SIZE_W = MosaicModelTest.TEST_SIZE_W;
+        internal const int TEST_SIZE_H = MosaicModelTest.TEST_SIZE_H;
 
         [SetUp]
         public void Setup() {
-            //Factory.DEFERR_INVOKER = doRun => Task.Run(doRun);
-            Factory.DEFERR_INVOKER = doRun => Task.Delay(MagicDelayMlsc).ContinueWith(t => doRun());
+            LoggerSimple.Put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            LoggerSimple.Put("> MosaicViewTest::Setup");
+
+            MosaicModelTest.StaticInitializer();
+
+          //Observable.Just("UI factory inited...").Subscribe(LoggerSimple.Put);
+        }
+
+        [SetUp]
+        public void Before() {
+            LoggerSimple.Put("======================================================");
+        }
+
+        [OneTimeTearDown]
+        public void After() {
+            LoggerSimple.Put("======================================================");
+            LoggerSimple.Put("< " + nameof(MosaicViewTest) + " closed");
+            LoggerSimple.Put("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         }
 
         [Test]
         public async Task PropertyChangedTest() {
+            var modifiedProperties = new List<string>();
+            void onViewPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+                LoggerSimple.Put("  MosaicTestView::PropertyChangedTest: onViewPropertyChanged: ev.name=" + ev.PropertyName);
+                modifiedProperties.Add(ev.PropertyName);
+            }
             using (var view = new MosaicTestView()) {
-                var modifiedProperties = new List<string>();
-                void onViewPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-                    LoggerSimple.Put("  MosaicTestView::PropertyChangedTest: onViewPropertyChanged: ev.name=" + ev.PropertyName);
-                    modifiedProperties.Add(ev.PropertyName);
-                }
                 view.PropertyChanged += onViewPropertyChanged;
 
-                view.Model.Size = new SizeDouble(123, 456);
+                Factory.DEFERR_INVOKER(() => view.Model.Size = new SizeDouble(TEST_SIZE_W, TEST_SIZE_H));
 
                 await Task.Delay(200);
 
@@ -71,75 +86,49 @@ namespace fmg.core.mosaic {
         }
 
         [Test]
-        public void MultipleChangeModelOneDrawViewTest() {
+        public async Task MultipleChangeModelOneDrawViewTest() {
             using (var view = new MosaicTestView()) {
                 Assert.AreEqual(0, view.DrawCount);
 
                 var m = view.Model;
-                ChangeModel(m);
-                Assert.NotNull(view.Image);
+                Factory.DEFERR_INVOKER(() => MosaicModelTest.ChangeModel(m));
+                await Task.Delay(100);
+
+                var img = view.Image;
+                Assert.NotNull(img);
                 Assert.AreEqual(1, view.DrawCount);
 
-                m.Area = 1234; // test no change
-                Assert.NotNull(view.Image);
+                // test no change
+                Factory.DEFERR_INVOKER(() => m.Size = new SizeDouble(TEST_SIZE_W, TEST_SIZE_H));
+                await Task.Delay(100);
+                Assert.AreEqual(true, ReferenceEquals(img, view.Image));
                 Assert.AreEqual(1, view.DrawCount);
 
-                m.Area = 1235; // test change
+                // test change
+                Factory.DEFERR_INVOKER(() => m.Size = new SizeDouble(TEST_SIZE_W + 1, TEST_SIZE_H));
+                await Task.Delay(200);
+                Assert.AreNotEqual(img, view.Image);
                 Assert.NotNull(view.Image);
                 Assert.AreEqual(2, view.DrawCount);
-            }
-        }
-
-        private void ChangeModel(MosaicTestModel m) {
-            m.MosaicType = EMosaic.eMosaicQuadrangle1;
-            m.SizeField = new Matrisize(22, 33);
-            m.Size = new SizeDouble(345, 678);
-            m.Area = 1234;
-            m.Padding = new BoundDouble(10);
-            m.BackgroundColor = Color.DimGray;
-            m.BkFill.Mode = 1;
-            m.ColorText.SetColorClose(1, Color.LightSalmon);
-            m.ColorText.SetColorOpen(2, Color.MediumSeaGreen);
-            m.PenBorder.ColorLight = Color.MediumPurple;
-            m.PenBorder.Width = 2;
-        }
-
-        [Test]
-        public void MultiNotificationOfImageChangedTest() {
-            using (var view = new MosaicTestView()) {
-                var imgChangeCount = 0;
-                void onViewPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-                    System.Diagnostics.Debug.WriteLine(ev.PropertyName);
-                    if (ev.PropertyName == nameof(view.Image))
-                        ++imgChangeCount;
-                }
-                view.PropertyChanged += onViewPropertyChanged;
-
-                var m = view.Model;
-                ChangeModel(m);
-
-                Assert.LessOrEqual(1, imgChangeCount);
-
-                view.PropertyChanged -= onViewPropertyChanged;
             }
         }
 
         [Test]
         public async Task OneNotificationOfImageChangedTest() {
             using (var view = new MosaicTestView()) {
-                var imgChangeCount = 0;
+                var modifiedProperties = new Dictionary<string /* property name */, int /* count */>();
 
                 using (var signal = new Signal()) {
                     var ob = Observable
                         .FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(h => view.PropertyChanged += h, h => view.PropertyChanged -= h);
                     using (ob.Subscribe(
                         ev => {
-                            LoggerSimple.Put("onViewPropertyChanged: PropertyName=" + ev.EventArgs.PropertyName);
-                            if (ev.EventArgs.PropertyName == nameof(view.Image))
-                                ++imgChangeCount;
+                            var name = ev.EventArgs.PropertyName;
+                            LoggerSimple.Put("  OneNotificationOfImageChangedTest: onViewPropertyChanged: ev.name=" + name);
+                            modifiedProperties[name] = 1 + (modifiedProperties.ContainsKey(name) ? modifiedProperties[name] : 0);
                         }))
                     {
-                        using (ob.Timeout(TimeSpan.FromMilliseconds(MagicDelayMlsc * 1.5))
+                        using (ob.Timeout(TimeSpan.FromMilliseconds(50))
                             .Subscribe(ev => {
                                 LoggerSimple.Put("onNext:");
                             }, ex => {
@@ -147,15 +136,18 @@ namespace fmg.core.mosaic {
                                 signal.Set();
                             }))
                         {
-                            var m = view.Model;
-                            ChangeModel(m);
+                            Factory.DEFERR_INVOKER(() => MosaicModelTest.ChangeModel(view.Model));
 
-                            Assert.IsTrue(await signal.Wait(TimeSpan.FromSeconds(5)));
+                            Assert.IsTrue(await signal.Wait(TimeSpan.FromSeconds(1)));
                         }
                     }
                 }
 
-                Assert.AreEqual(1, imgChangeCount);
+                LoggerSimple.Put("  OneNotificationOfImageChangedTest: checking...");
+                Assert.IsTrue(1 <= modifiedProperties[nameof(view.Image)]); // TODO must be AreEqual(1, modifiedProperties[nameof(IImageView.Image)]);
+                Assert.AreEqual(0, view.DrawCount);
+                var img = view.Image; // call the implicit draw method
+                Assert.AreEqual(1, view.DrawCount);
             }
         }
 

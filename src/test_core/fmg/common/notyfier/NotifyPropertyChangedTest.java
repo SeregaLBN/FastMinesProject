@@ -1,16 +1,18 @@
 package fmg.common.notyfier;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
-import fmg.common.ui.Factory;
+import fmg.common.LoggerSimple;
+import fmg.core.mosaic.MosaicModelTest;
+import io.reactivex.Flowable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 
 public class NotifyPropertyChangedTest {
 
@@ -24,18 +26,31 @@ public class NotifyPropertyChangedTest {
 
     };
 
-    static ExecutorService scheduler;
-
     @BeforeClass
     public static void setup() {
-        scheduler = Executors.newScheduledThreadPool(1);
-        Factory.DEFERR_INVOKER = scheduler::execute;
+        LoggerSimple.put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        LoggerSimple.put("> NotifyPropertyChangedTest::setup");
+
+        MosaicModelTest.StaticInitializer();
+
+        Flowable.just("UI factory inited...").subscribe(LoggerSimple::put);
+    }
+
+    @Before
+    public void before() {
+        LoggerSimple.put("======================================================");
+    }
+
+    @AfterClass
+    public static void after() {
+        LoggerSimple.put("======================================================");
+        LoggerSimple.put("< NotifyPropertyChangedTest closed");
+        LoggerSimple.put("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     }
 
     @Test
     public void NotifyPropertyChangedSyncTest() {
         try (NotifyPropertyChanged notifier = new NotifyPropertyChanged(_dummy, false)) {
-
             int countFiredEvents = 3 + ThreadLocalRandom.current().nextInt(10);
             int[] countReceivedEvents = { 0 };
 
@@ -52,25 +67,38 @@ public class NotifyPropertyChangedTest {
     @Test
     public void NotifyPropertyChangedAsyncTest() throws InterruptedException {
         try (NotifyPropertyChanged notifier = new NotifyPropertyChanged(_dummy, true)) {
-
             int countFiredEvents = 3 + ThreadLocalRandom.current().nextInt(10);
             int[] countReceivedEvents = { 0 };
             Object[] firedValue = { null };
 
+            Subject<PropertyChangeEvent> subject = PublishSubject.create();
             PropertyChangeListener listener = ev -> {
                 ++countReceivedEvents[0];
                 firedValue[0] = ev.getNewValue();
+                subject.onNext(ev);
             };
             notifier.addListener(listener);
+
+            Signal signal = new Signal();
+            Disposable dis = subject.timeout(50, TimeUnit.MILLISECONDS)
+                    .subscribe(ev -> {
+                        LoggerSimple.put("onNext: ev=" + ev);
+                    }, ex -> {
+                        LoggerSimple.put("onError: " + ex);
+                        signal.set();
+                    });
+
             final String prefix = " Value ";
             for (int i=0; i<countFiredEvents; ++i)
                 notifier.onPropertyChanged(null, prefix + i, "propertyName");
 
-            scheduler.awaitTermination(1000, TimeUnit.MILLISECONDS);
-            notifier.removeListener(listener);
+            Assert.assertTrue(signal.await(1000));
 
             Assert.assertEquals(1, countReceivedEvents[0]);
             Assert.assertEquals(prefix + (countFiredEvents-1), firedValue[0]);
+
+            notifier.removeListener(listener);
+            dis.dispose();
         }
     }
 

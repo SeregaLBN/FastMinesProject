@@ -60,7 +60,7 @@ public abstract class BaseCell {
      * <br> (Полные данные о конкретной мозаике) <br>
      * Доопределаяется наследниками BaseCell
      */
-    public static abstract class BaseAttribute implements INotifyPropertyChanged {
+    public abstract static class BaseAttribute implements INotifyPropertyChanged {
 
         public static final String PROPERTY_AREA = "Area";
 
