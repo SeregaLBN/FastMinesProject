@@ -20,23 +20,23 @@ jar {
 mainClassName = "fmg.swing.app.Main"
 
 sourceSets {
-   main {
-      java {
-         srcDir '../src/src_platform_swing'
-         srcDir 'src/main/java'
-         include '**/*.java'
-      }
-      resources {
-         //srcDir 'src/test/resources'
-//         srcDir '../res'
-//         exclude '**/*~*'
-//         include '**/*.gif'
-//         include '**/*.jpeg'
-//         include '**/*.jpg'
-//       //include '**/*.ico'
-//         include '**/*.png'
-      }
-   }
+    main {
+        java {
+            srcDir '../src/src_platform_swing'
+            srcDir 'src/main/java'
+            include '**/*.java'
+        }
+        resources {
+          //srcDir 'src/test/resources'
+//          srcDir '../res'
+//          exclude '**/*~*'
+//          include '**/*.gif'
+//          include '**/*.jpeg'
+//          include '**/*.jpg'
+//        //include '**/*.ico'
+//          include '**/*.png'
+        }
+    }
     test {
         java {
             srcDir 'src/test/java'
@@ -50,26 +50,30 @@ sourceSets {
 dependencies {
     implementation project(':FastMines_core')
 
+    testCompile project(':FastMines_core').sourceSets.test.output
+
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
     testCompile 'org.awaitility:awaitility:3.1.5'
     testCompile 'io.reactivex.rxjava2:rxjava:2.2.5'
 }
 
+test.dependsOn(":FastMines_core:test")
+
 //jar {
-//   into('res') {
-//      from '../res'
-//      exclude '**/*~*'
-//      include '**/*.png'
-//   }
+//    into('res') {
+//        from '../res'
+//        exclude '**/*~*'
+//        include '**/*.png'
+//    }
 //}
 
 //version = '2.0.3'
 
 jar {
-   manifest {
-      attributes 'Main-Class': 'fmg.swing.app.Main',
-                 'Title': 'FastMines game - Java SWING desktop application',
-                 'Version': '2.0.3'
-   }
+    manifest {
+        attributes 'Main-Class': 'fmg.swing.app.Main',
+                   'Title': 'FastMines game - Java SWING desktop application',
+                   'Version': '2.0.3'
+    }
 }

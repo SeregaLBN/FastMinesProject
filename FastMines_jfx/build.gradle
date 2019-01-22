@@ -22,16 +22,30 @@ mainClassName = "fmg.jfx.Demo"
 //version = '0.0.1'
 
 sourceSets {
-   main {
-      java {
-         srcDir '../src/src_platform_jfx'
-         include '**/*.java'
-      }
-   }
+    main {
+        java {
+            srcDir '../src/src_platform_jfx'
+            include '**/*.java'
+        }
+    }
+    test {
+        java {
+            srcDir 'src/test/java'
+            srcDir '../src/test_jfx'
+            include '**/*.java'
+        }
+    }
 }
 
 dependencies {
     implementation project(':FastMines_core')
+
+    testCompile project(':FastMines_core').sourceSets.test.output
+
+    // Use JUnit test framework
+    testImplementation 'junit:junit:4.12'
+    testCompile 'org.awaitility:awaitility:3.1.5'
+    testCompile 'io.reactivex.rxjava2:rxjava:2.2.5'
 }
 
 jar {
