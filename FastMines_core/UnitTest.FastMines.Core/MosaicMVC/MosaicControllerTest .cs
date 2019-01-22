@@ -50,7 +50,7 @@ namespace fmg.core.mosaic {
         }
 
         [Test]
-        public async Task PropertyChangedAsyncTest() {
+        public async Task PropertyChangedTest() {
             using (var ctrlr = new MosaicTestController()) {
                 var modifiedProperties = new Dictionary<string /* property name */, int /* count */>();
 
@@ -60,7 +60,7 @@ namespace fmg.core.mosaic {
                     using (ob.Subscribe(
                         ev => {
                             var name = ev.EventArgs.PropertyName;
-                            LoggerSimple.Put("  PropertyChangedAsyncTest: onCtrlPropertyChanged: ev.name=" + name);
+                            LoggerSimple.Put("  PropertyChangedTest: onCtrlPropertyChanged: ev.name=" + name);
                             modifiedProperties[name] = 1 + (modifiedProperties.ContainsKey(name) ? modifiedProperties[name] : 0);
                         }))
                     {
@@ -79,10 +79,9 @@ namespace fmg.core.mosaic {
                     }
                 }
 
-                LoggerSimple.Put("  PropertyChangedAsyncTest: checking...");
-                Assert.IsTrue(1 <= modifiedProperties[nameof(ctrlr.Image)]); // TODO must be AreEqual(1, modifiedProperties[nameof(IImageController.Image)]);
+                LoggerSimple.Put("  PropertyChangedTest: checking...");
+                Assert.AreEqual(1, modifiedProperties[nameof(ctrlr.Image)]);
             }
-
         }
 
         [Test]

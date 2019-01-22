@@ -105,7 +105,17 @@ public final class NotifyPropertyChanged implements AutoCloseable//, INotifyProp
                 event = new Pair<>((event == null) ? oldValue : event.first, newValue);
                 _deferrNotifications.put(propertyName, event); // Re-save only the last event (with initial old value)
             }
-            if (shedule)
+            if (shedule) {
+                /** /
+                LoggerSimple.put("Deferr shedule:\n   " +
+                        Stream.of(Thread.currentThread().getStackTrace())
+                            .filter(x -> x.getClassName().startsWith("fmg."))
+                            .map(x -> x.toString())
+                          //.map(x -> x.substring(9))
+                            .filter(x -> !x.contains(".lambda$"))
+                          //.filter(x -> !x.contains(".onPropertyChanged("))
+                            .collect(Collectors.joining("\n   ")));
+                /**/
                 Factory.DEFERR_INVOKER.accept(() -> {
                     if (_disposed || isHolded())
                         return;
@@ -116,6 +126,7 @@ public final class NotifyPropertyChanged implements AutoCloseable//, INotifyProp
                     else
                         _propertyChanges.firePropertyChange(propertyName, event.first, event.second);
                 });
+            }
         }
     }
 

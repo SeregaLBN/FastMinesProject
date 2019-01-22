@@ -144,7 +144,7 @@ namespace fmg.core.mosaic {
                 }
 
                 LoggerSimple.Put("  OneNotificationOfImageChangedTest: checking...");
-                Assert.IsTrue(1 <= modifiedProperties[nameof(view.Image)]); // TODO must be AreEqual(1, modifiedProperties[nameof(IImageView.Image)]);
+                Assert.AreEqual(1, modifiedProperties[nameof(view.Image)]);
                 Assert.AreEqual(0, view.DrawCount);
                 var img = view.Image; // call the implicit draw method
                 Assert.AreEqual(1, view.DrawCount);

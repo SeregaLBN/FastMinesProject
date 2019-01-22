@@ -88,28 +88,6 @@ namespace fmg.core.mosaic {
             _modifiedCells.Clear();
         }
 
-        protected override void OnPropertyModelChanged(object sender, PropertyChangedEventArgs ev) {
-            base.OnPropertyModelChanged(sender, ev);
-            switch (ev.PropertyName) {
-            case nameof(MosaicGameModel.MosaicType):
-                ChangeFontSize();
-                break;
-            case nameof(MosaicGameModel.Area):
-                ChangeFontSize();
-                break;
-            case nameof(MosaicDrawModel<TImageInner>.PenBorder):
-                ChangeFontSize();
-                break;
-            }
-        }
-
-        /// <summary> пересчитать и установить новую высоту шрифта </summary>
-        private void ChangeFontSize() {
-            var model = Model;
-            var penBorder = model.PenBorder;
-            model.FontInfo.Size = model.CellAttr.GetSq(penBorder.Width);
-        }
-
     }
 
 }

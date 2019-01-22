@@ -150,7 +150,7 @@ public class MosaicViewTest {
             Assert.assertTrue(signal.await(1000));
 
             LoggerSimple.put("  oneNotificationOfImageChangedTest: checking...");
-            Assert.assertTrue(1 <= modifiedProperties.get(IImageView.PROPERTY_IMAGE)); // TODO must be assertEquals(1, modifiedProperties.get(IImageView.PROPERTY_IMAGE).intValue());
+            Assert.assertEquals(1, modifiedProperties.get(IImageView.PROPERTY_IMAGE).intValue());
             Assert.assertEquals(0, view.getDrawCount());
             view.getImage(); // call the implicit draw method
             Assert.assertEquals(1, view.getDrawCount());

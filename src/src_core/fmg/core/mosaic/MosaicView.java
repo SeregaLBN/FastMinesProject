@@ -1,6 +1,5 @@
 package fmg.core.mosaic;
 
-import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.stream.Collectors;
@@ -11,7 +10,6 @@ import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.ImageView;
 import fmg.core.mosaic.cells.BaseCell;
-import fmg.core.types.draw.PenBorder;
 
 /**
  * MVC: view. Base mosaic view implementation
@@ -85,31 +83,6 @@ public abstract class MosaicView<TImage,
             System.out.println("MosaicView.drawBody: " + (_modifiedCells.isEmpty() ? "all" : ("cnt=" + _modifiedCells.size()) + ": " + _modifiedCells.stream().limit(5).collect(Collectors.toList())));
         drawModified(_modifiedCells.isEmpty() ? null : _modifiedCells);
         _modifiedCells.clear();
-    }
-
-    @Override
-    protected void onPropertyModelChanged(PropertyChangeEvent ev) {
-        super.onPropertyModelChanged(ev);
-        switch (ev.getPropertyName()) {
-        case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
-            changeFontSize();
-            break;
-        case MosaicGameModel.PROPERTY_AREA:
-            changeFontSize();
-            break;
-        case MosaicDrawModel.PROPERTY_PEN_BORDER:
-            changeFontSize();
-            break;
-        default:
-            // none
-        }
-    }
-
-    /** пересчитать и установить новую высоту шрифта */
-    private void changeFontSize() {
-        TMosaicModel model = getModel();
-        PenBorder penBorder = model.getPenBorder();
-        model.getFontInfo().setSize(model.getCellAttr().getSq((int)penBorder.getWidth()));
     }
 
 }

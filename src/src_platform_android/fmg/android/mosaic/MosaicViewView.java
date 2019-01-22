@@ -10,7 +10,6 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.view.View;
 import android.view.ViewGroup;
-import fmg.common.geom.BoundDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicDrawModel;

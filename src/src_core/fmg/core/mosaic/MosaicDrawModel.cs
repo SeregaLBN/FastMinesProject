@@ -328,6 +328,15 @@ namespace fmg.core.mosaic {
                                                 s.Height - sm.Height - p.Top);
                     }
                 }
+
+                switch (ev.PropertyName) {
+                case nameof(this.MosaicType):
+                case nameof(this.Area):
+                case nameof(this.PenBorder):
+                    var penBorder = PenBorder;
+                    FontInfo.Size = CellAttr.GetSq(penBorder.Width);
+                    break;
+                }
             } finally {
                 lockChanging = false;
             }

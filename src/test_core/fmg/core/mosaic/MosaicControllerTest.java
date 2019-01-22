@@ -83,7 +83,7 @@ public class MosaicControllerTest {
             Assert.assertTrue(signal.await(1000));
 
             LoggerSimple.put("  propertyChangedTest: checking...");
-            Assert.assertTrue(1 <= modifiedProperties.get(IImageController.PROPERTY_IMAGE)); // TODO must be assertEquals(1, modifiedProperties.get(IImageController.PROPERTY_IMAGE).intValue());
+            Assert.assertEquals(1, modifiedProperties.get(IImageController.PROPERTY_IMAGE).intValue());
 
             ctrlr.removeListener(onCtrlPropertyChanged);
             dis.dispose();

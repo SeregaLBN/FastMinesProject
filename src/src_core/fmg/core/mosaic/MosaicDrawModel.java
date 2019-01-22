@@ -399,6 +399,18 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
                                                s.height - sm.height - p.top));
                 }
             }
+
+            // change font size (пересчитать и установить новую высоту шрифта)
+            switch (ev.getPropertyName()) {
+            case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
+            case MosaicGameModel.PROPERTY_AREA:
+            case MosaicDrawModel.PROPERTY_PEN_BORDER:
+                PenBorder penBorder = getPenBorder();
+                getFontInfo().setSize(getCellAttr().getSq(penBorder.getWidth()));
+                break;
+            default:
+                // none
+            }
         } finally {
             lockChanging = false;
         }
