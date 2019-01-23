@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Point2D;
-import java.util.Arrays;
 
 import fmg.core.img.FlagModel;
 import fmg.core.img.ImageController;
@@ -144,12 +143,5 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
         }
 
     }
-
-    ////////////// TEST //////////////
-    public static void main(String[] args) {
-        TestDrawing.testApp(() -> Arrays.asList(new Flag.ControllerIcon()
-                                              , new Flag.ControllerImage()));
-    }
-    //////////////////////////////////
 
 }

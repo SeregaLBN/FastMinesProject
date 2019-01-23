@@ -1,6 +1,5 @@
 package fmg.swing.img;
 
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import fmg.common.Color;
@@ -103,18 +102,5 @@ public abstract class MosaicGroupImg<TImage> extends MosaicSkillOrGroupView<TIma
         }
 
     }
-
-    ////////////// TEST //////////////
-    public static void main(String[] args) {
-        TestDrawing.testApp(() ->
-            Stream.concat(Stream.of((EMosaicGroup)null),
-                          Stream.of(EMosaicGroup.values()))
-                .map(e -> new Pair<>(new MosaicGroupImg.ControllerIcon (e),
-                                     new MosaicGroupImg.ControllerImage(e)))
-                .flatMap(x -> Stream.of(x.first, x.second))
-                .collect(Collectors.toList())
-        );
-    }
-    //////////////////////////////////
 
 }

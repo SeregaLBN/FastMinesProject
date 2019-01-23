@@ -175,7 +175,7 @@ public class DemoActivity extends Activity {
                 imgControls.clear();
 
             Function<IImageController<?,?,?>, ATestDrawing.CellTilingInfo> callback = ctr.itemCallback;
-            for (IImageController imgObj : images) {
+            for (IImageController<?,?,?> imgObj : images) {
                 ATestDrawing.CellTilingInfo cti = callback.apply(imgObj);
                 PointDouble offset = cti.imageOffset;
 
@@ -184,7 +184,7 @@ public class DemoActivity extends Activity {
                     if (imgIsControl) {
                         imgControl = (View)imgObj.getImage();
                     } else {
-                        View imgControl2 = imgControl = new View(this) {
+                        imgControl = new View(this) {
                             @Override
                             public void draw(Canvas canvas) {
                                 super.draw(canvas);
@@ -199,10 +199,10 @@ public class DemoActivity extends Activity {
                         };
                       //imgControl.setBackgroundColor(Cast.toColor(Color.RandomColor().brighter()));
 
+                        View imgControl2 = imgControl;
                         PropertyChangeListener onChangeImage = ev -> {
-                            if (ev.getPropertyName().equals(IImageController.PROPERTY_IMAGE)) {
+                            if (ev.getPropertyName().equals(IImageController.PROPERTY_IMAGE))
                                 imgControl2.invalidate();
-                            }
                         };
                         imgObj.addListener(onChangeImage);
                         binding.put(imgObj, onChangeImage);

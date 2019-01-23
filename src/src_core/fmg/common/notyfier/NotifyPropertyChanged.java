@@ -42,8 +42,6 @@ public final class NotifyPropertyChanged implements AutoCloseable//, INotifyProp
 
     /** Set the value to the specified property  and throw event to listeners */
     public <T> boolean setProperty(T oldValue, T newValue, String propertyName) {
-        if (isHolded())
-            return false;
         if (_disposed) {
             if (newValue != null) {
                 System.err.println("Illegal call property " + _owner.getClass().getCanonicalName() + "."+ propertyName + ": object already disposed!");
@@ -70,7 +68,8 @@ public final class NotifyPropertyChanged implements AutoCloseable//, INotifyProp
             throw new RuntimeException(ex);
         }
 
-        onPropertyChanged(oldValue, newValue, propertyName);
+        if (!isHolded())
+            onPropertyChanged(oldValue, newValue, propertyName);
         return true;
     }
 

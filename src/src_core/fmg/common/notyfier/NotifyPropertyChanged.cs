@@ -44,8 +44,6 @@ namespace fmg.common.notyfier {
         /// when invoked from compilers that support CallerMemberName.</param>
         /// <returns>True if the value was changed, false if the existing value matched the desired value.</returns>
         public bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string propertyName = null) {
-            if (Holded())
-                return false;
             if (_disposed) {
                 if (value != null) {
                     System.Diagnostics.Debug.WriteLine("Illegal call property " + _owner.GetType().FullName + "." + propertyName + ": object already disposed!");
@@ -57,7 +55,8 @@ namespace fmg.common.notyfier {
 
             var tmp = storage;
             storage = value;
-            OnPropertyChanged(tmp, value, propertyName);
+            if (!Holded())
+                OnPropertyChanged(tmp, value, propertyName);
             return true;
         }
 

@@ -2,17 +2,18 @@ package fmg.swing.mosaic;
 
 import java.awt.Component;
 import java.awt.Window;
-import java.awt.event.*;
-import java.util.concurrent.ThreadLocalRandom;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.MouseEvent;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
 
 import fmg.core.mosaic.MosaicController;
 import fmg.core.mosaic.MosaicDrawModel;
-import fmg.core.mosaic.MosaicView;
-import fmg.core.types.EMosaic;
-import fmg.core.types.ESkillLevel;
 import fmg.swing.utils.Cast;
 
 /** MVC: controller. SWING implementation */
@@ -118,40 +119,5 @@ public class MosaicJPanelController extends MosaicController<JPanel, Icon, Mosai
         getView().close();
         super.close();
     }
-
-    ////////////// TEST //////////////
-    public static void main(String[] args) {
-        MosaicView._DEBUG_DRAW_FLOW = true;
-        MosaicJPanelController ctrllr = new MosaicJPanelController();
-
-        if (ThreadLocalRandom.current().nextBoolean()) {
-            // unmodified controller test
-        } else {
-            EMosaic mosaicType = EMosaic.eMosaicTrSq1;
-            ESkillLevel skill  = ESkillLevel.eBeginner;
-
-            ctrllr.setArea(1500);
-            ctrllr.setMosaicType(mosaicType);
-            ctrllr.setSizeField(skill.getDefaultSize());
-            ctrllr.setMinesCount(skill.getNumberMines(mosaicType));
-            ctrllr.gameNew();
-        }
-
-        JFrame frame = new JFrame();
-        frame.add(ctrllr.getView().getControl());
-        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent we) {
-                ctrllr.close();
-                frame.dispose();
-            }
-        });
-
-        frame.setTitle("SWING: Demo " + MosaicJPanelController.class.getSimpleName());
-        frame.pack();
-        frame.setVisible(true);
-    }
-    //////////////////////////////////
 
 }
