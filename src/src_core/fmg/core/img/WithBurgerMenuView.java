@@ -1,6 +1,6 @@
 package fmg.core.img;
 
-import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
 
 /**
  * MVC: view of images with burger menu (where burger menu its secondary model)
@@ -11,27 +11,23 @@ public abstract class WithBurgerMenuView<TImage, TImageModel extends AnimatedIma
 
     /** the second model of image */
     private final BurgerMenuModel _burgerMenuModel;
-    private final PropertyChangeListener _burgerMenuModelListener;
 
     protected WithBurgerMenuView(TImageModel imageModel) {
         super(imageModel);
         _burgerMenuModel = new BurgerMenuModel(imageModel);
-        _burgerMenuModelListener = event -> {
-            assert event.getSource() == _burgerMenuModel; // by reference
-            onPropertyBurgerMenuModelChanged(event.getOldValue(), event.getNewValue(), event.getPropertyName());
-        };
-        _burgerMenuModel.addListener(_burgerMenuModelListener);
+        _burgerMenuModel.addListener(this::onPropertyBurgerMenuModelChanged);
     }
 
     public BurgerMenuModel getBurgerMenuModel() { return _burgerMenuModel; }
 
-    protected void onPropertyBurgerMenuModelChanged(Object oldValue, Object newValue, String propertyName) {
+    protected void onPropertyBurgerMenuModelChanged(PropertyChangeEvent ev) {
+        assert ev.getSource() == _burgerMenuModel; // by reference
         invalidate();
     }
 
     @Override
     public void close() {
-        _burgerMenuModel.removeListener(_burgerMenuModelListener);
+        _burgerMenuModel.removeListener(this::onPropertyBurgerMenuModelChanged);
         _burgerMenuModel.close();
         super.close();
     }

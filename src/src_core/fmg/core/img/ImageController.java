@@ -1,5 +1,6 @@
 package fmg.core.img;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import fmg.common.geom.SizeDouble;
@@ -21,12 +22,11 @@ public abstract class ImageController<TImage,
 
     /** MVC: view */
     private final TImageView _imageView;
-    private final PropertyChangeListener _imageViewListener = ev -> onPropertyViewChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
     protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this, true);
 
     protected ImageController(TImageView imageView) {
         _imageView = imageView;
-        _imageView.addListener(_imageViewListener);
+        _imageView.addListener(this::onPropertyViewChanged);
     }
 
     protected TImageView  getView()  { return _imageView; }
@@ -37,16 +37,16 @@ public abstract class ImageController<TImage,
     @Override
     public    SizeDouble  getSize()  { return getView().getSize(); }
 
-    protected void onPropertyViewChanged(Object oldValue, Object newValue, String propertyName) {
-        switch (propertyName) {
+    protected void onPropertyViewChanged(PropertyChangeEvent ev) {
+        switch (ev.getPropertyName()) {
         case IImageView.PROPERTY_MODEL:
-            _notifier.onPropertyChanged(oldValue, newValue, PROPERTY_MODEL);
+            _notifier.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_MODEL);
             break;
         case IImageView.PROPERTY_IMAGE:
-            _notifier.onPropertyChanged(oldValue, newValue, PROPERTY_IMAGE);
+            _notifier.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_IMAGE);
             break;
         case IImageView.PROPERTY_SIZE:
-            _notifier.onPropertyChanged(oldValue, newValue, PROPERTY_SIZE);
+            _notifier.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_SIZE);
             break;
         default:
             break;
@@ -64,7 +64,7 @@ public abstract class ImageController<TImage,
 
     @Override
     public void close() {
-        _imageView.removeListener(_imageViewListener);
+        _imageView.removeListener(this::onPropertyViewChanged);
         _notifier.close();
     }
 

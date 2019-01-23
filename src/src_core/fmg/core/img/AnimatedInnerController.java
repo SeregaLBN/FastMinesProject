@@ -1,5 +1,6 @@
 package fmg.core.img;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,12 +22,11 @@ public final class AnimatedInnerController<TImage,
 
     private final TImageModel _model;
     private Map<Class<? extends IModelTransformer>, IModelTransformer> _transformers = new HashMap<>();
-    private final PropertyChangeListener _imageModelListener = ev -> onPropertyModelChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
     private boolean _animationWasUsed = false;
 
     public AnimatedInnerController(TImageModel model) {
         _model = model;
-        model.addListener(_imageModelListener);
+        model.addListener(this::onPropertyModelChanged);
     }
 
 
@@ -55,11 +55,11 @@ public final class AnimatedInnerController<TImage,
             _transformers.remove(transformerClass);
     }
 
-    private void onPropertyModelChanged(Object oldValue, Object newValue, String propertyName) {
-        switch (propertyName) {
+    private void onPropertyModelChanged(PropertyChangeEvent ev) {
+        switch (ev.getPropertyName()) {
         case IAnimatedModel.PROPERTY_ANIMATED:
             _animationWasUsed = true;
-            if ((Boolean)newValue) {
+            if ((Boolean)ev.getNewValue()) {
                 TImageModel model = _model;
                 Factory.GET_ANIMATOR.get().subscribe(this, timeFromStartSubscribe -> {
                     long mod = timeFromStartSubscribe % model.getAnimatePeriod();
@@ -81,7 +81,7 @@ public final class AnimatedInnerController<TImage,
 
     @Override
     public void close() {
-        _model.removeListener(_imageModelListener);
+        _model.removeListener(this::onPropertyModelChanged);
         if (_animationWasUsed) // do not call Factory.GET_ANIMATOR if it is not already used
             Factory.GET_ANIMATOR.get().unsubscribe(this);
         _transformers.clear();

@@ -1,6 +1,6 @@
 package fmg.core.mosaic;
 
-import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
@@ -40,12 +40,10 @@ public abstract class MosaicController<TImage, TImageInner,
     /** использовать ли флажок на поле */
     private boolean _useUnknown = true;
 
-    private final PropertyChangeListener _modelListener = ev -> onPropertyModelChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
-
 
     protected MosaicController(TMosaicView mosaicView) {
         super(mosaicView);
-        getModel().addListener(_modelListener);
+        getModel().addListener(this::onPropertyModelChanged);
     }
 
 
@@ -515,8 +513,8 @@ public abstract class MosaicController<TImage, TImageInner,
         return (getGameStatus() == EGameStatus.eGSEnd) && (0 == getCountMinesLeft());
     }
 
-    protected void onPropertyModelChanged(Object oldValue, Object newValue, String propertyName) {
-        switch (propertyName) {
+    protected void onPropertyModelChanged(PropertyChangeEvent ev) {
+        switch (ev.getPropertyName()) {
         case MosaicGameModel.PROPERTY_SIZE_FIELD:
             setCellDown(null); // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
             recheckMinesCount();
@@ -602,7 +600,7 @@ public abstract class MosaicController<TImage, TImageInner,
 
     @Override
     public void close() {
-        getModel().removeListener(_modelListener);
+        getModel().removeListener(this::onPropertyModelChanged);
         super.close();
     }
 
