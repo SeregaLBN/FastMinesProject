@@ -143,9 +143,9 @@ public class DemoApp  {
 //        _jPanel.setBorder(new LineBorder(Color.BLACK));
         pane.add(_jPanel, BorderLayout.CENTER);
 
-        nextImagesBtn.addActionListener(ev -> onNextImages(true));
         prevImagesBtn.addActionListener(ev -> onNextImages(false));
         refresh      .addActionListener(ev -> onNextImages(null));
+        nextImagesBtn.addActionListener(ev -> onNextImages(true));
         SwingUtilities.invokeLater(     () -> onNextImages(null));
 
 

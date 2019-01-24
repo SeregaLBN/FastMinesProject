@@ -213,7 +213,7 @@ public class TestDrawing {
         double addonX = (cols==1) ? 0 : !testIntersection ? 0 : dx/4; // test intersection
         double addonY = (rows==1) ? 0 : !testIntersection ? 0 : dy/4; // test intersection
         SizeDouble imgSize = new SizeDouble(dx - 2*pad + addonX,  // dx - 2*pad;
-                                           dy - 2*pad + addonY); // dy - 2*pad;
+                                            dy - 2*pad + addonY); // dy - 2*pad;
 
         Function<IImageController<?,?,?>, CellTilingInfo> itemCallback = item -> {
             int pos = images.indexOf(item);

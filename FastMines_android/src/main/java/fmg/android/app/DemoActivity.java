@@ -32,7 +32,7 @@ import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.ATestDrawing;
+import fmg.core.img.TestDrawing;
 import fmg.core.img.IImageController;
 import fmg.core.img.SmileModel;
 import fmg.core.mosaic.MosaicView;
@@ -41,10 +41,6 @@ import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
 
 public class DemoActivity extends Activity {
-
-    class TestDrawing extends ATestDrawing {
-        TestDrawing() { super("Android"); }
-    }
 
     private TestDrawing _td;
     private FrameLayout _innerLayout;
@@ -113,25 +109,29 @@ public class DemoActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.demo_activity);
 
-        _innerLayout = findViewById(R.id.inner_layout);
-
-        Button nextImagesBtn = findViewById(R.id.next_images);
-        nextImagesBtn.setOnClickListener(view -> onNextImages());
-
-        _td = new TestDrawing();
+        _td = new TestDrawing("Android");
 
         _onCreateImages = new Runnable[] {
-            this::testMosaicControl,
-            this::testMosaicImg,
-            this::testMosaicSkillImg,
-            this::testMosaicGroupImg,
-            this::testSmiles,
-            this::testLogos,
-            this::testMines,
-            this::testFlags
+                this::testMosaicControl,
+                this::testMosaicImg,
+                this::testMosaicSkillImg,
+                this::testMosaicGroupImg,
+                this::testSmiles,
+                this::testLogos,
+                this::testMines,
+                this::testFlags
         };
 
-        _innerLayout.post(this::onNextImages);
+        _innerLayout = findViewById(R.id.inner_layout);
+
+        Button prevImagesBtn = findViewById(R.id.prev_images);
+        Button refresh       = findViewById(R.id.refresh_images);
+        Button nextImagesBtn = findViewById(R.id.next_images);
+
+        prevImagesBtn.setOnClickListener(view -> onNextImages(false));
+        refresh      .setOnClickListener(view -> onNextImages(null));
+        nextImagesBtn.setOnClickListener(view -> onNextImages(true));
+        _innerLayout.post(               ()   -> onNextImages(null));
     }
 
     @Override
@@ -169,14 +169,16 @@ public class DemoActivity extends Activity {
             double sizeH = _innerLayout.getHeight(); // _innerLayout.getMeasuredHeight();
             RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
 
-            ATestDrawing.CellTilingResult ctr = _td.cellTiling(rc, images, testTransparent[0]);
+            TestDrawing.CellTilingResult ctr = _td.cellTiling(rc, images, testTransparent[0]);
             SizeDouble imgSize = ctr.imageSize;
+            if (imgSize.width <= 0 || imgSize.height <= 0)
+                return;
             if (createImgControls)
                 imgControls.clear();
 
-            Function<IImageController<?,?,?>, ATestDrawing.CellTilingInfo> callback = ctr.itemCallback;
+            Function<IImageController<?,?,?>, TestDrawing.CellTilingInfo> callback = ctr.itemCallback;
             for (IImageController<?,?,?> imgObj : images) {
-                ATestDrawing.CellTilingInfo cti = callback.apply(imgObj);
+                TestDrawing.CellTilingInfo cti = callback.apply(imgObj);
                 PointDouble offset = cti.imageOffset;
 
                 if (createImgControls) {
@@ -263,14 +265,20 @@ public class DemoActivity extends Activity {
 
     }
 
-    void onNextImages() {
+    void onNextImages(Boolean isNext) {
         if (_onCloseImages != null)
             _onCloseImages.run();
 
-        Runnable onCreate = _onCreateImages[_nextCreateImagesIndex];
-        if (++_nextCreateImagesIndex >= _onCreateImages.length)
-            _nextCreateImagesIndex = 0;
-        onCreate.run();
+        if (isNext != null)
+            if (isNext) {
+                if (++_nextCreateImagesIndex >= _onCreateImages.length)
+                    _nextCreateImagesIndex = 0;
+            } else {
+                if (--_nextCreateImagesIndex < 0)
+                    _nextCreateImagesIndex = _onCreateImages.length - 1;
+            }
+
+        _onCreateImages[_nextCreateImagesIndex].run();
     }
 
 }

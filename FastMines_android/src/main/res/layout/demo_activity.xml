@@ -4,17 +4,29 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <Button
-        android:id="@+id/next_images"
+    <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Next Images" />
+        android:layout_height="wrap_content">
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/prev_images"
+                android:text="...Previous" />
+            <Button
+                android:id="@+id/refresh_images"
+                android:text="🗘" />
+            <Button
+                android:id="@+id/next_images"
+                android:text="Next..." />
+        </TableRow>
+    </TableLayout>
 
     <FrameLayout
         android:id="@+id/inner_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
     </FrameLayout>
 
 </LinearLayout>
