@@ -218,7 +218,7 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
 
     ////////////// TEST //////////////
     public static void main(String[] args) {
-        TestDrawing.testApp(() -> Arrays.asList(new Logo.ControllerCanvas()
+        DemoApp.testApp(() -> Arrays.asList(new Logo.ControllerCanvas()
                                               , new Logo.ControllerImage()
                                               , new Logo.ControllerCanvas()
                                               , new Logo.ControllerImage()));

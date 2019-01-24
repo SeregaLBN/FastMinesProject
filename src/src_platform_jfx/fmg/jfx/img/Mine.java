@@ -19,7 +19,7 @@ public final class Mine {
 
     ////////////// TEST //////////////
     public static void main(String[] args) {
-        TestDrawing.testApp(() -> Arrays.asList(new Mine.ControllerCanvas()
+        DemoApp.testApp(() -> Arrays.asList(new Mine.ControllerCanvas()
                                               , new Mine.ControllerImage()
                                               , new Mine.ControllerCanvas()
                                               , new Mine.ControllerImage()

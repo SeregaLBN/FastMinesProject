@@ -140,7 +140,7 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
 
     ////////////// TEST //////////////
     public static void main(String[] args) {
-        TestDrawing.testApp(() -> Arrays.asList(new Flag.ControllerCanvas()
+        DemoApp.testApp(() -> Arrays.asList(new Flag.ControllerCanvas()
                                               , new Flag.ControllerImage()));
     }
     //////////////////////////////////

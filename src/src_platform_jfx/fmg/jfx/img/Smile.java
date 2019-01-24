@@ -543,7 +543,7 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
 
     ////////////// TEST //////////////
     public static void main(String[] args) {
-        TestDrawing.testApp(() -> {
+        DemoApp.testApp(() -> {
                 return Arrays.asList(EFaceType.values()).stream()
                     .map(e -> Stream.of(new Smile.ControllerCanvas(e),
                                         new Smile.ControllerImage(e)))

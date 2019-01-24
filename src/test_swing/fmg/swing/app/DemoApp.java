@@ -20,9 +20,9 @@ import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.ATestDrawing;
 import fmg.core.img.IImageController;
 import fmg.core.img.SmileModel.EFaceType;
+import fmg.core.img.TestDrawing;
 import fmg.core.mosaic.MosaicView;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
@@ -30,14 +30,10 @@ import fmg.core.types.ESkillLevel;
 import fmg.swing.img.*;
 import fmg.swing.mosaic.MosaicJPanelController;
 
-public class DemoApp extends JFrame {
-    private static final long serialVersionUID = 1L;
-
-    class TestDrawing extends ATestDrawing {
-        TestDrawing() { super("Swing"); }
-    }
+public class DemoApp  {
 
     private TestDrawing _td;
+    private JFrame _frame;
     private JPanel _jPanel;
     private static final int margin = 10; // panel margin - padding to inner images
     private Runnable _onCloseImages;
@@ -56,7 +52,6 @@ public class DemoApp extends JFrame {
                 EMosaic mosaicType = EMosaic.eMosaicTrSq1;
                 ESkillLevel skill  = ESkillLevel.eBeginner;
 
-                mosaicController.setArea(1500);
                 mosaicController.setMosaicType(mosaicType);
                 mosaicController.setSizeField(skill.getDefaultSize());
                 mosaicController.setMinesCount(skill.getNumberMines(mosaicType));
@@ -118,7 +113,7 @@ public class DemoApp extends JFrame {
     // #endregion
 
     public void runApp() {
-        _td = new TestDrawing();
+        _td = new TestDrawing("Swing");
 
         _onCreateImages = new Runnable[] {
             this::testMosaicControl,
@@ -131,42 +126,48 @@ public class DemoApp extends JFrame {
             this::testFlags
         };
 
-        Box box = Box.createVerticalBox();
-
+        _frame = new JFrame();
+        Container pane = _frame.getContentPane();
+        GridLayout grLay = new GridLayout(0, 3);
+        JPanel box2 = new JPanel(grLay);
+        JButton prevImagesBtn = new JButton("...Previous");
+        JButton refresh = new JButton("🗘");
         JButton nextImagesBtn = new JButton("Next...");
-        //nextImagesBtn.setMargin(new Insets(margin, margin, 2, margin));
-        nextImagesBtn.addActionListener(ev -> onNextImages());
-        box.add(nextImagesBtn);
-
-        box.add(Box.createVerticalStrut(5));
+        box2.add(prevImagesBtn);
+        box2.add(refresh);
+        box2.add(nextImagesBtn);
+        pane.add(box2, BorderLayout.PAGE_START);
 
         _jPanel = new JPanel();
         _jPanel.setLayout(null);
 //        _jPanel.setBorder(new LineBorder(Color.BLACK));
-        box.add(_jPanel);
-        add(box);
+        pane.add(_jPanel, BorderLayout.CENTER);
 
-        SwingUtilities.invokeLater(this::onNextImages);
+        nextImagesBtn.addActionListener(ev -> onNextImages(true));
+        prevImagesBtn.addActionListener(ev -> onNextImages(false));
+        refresh      .addActionListener(ev -> onNextImages(null));
+        SwingUtilities.invokeLater(     () -> onNextImages(null));
 
 
 
         //setDefaultCloseOperation(EXIT_ON_CLOSE);
-        addWindowListener(new WindowAdapter() {
+        _frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) {
                 onDestroy();
             }
         });
 
-        setPreferredSize(new Dimension(300, 300));
-        setLocationRelativeTo(null);
-        pack();
-        setVisible(true);
+        SwingUtilities.invokeLater(nextImagesBtn::requestFocus);
+        _frame.setPreferredSize(new Dimension(300, 300));
+        _frame.setLocationRelativeTo(null);
+        _frame.pack();
+        _frame.setVisible(true);
     }
 
     protected void onDestroy() {
         _onCloseImages.run();
-        dispose();
+        _frame.dispose();
         Animator.getSingleton().close();
     }
 
@@ -178,7 +179,7 @@ public class DemoApp extends JFrame {
     void testApp(Supplier<List<IImageController<?,?,?>>> funcGetImages) {
         _jPanel.removeAll();
         List<IImageController<?,?,?>> images = funcGetImages.get();
-        setTitle(_td.getTitle(images));
+        _frame.setTitle(_td.getTitle(images));
 
         List<Component> imgControls = new ArrayList<>(images.size());
         boolean[] testTransparent = { false };
@@ -199,14 +200,16 @@ public class DemoApp extends JFrame {
             double sizeH = _jPanel.getHeight();
             RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
 
-            ATestDrawing.CellTilingResult ctr = _td.cellTiling(rc, images, testTransparent[0]);
+            TestDrawing.CellTilingResult ctr = _td.cellTiling(rc, images, testTransparent[0]);
             SizeDouble imgSize = ctr.imageSize;
+            if (imgSize.width <= 0 || imgSize.height <= 0)
+                return;
             if (createImgControls)
                 imgControls.clear();
 
-            Function<IImageController<?,?,?>, ATestDrawing.CellTilingInfo> callback = ctr.itemCallback;
+            Function<IImageController<?,?,?>, TestDrawing.CellTilingInfo> callback = ctr.itemCallback;
             for (IImageController<?,?,?> imgObj : images) {
-                ATestDrawing.CellTilingInfo cti = callback.apply(imgObj);
+                TestDrawing.CellTilingInfo cti = callback.apply(imgObj);
                 PointDouble offset = cti.imageOffset;
 
                 if (createImgControls) {
@@ -220,7 +223,7 @@ public class DemoApp extends JFrame {
 
                             @Override
                             public void paintComponent(Graphics g) {
-                                //super.paintComponent(g);
+                              //super.paintComponent(g); // don`t redraw base
                                 Object image = imgObj.getImage();
                                 if (image instanceof Icon) {
                                     Icon ico = (Icon)image;
@@ -239,8 +242,10 @@ public class DemoApp extends JFrame {
 
                         Component imgControl2 = imgControl;
                         PropertyChangeListener onChangeImage = ev -> {
-                            if (ev.getPropertyName().equals(IImageController.PROPERTY_IMAGE))
-                                imgControl2.invalidate();
+                            if (ev.getPropertyName().equals(IImageController.PROPERTY_IMAGE)) {
+                                _jPanel.repaint();
+                                imgControl2.repaint();
+                            }
                         };
                         imgObj.addListener(onChangeImage);
                         binding.put(imgObj, onChangeImage);
@@ -249,7 +254,6 @@ public class DemoApp extends JFrame {
                     _jPanel.add(imgControl);
 //                    ((JPanel)imgControl).setBorder(new LineBorder(Color.RED));
                     imgControls.add(ctr.tableSize.width * cti.j + cti.i, imgControl);
-//                    resized = true; // to set real values to imgControl.setBounds
                 }
 
                 if (resized) {
@@ -297,14 +301,20 @@ public class DemoApp extends JFrame {
         };
     }
 
-    void onNextImages() {
+    void onNextImages(Boolean isNext) {
         if (_onCloseImages != null)
             _onCloseImages.run();
 
-        Runnable onCreate = _onCreateImages[_nextCreateImagesIndex];
-        if (++_nextCreateImagesIndex >= _onCreateImages.length)
-            _nextCreateImagesIndex = 0;
-        onCreate.run();
+        if (isNext != null)
+            if (isNext) {
+                if (++_nextCreateImagesIndex >= _onCreateImages.length)
+                    _nextCreateImagesIndex = 0;
+            } else {
+                if (--_nextCreateImagesIndex < 0)
+                    _nextCreateImagesIndex = _onCreateImages.length - 1;
+            }
+
+        _onCreateImages[_nextCreateImagesIndex].run();
     }
 
     public static void main(String[] args) {

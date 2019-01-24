@@ -13,7 +13,7 @@ import fmg.core.img.MosaicAnimatedModel.ERotateMode;
 import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.mosaic.MosaicGameModel;
 
-public abstract class ATestDrawing {
+public class TestDrawing {
 
     public Random getRandom() { return ThreadLocalRandom.current(); }
     public int r(int max) { return getRandom().nextInt(max); }
@@ -22,7 +22,7 @@ public abstract class ATestDrawing {
 
     private final String titlePrefix;
 
-    protected ATestDrawing(String titlePrefix) {
+    public TestDrawing(String titlePrefix) {
         this.titlePrefix = titlePrefix;
     }
 

@@ -21,14 +21,14 @@ import fmg.common.Color;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.ATestDrawing;
-import fmg.core.img.ATestDrawing.CellTilingInfo;
-import fmg.core.img.ATestDrawing.CellTilingResult;
 import fmg.core.img.IImageController;
+import fmg.core.img.TestDrawing;
+import fmg.core.img.TestDrawing.CellTilingInfo;
+import fmg.core.img.TestDrawing.CellTilingResult;
 import fmg.jfx.utils.Cast;
 
 /** @see {@link MosaicSkillImg#main}, {@link MosaicGroupImg#main}, {@link MosaicsImg#main} */
-public final class TestDrawing extends Application {
+public final class DemoApp extends Application {
 
     static final int margin = 10;
 
@@ -40,7 +40,7 @@ public final class TestDrawing extends Application {
       //setUserAgentStylesheet(STYLESHEET_MODENA);
 
 
-        ATestDrawing td = new ATestDrawing("JFX") {};
+        TestDrawing td = new TestDrawing("JFX");
 
         List<IImageController<?,?,?>> images = funcGetImages.get();
         boolean[] testTransparent = { td.bl() };
@@ -178,7 +178,7 @@ public final class TestDrawing extends Application {
     }
 
     public static void testApp(Supplier<List<IImageController<?,?,?>>> funcGetImages) {
-        TestDrawing.funcGetImages = funcGetImages;
+        DemoApp.funcGetImages = funcGetImages;
         launch();
     }
 

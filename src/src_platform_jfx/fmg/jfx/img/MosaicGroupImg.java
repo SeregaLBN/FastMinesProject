@@ -107,7 +107,7 @@ public abstract class MosaicGroupImg<TImage> extends MosaicSkillOrGroupView<TIma
 
     ////////////// TEST //////////////
     public static void main(String[] args) {
-        TestDrawing.testApp(() ->
+        DemoApp.testApp(() ->
             Stream.concat(Stream.of((EMosaicGroup)null),
                           Stream.of(EMosaicGroup.values()))
                 .map(e -> new Pair<>(new MosaicGroupImg.ControllerCanvas (e),

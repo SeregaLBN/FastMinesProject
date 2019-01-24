@@ -127,7 +127,7 @@ public abstract class MosaicImg<TImage>
 
     ////////////// TEST //////////////
     public static void main(String[] args) {
-        TestDrawing.testApp(() ->
+        DemoApp.testApp(() ->
             // // test single
             // Arrays.asList(new MosaicImg.ControllerImage() { { setMosaicType(EMosaic.eMosaicSquare1); }})
 
