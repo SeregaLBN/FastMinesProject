@@ -69,83 +69,13 @@
             "args": ""
         },
         {
-            "name": "Java SWING: test AboutDlg",
+            "name": "Java SWING: test dialogs",
             "type": "java",
             "request": "launch",
             "cwd": "${workspaceFolder}/FastMines_swing",
             "console": "internalConsole",
             "stopOnEntry": false,
-            "mainClass": "fmg.swing.dialogs.AboutDlg",
-            "args": ""
-        },
-        {
-            "name": "Java SWING: test ChampionDlg",
-            "type": "java",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/FastMines_swing",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "fmg.swing.dialogs.ChampionDlg",
-            "args": ""
-        },
-        {
-            "name": "Java SWING: test CustomSkillDlg",
-            "type": "java",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/FastMines_swing",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "fmg.swing.dialogs.CustomSkillDlg",
-            "args": ""
-        },
-        {
-            "name": "Java SWING: test LoginDlg",
-            "type": "java",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/FastMines_swing",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "fmg.swing.dialogs.LoginDlg",
-            "args": ""
-        },
-        {
-            "name": "Java SWING: test ManageDlg",
-            "type": "java",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/FastMines_swing",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "fmg.swing.dialogs.ManageDlg",
-            "args": ""
-        },
-        {
-            "name": "Java SWING: test ReportDlg",
-            "type": "java",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/FastMines_swing",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "fmg.swing.dialogs.ReportDlg",
-            "args": ""
-        },
-        {
-            "name": "Java SWING: test SelectMosaicDlg",
-            "type": "java",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/FastMines_swing",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "fmg.swing.dialogs.SelectMosaicDlg",
-            "args": ""
-        },
-        {
-            "name": "Java SWING: test StatisticDlg",
-            "type": "java",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/FastMines_swing",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "fmg.swing.dialogs.StatisticDlg",
+            "mainClass": "fmg.swing.app.TestDialogs",
             "args": ""
         },
         {

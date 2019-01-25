@@ -328,11 +328,4 @@ public class CustomSkillDlg extends JDialog {
         }
     }
 
-    //////////////////////////////////////////////////
-    // TEST
-    public static void main(String[] args) {
-        CustomSkillDlg sm = new CustomSkillDlg(null, true);
-        sm.setVisible(true);
-    }
-
 }

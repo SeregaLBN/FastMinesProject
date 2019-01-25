@@ -155,12 +155,4 @@ public class LoginDlg extends JDialog {
     public void setOkActionListener(ActionListener onOkActionListener) { this.onOkActionListener = onOkActionListener; }
     public void setCancelActionListener(ActionListener CancelOkActionListener) { this.onCancelActionListener = CancelOkActionListener; }
 
-    //////////////////////////////////////////////////
-    // TEST
-    /** тестовый метод для проверки диалогового окна */
-    public static void main(String[] args) {
-        LoginDlg dlg = new LoginDlg(null, true, "aasd", true);
-        dlg.setVisible(true);
-    }
-
 }

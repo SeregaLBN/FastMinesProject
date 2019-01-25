@@ -13,7 +13,6 @@ import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.LogoModel;
 import fmg.core.img.SmileModel;
-import fmg.swing.img.Animator;
 import fmg.swing.img.Logo;
 import fmg.swing.img.Smile;
 import fmg.swing.utils.GuiTools;
@@ -314,15 +313,6 @@ public class AboutDlg extends JDialog implements AutoCloseable {
     public void close() {
         _logo.close();
         _smile.close();
-    }
-
-    //////////////////////////////////////////////////
-    // TEST
-    public static void main(String[] args) {
-        try (AboutDlg dlg = new AboutDlg(null, true)) {
-            dlg.setVisible(true);
-        }
-        Animator.getSingleton().close();
     }
 
 }

@@ -12,7 +12,6 @@ import fmg.core.types.viewmodel.serializable.PlayersModel;
 import fmg.swing.app.Main;
 import fmg.swing.app.model.view.ReportTableModel;
 import fmg.swing.app.model.view.StaticsticTblModel;
-import fmg.swing.img.Animator;
 
 /** Диалог отображения статистики пользователя */
 public class StatisticDlg extends ReportDlg {
@@ -67,17 +66,6 @@ public class StatisticDlg extends ReportDlg {
     public void showData(ESkillLevel eSkill, EMosaic eMosaic) {
         int pos = players.getPos((parent==null) ? null : parent.getActiveUserId());
         super.showData(eSkill, eMosaic, pos);
-    }
-
-    //////////////////////////////////////////////////
-    // TEST
-    public static void main(String[] args) {
-        PlayersModel players = new PlayersModel();
-        players.Load();
-        try (StatisticDlg dlg = new StatisticDlg(null, true, players)) {
-            dlg.showData(ESkillLevel.eAmateur, EMosaic.eMosaicTriangle3);
-        }
-        Animator.getSingleton().close();
     }
 
 }

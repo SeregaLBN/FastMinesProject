@@ -10,7 +10,6 @@ import fmg.core.types.viewmodel.serializable.ChampionsModel;
 import fmg.swing.app.Main;
 import fmg.swing.app.model.view.ChampionTblModel;
 import fmg.swing.app.model.view.ReportTableModel;
-import fmg.swing.img.Animator;
 
 /** Диалог отображения чемпионов */
 public class ChampionDlg extends ReportDlg {
@@ -55,17 +54,6 @@ public class ChampionDlg extends ReportDlg {
         int pos = champions.getPos((parent==null) ? null : parent.getActiveUserId(), eMosaic, eSkill);
         // ...на этой позиции и фокусируюсь
         super.showData(eSkill, eMosaic, pos);
-    }
-
-    //////////////////////////////////////////////////
-    // TEST
-    public static void main(String[] args) {
-        ChampionsModel champions = new ChampionsModel(null);
-        champions.Load();
-        try (ChampionDlg dlg = new ChampionDlg(null, true, champions)) {
-            dlg.showData(ESkillLevel.eBeginner, EMosaic.eMosaicSquare1);
-        }
-        Animator.getSingleton().close();
     }
 
 }

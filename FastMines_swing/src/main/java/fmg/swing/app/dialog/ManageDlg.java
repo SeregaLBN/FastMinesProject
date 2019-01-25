@@ -298,18 +298,4 @@ public class ManageDlg extends JDialog {
         doNotAskStartup.setSelected(checked);
     }
 
-    //////////////////////////////////////////////////
-    // TEST
-    public static void main(String[] args) {
-        try {
-            PlayersModel players = new PlayersModel();
-            players.Load();
-            ManageDlg manage = new ManageDlg(null, true, players);
-            manage.setVisible(true);
-            players.Save();
-        } catch (Exception ex) {
-            System.err.println(ex);
-        }
-    }
-
 }

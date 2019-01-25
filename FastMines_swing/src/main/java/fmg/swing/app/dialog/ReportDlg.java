@@ -24,11 +24,10 @@ import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
 import fmg.swing.app.Main;
 import fmg.swing.app.model.view.ReportTableModel;
-import fmg.swing.img.Animator;
 import fmg.swing.img.MosaicImg;
 import fmg.swing.utils.ImgUtils;
 
-abstract class ReportDlg extends JDialog implements AutoCloseable {
+public abstract class ReportDlg extends JDialog implements AutoCloseable {
 
     private static final long serialVersionUID = 1L;
 
@@ -305,16 +304,6 @@ abstract class ReportDlg extends JDialog implements AutoCloseable {
             setBackground(table.getTableHeader().getBackground());
             return cmpnt;
         }
-    }
-
-    //////////////////////////////////////////////////
-    // TEST
-    public static void main(String[] args) {
-        try (ReportDlg dlg = new ReportDlg(null, true) { private static final long serialVersionUID = 1L; })
-        {
-            dlg.showData(ESkillLevel.eAmateur, EMosaic.eMosaicTriangle1, -1);
-        }
-        Animator.getSingleton().close();
     }
 
 }

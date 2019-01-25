@@ -18,7 +18,6 @@ import fmg.core.types.EMosaicGroup;
 import fmg.swing.app.Main;
 import fmg.swing.app.model.control.SpinNumberDocListener;
 import fmg.swing.app.model.control.SpinnerDiapasonModel;
-import fmg.swing.img.Animator;
 import fmg.swing.img.MosaicImg;
 import fmg.swing.utils.Cast;
 import fmg.swing.utils.GuiTools;
@@ -341,17 +340,6 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
     public void close() {
         mosaicsImg.close();
         mosaicsImgRollover.close();
-    }
-
-    //////////////////////////////////////////////////
-    // TEST
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            try (SelectMosaicDlg sm = new SelectMosaicDlg(null, true)) {
-                sm.startSelect(EMosaicGroup.eQuadrangles);
-            }
-            Animator.getSingleton().close();
-        });
     }
 
 }
