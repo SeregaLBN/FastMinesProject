@@ -60,82 +60,12 @@
         },
         {
             "type": "java",
-            "name": "Java SWING: test MosaicJPanelController",
+            "name": "Java SWING: test DemoApp",
             "request": "launch",
             "cwd": "${workspaceFolder}/FastMines_swing",
             "console": "internalConsole",
             "stopOnEntry": false,
-            "mainClass": "fmg.swing.mosaic.MosaicJPanelController",
-            "args": ""
-        },
-        {
-            "type": "java",
-            "name": "Java SWING: test MosaicImg",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/FastMines_swing",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "fmg.swing.img.MosaicImg",
-            "args": ""
-        },
-        {
-            "name": "Java SWING: test MosaicSkillImg",
-            "type": "java",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/FastMines_swing",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "fmg.swing.img.MosaicSkillImg",
-            "args": ""
-        },
-        {
-            "name": "Java SWING: test MosaicGroupImg",
-            "type": "java",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/FastMines_swing",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "fmg.swing.img.MosaicGroupImg",
-            "args": ""
-        },
-        {
-            "name": "Java SWING: test Logo images",
-            "type": "java",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/FastMines_swing",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "fmg.swing.img.Logo",
-            "args": ""
-        },
-        {
-            "name": "Java SWING: test Mine images",
-            "type": "java",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/FastMines_swing",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "fmg.swing.img.Mine",
-            "args": ""
-        },
-        {
-            "name": "Java SWING: test Smile images",
-            "type": "java",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/FastMines_swing",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "fmg.swing.img.Smile",
-            "args": ""
-        },
-        {
-            "name": "Java SWING: test Flag images",
-            "type": "java",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/FastMines_swing",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "fmg.swing.img.Flag",
+            "mainClass": "fmg.swing.app.DemoApp",
             "args": ""
         },
         {
