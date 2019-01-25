@@ -28,3 +28,5 @@ Mines*.stc
 **/*FastMines.*.nuget.props
 local.properties
 *.iml
+gradlew*
+gradle-wrapper*
