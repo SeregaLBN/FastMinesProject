@@ -13,6 +13,7 @@
 **/build
 **/Debug
 **/Release
+FastMines.sln.DotSettings.user
 FastMines_uwp/*.VC.db
 FastMines_uwp/*.VC.opendb
 .vs/*
