@@ -152,9 +152,12 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
             model.setImgMine(_imgMine.getImage());
         } else {
             _imgFlag.getModel().setSize(new SizeDouble(max, max));
-            model.setImgFlag(ImgUtils.zoom(_imgFlag.getImage(), (int)sq, (int)sq));
             _imgMine.getModel().setSize(new SizeDouble(max, max));
-            model.setImgMine(ImgUtils.zoom(_imgMine.getImage(), (int)sq, (int)sq));
+            int iSq = (int)sq;
+            if (iSq < 1)
+                return;
+            model.setImgFlag(ImgUtils.zoom(_imgFlag.getImage(), iSq, iSq));
+            model.setImgMine(ImgUtils.zoom(_imgMine.getImage(), iSq, iSq));
         }
     }
 

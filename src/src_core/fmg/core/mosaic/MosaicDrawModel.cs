@@ -332,6 +332,7 @@ namespace fmg.core.mosaic {
                 switch (ev.PropertyName) {
                 case nameof(this.MosaicType):
                 case nameof(this.Area):
+                case nameof(this.Size):
                 case nameof(this.PenBorder):
                     var penBorder = PenBorder;
                     FontInfo.Size = CellAttr.GetSq(penBorder.Width);

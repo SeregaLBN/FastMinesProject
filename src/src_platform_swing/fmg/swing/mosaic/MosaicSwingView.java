@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import fmg.common.Color;
+import fmg.common.LoggerSimple;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.RegionDouble;
@@ -276,6 +277,7 @@ public abstract class MosaicSwingView<TImage,
     protected void onPropertyModelChanged(PropertyChangeEvent ev) {
         super.onPropertyModelChanged(ev);
         if (MosaicDrawModel.PROPERTY_FONT_INFO.equals(ev.getPropertyName())) {
+            LoggerSimple.put("MosaicSwingView::onPropertyModelChanged: PROPERTY_FONT_INFO: font reset: font size={0}", getModel().getFontInfo().getSize());
             _font = null;
             _mapTextLayout.clear();
         }

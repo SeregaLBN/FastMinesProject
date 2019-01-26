@@ -50,8 +50,8 @@ namespace fmg.uwp.img {
         }
 
         public void Pause(object subscriber) {
-            SubscribeInfo info = _subscribers[subscriber];
-            if (info == null)
+            SubscribeInfo info;
+            if (!_subscribers.TryGetValue(subscriber, out info))
                 return;
             info.active = false;
             info.startTime = DateTime.MinValue + (DateTime.Now - info.startTime); // set of pause delta time

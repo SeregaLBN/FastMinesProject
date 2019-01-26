@@ -13,6 +13,10 @@ namespace fmg.core.img {
         public event PropertyChangedEventHandler PropertyChanged;
         protected readonly NotifyPropertyChanged _notifier;
 
+        public FlagModel() {
+            _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev), false);
+        }
+
         /// <summary> width and height in pixel </summary>
         public SizeDouble Size {
             get { return _size; }

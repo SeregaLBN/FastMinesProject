@@ -116,13 +116,15 @@ namespace fmg.uwp.mosaic.xaml {
             // 2. paint all cells
             var xamlBinder = MapCellToShape;
             foreach (var cell in modifiedCells) {
-               var binder = xamlBinder[cell];
-               var txt = binder.Txt;
-               var image = binder.Img;
-               var poly = binder.Poly;
-               var rcInner = cell.GetRcInner(pen.Width).MoveXY(offset.Width, offset.Height);
-
-               { // 2.1. paint component
+                CellShapes binder;
+                if (!xamlBinder.TryGetValue(cell, out binder))
+                    return;
+                var txt = binder.Txt;
+                var image = binder.Img;
+                var poly = binder.Poly;
+                var rcInner = cell.GetRcInner(pen.Width).MoveXY(offset.Width, offset.Height);
+                
+                { // 2.1. paint component
                     { // 2.1.1. paint cell background
                         Color clr;
                         if (isSimpleDraw) // когда русуется иконка, а не игровое поле, - делаю попроще...

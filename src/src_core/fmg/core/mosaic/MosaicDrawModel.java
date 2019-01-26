@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fmg.common.Color;
+import fmg.common.LoggerSimple;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.INotifyPropertyChanged;
@@ -404,8 +405,10 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
             switch (ev.getPropertyName()) {
             case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
             case MosaicGameModel.PROPERTY_AREA:
+            case MosaicDrawModel.PROPERTY_SIZE:
             case MosaicDrawModel.PROPERTY_PEN_BORDER:
                 PenBorder penBorder = getPenBorder();
+                LoggerSimple.put("MosaicDrawModel::onPropertyChanged: need change font size: pName={0}", ev.getPropertyName());
                 getFontInfo().setSize(getCellAttr().getSq(penBorder.getWidth()));
                 break;
             default:
