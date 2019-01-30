@@ -115,10 +115,9 @@ namespace fmg.core.types {
         }
 
         public static String GetDescription(this ESkillLevel self) {
-            switch (self) {
-            case ESkillLevel.eProfi: return "Professional";
-            default: return self.ToString().Substring(1);
-            }
+            if (self == ESkillLevel.eProfi)
+                return "Professional";
+            return self.ToString().Substring(1);
         }
 
         public static int Ordinal(this ESkillLevel self) {

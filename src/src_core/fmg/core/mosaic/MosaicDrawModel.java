@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fmg.common.Color;
-import fmg.common.LoggerSimple;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.INotifyPropertyChanged;
@@ -29,22 +28,20 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
     /** Fit the area/padding to the size.
      *
      * <ul>При autoFit = true
-     * <li> При любом изменении Size, Padding меняется пропорционально Size
-     * <li> При любом изменении Size / MosaicType / SizeField / Padding,
+     * <li> При изменении Size, Padding меняется пропорционально Size
+     * <li> При изменении Size / MosaicType / SizeField / Padding,
      *      Мозаика равномерно вписывается во внутреннюю область {@link #getInnerSize()}
-     * <li> Area напрямую не устанавливается. А если устанавливается, то {@link #getMosaicSize()} + {@link #getPadding()}
-     *      будут определять новый {@link #getSize()}
+     * <li> При изменении Area, нужно что бы {@link #getMosaicSize()} + {@link #getPadding()} будут определять новый {@link #getSize()}
      * </ul>
      *
      * <ul>При autoFit = false
-     * <li> <ol>При любом изменении Size / MosaicType / SizeField:
+     * <li> <ol>При изменении Size / MosaicType / SizeField:
      *      <li> Мозаика равномерно вписывается во вcю область {@link #getSize()}
      *      <li> при этом Padding заного перерасчитывается с нуля
      *      </ol>
-     * <li> при изменении Offset меняется Padding так, чтобы InnerSize остался прежним
-     * <li> Padding напрямую не устанавливается (меняется через установку Offset).
-     *      А если меняется, то перерасчитывается Area, так что бы мозаика вписывалась внутрь нового InnerSize.
-     * <li> Area меняется явно. При этом Size и Offset не меняются, но при этом меняется Padding.left и Padding.bottom.
+     * <li> При изменении Offset меняется Padding так, чтобы InnerSize остался прежним
+     * <li> При изменении Padding перерасчитывается Area, так что бы мозаика вписывалась внутрь нового InnerSize.
+     * <li> При изменении Area: при этом Size и Offset не меняются, но при этом меняется Padding.left и Padding.bottom.
      * </ul>
      **/
     private boolean        _autoFit = true;
@@ -345,22 +342,16 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
 
                 // recalc size
                 if (PROPERTY_AREA.equals(ev.getPropertyName())) {
-                    String err = "При autoFit==true, Area напрямую не устанавливается!";
-                    System.err.println(err);
-                    if (!true) {
-                        throw new UnsupportedOperationException(err);
-                    } else {
-                        SizeDouble ms = getMosaicSize();
-                        BoundDouble p = getPadding();
-                        if (((ms.width  + p.getLeftAndRight()) <= 0) ||
-                            ((ms.height + p.getTopAndBottom()) <= 0))
-                        {
-                            // reset padding
-                            p = new BoundDouble(0);
-                            setPadding(p);
-                        }
-                        setSize(new SizeDouble(ms.width + p.getLeftAndRight(), ms.height + p.getTopAndBottom()));
+                    SizeDouble ms = getMosaicSize();
+                    BoundDouble p = getPadding();
+                    if (((ms.width  + p.getLeftAndRight()) <= 0) ||
+                        ((ms.height + p.getTopAndBottom()) <= 0))
+                    {
+                        // reset padding
+                        p = new BoundDouble(0);
+                        setPadding(p);
                     }
+                    setSize(new SizeDouble(ms.width + p.getLeftAndRight(), ms.height + p.getTopAndBottom()));
                 }
             } else {
                 // recalc area / padding
@@ -380,15 +371,8 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
                 }
 
                 // recalc area
-                if (PROPERTY_PADDING.equals(ev.getPropertyName())) {
-                    String err = "При autoFit==false, Padding напрямую не устанавливается!";
-                    System.err.println(err);
-                    if (!true) {
-                        throw new UnsupportedOperationException(err);
-                    } else {
-                        setArea(MosaicHelper.findAreaBySize(getMosaicType(), getSizeField(), getInnerSize(), new SizeDouble()));
-                    }
-                }
+                if (PROPERTY_PADDING.equals(ev.getPropertyName()))
+                    setArea(MosaicHelper.findAreaBySize(getMosaicType(), getSizeField(), getInnerSize(), new SizeDouble()));
 
                 // recalc size
                 if (PROPERTY_AREA.equals(ev.getPropertyName())) {
@@ -408,7 +392,6 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
             case MosaicDrawModel.PROPERTY_SIZE:
             case MosaicDrawModel.PROPERTY_PEN_BORDER:
                 PenBorder penBorder = getPenBorder();
-                LoggerSimple.put("MosaicDrawModel::onPropertyChanged: need change font size: pName={0}", ev.getPropertyName());
                 getFontInfo().setSize(getCellAttr().getSq(penBorder.getWidth()));
                 break;
             default:

@@ -212,7 +212,6 @@ namespace Test.FastMines.Uwp.Images {
                 EMosaic mosaicType = EMosaic.eMosaicTrSq1;
                 ESkillLevel skill = ESkillLevel.eBeginner;
 
-                mosaicController.Area = 500;
                 mosaicController.MosaicType = mosaicType;
                 mosaicController.SizeField = skill.GetDefaultSize();
                 mosaicController.MinesCount = skill.GetNumberMines(mosaicType);

@@ -44,7 +44,6 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
     /** width and height in pixel */
     @Override
     public SizeDouble getSize() { return getModel().getSize(); }
-    public void setSize(double widhtAndHeight) { setSize(new SizeDouble(widhtAndHeight, widhtAndHeight)) ; }
     @Override
     public void setSize(SizeDouble value) { getModel().setSize(value); }
 

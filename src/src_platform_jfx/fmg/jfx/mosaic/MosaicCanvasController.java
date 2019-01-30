@@ -111,7 +111,6 @@ public class MosaicCanvasController extends MosaicController<Canvas, Image, Mosa
                 EMosaic mosaicType = EMosaic.eMosaicTrSq1;
                 ESkillLevel skill  = ESkillLevel.eBeginner;
 
-                ctrllr.setArea(1500);
                 ctrllr.setMosaicType(mosaicType);
                 ctrllr.setSizeField(skill.getDefaultSize());
                 ctrllr.setMinesCount(skill.getNumberMines(mosaicType));

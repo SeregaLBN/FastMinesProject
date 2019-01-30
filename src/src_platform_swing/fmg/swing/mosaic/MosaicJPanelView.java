@@ -12,6 +12,8 @@ import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.mosaic.MosaicGameModel;
+import fmg.core.mosaic.MosaicHelper;
+import fmg.core.mosaic.MosaicInitData;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.swing.img.Flag;
 import fmg.swing.img.Mine;
@@ -44,6 +46,10 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
 
                 @Override
                 protected void paintComponent(Graphics g) {
+                    Dimension sizeOutward = this.getSize();
+                    g.setColor(java.awt.Color.GREEN);
+                    g.fillRect(0, 0, sizeOutward.width, sizeOutward.height);
+
                     //super.paintComponent(g);
                     Graphics2D g2d = (Graphics2D) g;
                     g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -60,15 +66,31 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
                 @Override
                 public Dimension getPreferredSize() {
                     SizeDouble size = getModel().getSize();
-                    size.height++;
-                    size.width++;
-//                    System.out.println("Mosaic::getPreferredSize: size="+size);
                     return Cast.toSize(size);
-                 }
+                }
 
                 @Override
                 public Dimension getMinimumSize() {
-                    return getPreferredSize();
+                    MosaicGameModel m = getModel();
+                    SizeDouble minSize = MosaicHelper.getSize(m.getMosaicType(), MosaicInitData.AREA_MINIMUM, m.getSizeField());
+                    return new Dimension((int)minSize.width, (int)minSize.height);
+                }
+
+                @Override
+                public void setBackground(Color bg) {
+                    getModel().setBackgroundColor(Cast.toColor(bg));
+                }
+
+                @Override
+                public Color getBackground() {
+                    return Cast.toColor(getModel().getBackgroundColor());
+                }
+
+                @Override
+                public void setBounds(int x, int y, int width, int height) {
+                    if ((width > 0) && (height > 0))
+                        MosaicJPanelView.this.setSize(new SizeDouble(width, height));
+                    super.setBounds(x, y, width, height);
                 }
 
             };

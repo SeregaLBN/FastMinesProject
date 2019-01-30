@@ -1,6 +1,6 @@
 package fmg.core.types;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.stream.IntStream;
 
@@ -19,7 +19,7 @@ public enum ESkillLevel {
     /** коэффициент уровня сложности в зависимости от типа мозаики - чем больше, тем сложнее */
     private static final Map<EMosaic, Double> mosaicCoefficient; // skill level coefficient
     static {
-        mosaicCoefficient = new HashMap<EMosaic, Double>(EMosaic.values().length);
+        mosaicCoefficient = new EnumMap<>(EMosaic.class);
         for (EMosaic mosaicType : EMosaic.values()) {
             BaseCell.BaseAttribute attr = MosaicHelper.createAttributeInstance(mosaicType);
 
@@ -87,7 +87,7 @@ eCrazy      281
         case eCrazy   : return 0.12488888888888888;
         default: break;
         }
-        throw new RuntimeException("Invalid method call. Для уровня сложности '"+this+"' нет коэффициента сложности.");
+        throw new IllegalArgumentException("Invalid method call. Для уровня сложности '"+this+"' нет коэффициента сложности.");
     }
 
     /** размеры полей */
@@ -99,7 +99,7 @@ eCrazy      281
         case eCrazy   : return new Matrisize(45, 25); // 281
         default: break;
         }
-        throw new RuntimeException("Invalid method call. Для уровня сложности '"+this+"' нет размера поля по-умолчанию.");
+        throw new IllegalArgumentException("Invalid method call. Для уровня сложности '"+this+"' нет размера поля по-умолчанию.");
     }
 
     /** Узнать кол-во мин на размере поля по-умолчанию */
@@ -112,16 +112,15 @@ eCrazy      281
         if (customSizeMosaic == null)
             throw new IllegalArgumentException("customSizeMosaic must be not null");
         if (this == eCustom)
-            throw new RuntimeException("Для уровня сложности '"+this+"' кол-во мин задаётся явно, а не расчитывается...");
+            throw new IllegalArgumentException("Для уровня сложности '"+this+"' кол-во мин задаётся явно, а не расчитывается...");
 
         return (int) (customSizeMosaic.m * customSizeMosaic.n * getCoefficient() / mosaicCoefficient.get(eMosaic));
     }
 
     public String getDescription() {
-        switch (this) {
-        case eProfi: return "Professional";
-        default    : return this.toString().substring(1);
-        }
+        if (this == eProfi)
+            return "Professional";
+        return this.toString().substring(1);
     }
 
     public static ESkillLevel fromOrdinal(int ordinal) {

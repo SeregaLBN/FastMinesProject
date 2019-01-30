@@ -61,11 +61,6 @@ public abstract class MosaicController<TImage, TImageInner,
         return getModel().getMatrix();
     }
 
-    /** площадь ячеек */
-    public double getArea() { return getModel().getArea(); }
-    /** установить новую площадь ячеек */
-    public void setArea(double newArea) { getModel().setArea(newArea); }
-
     /** размер поля в ячейках */
     public Matrisize getSizeField() { return getModel().getSizeField(); }
     /** размер поля в ячейках */
@@ -492,8 +487,9 @@ public abstract class MosaicController<TImage, TImageInner,
     }
     /** размер мозаики в пикселях для указанных параметров */
     public SizeDouble getMosaicSize(Matrisize sizeField, double area) {
-        return DoubleExt.hasMinDiff(area, getArea())
-            ? getModel().getCellAttr().getSize(sizeField)
+        TMosaicModel m = getModel();
+        return DoubleExt.hasMinDiff(area, m.getArea())
+            ? m.getCellAttr().getSize(sizeField)
             : MosaicHelper.getSize(getMosaicType(), area, sizeField);
     }
     /** размер мозаики в пикселях */

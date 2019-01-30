@@ -258,7 +258,7 @@ public class CustomSkillDlg extends JDialog {
 
             if (isFullScreen) {
                 if (isFullScreenAtCurrArea)
-                    s = parent.calcMaxMosaicSize(parent.getMosaicController().getArea());
+                    s = parent.calcMaxMosaicSize(parent.getMosaicController().getModel().getArea());
             } else
                 s = parent.getMosaicController().getSizeField();
             currSizeX = s.m; currSizeY = s.n;

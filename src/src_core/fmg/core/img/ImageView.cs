@@ -42,10 +42,9 @@ namespace fmg.core.img {
 
         /// <summary> width and height in pixel </summary>
         public SizeDouble Size {
-            get { return Model.Size; }
-            set { Model.Size = value; }
+            get => Model.Size;
+            set  { Model.Size = value; }
         }
-        public void SetSize(double widhtAndHeight) { Size = new SizeDouble(widhtAndHeight, widhtAndHeight); }
 
         protected abstract TImage CreateImage();
         public TImage Image {

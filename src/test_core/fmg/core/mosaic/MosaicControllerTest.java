@@ -95,7 +95,7 @@ public class MosaicControllerTest {
     public void readinessAtTheStartTest() {
         final int defArea = 500;
         try (MosaicTestController ctrlr = new MosaicTestController()) {
-            Assert.assertEquals(defArea, ctrlr.getArea(), P);
+            Assert.assertEquals(defArea, ctrlr.getModel().getArea(), P);
             Assert.assertEquals(null, ctrlr.getCellDown());
             Assert.assertEquals(0, ctrlr.getCountClick());
             Assert.assertEquals(0, ctrlr.getCountFlag());

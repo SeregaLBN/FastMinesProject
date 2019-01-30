@@ -5,13 +5,14 @@ import java.util.UUID;
 
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.Point;
+import fmg.common.geom.SizeDouble;
 import fmg.core.types.EMosaic;
 import fmg.core.types.draw.EShowElement;
 
 /** Данные проекта, записываемые/считываемые в/из файл(а) */
 public class SerializeProjData implements Externalizable {
 
-    private static final long version = 2;
+    private static final long VERSION = 2;
 
     private SerializeMosaicData mosaicData;
 
@@ -52,7 +53,7 @@ public class SerializeProjData implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeLong(version);
+        out.writeLong(VERSION);
 
         mosaicData.writeExternal(out);
 
@@ -73,8 +74,9 @@ public class SerializeProjData implements Externalizable {
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        if (version != in.readLong())
-            throw new RuntimeException("Unknown version!");
+        long ver = in.readLong();
+        if (VERSION != ver)
+            throw new IllegalArgumentException("Unknown version!");
 
         mosaicData.readExternal(in);
 
@@ -96,15 +98,16 @@ public class SerializeProjData implements Externalizable {
      * Load ini data from file
      * @return <b>true</b> - successful read; <b>false</b> - not exist or fail read, and set to defaults
      */
-    public boolean Load() {
+    public boolean load() {
         File file = getIniFile();
         if (!file.exists()) {
             setDefaults();
             return false;
         }
 
-        try {
-            ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
+        try (InputStream is = new FileInputStream(file);
+            ObjectInputStream in = new ObjectInputStream(is))
+        {
             this.readExternal(in);
             return true;
         } catch (Exception ex) {
@@ -114,10 +117,12 @@ public class SerializeProjData implements Externalizable {
         }
     }
 
-    public void Save() throws FileNotFoundException, IOException {
-        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(getIniFile()));
-        this.writeExternal(out);
-        out.flush();
+    public void save() throws IOException {
+        try (OutputStream os = new FileOutputStream(getIniFile());
+             ObjectOutputStream out = new ObjectOutputStream(os))
+        {
+            this.writeExternal(out);
+        }
     }
 
     public static File getIniFile() {
@@ -133,8 +138,8 @@ public class SerializeProjData implements Externalizable {
     public int getMinesCount() { return mosaicData.getMinesCount(); }
     public void setMinesCount(int minesCount) { mosaicData.setMinesCount(minesCount); }
 
-    public double getArea() { return mosaicData.getArea(); }
-    public void setArea(double area) { mosaicData.setArea(area); }
+    public SizeDouble getSize() { return mosaicData.getSize(); }
+    public void setSize(SizeDouble size) { mosaicData.setSize(size); }
 
     public boolean getShowElement(EShowElement key) { return eShowElements[key.ordinal()]; }
     public void setShowElement(EShowElement key, boolean val) { this.eShowElements[key.ordinal()] = val; }

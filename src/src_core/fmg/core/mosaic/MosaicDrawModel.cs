@@ -29,23 +29,22 @@ namespace fmg.core.mosaic {
         /// <item><description>При любом изменении Size, Padding меняется пропорционально Size</description></item>
         /// <item><description>При любом изменении Size / MosaicType / SizeField / Padding,
         ///                    Мозаика равномерно вписывается во внутреннюю область {@link #getInnerSize()}</description></item>
-        /// <item><description>Area напрямую не устанавливается. А если устанавливается, то {@link #getMosaicSize()} + {@link #getPadding()}
+        /// <item><description>При изменении Area, нужно что бы {@link #getMosaicSize()} + {@link #getPadding()}
         ///                    будут определять новый {@link #getSize()}</description></item>
         /// </list>
         ///
         /// <br/>
         /// При autoFit = false:
         /// <list type="number">
-        /// <item><description>При любом изменении Size / MosaicType / SizeField:
+        /// <item><description>При изменении Size / MosaicType / SizeField:
         ///     <list type="bullet">
         ///     <item><description>Мозаика равномерно вписывается во вcю область {@link #getSize()} </description></item>
         ///     <item><description>при этом Padding заного перерасчитывается с нуля </description></item>
         ///     </list>
         /// </description></item>
-        /// <item> <description>при изменении Offset меняется Padding так, чтобы InnerSize остался прежним </description></item>
-        /// <item> <description>Padding напрямую не устанавливается (меняется через установку Offset).
-        ///                     А если меняется, то перерасчитывается Area, так что бы мозаика вписывалась внутрь нового InnerSize. </description></item>
-        /// <item> <description>Area меняется явно. При этом Size и Offset не меняются, но при этом меняется Padding.left и Padding.bottom. </description></item>
+        /// <item> <description>При изменении Offset меняется Padding так, чтобы InnerSize остался прежним </description></item>
+        /// <item> <description>При изменении Padding перерасчитывается Area, так что бы мозаика вписывалась внутрь нового InnerSize. </description></item>
+        /// <item> <description>При изменении Area: при этом Size и Offset не меняются, но при этом меняется Padding.left и Padding.bottom. </description></item>
         /// </list>
         /// </summary>
         private bool           _autoFit = true;
@@ -277,23 +276,16 @@ namespace fmg.core.mosaic {
 
                     // recalc size
                     if (ev.PropertyName == nameof(this.Area)) {
-                        var err = "При autoFit==true, Area напрямую не устанавливается!";
-                      //System.Diagnostics.Debug.Assert(false, err);
-                        LoggerSimple.Put(err);
-                        if (!true) {
-                            throw new InvalidOperationException(err);
-                        } else {
-                            var ms = MosaicSize;
-                            var p = Padding;
-                            if (((ms.Width  + p.LeftAndRight) <= 0) ||
-                                ((ms.Height + p.TopAndBottom) <= 0))
-                            {
-                                // reset padding
-                                p = new BoundDouble(0);
-                                Padding = p;
-                            }
-                            Size = new SizeDouble(ms.Width + p.LeftAndRight, ms.Height + p.TopAndBottom);
+                        var ms = MosaicSize;
+                        var p = Padding;
+                        if (((ms.Width  + p.LeftAndRight) <= 0) ||
+                            ((ms.Height + p.TopAndBottom) <= 0))
+                        {
+                            // reset padding
+                            p = new BoundDouble(0);
+                            Padding = p;
                         }
+                        Size = new SizeDouble(ms.Width + p.LeftAndRight, ms.Height + p.TopAndBottom);
                     }
                 } else {
                     // recalc area / padding
@@ -312,8 +304,6 @@ namespace fmg.core.mosaic {
 
                     // recalc area
                     if (ev.PropertyName == nameof(this.Padding)) {
-                        //System.Diagnostics.Debug.Assert(false, "При autoFit==false, Padding напрямую не устанавливается.");
-                        LoggerSimple.Put("При autoFit==false, Padding напрямую не устанавливается.");
                         var innerSize = InnerSize;
                         Area = MosaicHelper.FindAreaBySize(MosaicType, SizeField, ref innerSize);
                     }

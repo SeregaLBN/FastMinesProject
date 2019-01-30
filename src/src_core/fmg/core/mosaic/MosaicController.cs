@@ -52,12 +52,6 @@ namespace fmg.core.mosaic {
 
         public IList<BaseCell> Matrix => Model.Matrix;
 
-        /// <summary> площадь ячеек </summary>
-        public double Area {
-            get { return Model.Area; }
-            set { Model.Area = value; }
-        }
-
         /// <summary> размер поля в ячейках </summary>
         public Matrisize SizeField {
             get { return Model.SizeField; }
@@ -471,8 +465,9 @@ namespace fmg.core.mosaic {
 
         /// <summary> размер мозаики в пикселях для указанных параметров </summary>
         public SizeDouble GetMosaicSize(Matrisize sizeField, double area) {
-            return area.HasMinDiff(Area)
-                ? Model.CellAttr.GetSize(sizeField)
+            var m = Model;
+            return area.HasMinDiff(m.Area)
+                ? m.CellAttr.GetSize(sizeField)
                 : MosaicHelper.GetSize(MosaicType, area, sizeField);
         }
         /// <summary> размер мозаики в пикселях </summary>

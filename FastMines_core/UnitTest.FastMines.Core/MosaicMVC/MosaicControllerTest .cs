@@ -85,7 +85,7 @@ namespace fmg.core.mosaic {
         }
 
         [Test]
-        public async Task ReadinessAtTheStartTest() {
+        public void ReadinessAtTheStartTest() {
             const int defArea = 500;
             using (var ctrlr = new MosaicTestController()) {
                 Assert.AreEqual(defArea, ctrlr.Area, P);

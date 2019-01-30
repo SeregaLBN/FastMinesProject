@@ -13,7 +13,7 @@ namespace fmg.core.mosaic {
         private EMosaic   _mosaicType = EMosaic.eMosaicSquare1;
         private Matrisize _sizeField  = ESkillLevel.eBeginner.GetDefaultSize();
         private int       _minesCount = ESkillLevel.eBeginner.GetNumberMines(EMosaic.eMosaicSquare1);
-        private double    _area = AREA_MINIMUM * 10;
+        private SizeDouble size = new SizeDouble(500, 500);
 
         private bool _lockFireSkill = false;
 
@@ -67,9 +67,9 @@ namespace fmg.core.mosaic {
             }
         }
 
-        public double Area {
-            get { return _area; }
-            set { _notifier.SetProperty(ref _area, value); }
+        public SizeDouble Size {
+            get { return size; }
+            set { _notifier.SetProperty(ref size, value); }
         }
 
         public ESkillLevel SkillLevel {
@@ -86,7 +86,7 @@ namespace fmg.core.mosaic {
             }
             set {
                 if (value == ESkillLevel.eCustom)
-                    throw new System.ArgumentException();
+                    throw new System.ArgumentException("Custom skill level not recognized");
                 var skillOld = SkillLevel;
                 if (skillOld == value)
                     return;

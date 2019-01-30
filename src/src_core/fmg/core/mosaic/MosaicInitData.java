@@ -1,6 +1,7 @@
 package fmg.core.mosaic;
 
 import fmg.common.geom.Matrisize;
+import fmg.common.geom.SizeDouble;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
 
@@ -12,13 +13,13 @@ public class MosaicInitData {
     private Matrisize sizeField;
     private EMosaic mosaicType;
     private int minesCount;
-    private double area;
+    private SizeDouble size;
 
     public MosaicInitData() {
         mosaicType = EMosaic.eMosaicSquare1;
         sizeField = ESkillLevel.eBeginner.getDefaultSize();
         minesCount = ESkillLevel.eBeginner.getNumberMines(mosaicType);
-        area = AREA_MINIMUM * 10;
+        size = new SizeDouble(500, 500);
     }
 
     public Matrisize getSizeField() { return sizeField; }
@@ -30,8 +31,8 @@ public class MosaicInitData {
     public int getMinesCount() { return minesCount; }
     public void setMinesCount(int minesCount) { this.minesCount = minesCount; }
 
-    public double getArea() { return area; }
-    public void setArea(double area) { this.area = area; }
+    public SizeDouble getSize() { return size; }
+    public void setSize(SizeDouble size) { this.size = size; }
 
     public ESkillLevel getSkillLevel() {
         if (sizeField.equals(ESkillLevel.eBeginner.getDefaultSize()) && (minesCount == ESkillLevel.eBeginner.getNumberMines(mosaicType)))
