@@ -859,9 +859,6 @@ public class Main extends JFrame {
         private static final long serialVersionUID = 1L;
 
         public PausePanel() {
-//            this.setBorder(BorderFactory.createRaisedBevelBorder());
-//          this.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-//          this.setFocusable(true);
             this.addMouseListener(Main.this.getHandlers().getPausePanelMouseListener());
         }
 
@@ -889,13 +886,10 @@ public class Main extends JFrame {
 
         @Override
         protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            if (!isPaused()) {
-                Dimension sizeOutward = this.getSize();
-                g.setColor(java.awt.Color.CYAN);
-                g.fillRect(0, 0, sizeOutward.width, sizeOutward.height);
+            if (!isPaused())
                 return;
-            }
+
+            super.paintComponent(g);
             Dimension sizeOutward = this.getSize();
             Logo.ControllerIcon logo = getLogo();
             double sq = Math.min(sizeOutward.getWidth(), sizeOutward.getHeight());
@@ -921,7 +915,20 @@ public class Main extends JFrame {
 //            return super.getPreferredSize();
             return getMosaicPanel().getPreferredSize();
         }
+        @Override
+        public Dimension getMinimumSize() {
+            return getMosaicPanel().getMinimumSize();
+        }
         /**/
+    }
+
+    @Override
+    public Dimension getMinimumSize() {
+        Insets in = getMosaicMargin();
+        Dimension dim = getMosaicPanel().getMinimumSize();
+        dim.width  += in.left + in.right;
+        dim.height += in.top  + in.bottom;
+        return dim;
     }
 
     class StatusBar extends JLabel {
@@ -946,7 +953,7 @@ public class Main extends JFrame {
         if (contentPane == null) {
             contentPane = new JPanel();
             JPanel centerPanel = getPausePanel();
-            centerPanel.setLayout(new GridLayout(0, 1));
+            centerPanel.setLayout(new GridLayout());
             centerPanel.add(getMosaicPanel());
 
             //contentPane.setBorder(BorderFactory.createEmptyBorder());
@@ -1114,6 +1121,8 @@ public class Main extends JFrame {
         }
 
         this.setContentPane(getContentPane());
+//        setMinimumSize(getMinimumSize());
+//        setMinimumSize(new Dimension(400, 400));
 
         this.setJMenuBar(getMenu());
         this.setTitle("FastMines");
@@ -1525,6 +1534,8 @@ public class Main extends JFrame {
         if (isPaused())
             changePause();
 
+//        setMinimumSize(new Dimension());
+
         ESkillLevel skill = getSkillLevel();
         getMosaicController().setMosaicType(mosaicType);
         if (skill != ESkillLevel.eCustom) {
@@ -1546,6 +1557,8 @@ public class Main extends JFrame {
 
         if (isPaused())
             changePause();
+
+//        setMinimumSize(new Dimension());
 
         getMosaicController().setSizeField(newSize);
         getMosaicController().setMinesCount(numberMines);
@@ -1715,8 +1728,9 @@ public class Main extends JFrame {
         if ((maxSize.width < size.width) || (maxSize.height < size.height))
             size = maxSize;
         Insets o = getMosaicMargin();
-//        getMosaicController().getModel().setSize(size);
-        this.setSize((int)size.width + o.left + o.right, (int)size.height + o.top + o.bottom);
+        Dimension dim = new Dimension();
+        dim.setSize(size.width + o.left + o.right, size.height + o.top + o.bottom);
+        this.setSize(dim);
     }
 
     /** Zoom + */
@@ -1756,10 +1770,8 @@ public class Main extends JFrame {
             sizeMax();
 
         for (EZoomInterface key: EZoomInterface.values())
-            switch (key ) {
-            case eAlwaysMax: break;
-            default: getMenu().getOptions().getZoomItem(key).setEnabled(!checked);
-            }
+            if (key != EZoomInterface.eAlwaysMax)
+                getMenu().getOptions().getZoomItem(key).setEnabled(!checked);
     }
 
     void optionsThemeDefault() {
@@ -2500,9 +2512,11 @@ public class Main extends JFrame {
             break;
         case MosaicGameModel.PROPERTY_SIZE_FIELD:
             getMenu().getGame().recheckSelectedSkillLevel();
+//            setMinimumSize(getMinimumSize());
             break;
         case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
             getMenu().getMosaics().recheckSelectedMosaicType();
+//            setMinimumSize(getMinimumSize());
             break;
         default:
             // none

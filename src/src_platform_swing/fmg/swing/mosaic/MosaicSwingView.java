@@ -83,7 +83,7 @@ public abstract class MosaicSwingView<TImage,
         boolean isSimpleDraw = pen.getColorLight().equals(pen.getColorShadow());
         BackgroundFill bkFill = model.getBackgroundFill();
 
-        /**/
+        /** /
         { // DEBUG
             Stroke storkeOld = g.getStroke();
 
@@ -260,8 +260,7 @@ public abstract class MosaicSwingView<TImage,
     }
 
     private Rectangle2D getStringBounds(String text) {
-        TextLayout tl = _mapTextLayout.get(text);
-        _mapTextLayout.computeIfAbsent(text, k -> new TextLayout(text, getFont(), _frc));
+        TextLayout tl = _mapTextLayout.computeIfAbsent(text, k -> new TextLayout(text, getFont(), _frc));
         return tl.getBounds();
 //        return font.getStringBounds(text, new FontRenderContext(null, true, true));
     }
