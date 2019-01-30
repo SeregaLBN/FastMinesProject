@@ -23,6 +23,7 @@ import fmg.common.geom.SizeDouble;
 import fmg.core.img.IImageController;
 import fmg.core.img.SmileModel.EFaceType;
 import fmg.core.img.TestDrawing;
+import fmg.core.mosaic.MosaicImageController;
 import fmg.core.mosaic.MosaicView;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
@@ -69,16 +70,20 @@ public class DemoApp  {
                                                  // test all
                                                  Stream.of(EMosaic.values())
 
-                                               //         // variant 1
-                                               //         .map(e -> Stream.of(new MosaicImg.ControllerIcon () { { setMosaicType(e); }},
-                                               //                             new MosaicImg.ControllerImage() { { setMosaicType(e); }}))
-                                               //         .flatMap(x -> x)
+                                                    //  // variant 1
+                                                    //  .map(e -> Stream.of(new MosaicImg.ControllerIcon (),
+                                                    //                      new MosaicImg.ControllerImage())
+                                                    //                  .peek(ctrlr -> ctrlr.setMosaicType(e)))
+                                                    //  .flatMap(x -> x)
 
                                                         // variant 2
-                                                        .map(e -> ThreadLocalRandom.current().nextBoolean()
-                                                                    ? new MosaicImg.ControllerIcon () { { setMosaicType(e); }}
-                                                                    : new MosaicImg.ControllerImage() { { setMosaicType(e); }}
-                                                            )
+                                                        .map(e -> {
+                                                                MosaicImageController<?, ?> ctrlr = ThreadLocalRandom.current().nextBoolean()
+                                                                    ? new MosaicImg.ControllerIcon ()
+                                                                    : new MosaicImg.ControllerImage();
+                                                                ctrlr.setMosaicType(e);
+                                                                return ctrlr;
+                                                            })
                                                         .collect(Collectors.toList())
                                      ); }
     public void testMosaicGroupImg() { testApp(() -> Stream.concat(Stream.of((EMosaicGroup)null),
