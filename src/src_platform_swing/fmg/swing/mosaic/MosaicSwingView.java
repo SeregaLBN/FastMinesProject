@@ -93,7 +93,7 @@ public abstract class MosaicSwingView<TImage,
             g.drawRect(0, 0, (int)size.width, (int)size.height);
 
             g.setColor(Cast.toColor(Color.Chartreuse()));
-            dotted = new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0);
+            dotted = new BasicStroke(7.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0);
             g.setStroke(dotted);
             g.drawRect((int)offset.width, (int)offset.height, (int)model.getMosaicSize().width, (int)model.getMosaicSize().height);
 

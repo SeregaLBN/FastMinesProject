@@ -26,7 +26,7 @@ public class TestDialogs {
         MosaicJPanelController ctrllr = new MosaicJPanelController();
 
         JFrame frame = new JFrame();
-        frame.add(ctrllr.getViewPanel());
+        frame.setContentPane(ctrllr.getViewPanel());
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) {
