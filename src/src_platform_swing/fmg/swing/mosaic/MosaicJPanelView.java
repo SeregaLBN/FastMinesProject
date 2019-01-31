@@ -33,7 +33,10 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
     private Flag.ControllerIcon _imgFlag = new Flag.ControllerIcon();
     private Mine.ControllerIcon _imgMine = new Mine.ControllerIcon();
     private final Collection<BaseCell> _modifiedCells = new HashSet<>();
-    boolean zoomFocusToMosaicField = !true;
+
+    boolean zoomFocusToMosaicField = false; // experimental
+    boolean forceSimpleDraw = false;
+
     private boolean useDebounce = true;
     private final Subject<SizeDouble> sizeObserv;
     private final Disposable sizeDebounce;
@@ -60,7 +63,6 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
             _control = new JPanel() {
                 private static final long serialVersionUID = 1L;
 
-                boolean forceSimpleDraw = false;
                 BufferedImage lastImg;
 
                 @Override
@@ -84,6 +86,7 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
                         // classic simple draw
                         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                         draw.accept(g2d);
+
                     } else {
                         // smart drawing
 
@@ -115,7 +118,6 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
                                 gImg.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
                                 draw.accept(gImg);
-                                g2d.drawImage(lastImg, (int)-offset.width, (int)-offset.height, null);
 
                                 gImg.dispose();
                             } // else // no else!
