@@ -1,14 +1,10 @@
 package fmg.jfx.img;
 
 import java.util.Collection;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import fmg.core.img.MosaicAnimatedModel;
 import fmg.core.mosaic.MosaicImageController;
 import fmg.core.mosaic.cells.BaseCell;
-import fmg.core.types.EMosaic;
 import fmg.jfx.mosaic.MosaicJfxView;
 
 /**
@@ -124,33 +120,5 @@ public abstract class MosaicImg<TImage>
         }
 
     }
-
-    ////////////// TEST //////////////
-    public static void main(String[] args) {
-        DemoApp.testApp(() ->
-            // // test single
-            // Arrays.asList(new MosaicImg.ControllerImage() { { setMosaicType(EMosaic.eMosaicSquare1); }})
-
-            // test all
-            Stream.of(EMosaic.values())
-
-                // // variant 1
-                // .map(e -> Stream.of(new MosaicImg.ControllerCanvas() { { setMosaicType(e); }},
-                // new MosaicImg.ControllerImage () { { setMosaicType(e); }}))
-                // .flatMap(x -> x)
-
-                // variant 2
-                .map(e -> ThreadLocalRandom.current().nextBoolean()
-                    ? new MosaicImg.ControllerCanvas() {{
-                            setMosaicType(e);
-                        }
-                    }
-                    : new MosaicImg.ControllerImage() {{
-                            setMosaicType(e);
-                        }
-                    })
-                .collect(Collectors.toList()));
-    }
-    //////////////////////////////////
 
 }

@@ -1,6 +1,5 @@
 package fmg.jfx.img;
 
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import fmg.common.Color;
@@ -104,18 +103,5 @@ public abstract class MosaicSkillImg<TImage> extends MosaicSkillOrGroupView<TIma
         }
 
     }
-
-    ////////////// TEST //////////////
-    public static void main(String[] args) {
-        DemoApp.testApp(() ->
-            Stream.concat(Stream.of((ESkillLevel)null),
-                          Stream.of(ESkillLevel.values()))
-                .map(e -> new Pair<>(new MosaicSkillImg.ControllerCanvas(e),
-                                     new MosaicSkillImg.ControllerImage(e)))
-                .flatMap(x -> Stream.of(x.first, x.second))
-                .collect(Collectors.toList())
-        );
-    }
-    //////////////////////////////////
 
 }

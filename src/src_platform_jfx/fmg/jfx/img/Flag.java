@@ -1,7 +1,5 @@
 package fmg.jfx.img;
 
-import java.util.Arrays;
-
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -137,12 +135,5 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
         }
 
     }
-
-    ////////////// TEST //////////////
-    public static void main(String[] args) {
-        DemoApp.testApp(() -> Arrays.asList(new Flag.ControllerCanvas()
-                                              , new Flag.ControllerImage()));
-    }
-    //////////////////////////////////
 
 }

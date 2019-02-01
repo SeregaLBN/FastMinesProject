@@ -1,9 +1,6 @@
 package fmg.jfx.img;
 
-import java.util.Arrays;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.*;
@@ -540,18 +537,5 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
         }
 
     }
-
-    ////////////// TEST //////////////
-    public static void main(String[] args) {
-        DemoApp.testApp(() -> {
-                return Arrays.asList(EFaceType.values()).stream()
-                    .map(e -> Stream.of(new Smile.ControllerCanvas(e),
-                                        new Smile.ControllerImage(e)))
-                    .flatMap(x -> x)
-                    .collect(Collectors.toList());
-            }
-        );
-    }
-    //////////////////////////////////
 
 }

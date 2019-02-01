@@ -1,6 +1,5 @@
-package fmg.jfx.img;
 
-import java.util.Arrays;
+package fmg.jfx.img;
 
 import fmg.core.img.LogoModel;
 
@@ -16,15 +15,5 @@ public final class Mine {
     public static class ControllerImage extends Logo.ControllerImage {
         public ControllerImage() { LogoModel.toMineModel(getModel()); }
     }
-
-    ////////////// TEST //////////////
-    public static void main(String[] args) {
-        DemoApp.testApp(() -> Arrays.asList(new Mine.ControllerCanvas()
-                                              , new Mine.ControllerImage()
-                                              , new Mine.ControllerCanvas()
-                                              , new Mine.ControllerImage()
-                           ));
-    }
-    //////////////////////////////////
 
 }

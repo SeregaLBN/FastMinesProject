@@ -1,38 +1,28 @@
 package fmg.jfx.app;
 
-import java.util.concurrent.ThreadLocalRandom;
+import javafx.application.Application;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
-import fmg.jfx.img.*;
+import fmg.core.mosaic.MosaicView;
 import fmg.jfx.mosaic.MosaicCanvasController;
 
-public class Demo {
+public class Main extends Application {
+
+    @Override
+    public void start(Stage stage) {
+        MosaicView._DEBUG_DRAW_FLOW = true;
+        MosaicCanvasController ctrllr = new MosaicCanvasController();
+
+        stage.setScene(new Scene(new Group(ctrllr.getViewCanvas())));
+        stage.setOnCloseRequest(event -> ctrllr.close());
+        stage.setTitle("FastMines simple");
+        stage.show();
+    }
 
     public static void main(String[] args) {
-        switch (ThreadLocalRandom.current().nextInt(7)) {
-        case 0:
-            Flag.main(args);
-            break;
-        case 1:
-            Logo.main(args);
-            break;
-        case 2:
-            Mine.main(args);
-            break;
-        case 3:
-            MosaicGroupImg.main(args);
-            break;
-        case 4:
-            MosaicSkillImg.main(args);
-            break;
-        case 5:
-            MosaicImg.main(args);
-            break;
-        case 6:
-            MosaicCanvasController.main(args);
-            break;
-        default:
-            break;
-        }
+        launch(args);
     }
 
 }

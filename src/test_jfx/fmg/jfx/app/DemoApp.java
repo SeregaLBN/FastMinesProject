@@ -1,9 +1,13 @@
-package fmg.jfx.img;
+package fmg.jfx.app;
 
 import java.beans.PropertyChangeListener;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -18,13 +22,19 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import fmg.common.Color;
+import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.IImageController;
+import fmg.core.img.SmileModel.EFaceType;
 import fmg.core.img.TestDrawing;
 import fmg.core.img.TestDrawing.CellTilingInfo;
 import fmg.core.img.TestDrawing.CellTilingResult;
+import fmg.core.types.EMosaic;
+import fmg.core.types.EMosaicGroup;
+import fmg.core.types.ESkillLevel;
+import fmg.jfx.img.*;
 import fmg.jfx.utils.Cast;
 
 /** @see {@link MosaicSkillImg#main}, {@link MosaicGroupImg#main}, {@link MosaicsImg#main} */
@@ -34,6 +44,83 @@ public final class DemoApp extends Application {
 
     static Supplier<List<IImageController<?,?,?>>> funcGetImages;
     private Canvas canvas;
+
+
+    ////////////// TEST //////////////
+    public static void mainFlag() {
+        DemoApp.testApp(() -> Arrays.asList(new Flag.ControllerCanvas()
+                                              , new Flag.ControllerImage()));
+    }
+    public static void mainLogo() {
+        DemoApp.testApp(() -> Arrays.asList(new Logo.ControllerCanvas()
+                                              , new Logo.ControllerImage()
+                                              , new Logo.ControllerCanvas()
+                                              , new Logo.ControllerImage()));
+    }
+    public static void mainMine() {
+        DemoApp.testApp(() -> Arrays.asList(new Mine.ControllerCanvas()
+                                              , new Mine.ControllerImage()
+                                              , new Mine.ControllerCanvas()
+                                              , new Mine.ControllerImage()
+                           ));
+    }
+    public static void mainMosaicImg() {
+        DemoApp.testApp(() ->
+            // // test single
+            // Arrays.asList(new MosaicImg.ControllerImage() { { setMosaicType(EMosaic.eMosaicSquare1); }})
+
+            // test all
+            Stream.of(EMosaic.values())
+
+                // // variant 1
+                // .map(e -> Stream.of(new MosaicImg.ControllerCanvas() { { setMosaicType(e); }},
+                // new MosaicImg.ControllerImage () { { setMosaicType(e); }}))
+                // .flatMap(x -> x)
+
+                // variant 2
+                .map(e -> ThreadLocalRandom.current().nextBoolean()
+                    ? new MosaicImg.ControllerCanvas() {{
+                            setMosaicType(e);
+                        }
+                    }
+                    : new MosaicImg.ControllerImage() {{
+                            setMosaicType(e);
+                        }
+                    })
+                .collect(Collectors.toList()));
+    }
+    public static void mainMosaicGroupImg() {
+        DemoApp.testApp(() ->
+            Stream.concat(Stream.of((EMosaicGroup)null),
+                          Stream.of(EMosaicGroup.values()))
+                .map(e -> new Pair<>(new MosaicGroupImg.ControllerCanvas (e),
+                                     new MosaicGroupImg.ControllerImage(e)))
+                .flatMap(x -> Stream.of(x.first, x.second))
+                .collect(Collectors.toList())
+        );
+    }
+    public static void mainMosaicSkillImg() {
+        DemoApp.testApp(() ->
+            Stream.concat(Stream.of((ESkillLevel)null),
+                          Stream.of(ESkillLevel.values()))
+                .map(e -> new Pair<>(new MosaicSkillImg.ControllerCanvas(e),
+                                     new MosaicSkillImg.ControllerImage(e)))
+                .flatMap(x -> Stream.of(x.first, x.second))
+                .collect(Collectors.toList())
+        );
+    }
+    public static void mainSmile() {
+        DemoApp.testApp(() -> {
+                return Arrays.asList(EFaceType.values()).stream()
+                    .map(e -> Stream.of(new Smile.ControllerCanvas(e),
+                                        new Smile.ControllerImage(e)))
+                    .flatMap(x -> x)
+                    .collect(Collectors.toList());
+            }
+        );
+    }
+    //////////////////////////////////
+
 
     @Override
     public void start(Stage primaryStage) {
@@ -180,6 +267,11 @@ public final class DemoApp extends Application {
     public static void testApp(Supplier<List<IImageController<?,?,?>>> funcGetImages) {
         DemoApp.funcGetImages = funcGetImages;
         launch();
+    }
+
+
+    public static void main(String[] args) {
+        mainFlag(); // any
     }
 
 }
