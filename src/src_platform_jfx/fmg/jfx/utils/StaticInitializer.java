@@ -5,6 +5,8 @@ import fmg.jfx.img.Animator;
 
 public final class StaticInitializer {
 
+    private StaticInitializer() {}
+
     static {
         Factory.DEFERR_INVOKER = javafx.application.Platform::runLater;
         Factory.GET_ANIMATOR = Animator::getSingleton;

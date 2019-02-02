@@ -90,15 +90,15 @@ public class DemoActivity extends Activity {
                                                                    new MosaicSkillImg.ControllerBitmap(e)))
                                               .flatMap(x -> Stream.of(x.first, x.second))
                                               .collect(Collectors.toList())); }
-    public void testLogos         () { testApp(() -> Arrays.asList(new Logo.ControllerBitmap()
+    public void testLogo          () { testApp(() -> Arrays.asList(new Logo.ControllerBitmap()
                                                                  , new Logo.ControllerBitmap()
                                                                  , new Logo.ControllerBitmap()
                                                                  , new Logo.ControllerBitmap())); }
-    public void testMines         () { testApp(() -> Arrays.asList(new Mine.ControllerBitmap()
+    public void testMine          () { testApp(() -> Arrays.asList(new Mine.ControllerBitmap()
                                                                  , new Mine.ControllerBitmap())); }
-    public void testFlags         () { testApp(() -> Arrays.asList(new Flag.ControllerBitmap()
+    public void testFlag          () { testApp(() -> Arrays.asList(new Flag.ControllerBitmap()
                                                                  , new Flag.ControllerBitmap())); }
-    public void testSmiles        () { testApp(() -> Arrays.asList(SmileModel.EFaceType.values())
+    public void testSmile         () { testApp(() -> Arrays.asList(SmileModel.EFaceType.values())
                                                          .stream()
                                                          .map(e -> new Smile.ControllerBitmap(e))
                                                          .collect(Collectors.toList())); }
@@ -116,20 +116,20 @@ public class DemoActivity extends Activity {
                 this::testMosaicImg,
                 this::testMosaicSkillImg,
                 this::testMosaicGroupImg,
-                this::testSmiles,
-                this::testLogos,
-                this::testMines,
-                this::testFlags
+                this::testSmile,
+                this::testLogo,
+                this::testMine,
+                this::testFlag
         };
 
         _innerLayout = findViewById(R.id.inner_layout);
 
         Button prevImagesBtn = findViewById(R.id.prev_images);
-        Button refresh       = findViewById(R.id.refresh_images);
+        Button refreshButton = findViewById(R.id.refresh_images);
         Button nextImagesBtn = findViewById(R.id.next_images);
 
         prevImagesBtn.setOnClickListener(view -> onNextImages(false));
-        refresh      .setOnClickListener(view -> onNextImages(null));
+        refreshButton.setOnClickListener(view -> onNextImages(null));
         nextImagesBtn.setOnClickListener(view -> onNextImages(true));
         _innerLayout.post(               ()   -> onNextImages(null));
     }

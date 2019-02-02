@@ -33,10 +33,11 @@ import fmg.swing.mosaic.MosaicJPanelController;
 
 public class DemoApp  {
 
+    private static final int margin = 10; // panel margin - padding to inner images
+
     private TestDrawing _td;
     private JFrame _frame;
     private JPanel _jPanel;
-    private static final int margin = 10; // panel margin - padding to inner images
     private Runnable _onCloseImages;
     private Runnable[] _onCreateImages; // images factory
     private int _nextCreateImagesIndex;
@@ -59,62 +60,68 @@ public class DemoApp  {
                 mosaicController.gameNew();
             }
             return Arrays.asList(mosaicController);
-
         }
     );}
 
-    public void testMosaicImg     () { testApp(() ->
-                                               //  // test single
-                                               //  Arrays.asList(new MosaicImg.ControllerImage() { { setMosaicType(EMosaic.eMosaicSquare1); }})
+    public void testMosaicImg     () {
+        testApp(() ->
+             //// test single
+             //Arrays.asList(new MosaicImg.ControllerImage() { { setMosaicType(EMosaic.eMosaicSquare1); }})
 
-                                                 // test all
-                                                 Stream.of(EMosaic.values())
+             // test all
+             Stream.of(EMosaic.values())
 
-                                                    //  // variant 1
-                                                    //  .map(e -> Stream.of(new MosaicImg.ControllerIcon (),
-                                                    //                      new MosaicImg.ControllerImage())
-                                                    //                  .peek(ctrlr -> ctrlr.setMosaicType(e)))
-                                                    //  .flatMap(x -> x)
+             //// variant 1
+             //.map(e -> Stream.of(new MosaicImg.ControllerIcon (),
+             //                    new MosaicImg.ControllerImage())
+             //                .peek(ctrlr -> ctrlr.setMosaicType(e)))
+             //.flatMap(x -> x)
 
-                                                        // variant 2
-                                                        .map(e -> {
-                                                                MosaicImageController<?, ?> ctrlr = ThreadLocalRandom.current().nextBoolean()
-                                                                    ? new MosaicImg.ControllerIcon ()
-                                                                    : new MosaicImg.ControllerImage();
-                                                                ctrlr.setMosaicType(e);
-                                                                return ctrlr;
-                                                            })
-                                                        .collect(Collectors.toList())
-                                     ); }
-    public void testMosaicGroupImg() { testApp(() -> Stream.concat(Stream.of((EMosaicGroup)null),
-                                                                   Stream.of(EMosaicGroup.values()))
-                                               .map(e -> new Pair<>(new MosaicGroupImg.ControllerIcon (e),
-                                                                    new MosaicGroupImg.ControllerImage(e)))
-                                               .flatMap(x -> Stream.of(x.first, x.second))
-                                               .collect(Collectors.toList())
-                                     ); }
-    public void testMosaicSkillImg() { testApp(() -> Stream.concat(Stream.of((ESkillLevel)null),
-                                                                   Stream.of(ESkillLevel.values()))
-                                               .map(e -> new Pair<>(new MosaicSkillImg.ControllerIcon (e),
-                                                                    new MosaicSkillImg.ControllerImage(e)))
-                                               .flatMap(x -> Stream.of(x.first, x.second))
-                                               .collect(Collectors.toList())
-                                     ); }
-    public void testLogos         () { testApp(() -> Arrays.asList(new Logo.ControllerIcon()
-                                                                 , new Logo.ControllerImage()
-                                                                 , new Logo.ControllerIcon()
-                                                                 , new Logo.ControllerImage())); }
-    public void testMines         () { testApp(() -> Arrays.asList(new Mine.ControllerIcon()
-                                                                 , new Mine.ControllerImage()
-                                                                 , new Mine.ControllerIcon()
-                                                                 , new Mine.ControllerImage())); }
-    public void testFlags         () { testApp(() -> Arrays.asList(new Flag.ControllerIcon()
-                                                                 , new Flag.ControllerImage())); }
-    public void testSmiles        () { testApp(() -> Arrays.asList(EFaceType.values()).stream()
-                                               .map(e -> Stream.of(new Smile.ControllerIcon(e),
-                                                                   new Smile.ControllerImage(e)))
-                                               .flatMap(x -> x)
-                                               .collect(Collectors.toList())); }
+             // variant 2
+             .map(e -> {
+                     MosaicImageController<?, ?> ctrlr = ThreadLocalRandom.current().nextBoolean()
+                         ? new MosaicImg.ControllerIcon ()
+                         : new MosaicImg.ControllerImage();
+                     ctrlr.setMosaicType(e);
+                     return ctrlr;
+                 })
+             .collect(Collectors.toList())
+    );}
+    public void testMosaicGroupImg() {
+        testApp(() -> Stream.concat(Stream.of((EMosaicGroup)null),
+                                     Stream.of(EMosaicGroup.values()))
+                 .map(e -> new Pair<>(new MosaicGroupImg.ControllerIcon (e),
+                                      new MosaicGroupImg.ControllerImage(e)))
+                 .flatMap(x -> Stream.of(x.first, x.second))
+                 .collect(Collectors.toList())
+    );}
+    public void testMosaicSkillImg() {
+        testApp(() -> Stream.concat(Stream.of((ESkillLevel)null),
+                                     Stream.of(ESkillLevel.values()))
+                 .map(e -> new Pair<>(new MosaicSkillImg.ControllerIcon (e),
+                                      new MosaicSkillImg.ControllerImage(e)))
+                 .flatMap(x -> Stream.of(x.first, x.second))
+                 .collect(Collectors.toList())
+    );}
+    public void testLogo() {
+        testApp(() -> Arrays.asList(new Logo.ControllerIcon()
+                                  , new Logo.ControllerImage()
+                                  , new Logo.ControllerIcon()
+                                  , new Logo.ControllerImage())); }
+    public void testMine() {
+        testApp(() -> Arrays.asList(new Mine.ControllerIcon()
+                                  , new Mine.ControllerImage()
+                                  , new Mine.ControllerIcon()
+                                  , new Mine.ControllerImage())); }
+    public void testFlag() {
+        testApp(() -> Arrays.asList(new Flag.ControllerIcon()
+                                  , new Flag.ControllerImage())); }
+    public void testSmile() {
+        testApp(() -> Arrays.asList(EFaceType.values()).stream()
+                            .map(e -> Stream.of(new Smile.ControllerIcon(e),
+                                                new Smile.ControllerImage(e)))
+                            .flatMap(x -> x)
+                            .collect(Collectors.toList())); }
     // #endregion
 
     public void runApp() {
@@ -125,35 +132,37 @@ public class DemoApp  {
             this::testMosaicImg,
             this::testMosaicSkillImg,
             this::testMosaicGroupImg,
-            this::testSmiles,
-            this::testLogos,
-            this::testMines,
-            this::testFlags
+            this::testSmile,
+            this::testLogo,
+            this::testMine,
+            this::testFlag
         };
 
         _frame = new JFrame();
         Container pane = _frame.getContentPane();
-        GridLayout grLay = new GridLayout(0, 3);
-        JPanel box2 = new JPanel(grLay);
-        JButton prevImagesBtn = new JButton("...Previous");
-        JButton refresh = new JButton("🗘");
-        JButton nextImagesBtn = new JButton("Next...");
-        box2.add(prevImagesBtn);
-        box2.add(refresh);
-        box2.add(nextImagesBtn);
-        pane.add(box2, BorderLayout.PAGE_START);
+        { // top
+            GridLayout grLay = new GridLayout(0, 3);
+            JPanel box2 = new JPanel(grLay);
+            JButton prevImagesBtn = new JButton("...Previous");
+            JButton refreshButton = new JButton("🗘");
+            JButton nextImagesBtn = new JButton("Next...");
+            box2.add(prevImagesBtn);
+            box2.add(refreshButton);
+            box2.add(nextImagesBtn);
+            pane.add(box2, BorderLayout.PAGE_START);
 
-        _jPanel = new JPanel();
-        _jPanel.setLayout(null);
-//        _jPanel.setBorder(new LineBorder(Color.BLACK));
-        pane.add(_jPanel, BorderLayout.CENTER);
-
-        prevImagesBtn.addActionListener(ev -> onNextImages(false));
-        refresh      .addActionListener(ev -> onNextImages(null));
-        nextImagesBtn.addActionListener(ev -> onNextImages(true));
-        SwingUtilities.invokeLater(     () -> onNextImages(null));
-
-
+            prevImagesBtn.addActionListener(ev -> onNextImages(false));
+            refreshButton.addActionListener(ev -> onNextImages(null));
+            nextImagesBtn.addActionListener(ev -> onNextImages(true));
+            SwingUtilities.invokeLater(     () -> onNextImages(null));
+            SwingUtilities.invokeLater(nextImagesBtn::requestFocus);
+        }
+        { // center
+            _jPanel = new JPanel();
+            _jPanel.setLayout(null);
+    //        _jPanel.setBorder(new LineBorder(Color.BLACK));
+            pane.add(_jPanel, BorderLayout.CENTER);
+        }
 
         //setDefaultCloseOperation(EXIT_ON_CLOSE);
         _frame.addWindowListener(new WindowAdapter() {
@@ -163,7 +172,6 @@ public class DemoApp  {
             }
         });
 
-        SwingUtilities.invokeLater(nextImagesBtn::requestFocus);
         _frame.setPreferredSize(new Dimension(300, 300));
         _frame.setLocationRelativeTo(null);
         _frame.pack();
@@ -182,9 +190,9 @@ public class DemoApp  {
     }
 
     void testApp(Supplier<List<IImageController<?,?,?>>> funcGetImages) {
-        _jPanel.removeAll();
         List<IImageController<?,?,?>> images = funcGetImages.get();
         _frame.setTitle(_td.getTitle(images));
+        _jPanel.removeAll();
 
         List<Component> imgControls = new ArrayList<>(images.size());
         boolean[] testTransparent = { false };
