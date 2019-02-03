@@ -34,7 +34,6 @@ import fmg.core.img.IImageController;
 import fmg.core.img.SmileModel.EFaceType;
 import fmg.core.img.TestDrawing;
 import fmg.core.img.TestDrawing.CellTilingInfo;
-import fmg.core.img.TestDrawing.CellTilingResult;
 import fmg.core.mosaic.MosaicImageController;
 import fmg.core.mosaic.MosaicView;
 import fmg.core.types.EMosaic;
@@ -43,6 +42,7 @@ import fmg.core.types.ESkillLevel;
 import fmg.jfx.img.*;
 import fmg.jfx.mosaic.MosaicCanvasController;
 import fmg.jfx.utils.Cast;
+import fmg.jfx.utils.StaticInitializer;
 
 /** @see {@link MosaicSkillImg#main}, {@link MosaicGroupImg#main}, {@link MosaicsImg#main} */
 public final class DemoApp extends Application {
@@ -172,7 +172,6 @@ public final class DemoApp extends Application {
             HBox hbox = new HBox();
             hbox.setPadding(new Insets(15, 12, 15, 12));
             hbox.setSpacing(10);
-            hbox.setStyle("-fx-background-color: #336699;");
 
             Button prevImagesBtn = new Button("...Previous");
             Button refreshButton = new Button("🗘");
@@ -206,7 +205,6 @@ public final class DemoApp extends Application {
 
     protected void onDestroy() {
         _onCloseImages.run();
-        _frame.dispose();
         Animator.getSingleton().close();
     }
 
@@ -222,9 +220,9 @@ public final class DemoApp extends Application {
 
         List<Canvas> imgControls = new ArrayList<>(images.size());
         boolean[] testTransparent = { false };
-        boolean imgIsControl = images.get(0).getImage() instanceof Canvas;
-        Map<IImageController<?,?,?>, PropertyChangeListener> binding = imgIsControl ? null : new HashMap<>(images.size());
-        AnimationTimer timer;
+        //boolean isMosaicGameController = images.get(0) instanceof MosaicCanvasController;
+        Map<IImageController<?,?,?>, PropertyChangeListener> binding = new HashMap<>();
+        AnimationTimer[] timer = { null };
 
 
         Proc3Bool onCellTilingHandler = (applySettings, createImgControls, resized) -> {
@@ -248,7 +246,7 @@ public final class DemoApp extends Application {
             if (createImgControls)
                 imgControls.clear();
 
-            timer = new AnimationTimer() {
+            timer[0] = new AnimationTimer() {
 
                 @Override
                 public void handle(long now) {
@@ -286,7 +284,7 @@ public final class DemoApp extends Application {
                     });
                 }
             };
-            timer.start();
+            timer[0].start();
 
             Function<IImageController<?,?,?>, TestDrawing.CellTilingInfo> callback = ctr.itemCallback;
             for (IImageController<?,?,?> imgObj : images) {
@@ -294,58 +292,41 @@ public final class DemoApp extends Application {
                 PointDouble offset = cti.imageOffset;
 
                 if (createImgControls) {
-                    Component imgControl = null;
-                    if (imgIsControl) {
-                        imgControl = (Component)imgObj.getImage();
+                    Object img = imgObj.getImage();
+                    Canvas imgControl = null;
+                    if (img instanceof Canvas) {
+                        imgControl = (Canvas)img;
                     } else {
-                        imgControl = new JPanel() {
-
-                            private static final long serialVersionUID = 1L;
-
-                            @Override
-                            public void paintComponent(Graphics g) {
-                              //super.paintComponent(g); // don`t redraw base
-                                Object image = imgObj.getImage();
-                                if (image instanceof Icon) {
-                                    Icon ico = (Icon)image;
-                                    //ico = ImgUtils.zoom(ico, imgSize.width, imgSize.height);
-                                    ico.paintIcon(null, g, 0, 0);
-                                } else
-                                if (image instanceof Image) {
-                                    Image img = (Image)image;
-                                    //img = ImgUtils.zoom(img, imgSize.width, imgSize.height);
-                                    g.drawImage(img, 0, 0, null);
-                                } else
-                                    throw new IllegalArgumentException("Not supported image type is " + image.getClass().getName());
-                            }
-                        };
-                      //imgControl.setBackgroundColor(Cast.toColor(Color.RandomColor().brighter()));
-
-                        Component imgControl2 = imgControl;
-                        PropertyChangeListener onChangeImage = ev -> {
-                            if (ev.getPropertyName().equals(IImageController.PROPERTY_IMAGE)) {
-                                _jPanel.repaint();
-                                imgControl2.repaint();
-                            }
-                        };
-                        imgObj.addListener(onChangeImage);
-                        binding.put(imgObj, onChangeImage);
+                        //throw new IllegalArgumentException("Not supported image type is " + image.getClass().getName());
+                        // ignore another - drawed into AnimationTimer
                     }
 
-                    _jPanel.add(imgControl);
-//                    ((JPanel)imgControl).setBorder(new LineBorder(Color.RED));
+
+                    if (imgControl != null) {
+                        Canvas imgControl2 = imgControl;
+                        PropertyChangeListener onChangeImage = ev -> {
+                            if (ev.getPropertyName().equals(IImageController.PROPERTY_IMAGE)) {
+                                //group.repaint();
+                                //imgControl2.invalidate();
+                            }
+                        };
+
+                        imgObj.addListener(onChangeImage);
+                        binding.put(imgObj, onChangeImage);
+                        group.getChildren().add(imgControl);
+                    }
+
                     imgControls.add(ctr.tableSize.width * cti.j + cti.i, imgControl);
                 }
 
                 if (resized) {
                     imgObj.getModel().setSize(imgSize);
-                    Component imgControl = imgControls.get(ctr.tableSize.width * cti.j + cti.i);
-                    Rectangle bound = imgControl.getBounds();
-                    bound.x      = (int)offset.x;
-                    bound.y      = (int)offset.y;
-                    bound.width  = (int)imgSize.width;
-                    bound.height = (int)imgSize.height;
-                    imgControl.setBounds(bound);
+
+                    Object img = imgObj.getImage();
+                    if (img instanceof Canvas) {
+                        Canvas imgCanvas = (Canvas)img;
+                        imgCanvas.relocate(offset.x, offset.y);
+                    }
                 }
             }
         };
@@ -370,119 +351,15 @@ public final class DemoApp extends Application {
             canvas. widthProperty().removeListener(onSizeWListener);
             canvas.heightProperty().removeListener(onSizeHListener);
             canvas.removeEventFilter(MouseEvent.MOUSE_PRESSED, mouseHandler);
-            timer.stop();
+            timer[0].stop();
             images.forEach(imgObj -> {
-                if (!imgIsControl)
+                if (binding.containsKey(imgObj))
                     imgObj.removeListener(binding.get(imgObj));
                 imgObj.close();
             });
             //images.clear(); // unmodifiable list
             //images = null; // not final
         };
-
-
-
-
-
-
-        /////////////////////////////////////////////////////////
-
-        boolean[] testTransparent = { _td.bl() };
-        final RectDouble[] rc = { new RectDouble() };
-        final CellTilingResult[] ctr = { new CellTilingResult() };
-
-        AnimationTimer timer = new AnimationTimer() {
-
-            @Override
-            public void handle(long now) {
-                if (rc[0] == null)
-                    return;
-
-                if ((rc[0].width <= 0) || (rc[0].height <= 0))
-                    return;
-
-                SizeDouble imgSize = ctr[0].imageSize;
-                if ((imgSize.width <= 0) || (imgSize.height <= 0))
-                    return;
-
-                GraphicsContext gc = canvas.getGraphicsContext2D();
-              //gc.clearRect(0,0, canvas.getWidth(), canvas.getHeight());
-                gc.setFill(Cast.toColor(Color.Gray().brighter()));
-                gc.fillRect(0,0, canvas.getWidth(), canvas.getHeight());
-
-              //gc.setStroke(Cast.toColor(Color.Black));
-              //gc.setLineWidth(1);
-                gc.strokeRect(rc[0].x, rc[0].y, rc[0].width, rc[0].height);
-
-                Function<IImageController<?,?,?>, CellTilingInfo> callback = ctr[0].itemCallback;
-                images.forEach(imgController -> {
-                    CellTilingInfo cti = callback.apply(imgController);
-                    PointDouble offset = cti.imageOffset;
-
-                    Object imgObj = imgController.getImage();
-//                    if (imgObj instanceof Canvas) {
-//                        Canvas canvasImg = (Canvas)imgObj;
-//                        imgObj = ImgUtils.toImage(canvasImg);
-//                    } // else // no else!
-                    if (imgObj instanceof Image) {
-                        Image img = (Image)imgObj;
-                        gc.drawImage(img, offset.x, offset.y);
-                    } //else
-//                         throw new IllegalArgumentException("Not supported image type is " + imgObj.getClass().getName());
-                });
-            }
-        };
-        timer.start();
-
-        Runnable onCellTilingHandler = () -> {
-            double w = canvas.getWidth();
-            double h = canvas.getHeight();
-            rc[0] = new RectDouble(margin, margin, w-margin*2, h-margin*2); // inner rect where drawing images as tiles
-            ctr[0] = _td.cellTiling(rc[0], images, testTransparent[0]);
-
-            SizeDouble imgSize = ctr[0].imageSize;
-            if (imgSize.height < 1 || imgSize.width < 1)
-                return;
-
-            Function<IImageController<?,?,?>, CellTilingInfo> callback = ctr[0].itemCallback;
-            for (IImageController<?, ?, ?> img : images) {
-                img.getModel().setSize(imgSize);
-
-                Object imgObj = img.getImage();
-                if (imgObj instanceof Canvas) {
-                    Canvas imgCanvas = (Canvas)imgObj;
-                    CellTilingInfo cti = callback.apply(img);
-                    PointDouble offset = cti.imageOffset;
-                    imgCanvas.relocate(offset.x, offset.y);
-                }
-            }
-        };
-
-        EventHandler<MouseEvent> mouseHandler = ev -> {
-            testTransparent[0] = _td.bl();
-            images.forEach(img -> _td.applySettings(img, testTransparent[0]));
-            onCellTilingHandler.run();
-        };
-        canvas.addEventFilter(MouseEvent.MOUSE_PRESSED, mouseHandler);
-
-        PropertyChangeListener propertyChangeListener = ev -> {
-          //System.out.println("propertyChangeListener: " + ev.getSource().getClass().getSimpleName());
-            if (IImageController.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
-                IImageController<?,?,?> imgCntrllr = (IImageController<?,?,?>)ev.getSource();
-                Object imgObj = imgCntrllr.getImage();
-                if (imgObj instanceof Canvas) {
-                    Canvas imgCanvas = (Canvas)imgObj;
-                    if (!group.getChildren().contains(imgCanvas))
-                        group.getChildren().add(imgCanvas);
-                }
-            }
-        };
-
-        images.forEach(img -> {
-            img.addListener(propertyChangeListener);
-            _td.applySettings(img, testTransparent[0]);
-        });
-
     }
 
     void onNextImages(Boolean isNext) {
@@ -501,7 +378,8 @@ public final class DemoApp extends Application {
         _onCreateImages[_nextCreateImagesIndex].run();
     }
 
-    public void main(String[] args) {
+    public static void main(String[] args) {
+        StaticInitializer.init();
         launch(args);
     }
 

@@ -45,6 +45,7 @@ using WBmpMine                  = fmg.uwp.img.wbmp.Mine;
 using WBmpFlag                  = fmg.uwp.img.wbmp.Flag;
 using WBmpSmile                 = fmg.uwp.img.wbmp.Smile;
 using DummyMosaicImageType = System.Object;
+using fmg.uwp.mosaic;
 
 namespace Test.FastMines.Uwp.Images {
 
@@ -394,7 +395,8 @@ namespace Test.FastMines.Uwp.Images {
 
             FrameworkElement[] imgControls = null;
             bool testTransparent = false;
-            bool imgIsControl = typeof(FrameworkElement).GetTypeInfo().IsAssignableFrom(typeof(TImage).GetTypeInfo());
+            bool isMosaicGameController = //typeof(MosaicFrameworkElementController).GetTypeInfo().IsAssignableFrom(typeof(TImageController).GetTypeInfo());
+                                          images[0] is MosaicFrameworkElementController<TImage, TMosaicImageInner, TImageView>;
 
             void onCellTilingHandler(bool applySettings, bool createImgControls, bool resized) {
                 if (images.Count == 1)      // if one image...
@@ -410,7 +412,7 @@ namespace Test.FastMines.Uwp.Images {
                 double sizeH = _panel.ActualHeight;
                 var rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
 
-                ATestDrawing.CellTilingResult<TImage, TImageController, TImageView, TImageModel> ctr = _td.CellTiling<TImage, TImageController, TImageView, TImageModel>(rc, images, testTransparent);
+                var ctr = _td.CellTiling<TImage, TImageController, TImageView, TImageModel>(rc, images, testTransparent);
                 var imgSize = ctr.imageSize;
                 if (createImgControls)
                     imgControls = new FrameworkElement[images.Count];
@@ -421,9 +423,10 @@ namespace Test.FastMines.Uwp.Images {
                     PointDouble offset = cti.imageOffset;
 
                     if (createImgControls) {
+                        var img = imgObj.Image;
                         FrameworkElement imgControl;
-                        if (imgIsControl) {
-                            imgControl = imgObj.Image as FrameworkElement;
+                        if (img is FrameworkElement) {
+                            imgControl = img as FrameworkElement;
                     #region lifehack for XAML
                             if (typeof(TImageController) == typeof(MosaicXamlController)) {
                                 imgControl.Visibility = Visibility.Collapsed;
@@ -472,7 +475,7 @@ namespace Test.FastMines.Uwp.Images {
                                 void onDraw(CanvasControl s, CanvasDrawEventArgs ev) {
                                     //if (imgObj.Disposed)
                                     //   return;
-                                    if (!(imgObj.Image is CanvasBitmap cb))
+                                    if (!(img is CanvasBitmap cb))
                                         return; // already disposed?
                                     ev.DrawingSession.DrawImage(cb, new Windows.Foundation.Rect(0, 0, cnvsCtrl.Width, cnvsCtrl.Height));
                                 }
@@ -512,14 +515,14 @@ namespace Test.FastMines.Uwp.Images {
                 onCellTilingHandler(true, false, false);
             }
             _panel.SizeChanged += onSizeChanged;
-            if (imgIsControl)
+            if (isMosaicGameController)
                 _panel.PointerPressed += onPointerPressed;
             else
                 _panel.Tapped         += onTapped;
 
             _onCloseImages = () => {
                 _panel.SizeChanged -= onSizeChanged;
-                if (imgIsControl)
+                if (isMosaicGameController)
                     _panel.PointerPressed -= onPointerPressed;
                 else
                     _panel.Tapped         -= onTapped;

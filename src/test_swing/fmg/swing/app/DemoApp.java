@@ -30,6 +30,7 @@ import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
 import fmg.swing.img.*;
 import fmg.swing.mosaic.MosaicJPanelController;
+import fmg.swing.utils.StaticInitializer;
 
 public class DemoApp  {
 
@@ -196,8 +197,8 @@ public class DemoApp  {
 
         List<Component> imgControls = new ArrayList<>(images.size());
         boolean[] testTransparent = { false };
-        boolean imgIsControl = images.get(0).getImage() instanceof Component;
-        Map<IImageController<?,?,?>, PropertyChangeListener> binding = imgIsControl ? null : new HashMap<>(images.size());
+        //boolean isMosaicGameController = images.get(0) instanceof MosaicJPanelController;
+        Map<IImageController<?,?,?>, PropertyChangeListener> binding = new HashMap<>();
 
         Proc3Bool onCellTilingHandler = (applySettings, createImgControls, resized) -> {
             if (images.size() == 1)     // if one image...
@@ -226,9 +227,10 @@ public class DemoApp  {
                 PointDouble offset = cti.imageOffset;
 
                 if (createImgControls) {
+                    Object img = imgObj.getImage();
                     Component imgControl = null;
-                    if (imgIsControl) {
-                        imgControl = (Component)imgObj.getImage();
+                    if (img instanceof Component) {
+                        imgControl = (Component)img;
                     } else {
                         imgControl = new JPanel() {
 
@@ -237,18 +239,18 @@ public class DemoApp  {
                             @Override
                             public void paintComponent(Graphics g) {
                               //super.paintComponent(g); // don`t redraw base
-                                Object image = imgObj.getImage();
-                                if (image instanceof Icon) {
-                                    Icon ico = (Icon)image;
+                                Object img = imgObj.getImage(); // reload image
+                                if (img instanceof Icon) {
+                                    Icon ico = (Icon)img;
                                     //ico = ImgUtils.zoom(ico, imgSize.width, imgSize.height);
                                     ico.paintIcon(null, g, 0, 0);
                                 } else
-                                if (image instanceof Image) {
-                                    Image img = (Image)image;
-                                    //img = ImgUtils.zoom(img, imgSize.width, imgSize.height);
-                                    g.drawImage(img, 0, 0, null);
+                                if (img instanceof Image) {
+                                    Image image = (Image)img;
+                                    //image = ImgUtils.zoom(image, imgSize.width, imgSize.height);
+                                    g.drawImage(image, 0, 0, null);
                                 } else
-                                    throw new IllegalArgumentException("Not supported image type is " + image.getClass().getName());
+                                    throw new IllegalArgumentException("Not supported image type is " + img.getClass().getName());
                             }
                         };
                       //imgControl.setBackgroundColor(Cast.toColor(Color.RandomColor().brighter()));
@@ -305,7 +307,7 @@ public class DemoApp  {
             _jPanel.removeComponentListener(onSizeChanged);
             _jPanel.removeMouseListener(onMousePressed);
             images.forEach(imgObj -> {
-                if (!imgIsControl)
+                if (binding.containsKey(imgObj))
                     imgObj.removeListener(binding.get(imgObj));
                 imgObj.close();
             });
@@ -331,6 +333,7 @@ public class DemoApp  {
     }
 
     public static void main(String[] args) {
+        StaticInitializer.init();
         SwingUtilities.invokeLater(() ->
             new DemoApp().runApp()
         );

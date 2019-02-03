@@ -152,8 +152,8 @@ public class DemoActivity extends Activity {
 
         List<View> imgControls = new ArrayList<>(images.size());
         boolean[] testTransparent = { false };
-        boolean imgIsControl = images.get(0).getImage() instanceof View;
-        Map<IImageController<?,?,?>, PropertyChangeListener> binding = imgIsControl ? null : new HashMap<>(images.size());
+        boolean isMosaicGameController = images.get(0).getImage() instanceof View;
+        Map<IImageController<?,?,?>, PropertyChangeListener> binding = new HashMap<>();
 
         Proc3Bool onCellTilingHandler = (applySettings, createImgControls, resized) -> {
             if (images.size() == 1)     // if one image...
@@ -182,20 +182,20 @@ public class DemoActivity extends Activity {
                 PointDouble offset = cti.imageOffset;
 
                 if (createImgControls) {
+                    Object img = imgObj.getImage();
                     View imgControl = null;
-                    if (imgIsControl) {
-                        imgControl = (View)imgObj.getImage();
+                    if (img instanceof View) {
+                        imgControl = (View)img;
                     } else {
                         imgControl = new View(this) {
                             @Override
                             public void draw(Canvas canvas) {
                                 super.draw(canvas);
-                                Object image = imgObj.getImage();
-                                if (image instanceof Bitmap) {
-                                    Bitmap bmp = (Bitmap)image;
+                                if (img instanceof Bitmap) {
+                                    Bitmap bmp = (Bitmap)img;
                                     canvas.drawBitmap(bmp, 0,0, null);
                                 } else {
-                                    throw new RuntimeException("Unsupported image type: " + image.getClass().getSimpleName());
+                                    throw new RuntimeException("Unsupported image type: " + img.getClass().getSimpleName());
                                 }
                             }
                         };
@@ -243,19 +243,19 @@ public class DemoActivity extends Activity {
            return true;
         };
 //        _innerLayout.getViewTreeObserver().addOnGlobalLayoutListener(onSizeChanged);
-        if (imgIsControl)
+        if (isMosaicGameController)
             _innerLayout.setOnClickListener(onClick);
         else
             _innerLayout.setOnTouchListener(onTouch);
 
         _onCloseImages = () -> {
 //            _innerLayout.getViewTreeObserver().removeOnGlobalLayoutListener(onSizeChanged);
-            if (imgIsControl)
+            if (isMosaicGameController)
                 _innerLayout.setOnClickListener(null);
             else
                 _innerLayout.setOnTouchListener(null);
             images.forEach(imgObj -> {
-                if (!imgIsControl)
+                if (binding.containsKey(imgObj))
                     imgObj.removeListener(binding.get(imgObj));
                 imgObj.close();
             });
