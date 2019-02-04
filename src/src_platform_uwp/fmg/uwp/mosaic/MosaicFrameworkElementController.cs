@@ -37,7 +37,7 @@ namespace fmg.uwp.mosaic {
         #region if _extendedManipulation
         /// <summary> мин отступ от краев экрана для мозаики </summary>
         private const double MinIndent = 30;
-        private const bool DeferredZoom = true;
+        private const bool DeferredZoom = !true;
         private bool _manipulationStarted;
         private bool _turnX;
         private bool _turnY;
@@ -200,22 +200,22 @@ namespace fmg.uwp.mosaic {
         }
 
         /// <summary> Zoom + </summary>
-        void AreaInc(double zoomPower = 1.3, Windows.Foundation.Point? mouseDevicePosition = null) {
+        void ZoomInc(double zoomPower = 1.3, Windows.Foundation.Point? mouseDevicePosition = null) {
             _mouseDevicePosition_AreaChanging = mouseDevicePosition;
             if (DeferredZoom) {
                 Scale(1.01 * zoomPower);
             } else {
-                Area *= 1.01 * zoomPower;
+                Model.Area *= 1.01 * zoomPower;
             }
         }
 
         /// <summary> Zoom - </summary>
-        void AreaDec(double zoomPower = 1.3, Windows.Foundation.Point? mouseDevicePosition = null) {
+        void ZoomDec(double zoomPower = 1.3, Windows.Foundation.Point? mouseDevicePosition = null) {
             _mouseDevicePosition_AreaChanging = mouseDevicePosition;
             if (DeferredZoom) {
                 Scale(0.99 / zoomPower);
             } else {
-                Area *= 0.99 / zoomPower;
+                Model.Area *= 0.99 / zoomPower;
             }
         }
 
@@ -227,7 +227,7 @@ namespace fmg.uwp.mosaic {
                     _originalTransform = ctrl.RenderTransform;
                 }
                 ctrl.RenderTransform = _scaleTransform;
-                _deferredArea = Area;
+                _deferredArea = Model.Area;
             }
 
 
@@ -250,7 +250,7 @@ namespace fmg.uwp.mosaic {
         }
 
         private void OnDeferredAreaChanging(object sender, NeedAreaChangingEventArgs ev) {
-            Area = _deferredArea;
+            Model.Area = _deferredArea;
 
             // restore
             _scaleTransform.CenterX = _scaleTransform.CenterY = 0;
@@ -259,20 +259,20 @@ namespace fmg.uwp.mosaic {
         }
 
         /// <summary> Zoom minimum </summary>
-        void AreaMin() {
-            Area = MosaicInitData.AREA_MINIMUM;
+        void ZoomMin() {
+            Model.Area = MosaicInitData.AREA_MINIMUM;
         }
 
         /// <summary> Zoom maximum </summary>
-        void AreaMax() {
+        void ZoomMax() {
             var maxArea = CalcMaxArea();
-            Area = maxArea;
+            Model.Area = maxArea;
         }
 
         void AreaOptimal() {
             var sizeControl = GetControlSize();
             var model = Model;
-            Area = MosaicHelper.FindAreaBySize(model.MosaicType, model.SizeField, ref sizeControl);
+            Model.Area = MosaicHelper.FindAreaBySize(model.MosaicType, model.SizeField, ref sizeControl);
         }
 
         private void OnControlSizeChanged(object sender, SizeChangedEventArgs e) {
@@ -328,9 +328,9 @@ namespace fmg.uwp.mosaic {
             var wheelPower = 1 + ((Math.Abs(wheelDelta) / _baseWheelDelta.Value) - 1) / 10;
 
             if (wheelDelta > 0)
-                AreaInc(wheelPower, ev.GetCurrentPoint(null).Position);
+                ZoomInc(wheelPower, ev.GetCurrentPoint(null).Position);
             else
-                AreaDec(wheelPower, ev.GetCurrentPoint(null).Position);
+                ZoomDec(wheelPower, ev.GetCurrentPoint(null).Position);
 
             ev.Handled = true;
             //}
@@ -582,9 +582,9 @@ namespace fmg.uwp.mosaic {
                 if (Math.Abs(1 - delta.Scale) > 0.009) {
                     #region scale / zoom
                     if (delta.Scale > 0)
-                        AreaInc(delta.Scale, ev.Position);
+                        ZoomInc(delta.Scale, ev.Position);
                     else
-                        AreaDec(2 + delta.Scale, ev.Position);
+                        ZoomDec(2 + delta.Scale, ev.Position);
                     #endregion
                 } else {
                     #region drag
@@ -707,11 +707,11 @@ namespace fmg.uwp.mosaic {
                 break;
             case (VirtualKey)187: // Plus (without Shift)
             case VirtualKey.Add: // numpad Plus
-                AreaInc();
+                ZoomInc();
                 break;
             case (VirtualKey)189: // Minus (without Shift)
             case VirtualKey.Subtract: // numpad Minus
-                AreaDec();
+                ZoomDec();
                 break;
             default:
                 ev.Handled = false;

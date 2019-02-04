@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Reflection;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Windows.UI;
@@ -45,7 +44,6 @@ using WBmpMine                  = fmg.uwp.img.wbmp.Mine;
 using WBmpFlag                  = fmg.uwp.img.wbmp.Flag;
 using WBmpSmile                 = fmg.uwp.img.wbmp.Smile;
 using DummyMosaicImageType = System.Object;
-using fmg.uwp.mosaic;
 
 namespace Test.FastMines.Uwp.Images {
 
@@ -396,7 +394,10 @@ namespace Test.FastMines.Uwp.Images {
             FrameworkElement[] imgControls = null;
             bool testTransparent = false;
             bool isMosaicGameController = //typeof(MosaicFrameworkElementController).GetTypeInfo().IsAssignableFrom(typeof(TImageController).GetTypeInfo());
-                                          images[0] is MosaicFrameworkElementController<TImage, TMosaicImageInner, TImageView>;
+                                            (typeof(TImageController) == typeof(Win2dMosaicCanvasSwapController))
+                                         || (typeof(TImageController) == typeof(WBmpMosaicImageController))
+                                         || (typeof(TImageController) == typeof(Win2dMosaicCanvasVirtController))
+                                         || (typeof(TImageController) == typeof(MosaicXamlController));
 
             void onCellTilingHandler(bool applySettings, bool createImgControls, bool resized) {
                 if (images.Count == 1)      // if one image...
