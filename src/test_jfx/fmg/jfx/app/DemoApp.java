@@ -1,7 +1,10 @@
 package fmg.jfx.app;
 
 import java.beans.PropertyChangeListener;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -13,7 +16,6 @@ import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -22,9 +24,11 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import fmg.common.Color;
+import fmg.common.LoggerSimple;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
@@ -35,7 +39,6 @@ import fmg.core.img.SmileModel.EFaceType;
 import fmg.core.img.TestDrawing;
 import fmg.core.img.TestDrawing.CellTilingInfo;
 import fmg.core.mosaic.MosaicImageController;
-import fmg.core.mosaic.MosaicView;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
@@ -44,14 +47,14 @@ import fmg.jfx.mosaic.MosaicCanvasController;
 import fmg.jfx.utils.Cast;
 import fmg.jfx.utils.StaticInitializer;
 
-/** @see {@link MosaicSkillImg#main}, {@link MosaicGroupImg#main}, {@link MosaicsImg#main} */
+/** live UI test application */
 public final class DemoApp extends Application {
 
-    static final int margin = 10;
+    static final int MARGIN = 10;
 
     private TestDrawing _td;
     private Stage primaryStage;
-    private Group group;
+    private Pane pane;
     private Canvas canvas;
     private Runnable _onCloseImages;
     private Runnable[] _onCreateImages; // images factory
@@ -59,7 +62,7 @@ public final class DemoApp extends Application {
 
     // #region images Fabrica
     public void testMosaicControl() {
-        MosaicView._DEBUG_DRAW_FLOW = true;
+        //MosaicView._DEBUG_DRAW_FLOW = true;
         testApp(() -> {
             MosaicCanvasController ctrllr = new MosaicCanvasController();
             if (ThreadLocalRandom.current().nextBoolean()) {
@@ -73,14 +76,14 @@ public final class DemoApp extends Application {
                 ctrllr.setMinesCount(skill.getNumberMines(mosaicType));
                 ctrllr.gameNew();
             }
-            return Arrays.asList(ctrllr);
+            return Stream.of(ctrllr);
         }
     );}
 
     public void testMosaicImg() {
         testApp(() ->
             // // test single
-            // Arrays.asList(new MosaicImg.ControllerImage() { { setMosaicType(EMosaic.eMosaicSquare1); }})
+            // Stream.of(new MosaicImg.ControllerImage() { { setMosaicType(EMosaic.eMosaicSquare1); }})
 
             // test all
             Stream.of(EMosaic.values())
@@ -98,8 +101,7 @@ public final class DemoApp extends Application {
                                 : new MosaicImg.ControllerImage();
                         ctrlr.setMosaicType(e);
                         return ctrlr;
-                    })
-                .collect(Collectors.toList()));
+                    }));
     }
     public void testMosaicGroupImg() {
         testApp(() ->
@@ -108,7 +110,6 @@ public final class DemoApp extends Application {
                 .map(e -> new Pair<>(new MosaicGroupImg.ControllerCanvas (e),
                                      new MosaicGroupImg.ControllerImage(e)))
                 .flatMap(x -> Stream.of(x.first, x.second))
-                .collect(Collectors.toList())
         );
     }
     public void testMosaicSkillImg() {
@@ -118,31 +119,29 @@ public final class DemoApp extends Application {
                 .map(e -> new Pair<>(new MosaicSkillImg.ControllerCanvas(e),
                                      new MosaicSkillImg.ControllerImage(e)))
                 .flatMap(x -> Stream.of(x.first, x.second))
-                .collect(Collectors.toList())
         );
     }
     public void testLogo() {
-        testApp(() -> Arrays.asList(new Logo.ControllerCanvas()
-                                  , new Logo.ControllerImage()
-                                  , new Logo.ControllerCanvas()
-                                  , new Logo.ControllerImage()));
+        testApp(() -> Stream.of(new Logo.ControllerCanvas()
+                              , new Logo.ControllerImage()
+                              , new Logo.ControllerCanvas()
+                              , new Logo.ControllerImage()));
     }
     public void testMine() {
-        testApp(() -> Arrays.asList(new Mine.ControllerCanvas()
-                                  , new Mine.ControllerImage()
-                                  , new Mine.ControllerCanvas()
-                                  , new Mine.ControllerImage()));
+        testApp(() -> Stream.of(new Mine.ControllerCanvas()
+                              , new Mine.ControllerImage()
+                              , new Mine.ControllerCanvas()
+                              , new Mine.ControllerImage()));
     }
     public void testFlag() {
-        testApp(() -> Arrays.asList(new Flag.ControllerCanvas()
-                                  , new Flag.ControllerImage()));
+        testApp(() -> Stream.of(new Flag.ControllerCanvas()
+                              , new Flag.ControllerImage()));
     }
     public void testSmile() {
-        testApp(() -> Arrays.asList(EFaceType.values()).stream()
+        testApp(() -> Stream.of(EFaceType.values())
                     .map(e -> Stream.of(new Smile.ControllerCanvas(e),
                                         new Smile.ControllerImage(e)))
-                    .flatMap(x -> x)
-                    .collect(Collectors.toList()));
+                    .flatMap(x -> x));
     }
     // #endregion
 
@@ -167,11 +166,13 @@ public final class DemoApp extends Application {
 
 
         BorderPane border = new BorderPane();
+        border.setStyle("-fx-border-color: black;");
         Scene scene = new Scene(border);
         { // top
             HBox hbox = new HBox();
             hbox.setPadding(new Insets(15, 12, 15, 12));
             hbox.setSpacing(10);
+            hbox.setStyle("-fx-background-color: #336699;");
 
             Button prevImagesBtn = new Button("...Previous");
             Button refreshButton = new Button("🗘");
@@ -182,16 +183,25 @@ public final class DemoApp extends Application {
             hbox.getChildren().addAll(prevImagesBtn, refreshButton, nextImagesBtn);
             border.setTop(hbox);
 
-            prevImagesBtn.setOnMouseClicked(ev -> onNextImages(false));
-            refreshButton.setOnMouseClicked(ev -> onNextImages(null));
-            nextImagesBtn.setOnMouseClicked(ev -> onNextImages(true));
-            Factory.DEFERR_INVOKER.accept(  () -> onNextImages(null));
+            prevImagesBtn.setOnAction(    ev -> onNextImages(false));
+            refreshButton.setOnAction(    ev -> onNextImages(null));
+            nextImagesBtn.setOnAction(    ev -> onNextImages(true));
+            Factory.DEFERR_INVOKER.accept(() -> onNextImages(null));
             Factory.DEFERR_INVOKER.accept(nextImagesBtn::requestFocus);
         }
         { // center
             canvas = new Canvas(300, 300);
-            group = new Group(canvas);
-            border.setCenter(group);
+            pane = new Pane(canvas);
+//            anchorpane = new AnchorPane();
+//            AnchorPane.setTopAnchor(pane, 3.0);
+//            AnchorPane.setLeftAnchor(pane, 3.0);
+//            AnchorPane.setRightAnchor(pane, 3.0);
+//            AnchorPane.setBottomAnchor(pane, 3.0);
+//            //group.getChildren().addAll(canvas);
+//            anchorpane.getChildren().addAll(pane);
+            pane.setStyle("-fx-background-color: #00FF00;");
+//            anchorpane.setStyle("-fx-background-color: #FF0000;");
+            border.setCenter(pane);
         }
 
         primaryStage.setScene(scene);
@@ -213,20 +223,21 @@ public final class DemoApp extends Application {
         void apply(boolean t1, boolean t2, boolean t3);
     }
 
-    void testApp(Supplier<List<IImageController<?,?,?>>> funcGetImages) {
-        List<IImageController<?,?,?>> images = funcGetImages.get();
+    void testApp(Supplier<Stream<IImageController<?,?,?>>> funcGetImages) {
+        List<IImageController<?,?,?>> images = funcGetImages.get().collect(Collectors.toList());
         primaryStage.setTitle(_td.getTitle(images));
-        group.getChildren().remove(1, group.getChildren().size());
+        pane.getChildren().remove(1, pane.getChildren().size());
 
         List<Canvas> imgControls = new ArrayList<>(images.size());
         boolean[] testTransparent = { false };
-        //boolean isMosaicGameController = images.get(0) instanceof MosaicCanvasController;
+        boolean isMosaicGameController = images.get(0) instanceof MosaicCanvasController;
         Map<IImageController<?,?,?>, PropertyChangeListener> binding = new HashMap<>();
         AnimationTimer[] timer = { null };
+        boolean[] closed = { false };
 
 
         Proc3Bool onCellTilingHandler = (applySettings, createImgControls, resized) -> {
-            if (images.size() == 1)     // if one image...
+            if (isMosaicGameController) // when is this game field...
                 applySettings = false;  // ... then test as is
             resized = resized || applySettings;
 
@@ -237,7 +248,7 @@ public final class DemoApp extends Application {
 
             double sizeW = canvas.getWidth();
             double sizeH = canvas.getHeight();
-            RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
+            RectDouble rc = new RectDouble(MARGIN, MARGIN, sizeW - MARGIN * 2, sizeH - MARGIN * 2); // inner rect where drawing images as tiles
 
             TestDrawing.CellTilingResult ctr = _td.cellTiling(rc, images, testTransparent[0]);
             SizeDouble imgSize = ctr.imageSize;
@@ -250,6 +261,8 @@ public final class DemoApp extends Application {
 
                 @Override
                 public void handle(long now) {
+                    if (closed[0])
+                        return;
                     if ((rc.width <= 0) || (rc.height <= 0))
                         return;
 
@@ -313,7 +326,7 @@ public final class DemoApp extends Application {
 
                         imgObj.addListener(onChangeImage);
                         binding.put(imgObj, onChangeImage);
-                        group.getChildren().add(imgControl);
+                        pane.getChildren().add(imgControl);
                     }
 
                     imgControls.add(ctr.tableSize.width * cti.j + cti.i, imgControl);
@@ -334,13 +347,17 @@ public final class DemoApp extends Application {
         onCellTilingHandler.apply(true, true, true);
 
         ChangeListener<Number> onSizeWListener = (observable, oldValue, newValue) -> {
+            LoggerSimple.put("onSizeWListener: newValue=" + newValue);
+            canvas.setWidth(newValue.doubleValue());
             onCellTilingHandler.apply(false, false, true);
         };
         ChangeListener<Number> onSizeHListener = (observable, oldValue, newValue) -> {
+            LoggerSimple.put("onSizeHListener: newValue=" + newValue);
+            canvas.setHeight(newValue.doubleValue());
             onCellTilingHandler.apply(false, false, true);
         };
-        canvas. widthProperty().addListener(onSizeWListener);
-        canvas.heightProperty().addListener(onSizeHListener);
+        pane. widthProperty().addListener(onSizeWListener);
+        pane.heightProperty().addListener(onSizeHListener);
 
         EventHandler<MouseEvent> mouseHandler = ev -> {
             onCellTilingHandler.apply(true, false, false);
@@ -348,10 +365,11 @@ public final class DemoApp extends Application {
         canvas.addEventFilter(MouseEvent.MOUSE_PRESSED, mouseHandler);
 
         _onCloseImages = () -> {
-            canvas. widthProperty().removeListener(onSizeWListener);
-            canvas.heightProperty().removeListener(onSizeHListener);
-            canvas.removeEventFilter(MouseEvent.MOUSE_PRESSED, mouseHandler);
+            closed[0] = true;
             timer[0].stop();
+            pane. widthProperty().removeListener(onSizeWListener);
+            pane.heightProperty().removeListener(onSizeHListener);
+            canvas.removeEventFilter(MouseEvent.MOUSE_PRESSED, mouseHandler);
             images.forEach(imgObj -> {
                 if (binding.containsKey(imgObj))
                     imgObj.removeListener(binding.get(imgObj));

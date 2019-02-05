@@ -40,11 +40,12 @@ import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
 
+/** live UI test application */
 public class DemoActivity extends Activity {
 
     private TestDrawing _td;
     private FrameLayout _innerLayout;
-    private static final int margin = 10; // panel margin - padding to inner images
+    private static final int MARGIN = 10; // panel margin - padding to inner images
     private Runnable _onCloseImages;
     private Runnable[] _onCreateImages; // images factory
     private int _nextCreateImagesIndex;
@@ -61,47 +62,45 @@ public class DemoActivity extends Activity {
                 EMosaic mosaicType = EMosaic.eMosaicTrSq1;
                 ESkillLevel skill  = ESkillLevel.eBeginner;
 
-                mosaicController.setArea(1500);
                 mosaicController.setMosaicType(mosaicType);
                 mosaicController.setSizeField(skill.getDefaultSize());
                 mosaicController.setMinesCount(skill.getNumberMines(mosaicType));
                 mosaicController.gameNew();
             }
-            return Arrays.asList(mosaicController);
+            return Stream.of(mosaicController);
 
         }
     );}
     public void testMosaicImg     () { testApp(() ->
                                                    //// test single
-                                                   //Arrays.asList(new MosaicImg.ControllerBitmap() { { setMosaicType(EMosaic.eMosaicSquare1); }})
+                                                   //Stream.of(new MosaicImg.ControllerBitmap() { { setMosaicType(EMosaic.eMosaicSquare1); }})
 
                                                    // test all
                                                    Stream.of(EMosaic.values())
                                                          .map(e -> new MosaicImg.ControllerBitmap() { { setMosaicType(e); }})
-                                                         .collect(Collectors.toList())
-                                     ); }
+                                     );
+    }
     public void testMosaicGroupImg() { testApp(() -> Stream.concat(Stream.of((EMosaicGroup)null), Stream.of(EMosaicGroup.values()))
                                               .map(e -> new Pair<>(new MosaicGroupImg.ControllerBitmap(e),
                                                                    new MosaicGroupImg.ControllerBitmap(e)))
-                                              .flatMap(x -> Stream.of(x.first, x.second))
-                                              .collect(Collectors.toList())); }
+                                              .flatMap(x -> Stream.of(x.first, x.second)));
+    }
     public void testMosaicSkillImg() { testApp(() -> Stream.concat(Stream.of((ESkillLevel)null), Stream.of(ESkillLevel.values()))
                                               .map(e -> new Pair<>(new MosaicSkillImg.ControllerBitmap(e),
                                                                    new MosaicSkillImg.ControllerBitmap(e)))
-                                              .flatMap(x -> Stream.of(x.first, x.second))
-                                              .collect(Collectors.toList())); }
-    public void testLogo          () { testApp(() -> Arrays.asList(new Logo.ControllerBitmap()
-                                                                 , new Logo.ControllerBitmap()
-                                                                 , new Logo.ControllerBitmap()
-                                                                 , new Logo.ControllerBitmap())); }
-    public void testMine          () { testApp(() -> Arrays.asList(new Mine.ControllerBitmap()
-                                                                 , new Mine.ControllerBitmap())); }
-    public void testFlag          () { testApp(() -> Arrays.asList(new Flag.ControllerBitmap()
-                                                                 , new Flag.ControllerBitmap())); }
-    public void testSmile         () { testApp(() -> Arrays.asList(SmileModel.EFaceType.values())
-                                                         .stream()
-                                                         .map(e -> new Smile.ControllerBitmap(e))
-                                                         .collect(Collectors.toList())); }
+                                              .flatMap(x -> Stream.of(x.first, x.second)));
+    }
+    public void testLogo          () { testApp(() -> Stream.of(new Logo.ControllerBitmap()
+                                                             , new Logo.ControllerBitmap()
+                                                             , new Logo.ControllerBitmap()
+                                                             , new Logo.ControllerBitmap())); }
+    public void testMine          () { testApp(() -> Stream.of(new Mine.ControllerBitmap()
+                                                             , new Mine.ControllerBitmap())); }
+    public void testFlag          () { testApp(() -> Stream.of(new Flag.ControllerBitmap()
+                                                             , new Flag.ControllerBitmap())); }
+    public void testSmile         () { testApp(() -> Stream.of(SmileModel.EFaceType.values())
+                                                         .map(e -> new Smile.ControllerBitmap(e)));
+    }
     // #endregion
 
     @Override
@@ -145,10 +144,10 @@ public class DemoActivity extends Activity {
         void apply(boolean t1, boolean t2, boolean t3);
     }
 
-    void testApp(Supplier<List<IImageController<?,?,?>>> funcGetImages) {
-        _innerLayout.removeAllViews();
-        List<IImageController<?,?,?>> images = funcGetImages.get();
+    void testApp(Supplier<Stream<IImageController<?,?,?>>> funcGetImages) {
+        List<IImageController<?,?,?>> images = funcGetImages.get().collect(Collectors.toList());
         setTitle(_td.getTitle(images));
+        _innerLayout.removeAllViews();
 
         List<View> imgControls = new ArrayList<>(images.size());
         boolean[] testTransparent = { false };
@@ -156,7 +155,7 @@ public class DemoActivity extends Activity {
         Map<IImageController<?,?,?>, PropertyChangeListener> binding = new HashMap<>();
 
         Proc3Bool onCellTilingHandler = (applySettings, createImgControls, resized) -> {
-            if (images.size() == 1)     // if one image...
+            if (isMosaicGameController) // when is this game field...
                 applySettings = false;  // ... then test as is
             resized = resized || applySettings;
 
@@ -167,7 +166,7 @@ public class DemoActivity extends Activity {
 
             double sizeW = _innerLayout.getWidth();  // _innerLayout.getMeasuredWidth();
             double sizeH = _innerLayout.getHeight(); // _innerLayout.getMeasuredHeight();
-            RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
+            RectDouble rc = new RectDouble(MARGIN, MARGIN, sizeW - MARGIN * 2, sizeH - MARGIN * 2); // inner rect where drawing images as tiles
 
             TestDrawing.CellTilingResult ctr = _td.cellTiling(rc, images, testTransparent[0]);
             SizeDouble imgSize = ctr.imageSize;
@@ -191,6 +190,7 @@ public class DemoActivity extends Activity {
                             @Override
                             public void draw(Canvas canvas) {
                                 super.draw(canvas);
+                                Object img = imgObj.getImage(); // reload image!
                                 if (img instanceof Bitmap) {
                                     Bitmap bmp = (Bitmap)img;
                                     canvas.drawBitmap(bmp, 0,0, null);

@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,9 +31,10 @@ import fmg.swing.img.*;
 import fmg.swing.mosaic.MosaicJPanelController;
 import fmg.swing.utils.StaticInitializer;
 
+/** live UI test application */
 public class DemoApp  {
 
-    private static final int margin = 10; // panel margin - padding to inner images
+    private static final int MARGIN = 10; // panel margin - padding to inner images
 
     private TestDrawing _td;
     private JFrame _frame;
@@ -60,14 +60,14 @@ public class DemoApp  {
                 mosaicController.setMinesCount(skill.getNumberMines(mosaicType));
                 mosaicController.gameNew();
             }
-            return Arrays.asList(mosaicController);
-        }
-    );}
+            return Stream.of(mosaicController);
+        });
+    }
 
     public void testMosaicImg     () {
         testApp(() ->
              //// test single
-             //Arrays.asList(new MosaicImg.ControllerImage() { { setMosaicType(EMosaic.eMosaicSquare1); }})
+             //Stream.of(new MosaicImg.ControllerImage() { { setMosaicType(EMosaic.eMosaicSquare1); }})
 
              // test all
              Stream.of(EMosaic.values())
@@ -85,44 +85,44 @@ public class DemoApp  {
                          : new MosaicImg.ControllerImage();
                      ctrlr.setMosaicType(e);
                      return ctrlr;
-                 })
-             .collect(Collectors.toList())
-    );}
+                 }));
+    }
     public void testMosaicGroupImg() {
         testApp(() -> Stream.concat(Stream.of((EMosaicGroup)null),
                                      Stream.of(EMosaicGroup.values()))
                  .map(e -> new Pair<>(new MosaicGroupImg.ControllerIcon (e),
                                       new MosaicGroupImg.ControllerImage(e)))
-                 .flatMap(x -> Stream.of(x.first, x.second))
-                 .collect(Collectors.toList())
-    );}
+                 .flatMap(x -> Stream.of(x.first, x.second)));
+    }
     public void testMosaicSkillImg() {
         testApp(() -> Stream.concat(Stream.of((ESkillLevel)null),
                                      Stream.of(ESkillLevel.values()))
                  .map(e -> new Pair<>(new MosaicSkillImg.ControllerIcon (e),
                                       new MosaicSkillImg.ControllerImage(e)))
-                 .flatMap(x -> Stream.of(x.first, x.second))
-                 .collect(Collectors.toList())
-    );}
+                 .flatMap(x -> Stream.of(x.first, x.second)));
+    }
     public void testLogo() {
-        testApp(() -> Arrays.asList(new Logo.ControllerIcon()
-                                  , new Logo.ControllerImage()
-                                  , new Logo.ControllerIcon()
-                                  , new Logo.ControllerImage())); }
+        testApp(() -> Stream.of(new Logo.ControllerIcon()
+                              , new Logo.ControllerImage()
+                              , new Logo.ControllerIcon()
+                              , new Logo.ControllerImage()));
+    }
     public void testMine() {
-        testApp(() -> Arrays.asList(new Mine.ControllerIcon()
-                                  , new Mine.ControllerImage()
-                                  , new Mine.ControllerIcon()
-                                  , new Mine.ControllerImage())); }
+        testApp(() -> Stream.of(new Mine.ControllerIcon()
+                              , new Mine.ControllerImage()
+                              , new Mine.ControllerIcon()
+                              , new Mine.ControllerImage()));
+    }
     public void testFlag() {
-        testApp(() -> Arrays.asList(new Flag.ControllerIcon()
-                                  , new Flag.ControllerImage())); }
+        testApp(() -> Stream.of(new Flag.ControllerIcon()
+                              , new Flag.ControllerImage()));
+    }
     public void testSmile() {
-        testApp(() -> Arrays.asList(EFaceType.values()).stream()
+        testApp(() -> Stream.of(EFaceType.values())
                             .map(e -> Stream.of(new Smile.ControllerIcon(e),
                                                 new Smile.ControllerImage(e)))
-                            .flatMap(x -> x)
-                            .collect(Collectors.toList())); }
+                            .flatMap(x -> x));
+    }
     // #endregion
 
     public void runApp() {
@@ -190,18 +190,18 @@ public class DemoApp  {
         void apply(boolean t1, boolean t2, boolean t3);
     }
 
-    void testApp(Supplier<List<IImageController<?,?,?>>> funcGetImages) {
-        List<IImageController<?,?,?>> images = funcGetImages.get();
+    void testApp(Supplier<Stream<IImageController<?,?,?>>> funcGetImages) {
+        List<IImageController<?,?,?>> images = funcGetImages.get().collect(Collectors.toList());
         _frame.setTitle(_td.getTitle(images));
         _jPanel.removeAll();
 
         List<Component> imgControls = new ArrayList<>(images.size());
         boolean[] testTransparent = { false };
-        //boolean isMosaicGameController = images.get(0) instanceof MosaicJPanelController;
+        boolean isMosaicGameController = images.get(0) instanceof MosaicJPanelController;
         Map<IImageController<?,?,?>, PropertyChangeListener> binding = new HashMap<>();
 
         Proc3Bool onCellTilingHandler = (applySettings, createImgControls, resized) -> {
-            if (images.size() == 1)     // if one image...
+            if (isMosaicGameController) // when is this game field...
                 applySettings = false;  // ... then test as is
             resized = resized || applySettings;
 
@@ -212,7 +212,7 @@ public class DemoApp  {
 
             double sizeW = _jPanel.getWidth();
             double sizeH = _jPanel.getHeight();
-            RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
+            RectDouble rc = new RectDouble(MARGIN, MARGIN, sizeW - MARGIN * 2, sizeH - MARGIN * 2); // inner rect where drawing images as tiles
 
             TestDrawing.CellTilingResult ctr = _td.cellTiling(rc, images, testTransparent[0]);
             SizeDouble imgSize = ctr.imageSize;

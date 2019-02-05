@@ -60,7 +60,7 @@
         },
         {
             "type": "java",
-            "name": "Java SWING: test DemoApp",
+            "name": "Java SWING: Demo app",
             "request": "launch",
             "cwd": "${workspaceFolder}/FastMines_swing",
             "console": "internalConsole",
@@ -85,87 +85,7 @@
             "cwd": "${workspaceFolder}/FastMines_jfx",
             "console": "internalConsole",
             "stopOnEntry": false,
-            "mainClass": "fmg.jfx.app.Demo",
-            "args": ""
-        },
-        {
-            "type": "java",
-            "name": "JavaFX: test MosaicCanvasController",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/FastMines_jfx",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "fmg.jfx.mosaic.MosaicCanvasController",
-            "args": ""
-        },
-        {
-            "type": "java",
-            "name": "JavaFX: test MosaicImg",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/FastMines_jfx",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "fmg.jfx.img.MosaicImg",
-            "args": ""
-        },
-        {
-            "name": "JavaFX: test MosaicSkillImg",
-            "type": "java",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/FastMines_jfx",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "fmg.jfx.img.MosaicSkillImg",
-            "args": ""
-        },
-        {
-            "name": "JavaFX: test MosaicGroupImg",
-            "type": "java",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/FastMines_jfx",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "fmg.jfx.img.MosaicGroupImg",
-            "args": ""
-        },
-        {
-            "name": "JavaFX: test Logo images",
-            "type": "java",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/FastMines_jfx",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "fmg.jfx.img.Logo",
-            "args": ""
-        },
-        {
-            "name": "JavaFX: test Mine images",
-            "type": "java",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/FastMines_jfx",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "fmg.jfx.img.Mine",
-            "args": ""
-        },
-        {
-            "name": "JavaFX: test Smile images",
-            "type": "java",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/FastMines_jfx",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "fmg.jfx.img.Smile",
-            "args": ""
-        },
-        {
-            "name": "JavaFX: test Flag images",
-            "type": "java",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/FastMines_jfx",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "fmg.jfx.img.Flag",
+            "mainClass": "fmg.jfx.app.DemoApp",
             "args": ""
         }
     ]

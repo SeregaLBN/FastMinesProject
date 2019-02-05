@@ -387,9 +387,9 @@ namespace Test.FastMines.Uwp.Images {
             where TImageModel       : IImageModel
             where TAnimatedModel    : IAnimatedModel
         {
-            _panel.Children.Clear();
             var images = funcGetImages().ToList();
             ApplicationView.GetForCurrentView().Title = _td.GetTitle<TImage, TImageController, TImageView, TImageModel>(images);
+            _panel.Children.Clear();
 
             FrameworkElement[] imgControls = null;
             bool testTransparent = false;
@@ -400,7 +400,7 @@ namespace Test.FastMines.Uwp.Images {
                                          || (typeof(TImageController) == typeof(MosaicXamlController));
 
             void onCellTilingHandler(bool applySettings, bool createImgControls, bool resized) {
-                if (images.Count == 1)      // if one image...
+                if (isMosaicGameController) // when is this game field...
                     applySettings = false;  // ... then test as is
                 resized = resized || createImgControls || applySettings;
 
