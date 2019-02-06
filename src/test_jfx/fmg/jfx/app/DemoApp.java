@@ -285,15 +285,15 @@ public final class DemoApp extends Application {
                         PointDouble offset = cti.imageOffset;
 
                         Object imgObj = imgController.getImage();
-//                        if (imgObj instanceof Canvas) {
-//                            Canvas canvasImg = (Canvas)imgObj;
-//                            imgObj = ImgUtils.toImage(canvasImg);
-//                        } // else // no else!
+                        if (imgObj instanceof Canvas) {
+                            // none
+                        }  else
                         if (imgObj instanceof Image) {
                             Image img = (Image)imgObj;
                             gc.drawImage(img, offset.x, offset.y);
-                        } //else
-//                             throw new IllegalArgumentException("Not supported image type is " + imgObj.getClass().getName());
+                        } else {
+                            throw new IllegalArgumentException("Not supported image type is " + imgObj.getClass().getName());
+                        }
                     });
                 }
             };
@@ -309,9 +309,11 @@ public final class DemoApp extends Application {
                     Canvas imgControl = null;
                     if (img instanceof Canvas) {
                         imgControl = (Canvas)img;
+                    }  else
+                    if (img instanceof Image) {
+                        // ignore.. - drawed into AnimationTimer
                     } else {
-                        //throw new IllegalArgumentException("Not supported image type is " + image.getClass().getName());
-                        // ignore another - drawed into AnimationTimer
+                        throw new IllegalArgumentException("Not supported image type is " + img.getClass().getName());
                     }
 
 
@@ -347,12 +349,10 @@ public final class DemoApp extends Application {
         onCellTilingHandler.apply(true, true, true);
 
         ChangeListener<Number> onSizeWListener = (observable, oldValue, newValue) -> {
-            LoggerSimple.put("onSizeWListener: newValue=" + newValue);
             canvas.setWidth(newValue.doubleValue());
             onCellTilingHandler.apply(false, false, true);
         };
         ChangeListener<Number> onSizeHListener = (observable, oldValue, newValue) -> {
-            LoggerSimple.put("onSizeHListener: newValue=" + newValue);
             canvas.setHeight(newValue.doubleValue());
             onCellTilingHandler.apply(false, false, true);
         };

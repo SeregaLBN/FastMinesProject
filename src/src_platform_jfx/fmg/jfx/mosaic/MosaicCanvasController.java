@@ -30,7 +30,7 @@ public class MosaicCanvasController extends MosaicController<Canvas, Image, Mosa
     }
 
     private EventHandler<MouseEvent> mouseHandler = ev -> {
-        PointDouble clickPoint = new PointDouble(ev.getSceneX(), ev.getSceneY());
+        PointDouble clickPoint = new PointDouble(ev.getX(), ev.getY());
 
         if (ev.getEventType() == MouseEvent.MOUSE_PRESSED) {
             if (ev.isPrimaryButtonDown())
