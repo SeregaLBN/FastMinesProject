@@ -51,7 +51,6 @@ public final class NotifyPropertyChanged implements AutoCloseable//, INotifyProp
 
         try {
             Field fld = findField(propertyName);
-            fld.setAccessible(true);
             Object oldValueReal = fld.get(_owner);
             if (((oldValueReal == null) && (oldValue != null)) ||
                 ((oldValueReal != null) && !oldValueReal.equals(oldValue)))
@@ -140,6 +139,7 @@ public final class NotifyPropertyChanged implements AutoCloseable//, INotifyProp
             if (!opt.isPresent())
                 throw new RuntimeException("Property '" + propertyName + "' not found");
             field = opt.get();
+            field.setAccessible(true);
             _cachedFields.put(propertyName, field);
         }
         return field;

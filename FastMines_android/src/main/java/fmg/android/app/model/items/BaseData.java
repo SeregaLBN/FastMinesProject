@@ -1,0 +1,135 @@
+package fmg.android.app.model.items;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
+import fmg.common.geom.BoundDouble;
+import fmg.common.geom.SizeDouble;
+import fmg.common.notyfier.INotifyPropertyChanged;
+import fmg.common.notyfier.NotifyPropertyChanged;
+import fmg.core.img.IImageModel;
+import fmg.core.img.IImageView;
+import fmg.core.img.ImageController;
+
+/** Base item class for <see cref="MosaicDataItem"/> and <see cref="MosaicGroupDataItem"/> and <see cref="MosaicSkillDataItem"/> */
+public abstract class BaseData<T,
+                               TImageModel extends IImageModel,
+                               TImageView  extends IImageView<android.graphics.Bitmap, TImageModel>,
+                               TImageCtrlr extends ImageController<android.graphics.Bitmap, TImageView, TImageModel>>
+        implements INotifyPropertyChanged, AutoCloseable
+{
+
+    public static final String PROPERTY_SIZE      = IImageModel.PROPERTY_SIZE;
+    public static final String PROPERTY_PADDING   = IImageModel.PROPERTY_PADDING;
+    public static final String PROPERTY_UNIQUE_ID = "UniqueId";
+    public static final String PROPERTY_TITLE     = "Title";
+    public static final String PROPERTY_ENTITY    = "Entity";
+
+    private T uniqueId;
+    protected TImageCtrlr entity;
+    private String title = "";
+    protected final NotifyPropertyChanged notifier/*Sync*/ = new NotifyPropertyChanged(this, false);
+    private   final NotifyPropertyChanged notifierAsync    = new NotifyPropertyChanged(this, true);
+
+    protected BaseData(T uniqueId) {
+        this.uniqueId = uniqueId;
+        notifier.addListener(this::onPropertyChanged);
+    }
+
+    public T getUniqueId() { return uniqueId; }
+    public void setUniqueId(T uniqueId) {
+        notifier.setProperty(this.uniqueId, uniqueId, PROPERTY_UNIQUE_ID);
+    }
+
+    public String getTitle() { return title; }
+    public void setTitle(String title) {
+        notifier.setProperty(this.title, title, PROPERTY_TITLE);
+    }
+
+    public abstract double getZoom();
+
+    public abstract TImageCtrlr getEntity();
+    protected void setEntity(TImageCtrlr entity) {
+        TImageCtrlr old = this.entity;
+        if (notifier.setProperty(this.entity, entity, PROPERTY_ENTITY)) {
+            if (old != null) {
+                old.getModel().removeListener(this::onModelPropertyChanged);
+                old.close();
+            }
+            if (entity != null) {
+                entity.getModel().addListener(this::onModelPropertyChanged);
+            }
+        }
+    }
+
+    public SizeDouble getSize() {
+        SizeDouble size = getEntity().getModel().getSize();
+        double zoom = getZoom();
+        return new SizeDouble(size.width / zoom, size.height / zoom);
+    }
+    public void setSize(SizeDouble size) {
+        getEntity().getModel().setSize(zoomSize(size));
+    }
+
+    public BoundDouble getPadding() {
+        BoundDouble pad = getEntity().getModel().getPadding();
+        double zoom = getZoom();
+        return new BoundDouble (pad.left / zoom, pad.top / zoom, pad.right / zoom, pad.bottom / zoom);
+    }
+    public void setPadding(BoundDouble pad) {
+        getEntity().getModel().setPadding(zoomPadding(pad));
+    }
+
+    SizeDouble zoomSize(SizeDouble size) {
+        if (size == null)
+            return null;
+        double zoom = getZoom();
+        return new SizeDouble(size.width * zoom, size.height * zoom);
+    }
+
+    BoundDouble zoomPadding(BoundDouble pad) {
+        double zoom = getZoom();
+        return new BoundDouble(pad.left * zoom, pad.top * zoom, pad.right * zoom, pad.bottom * zoom);
+    }
+
+    protected void onPropertyChanged(PropertyChangeEvent ev) {
+        // refire as async event
+        notifierAsync.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+    }
+
+    protected void onModelPropertyChanged(PropertyChangeEvent ev) {
+        assert (ev.getSource() == getEntity().getModel());
+
+        switch (ev.getPropertyName()) {
+        case IImageModel.PROPERTY_SIZE:
+            SizeDouble oldSize = (SizeDouble)ev.getOldValue();
+            SizeDouble newSize = (SizeDouble)ev.getNewValue();
+            notifier.onPropertyChanged(zoomSize(oldSize), zoomSize(newSize), PROPERTY_SIZE);
+            break;
+        case IImageModel.PROPERTY_PADDING:
+            notifier.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_PADDING);
+            break;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return title;
+    }
+
+    @Override
+    public void addListener(PropertyChangeListener listener) {
+        notifier.addListener(listener);
+    }
+    @Override
+    public void removeListener(PropertyChangeListener listener) {
+        notifier.removeListener(listener);
+    }
+
+    @Override
+    public void close() {
+        notifier.close();
+        setEntity(null); // call setter
+    }
+
+}

@@ -16,10 +16,12 @@ public abstract class MosaicSkillController<TImage,
     protected MosaicSkillController(boolean showBurgerMenu, TImageView imageView) {
         super(imageView);
 
-        getView().getBurgerMenuModel().setShow(showBurgerMenu);
+        getBurgerMenuModel().setShow(showBurgerMenu);
 
         usePolarLightFgTransforming(true);
         useRotateTransforming(true);
     }
+
+    public BurgerMenuModel getBurgerMenuModel() { return getView().getBurgerMenuModel(); }
 
 }

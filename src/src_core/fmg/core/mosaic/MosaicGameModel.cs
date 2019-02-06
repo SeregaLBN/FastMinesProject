@@ -140,6 +140,11 @@ namespace fmg.core.mosaic {
         /// <summary> доступ к заданной ячейке </summary>
         public BaseCell GetCell(Coord coord) { return GetCell(coord.x, coord.y); }
 
+        protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            // refire as async event
+            _notifierAsync.OnPropertyChanged(ev);
+        }
+
         protected virtual void OnCellAttributePropertyChanged(object sender, PropertyChangedEventArgs ev) {
             System.Diagnostics.Debug.Assert(ReferenceEquals(sender, CellAttr));
 
@@ -149,11 +154,6 @@ namespace fmg.core.mosaic {
                 _notifier.OnPropertyChanged<double>(ev, nameof(this.Area)); // ! rethrow event - notify parent class
             }
             _notifier.OnPropertyChanged(nameof(this.CellAttr));
-        }
-
-        protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            // refire as async event
-            _notifierAsync.OnPropertyChanged(ev);
         }
 
         /// <summary> off notifier </summary>

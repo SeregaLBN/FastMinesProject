@@ -129,4 +129,31 @@ eCrazy      281
         return ESkillLevel.values()[ordinal];
     }
 
+    public char unicodeChar() {
+        switch (this) {
+        // http://unicode-table.com/sets/stars-symbols/                  // http://unicode-table.com/en/sets/emoji/
+        // http://unicode-table.com/search/?q=star                       // http://unicode-table.com/en/1F63D/
+        case eBeginner: return '\u2736'; // '✶'; //                               "😺"; // \u1F638
+        case eAmateur : return '\u2737'; // '✷'; //                               "😸"; // \u1F63A
+        case eProfi   : return '\u2738'; // '✸'; //                               "😻"; // \u1F63B
+        case eCrazy   : return '\u2739'; // '✹'; //                               "😼"; // \u1F63C
+        case eCustom  : return '\u273B'; // '✻'; //                               "😽"; // \u1F63D
+        }
+        throw new IllegalArgumentException("Invalid paramenter value " + this);
+    }
+
+    public Matrisize sizeTileField(EMosaic mosaicType) {
+        Matrisize size = mosaicType.sizeIcoField(true);
+        switch (this) {
+        case eBeginner: size.m += 0; size.n += 0; break;
+        case eAmateur : size.m += 1; size.n += 0; break;
+        case eProfi   : size.m += 1; size.n += 1; break;
+        case eCrazy   : size.m += 2; size.n += 1; break;
+        case eCustom:
+        default:
+            throw new IllegalArgumentException("Invalid paramenter value " + mosaicType);
+        }
+        return size;
+    }
+
 }

@@ -40,7 +40,7 @@ public abstract class MosaicSkillImg<TImage> extends MosaicSkillOrGroupView<TIma
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /** MosaicsSkill image view implementation over {@link android.graphics.Bitmap} */
-    static class Bitmap extends MosaicSkillImg<android.graphics.Bitmap> {
+    public static class Bitmap extends MosaicSkillImg<android.graphics.Bitmap> {
 
         private BmpCanvas wrap = new BmpCanvas();
 

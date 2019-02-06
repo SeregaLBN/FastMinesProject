@@ -45,8 +45,8 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
     /** из каких фигур состоит мозаика поля */
     private EMosaic _mosaicType = EMosaic.eMosaicSquare1;
 
-    protected final NotifyPropertyChanged _notifier      = new NotifyPropertyChanged(this, false);
-    private   final NotifyPropertyChanged _notifierAsync = new NotifyPropertyChanged(this, true);
+    protected final NotifyPropertyChanged _notifier/*Sync*/ = new NotifyPropertyChanged(this, false);
+    private   final NotifyPropertyChanged _notifierAsync    = new NotifyPropertyChanged(this, true);
 
     public static final String PROPERTY_AREA        = BaseCell.BaseAttribute.PROPERTY_AREA;
     public static final String PROPERTY_CELL_ATTR   = "CellAttr";
@@ -146,6 +146,11 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
     @Override
     public BaseCell getCell(Coord coord) { return getCell(coord.x, coord.y); }
 
+    protected void onPropertyChanged(PropertyChangeEvent ev) {
+        // refire as async event
+        _notifierAsync.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+    }
+
     protected void onCellAttributePropertyChanged(PropertyChangeEvent ev) {
         String propName = ev.getPropertyName();
         if (BaseCell.BaseAttribute.PROPERTY_AREA.equals(propName)) {
@@ -154,11 +159,6 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
             _notifier.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_AREA); // ! rethrow event - notify parent class
         }
         _notifier.onPropertyChanged(PROPERTY_CELL_ATTR);
-    }
-
-    protected void onPropertyChanged(PropertyChangeEvent ev) {
-        // refire as async event
-        _notifierAsync.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
     }
 
     /** off notifier */

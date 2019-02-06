@@ -16,11 +16,13 @@ public abstract class MosaicGroupController< TImage,
     protected MosaicGroupController(boolean showBurgerMenu, TImageView imageView) {
         super(imageView);
 
-        getView().getBurgerMenuModel().setShow(showBurgerMenu);
+        getBurgerMenuModel().setShow(showBurgerMenu);
 
         addModelTransformer(new MosaicGroupTransformer());
         usePolarLightFgTransforming(true);
         useRotateTransforming(true);
     }
+
+    public BurgerMenuModel getBurgerMenuModel() { return getView().getBurgerMenuModel(); }
 
 }

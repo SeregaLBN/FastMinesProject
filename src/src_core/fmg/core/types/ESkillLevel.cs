@@ -149,9 +149,9 @@ namespace fmg.core.types {
             throw new ArgumentException("Invalid paramenter value " + self);
         }
 
-        public static Matrisize SizeTileField(this EMosaic self, ESkillLevel skill) {
-            var size = self.SizeIcoField(true);
-            switch (skill) {
+        public static Matrisize SizeTileField(this ESkillLevel self, EMosaic mosaicType) {
+            var size = mosaicType.SizeIcoField(true);
+            switch (self) {
             case ESkillLevel.eBeginner: size.m += 0; size.n += 0; break;
             case ESkillLevel.eAmateur : size.m += 1; size.n += 0; break;
             case ESkillLevel.eProfi   : size.m += 1; size.n += 1; break;
