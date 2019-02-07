@@ -10,7 +10,7 @@ import fmg.core.img.MosaicSkillModel;
 import fmg.core.types.ESkillLevel;
 
 /** Mosaic skill level item for data model */
-public class MosaicSkillDataItem extends BaseData<ESkillLevel, MosaicSkillModel, MosaicSkillImg.Bitmap, MosaicSkillImg.ControllerBitmap> {
+public class MosaicSkillDataItem extends BaseDataItem<ESkillLevel, MosaicSkillModel, MosaicSkillImg.Bitmap, MosaicSkillImg.ControllerBitmap> {
 
     public static final String PROPERTY_PADDING_BURGER = "PaddingBurgerMenu";
 
@@ -24,9 +24,6 @@ public class MosaicSkillDataItem extends BaseData<ESkillLevel, MosaicSkillModel,
 
     @Deprecated
     public String getUnicodeChar() { return getSkillLevel() == null ? null : Character.toString(getSkillLevel().unicodeChar()); }
-
-    @Override
-    public double getZoom() { return 2; }
 
     @Override
     public MosaicSkillImg.ControllerBitmap getEntity() {

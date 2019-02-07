@@ -66,7 +66,7 @@ namespace fmg.core.types {
             case EMosaicGroup.eOthers     : return dark ? '\u2605' : '\u2606'; // http://unicode-table.com/en/blocks/miscellaneous-symbols/
                                                                           //return dark ? '\u25E9' : '\u2B15'; // http://unicode-table.com/en/search/?q=Square+with+Left+Diagonal+Half+Black
             }
-            throw new ArgumentException("Invalid paramenter value " + self);
+            throw new ArgumentException("Invalid parameter value " + self);
         }
 
     }

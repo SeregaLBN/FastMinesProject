@@ -11,7 +11,7 @@ import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
 
 /** Mosaic item for data model */
-public class MosaicDataItem extends BaseData<EMosaic, MosaicAnimatedModel<Void>, MosaicImg.Bitmap, MosaicImg.ControllerBitmap> {
+public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicAnimatedModel<Void>, MosaicImg.Bitmap, MosaicImg.ControllerBitmap> {
 
     public static final String PROPERTY_MOSAIC_TYPE = MosaicGameModel.PROPERTY_MOSAIC_TYPE;
     public static final String PROPERTY_SKILL_LEVEL = "SkillLevel";
@@ -30,9 +30,6 @@ public class MosaicDataItem extends BaseData<EMosaic, MosaicAnimatedModel<Void>,
     public void setSkillLevel(ESkillLevel skillLevel) {
         notifier.setProperty(this.skillLevel, skillLevel, PROPERTY_SKILL_LEVEL);
     }
-
-    @Override
-    public double getZoom() { return 2; }
 
     @Override
     public MosaicImg.ControllerBitmap getEntity() {

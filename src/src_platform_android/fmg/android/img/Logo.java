@@ -154,7 +154,7 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /** Logo image view implementation over {@link android.graphics.Bitmap} */
-    static class Bitmap extends Logo<android.graphics.Bitmap> {
+    public static class Bitmap extends Logo<android.graphics.Bitmap> {
 
         private BmpCanvas wrap = new BmpCanvas();
 

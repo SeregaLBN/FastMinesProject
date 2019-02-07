@@ -10,7 +10,7 @@ import fmg.core.img.MosaicGroupModel;
 import fmg.core.types.EMosaicGroup;
 
 /** Mosaic group item for data model */
-public class MosaicGroupDataItem extends BaseData<EMosaicGroup, MosaicGroupModel, MosaicGroupImg.Bitmap, MosaicGroupImg.ControllerBitmap> {
+public class MosaicGroupDataItem extends BaseDataItem<EMosaicGroup, MosaicGroupModel, MosaicGroupImg.Bitmap, MosaicGroupImg.ControllerBitmap> {
 
     public static final String PROPERTY_PADDING_BURGER = "PaddingBurgerMenu";
 
@@ -21,9 +21,6 @@ public class MosaicGroupDataItem extends BaseData<EMosaicGroup, MosaicGroupModel
 
     public EMosaicGroup getMosaicGroup()                          { return getUniqueId(); }
     public void         setMosaicGroup(EMosaicGroup eMosaicGroup) {        setUniqueId(eMosaicGroup); }
-
-    @Override
-    public double getZoom() { return 2; }
 
     @Override
     public MosaicGroupImg.ControllerBitmap getEntity() {

@@ -7,15 +7,16 @@ import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.INotifyPropertyChanged;
 import fmg.common.notyfier.NotifyPropertyChanged;
+import fmg.core.img.IAnimatedModel;
 import fmg.core.img.IImageModel;
 import fmg.core.img.IImageView;
 import fmg.core.img.ImageController;
 
 /** Base item class for <see cref="MosaicDataItem"/> and <see cref="MosaicGroupDataItem"/> and <see cref="MosaicSkillDataItem"/> */
-public abstract class BaseData<T,
-                               TImageModel extends IImageModel,
-                               TImageView  extends IImageView<android.graphics.Bitmap, TImageModel>,
-                               TImageCtrlr extends ImageController<android.graphics.Bitmap, TImageView, TImageModel>>
+public abstract class BaseDataItem<T,
+                                   TImageModel extends IAnimatedModel,
+                                   TImageView  extends IImageView<android.graphics.Bitmap, TImageModel>,
+                                   TImageCtrlr extends ImageController<android.graphics.Bitmap, TImageView, TImageModel>>
         implements INotifyPropertyChanged, AutoCloseable
 {
 
@@ -31,7 +32,7 @@ public abstract class BaseData<T,
     protected final NotifyPropertyChanged notifier/*Sync*/ = new NotifyPropertyChanged(this, false);
     private   final NotifyPropertyChanged notifierAsync    = new NotifyPropertyChanged(this, true);
 
-    protected BaseData(T uniqueId) {
+    protected BaseDataItem(T uniqueId) {
         this.uniqueId = uniqueId;
         notifier.addListener(this::onPropertyChanged);
     }
@@ -46,7 +47,7 @@ public abstract class BaseData<T,
         notifier.setProperty(this.title, title, PROPERTY_TITLE);
     }
 
-    public abstract double getZoom();
+    public double getZoom() { return 2; }
 
     public abstract TImageCtrlr getEntity();
     protected void setEntity(TImageCtrlr entity) {
@@ -119,16 +120,18 @@ public abstract class BaseData<T,
 
     @Override
     public void addListener(PropertyChangeListener listener) {
-        notifier.addListener(listener);
+        notifierAsync.addListener(listener);
     }
     @Override
     public void removeListener(PropertyChangeListener listener) {
-        notifier.removeListener(listener);
+        notifierAsync.removeListener(listener);
     }
 
     @Override
     public void close() {
+        notifier.removeListener(this::onPropertyChanged);
         notifier.close();
+        notifierAsync.close();
         setEntity(null); // call setter
     }
 
