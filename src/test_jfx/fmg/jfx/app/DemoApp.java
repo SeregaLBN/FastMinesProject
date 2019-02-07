@@ -28,7 +28,6 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import fmg.common.Color;
-import fmg.common.LoggerSimple;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
@@ -316,9 +315,9 @@ public final class DemoApp extends Application {
                         throw new IllegalArgumentException("Not supported image type is " + img.getClass().getName());
                     }
 
-
+                    // TODO remove unused code
                     if (imgControl != null) {
-                        Canvas imgControl2 = imgControl;
+//                        Canvas imgControl2 = imgControl;
                         PropertyChangeListener onChangeImage = ev -> {
                             if (ev.getPropertyName().equals(IImageController.PROPERTY_IMAGE)) {
                                 //group.repaint();

@@ -7,7 +7,7 @@ using fmg.core.mosaic;
 
 namespace fmg.core.img {
 
-    public abstract class ATestDrawing {
+    public class TestDrawing {
 
         public Random GetRandom => ThreadLocalRandom.Current;
         public int R(int max) { return GetRandom.Next(max); }
@@ -16,7 +16,7 @@ namespace fmg.core.img {
 
         private readonly string titlePrefix;
 
-        protected ATestDrawing(string titlePrefix) {
+        public TestDrawing(string titlePrefix) {
             this.titlePrefix = titlePrefix;
         }
 
@@ -197,7 +197,7 @@ namespace fmg.core.img {
                       : tailH / tailW;
             }
 
-            int colsOpt = 0;
+            int colsOpt = 1;
             {
                 double xToY = 0; // отношение меньшей стороны к большей
                                  // ищу оптимальное кол-во рядков для расположения плиток. Оптимальным считаю такое расположение,

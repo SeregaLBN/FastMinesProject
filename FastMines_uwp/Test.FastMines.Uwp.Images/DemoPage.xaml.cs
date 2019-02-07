@@ -49,10 +49,6 @@ namespace Test.FastMines.Uwp.Images {
 
     public sealed partial class DemoPage : Page {
 
-        class TestDrawing : ATestDrawing {
-            public TestDrawing() : base("UWP") { }
-        }
-
         private TestDrawing _td;
         private Panel _panel;
         private static readonly int margin = 10; // panel margin - padding to inner images
@@ -312,7 +308,7 @@ namespace Test.FastMines.Uwp.Images {
 
 
         public DemoPage() {
-            _td = new TestDrawing();
+            _td = new TestDrawing("UWP");
 
             var device = CanvasDevice.GetSharedDevice();
             _onCreateImages = new Action[] {
@@ -415,12 +411,14 @@ namespace Test.FastMines.Uwp.Images {
 
                 var ctr = _td.CellTiling<TImage, TImageController, TImageView, TImageModel>(rc, images, testTransparent);
                 var imgSize = ctr.imageSize;
+                if (imgSize.Width <= 0 || imgSize.Height <= 0)
+                    return;
                 if (createImgControls)
                     imgControls = new FrameworkElement[images.Count];
 
                 var callback = ctr.itemCallback;
                 foreach (var imgObj in images) {
-                    ATestDrawing.CellTilingInfo cti = callback(imgObj);
+                    TestDrawing.CellTilingInfo cti = callback(imgObj);
                     PointDouble offset = cti.imageOffset;
 
                     if (createImgControls) {

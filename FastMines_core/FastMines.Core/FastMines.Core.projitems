@@ -198,8 +198,8 @@
     <Compile Include="..\..\src\src_core\fmg\core\img\IAnimatedModel.cs">
       <Link>src_fmg.core\img\IAnimatedModel.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\img\ATestDrawing.cs">
-      <Link>src_fmg.core\img\ATestDrawing.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\img\TestDrawing.cs">
+      <Link>src_fmg.core\img\TestDrawing.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\types\EGameStatus.cs">
       <Link>src_fmg.core\types\EGameStatus.cs</Link>
