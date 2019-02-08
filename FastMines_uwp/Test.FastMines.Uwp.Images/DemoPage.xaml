@@ -6,20 +6,28 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
-    mc:Ignorable="d"
-    x:Name="_page">
+    mc:Ignorable="d">
 
-    <!--
-    <StackPanel Orientation="Vertical" Background="{ThemeResource FlipViewButtonPointerOverBackgroundThemeBrush}" Margin="3,3,3,3">
-        <StackPanel Orientation="Horizontal" Background="{ThemeResource ComboBoxItemPointerOverBackgroundThemeBrush}" Margin="0,0,0,0">
-            <Button Content="Button" Height="182" Width="479" HorizontalAlignment="Left"/>
-            <Button Content="Button" Height="182" Width="479" HorizontalAlignment="Center"/>
-            <Button Content="Button" Height="182" Width="479" HorizontalAlignment="Right"/>
-        </StackPanel>
-        <Border BorderBrush="Black" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="1490" Margin="3,3,3,3" >
-            <Frame x:Name="_page"></Frame>
-        </Border>
-    </StackPanel>
-    -->
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" MinHeight="35" />
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Grid.ColumnSpan="3" Background="#336699" />
+        <Border Grid.Row="1" Grid.ColumnSpan="3" Background="skyBlue" />
+
+        <Button Grid.Column="0" Grid.Row="0" FontSize="25" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Content="...Previous" x:Name="prevImagesBtn" />
+        <Button Grid.Column="1" Grid.Row="0" FontSize="25" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Content="🗘"          x:Name="refreshButton" />
+        <Button Grid.Column="2" Grid.Row="0" FontSize="25" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Content="Next..."     x:Name="nextImagesBtn" />
+
+        <Frame Grid.Row="1" Grid.ColumnSpan="3" x:Name="mosaicContainer" Margin="3,3,3,3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+
+    </Grid>
 
 </Page>

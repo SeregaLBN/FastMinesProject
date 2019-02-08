@@ -44,6 +44,7 @@ using WBmpMine                  = fmg.uwp.img.wbmp.Mine;
 using WBmpFlag                  = fmg.uwp.img.wbmp.Flag;
 using WBmpSmile                 = fmg.uwp.img.wbmp.Smile;
 using DummyMosaicImageType = System.Object;
+using fmg.uwp.img;
 
 namespace Test.FastMines.Uwp.Images {
 
@@ -341,16 +342,24 @@ namespace Test.FastMines.Uwp.Images {
 
             InitializeComponent();
 
-            _page.Content = _panel = new Canvas();
+            mosaicContainer.Content = _panel = new Canvas();
             _panel.Background = new SolidColorBrush(Colors.Transparent); // lifehack: otherwise the click does not handled on the empty place
 
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-            SystemNavigationManager.GetForCurrentView().BackRequested += (s, ev) => { OnNextImages(); ev.Handled = true; };
+            SystemNavigationManager.GetForCurrentView().BackRequested += (s, ev) => { OnNextImages(false); ev.Handled = true; };
             if (ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons")) {
-                HardwareButtons.BackPressed += (s, ev) => { OnNextImages(); ev.Handled = true; };
+                HardwareButtons.BackPressed += (s, ev) => { OnNextImages(false); ev.Handled = true; };
             }
-            _page.Loaded   += (s, ev) => OnNextImages();
-            _page.Unloaded += (s, ev) => _onCloseImages();
+            prevImagesBtn.Click += (s, ev) => OnNextImages(false);
+            refreshButton.Click += (s, ev) => OnNextImages(null);
+            nextImagesBtn.Click += (s, ev) => OnNextImages(true);
+            this.Loaded         += (s, ev) => OnNextImages(null);
+            this.Unloaded       += (s, ev) => OnDestroy();
+        }
+
+        protected void OnDestroy() {
+            _onCloseImages();
+            Animator.Singleton.Dispose();
         }
 
         #region main part
@@ -394,6 +403,7 @@ namespace Test.FastMines.Uwp.Images {
                                          || (typeof(TImageController) == typeof(WBmpMosaicImageController))
                                          || (typeof(TImageController) == typeof(Win2dMosaicCanvasVirtController))
                                          || (typeof(TImageController) == typeof(MosaicXamlController));
+            bool closed = false;
 
             void onCellTilingHandler(bool applySettings, bool createImgControls, bool resized) {
                 if (isMosaicGameController) // when is this game field...
@@ -472,11 +482,13 @@ namespace Test.FastMines.Uwp.Images {
                                 });
 
                                 void onDraw(CanvasControl s, CanvasDrawEventArgs ev) {
-                                    //if (imgObj.Disposed)
-                                    //   return;
-                                    if (!(img is CanvasBitmap cb))
-                                        return; // already disposed?
-                                    ev.DrawingSession.DrawImage(cb, new Windows.Foundation.Rect(0, 0, cnvsCtrl.Width, cnvsCtrl.Height));
+                                    if (closed)
+                                        return;
+                                    try {
+                                        ev.DrawingSession.DrawImage(img as CanvasBitmap, new Windows.Foundation.Rect(0, 0, cnvsCtrl.Width, cnvsCtrl.Height));
+                                    } catch(ObjectDisposedException ex) {
+                                        LoggerSimple.Put("TODO: fix " + ex);
+                                    }
                                 }
                                 cnvsCtrl.Draw += onDraw;
                                 cnvsCtrl.Unloaded += (s, ev) => {
@@ -520,6 +532,7 @@ namespace Test.FastMines.Uwp.Images {
                 _panel.Tapped         += onTapped;
 
             _onCloseImages = () => {
+                closed = true;
                 _panel.SizeChanged -= onSizeChanged;
                 if (isMosaicGameController)
                     _panel.PointerPressed -= onPointerPressed;
@@ -543,13 +556,18 @@ namespace Test.FastMines.Uwp.Images {
         }
         #endregion
 
-        void OnNextImages() {
+        void OnNextImages(bool? isNext) {
             _onCloseImages?.Invoke();
 
-            Action onCreate = _onCreateImages[_nextCreateImagesIndex];
-            if (++_nextCreateImagesIndex >= _onCreateImages.Length)
-                _nextCreateImagesIndex = 0;
-            onCreate();
+            if (isNext != null)
+                if (isNext.Value) {
+                    if (++_nextCreateImagesIndex >= _onCreateImages.Length)
+                        _nextCreateImagesIndex = 0;
+                } else {
+                    if (--_nextCreateImagesIndex < 0)
+                        _nextCreateImagesIndex = _onCreateImages.Length - 1;
+                }
+            _onCreateImages[_nextCreateImagesIndex]();
         }
 
         public void Animation(bool enable) {
