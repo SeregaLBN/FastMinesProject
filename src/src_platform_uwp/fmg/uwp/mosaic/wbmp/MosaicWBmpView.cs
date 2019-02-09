@@ -57,7 +57,7 @@ namespace fmg.uwp.mosaic.wbmp {
             var bkFill = model.BkFill;
 
 #if DEBUG
-            if (_DEBUG_DRAW_FLOW)
+            if (MosaicViewCfg.DEBUG_DRAW_FLOW)
                 LoggerSimple.Put($"MosaicWBmpView.Draw: {((toDrawCells==null) ? "all" : "cnt="+ toDrawCells.Count)}"
                                                         + $"; drawBk={drawBk}");
 #endif
@@ -171,7 +171,7 @@ namespace fmg.uwp.mosaic.wbmp {
                 }
             }
 #if DEBUG
-            if (_DEBUG_DRAW_FLOW)
+            if (MosaicViewCfg.DEBUG_DRAW_FLOW)
                 LoggerSimple.Put("-------------------------------");
 #endif
         _alreadyPainted = false;

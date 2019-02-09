@@ -61,7 +61,7 @@ namespace fmg.uwp.mosaic.win2d {
             var cssBL = CssBorderLine;
 
 #if DEBUG
-            if (_DEBUG_DRAW_FLOW)
+            if (MosaicViewCfg.DEBUG_DRAW_FLOW)
                 LoggerSimple.Put("MosaicWin2DView.Draw: " + (toDrawCells == null ? "all" : ("cnt=" + toDrawCells.Count))
                                                           + "; drawBk=" + drawBk);
 #endif
@@ -168,7 +168,7 @@ namespace fmg.uwp.mosaic.win2d {
             }
 
 #if DEBUG
-            if (_DEBUG_DRAW_FLOW)
+            if (MosaicViewCfg.DEBUG_DRAW_FLOW)
                 LoggerSimple.Put("-------------------------------");
 #endif
 

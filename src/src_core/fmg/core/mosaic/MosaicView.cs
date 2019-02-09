@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.ComponentModel;
 using System.Collections.Generic;
 using fmg.common;
 using fmg.common.geom;
@@ -7,6 +6,14 @@ using fmg.core.img;
 using fmg.core.mosaic.cells;
 
 namespace fmg.core.mosaic {
+
+#if DEBUG
+    public sealed class MosaicViewCfg {
+        private MosaicViewCfg() { }
+
+        public static bool DEBUG_DRAW_FLOW = false;
+    }
+#endif
 
     /// <summary> MVC: view. Base mosaic view implementation </summary>
     /// <typeparam name="TImage">platform specific view/image/picture or other display context/canvas/window/panel</typeparam>
@@ -23,14 +30,11 @@ namespace fmg.core.mosaic {
             : base(mosaicModel)
         { }
 
-#if DEBUG
-        public static bool _DEBUG_DRAW_FLOW = false;
-#endif
         private readonly HashSet<BaseCell> _modifiedCells = new HashSet<BaseCell>();
 
         protected ICollection<BaseCell> ToDrawCells(RectDouble? invalidatedRect) {
 #if DEBUG
-            if (_DEBUG_DRAW_FLOW)
+            if (MosaicViewCfg.DEBUG_DRAW_FLOW)
                 LoggerSimple.Put("> MosaicView.ToDrawCells: invalidatedRect=" + (invalidatedRect==null ? "null" : invalidatedRect.ToString()));
 #endif
 
@@ -56,7 +60,7 @@ namespace fmg.core.mosaic {
                 .ToList();
 
 #if DEBUG
-            if (_DEBUG_DRAW_FLOW)
+            if (MosaicViewCfg.DEBUG_DRAW_FLOW)
                 LoggerSimple.Put("< MosaicView.ToDrawCells: cnt=" + toDrawCells.Count);
 #endif
             return toDrawCells;
@@ -68,7 +72,7 @@ namespace fmg.core.mosaic {
             else
                 _modifiedCells.UnionWith(modifiedCells);
 #if DEBUG
-            if (_DEBUG_DRAW_FLOW)
+            if (MosaicViewCfg.DEBUG_DRAW_FLOW)
                 LoggerSimple.Put("MosaicView.Invalidate: " + ((modifiedCells == null) ? "all" : ("cnt=" + modifiedCells.Count) + ": " + modifiedCells.Take(5).ToList()));
 #endif
             Invalidate();
@@ -81,7 +85,7 @@ namespace fmg.core.mosaic {
         /// <summary> repaint all </summary>
         protected override void DrawBody() {
 #if DEBUG
-            if (_DEBUG_DRAW_FLOW)
+            if (MosaicViewCfg.DEBUG_DRAW_FLOW)
                 LoggerSimple.Put("MosaicView.DrawBody: " + (!_modifiedCells.Any() ? "all" : ("cnt=" + _modifiedCells.Count) + ": " + _modifiedCells.Take(5).ToList()));
 #endif
             DrawModified(!_modifiedCells.Any() ? null : _modifiedCells);

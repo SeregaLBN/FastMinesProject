@@ -161,9 +161,6 @@ namespace Test.FastMines.Uwp.Images {
                                     .SelectMany(m => m)));
         }
         private void TestWin2dMosaicsImg1(ICanvasResourceCreator resourceCreator) {
-#if DEBUG
-            Win2dMosaicImg.CanvasBmp._DEBUG_DRAW_FLOW = !true; // true - strongly slows rendering
-#endif
             TestApp<CanvasBitmap, Nothing, Win2dMosaicImg.ControllerBitmap, Win2dMosaicImg.CanvasBmp, Win2dMosaicImg.CanvasBmp, MosaicAnimatedModel<Nothing>, MosaicAnimatedModel<Nothing>>(
                 () =>
                     //new List<Win2dMosaicImg.ControllerBitmap>() { new Win2dMosaicImg.ControllerBitmap(resourceCreator) { MosaicType = EMosaic.eMosaicSquare1 } }
@@ -171,9 +168,6 @@ namespace Test.FastMines.Uwp.Images {
             );
         }
         private void TestWin2dMosaicsImg2(ICanvasResourceCreator resourceCreator) {
-#if DEBUG
-            Win2dMosaicImg.CanvasImgSrc._DEBUG_DRAW_FLOW = !true; // true - strongly slows rendering
-#endif
             TestApp<CanvasImageSource, Nothing, Win2dMosaicImg.ControllerImgSrc, Win2dMosaicImg.CanvasImgSrc, Win2dMosaicImg.CanvasImgSrc, MosaicAnimatedModel<Nothing>, MosaicAnimatedModel<Nothing>>(
                 () =>
                     //new List<Win2dMosaicImg.ControllerImgSrc>() { new Win2dMosaicImg.ControllerImgSrc(resourceCreator) { MosaicType = EMosaic.eMosaicSquare1 } }
@@ -217,9 +211,6 @@ namespace Test.FastMines.Uwp.Images {
         }
 
         private void TestWin2dMosaicsCanvasSwapControl(ICanvasResourceCreator resourceCreator) {
-#if DEBUG
-            Win2dMosaicCanvasSwapView._DEBUG_DRAW_FLOW = true;
-#endif
             TestApp<CanvasSwapChainPanel, CanvasBitmap, Win2dMosaicCanvasSwapController, Win2dMosaicCanvasSwapView, DummyView<CanvasSwapChainPanel>, MosaicDrawModel<CanvasBitmap>, DummyModel>(
                 () => new Win2dMosaicCanvasSwapController[] {
                   //TuneMosaicGameController<CanvasSwapChainPanel, CanvasBitmap, Win2dMosaicCanvasSwapController, Win2dMosaicCanvasSwapView, MosaicDrawModel<CanvasBitmap>>(new Win2dMosaicCanvasSwapController(resourceCreator)),
@@ -228,9 +219,6 @@ namespace Test.FastMines.Uwp.Images {
         }
 
         private void TestWin2dMosaicsCanvasVirtualControl(ICanvasResourceCreator resourceCreator) {
-#if DEBUG
-            Win2dMosaicCanvasVirtView._DEBUG_DRAW_FLOW = true;
-#endif
             TestApp<CanvasVirtualControl, CanvasBitmap, Win2dMosaicCanvasVirtController, Win2dMosaicCanvasVirtView, DummyView<CanvasVirtualControl>, MosaicDrawModel<CanvasBitmap>, DummyModel>(
                 () => new Win2dMosaicCanvasVirtController[] {
                   //TuneMosaicGameController<CanvasVirtualControl, CanvasBitmap, Win2dMosaicCanvasVirtController, Win2dMosaicCanvasVirtView, MosaicDrawModel<CanvasBitmap>>(new Win2dMosaicCanvasVirtController(resourceCreator)),
@@ -239,27 +227,18 @@ namespace Test.FastMines.Uwp.Images {
         }
 
         private void TestXamlMosaicControl()  {
-#if DEBUG
-            MosaicXamlView._DEBUG_DRAW_FLOW = true;
-#endif
             TestApp<Panel, ImageSource, MosaicXamlController, MosaicXamlView, DummyView<Panel>, MosaicDrawModel<ImageSource>, DummyModel>(
                 () => new MosaicXamlController[] {
                     TuneMosaicGameController<Panel, ImageSource, MosaicXamlController, MosaicXamlView, MosaicDrawModel<ImageSource>>(new MosaicXamlController())
             });
         }
         private void TestWBmpMosaicControl() {
-#if DEBUG
-            WBmpMosaicImageView._DEBUG_DRAW_FLOW = true;
-#endif
             TestApp<Image, WriteableBitmap, WBmpMosaicImageController, WBmpMosaicImageView, DummyView<Image>, MosaicDrawModel<WriteableBitmap>, DummyModel>(
                 () => new WBmpMosaicImageController[] {
                     TuneMosaicGameController<Image, WriteableBitmap, WBmpMosaicImageController, WBmpMosaicImageView, MosaicDrawModel<WriteableBitmap>>(new WBmpMosaicImageController())
             });
         }
         private void TestWBmpMosaicsImg() {
-#if DEBUG
-            WBmpMosaicImg._DEBUG_DRAW_FLOW = !true;
-#endif
             TestApp<WriteableBitmap, Nothing, WBmpMosaicImg.Controller, WBmpMosaicImg, WBmpMosaicImg, MosaicAnimatedModel<Nothing>, MosaicAnimatedModel<Nothing>>(
                 () =>
                     //new List<MosaicWBmpImg.Controller>() { new MosaicWBmpImg.Controller() { MosaicType = EMosaic.eMosaicSquare1 } }
@@ -311,13 +290,16 @@ namespace Test.FastMines.Uwp.Images {
         public DemoPage() {
             _td = new TestDrawing("UWP");
 
+#if DEBUG
+            MosaicViewCfg.DEBUG_DRAW_FLOW = false; // true - strongly slows rendering
+#endif
             var device = CanvasDevice.GetSharedDevice();
             _onCreateImages = new Action[] {
+                () => TestWin2dMosaicsImg1    (device),
                 () => TestWin2dMosaicsCanvasVirtualControl(device),
                 () => TestWin2dMosaicsCanvasSwapControl(device),
                 TestXamlMosaicControl,
                 TestWBmpMosaicControl,
-                () => TestWin2dMosaicsImg1    (device),
                 () => TestWin2dMosaicsImg2    (device),
                 () => TestWin2dMosaicSkillImg1(device),
                 () => TestWin2dMosaicSkillImg2(device),
@@ -353,7 +335,10 @@ namespace Test.FastMines.Uwp.Images {
             prevImagesBtn.Click += (s, ev) => OnNextImages(false);
             refreshButton.Click += (s, ev) => OnNextImages(null);
             nextImagesBtn.Click += (s, ev) => OnNextImages(true);
-            this.Loaded         += (s, ev) => OnNextImages(null);
+            this.Loaded         += (s, ev) => {
+                nextImagesBtn.Focus(FocusState.Programmatic);
+                OnNextImages(null);
+            };
             this.Unloaded       += (s, ev) => OnDestroy();
         }
 
