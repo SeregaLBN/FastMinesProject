@@ -45,7 +45,7 @@ public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicAnimatedModel<Vo
             m.getPenBorder().setWidth(3 * getZoom());
 //            m.setRotateAngle(45 * ThreadLocalRandom.current().nextInt(7));
 
-            android.graphics.Bitmap bmp = tmp.getImage();
+//            android.graphics.Bitmap bmp = tmp.getImage();
 //            assert (bmp.getWidth()  == (int)(getSize().width * getZoom()));
 //            assert (bmp.getHeight() == (int)(getSize().height * getZoom()));
             setEntity(tmp);
@@ -70,7 +70,7 @@ public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicAnimatedModel<Vo
     }
 
     private static String fixTitle(EMosaic mosaicType) {
-        return mosaicType.getDescription(false);//.Replace("-", "\u2006-\u2006");
+        return mosaicType.getDescription(false);//.replace("-", "\u2006-\u2006");
     }
 
     private Matrisize calcSizeField(ESkillLevel skill) {

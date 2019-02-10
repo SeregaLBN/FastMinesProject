@@ -1,14 +1,17 @@
 using System.ComponentModel;
 using Microsoft.Graphics.Canvas;
 using fmg.common;
+using fmg.common.notyfier;
 using fmg.common.geom;
 using fmg.core.types;
-using MosaicsGroupCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsGroupImg.CanvasBmp;
+using fmg.core.img;
+using MosaicGroupView       = fmg.uwp.img.win2d.MosaicGroupImg.CanvasBmp;
+using MosaicGroupController = fmg.uwp.img.win2d.MosaicGroupImg.ControllerBitmap;
 
 namespace fmg.DataModel.Items {
 
     /// <summary> Mosaic group item for data model </summary>
-    public class MosaicGroupDataItem : BaseData<EMosaicGroup?, MosaicsGroupCanvasBmp> {
+    public class MosaicGroupDataItem : BaseDataItem<EMosaicGroup?, MosaicGroupModel, MosaicGroupView, MosaicGroupController> {
 
         public MosaicGroupDataItem(EMosaicGroup? eMosaicGroup)
             : base(eMosaicGroup)
@@ -16,56 +19,50 @@ namespace fmg.DataModel.Items {
             Title = eMosaicGroup?.GetDescription();
         }
 
-        public EMosaicGroup? MosaicGroup => UniqueId;
+        public EMosaicGroup? MosaicGroup {
+            get => UniqueId;
+            set { UniqueId = value; }
+        }
 
-        public override int Zoom() { return 2; }
-
-        private MosaicsGroupCanvasBmp _mosaicGroupImg;
-        public override MosaicsGroupCanvasBmp Image {
+        public override MosaicGroupController Entity {
             get {
-                if (_mosaicGroupImg == null) {
-                    // call this setter
-                    Image = new MosaicsGroupCanvasBmp(MosaicGroup, CanvasDevice.GetSharedDevice()) {
-                        BorderWidth = 3,
-                        RotateAngle = ThreadLocalRandom.Current.Next(90)
-                    };
+                if (entity == null) {
+                    var tmp = new MosaicGroupController(MosaicGroup, CanvasDevice.GetSharedDevice());
+                    var m = tmp.Model;
+                    m.BorderWidth = 3;
+                    m.RotateAngle = ThreadLocalRandom.Current.Next(90);
+                    tmp.BurgerMenuModel.PropertyChanged += OnBurgerMenuModelPropertyChanged;
+                    Entity = tmp; // call this setter
                 }
-                return _mosaicGroupImg;
-            }
-            protected set {
-                var old = _mosaicGroupImg;
-                if (SetProperty(ref _mosaicGroupImg, value)) {
-                    if (old != null) {
-                        old.PropertyChanged -= OnImagePropertyChanged;
-                        old.Dispose();
-                    }
-                    if (value != null) {
-                        value.PropertyChanged += OnImagePropertyChanged;
-                    }
-                    OnPropertyChanged(nameof(this.Image));
-                }
+                return entity;
             }
         }
 
-        public Bound ImagePaddingBurgerMenu {
+        public BoundDouble PaddingBurgerMenu {
             get {
-                var pad = Image.PaddingBurgerMenu;
+                var pad = Entity.BurgerMenuModel.Padding;
                 var zoom = Zoom();
-                return new Bound(pad.Left / zoom, pad.Top / zoom, pad.Right / zoom, pad.Bottom / zoom);
+                return new BoundDouble(pad.Left / zoom, pad.Top / zoom, pad.Right / zoom, pad.Bottom / zoom);
             }
             set {
-                var zoom = Zoom();
-                Image.PaddingBurgerMenu = new Bound(value.Left * zoom, value.Top * zoom, value.Right * zoom, value.Bottom * zoom);
+                Entity.BurgerMenuModel.Padding = ZoomPadding(value);
             }
         }
 
-        protected override void OnImagePropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            base.OnImagePropertyChanged(sender, ev);
+        protected void OnBurgerMenuModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             switch (ev.PropertyName) {
-            case nameof(MosaicsGroupCanvasBmp.PaddingBurgerMenu):
-                OnPropertyChanged<Bound>(ev, nameof(this.ImagePaddingBurgerMenu));
+            case nameof(BurgerMenuModel.Padding):
+                if (ev is PropertyChangedExEventArgs<BoundDouble> evx)
+                    notifier.OnPropertyChanged(ZoomPadding(evx.OldValue), ZoomPadding(evx.NewValue), nameof(this.PaddingBurgerMenu));
+                else
+                    notifier.OnPropertyChanged(nameof(this.PaddingBurgerMenu));
                 break;
             }
+        }
+
+        protected override void Disposing() {
+            Entity.BurgerMenuModel.PropertyChanged -= OnBurgerMenuModelPropertyChanged;
+            base.Disposing();
         }
 
     }

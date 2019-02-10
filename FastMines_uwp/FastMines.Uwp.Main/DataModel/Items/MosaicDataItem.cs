@@ -2,12 +2,16 @@
 using Microsoft.Graphics.Canvas;
 using fmg.common.geom;
 using fmg.core.types;
-using MosaicsCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsImg.CanvasBmp;
+using MosaicsModel      = fmg.core.img.MosaicAnimatedModel<fmg.common.Nothing>;
+using MosaicsView       = fmg.uwp.img.win2d.MosaicImg.CanvasBmp;
+using MosaicsController = fmg.uwp.img.win2d.MosaicImg.ControllerBitmap;
 
 namespace fmg.DataModel.Items {
 
     /// <summary> Mosaic item for data model </summary>
-    public class MosaicDataItem : BaseData<EMosaic, MosaicsCanvasBmp> {
+    public class MosaicDataItem : BaseDataItem<EMosaic, MosaicsModel, MosaicsView, MosaicsController> {
+
+        private ESkillLevel _skillLevel;
 
         public MosaicDataItem(EMosaic mosaicType)
             : base(mosaicType)
@@ -15,64 +19,52 @@ namespace fmg.DataModel.Items {
             Title = FixTitle(mosaicType);
         }
 
-        public EMosaic MosaicType => UniqueId;
+        public EMosaic MosaicType {
+            get => UniqueId;
+            set {  UniqueId = value; }
+        }
 
-        private ESkillLevel _skillLevel;
         public ESkillLevel SkillLevel {
             get { return _skillLevel; }
             set {
-                if (SetProperty(ref _skillLevel, value)) {
-                    Image.SizeField = CaclSizeField(value);
-                }
+                notifier.SetProperty(ref _skillLevel, value);
             }
         }
 
-        public override int Zoom() { return 2; }
-
-        private MosaicsCanvasBmp _mosaicImg;
-        public override MosaicsCanvasBmp Image {
+        public override MosaicsController Entity {
             get {
-                if (_mosaicImg == null) {
-                    var sizeField = MosaicType.SizeTileField(SkillLevel);
-                    var tmp = new MosaicsCanvasBmp(CanvasDevice.GetSharedDevice()) {
-                        MosaicType = MosaicType,
-                        SizeField = sizeField,
-                        PaddingInt = 5 * Zoom(),
-                        RotateMode = MosaicsCanvasBmp.ERotateMode.SomeCells,
-                        //BackgroundColor = MosaicsCanvasBmp.DefaultBkColor,
-                        BorderWidth = 3 * Zoom()//,
-                        //RotateAngle = 45 * ThreadLocalRandom.Current.Next(7)
-                    };
+                if (entity == null) {
+                    var sizeField = SkillLevel.SizeTileField(MosaicType);
+                    var tmp = new MosaicsController(CanvasDevice.GetSharedDevice());
+                    var m = tmp.Model;
+                    m.MosaicType = MosaicType;
+                    m.SizeField = sizeField;
+                    m.Padding = new BoundDouble(5 * Zoom());
+                    m.RotateMode = MosaicsModel.ERotateMode.someCells;
+                    //m.BackgroundColor = MosaicDrawModelConst.DefaultBkColor;
+                    m.PenBorder.Width = 3 * Zoom();
+                    //m.RotateAngle = 45 * ThreadLocalRandom.Current.Next(7);
+
                     //var bmp = tmp.Image;
-                    //System.Diagnostics.Debug.Assert(bmp.PixelWidth == ImageSize * ZoomKoef);
-                    //System.Diagnostics.Debug.Assert(bmp.PixelHeight == ImageSize * ZoomKoef);
-                    Image = tmp; // call this setter
+                    //System.Diagnostics.Debug.Assert(bmp.SizeInPixels.Width  == (int)(Size.Width  * Zoom()));
+                    //System.Diagnostics.Debug.Assert(bmp.SizeInPixels.Height == (int)(Size.Height * Zoom()));
+                    Entity = tmp; // call this setter
                 }
-                return _mosaicImg;
-            }
-            protected set {
-                var old = _mosaicImg;
-                if (SetProperty(ref _mosaicImg, value)) {
-                    if (old != null) {
-                        old.PropertyChanged -= OnImagePropertyChanged;
-                        old.Dispose();
-                    }
-                    if (value != null) {
-                        value.PropertyChanged += OnImagePropertyChanged;
-                    }
-                    OnPropertyChanged(nameof(this.Image));
-                }
+                return entity;
             }
         }
 
-        protected override void OnPropertyChanged(PropertyChangedEventArgs ev) {
-            base.OnPropertyChanged(ev);
+        protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            base.OnPropertyChanged(sender, ev);
             switch(ev.PropertyName) {
             case nameof(this.UniqueId):
-                OnPropertyChanged<EMosaic>(ev, nameof(this.MosaicType)); // recall with another property name
-                Image.MosaicType = MosaicType;
-                Image.SizeField = CaclSizeField(SkillLevel);
+                notifier.OnPropertyChanged(nameof(this.MosaicType)); // recall with another property name
+                Entity.MosaicType = MosaicType;
+                Entity.SizeField = CalcSizeField(SkillLevel);
                 Title = FixTitle(MosaicType);
+                break;
+            case nameof(this.SkillLevel):
+                Entity.SizeField = CalcSizeField(SkillLevel);
                 break;
             }
         }
@@ -81,10 +73,11 @@ namespace fmg.DataModel.Items {
             return mosaicType.GetDescription(false);//.Replace("-", "\u2006-\u2006");
         }
 
-        private Matrisize CaclSizeField(ESkillLevel skill) {
-            return MosaicType.SizeTileField((skill == ESkillLevel.eCustom)
-                                                ? ESkillLevel.eBeginner
-                                                : skill);
+        private Matrisize CalcSizeField(ESkillLevel skill) {
+            return ((skill == ESkillLevel.eCustom)
+                        ? ESkillLevel.eBeginner
+                        : skill)
+                    .SizeTileField(MosaicType);
         }
 
     }

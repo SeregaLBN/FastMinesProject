@@ -18,6 +18,8 @@ namespace fmg.core.img {
             UseRotateTransforming(true);
         }
 
+        public BurgerMenuModel BurgerMenuModel => View.BurgerMenuModel;
+
     }
 
 }

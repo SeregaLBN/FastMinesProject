@@ -15,7 +15,7 @@
     <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
     <PackageCertificateKeyFile>FastMines.Uwp.Main_TemporaryKey.pfx</PackageCertificateKeyFile>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.16299.0</TargetPlatformVersion>
+    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.17134.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.10240.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
   </PropertyGroup>
@@ -99,7 +99,8 @@
     <Compile Include="DataModel\DataSources\MosaicsDataSource.cs" />
     <Compile Include="DataModel\DataSources\MosaicSkillsDataSource.cs" />
     <Compile Include="DataModel\DataSources\MosaicGroupsDataSource.cs" />
-    <Compile Include="DataModel\Items\BaseData.cs" />
+    <Compile Include="DataModel\Items\BaseDataItem.cs" />
+    <Compile Include="DataModel\Items\LogoDataItem.cs" />
     <Compile Include="DataModel\Items\MosaicDataItem.cs" />
     <Compile Include="DataModel\Items\MosaicSkillDataItem.cs" />
     <Compile Include="DataModel\Items\MosaicGroupDataItem.cs" />
@@ -589,7 +590,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <SDKReference Include="WindowsMobile, Version=10.0.16299.0">
+    <SDKReference Include="WindowsMobile, Version=10.0.17134.0">
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>

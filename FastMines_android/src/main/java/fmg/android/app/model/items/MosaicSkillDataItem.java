@@ -48,7 +48,6 @@ public class MosaicSkillDataItem extends BaseDataItem<ESkillLevel, MosaicSkillMo
     }
 
     protected void onBurgerMenuModelPropertyChanged(PropertyChangeEvent ev) {
-        super.onPropertyChanged(ev);
         switch (ev.getPropertyName()) {
         case BurgerMenuModel.PROPERTY_PADDING:
             notifier.onPropertyChanged(zoomPadding((BoundDouble)ev.getOldValue()), zoomPadding((BoundDouble)ev.getNewValue()), PROPERTY_PADDING_BURGER);

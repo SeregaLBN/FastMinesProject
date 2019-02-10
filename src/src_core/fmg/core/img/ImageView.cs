@@ -29,7 +29,7 @@ namespace fmg.core.img {
         protected bool Disposed { get; private set; }
         private event PropertyChangedEventHandler PropertyChangedSync;
         public  event PropertyChangedEventHandler PropertyChanged/*Async*/;
-        protected readonly NotifyPropertyChanged _notifier;
+        protected readonly NotifyPropertyChanged _notifier/*Sync*/;
         private   readonly NotifyPropertyChanged _notifierAsync;
 
         protected ImageView(TImageModel imageModel) {

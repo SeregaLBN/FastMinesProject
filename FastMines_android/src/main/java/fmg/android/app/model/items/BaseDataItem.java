@@ -103,12 +103,10 @@ public abstract class BaseDataItem<T,
 
         switch (ev.getPropertyName()) {
         case IImageModel.PROPERTY_SIZE:
-            SizeDouble oldSize = (SizeDouble)ev.getOldValue();
-            SizeDouble newSize = (SizeDouble)ev.getNewValue();
-            notifier.onPropertyChanged(zoomSize(oldSize), zoomSize(newSize), PROPERTY_SIZE);
+            notifier.onPropertyChanged(zoomSize((SizeDouble)ev.getOldValue()), zoomSize((SizeDouble)ev.getNewValue()), PROPERTY_SIZE);
             break;
         case IImageModel.PROPERTY_PADDING:
-            notifier.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_PADDING);
+            notifier.onPropertyChanged(zoomPadding((BoundDouble)ev.getOldValue()), zoomPadding((BoundDouble)ev.getNewValue()), PROPERTY_PADDING);
             break;
         }
     }
