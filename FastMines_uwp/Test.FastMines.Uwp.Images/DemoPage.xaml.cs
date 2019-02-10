@@ -21,6 +21,7 @@ using fmg.common.Converters;
 using fmg.core.img;
 using fmg.core.types;
 using fmg.core.mosaic;
+using fmg.uwp.img;
 using fmg.uwp.utils;
 using fmg.uwp.mosaic.xaml;
 using Win2dMosaicCanvasSwapController = fmg.uwp.mosaic.win2d.MosaicCanvasSwapChainPanelController;
@@ -44,7 +45,6 @@ using WBmpMine                  = fmg.uwp.img.wbmp.Mine;
 using WBmpFlag                  = fmg.uwp.img.wbmp.Flag;
 using WBmpSmile                 = fmg.uwp.img.wbmp.Smile;
 using DummyMosaicImageType = System.Object;
-using fmg.uwp.img;
 
 namespace Test.FastMines.Uwp.Images {
 
@@ -199,7 +199,7 @@ namespace Test.FastMines.Uwp.Images {
             if (ThreadLocalRandom.Current.Next(2) == 1) {
                 // unmodified controller test
             } else {
-                EMosaic mosaicType = EMosaic.eMosaicTrSq1;
+                EMosaic mosaicType = EMosaicEx.FromOrdinal(ThreadLocalRandom.Current.Next(EMosaicEx.GetValues().Length));
                 ESkillLevel skill = ESkillLevel.eBeginner;
 
                 mosaicController.MosaicType = mosaicType;
@@ -295,11 +295,11 @@ namespace Test.FastMines.Uwp.Images {
 #endif
             var device = CanvasDevice.GetSharedDevice();
             _onCreateImages = new Action[] {
-                () => TestWin2dMosaicsImg1    (device),
                 () => TestWin2dMosaicsCanvasVirtualControl(device),
                 () => TestWin2dMosaicsCanvasSwapControl(device),
                 TestXamlMosaicControl,
                 TestWBmpMosaicControl,
+                () => TestWin2dMosaicsImg1    (device),
                 () => TestWin2dMosaicsImg2    (device),
                 () => TestWin2dMosaicSkillImg1(device),
                 () => TestWin2dMosaicSkillImg2(device),
@@ -388,7 +388,6 @@ namespace Test.FastMines.Uwp.Images {
                                          || (typeof(TImageController) == typeof(WBmpMosaicImageController))
                                          || (typeof(TImageController) == typeof(Win2dMosaicCanvasVirtController))
                                          || (typeof(TImageController) == typeof(MosaicXamlController));
-            bool closed = false;
 
             void onCellTilingHandler(bool applySettings, bool createImgControls, bool resized) {
                 if (isMosaicGameController) // when is this game field...
@@ -419,8 +418,8 @@ namespace Test.FastMines.Uwp.Images {
                     if (createImgControls) {
                         var img = imgObj.Image;
                         FrameworkElement imgControl;
-                        if (img is FrameworkElement) {
-                            imgControl = img as FrameworkElement;
+                        if (img is FrameworkElement imgFE) {
+                            imgControl = imgFE;
                     #region lifehack for XAML
                             if (typeof(TImageController) == typeof(MosaicXamlController)) {
                                 imgControl.Visibility = Visibility.Collapsed;
@@ -467,13 +466,8 @@ namespace Test.FastMines.Uwp.Images {
                                 });
 
                                 void onDraw(CanvasControl s, CanvasDrawEventArgs ev) {
-                                    if (closed)
-                                        return;
-                                    try {
-                                        ev.DrawingSession.DrawImage(img as CanvasBitmap, new Windows.Foundation.Rect(0, 0, cnvsCtrl.Width, cnvsCtrl.Height));
-                                    } catch(ObjectDisposedException ex) {
-                                        LoggerSimple.Put("TODO: fix " + ex);
-                                    }
+                                    var img2 = imgObj.Image; // reload image !!
+                                    ev.DrawingSession.DrawImage(img2 as CanvasBitmap, new Windows.Foundation.Rect(0, 0, cnvsCtrl.Width, cnvsCtrl.Height));
                                 }
                                 cnvsCtrl.Draw += onDraw;
                                 cnvsCtrl.Unloaded += (s, ev) => {
@@ -482,7 +476,7 @@ namespace Test.FastMines.Uwp.Images {
                             } else
                     #endregion
                             {
-                                throw new Exception("Unsupported image type");
+                                throw new Exception("Unsupported image type: " + img.GetType().FullName);
                             }
                         }
                         _panel.Children.Add(imgControl);
@@ -517,7 +511,6 @@ namespace Test.FastMines.Uwp.Images {
                 _panel.Tapped         += onTapped;
 
             _onCloseImages = () => {
-                closed = true;
                 _panel.SizeChanged -= onSizeChanged;
                 if (isMosaicGameController)
                     _panel.PointerPressed -= onPointerPressed;

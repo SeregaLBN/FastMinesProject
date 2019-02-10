@@ -85,7 +85,9 @@ namespace fmg.core.types {
     }
 
     public static class EMosaicEx {
+
         private static readonly EMosaic[] EMosaicValues = (EMosaic[])Enum.GetValues(typeof(EMosaic));
+
         public static EMosaic[] GetValues() { return EMosaicValues; }
 
         public static int Ordinal(this EMosaic self) {

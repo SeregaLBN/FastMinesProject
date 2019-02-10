@@ -59,7 +59,7 @@ public class DemoActivity extends Activity {
             if (ThreadLocalRandom.current().nextBoolean()) {
                 // unmodified controller test
             } else {
-                EMosaic mosaicType = EMosaic.eMosaicTrSq1;
+                EMosaic mosaicType = EMosaic.fromOrdinal(ThreadLocalRandom.current().nextInt(EMosaic.values().length));
                 ESkillLevel skill  = ESkillLevel.eBeginner;
 
                 mosaicController.setMosaicType(mosaicType);
@@ -190,12 +190,12 @@ public class DemoActivity extends Activity {
                             @Override
                             public void draw(Canvas canvas) {
                                 super.draw(canvas);
-                                Object img = imgObj.getImage(); // reload image!
-                                if (img instanceof Bitmap) {
-                                    Bitmap bmp = (Bitmap)img;
+                                Object img2 = imgObj.getImage(); // reload image!
+                                if (img2 instanceof Bitmap) {
+                                    Bitmap bmp = (Bitmap)img2;
                                     canvas.drawBitmap(bmp, 0,0, null);
                                 } else {
-                                    throw new RuntimeException("Unsupported image type: " + img.getClass().getSimpleName());
+                                    throw new RuntimeException("Unsupported image type: " + img2.getClass().getName());
                                 }
                             }
                         };

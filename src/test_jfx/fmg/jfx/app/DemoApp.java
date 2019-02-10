@@ -25,6 +25,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 
 import fmg.common.Color;
@@ -67,7 +68,7 @@ public final class DemoApp extends Application {
             if (ThreadLocalRandom.current().nextBoolean()) {
                 // unmodified controller test
             } else {
-                EMosaic mosaicType = EMosaic.eMosaicTrSq1;
+                EMosaic mosaicType = EMosaic.fromOrdinal(ThreadLocalRandom.current().nextInt(EMosaic.values().length));
                 ESkillLevel skill  = ESkillLevel.eBeginner;
 
                 ctrllr.setMosaicType(mosaicType);
@@ -148,7 +149,6 @@ public final class DemoApp extends Application {
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        //setUserAgentStylesheet(STYLESHEET_MODENA);
 
         _td = new TestDrawing("JFX");
 
@@ -169,16 +169,22 @@ public final class DemoApp extends Application {
         Scene scene = new Scene(border);
         { // top
             HBox hbox = new HBox();
-            hbox.setPadding(new Insets(15, 12, 15, 12));
-            hbox.setSpacing(10);
+            hbox.setPadding(new Insets(1, 1, 3, 1));
+            hbox.setSpacing(1);
             hbox.setStyle("-fx-background-color: #336699;");
 
             Button prevImagesBtn = new Button("...Previous");
             Button refreshButton = new Button("🗘");
             Button nextImagesBtn = new Button("Next...");
             prevImagesBtn.setMinSize(100, 20);
-            refreshButton.setMinSize(100, 20);
+            refreshButton.setMinSize(20, 20);
             nextImagesBtn.setMinSize(100, 20);
+            HBox.setHgrow(prevImagesBtn, Priority.ALWAYS);
+            HBox.setHgrow(refreshButton, Priority.ALWAYS);
+            HBox.setHgrow(nextImagesBtn, Priority.ALWAYS);
+            prevImagesBtn.setMaxWidth(Double.MAX_VALUE);
+            refreshButton.setMaxWidth(Double.MAX_VALUE);
+            nextImagesBtn.setMaxWidth(Double.MAX_VALUE);
             hbox.getChildren().addAll(prevImagesBtn, refreshButton, nextImagesBtn);
             border.setTop(hbox);
 
@@ -191,15 +197,7 @@ public final class DemoApp extends Application {
         { // center
             canvas = new Canvas(300, 300);
             pane = new Pane(canvas);
-//            anchorpane = new AnchorPane();
-//            AnchorPane.setTopAnchor(pane, 3.0);
-//            AnchorPane.setLeftAnchor(pane, 3.0);
-//            AnchorPane.setRightAnchor(pane, 3.0);
-//            AnchorPane.setBottomAnchor(pane, 3.0);
-//            //group.getChildren().addAll(canvas);
-//            anchorpane.getChildren().addAll(pane);
             pane.setStyle("-fx-background-color: #00FF00;");
-//            anchorpane.setStyle("-fx-background-color: #FF0000;");
             border.setCenter(pane);
         }
 
@@ -209,6 +207,7 @@ public final class DemoApp extends Application {
         primaryStage.setHeight(300);
         primaryStage.setWidth(300);
         primaryStage.setOnCloseRequest(ev -> onDestroy());
+        primaryStage.sizeToScene();
         primaryStage.show();
     }
 
@@ -291,7 +290,7 @@ public final class DemoApp extends Application {
                             Image img = (Image)imgObj;
                             gc.drawImage(img, offset.x, offset.y);
                         } else {
-                            throw new IllegalArgumentException("Not supported image type is " + imgObj.getClass().getName());
+                            throw new IllegalArgumentException("Unsupported image type: " + imgObj.getClass().getName());
                         }
                     });
                 }
@@ -308,11 +307,11 @@ public final class DemoApp extends Application {
                     Canvas imgControl = null;
                     if (img instanceof Canvas) {
                         imgControl = (Canvas)img;
-                    }  else
+                    } else
                     if (img instanceof Image) {
                         // ignore.. - drawed into AnimationTimer
                     } else {
-                        throw new IllegalArgumentException("Not supported image type is " + img.getClass().getName());
+                        throw new IllegalArgumentException("Unsupported image type: " + img.getClass().getName());
                     }
 
                     // TODO remove unused code

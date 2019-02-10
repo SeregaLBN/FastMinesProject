@@ -52,7 +52,7 @@ public class DemoApp  {
             if (ThreadLocalRandom.current().nextBoolean()) {
                 // unmodified controller test
             } else {
-                EMosaic mosaicType = EMosaic.eMosaicTrSq1;
+                EMosaic mosaicType = EMosaic.fromOrdinal(ThreadLocalRandom.current().nextInt(EMosaic.values().length));
                 ESkillLevel skill  = ESkillLevel.eBeginner;
 
                 mosaicController.setMosaicType(mosaicType);
@@ -231,7 +231,10 @@ public class DemoApp  {
                     Component imgControl = null;
                     if (img instanceof Component) {
                         imgControl = (Component)img;
-                    } else {
+                    } else
+                    if ((img instanceof Icon) ||
+                        (img instanceof Image))
+                    {
                         imgControl = new JPanel() {
 
                             private static final long serialVersionUID = 1L;
@@ -239,18 +242,19 @@ public class DemoApp  {
                             @Override
                             public void paintComponent(Graphics g) {
                               //super.paintComponent(g); // don`t redraw base
-                                Object img = imgObj.getImage(); // reload image
-                                if (img instanceof Icon) {
-                                    Icon ico = (Icon)img;
+                                Object img2 = imgObj.getImage(); // reload image
+                                if (img2 instanceof Icon) {
+                                    Icon ico = (Icon)img2;
                                     //ico = ImgUtils.zoom(ico, imgSize.width, imgSize.height);
                                     ico.paintIcon(null, g, 0, 0);
                                 } else
-                                if (img instanceof Image) {
-                                    Image image = (Image)img;
+                                if (img2 instanceof Image) {
+                                    Image image = (Image)img2;
                                     //image = ImgUtils.zoom(image, imgSize.width, imgSize.height);
                                     g.drawImage(image, 0, 0, null);
-                                } else
-                                    throw new IllegalArgumentException("Not supported image type is " + img.getClass().getName());
+                                } else {
+                                    throw new IllegalArgumentException("Unsupported image type: " + img2.getClass().getName());
+                                }
                             }
                         };
                       //imgControl.setBackgroundColor(Cast.toColor(Color.RandomColor().brighter()));
@@ -264,6 +268,8 @@ public class DemoApp  {
                         };
                         imgObj.addListener(onChangeImage);
                         binding.put(imgObj, onChangeImage);
+                    } else {
+                        throw new IllegalArgumentException("Unsupported image type: " + img.getClass().getName());
                     }
 
                     _jPanel.add(imgControl);
