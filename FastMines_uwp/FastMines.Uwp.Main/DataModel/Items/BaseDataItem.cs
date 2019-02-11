@@ -122,7 +122,7 @@ namespace fmg.DataModel.Items {
         protected virtual void Disposing() {
             notifier.Dispose();
             notifierAsync.Dispose();
-            this.PropertyChanged -= OnPropertyChanged;
+            this.PropertyChangedSync -= OnPropertyChanged;
             Entity = null; // call setter
         }
 

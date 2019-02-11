@@ -15,12 +15,13 @@ import fmg.core.img.IImageView;
 import fmg.core.img.ImageController;
 
 public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THeaderModel, THeaderView, THeaderCtrlr>,
-                                     TItem   extends BaseDataItem<TItemId  , TItemModel, TItemView, TItemCtrlr>,
                                      THeaderId,
-                                     TItemId,
                                      THeaderModel extends IAnimatedModel,
                                      THeaderView  extends IImageView<Bitmap, THeaderModel>,
                                      THeaderCtrlr extends ImageController<Bitmap, THeaderView, THeaderModel>,
+                                     
+                                     TItem   extends BaseDataItem<TItemId, TItemModel, TItemView, TItemCtrlr>,
+                                     TItemId,
                                      TItemModel extends IAnimatedModel,
                                      TItemView  extends IImageView<Bitmap, TItemModel>,
                                      TItemCtrlr extends ImageController<Bitmap, TItemView, TItemModel>>
@@ -51,6 +52,7 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
 
     public abstract List<TItem> getDataSource();
 
+    /** Selected element */
     public TItem getCurrentItem() {
         return getDataSource().get(getCurrentItemPos());
     }
@@ -58,6 +60,7 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
         setCurrentItemPos(getDataSource().indexOf(activeItem));
     }
 
+    /** Selected index of element */
     public int getCurrentItemPos() { return currentItemPos; }
     public void setCurrentItemPos(int pos) {
         if ((pos < 0) || (pos >= getDataSource().size()))

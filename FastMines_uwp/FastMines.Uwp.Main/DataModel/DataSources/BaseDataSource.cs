@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Linq;
+using System.ComponentModel;
+using System.Collections.ObjectModel;
 using Microsoft.Graphics.Canvas;
 using fmg.DataModel.Items;
 using fmg.common.notyfier;
@@ -10,64 +11,109 @@ using fmg.core.img;
 namespace fmg.DataModel.DataSources {
 
     /// <summary> base DataSource menu items </summary>
-    public abstract class BaseDataSource<TItem, T, TImage> : NotifyPropertyChanged, IDisposable
-        where TItem : BaseData<T, TImage>
-        where TImage : ImageModel<CanvasBitmap>
+    public abstract class BaseDataSource<THeader, THeaderId, THeaderModel, THeaderView, THeaderCtrlr,
+                                         TItem  ,   TItemId,   TItemModel,   TItemView,   TItemCtrlr>
+            : INotifyPropertyChanged, IDisposable
+
+        where THeader : BaseDataItem<THeaderId, THeaderModel, THeaderView, THeaderCtrlr>
+        where TItem   : BaseDataItem<  TItemId,   TItemModel,   TItemView,   TItemCtrlr>
+        where THeaderId : class
+        where TItemId   : class
+        where THeaderModel : IAnimatedModel
+        where THeaderView  : IImageView<CanvasBitmap, THeaderModel>
+        where THeaderCtrlr : ImageController<CanvasBitmap, THeaderView, THeaderModel>
+        where TItemModel : IAnimatedModel
+        where TItemView  : IImageView<CanvasBitmap, TItemModel>
+        where TItemCtrlr : ImageController<CanvasBitmap, TItemView, TItemModel>
     {
-        private readonly ObservableCollection<TItem> _dataSource = new ObservableCollection<TItem>();
-        private TItem _currentElement;
+        /// <summary> Images that describes this data source </summary>
+        protected THeader header;
+        /// <summary> Data source - images that describes the elements </summary>
+        protected readonly ObservableCollection<TItem> dataSource = new ObservableCollection<TItem>();
+        /// <summary> Current item index in {@link #dataSource} </summary>
+        protected int currentItemPos = 0;
 
-        protected ObservableCollection<TItem> DataSourceInternal => _dataSource;
-        public ObservableCollection<TItem> DataSource {
-            get {
-                if (!_dataSource.Any()) {
-                    FillDataSource();
-                }
-                return _dataSource;
-            }
+        protected bool Disposed { get; private set; }
+        private event PropertyChangedEventHandler PropertyChangedSync;
+        public  event PropertyChangedEventHandler PropertyChanged/*Async*/;
+        protected readonly NotifyPropertyChanged notifier/*Sync*/;
+        private   readonly NotifyPropertyChanged notifierAsync;
+
+        protected BaseDataSource() {
+            notifier      = new NotifyPropertyChanged(this, ev => PropertyChangedSync?.Invoke(this, ev), false);
+            notifierAsync = new NotifyPropertyChanged(this, ev => PropertyChanged    ?.Invoke(this, ev), true);
+            this.PropertyChangedSync += OnPropertyChanged;
         }
 
-        protected virtual void FillDataSource() {
-            OnPropertyChanged(nameof(DataSource));
-        }
+        public abstract THeader Header { get; }
+
+        public abstract ObservableCollection<TItem> DataSource { get; }
 
         /// <summary> Selected element </summary>
-        public TItem CurrentElement {
-            get { return _currentElement; }
+        public TItem CurrentItem {
+            get { return DataSource[CurrentItemPos]; }
+            set { CurrentItemPos = DataSource.IndexOf(value); }
+        }
+
+        /// <summary> Selected index of element </summary>
+        public int CurrentItemPos {
+            get { return currentItemPos; }
             set {
-                if (SetProperty(ref _currentElement, value)) {
-                    OnCurrentElementChanged();
-                }
+                if ((value < 0) || (value >= DataSource.Count))
+                    throw new ArgumentException("Illegal index of value=" + value);
+                if (value == currentItemPos)
+                    return;
+                notifier.SetProperty(ref this.currentItemPos, value);
             }
         }
 
-        protected abstract void OnCurrentElementChanged();
-
-        public Size ImageSize {
-            get { return DataSource.First().ImageSize; }
+        public SizeDouble ImageSize {
+            get { return DataSource.First().Size; }
             set {
                 var old = ImageSize;
                 foreach (var mi in DataSource) {
-                    mi.ImageSize = value;
+                    mi.Size = value;
                 }
                 if (old != value) {
-                    OnPropertyChanged(new PropertyChangedExEventArgs<Size>(value, old));
+                    notifier.OnPropertyChanged(old, value);
                 }
             }
         }
 
-        protected override void Dispose(bool disposing) {
+        /// <summary> for one selected - start animate; for all other - stop animate </summary>
+        protected abstract void OnCurrentItemChanged();
+
+        protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            // refire as async event
+            notifierAsync.OnPropertyChanged(ev);
+
+            switch (ev.PropertyName) {
+            case nameof(this.CurrentItemPos):
+                OnCurrentItemChanged();
+                notifier.OnPropertyChanged(nameof(CurrentItem));
+                break;
+            }
+        }
+
+        protected virtual void Disposing() {
+            header?.Dispose();
+            foreach (var item in dataSource)
+                item.Dispose();
+            dataSource.Clear();
+
+            //CurrentItem = null;
+
+            this.PropertyChangedSync -= OnPropertyChanged;
+            notifier.Dispose();
+            notifierAsync.Dispose();
+        }
+
+        public void Dispose() {
             if (Disposed)
                 return;
-
-            base.Dispose(disposing);
-
-            if (disposing) {
-                CurrentElement = null;
-                foreach (var mi in _dataSource)
-                    mi.Dispose();
-                _dataSource.Clear();
-            }
+            Disposed = true;
+            Disposing();
+            GC.SuppressFinalize(this);
         }
 
     }
