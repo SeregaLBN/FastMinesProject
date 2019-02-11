@@ -1,16 +1,18 @@
 package fmg.android.app;
 
 import android.app.Activity;
+import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProviders;
+import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
 
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +22,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import fmg.android.app.databinding.DemoActivityBinding;
 import fmg.android.img.Flag;
 import fmg.android.img.Logo;
 import fmg.android.img.Mine;
@@ -41,14 +44,19 @@ import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
 
 /** live UI test application */
-public class DemoActivity extends Activity {
+public class DemoActivity extends /*AppCompat*/Activity {
+
+    private static final int MARGIN = 10; // panel margin - padding to inner images
 
     private TestDrawing _td;
-    private FrameLayout _innerLayout;
-    private static final int MARGIN = 10; // panel margin - padding to inner images
+    private DemoActivityBinding activityBinding;
     private Runnable _onCloseImages;
     private Runnable[] _onCreateImages; // images factory
-    private int _nextCreateImagesIndex;
+    private DemoViewModel viewModel;
+    public static class DemoViewModel extends ViewModel {
+        private int _nextCreateImagesIndex;
+    }
+
 
     // #region images Fabrica
     public void testMosaicControl () {
@@ -106,31 +114,29 @@ public class DemoActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.demo_activity);
+
+        activityBinding = DataBindingUtil.setContentView(this, R.layout.demo_activity);
+        viewModel = new DemoViewModel(); // ViewModelProviders.of(this).get(DemoViewModel.class);
+        activityBinding.setViewModel(viewModel);
+        activityBinding.executePendingBindings();
 
         _td = new TestDrawing("Android");
 
         _onCreateImages = new Runnable[] {
-                this::testMosaicControl,
-                this::testMosaicImg,
-                this::testMosaicSkillImg,
-                this::testMosaicGroupImg,
-                this::testSmile,
-                this::testLogo,
-                this::testMine,
-                this::testFlag
+            this::testMosaicControl,
+            this::testMosaicImg,
+            this::testMosaicSkillImg,
+            this::testMosaicGroupImg,
+            this::testSmile,
+            this::testLogo,
+            this::testMine,
+            this::testFlag
         };
 
-        _innerLayout = findViewById(R.id.inner_layout);
-
-        Button prevImagesBtn = findViewById(R.id.prev_images);
-        Button refreshButton = findViewById(R.id.refresh_images);
-        Button nextImagesBtn = findViewById(R.id.next_images);
-
-        prevImagesBtn.setOnClickListener(view -> onNextImages(false));
-        refreshButton.setOnClickListener(view -> onNextImages(null));
-        nextImagesBtn.setOnClickListener(view -> onNextImages(true));
-        _innerLayout.post(               ()   -> onNextImages(null));
+        activityBinding.prevImagesBtn.setOnClickListener(view -> onNextImages(false));
+        activityBinding.refreshButton.setOnClickListener(view -> onNextImages(null));
+        activityBinding.nextImagesBtn.setOnClickListener(view -> onNextImages(true));
+        activityBinding.innerLayout.post(                ()   -> onNextImages(null));
     }
 
     @Override
@@ -147,7 +153,8 @@ public class DemoActivity extends Activity {
     void testApp(Supplier<Stream<IImageController<?,?,?>>> funcGetImages) {
         List<IImageController<?,?,?>> images = funcGetImages.get().collect(Collectors.toList());
         setTitle(_td.getTitle(images));
-        _innerLayout.removeAllViews();
+        FrameLayout innerLayout = activityBinding.innerLayout;
+        innerLayout.removeAllViews();
 
         List<View> imgControls = new ArrayList<>(images.size());
         boolean[] testTransparent = { false };
@@ -164,8 +171,8 @@ public class DemoActivity extends Activity {
                 images.forEach(img -> _td.applySettings(img, testTransparent[0]));
             }
 
-            double sizeW = _innerLayout.getWidth();  // _innerLayout.getMeasuredWidth();
-            double sizeH = _innerLayout.getHeight(); // _innerLayout.getMeasuredHeight();
+            double sizeW = innerLayout.getWidth();  // _innerLayout.getMeasuredWidth();
+            double sizeH = innerLayout.getHeight(); // _innerLayout.getMeasuredHeight();
             RectDouble rc = new RectDouble(MARGIN, MARGIN, sizeW - MARGIN * 2, sizeH - MARGIN * 2); // inner rect where drawing images as tiles
 
             TestDrawing.CellTilingResult ctr = _td.cellTiling(rc, images, testTransparent[0]);
@@ -211,7 +218,7 @@ public class DemoActivity extends Activity {
                     }
 
                     FrameLayout.LayoutParams lpView = new FrameLayout.LayoutParams(0,0);
-                    _innerLayout.addView(imgControl, lpView);
+                    innerLayout.addView(imgControl, lpView);
                     imgControls.add(ctr.tableSize.width * cti.j + cti.i, imgControl);
                     resized = true; // to set real values to lpView
                 }
@@ -244,16 +251,16 @@ public class DemoActivity extends Activity {
         };
 //        _innerLayout.getViewTreeObserver().addOnGlobalLayoutListener(onSizeChanged);
         if (isMosaicGameController)
-            _innerLayout.setOnClickListener(onClick);
+            innerLayout.setOnClickListener(onClick);
         else
-            _innerLayout.setOnTouchListener(onTouch);
+            innerLayout.setOnTouchListener(onTouch);
 
         _onCloseImages = () -> {
 //            _innerLayout.getViewTreeObserver().removeOnGlobalLayoutListener(onSizeChanged);
             if (isMosaicGameController)
-                _innerLayout.setOnClickListener(null);
+                innerLayout.setOnClickListener(null);
             else
-                _innerLayout.setOnTouchListener(null);
+                innerLayout.setOnTouchListener(null);
             images.forEach(imgObj -> {
                 if (binding.containsKey(imgObj))
                     imgObj.removeListener(binding.get(imgObj));
@@ -271,14 +278,14 @@ public class DemoActivity extends Activity {
 
         if (isNext != null)
             if (isNext) {
-                if (++_nextCreateImagesIndex >= _onCreateImages.length)
-                    _nextCreateImagesIndex = 0;
+                if (++viewModel._nextCreateImagesIndex >= _onCreateImages.length)
+                    viewModel._nextCreateImagesIndex = 0;
             } else {
-                if (--_nextCreateImagesIndex < 0)
-                    _nextCreateImagesIndex = _onCreateImages.length - 1;
+                if (--viewModel._nextCreateImagesIndex < 0)
+                    viewModel._nextCreateImagesIndex = _onCreateImages.length - 1;
             }
 
-        _onCreateImages[_nextCreateImagesIndex].run();
+        _onCreateImages[viewModel._nextCreateImagesIndex].run();
     }
 
 }
