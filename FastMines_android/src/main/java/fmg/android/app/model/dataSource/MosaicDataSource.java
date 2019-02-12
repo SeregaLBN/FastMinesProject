@@ -22,12 +22,8 @@ import fmg.core.types.ESkillLevel;
 import fmg.core.types.draw.PenBorder;
 
 public class MosaicDataSource extends BaseDataSource<
-        LogoDataItem,
-        MosaicDataItem,
-        Void,
-        EMosaic,
-        LogoModel, Logo.Bitmap, Logo.ControllerBitmap,
-        MosaicAnimatedModel<Void>, MosaicImg.Bitmap, MosaicImg.ControllerBitmap>
+        LogoDataItem  ,    Void,           LogoModel      ,      Logo.Bitmap,      Logo.ControllerBitmap,
+        MosaicDataItem, EMosaic, MosaicAnimatedModel<Void>, MosaicImg.Bitmap, MosaicImg.ControllerBitmap>
 {
 
     public static final String PROPERTY_CURRENT_GROUP = "CurrentGroup";

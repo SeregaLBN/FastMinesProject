@@ -14,12 +14,8 @@ import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.types.EMosaicGroup;
 
 public class MosaicGroupDataSource extends BaseDataSource<
-        MosaicGroupDataItem,
-        MosaicGroupDataItem,
-        EMosaicGroup,
-        EMosaicGroup,
-        MosaicGroupModel, MosaicGroupImg.Bitmap, MosaicGroupImg.ControllerBitmap,
-        MosaicGroupModel, MosaicGroupImg.Bitmap, MosaicGroupImg.ControllerBitmap>
+        MosaicGroupDataItem, EMosaicGroup, MosaicGroupModel, MosaicGroupImg.Bitmap, MosaicGroupImg.ControllerBitmap,
+        MosaicGroupDataItem, EMosaicGroup, MosaicGroupModel, MosaicGroupImg.Bitmap, MosaicGroupImg.ControllerBitmap>
 {
 
     @Override
