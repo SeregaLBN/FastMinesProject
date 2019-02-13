@@ -17,8 +17,6 @@ namespace fmg.DataModel.DataSources {
 
         where THeader : BaseDataItem<THeaderId, THeaderModel, THeaderView, THeaderCtrlr>
         where TItem   : BaseDataItem<  TItemId,   TItemModel,   TItemView,   TItemCtrlr>
-        where THeaderId : class
-        where TItemId   : class
         where THeaderModel : IAnimatedModel
         where THeaderView  : IImageView<CanvasBitmap, THeaderModel>
         where THeaderCtrlr : ImageController<CanvasBitmap, THeaderView, THeaderModel>

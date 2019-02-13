@@ -66,8 +66,13 @@ public class MosaicDataSource extends BaseDataSource<
     }
 
     private void reloadDataSource() {
+        List<EMosaic> newEntities = (getCurrentGroup() == null)
+                ? getCurrentGroup().getMosaics()
+                : Stream.of(EMosaic.values()).collect(Collectors.toList());
+
         if ((dataSource == null) || dataSource.isEmpty()) {
-            dataSource = Stream.of(EMosaic.values())
+            // first load all
+            dataSource = newEntities.stream()
                     .map(this::makeItem)
                     .collect(Collectors.toList());
 
@@ -78,7 +83,6 @@ public class MosaicDataSource extends BaseDataSource<
         // Перегружаю не всё, а только то, что нужно. Остальное - обновляю.
         SizeDouble size = getImageSize(); // save
         int pos = getCurrentItemPos(); // save
-        List<EMosaic> newEntities = getCurrentGroup().getMosaics();
         int oldSize = dataSource.size();
         int newSize = newEntities.size();
         int max = Math.max(oldSize, newSize);
@@ -94,7 +98,9 @@ public class MosaicDataSource extends BaseDataSource<
             if (i < min) {
                 MosaicDataItem mi = dataSource.get(i);
                 mi.setUniqueId(mosaicType);
-                mi.setSkillLevel(getCurrentSkill());
+                ESkillLevel skill = getCurrentSkill();
+                if (skill != null)
+                    mi.setSkillLevel(skill);
             } else {
                 MosaicDataItem mi = makeItem(mosaicType);
                 mi.setSize(size); //  restore
@@ -106,7 +112,9 @@ public class MosaicDataSource extends BaseDataSource<
 
     private MosaicDataItem makeItem(EMosaic mosaicType) {
         MosaicDataItem mi = new MosaicDataItem(mosaicType);
-        mi.setSkillLevel(getCurrentSkill());
+        ESkillLevel skill = getCurrentSkill();
+        if (skill != null)
+            mi.setSkillLevel(skill);
         MosaicAnimatedModel<?> model = mi.getEntity().getModel();
         PenBorder pen = model.getPenBorder();
         pen.setWidth(1);
@@ -129,7 +137,7 @@ public class MosaicDataSource extends BaseDataSource<
             model.getPenBorder().setColorLight (selected ? Color.White() : Color.Black());
             model.getPenBorder().setColorShadow(selected ? Color.White() : Color.Black());
             model.setBackgroundColor(selected ? AnimatedImageModel.DefaultBkColor : MosaicDrawModel.DefaultBkColor);
-            model.setPadding(new BoundDouble(selected ? 10 : 5));
+            model.setPadding(new BoundDouble(model.getSize().width * (selected ? 10 : 5) /*/(mi.SkillLevel.Ordinal() + 1)*/ / 100));
             model.setRotateAngle(0);
         }
     }

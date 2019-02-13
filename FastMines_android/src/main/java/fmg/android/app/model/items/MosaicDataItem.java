@@ -28,6 +28,8 @@ public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicAnimatedModel<Vo
 
     public ESkillLevel getSkillLevel() { return skillLevel; }
     public void setSkillLevel(ESkillLevel skillLevel) {
+        if (skillLevel == null)
+            throw new IllegalArgumentException("Value of type " + ESkillLevel.class.getSimpleName() + " must be defined");
         notifier.setProperty(this.skillLevel, skillLevel, PROPERTY_SKILL_LEVEL);
     }
 

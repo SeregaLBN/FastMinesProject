@@ -96,7 +96,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataModel\DataSources\BaseDataSource.cs" />
-    <Compile Include="DataModel\DataSources\MosaicsDataSource.cs" />
+    <Compile Include="DataModel\DataSources\MosaicDataSource.cs" />
     <Compile Include="DataModel\DataSources\MosaicSkillsDataSource.cs" />
     <Compile Include="DataModel\DataSources\MosaicGroupsDataSource.cs" />
     <Compile Include="DataModel\Items\BaseDataItem.cs" />
