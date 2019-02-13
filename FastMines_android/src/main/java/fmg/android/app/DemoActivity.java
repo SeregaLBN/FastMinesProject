@@ -1,6 +1,5 @@
 package fmg.android.app;
 
-import android.app.Activity;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
@@ -44,7 +43,7 @@ import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
 
 /** live UI test application */
-public class DemoActivity extends /*AppCompat*/Activity {
+public class DemoActivity extends AppCompatActivity {
 
     private static final int MARGIN = 10; // panel margin - padding to inner images
 
@@ -52,8 +51,8 @@ public class DemoActivity extends /*AppCompat*/Activity {
     private DemoActivityBinding activityBinding;
     private Runnable _onCloseImages;
     private Runnable[] _onCreateImages; // images factory
-    private DemoViewModel viewModel;
     public static class DemoViewModel extends ViewModel {
+        private List<IImageController<?,?,?>> _images;
         private int _nextCreateImagesIndex;
     }
 
@@ -116,7 +115,7 @@ public class DemoActivity extends /*AppCompat*/Activity {
         super.onCreate(savedInstanceState);
 
         activityBinding = DataBindingUtil.setContentView(this, R.layout.demo_activity);
-        viewModel = new DemoViewModel(); // ViewModelProviders.of(this).get(DemoViewModel.class);
+        DemoViewModel viewModel = ViewModelProviders.of(this).get(DemoViewModel.class);
         activityBinding.setViewModel(viewModel);
         activityBinding.executePendingBindings();
 
@@ -151,7 +150,7 @@ public class DemoActivity extends /*AppCompat*/Activity {
     }
 
     void testApp(Supplier<Stream<IImageController<?,?,?>>> funcGetImages) {
-        List<IImageController<?,?,?>> images = funcGetImages.get().collect(Collectors.toList());
+        List<IImageController<?,?,?>> images = activityBinding.getViewModel()._images = funcGetImages.get().collect(Collectors.toList());
         setTitle(_td.getTitle(images));
         FrameLayout innerLayout = activityBinding.innerLayout;
         innerLayout.removeAllViews();
@@ -276,6 +275,7 @@ public class DemoActivity extends /*AppCompat*/Activity {
         if (_onCloseImages != null)
             _onCloseImages.run();
 
+        DemoViewModel viewModel = activityBinding.getViewModel();
         if (isNext != null)
             if (isNext) {
                 if (++viewModel._nextCreateImagesIndex >= _onCreateImages.length)

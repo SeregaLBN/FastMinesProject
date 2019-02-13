@@ -41,7 +41,7 @@ namespace fmg.DataModel.Items {
             set { notifier.SetProperty(ref title, value); }
         }
 
-        public double Zoom() => 2;
+        protected double Zoom() => 2;
 
         public virtual TImageCtrlr Entity {
             get { throw new NotImplementedException("Must be overridden"); }

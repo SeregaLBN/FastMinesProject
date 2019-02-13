@@ -1,8 +1,13 @@
 package fmg.android.app.model.items;
 
+import android.databinding.BaseObservable;
+import android.databinding.Bindable;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import fmg.android.app.BR;
+import fmg.common.LoggerSimple;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.INotifyPropertyChanged;
@@ -17,14 +22,15 @@ public abstract class BaseDataItem<T,
                                    TImageModel extends IAnimatedModel,
                                    TImageView  extends IImageView<android.graphics.Bitmap, TImageModel>,
                                    TImageCtrlr extends ImageController<android.graphics.Bitmap, TImageView, TImageModel>>
-        implements INotifyPropertyChanged, AutoCloseable
+    extends BaseObservable
+    implements INotifyPropertyChanged, AutoCloseable
 {
 
-    public static final String PROPERTY_SIZE      = IImageModel.PROPERTY_SIZE;
-    public static final String PROPERTY_PADDING   = IImageModel.PROPERTY_PADDING;
     public static final String PROPERTY_UNIQUE_ID = "UniqueId";
     public static final String PROPERTY_TITLE     = "Title";
     public static final String PROPERTY_ENTITY    = "Entity";
+    public static final String PROPERTY_SIZE      = IImageModel.PROPERTY_SIZE;
+    public static final String PROPERTY_PADDING   = IImageModel.PROPERTY_PADDING;
 
     private T uniqueId;
     protected TImageCtrlr entity;
@@ -37,18 +43,21 @@ public abstract class BaseDataItem<T,
         notifier.addListener(this::onPropertyChanged);
     }
 
+    @Bindable
     public T getUniqueId() { return uniqueId; }
     public void setUniqueId(T uniqueId) {
         notifier.setProperty(this.uniqueId, uniqueId, PROPERTY_UNIQUE_ID);
     }
 
+    @Bindable
     public String getTitle() { return title; }
     public void setTitle(String title) {
         notifier.setProperty(this.title, title, PROPERTY_TITLE);
     }
 
-    public double getZoom() { return 2; }
+    protected double getZoom() { return 2; }
 
+    @Bindable
     public abstract TImageCtrlr getEntity();
     protected void setEntity(TImageCtrlr entity) {
         TImageCtrlr old = this.entity;
@@ -63,6 +72,7 @@ public abstract class BaseDataItem<T,
         }
     }
 
+    @Bindable
     public SizeDouble getSize() {
         SizeDouble size = getEntity().getModel().getSize();
         double zoom = getZoom();
@@ -72,6 +82,7 @@ public abstract class BaseDataItem<T,
         getEntity().getModel().setSize(zoomSize(size));
     }
 
+    @Bindable
     public BoundDouble getPadding() {
         BoundDouble pad = getEntity().getModel().getPadding();
         double zoom = getZoom();
@@ -96,6 +107,15 @@ public abstract class BaseDataItem<T,
     protected void onPropertyChanged(PropertyChangeEvent ev) {
         // refire as async event
         notifierAsync.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+
+        // refire as as android data binding event
+        switch (ev.getPropertyName()) {
+        case PROPERTY_UNIQUE_ID: notifyPropertyChanged(BR.uniqueId); break;
+        case PROPERTY_TITLE    : notifyPropertyChanged(BR.title   ); break;
+        case PROPERTY_ENTITY   : notifyPropertyChanged(BR.entity  ); break;
+        case PROPERTY_SIZE     : notifyPropertyChanged(BR.size    ); break;
+        case PROPERTY_PADDING  : notifyPropertyChanged(BR.padding ); break;
+        }
     }
 
     protected void onModelPropertyChanged(PropertyChangeEvent ev) {

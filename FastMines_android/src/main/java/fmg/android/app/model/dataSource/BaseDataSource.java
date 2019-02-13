@@ -1,5 +1,8 @@
 package fmg.android.app.model.dataSource;
 
+import android.arch.lifecycle.ViewModel;
+import android.databinding.BaseObservable;
+import android.databinding.Bindable;
 import android.graphics.Bitmap;
 
 import java.beans.PropertyChangeEvent;
@@ -25,6 +28,7 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
                                      TItemModel extends IAnimatedModel,
                                      TItemView  extends IImageView<Bitmap, TItemModel>,
                                      TItemCtrlr extends ImageController<Bitmap, TItemView, TItemModel>>
+    extends ViewModel
     implements INotifyPropertyChanged, AutoCloseable
 {
 
@@ -50,6 +54,7 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
 
     public abstract THeader getHeader();
 
+//    @Bindable
     public abstract List<TItem> getDataSource();
 
     /** Selected element */
