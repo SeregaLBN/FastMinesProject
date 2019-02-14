@@ -10,6 +10,7 @@ import fmg.android.app.databinding.DemoActivityBinding;
 import fmg.android.app.databinding.MainActivityBinding;
 import fmg.android.app.model.dataSource.MosaicGroupDataSource;
 import fmg.android.app.model.items.MosaicGroupDataItem;
+import fmg.android.app.presentation.MainMenuViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,8 +20,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityBinding = DataBindingUtil.setContentView(this, R.layout.main_activity);
-        MosaicGroupDataSource mosaicGroupDS = ViewModelProviders.of(this).get(MosaicGroupDataSource.class);
-        activityBinding.setMosaicGroupDS(mosaicGroupDS);
+        MainMenuViewModel viewModel = ViewModelProviders.of(this).get(MainMenuViewModel.class);
+        activityBinding.setViewModel(viewModel);
         activityBinding.executePendingBindings();
 
 //        Intent intent = new Intent(this, DemoActivity.class);

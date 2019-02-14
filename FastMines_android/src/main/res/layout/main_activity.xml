@@ -4,12 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <import type="android.view.View"/>
 
         <variable
-            name="mosaicGroupDS"
-            type="fmg.android.app.model.dataSource.MosaicGroupDataSource" />
+            name="viewModel"
+            type="fmg.android.app.presentation.MainMenuViewModel" />
     </data>
 
     <android.support.constraint.ConstraintLayout
