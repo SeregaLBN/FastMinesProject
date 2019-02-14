@@ -1,10 +1,13 @@
 package fmg.android.app.model.dataSource;
 
+import android.databinding.Bindable;
+
 import java.beans.PropertyChangeEvent;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import fmg.android.app.BR;
 import fmg.android.app.model.items.LogoDataItem;
 import fmg.android.app.model.items.MosaicDataItem;
 import fmg.android.img.Logo;
@@ -55,11 +58,13 @@ public class MosaicDataSource extends BaseDataSource<
         return dataSource;
     }
 
+    @Bindable
     public EMosaicGroup getCurrentGroup() { return currentGroup; }
     public void setCurrentGroup(EMosaicGroup currentGroup) {
         notifier.setProperty(this.currentGroup, currentGroup, PROPERTY_CURRENT_GROUP);
     }
 
+    @Bindable
     public ESkillLevel getCurrentSkill() { return currentSkill; }
     public void setCurrentSkill(ESkillLevel currentSkill) {
         notifier.setProperty(this.currentSkill, currentSkill, PROPERTY_CURRENT_SKILL);
@@ -151,6 +156,16 @@ public class MosaicDataSource extends BaseDataSource<
         case PROPERTY_CURRENT_SKILL:
             reloadDataSource();
             break;
+        }
+    }
+
+    @Override
+    protected void onAsyncPropertyChanged(PropertyChangeEvent ev) {
+        super.onAsyncPropertyChanged(ev);
+
+        switch (ev.getPropertyName()) {
+        case PROPERTY_CURRENT_GROUP: notifyPropertyChanged(BR.currentGroup); break;
+        case PROPERTY_CURRENT_SKILL: notifyPropertyChanged(BR.currentSkill); break;
         }
     }
 

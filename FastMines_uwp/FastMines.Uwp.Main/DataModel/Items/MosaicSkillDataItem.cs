@@ -50,6 +50,16 @@ namespace fmg.DataModel.Items {
             }
         }
 
+        protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            base.OnPropertyChanged(sender, ev);
+
+            switch(ev.PropertyName) {
+            case nameof(this.UniqueId):
+                notifier.OnPropertyChanged(nameof(this.SkillLevel)); // recall with another property name
+                break;
+            }
+        }
+
         protected void OnBurgerMenuModelPropertyChanged(object sender, PropertyChangedEventArgs ev)
         {
             switch (ev.PropertyName) {

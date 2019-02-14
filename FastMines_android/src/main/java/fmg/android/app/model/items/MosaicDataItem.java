@@ -1,7 +1,10 @@
 package fmg.android.app.model.items;
 
+import android.databinding.Bindable;
+
 import java.beans.PropertyChangeEvent;
 
+import fmg.android.app.BR;
 import fmg.android.img.MosaicImg;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.Matrisize;
@@ -23,9 +26,11 @@ public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicAnimatedModel<Vo
         setTitle(fixTitle(mosaicType));
     }
 
+    @Bindable
     public EMosaic getMosaicType()                   { return getUniqueId(); }
     public void    setMosaicType(EMosaic mosaicType) {        setUniqueId(mosaicType); }
 
+    @Bindable
     public ESkillLevel getSkillLevel() { return skillLevel; }
     public void setSkillLevel(ESkillLevel skillLevel) {
         if (skillLevel == null)
@@ -58,6 +63,7 @@ public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicAnimatedModel<Vo
     @Override
     protected void onPropertyChanged(PropertyChangeEvent ev) {
         super.onPropertyChanged(ev);
+
         switch (ev.getPropertyName()) {
         case PROPERTY_UNIQUE_ID:
             notifier.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_MOSAIC_TYPE); // recall with another property name
@@ -68,6 +74,17 @@ public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicAnimatedModel<Vo
         case PROPERTY_SKILL_LEVEL:
             getEntity().setSizeField(calcSizeField(getSkillLevel()));
             break;
+        }
+    }
+
+    @Override
+    protected void onAsyncPropertyChanged(PropertyChangeEvent ev) {
+        super.onAsyncPropertyChanged(ev);
+
+        // refire as android data binding event
+        switch (ev.getPropertyName()) {
+        case PROPERTY_MOSAIC_TYPE: notifyPropertyChanged(BR.mosaicType); break;
+        case PROPERTY_SKILL_LEVEL: notifyPropertyChanged(BR.skillLevel); break;
         }
     }
 

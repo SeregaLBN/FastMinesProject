@@ -1,8 +1,11 @@
 package fmg.android.app.model.items;
 
+import android.databinding.Bindable;
+
 import java.beans.PropertyChangeEvent;
 import java.util.concurrent.ThreadLocalRandom;
 
+import fmg.android.app.BR;
 import fmg.android.img.MosaicSkillImg;
 import fmg.common.geom.BoundDouble;
 import fmg.core.img.BurgerMenuModel;
@@ -12,6 +15,7 @@ import fmg.core.types.ESkillLevel;
 /** Mosaic skill level item for data model */
 public class MosaicSkillDataItem extends BaseDataItem<ESkillLevel, MosaicSkillModel, MosaicSkillImg.Bitmap, MosaicSkillImg.ControllerBitmap> {
 
+    public static final String PROPERTY_SKILL_LEVEL    = "SkillLevel";
     public static final String PROPERTY_PADDING_BURGER = "PaddingBurgerMenu";
 
     public MosaicSkillDataItem(ESkillLevel eSkill) {
@@ -19,6 +23,7 @@ public class MosaicSkillDataItem extends BaseDataItem<ESkillLevel, MosaicSkillMo
         setTitle(eSkill==null ? null : eSkill.getDescription());
     }
 
+    @Bindable
     public ESkillLevel getSkillLevel()                   { return getUniqueId(); }
     public void        setSkillLevel(ESkillLevel eSkill) {        setUniqueId(eSkill); }
 
@@ -38,6 +43,7 @@ public class MosaicSkillDataItem extends BaseDataItem<ESkillLevel, MosaicSkillMo
         return this.entity;
     }
 
+    @Bindable
     public BoundDouble getPaddingBurgerMenu() {
         BoundDouble pad = getEntity().getBurgerMenuModel().getPadding();
         double zoom = getZoom();
@@ -45,6 +51,28 @@ public class MosaicSkillDataItem extends BaseDataItem<ESkillLevel, MosaicSkillMo
     }
     public void setPaddingBurgerMenu(BoundDouble paddingBurgerMenu) {
         getEntity().getBurgerMenuModel().setPadding(zoomPadding(paddingBurgerMenu));
+    }
+
+    @Override
+    protected void onPropertyChanged(PropertyChangeEvent ev) {
+        super.onPropertyChanged(ev);
+
+        switch (ev.getPropertyName()) {
+        case PROPERTY_UNIQUE_ID:
+            notifier.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_SKILL_LEVEL); // recall with another property name
+            break;
+        }
+    }
+
+    @Override
+    protected void onAsyncPropertyChanged(PropertyChangeEvent ev) {
+        super.onAsyncPropertyChanged(ev);
+
+        // refire as android data binding event
+        switch (ev.getPropertyName()) {
+        case PROPERTY_SKILL_LEVEL   : notifyPropertyChanged(BR.skillLevel       ); break;
+        case PROPERTY_PADDING_BURGER: notifyPropertyChanged(BR.paddingBurgerMenu); break;
+        }
     }
 
     protected void onBurgerMenuModelPropertyChanged(PropertyChangeEvent ev) {

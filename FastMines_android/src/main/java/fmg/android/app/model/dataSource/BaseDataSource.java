@@ -9,6 +9,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 
+import fmg.android.app.BR;
 import fmg.android.app.model.items.BaseDataItem;
 import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.INotifyPropertyChanged;
@@ -28,7 +29,7 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
                                      TItemModel extends IAnimatedModel,
                                      TItemView  extends IImageView<Bitmap, TItemModel>,
                                      TItemCtrlr extends ImageController<Bitmap, TItemView, TItemModel>>
-    extends ViewModel
+    extends BaseObservable
     implements INotifyPropertyChanged, AutoCloseable
 {
 
@@ -49,15 +50,18 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
     private   final NotifyPropertyChanged notifierAsync    = new NotifyPropertyChanged(this, true);
 
     protected BaseDataSource() {
-        notifier.addListener(this::onPropertyChanged);
+        notifier     .addListener(this::onPropertyChanged);
+        notifierAsync.addListener(this::onAsyncPropertyChanged);
     }
 
+    @Bindable
     public abstract THeader getHeader();
 
-//    @Bindable
+    @Bindable
     public abstract List<TItem> getDataSource();
 
     /** Selected element */
+    @Bindable
     public TItem getCurrentItem() {
         return getDataSource().get(getCurrentItemPos());
     }
@@ -66,6 +70,7 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
     }
 
     /** Selected index of element */
+    @Bindable
     public int getCurrentItemPos() { return currentItemPos; }
     public void setCurrentItemPos(int pos) {
         if ((pos < 0) || (pos >= getDataSource().size()))
@@ -75,6 +80,7 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
         notifier.setProperty(this.currentItemPos, pos, PROPERTY_CURRENT_ITEM_POS);
     }
 
+    @Bindable
     public SizeDouble getImageSize() {
         return getDataSource().get(0).getSize();
     }
@@ -102,6 +108,17 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
         }
     }
 
+    protected void onAsyncPropertyChanged(PropertyChangeEvent ev) {
+        // refire as android data binding event
+        switch (ev.getPropertyName()) {
+        case PROPERTY_DATA_SOURCE     : notifyPropertyChanged(BR.dataSource    ); break;
+        case PROPERTY_HEADER          : notifyPropertyChanged(BR.header        ); break;
+        case PROPERTY_IMAGE_SIZE      : notifyPropertyChanged(BR.imageSize     ); break;
+        case PROPERTY_CURRENT_ITEM    : notifyPropertyChanged(BR.currentItem   ); break;
+        case PROPERTY_CURRENT_ITEM_POS: notifyPropertyChanged(BR.currentItemPos); break;
+        }
+    }
+
     @Override
     public void close() {
         if (header != null)
@@ -110,7 +127,8 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
             dataSource.forEach(TItem::close);
             dataSource.clear();
         }
-        notifier.removeListener(this::onPropertyChanged);
+        notifier     .removeListener(this::onPropertyChanged);
+        notifierAsync.removeListener(this::onAsyncPropertyChanged);
         notifier.close();
         notifierAsync.close();
     }

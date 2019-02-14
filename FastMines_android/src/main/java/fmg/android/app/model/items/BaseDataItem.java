@@ -40,7 +40,8 @@ public abstract class BaseDataItem<T,
 
     protected BaseDataItem(T uniqueId) {
         this.uniqueId = uniqueId;
-        notifier.addListener(this::onPropertyChanged);
+        notifier     .addListener(this::onPropertyChanged);
+        notifierAsync.addListener(this::onAsyncPropertyChanged);
     }
 
     @Bindable
@@ -107,8 +108,10 @@ public abstract class BaseDataItem<T,
     protected void onPropertyChanged(PropertyChangeEvent ev) {
         // refire as async event
         notifierAsync.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+    }
 
-        // refire as as android data binding event
+    protected void onAsyncPropertyChanged(PropertyChangeEvent ev) {
+        // refire as android data binding event
         switch (ev.getPropertyName()) {
         case PROPERTY_UNIQUE_ID: notifyPropertyChanged(BR.uniqueId); break;
         case PROPERTY_TITLE    : notifyPropertyChanged(BR.title   ); break;
@@ -147,7 +150,8 @@ public abstract class BaseDataItem<T,
 
     @Override
     public void close() {
-        notifier.removeListener(this::onPropertyChanged);
+        notifier     .removeListener(this::onPropertyChanged);
+        notifierAsync.removeListener(this::onAsyncPropertyChanged);
         notifier.close();
         notifierAsync.close();
         setEntity(null); // call setter
