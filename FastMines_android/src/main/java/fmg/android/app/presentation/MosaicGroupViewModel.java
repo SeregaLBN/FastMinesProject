@@ -27,7 +27,7 @@ public class MosaicGroupViewModel extends ViewModel implements AutoCloseable {
         switch (ev.getPropertyName()) {
         case MosaicDataSource.PROPERTY_IMAGE_SIZE:
             // TODO ! notify parent container
-            //notifier.onPropertyChanged<SizeDouble>(ev, nameof(this.ImageSize));
+            //notifier.firePropertyChanged<SizeDouble>(ev, nameof(this.ImageSize));
             break;
         }
     }

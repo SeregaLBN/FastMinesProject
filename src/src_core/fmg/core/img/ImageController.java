@@ -40,13 +40,13 @@ public abstract class ImageController<TImage,
     protected void onPropertyViewChanged(PropertyChangeEvent ev) {
         switch (ev.getPropertyName()) {
         case IImageView.PROPERTY_MODEL:
-            _notifier.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_MODEL);
+            _notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_MODEL);
             break;
         case IImageView.PROPERTY_IMAGE:
-            _notifier.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_IMAGE);
+            _notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_IMAGE);
             break;
         case IImageView.PROPERTY_SIZE:
-            _notifier.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_SIZE);
+            _notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_SIZE);
             break;
         default:
             break;

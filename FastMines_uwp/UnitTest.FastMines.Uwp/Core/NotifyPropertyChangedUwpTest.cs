@@ -29,7 +29,7 @@ namespace fmg.common.notyfier {
             const string prefix = "Value ";
             using (var notifier = new NotifyPropertyChanged(null, listener, true)) {
                 for (int i=0; i<countFiredEvents; ++i)
-                    notifier.OnPropertyChanged(null, prefix + i, "propertyName");
+                    notifier.FirePropertyChanged(null, prefix + i, "propertyName");
 
                 await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                     CoreDispatcherPriority.Low,

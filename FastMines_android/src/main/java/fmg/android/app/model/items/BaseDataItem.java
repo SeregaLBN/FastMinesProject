@@ -7,7 +7,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import fmg.android.app.BR;
-import fmg.common.LoggerSimple;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.INotifyPropertyChanged;
@@ -107,7 +106,7 @@ public abstract class BaseDataItem<T,
 
     protected void onPropertyChanged(PropertyChangeEvent ev) {
         // refire as async event
-        notifierAsync.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+        notifierAsync.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
     }
 
     protected void onAsyncPropertyChanged(PropertyChangeEvent ev) {
@@ -126,10 +125,10 @@ public abstract class BaseDataItem<T,
 
         switch (ev.getPropertyName()) {
         case IImageModel.PROPERTY_SIZE:
-            notifier.onPropertyChanged(zoomSize((SizeDouble)ev.getOldValue()), zoomSize((SizeDouble)ev.getNewValue()), PROPERTY_SIZE);
+            notifier.firePropertyChanged(zoomSize((SizeDouble)ev.getOldValue()), zoomSize((SizeDouble)ev.getNewValue()), PROPERTY_SIZE);
             break;
         case IImageModel.PROPERTY_PADDING:
-            notifier.onPropertyChanged(zoomPadding((BoundDouble)ev.getOldValue()), zoomPadding((BoundDouble)ev.getNewValue()), PROPERTY_PADDING);
+            notifier.firePropertyChanged(zoomPadding((BoundDouble)ev.getOldValue()), zoomPadding((BoundDouble)ev.getNewValue()), PROPERTY_PADDING);
             break;
         }
     }

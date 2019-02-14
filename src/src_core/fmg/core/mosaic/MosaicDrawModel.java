@@ -214,7 +214,7 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
         public int getMode() { return _mode; }
 
         /** режим заливки фона ячеек
-         * @param mode
+         * @param newFillMode
          *  <li> 0 - цвет заливки фона по-умолчанию
          *  <li> not 0 - радуга %)
          */
@@ -297,16 +297,16 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
     }
 
     private void onFontInfoPropertyChanged(PropertyChangeEvent ev) {
-        _notifier.onPropertyChanged(null, ev.getSource(), PROPERTY_FONT_INFO);
+        _notifier.firePropertyChanged(null, ev.getSource(), PROPERTY_FONT_INFO);
     }
     private void onBackgroundFillPropertyChanged(PropertyChangeEvent ev) {
-        _notifier.onPropertyChanged(null, ev.getSource(), PROPERTY_BACKGROUND_FILL);
+        _notifier.firePropertyChanged(null, ev.getSource(), PROPERTY_BACKGROUND_FILL);
     }
     private void onColorTextPropertyChanged(PropertyChangeEvent ev) {
-        _notifier.onPropertyChanged(null, ev.getSource(), PROPERTY_COLOR_TEXT);
+        _notifier.firePropertyChanged(null, ev.getSource(), PROPERTY_COLOR_TEXT);
     }
     private void onPenBorderPropertyChanged(PropertyChangeEvent ev) {
-        _notifier.onPropertyChanged(null, ev.getSource(), PROPERTY_PEN_BORDER);
+        _notifier.firePropertyChanged(null, ev.getSource(), PROPERTY_PEN_BORDER);
     }
 
     @Override

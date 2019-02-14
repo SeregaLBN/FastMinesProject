@@ -66,7 +66,7 @@ public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicAnimatedModel<Vo
 
         switch (ev.getPropertyName()) {
         case PROPERTY_UNIQUE_ID:
-            notifier.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_MOSAIC_TYPE); // recall with another property name
+            notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_MOSAIC_TYPE); // recall with another property name
             getEntity().setMosaicType(getMosaicType());
             getEntity().setSizeField(calcSizeField(getSkillLevel()));
             setTitle(fixTitle(getMosaicType()));

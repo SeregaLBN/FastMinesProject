@@ -46,7 +46,7 @@ public class MosaicDataSource extends BaseDataSource<
             model.setPolarLights(true);
             model.setAnimated(true);
 
-            notifier.onPropertyChanged(null, header, PROPERTY_HEADER);
+            notifier.firePropertyChanged(null, header, PROPERTY_HEADER);
         }
         return header;
     }
@@ -81,7 +81,7 @@ public class MosaicDataSource extends BaseDataSource<
                     .map(this::makeItem)
                     .collect(Collectors.toList());
 
-            notifier.onPropertyChanged(null, dataSource, PROPERTY_DATA_SOURCE);
+            notifier.firePropertyChanged(null, dataSource, PROPERTY_DATA_SOURCE);
             return;
         }
 
@@ -111,7 +111,7 @@ public class MosaicDataSource extends BaseDataSource<
                 mi.setSize(size); //  restore
             }
         }
-        notifier.onPropertyChanged(null, dataSource, PROPERTY_DATA_SOURCE);
+        notifier.firePropertyChanged(null, dataSource, PROPERTY_DATA_SOURCE);
         setCurrentItemPos(Math.min(pos, dataSource.size() - 1)); // restore pos
     }
 

@@ -82,7 +82,7 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
         // Уведомляю владельца класса что поменялось изображение.
         // Т.е. что нужно вызвать getImage()
         // при котором и отрисуется новое изображение (через вызов draw)
-        _notifier.onPropertyChanged(PROPERTY_IMAGE);
+        _notifier.firePropertyChanged(PROPERTY_IMAGE);
     }
 
     private void draw() {
@@ -102,17 +102,17 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
 
     protected void onPropertyChanged(PropertyChangeEvent ev) {
         // refire as async event
-        _notifierAsync.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+        _notifierAsync.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
     }
 
     protected void onPropertyModelChanged(PropertyChangeEvent ev) {
 //        LoggerSimple.put("  ImageView::onPropertyModelChanged: ev.name=" + ev.getPropertyName());
-        _notifier.onPropertyChanged(null, getModel(), PROPERTY_MODEL);
+        _notifier.firePropertyChanged(null, getModel(), PROPERTY_MODEL);
         if (IImageModel.PROPERTY_SIZE.equals(ev.getPropertyName())) {
             setImage(null);
 //            invalidate();
-            _notifier.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_SIZE);
-            _notifier.onPropertyChanged(PROPERTY_IMAGE);
+            _notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_SIZE);
+            _notifier.firePropertyChanged(PROPERTY_IMAGE);
         } else {
             invalidate();
         }

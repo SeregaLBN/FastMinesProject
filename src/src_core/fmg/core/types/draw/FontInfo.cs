@@ -35,7 +35,7 @@ namespace fmg.core.types.draw {
                 if (_size.HasMinDiff(value))
                     return;
                 _size = value;
-                _notifier.OnPropertyChanged(old, value);
+                _notifier.FirePropertyChanged(old, value);
             }
         }
 

@@ -56,7 +56,7 @@ public class MosaicGroupDataItem extends BaseDataItem<EMosaicGroup, MosaicGroupM
 
         switch (ev.getPropertyName()) {
         case PROPERTY_UNIQUE_ID:
-            notifier.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_MOSAIC_GROUP); // recall with another property name
+            notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_MOSAIC_GROUP); // recall with another property name
             break;
         }
     }
@@ -75,7 +75,7 @@ public class MosaicGroupDataItem extends BaseDataItem<EMosaicGroup, MosaicGroupM
     protected void onBurgerMenuModelPropertyChanged(PropertyChangeEvent ev) {
         switch (ev.getPropertyName()) {
         case BurgerMenuModel.PROPERTY_PADDING:
-            notifier.onPropertyChanged(zoomPadding((BoundDouble)ev.getOldValue()), zoomPadding((BoundDouble)ev.getNewValue()), PROPERTY_PADDING_BURGER);
+            notifier.firePropertyChanged(zoomPadding((BoundDouble)ev.getOldValue()), zoomPadding((BoundDouble)ev.getNewValue()), PROPERTY_PADDING_BURGER);
             break;
         }
     }

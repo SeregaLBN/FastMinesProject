@@ -89,7 +89,7 @@ public abstract class AnimatedImageModel implements IAnimatedModel {
         if (!DoubleExt.hasMinDiff(_borderWidth, value)) {
             double old = _borderWidth;
             _borderWidth = value;
-            _notifier.onPropertyChanged(old, value, PROPERTY_BORDER_WIDTH);
+            _notifier.firePropertyChanged(old, value, PROPERTY_BORDER_WIDTH);
         }
     }
 
@@ -144,7 +144,7 @@ public abstract class AnimatedImageModel implements IAnimatedModel {
 
     protected void onInnerModelPropertyChanged(PropertyChangeEvent ev) {
         // refire
-        _notifier.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+        _notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
     }
 
     @Override

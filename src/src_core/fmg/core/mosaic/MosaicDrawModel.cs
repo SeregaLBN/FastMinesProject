@@ -232,16 +232,16 @@ namespace fmg.core.mosaic {
         }
 
         private void OnFontInfoPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            _notifier.OnPropertyChanged(nameof(this.FontInfo));
+            _notifier.FirePropertyChanged(nameof(this.FontInfo));
         }
         private void OnBackgroundFillPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            _notifier.OnPropertyChanged(nameof(this.BkFill));
+            _notifier.FirePropertyChanged(nameof(this.BkFill));
         }
         private void OnColorTextPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            _notifier.OnPropertyChanged(nameof(this.ColorText));
+            _notifier.FirePropertyChanged(nameof(this.ColorText));
         }
         private void OnPenBorderPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            _notifier.OnPropertyChanged(nameof(this.PenBorder));
+            _notifier.FirePropertyChanged(nameof(this.PenBorder));
         }
 
         protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {

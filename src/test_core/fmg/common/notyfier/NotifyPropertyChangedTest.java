@@ -57,7 +57,7 @@ public class NotifyPropertyChangedTest {
             PropertyChangeListener listener = ev -> { ++countReceivedEvents[0]; };
             notifier.addListener(listener);
             for (int i=0; i<countFiredEvents; ++i)
-                notifier.onPropertyChanged("propertyName");
+                notifier.firePropertyChanged("propertyName");
             notifier.removeListener(listener);
 
             Assert.assertEquals(countFiredEvents, countReceivedEvents[0]);
@@ -90,7 +90,7 @@ public class NotifyPropertyChangedTest {
 
             final String prefix = " Value ";
             for (int i=0; i<countFiredEvents; ++i)
-                notifier.onPropertyChanged(null, prefix + i, "propertyName");
+                notifier.firePropertyChanged(null, prefix + i, "propertyName");
 
             Assert.assertTrue(signal.await(1000));
 

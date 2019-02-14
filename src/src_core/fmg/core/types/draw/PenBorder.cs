@@ -49,7 +49,7 @@ namespace fmg.core.types.draw {
                 if (_width.HasMinDiff(value))
                     return;
                 _width = value;
-                _notifier.OnPropertyChanged(old, value);
+                _notifier.FirePropertyChanged(old, value);
             }
         }
 

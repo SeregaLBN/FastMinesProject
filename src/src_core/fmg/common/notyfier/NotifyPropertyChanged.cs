@@ -56,7 +56,7 @@ namespace fmg.common.notyfier {
             var tmp = storage;
             storage = value;
             if (!Holded())
-                OnPropertyChanged(tmp, value, propertyName);
+                FirePropertyChanged(tmp, value, propertyName);
             return true;
         }
 
@@ -65,18 +65,18 @@ namespace fmg.common.notyfier {
         /// <param name="newValue">new value</param>
         /// <param name="propertyName">Name of the property used to notify listeners.  This value is optional and can be provided automatically
         /// when invoked from compilers that support <see cref="CallerMemberNameAttribute"/>.</param>
-        public void OnPropertyChanged<T>(T oldValue, T newValue, [CallerMemberName] string propertyName = null) {
-            OnPropertyChanged(new PropertyChangedExEventArgs<T>(oldValue, newValue, propertyName));
+        public void FirePropertyChanged<T>(T oldValue, T newValue, [CallerMemberName] string propertyName = null) {
+            FirePropertyChanged(new PropertyChangedExEventArgs<T>(oldValue, newValue, propertyName));
         }
 
         /// <summary> Notifies listeners that a property value has changed. </summary>
         /// <param name="propertyName">Name of the property used to notify listeners.  This value is optional and can be provided automatically
         /// when invoked from compilers that support <see cref="CallerMemberNameAttribute"/>.</param>
-        public void OnPropertyChanged([CallerMemberName] string propertyName = null) {
-            OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+        public void FirePropertyChanged([CallerMemberName] string propertyName = null) {
+            FirePropertyChanged(new PropertyChangedEventArgs(propertyName));
         }
 
-        public void OnPropertyChanged(PropertyChangedEventArgs ev) {
+        public void FirePropertyChanged(PropertyChangedEventArgs ev) {
             if (_disposed || Holded())
                 return;
 
@@ -87,7 +87,7 @@ namespace fmg.common.notyfier {
             }
             if (!DeferredNotifications) {
                 fireOwnerEvent(ev);
-                //LoggerSimple.Put($"< OnPropertyChanged: {_owner.GetType().Name}: PropertyName={ev.PropertyName}");
+                //LoggerSimple.Put($"< FirePropertyChanged: {_owner.GetType().Name}: PropertyName={ev.PropertyName}");
             } else {
                 bool shedule = !_deferrNotifications.ContainsKey(ev.PropertyName);
                 _deferrNotifications[ev.PropertyName] = ev; // Re-save only the last event.
@@ -106,11 +106,11 @@ namespace fmg.common.notyfier {
         }
 
         /// <summary> rethrow member event, notify parent class/container </summary>
-        public void OnPropertyChanged<T>(PropertyChangedEventArgs from, [CallerMemberName] string propertyName = null) {
+        public void FirePropertyChanged<T>(PropertyChangedEventArgs from, [CallerMemberName] string propertyName = null) {
             if (from is PropertyChangedExEventArgs<T> evEx)
-                OnPropertyChanged(new PropertyChangedExEventArgs<T>(evEx.OldValue, evEx.NewValue, propertyName));
+                FirePropertyChanged(new PropertyChangedExEventArgs<T>(evEx.OldValue, evEx.NewValue, propertyName));
             else
-                OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+                FirePropertyChanged(new PropertyChangedEventArgs(propertyName));
         }
 
         public void Dispose() {

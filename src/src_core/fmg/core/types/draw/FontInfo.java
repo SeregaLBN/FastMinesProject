@@ -34,7 +34,7 @@ public class FontInfo implements INotifyPropertyChanged {
             return;
         String old = _name;
         _name = fontName;
-        _notifier.onPropertyChanged(old, fontName, PROPERTY_NAME);
+        _notifier.firePropertyChanged(old, fontName, PROPERTY_NAME);
     }
 
     public boolean isBold() { return _bold; }
@@ -43,7 +43,7 @@ public class FontInfo implements INotifyPropertyChanged {
             return;
         boolean old = _bold;
         _bold = isBold;
-        _notifier.onPropertyChanged(old, isBold, PROPERTY_BOLD);
+        _notifier.firePropertyChanged(old, isBold, PROPERTY_BOLD);
     }
 
     public double getSize() { return _size; }
@@ -52,7 +52,7 @@ public class FontInfo implements INotifyPropertyChanged {
         if (DoubleExt.hasMinDiff(_size, size))
             return;
         _size = size;
-        _notifier.onPropertyChanged(old, size, PROPERTY_SIZE);
+        _notifier.firePropertyChanged(old, size, PROPERTY_SIZE);
     }
 
     @Override

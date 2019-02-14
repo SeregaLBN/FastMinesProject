@@ -71,14 +71,14 @@ public class ColorText implements INotifyPropertyChanged {
         Color[] old = this.colorOpen;
         if (!Arrays.equals(old, colorOpen)) {
             this.colorOpen = colorOpen;
-            _notifier.onPropertyChanged(old, colorOpen, PROPERTY_COLOR_OPEN);
+            _notifier.firePropertyChanged(old, colorOpen, PROPERTY_COLOR_OPEN);
         }
     }
     public void setColorOpen(int i, Color colorOpen) {
         Color old = this.colorOpen[i];
         if (!old.equals(colorOpen)) {
             this.colorOpen[i] = colorOpen;
-            _notifier.onPropertyChanged(old, colorOpen, PROPERTY_COLOR_OPEN_N_ + i);
+            _notifier.firePropertyChanged(old, colorOpen, PROPERTY_COLOR_OPEN_N_ + i);
         }
     }
 
@@ -92,14 +92,14 @@ public class ColorText implements INotifyPropertyChanged {
         Color[] old = this.colorClose;
         if (!Arrays.equals(old, colorClose)) {
             this.colorClose = colorClose;
-            _notifier.onPropertyChanged(old, colorClose, PROPERTY_COLOR_CLOSE);
+            _notifier.firePropertyChanged(old, colorClose, PROPERTY_COLOR_CLOSE);
         }
     }
     public void setColorClose(int i, Color colorClose) {
         Color old = this.colorClose[i];
         if (!old.equals(colorClose)) {
             this.colorClose[i] = colorClose;
-            _notifier.onPropertyChanged(old, colorClose, PROPERTY_COLOR_CLOSE_N + i);
+            _notifier.firePropertyChanged(old, colorClose, PROPERTY_COLOR_CLOSE_N + i);
         }
     }
 

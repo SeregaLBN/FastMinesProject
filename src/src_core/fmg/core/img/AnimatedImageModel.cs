@@ -88,7 +88,7 @@ namespace fmg.core.img {
                 if (!_borderWidth.HasMinDiff(value)) {
                     double old = _borderWidth;
                     _borderWidth = value;
-                    _notifier.OnPropertyChanged<double>(old, value, nameof(this.BorderWidth));
+                    _notifier.FirePropertyChanged<double>(old, value, nameof(this.BorderWidth));
                 }
             }
         }
@@ -142,7 +142,7 @@ namespace fmg.core.img {
 
         protected void OnInnerModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             // refire
-            _notifier.OnPropertyChanged(ev);
+            _notifier.FirePropertyChanged(ev);
         }
 
         // <summary>  Dispose managed resources </summary>/

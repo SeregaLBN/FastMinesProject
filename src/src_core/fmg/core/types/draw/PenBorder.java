@@ -58,7 +58,7 @@ public class PenBorder implements INotifyPropertyChanged {
         if (DoubleExt.hasMinDiff(old, width))
             return;
         _width = width;
-        _notifier.onPropertyChanged(old, width, PROPERTY_WIDTH);
+        _notifier.firePropertyChanged(old, width, PROPERTY_WIDTH);
     }
 
     @Override

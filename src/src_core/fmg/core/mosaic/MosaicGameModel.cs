@@ -73,8 +73,8 @@ namespace fmg.core.mosaic {
                 _cellAttr.PropertyChanged -= OnCellAttributePropertyChanged;
                 _cellAttr = null;
                 _matrix.Clear();
-                _notifier.OnPropertyChanged();
-                _notifier.OnPropertyChanged(nameof(this.Matrix));
+                _notifier.FirePropertyChanged();
+                _notifier.FirePropertyChanged(nameof(this.Matrix));
             }
         }
 
@@ -116,8 +116,8 @@ namespace fmg.core.mosaic {
                 _matrix.Clear();
                 this._sizeField = value;
 
-                _notifier.OnPropertyChanged(old, value);
-                _notifier.OnPropertyChanged(nameof(this.Matrix));
+                _notifier.FirePropertyChanged(old, value);
+                _notifier.FirePropertyChanged(nameof(this.Matrix));
             }
         }
 
@@ -131,7 +131,7 @@ namespace fmg.core.mosaic {
 
                 this._mosaicType = value;
                 CellAttr = null;
-                _notifier.OnPropertyChanged(old, value);
+                _notifier.FirePropertyChanged(old, value);
             }
         }
 
@@ -142,7 +142,7 @@ namespace fmg.core.mosaic {
 
         protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             // refire as async event
-            _notifierAsync.OnPropertyChanged(ev);
+            _notifierAsync.FirePropertyChanged(ev);
         }
 
         protected virtual void OnCellAttributePropertyChanged(object sender, PropertyChangedEventArgs ev) {
@@ -151,9 +151,9 @@ namespace fmg.core.mosaic {
             if (ev.PropertyName == nameof(BaseCell.BaseAttribute.Area)) {
                 foreach (var cell in Matrix)
                     cell.Init();
-                _notifier.OnPropertyChanged<double>(ev, nameof(this.Area)); // ! rethrow event - notify parent class
+                _notifier.FirePropertyChanged<double>(ev, nameof(this.Area)); // ! rethrow event - notify parent class
             }
-            _notifier.OnPropertyChanged(nameof(this.CellAttr));
+            _notifier.FirePropertyChanged(nameof(this.CellAttr));
         }
 
         /// <summary> off notifier </summary>

@@ -68,32 +68,32 @@ public final class NotifyPropertyChanged implements AutoCloseable//, INotifyProp
         }
 
         if (!isHolded())
-            onPropertyChanged(oldValue, newValue, propertyName);
+            firePropertyChanged(oldValue, newValue, propertyName);
         return true;
     }
 
-    protected final void onPropertyChanged(int oldValue, int newValue, String propertyName) {
-        onPropertyChanged(Integer.valueOf(oldValue), Integer.valueOf(newValue), propertyName);
+    protected final void firePropertyChanged(int oldValue, int newValue, String propertyName) {
+        firePropertyChanged(Integer.valueOf(oldValue), Integer.valueOf(newValue), propertyName);
     }
 
-    public final void onPropertyChanged(double oldValue, double newValue, String propertyName) {
-        onPropertyChanged(Double.valueOf(oldValue), Double.valueOf(newValue), propertyName);
+    public final void firePropertyChanged(double oldValue, double newValue, String propertyName) {
+        firePropertyChanged(Double.valueOf(oldValue), Double.valueOf(newValue), propertyName);
     }
 
-    protected final void onPropertyChanged(boolean oldValue, boolean newValue, String propertyName) {
-        onPropertyChanged(Boolean.valueOf(oldValue), Boolean.valueOf(newValue), propertyName);
+    protected final void firePropertyChanged(boolean oldValue, boolean newValue, String propertyName) {
+        firePropertyChanged(Boolean.valueOf(oldValue), Boolean.valueOf(newValue), propertyName);
     }
 
-    public final void onPropertyChanged(String propertyName) {
-        onPropertyChanged(null, null, propertyName);
+    public final void firePropertyChanged(String propertyName) {
+        firePropertyChanged(null, null, propertyName);
     }
 
-    public <T> void onPropertyChanged(T oldValue, T newValue, String propertyName) {
+    public <T> void firePropertyChanged(T oldValue, T newValue, String propertyName) {
         if (_disposed || isHolded())
             return;
 
         if (!_deferredNotifications) {
-            //System.out.println("onPropertyChanged: " + propertyName + ": " + newValue);
+            //System.out.println("firePropertyChanged: " + propertyName + ": " + newValue);
             _propertyChanges.firePropertyChange(propertyName, oldValue, newValue);
         } else {
             boolean shedule;
@@ -111,7 +111,7 @@ public final class NotifyPropertyChanged implements AutoCloseable//, INotifyProp
                             .map(x -> x.toString())
                           //.map(x -> x.substring(9))
                             .filter(x -> !x.contains(".lambda$"))
-                          //.filter(x -> !x.contains(".onPropertyChanged("))
+                          //.filter(x -> !x.contains(".firePropertyChanged("))
                             .collect(Collectors.joining("\n   ")));
                 /**/
                 Factory.DEFERR_INVOKER.accept(() -> {

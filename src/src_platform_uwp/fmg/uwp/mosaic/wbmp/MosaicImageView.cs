@@ -91,9 +91,9 @@ namespace fmg.uwp.mosaic.wbmp {
             case nameof(InnerView.Image):
                 // refire
                 if (ev is PropertyChangedExEventArgs<WriteableBitmap> ev2)
-                    _notifier.OnPropertyChanged(ev2.OldValue, ev2.NewValue, nameof(InnerImage));
+                    _notifier.FirePropertyChanged(ev2.OldValue, ev2.NewValue, nameof(InnerImage));
                 else
-                    _notifier.OnPropertyChanged(nameof(InnerImage));
+                    _notifier.FirePropertyChanged(nameof(InnerImage));
                 break;
             }
         }

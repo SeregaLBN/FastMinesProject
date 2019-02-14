@@ -99,7 +99,7 @@ namespace fmg.core.img {
 
                 FigureHelper.RotateList(cell.GetRegion().Points, rotateAngle, center);
             }
-            _notifier.OnPropertyChanged(nameof(MosaicGameModel.Matrix));
+            _notifier.FirePropertyChanged(nameof(MosaicGameModel.Matrix));
         }
 
         /** ///////////// ================= PART <see cref="ERotateMode.someCells"/> ======================= ///////////// */
@@ -214,7 +214,7 @@ namespace fmg.core.img {
             _prepareList.Clear();
             if (_rotatedElements.Any()) {
                 _rotatedElements.Clear();
-                _notifier.OnPropertyChanged(nameof(this.RotatedElements));
+                _notifier.FirePropertyChanged(nameof(this.RotatedElements));
             }
 
             //      if (!Animated)
@@ -266,7 +266,7 @@ namespace fmg.core.img {
                     {
                         _prepareList.RemoveAt(i);
                         _rotatedElements.Add(new RotatedCellContext(NextRandomIndex(), angleOffset, area));
-                        _notifier.OnPropertyChanged(nameof(this.RotatedElements));
+                        _notifier.FirePropertyChanged(nameof(this.RotatedElements));
                     }
                 }
             }
@@ -296,7 +296,7 @@ namespace fmg.core.img {
                         _rotateCellAlterantive = !_rotateCellAlterantive;
                     AddRandomToPrepareList(false);
                 }
-                _notifier.OnPropertyChanged(nameof(this.RotatedElements));
+                _notifier.FirePropertyChanged(nameof(this.RotatedElements));
             }
         }
 
@@ -319,7 +319,7 @@ namespace fmg.core.img {
 
         protected void OnInnerModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             // refire
-            _notifier.OnPropertyChanged(ev);
+            _notifier.FirePropertyChanged(ev);
         }
 
 

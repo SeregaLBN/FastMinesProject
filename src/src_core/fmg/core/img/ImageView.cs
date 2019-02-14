@@ -78,7 +78,7 @@ namespace fmg.core.img {
             // Уведомляю владельца класса что поменялось изображение.
             // Т.е. что нужно вызвать getImage()
             // при котором и отрисуется новое изображение (через вызов draw)
-            _notifier.OnPropertyChanged(nameof(this.Image));
+            _notifier.FirePropertyChanged(nameof(this.Image));
         }
 
         private void Draw() {
@@ -99,16 +99,16 @@ namespace fmg.core.img {
             //LoggerSimple.Put(GetType().Name + ".OnPropertyChanged: PropertyName=" + ev.PropertyName);
 
             // refire as async event
-            _notifierAsync.OnPropertyChanged(ev);
+            _notifierAsync.FirePropertyChanged(ev);
         }
         protected virtual void OnPropertyModelChanged(object sender, PropertyChangedEventArgs ev) {
             System.Diagnostics.Debug.Assert(ReferenceEquals(sender, Model));
-            _notifier.OnPropertyChanged(default(TImageModel), Model, nameof(this.Model));
+            _notifier.FirePropertyChanged(default(TImageModel), Model, nameof(this.Model));
             if (nameof(IImageModel.Size) == ev.PropertyName) {
                 Image = null;
                 //Invalidate();
-                _notifier.OnPropertyChanged<SizeDouble>(ev, nameof(this.Size));
-                _notifier.OnPropertyChanged(nameof(this.Image));
+                _notifier.FirePropertyChanged<SizeDouble>(ev, nameof(this.Size));
+                _notifier.FirePropertyChanged(nameof(this.Image));
             } else {
                 Invalidate();
             }

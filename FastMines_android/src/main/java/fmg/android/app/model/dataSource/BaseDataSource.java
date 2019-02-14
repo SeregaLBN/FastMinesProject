@@ -1,6 +1,5 @@
 package fmg.android.app.model.dataSource;
 
-import android.arch.lifecycle.ViewModel;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.graphics.Bitmap;
@@ -90,7 +89,7 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
 
         //notifier.setProperty(old, size, PROPERTY_IMAGE_SIZE);
         if (!old.equals(size))
-            notifier.onPropertyChanged(old, size, PROPERTY_IMAGE_SIZE);
+            notifier.firePropertyChanged(old, size, PROPERTY_IMAGE_SIZE);
     }
 
     /** for one selected - start animate; for all other - stop animate */
@@ -98,12 +97,12 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
 
     protected void onPropertyChanged(PropertyChangeEvent ev) {
         // refire as async event
-        notifierAsync.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+        notifierAsync.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
 
         switch (ev.getPropertyName()) {
         case PROPERTY_CURRENT_ITEM_POS:
             onCurrentItemChanged();
-            notifier.onPropertyChanged(PROPERTY_CURRENT_ITEM);
+            notifier.firePropertyChanged(PROPERTY_CURRENT_ITEM);
             break;
         }
     }

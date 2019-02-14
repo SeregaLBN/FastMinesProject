@@ -74,8 +74,8 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
         _cellAttr.removeListener(this::onCellAttributePropertyChanged);
         _cellAttr = null;
         _matrix.clear();
-        _notifier.onPropertyChanged(PROPERTY_CELL_ATTR);
-        _notifier.onPropertyChanged(PROPERTY_MATRIX);
+        _notifier.firePropertyChanged(PROPERTY_CELL_ATTR);
+        _notifier.firePropertyChanged(PROPERTY_MATRIX);
     }
 
     /** площадь ячеек */
@@ -120,8 +120,8 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
         _matrix.clear();
         this._sizeField = newSizeField;
 
-        _notifier.onPropertyChanged(old, newSizeField, PROPERTY_SIZE_FIELD);
-        _notifier.onPropertyChanged(PROPERTY_MATRIX);
+        _notifier.firePropertyChanged(old, newSizeField, PROPERTY_SIZE_FIELD);
+        _notifier.firePropertyChanged(PROPERTY_MATRIX);
     }
 
     /** get mosaic type
@@ -137,7 +137,7 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
 
         this._mosaicType = newMosaicType;
         setCellAttr(null);
-        _notifier.onPropertyChanged(old, newMosaicType, PROPERTY_MOSAIC_TYPE);
+        _notifier.firePropertyChanged(old, newMosaicType, PROPERTY_MOSAIC_TYPE);
     }
 
     /** доступ к заданной ячейке */
@@ -148,7 +148,7 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
 
     protected void onPropertyChanged(PropertyChangeEvent ev) {
         // refire as async event
-        _notifierAsync.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+        _notifierAsync.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
     }
 
     protected void onCellAttributePropertyChanged(PropertyChangeEvent ev) {
@@ -156,9 +156,9 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
         if (BaseCell.BaseAttribute.PROPERTY_AREA.equals(propName)) {
             getMatrix().forEach(BaseCell::init);
 
-            _notifier.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_AREA); // ! rethrow event - notify parent class
+            _notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_AREA); // ! rethrow event - notify parent class
         }
-        _notifier.onPropertyChanged(PROPERTY_CELL_ATTR);
+        _notifier.firePropertyChanged(PROPERTY_CELL_ATTR);
     }
 
     /** off notifier */

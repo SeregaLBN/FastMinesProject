@@ -107,7 +107,7 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
 
             FigureHelper.rotateCollection(cell.getRegion().getPoints(), rotateAngle, center);
         }
-        _notifier.onPropertyChanged(PROPERTY_MATRIX);
+        _notifier.firePropertyChanged(PROPERTY_MATRIX);
     }
 
     /** ///////////// ================= PART {@link ERotateMode#someCells} ======================= ///////////// */
@@ -223,7 +223,7 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
         _prepareList.clear();
         if (!_rotatedElements.isEmpty()) {
             _rotatedElements.clear();
-            _notifier.onPropertyChanged(PROPERTY_ROTATED_ELEMENTS);
+            _notifier.firePropertyChanged(PROPERTY_ROTATED_ELEMENTS);
         }
 
 //        if (!isAnimated())
@@ -275,7 +275,7 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
                 {
                     _prepareList.remove(i);
                     _rotatedElements.add(new RotatedCellContext(nextRandomIndex(), angleOffset, area));
-                    _notifier.onPropertyChanged(PROPERTY_ROTATED_ELEMENTS);
+                    _notifier.firePropertyChanged(PROPERTY_ROTATED_ELEMENTS);
                 }
             }
         }
@@ -303,7 +303,7 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
                                 _rotateCellAlterantive = !_rotateCellAlterantive;
                                 addRandomToPrepareList(false);
                             });
-            _notifier.onPropertyChanged(PROPERTY_ROTATED_ELEMENTS);
+            _notifier.firePropertyChanged(PROPERTY_ROTATED_ELEMENTS);
         }
     }
 
@@ -327,7 +327,7 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
 
     protected void onInnerModelPropertyChanged(PropertyChangeEvent ev) {
         // refire
-        _notifier.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+        _notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
     }
 
     /** off notifier */

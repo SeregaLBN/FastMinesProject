@@ -85,8 +85,8 @@ public abstract class MosaicController<TImage, TImageInner,
             this._oldMinesCount = this._minesCount; // save
 
         _minesCount = newVal;
-        _notifier.onPropertyChanged(oldVal, _minesCount, PROPERTY_MINES_COUNT);
-        _notifier.onPropertyChanged(null, _minesCount, PROPERTY_COUNT_MINES_LEFT);
+        _notifier.firePropertyChanged(oldVal, _minesCount, PROPERTY_MINES_COUNT);
+        _notifier.firePropertyChanged(null, _minesCount, PROPERTY_COUNT_MINES_LEFT);
 
         gameNew();
     }
@@ -217,7 +217,7 @@ public abstract class MosaicController<TImage, TImageInner,
             if ((newMines != null) && !newMines.isEmpty())
                 current.addAll(newMines);
         }
-        _notifier.onPropertyChanged(PROPERTY_REPOSITORY_MINES);
+        _notifier.firePropertyChanged(PROPERTY_REPOSITORY_MINES);
         //setGameStatus(EGameStatus.eGSEnd);
         gameNew();
     }
@@ -264,9 +264,9 @@ public abstract class MosaicController<TImage, TImageInner,
             }
 
         setGameStatus(EGameStatus.eGSEnd);
-        _notifier.onPropertyChanged(PROPERTY_COUNT_MINES_LEFT);
-        _notifier.onPropertyChanged(PROPERTY_COUNT_FLAG);
-        _notifier.onPropertyChanged(PROPERTY_COUNT_OPEN);
+        _notifier.firePropertyChanged(PROPERTY_COUNT_MINES_LEFT);
+        _notifier.firePropertyChanged(PROPERTY_COUNT_FLAG);
+        _notifier.firePropertyChanged(PROPERTY_COUNT_OPEN);
 
         return toRepaint;
     }
@@ -349,11 +349,11 @@ public abstract class MosaicController<TImage, TImageInner,
                 setCountClick(getCountClick()+1);
                 setPlayInfo(EPlayInfo.ePlayerUser);  // юзер играл
                 if (countOpen > 0)
-                    _notifier.onPropertyChanged(PROPERTY_COUNT_OPEN);
+                    _notifier.firePropertyChanged(PROPERTY_COUNT_OPEN);
                 if ((countFlag > 0) || (countUnknown > 0)) {
-                    _notifier.onPropertyChanged(PROPERTY_COUNT_FLAG);
-                    _notifier.onPropertyChanged(PROPERTY_COUNT_MINES_LEFT);
-                    _notifier.onPropertyChanged(PROPERTY_COUNT_UNKNOWN);
+                    _notifier.firePropertyChanged(PROPERTY_COUNT_FLAG);
+                    _notifier.firePropertyChanged(PROPERTY_COUNT_MINES_LEFT);
+                    _notifier.firePropertyChanged(PROPERTY_COUNT_UNKNOWN);
                 }
             }
 
@@ -403,9 +403,9 @@ public abstract class MosaicController<TImage, TImageInner,
         if (any) {
             setCountClick(getCountClick()+1);
             setPlayInfo(EPlayInfo.ePlayerUser); // то считаю что юзер играл
-            _notifier.onPropertyChanged(PROPERTY_COUNT_FLAG);
-            _notifier.onPropertyChanged(PROPERTY_COUNT_MINES_LEFT);
-            _notifier.onPropertyChanged(PROPERTY_COUNT_UNKNOWN);
+            _notifier.firePropertyChanged(PROPERTY_COUNT_FLAG);
+            _notifier.firePropertyChanged(PROPERTY_COUNT_MINES_LEFT);
+            _notifier.firePropertyChanged(PROPERTY_COUNT_UNKNOWN);
         }
 
         result.modified.addAll(verifyFlag());

@@ -74,7 +74,7 @@ public abstract class BaseCell {
             double old = this.area;
             if (!DoubleExt.hasMinDiff(old, area)) {
                 this.area = area;
-                _notifier.onPropertyChanged(old, area, PROPERTY_AREA);
+                _notifier.firePropertyChanged(old, area, PROPERTY_AREA);
             }
         }
         /** площадь ячейки/фигуры */

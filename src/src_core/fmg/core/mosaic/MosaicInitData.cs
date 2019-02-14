@@ -35,7 +35,7 @@ namespace fmg.core.mosaic {
                     if (skillOld == ESkillLevel.eCustom) {
                         var skillNew = SkillLevel;
                         if (skillNew != skillOld)
-                            _notifier.OnPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
+                            _notifier.FirePropertyChanged(skillOld, skillNew, nameof(SkillLevel));
                     } else {
                         SkillLevel = skillOld;
                     }
@@ -50,7 +50,7 @@ namespace fmg.core.mosaic {
                 if (_notifier.SetProperty(ref _sizeField, value)) {
                     var skillNew = SkillLevel;
                     if (!_lockFireSkill && (skillNew != skillOld))
-                        _notifier.OnPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
+                        _notifier.FirePropertyChanged(skillOld, skillNew, nameof(SkillLevel));
                 }
             }
         }
@@ -62,7 +62,7 @@ namespace fmg.core.mosaic {
                 if (_notifier.SetProperty(ref _minesCount, value)) {
                     var skillNew = SkillLevel;
                     if (!_lockFireSkill && (skillNew != skillOld))
-                        _notifier.OnPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
+                        _notifier.FirePropertyChanged(skillOld, skillNew, nameof(SkillLevel));
                 }
             }
         }
@@ -101,7 +101,7 @@ namespace fmg.core.mosaic {
                 var skillNew = SkillLevel;
                 System.Diagnostics.Debug.Assert(value == skillNew);
                 System.Diagnostics.Debug.Assert(value != skillOld);
-                _notifier.OnPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
+                _notifier.FirePropertyChanged(skillOld, skillNew, nameof(SkillLevel));
             }
         }
 

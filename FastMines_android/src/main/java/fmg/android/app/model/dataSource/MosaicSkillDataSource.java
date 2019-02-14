@@ -31,7 +31,7 @@ public class MosaicSkillDataSource extends BaseDataSource<
             model.setPolarLights(true);
             model.setAnimated(true);
 
-            notifier.onPropertyChanged(null, header, PROPERTY_HEADER);
+            notifier.firePropertyChanged(null, header, PROPERTY_HEADER);
         }
         return header;
     }
@@ -48,7 +48,7 @@ public class MosaicSkillDataSource extends BaseDataSource<
                     })
                     .collect(Collectors.toList());
 
-            notifier.onPropertyChanged(null, dataSource, PROPERTY_DATA_SOURCE);
+            notifier.firePropertyChanged(null, dataSource, PROPERTY_DATA_SOURCE);
         }
         return dataSource;
     }

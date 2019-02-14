@@ -78,8 +78,8 @@ namespace fmg.core.mosaic {
                     this._oldMinesCount = this._minesCount; // save
 
                 _minesCount = newVal;
-                _notifier.OnPropertyChanged(oldVal, _minesCount, nameof(this.MinesCount));
-                _notifier.OnPropertyChanged( -1   , _minesCount, nameof(this.CountMinesLeft));
+                _notifier.FirePropertyChanged(oldVal, _minesCount, nameof(this.MinesCount));
+                _notifier.FirePropertyChanged( -1   , _minesCount, nameof(this.CountMinesLeft));
 
                 GameNew();
             }
@@ -182,7 +182,7 @@ namespace fmg.core.mosaic {
                     if ((value != null) && value.Any())
                         (current as List<Coord>).AddRange(value);
                 }
-                _notifier.OnPropertyChanged();
+                _notifier.FirePropertyChanged();
                 //GameStatus = EGameStatus.eGSEnd;
                 GameNew();
             }
@@ -230,9 +230,9 @@ namespace fmg.core.mosaic {
                 }
 
             GameStatus = EGameStatus.eGSEnd;
-            _notifier.OnPropertyChanged(nameof(this.CountMinesLeft));
-            _notifier.OnPropertyChanged(nameof(this.CountFlag));
-            _notifier.OnPropertyChanged(nameof(this.CountOpen));
+            _notifier.FirePropertyChanged(nameof(this.CountMinesLeft));
+            _notifier.FirePropertyChanged(nameof(this.CountFlag));
+            _notifier.FirePropertyChanged(nameof(this.CountOpen));
 
             return toRepaint;
         }
@@ -320,11 +320,11 @@ namespace fmg.core.mosaic {
                         CountClick++;
                         PlayInfo = EPlayInfo.ePlayerUser;  // юзер играл
                         if (countOpen > 0)
-                            _notifier.OnPropertyChanged(nameof(this.CountOpen));
+                            _notifier.FirePropertyChanged(nameof(this.CountOpen));
                         if ((countFlag > 0) || (countUnknown > 0)) {
-                            _notifier.OnPropertyChanged(nameof(this.CountFlag));
-                            _notifier.OnPropertyChanged(nameof(this.CountMinesLeft));
-                            _notifier.OnPropertyChanged(nameof(this.CountUnknown));
+                            _notifier.FirePropertyChanged(nameof(this.CountFlag));
+                            _notifier.FirePropertyChanged(nameof(this.CountMinesLeft));
+                            _notifier.FirePropertyChanged(nameof(this.CountUnknown));
                         }
                     }
 
@@ -376,9 +376,9 @@ namespace fmg.core.mosaic {
                 if (any) {
                     CountClick++;
                     PlayInfo = EPlayInfo.ePlayerUser; // то считаю что юзер играл
-                    _notifier.OnPropertyChanged(nameof(this.CountFlag));
-                    _notifier.OnPropertyChanged(nameof(this.CountMinesLeft));
-                    _notifier.OnPropertyChanged(nameof(this.CountUnknown));
+                    _notifier.FirePropertyChanged(nameof(this.CountFlag));
+                    _notifier.FirePropertyChanged(nameof(this.CountMinesLeft));
+                    _notifier.FirePropertyChanged(nameof(this.CountUnknown));
                 }
 
                 result.Modified.UnionWith(VerifyFlag());

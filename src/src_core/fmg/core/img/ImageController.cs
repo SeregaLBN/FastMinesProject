@@ -38,13 +38,13 @@ namespace fmg.core.img {
         private void OnPropertyViewChanged(object sender, PropertyChangedEventArgs ev) {
             switch (ev.PropertyName) {
             case nameof(View.Model):
-                _notifier.OnPropertyChanged<TImageModel>(ev, nameof(this.Model));
+                _notifier.FirePropertyChanged<TImageModel>(ev, nameof(this.Model));
                 break;
             case nameof(View.Image):
-                _notifier.OnPropertyChanged<TImage>(ev, nameof(this.Image));
+                _notifier.FirePropertyChanged<TImage>(ev, nameof(this.Image));
                 break;
             case nameof(View.Size):
-                _notifier.OnPropertyChanged<SizeDouble>(ev, nameof(this.Size));
+                _notifier.FirePropertyChanged<SizeDouble>(ev, nameof(this.Size));
                 break;
             }
         }

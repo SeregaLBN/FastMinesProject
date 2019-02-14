@@ -44,7 +44,7 @@ namespace fmg.common.notyfier {
             void listener(PropertyChangedEventArgs ev) { ++countReceivedEvents; }
             using (var notifier = new NotifyPropertyChanged(null, listener, false)) {
                 for (int i = 0; i < countFiredEvents; ++i)
-                    notifier.OnPropertyChanged("propertyName ");
+                    notifier.FirePropertyChanged("propertyName ");
             }
             Assert.AreEqual(countFiredEvents, countReceivedEvents);
         }
@@ -75,7 +75,7 @@ namespace fmg.common.notyfier {
                     {
 
                         for (var i=0; i<countFiredEvents; ++i)
-                            notifier.OnPropertyChanged(null, prefix + i, "propertyName");
+                            notifier.FirePropertyChanged(null, prefix + i, "propertyName");
 
                         signalWait = await signal.Wait(TimeSpan.FromSeconds(1));
                     }
