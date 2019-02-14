@@ -58,7 +58,7 @@ namespace fmg.DataModel.Items {
             base.OnPropertyChanged(sender, ev);
             switch(ev.PropertyName) {
             case nameof(this.UniqueId):
-                notifier.OnPropertyChanged(nameof(this.MosaicType)); // recall with another property name
+                notifier.FirePropertyChanged(nameof(this.MosaicType)); // recall with another property name
                 Entity.MosaicType = MosaicType;
                 Entity.SizeField = CalcSizeField(SkillLevel);
                 Title = FixTitle(MosaicType);

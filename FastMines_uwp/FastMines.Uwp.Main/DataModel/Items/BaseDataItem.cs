@@ -93,7 +93,7 @@ namespace fmg.DataModel.Items {
 
         protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             // refire as async event
-            notifierAsync.OnPropertyChanged(ev);
+            notifierAsync.FirePropertyChanged(ev);
         }
 
         protected void OnModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
@@ -102,15 +102,15 @@ namespace fmg.DataModel.Items {
             switch (ev.PropertyName) {
             case nameof(IImageModel.Size):
                 if (ev is PropertyChangedExEventArgs<SizeDouble> evx1)
-                    notifier.OnPropertyChanged(ZoomSize(evx1.OldValue), ZoomSize(evx1.NewValue), nameof(this.Size));
+                    notifier.FirePropertyChanged(ZoomSize(evx1.OldValue), ZoomSize(evx1.NewValue), nameof(this.Size));
                 else
-                    notifier.OnPropertyChanged(nameof(this.Size));
+                    notifier.FirePropertyChanged(nameof(this.Size));
                 break;
             case nameof(IImageModel.Padding):
                 if (ev is PropertyChangedExEventArgs<BoundDouble> evx2)
-                    notifier.OnPropertyChanged(ZoomPadding(evx2.OldValue), ZoomPadding(evx2.NewValue), nameof(this.Padding));
+                    notifier.FirePropertyChanged(ZoomPadding(evx2.OldValue), ZoomPadding(evx2.NewValue), nameof(this.Padding));
                 else
-                    notifier.OnPropertyChanged(nameof(this.Padding));
+                    notifier.FirePropertyChanged(nameof(this.Padding));
                 break;
             }
         }

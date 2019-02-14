@@ -73,7 +73,7 @@ namespace fmg.DataModel.DataSources {
                     mi.Size = value;
                 }
                 if (old != value) {
-                    notifier.OnPropertyChanged(old, value);
+                    notifier.FirePropertyChanged(old, value);
                 }
             }
         }
@@ -83,12 +83,12 @@ namespace fmg.DataModel.DataSources {
 
         protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             // refire as async event
-            notifierAsync.OnPropertyChanged(ev);
+            notifierAsync.FirePropertyChanged(ev);
 
             switch (ev.PropertyName) {
             case nameof(this.CurrentItemPos):
                 OnCurrentItemChanged();
-                notifier.OnPropertyChanged(nameof(CurrentItem));
+                notifier.FirePropertyChanged(nameof(CurrentItem));
                 break;
             }
         }

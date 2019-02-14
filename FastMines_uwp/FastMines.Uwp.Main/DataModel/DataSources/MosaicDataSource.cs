@@ -37,7 +37,7 @@ namespace fmg.DataModel.DataSources {
                     model.PolarLights = true;
                     model.Animated = true;
 
-                    notifier.OnPropertyChanged(null, header);
+                    notifier.FirePropertyChanged(null, header);
                 }
                 return header;
             }
@@ -73,7 +73,7 @@ namespace fmg.DataModel.DataSources {
                     .ToList()
                     .ForEach(mi => dataSource.Add(mi));
 
-                notifier.OnPropertyChanged(null, dataSource, nameof(DataSource));
+                notifier.FirePropertyChanged(null, dataSource, nameof(DataSource));
                 return;
             }
 
@@ -103,7 +103,7 @@ namespace fmg.DataModel.DataSources {
                     mi.Size = size; //  restore
                 }
             }
-            notifier.OnPropertyChanged(null, dataSource, nameof(DataSource));
+            notifier.FirePropertyChanged(null, dataSource, nameof(DataSource));
             CurrentItemPos = Math.Min(pos, dataSource.Count() - 1); // restore pos
         }
 
