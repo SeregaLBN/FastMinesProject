@@ -9,7 +9,7 @@ import fmg.common.notyfier.NotifyPropertyChangedAndroidTest;
 
 // Runs all unit tests.
 @RunWith(Suite.class)
-@Suite.SuiteClasses({//NotifyPropertyChangedAndroidTest.class, // TODO hmm... don`t worked ;(  need review test
+@Suite.SuiteClasses({NotifyPropertyChangedAndroidTest.class,
                      MosaicModelAndroidTest.class,
                      MosaicViewAndroidTest.class,
                      MosaicModelAndroidTest.class})
