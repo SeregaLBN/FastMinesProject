@@ -10,7 +10,7 @@ import fmg.android.app.model.dataSource.MosaicSkillDataSource;
 import fmg.common.geom.SizeDouble;
 
 /** ViewModel for {@link fmg.android.app.SelectMosaicActivity} */
-public class MosaicGroupViewModel extends ViewModel implements AutoCloseable {
+public class MosaicGroupViewModel extends ViewModel {
 
     private final MosaicDataSource mosaicDS = new MosaicDataSource();
 
@@ -33,7 +33,7 @@ public class MosaicGroupViewModel extends ViewModel implements AutoCloseable {
     }
 
     @Override
-    public void close() {
+    protected void onCleared() {
         mosaicDS.removeListener(this::onMosaicDsPropertyChanged);
         mosaicDS.close();
     }

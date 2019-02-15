@@ -8,7 +8,7 @@ import fmg.android.app.model.dataSource.MosaicGroupDataSource;
 import fmg.android.app.model.dataSource.MosaicSkillDataSource;
 
 /** ViewModel for {@link fmg.android.app.MainActivity} */
-public class MainMenuViewModel extends ViewModel implements AutoCloseable {
+public class MainMenuViewModel extends ViewModel {
 
     private final MosaicGroupDataSource mosaicGroupDS = new MosaicGroupDataSource();
     private final MosaicSkillDataSource mosaicSkillDS = new MosaicSkillDataSource();
@@ -42,7 +42,8 @@ public class MainMenuViewModel extends ViewModel implements AutoCloseable {
     }
 
     @Override
-    public void close() {
+    protected void onCleared() {
+        super.onCleared();
         mosaicGroupDS.removeListener(this::onMosaicGroupDsPropertyChanged);
         mosaicGroupDS.close();
         mosaicSkillDS.close();
