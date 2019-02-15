@@ -113,6 +113,14 @@ namespace fmg.core.img {
             set { _innerModel.Animated = value; }
         }
 
+        //[Obsolete("oldest use")]
+        //public void SetRIandRAD(int redrawInterval = 100, double rotateAngleDelta = 1.4) {
+        //    double totalFrames = 360 / rotateAngleDelta;
+        //    double animatePeriod = totalFrames * redrawInterval;
+        //    TotalFrames = (int)totalFrames;
+        //    AnimatePeriod = (long)animatePeriod;
+        //}
+
         /// <summary> Overall animation period (in milliseconds) </summary>
         public long AnimatePeriod {
             get { return _innerModel.AnimatePeriod; }

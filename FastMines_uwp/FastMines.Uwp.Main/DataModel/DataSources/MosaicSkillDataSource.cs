@@ -25,7 +25,8 @@ namespace fmg.DataModel.DataSources {
                     var model = header.Entity.Model;
                     model.Padding = new BoundDouble(3);
                     model.BackgroundColor = Color.Transparent;
-                    model.TotalFrames = 257; // RedrawInterval = 50;
+                    model.TotalFrames = 60;
+                    model.AnimatePeriod = 12900;
                     model.PolarLights = true;
                     model.Animated = true;
                 }
@@ -39,8 +40,8 @@ namespace fmg.DataModel.DataSources {
                     foreach (var e in ESkillLevelEx.GetValues()) {
                         var item = new MosaicSkillDataItem(e);
                         var model = item.Entity.Model;
-                        model.AnimatePeriod = 12857; // RedrawInterval = 50,
-                        model.TotalFrames = 257;     // RotateAngleDelta = 5
+                        model.TotalFrames = 60;
+                        model.AnimatePeriod = 3600;
                         dataSource.Add(item);
                     }
                     notifier.FirePropertyChanged();

@@ -32,8 +32,8 @@ public class MosaicGroupDataSource extends BaseDataSource<
             MosaicGroupModel model = header.getEntity().getModel();
             model.setPadding(new BoundDouble(3));
             model.setBackgroundColor(Color.Transparent());
-            model.setAnimatePeriod(12857);
-            model.setTotalFrames(257);
+            model.setTotalFrames(60);
+            model.setAnimatePeriod(12900);
             model.setPolarLights(true);
             model.setAnimated(true);
 
@@ -49,8 +49,8 @@ public class MosaicGroupDataSource extends BaseDataSource<
                 .map(MosaicGroupDataItem::new)
                 .peek(item -> {
                     MosaicGroupModel model = item.getEntity().getModel();
+                    model.setTotalFrames(60);
                     model.setAnimatePeriod(18000);
-                    model.setTotalFrames(257);
                 })
                 .collect(Collectors.toList());
 

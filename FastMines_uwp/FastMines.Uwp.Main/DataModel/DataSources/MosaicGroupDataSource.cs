@@ -26,7 +26,8 @@ namespace fmg.DataModel.DataSources {
                     var model = header.Entity.Model;
                     model.Padding = new BoundDouble(3);
                     model.BackgroundColor = Color.Transparent;
-                    model.TotalFrames = 257; // RedrawInterval = 50;
+                    model.TotalFrames = 60;
+                    model.AnimatePeriod = 12900;
                     model.PolarLights = true;
                     model.Animated = true;
                 }
@@ -40,8 +41,8 @@ namespace fmg.DataModel.DataSources {
                     foreach( var e in EMosaicGroupEx.GetValues()) {
                         var item = new MosaicGroupDataItem(e);
                         var model = item.Entity.Model;
-                        model.AnimatePeriod = 18000; // RedrawInterval = 70
-                        model.TotalFrames = 257;
+                        model.TotalFrames = 60;
+                        model.AnimatePeriod = 18000;
                         dataSource.Add(item);
                     }
                     notifier.FirePropertyChanged();
