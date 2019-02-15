@@ -4,10 +4,12 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import org.junit.*;
 
 import fmg.common.LoggerSimple;
+import fmg.common.ui.Factory;
 import fmg.core.mosaic.MosaicModelTest;
 import io.reactivex.Flowable;
 import io.reactivex.disposables.Disposable;
@@ -79,20 +81,23 @@ public class NotifyPropertyChangedTest {
             };
             notifier.addListener(listener);
 
-            Signal signal = new Signal();
+            Signal signal2 = new Signal();
             Disposable dis = subject.timeout(100, TimeUnit.MILLISECONDS)
                     .subscribe(ev -> {
                         LoggerSimple.put("onNext: ev=" + ev);
                     }, ex -> {
                         LoggerSimple.put("onError: " + ex);
-                        signal.set();
+                        signal2.set();
                     });
 
             final String prefix = " Value ";
-            for (int i=0; i<countFiredEvents; ++i)
-                notifier.firePropertyChanged(null, prefix + i, "propertyName");
+            Signal signal1 = executeInUiThread(() -> {
+                for (int i = 0; i < countFiredEvents; ++i)
+                    notifier.firePropertyChanged(null, prefix + i, "propertyName");
+            });
 
-            Assert.assertTrue(signal.await(1000));
+            Assert.assertTrue(signal1.await(200));
+            Assert.assertTrue(signal2.await(1000));
 
             Assert.assertEquals(1, countReceivedEvents[0]);
             Assert.assertEquals(prefix + (countFiredEvents-1), firedValue[0]);
@@ -100,6 +105,15 @@ public class NotifyPropertyChangedTest {
             notifier.removeListener(listener);
             dis.dispose();
         }
+    }
+
+    private Signal executeInUiThread(Runnable doRun) {
+        Signal signal = new Signal();
+        Factory.DEFERR_INVOKER.accept(() -> {
+            doRun.run();
+            signal.set();
+        });
+        return signal;
     }
 
 }
