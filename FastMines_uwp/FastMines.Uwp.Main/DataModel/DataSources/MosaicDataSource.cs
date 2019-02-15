@@ -133,7 +133,7 @@ namespace fmg.DataModel.DataSources {
                 img.Animated = selected;
                 img.PenBorder.ColorLight =
                 img.PenBorder.ColorShadow = selected ? Color.White : Color.Black;
-                img.BackgroundColor = selected ? AnimatedImageModelConsts.DefaultBkColor : MosaicDrawModelConst.DefaultBkColor;
+                img.BackgroundColor = selected ? AnimatedImageModelConst.DefaultBkColor : MosaicDrawModelConst.DefaultBkColor;
                 img.Padding = new BoundDouble(img.Size.Width * (selected ? 10 : 5) /*/(mi.SkillLevel.Ordinal() + 1)*/ / 100);
                 img.RotateAngle = 0;
             }

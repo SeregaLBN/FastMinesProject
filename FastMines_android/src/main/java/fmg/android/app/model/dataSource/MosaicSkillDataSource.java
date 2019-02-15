@@ -54,7 +54,7 @@ public class MosaicSkillDataSource extends BaseDataSource<
     }
 
     @Override
-    public void onCurrentItemChanged() {
+    protected void onCurrentItemChanged() {
         // for one selected - start animate; for all other - stop animate
         for (MosaicSkillDataItem item : getDataSource()) {
             boolean selected = (item.getUniqueId().ordinal() == currentItemPos);

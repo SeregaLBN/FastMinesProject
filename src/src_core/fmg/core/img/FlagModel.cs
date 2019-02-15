@@ -8,8 +8,8 @@ namespace fmg.core.img {
     /// <summary> Model of the flag image </summary>
     public class FlagModel : IImageModel {
 
-        private SizeDouble _size = new SizeDouble(AnimatedImageModelConsts.DefaultImageSize, AnimatedImageModelConsts.DefaultImageSize);
-        private BoundDouble _padding = new BoundDouble(AnimatedImageModelConsts.DefaultPadding);
+        private SizeDouble _size = new SizeDouble(AnimatedImageModelConst.DefaultImageSize, AnimatedImageModelConst.DefaultImageSize);
+        private BoundDouble _padding = new BoundDouble(AnimatedImageModelConst.DefaultPadding);
         public event PropertyChangedEventHandler PropertyChanged;
         protected readonly NotifyPropertyChanged _notifier;
 

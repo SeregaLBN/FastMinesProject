@@ -133,7 +133,7 @@ public class MosaicDataSource extends BaseDataSource<
     }
 
     @Override
-    public void onCurrentItemChanged() {
+    protected void onCurrentItemChanged() {
         // for one selected - start animate; for all other - stop animate
         for (MosaicDataItem item : getDataSource()) {
             boolean selected = (item.getUniqueId().ordinal() == currentItemPos);

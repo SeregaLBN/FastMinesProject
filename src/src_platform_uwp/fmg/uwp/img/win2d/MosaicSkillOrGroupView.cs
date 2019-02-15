@@ -13,7 +13,7 @@ using fmg.uwp.mosaic.win2d;
 
 namespace fmg.uwp.img.win2d {
 
-    /// <summary> MVC: view. Abstract Win2D representable <see cref="fmg.core.types.ESkillLevel"/> or <see cref="fmg.core.types.EMosaicGroup"/> as image.
+    /// <summary> MVC: view. Abstract Win2D representable <see cref="fmg.core.types.ESkillLevel"/> or <see cref="fmg.core.types.EMosaicGroup"/> as image. </summary>
     public abstract class MosaicSkillOrGroupView<TImage, TImageModel> : WithBurgerMenuView<TImage, TImageModel>
         where TImage      : DependencyObject, ICanvasResourceCreator
         where TImageModel : AnimatedImageModel

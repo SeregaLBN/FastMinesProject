@@ -1,9 +1,13 @@
 package fmg.android.app.model.dataSource;
 
+import android.databinding.Bindable;
+
+import java.beans.PropertyChangeEvent;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import fmg.android.app.BR;
 import fmg.android.app.model.items.MosaicGroupDataItem;
 import fmg.android.img.MosaicGroupImg;
 import fmg.common.Color;
@@ -17,6 +21,8 @@ public class MosaicGroupDataSource extends BaseDataSource<
         MosaicGroupDataItem, EMosaicGroup, MosaicGroupModel, MosaicGroupImg.Bitmap, MosaicGroupImg.ControllerBitmap,
         MosaicGroupDataItem, EMosaicGroup, MosaicGroupModel, MosaicGroupImg.Bitmap, MosaicGroupImg.ControllerBitmap>
 {
+
+    public static final String PROPERTY_UNICODE_CHARS = "UnicodeChars";
 
     @Override
     public MosaicGroupDataItem getHeader() {
@@ -54,7 +60,7 @@ public class MosaicGroupDataSource extends BaseDataSource<
     }
 
     @Override
-    public void onCurrentItemChanged() {
+    protected void onCurrentItemChanged() {
         // for one selected - start animate; for all other - stop animate
         for (MosaicGroupDataItem item : getDataSource()) {
             boolean selected = (item.getUniqueId().ordinal() == currentItemPos);
@@ -71,6 +77,37 @@ public class MosaicGroupDataSource extends BaseDataSource<
 //                hsv.s = hsv.v = 100;
 //                model.setForegroundColor(hsv.toColor());
 //            }
+        }
+    }
+
+    @Bindable
+    public String getUnicodeChars() {
+        MosaicGroupDataItem ci = getCurrentItem();
+        return getDataSource().stream()
+            .map(item -> {
+                boolean selected = (ci != null) && (item.getMosaicGroup() == ci.getMosaicGroup());
+                return item.getMosaicGroup().UnicodeChar(selected);
+            })
+            .collect(Collectors.joining(" "));
+    }
+
+    @Override
+    protected void onPropertyChanged(PropertyChangeEvent ev) {
+        super.onPropertyChanged(ev);
+
+        switch (ev.getPropertyName()) {
+        case PROPERTY_CURRENT_ITEM:
+            notifier.firePropertyChanged(PROPERTY_UNICODE_CHARS);
+            break;
+        }
+    }
+
+    @Override
+    protected void onAsyncPropertyChanged(PropertyChangeEvent ev) {
+        super.onAsyncPropertyChanged(ev);
+
+        switch (ev.getPropertyName()) {
+        case PROPERTY_UNICODE_CHARS: notifyPropertyChanged(BR.unicodeChars); break;
         }
     }
 

@@ -45,8 +45,8 @@ namespace fmg.core.img {
         }
 
         private EFaceType _faceType;
-        private SizeDouble _size = new SizeDouble(AnimatedImageModelConsts.DefaultImageSize, AnimatedImageModelConsts.DefaultImageSize);
-        private BoundDouble padding = new BoundDouble(AnimatedImageModelConsts.DefaultPadding);
+        private SizeDouble _size = new SizeDouble(AnimatedImageModelConst.DefaultImageSize, AnimatedImageModelConst.DefaultImageSize);
+        private BoundDouble padding = new BoundDouble(AnimatedImageModelConst.DefaultPadding);
         public event PropertyChangedEventHandler PropertyChanged;
         protected readonly NotifyPropertyChanged _notifier;
 

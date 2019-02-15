@@ -134,20 +134,20 @@ namespace fmg {
         }
 
         private void OnMosaicGroupDsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            //LoggerSimple.Put("MosaicGroupsDataSource::" + ev.PropertyName);
+            //LoggerSimple.Put("MosaicGroupDataSource::" + ev.PropertyName);
             switch (ev.PropertyName) {
             case nameof(ViewModel.MosaicGroupDs.CurrentElement):
                 var currentGroupItem = ViewModel.MosaicSkillDs.CurrentElement;
-                OnPropertyCurrentElementChanged(true, ((MosaicGroupsDataSource)sender).CurrentElement, currentGroupItem);
+                OnPropertyCurrentElementChanged(true, ((MosaicGroupDataSource)sender).CurrentElement, currentGroupItem);
                 break;
             }
         }
 
         private void OnMosaicSkillDsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            //LoggerSimple.Put("MosaicSkillsDataSource::" + ev.PropertyName);
+            //LoggerSimple.Put("MosaicSkillDataSource::" + ev.PropertyName);
             switch(ev.PropertyName) {
             case nameof(ViewModel.MosaicSkillDs.CurrentElement):
-                var currentSkillItem = ((MosaicSkillsDataSource)sender).CurrentElement;
+                var currentSkillItem = ((MosaicSkillDataSource)sender).CurrentElement;
                 OnPropertyCurrentElementChanged(false, ViewModel.MosaicGroupDs.CurrentElement, currentSkillItem);
                 break;
             }

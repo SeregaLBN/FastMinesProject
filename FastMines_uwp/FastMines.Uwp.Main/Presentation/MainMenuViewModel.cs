@@ -8,8 +8,8 @@ namespace fmg.common {
     /// <summary> ViewModel for <see cref="MainPage"/> </summary>
     public class MainMenuViewModel : NotifyPropertyChanged {
 
-        private readonly MosaicGroupsDataSource _mosaicGroupDs = new MosaicGroupsDataSource();
-        private readonly MosaicSkillsDataSource _mosaicSkillDs = new MosaicSkillsDataSource();
+        private readonly MosaicGroupDataSource _mosaicGroupDs = new MosaicGroupDataSource();
+        private readonly MosaicSkillDataSource _mosaicSkillDs = new MosaicSkillDataSource();
         private bool _isSplitViewPaneOpen;
 
         public MainMenuViewModel() {
@@ -25,11 +25,11 @@ namespace fmg.common {
             set { SetProperty(ref _isSplitViewPaneOpen, value); }
         }
 
-        public MosaicGroupsDataSource MosaicGroupDs => _mosaicGroupDs;
-        public MosaicSkillsDataSource MosaicSkillDs => _mosaicSkillDs;
+        public MosaicGroupDataSource MosaicGroupDs => _mosaicGroupDs;
+        public MosaicSkillDataSource MosaicSkillDs => _mosaicSkillDs;
 
         private void OnMosaicGroupDsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            System.Diagnostics.Debug.Assert(sender is MosaicGroupsDataSource);
+            System.Diagnostics.Debug.Assert(sender is MosaicGroupDataSource);
             switch (ev.PropertyName) {
             case nameof(MosaicsDataSource.CurrentElement): {
                     //// auto-close split view pane

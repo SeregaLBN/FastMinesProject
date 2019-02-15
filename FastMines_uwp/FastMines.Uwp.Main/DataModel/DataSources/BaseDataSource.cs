@@ -29,7 +29,7 @@ namespace fmg.DataModel.DataSources {
         /// <summary> Data source - images that describes the elements </summary>
         protected readonly ObservableCollection<TItem> dataSource = new ObservableCollection<TItem>();
         /// <summary> Current item index in {@link #dataSource} </summary>
-        protected int currentItemPos = 0;
+        protected int currentItemPos = -1;
 
         protected bool Disposed { get; private set; }
         private event PropertyChangedEventHandler PropertyChangedSync;

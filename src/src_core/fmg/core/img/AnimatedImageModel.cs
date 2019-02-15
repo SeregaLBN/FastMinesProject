@@ -6,7 +6,7 @@ using fmg.common.notyfier;
 
 namespace fmg.core.img {
 
-    public static class AnimatedImageModelConsts {
+    public static class AnimatedImageModelConst {
 
         public static readonly Color DefaultBkColor = Color.DarkOrange;
         public static readonly Color DefaultForegroundColor = Color.Orchid; // Color.LightSeaGreen;
@@ -19,12 +19,12 @@ namespace fmg.core.img {
     public abstract class AnimatedImageModel : IAnimatedModel {
 
         /// <summary> width and height in pixel </summary>
-        private SizeDouble _size = new SizeDouble(AnimatedImageModelConsts.DefaultImageSize, AnimatedImageModelConsts.DefaultImageSize);
+        private SizeDouble _size = new SizeDouble(AnimatedImageModelConst.DefaultImageSize, AnimatedImageModelConst.DefaultImageSize);
         /// <summary> inside padding </summary>
-        private BoundDouble _padding = new BoundDouble(AnimatedImageModelConsts.DefaultPadding);
-        private Color _foregroundColor = AnimatedImageModelConsts.DefaultForegroundColor;
+        private BoundDouble _padding = new BoundDouble(AnimatedImageModelConst.DefaultPadding);
+        private Color _foregroundColor = AnimatedImageModelConst.DefaultForegroundColor;
         /// <summary> background fill color </summary>
-        private Color _backgroundColor = AnimatedImageModelConsts.DefaultBkColor;
+        private Color _backgroundColor = AnimatedImageModelConst.DefaultBkColor;
         private Color _borderColor = Color.Maroon.Darker(0.5);
         private double _borderWidth = 3;
         /// <summary> 0° .. +360° </summary>

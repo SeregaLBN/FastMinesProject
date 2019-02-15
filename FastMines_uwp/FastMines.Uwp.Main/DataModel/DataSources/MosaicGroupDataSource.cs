@@ -1,75 +1,92 @@
 ﻿using System.Linq;
+using System.ComponentModel;
+using System.Collections.ObjectModel;
 using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.img;
-using fmg.uwp.draw.mosaic;
-using MosaicsGroupCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsGroupImg.CanvasBmp;
+using fmg.core.mosaic;
 using fmg.DataModel.Items;
+using MosaicGroupView       = fmg.uwp.img.win2d.MosaicGroupImg.CanvasBmp;
+using MosaicGroupController = fmg.uwp.img.win2d.MosaicGroupImg.ControllerBitmap;
 
 namespace fmg.DataModel.DataSources {
 
     /// <summary> DataSource menu items (mosaic groups) </summary>
-    public class MosaicGroupsDataSource : BaseDataSource<MosaicGroupDataItem, EMosaicGroup?, MosaicsGroupCanvasBmp> {
+    public class MosaicGroupDataSource : BaseDataSource<
+        MosaicGroupDataItem, EMosaicGroup?, MosaicGroupModel, MosaicGroupView, MosaicGroupController,
+        MosaicGroupDataItem, EMosaicGroup?, MosaicGroupModel, MosaicGroupView, MosaicGroupController>
+    {
 
-        MosaicGroupDataItem _itemOfType;
+        public override MosaicGroupDataItem Header {
+            get {
+                if (header == null) {
+                    header = new MosaicGroupDataItem(null);
 
-        protected override void FillDataSource() {
-            _itemOfType = new MosaicGroupDataItem(null) {
-                Image = {
-                    PaddingInt = 3,
-                    BackgroundColor = Color.Transparent,
-                    RedrawInterval = 50,
-                    PolarLights = true,
-                    Rotate = true
+                    var model = header.Entity.Model;
+                    model.Padding = new BoundDouble(3);
+                    model.BackgroundColor = Color.Transparent;
+                    model.TotalFrames = 257; // RedrawInterval = 50;
+                    model.PolarLights = true;
+                    model.Animated = true;
                 }
-            };
-
-            var dataSource = DataSourceInternal;
-            foreach (var g in EMosaicGroupEx.GetValues()) {
-                var mi = new MosaicGroupDataItem(g) {
-                    Image = {
-                        RedrawInterval = 70
-                    }
-                };
-                dataSource.Add(mi);
+                return header;
             }
-            base.FillDataSource();
         }
 
-        /// <summary> representative typeof(EMosaicGroup) </summary>
-        public MosaicGroupDataItem TopElement => _itemOfType;
+        public override ObservableCollection<MosaicGroupDataItem> DataSource {
+            get {
+                if (!dataSource.Any()) {
+                    foreach( var e in EMosaicGroupEx.GetValues()) {
+                        var item = new MosaicGroupDataItem(e);
+                        var model = item.Entity.Model;
+                        model.AnimatePeriod = 18000; // RedrawInterval = 70
+                        model.TotalFrames = 257;
+                        dataSource.Add(item);
+                    }
+                    notifier.FirePropertyChanged();
+                }
+                return dataSource;
+            }
+        }
 
-        protected override void OnCurrentElementChanged() {
-            OnPropertyChanged(nameof(this.UnicodeChars));
-
+        protected override void OnCurrentItemChanged() {
             // for one selected - start animate; for all other - stop animate
-            foreach (var mi in DataSource) {
-                var selected = ReferenceEquals(mi, CurrentElement);
-                var img = mi.Image;
-                img.PolarLights = selected;
-                img.Rotate = selected;
-                img.BorderColor = selected ? Color.Red : Color.Green;
-                img.BackgroundColor = selected ? ImageModelConsts.DefaultBkColor : PaintUwpContextCommon.DefaultBackgroundColor;
-                img.Padding = new Bound(selected ? 5 : 15);
+            foreach (var item in DataSource) {
+                var selected = ReferenceEquals(item, CurrentItem);
+                var model = item.Entity.Model;
+                model.PolarLights = selected;
+                model.Animated = selected;
+                model.BorderColor = selected ? Color.Red : Color.Green;
+                model.BackgroundColor = selected ? AnimatedImageModelConst.DefaultBkColor : MosaicDrawModelConst.DefaultBkColor;
+                model.Padding = new BoundDouble(selected ? 5 : 15);
                 if (!selected)
-                    img.ForegroundColor = ImageModelConsts.DefaultForegroundColor;
+                    model.ForegroundColor = AnimatedImageModelConst.DefaultForegroundColor;
                 //else {
-                //    HSV hsv = new HSV(ImageModelConsts.DefaultForegroundColor);
+                //    HSV hsv = new HSV(AnimatedImageModelConst.DefaultForegroundColor);
                 //    hsv.s = hsv.v = 100;
-                //    img.ForegroundColor = hsv.ToColor();
+                //    model.ForegroundColor = hsv.ToColor();
                 //}
             }
         }
 
-
         public string UnicodeChars {
             get {
-                var smi = CurrentElement;
-                return string.Join(" ", DataSource.Select(mi => {
-                    var selected = (smi != null) && (mi.Image.MosaicGroup == smi.Image.MosaicGroup);
-                    return mi.Image.MosaicGroup.Value.UnicodeChar(selected);
+                var ci = CurrentItem;
+                return string.Join(" ", DataSource.Select(item => {
+                    var selected = (ci != null) && (item.MosaicGroup == ci.MosaicGroup);
+                    return item.MosaicGroup.Value.UnicodeChar(selected);
                 }));
+            }
+        }
+
+        protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            base.OnPropertyChanged(sender, ev);
+
+            switch (ev.PropertyName) {
+            case nameof(this.CurrentItem):
+                notifier.FirePropertyChanged(nameof(this.UnicodeChars));
+                break;
             }
         }
 

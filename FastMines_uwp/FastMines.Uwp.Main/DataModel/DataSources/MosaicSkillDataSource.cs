@@ -1,61 +1,70 @@
-﻿using fmg.common;
+﻿using System.Linq;
+using System.Collections.ObjectModel;
+using fmg.common;
 using fmg.common.geom;
 using fmg.core.img;
 using fmg.core.types;
-using fmg.uwp.draw.mosaic;
-using MosaicsSkillCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsSkillImg.CanvasBmp;
+using fmg.core.mosaic;
 using fmg.DataModel.Items;
+using MosaicSkillView       = fmg.uwp.img.win2d.MosaicSkillImg.CanvasBmp;
+using MosaicSkillController = fmg.uwp.img.win2d.MosaicSkillImg.ControllerBitmap;
 
 namespace fmg.DataModel.DataSources {
 
     /// <summary> DataSource menu items (mosaic skills) </summary>
-    public class MosaicSkillsDataSource : BaseDataSource<MosaicSkillDataItem, ESkillLevel?, MosaicsSkillCanvasBmp> {
+    public class MosaicSkillDataSource : BaseDataSource<
+        MosaicSkillDataItem, ESkillLevel?, MosaicSkillModel, MosaicSkillView, MosaicSkillController,
+        MosaicSkillDataItem, ESkillLevel?, MosaicSkillModel, MosaicSkillView, MosaicSkillController>
+    {
 
-        MosaicSkillDataItem _itemOfType;
+        public override MosaicSkillDataItem Header {
+            get {
+                if (header == null) {
+                    header = new MosaicSkillDataItem(null);
 
-        protected override void FillDataSource() {
-            _itemOfType = new MosaicSkillDataItem(null) {
-                Image = {
-                    PaddingInt = 3,
-                    BackgroundColor = Color.Transparent,
-                    RedrawInterval = 50,
-                    PolarLights = true,
-                    Rotate = true
+                    var model = header.Entity.Model;
+                    model.Padding = new BoundDouble(3);
+                    model.BackgroundColor = Color.Transparent;
+                    model.TotalFrames = 257; // RedrawInterval = 50;
+                    model.PolarLights = true;
+                    model.Animated = true;
                 }
-            };
-
-            var dataSource = DataSourceInternal;
-            foreach (var s in ESkillLevelEx.GetValues()) {
-                var mi = new MosaicSkillDataItem(s) {
-                    Image = {
-                        RedrawInterval = 50,
-                        RotateAngleDelta = 5
-                    }
-                };
-                dataSource.Add(mi);
+                return header;
             }
-            base.FillDataSource();
         }
 
-        /// <summary> representative typeof(ESkillLevel) </summary>
-        public MosaicSkillDataItem TopElement => _itemOfType;
+        public override ObservableCollection<MosaicSkillDataItem> DataSource {
+            get {
+                if (!dataSource.Any()) {
+                    foreach (var e in ESkillLevelEx.GetValues()) {
+                        var item = new MosaicSkillDataItem(e);
+                        var model = item.Entity.Model;
+                        model.AnimatePeriod = 12857; // RedrawInterval = 50,
+                        model.TotalFrames = 257;     // RotateAngleDelta = 5
+                        dataSource.Add(item);
+                    }
+                    notifier.FirePropertyChanged();
+                }
+                return dataSource;
+            }
+        }
 
-        protected override void OnCurrentElementChanged() {
+        protected override void OnCurrentItemChanged() {
             // for one selected- start animate; for all other - stop animate
-            foreach (var mi in DataSource) {
-                var selected = ReferenceEquals(mi, CurrentElement);
-                var img = mi.Image;
-                img.Rotate = selected;
-                img.PolarLights = selected;
-                img.BorderColor = selected ? Color.Red : Color.Green;
-                img.BackgroundColor = selected ? ImageModelConsts.DefaultBkColor : PaintUwpContextCommon.DefaultBackgroundColor;
-                img.Padding = new Bound(selected ? 5 : 15);
+            foreach (var item in DataSource) {
+                var selected = ReferenceEquals(item, CurrentItem);
+                var model = item.Entity.Model;
+                model.Animated = selected;
+                model.PolarLights = selected;
+                model.BorderColor = selected ? Color.Red : Color.Green;
+                model.BackgroundColor = selected ? AnimatedImageModelConst.DefaultBkColor : MosaicDrawModelConst.DefaultBkColor;
+                model.Padding = new BoundDouble(selected ? 5 : 15);
                 if (!selected)
-                    img.ForegroundColor = ImageModelConsts.DefaultForegroundColor;
+                    model.ForegroundColor = AnimatedImageModelConst.DefaultForegroundColor;
                 //else {
                 //    HSV hsv = new HSV(ImageModelConsts.DefaultForegroundColor);
                 //    hsv.s = hsv.v = 100;
-                //    img.ForegroundColor = hsv.ToColor();
+                //    model.ForegroundColor = hsv.ToColor();
                 //}
             }
         }
