@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using fmg.common.notyfier;
 using fmg.DataModel.DataSources;
 using fmg.common.geom;
@@ -6,36 +7,43 @@ using fmg.common.geom;
 namespace fmg.common {
 
     /// <summary> ViewModel for <see cref="SelectMosaicPage"/> </summary>
-    public class MosaicGroupViewModel : NotifyPropertyChanged {
+    public class MosaicGroupViewModel : INotifyPropertyChanged, IDisposable {
 
-        private readonly MosaicsDataSource _mosaicsDs = new MosaicsDataSource();
+        private readonly MosaicDataSource mosaicDS = new MosaicDataSource();
+        protected bool Disposed { get; private set; }
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected readonly NotifyPropertyChanged notifier;
 
         public MosaicGroupViewModel() {
-            _mosaicsDs.PropertyChanged += OnMosaicsDsPropertyChanged;
+            mosaicDS.PropertyChanged += OnMosaicDsPropertyChanged;
+            notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev), false);
         }
 
-        public MosaicsDataSource MosaicsDs => _mosaicsDs;
+        public MosaicDataSource MosaicDS => mosaicDS;
 
-        public Size ImageSize {
-            get { return _mosaicsDs.ImageSize; }
-            set { _mosaicsDs.ImageSize = value; }
+        public SizeDouble ImageSize {
+            get { return mosaicDS.ImageSize; }
+            set { mosaicDS.ImageSize = value; }
         }
 
-        private void OnMosaicsDsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            if (ev.PropertyName == nameof(MosaicsDataSource.ImageSize)) {
+        private void OnMosaicDsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            if (ev.PropertyName == nameof(MosaicDataSource.ImageSize)) {
                 // ! notify parent container
-                OnPropertyChanged<Size>(ev, nameof(this.ImageSize));
+                notifier.FirePropertyChanged<SizeDouble>(ev, nameof(this.ImageSize));
             }
         }
 
-        protected override void Dispose(bool disposing) {
+        public void Dispose() {
             if (Disposed)
                 return;
+            Disposed = true;
 
-            base.Dispose(disposing);
+            mosaicDS.PropertyChanged -= OnMosaicDsPropertyChanged;
+            mosaicDS.Dispose();
 
-            _mosaicsDs.PropertyChanged -= OnMosaicsDsPropertyChanged;
-            _mosaicsDs.Dispose();
+            notifier.Dispose();
+
+            GC.SuppressFinalize(this);
         }
 
     }
