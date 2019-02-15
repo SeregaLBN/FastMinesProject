@@ -43,7 +43,7 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
     /** Data source - images that describes the elements */
     protected List<TItem> dataSource;
     /** Current item index in {@link #dataSource} */
-    protected int currentItemPos = 0;
+    protected int currentItemPos = -1;
 
     protected final NotifyPropertyChanged notifier/*Sync*/ = new NotifyPropertyChanged(this, false);
     private   final NotifyPropertyChanged notifierAsync    = new NotifyPropertyChanged(this, true);

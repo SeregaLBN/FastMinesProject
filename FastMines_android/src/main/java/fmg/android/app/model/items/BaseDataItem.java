@@ -2,6 +2,7 @@ package fmg.android.app.model.items;
 
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
+import android.graphics.Bitmap;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -12,6 +13,7 @@ import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.INotifyPropertyChanged;
 import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.core.img.IAnimatedModel;
+import fmg.core.img.IImageController;
 import fmg.core.img.IImageModel;
 import fmg.core.img.IImageView;
 import fmg.core.img.ImageController;
@@ -28,6 +30,7 @@ public abstract class BaseDataItem<T,
     public static final String PROPERTY_UNIQUE_ID = "UniqueId";
     public static final String PROPERTY_TITLE     = "Title";
     public static final String PROPERTY_ENTITY    = "Entity";
+    public static final String PROPERTY_IMAGE     = IImageController.PROPERTY_IMAGE;
     public static final String PROPERTY_SIZE      = IImageModel.PROPERTY_SIZE;
     public static final String PROPERTY_PADDING   = IImageModel.PROPERTY_PADDING;
 
@@ -63,14 +66,19 @@ public abstract class BaseDataItem<T,
         TImageCtrlr old = this.entity;
         if (notifier.setProperty(this.entity, entity, PROPERTY_ENTITY)) {
             if (old != null) {
+                old           .removeListener(this::onControllerPropertyChanged);
                 old.getModel().removeListener(this::onModelPropertyChanged);
                 old.close();
             }
             if (entity != null) {
+                entity.           addListener(this::onControllerPropertyChanged);
                 entity.getModel().addListener(this::onModelPropertyChanged);
             }
         }
     }
+
+    @Bindable
+    public Bitmap getImage() { return getEntity().getImage(); }
 
     @Bindable
     public SizeDouble getSize() {
@@ -115,8 +123,19 @@ public abstract class BaseDataItem<T,
         case PROPERTY_UNIQUE_ID: notifyPropertyChanged(BR.uniqueId); break;
         case PROPERTY_TITLE    : notifyPropertyChanged(BR.title   ); break;
         case PROPERTY_ENTITY   : notifyPropertyChanged(BR.entity  ); break;
+        case PROPERTY_IMAGE    : notifyPropertyChanged(BR.image   ); break;
         case PROPERTY_SIZE     : notifyPropertyChanged(BR.size    ); break;
         case PROPERTY_PADDING  : notifyPropertyChanged(BR.padding ); break;
+        }
+    }
+
+    protected void onControllerPropertyChanged(PropertyChangeEvent ev) {
+        assert (ev.getSource() == getEntity());
+
+        switch (ev.getPropertyName()) {
+        case IImageController.PROPERTY_IMAGE:
+            notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_IMAGE);
+            break;
         }
     }
 
@@ -134,9 +153,7 @@ public abstract class BaseDataItem<T,
     }
 
     @Override
-    public String toString() {
-        return title;
-    }
+    public String toString() { return title; }
 
     @Override
     public void addListener(PropertyChangeListener listener) {

@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     void onMenuMosaicGroupItemClick(View view, int position) {
         LoggerSimple.put("  onMenuMosaicGroupItemClick: pos={0}", position);
+        viewModel.getMosaicGroupDS().setCurrentItemPos(position);
     }
 
     @BindingAdapter("android:imageBitmap")
