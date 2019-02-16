@@ -6,8 +6,8 @@ namespace fmg.uwp.mosaic.xaml {
     /// <summary> MVC: controller. Xaml shapes implementation </summary>
     public class MosaicXamlController : MosaicFrameworkElementController<Panel, ImageSource, MosaicXamlView> {
 
-        public MosaicXamlController()
-            : base(new MosaicXamlView())
+        public MosaicXamlController(Panel control = null)
+            : base(new MosaicXamlView(control))
         { }
 
         public override Panel Control => View.Control;

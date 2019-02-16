@@ -18,8 +18,8 @@ using fmg.core.img;
 using fmg.uwp.utils;
 using fmg.DataModel.Items;
 using fmg.DataModel.DataSources;
-using MosaicsSkillCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsSkillImg.CanvasBmp;
-using MosaicsGroupCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsGroupImg.CanvasBmp;
+using MosaicsSkillImg = fmg.uwp.img.win2d.MosaicSkillImg.ControllerBitmap;
+using MosaicsGroupImg = fmg.uwp.img.win2d.MosaicGroupImg.ControllerBitmap;
 
 namespace fmg {
 
@@ -53,28 +53,28 @@ namespace fmg {
         private void OnPageLoaded(object sender, RoutedEventArgs e) {
             this.Loaded -= OnPageLoaded;
 
-            ViewModel.MosaicGroupDs.PropertyChanged += OnMosaicGroupDsPropertyChanged;
-            ViewModel.MosaicSkillDs.PropertyChanged += OnMosaicSkillDsPropertyChanged;
+            ViewModel.MosaicGroupDS.PropertyChanged += OnMosaicGroupDsPropertyChanged;
+            ViewModel.MosaicSkillDS.PropertyChanged += OnMosaicSkillDsPropertyChanged;
 
-            ViewModel.MosaicGroupDs.CurrentElement = ViewModel.MosaicGroupDs.DataSource.First(x => x.MosaicGroup == MosaicData.MosaicType.GetGroup());
-            ViewModel.MosaicSkillDs.CurrentElement = ViewModel.MosaicSkillDs.DataSource.First(x => x.SkillLevel == MosaicData.SkillLevel);
+            ViewModel.MosaicGroupDS.CurrentItem = ViewModel.MosaicGroupDS.DataSource.First(x => x.MosaicGroup == MosaicData.MosaicType.GetGroup());
+            ViewModel.MosaicSkillDS.CurrentItem = ViewModel.MosaicSkillDS.DataSource.First(x => x.SkillLevel == MosaicData.SkillLevel);
 
             var smp = RightFrame?.Content as SelectMosaicPage;
             if (smp != null) {
-                var ds = smp.ViewModel.MosaicsDs;
-                ds.CurrentElement = ds.DataSource.First(x => x.MosaicType == MosaicData.MosaicType);
+                var ds = smp.ViewModel.MosaicDS;
+                ds.CurrentItem = ds.DataSource.First(x => x.MosaicType == MosaicData.MosaicType);
             }
 
-            ApplyButtonColorSmoothTransition(_bttnGroupPanel, ViewModel.MosaicGroupDs.TopElement.Image);
-            ApplyButtonColorSmoothTransition(_bttnSkillPanel, ViewModel.MosaicSkillDs.TopElement.Image);
+            ApplyButtonColorSmoothTransition(_bttnGroupPanel, ViewModel.MosaicGroupDS.Header.Entity.Model);
+            ApplyButtonColorSmoothTransition(_bttnSkillPanel, ViewModel.MosaicSkillDS.Header.Entity.Model);
         }
 
         private void OnPageUnloaded(object sender, RoutedEventArgs ev) {
             this.Unloaded -= OnPageUnloaded;
 
             //System.Diagnostics.Debug.WriteLine("OnClosing");
-            ViewModel.MosaicGroupDs.PropertyChanged -= OnMosaicGroupDsPropertyChanged;
-            ViewModel.MosaicSkillDs.PropertyChanged -= OnMosaicSkillDsPropertyChanged;
+            ViewModel.MosaicGroupDS.PropertyChanged -= OnMosaicGroupDsPropertyChanged;
+            ViewModel.MosaicSkillDS.PropertyChanged -= OnMosaicSkillDsPropertyChanged;
 
             ViewModel.Dispose();
             _sizeChangedObservable?.Dispose();
@@ -105,8 +105,8 @@ namespace fmg {
             smp.CurrentMosaicGroup = mosaicGroup;
             smp.MosaicData = this.MosaicData;
             smp.CurrentSkillLevel = this.MosaicData.SkillLevel;
-            smp.CurrentElement = (this.MosaicData.MosaicType.GetGroup() == mosaicGroup)
-                                    ? smp.ViewModel.MosaicsDs.DataSource.First(x => x.MosaicType == this.MosaicData.MosaicType)
+            smp.CurrentItem = (this.MosaicData.MosaicType.GetGroup() == mosaicGroup)
+                                    ? smp.ViewModel.MosaicDS.DataSource.First(x => x.MosaicType == this.MosaicData.MosaicType)
                                     : null;
         }
         private void ShowCustomSkillPage() {
@@ -136,9 +136,9 @@ namespace fmg {
         private void OnMosaicGroupDsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             //LoggerSimple.Put("MosaicGroupDataSource::" + ev.PropertyName);
             switch (ev.PropertyName) {
-            case nameof(ViewModel.MosaicGroupDs.CurrentElement):
-                var currentGroupItem = ViewModel.MosaicSkillDs.CurrentElement;
-                OnPropertyCurrentElementChanged(true, ((MosaicGroupDataSource)sender).CurrentElement, currentGroupItem);
+            case nameof(ViewModel.MosaicGroupDS.CurrentItem):
+                var currentGroupItem = ViewModel.MosaicSkillDS.CurrentItem;
+                OnPropertyCurrentElementChanged(true, ((MosaicGroupDataSource)sender).CurrentItem, currentGroupItem);
                 break;
             }
         }
@@ -146,9 +146,9 @@ namespace fmg {
         private void OnMosaicSkillDsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             //LoggerSimple.Put("MosaicSkillDataSource::" + ev.PropertyName);
             switch(ev.PropertyName) {
-            case nameof(ViewModel.MosaicSkillDs.CurrentElement):
-                var currentSkillItem = ((MosaicSkillDataSource)sender).CurrentElement;
-                OnPropertyCurrentElementChanged(false, ViewModel.MosaicGroupDs.CurrentElement, currentSkillItem);
+            case nameof(ViewModel.MosaicSkillDS.CurrentItem):
+                var currentSkillItem = ((MosaicSkillDataSource)sender).CurrentItem;
+                OnPropertyCurrentElementChanged(false, ViewModel.MosaicGroupDS.CurrentItem, currentSkillItem);
                 break;
             }
         }
@@ -173,19 +173,19 @@ namespace fmg {
 
             var size = Math.Min(ev.NewSize.Height, ev.NewSize.Width);
             var size1 = size/7;
-            var wh = (int)Math.Min(Math.Max(minSize, size1), 100); // TODO: DPI dependency
-            ViewModel.MosaicGroupDs.ImageSize =
-            ViewModel.MosaicSkillDs.ImageSize = new Size(wh, wh);
+            var wh = Math.Min(Math.Max(minSize, size1), 100); // TODO: DPI dependency
+            ViewModel.MosaicGroupDS.ImageSize =
+            ViewModel.MosaicSkillDS.ImageSize = new SizeDouble(wh, wh);
 
-            ViewModel.MosaicGroupDs.TopElement.ImageSize =
-            ViewModel.MosaicSkillDs.TopElement.ImageSize = new Size(wh, topElemHeight);
-            ViewModel.MosaicGroupDs.TopElement.ImagePadding =
-            ViewModel.MosaicSkillDs.TopElement.ImagePadding = new Bound(pad, pad, wh - topElemHeight + pad, pad); // left margin
+            ViewModel.MosaicGroupDS.Header.Size =
+            ViewModel.MosaicSkillDS.Header.Size = new SizeDouble(wh, topElemHeight);
+            ViewModel.MosaicGroupDS.Header.Padding =
+            ViewModel.MosaicSkillDS.Header.Padding = new BoundDouble(pad, pad, wh - topElemHeight + pad, pad); // left margin
 
-            int whBurger = topElemHeight / 2 + Math.Min(topElemHeight / 2 - pad, Math.Max(0, (int)(wh - 1.5 * topElemHeight)));
-            Bound padBurger = new Bound(wh - whBurger, topElemHeight - whBurger, pad, pad);
-            ViewModel.MosaicGroupDs.TopElement.ImagePaddingBurgerMenu =
-            ViewModel.MosaicSkillDs.TopElement.ImagePaddingBurgerMenu = padBurger; // right-bottom margin
+            double whBurger = topElemHeight / 2 + Math.Min(topElemHeight / 2 - pad, Math.Max(0, (wh - 1.5 * topElemHeight)));
+            var padBurger = new BoundDouble(wh - whBurger, topElemHeight - whBurger, pad, pad);
+            ViewModel.MosaicGroupDS.Header.PaddingBurgerMenu =
+            ViewModel.MosaicSkillDS.Header.PaddingBurgerMenu = padBurger; // right-bottom margin
         }
 
         //public static IEnumerable<T> FindChilds<T>(FrameworkElement parent, int depth = 1, Func<T, bool> filter = null)
@@ -205,17 +205,17 @@ namespace fmg {
         //}
 
         private void OnCreateResourcesCanvasControl_MosaicsSkillImg(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
-            System.Diagnostics.Debug.Assert(canvasControl.DataContext is MosaicsSkillCanvasBmp);
+            System.Diagnostics.Debug.Assert(canvasControl.DataContext is MosaicsSkillImg);
             OnCreateResourcesCanvasControl(canvasControl, ev);
         }
 
         private void OnCreateResourcesCanvasControl_MosaicsGroupImg(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
-            System.Diagnostics.Debug.Assert(canvasControl.DataContext is MosaicsGroupCanvasBmp);
+            System.Diagnostics.Debug.Assert(canvasControl.DataContext is MosaicsGroupImg);
             OnCreateResourcesCanvasControl(canvasControl, ev);
         }
         private void OnCreateResourcesCanvasControl(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
             if (ev.Reason == CanvasCreateResourcesReason.FirstTime) {
-                var img = canvasControl.DataContext as ImageModel<CanvasBitmap>;
+                var img = canvasControl.DataContext as MosaicsGroupImg;
                 if (img == null)
                     return;
                 canvasControl.Draw += (sender2, ev2) => {
@@ -231,9 +231,9 @@ namespace fmg {
             }
         }
 
-        private void ApplyButtonColorSmoothTransition(Button bttn, ImageModel<CanvasBitmap> image) {
+        private void ApplyButtonColorSmoothTransition(Button bttn, AnimatedImageModel model) {
             int flag = 0;
-            var clrFrom = image.BackgroundColor; //Color.Coral;
+            var clrFrom = model.BackgroundColor; //Color.Coral;
             var clrTo = Color.BlueViolet;
             double fullTimeMsec = 1500, repeatTimeMsec = 100;
             double currStepAngle = 0;
@@ -248,12 +248,12 @@ namespace fmg {
                     } else {
                         currStepAngle += deltaStepAngle;
                         var sin = Math.Sin((currStepAngle / 4).ToRadian());
-                        clrCurr.A = (byte)(clrFrom.A + sin * (clrTo.A - clrFrom.A));
-                        clrCurr.R = (byte)(clrFrom.R + sin * (clrTo.R - clrFrom.R));
-                        clrCurr.G = (byte)(clrFrom.G + sin * (clrTo.G - clrFrom.G));
-                        clrCurr.B = (byte)(clrFrom.B + sin * (clrTo.B - clrFrom.B));
+                        clrCurr = new Color((byte)(clrFrom.A + sin * (clrTo.A - clrFrom.A)),
+                                            (byte)(clrFrom.R + sin * (clrTo.R - clrFrom.R)),
+                                            (byte)(clrFrom.G + sin * (clrTo.G - clrFrom.G)),
+                                            (byte)(clrFrom.B + sin * (clrTo.B - clrFrom.B)));
                     }
-                    image.BackgroundColor = clrCurr;
+                    model.BackgroundColor = clrCurr;
                 };
                 r.RepeatNoWait(TimeSpan.FromMilliseconds(repeatTimeMsec), () => flag != 1);
             };
@@ -267,12 +267,12 @@ namespace fmg {
                     } else {
                         currStepAngle -= deltaStepAngle;
                         var cos = Math.Cos((currStepAngle / 4).ToRadian());
-                        clrCurr.A = (byte)(clrTo.A - (1 - cos * (clrFrom.A - clrTo.A)));
-                        clrCurr.R = (byte)(clrTo.R - (1 - cos * (clrFrom.R - clrTo.R)));
-                        clrCurr.G = (byte)(clrTo.G - (1 - cos * (clrFrom.G - clrTo.G)));
-                        clrCurr.B = (byte)(clrTo.B - (1 - cos * (clrFrom.B - clrTo.B)));
+                        clrCurr = new Color((byte)(clrTo.A - (1 - cos * (clrFrom.A - clrTo.A))),
+                                            (byte)(clrTo.R - (1 - cos * (clrFrom.R - clrTo.R))),
+                                            (byte)(clrTo.G - (1 - cos * (clrFrom.G - clrTo.G))),
+                                            (byte)(clrTo.B - (1 - cos * (clrFrom.B - clrTo.B))));
                     }
-                    image.BackgroundColor = clrCurr;
+                    model.BackgroundColor = clrCurr;
                 };
                 r.RepeatNoWait(TimeSpan.FromMilliseconds(repeatTimeMsec), () => flag != 2);
             };
@@ -281,10 +281,10 @@ namespace fmg {
         private void OnClickBttnGroupPanel(object sender, RoutedEventArgs e) {
             if (_listViewMosaicGroupMenu.Visibility == Visibility.Collapsed) {
                 ApplySmoothVisibilityOverScale(typeof(EMosaicGroup), _listViewMosaicGroupMenu, Visibility.Visible);
-                ViewModel.MosaicGroupDs.TopElement.Image.HorizontalBurgerMenu = false;
+                ViewModel.MosaicGroupDS.Header.Entity.BurgerMenuModel.Horizontal = false;
             } else {
                 _splitView.IsPaneOpen = !_splitView.IsPaneOpen;
-                ViewModel.MosaicGroupDs.TopElement.Image.RotateAngleDelta = -ViewModel.MosaicGroupDs.TopElement.Image.RotateAngleDelta;
+                ViewModel.MosaicGroupDS.Header.Entity.Model.AnimeDirection = !ViewModel.MosaicGroupDS.Header.Entity.Model.AnimeDirection;
             }
         }
 
@@ -302,14 +302,14 @@ namespace fmg {
                                 ApplySmoothVisibilityOverScale(typeof(EMosaicGroup), _listViewMosaicGroupMenu, Visibility.Collapsed);
                         });
                 }
-                ViewModel.MosaicSkillDs.TopElement.Image.RotateAngleDelta = -ViewModel.MosaicSkillDs.TopElement.Image.RotateAngleDelta;
+                ViewModel.MosaicSkillDS.Header.Entity.Model.AnimeDirection = !ViewModel.MosaicSkillDS.Header.Entity.Model.AnimeDirection;
             } else {
                 if (isVisibleScroller && (_listViewMosaicGroupMenu.Visibility == Visibility.Visible)) {
                     ApplySmoothVisibilityOverScale(typeof(EMosaicGroup), _listViewMosaicGroupMenu, Visibility.Collapsed);
-                    ViewModel.MosaicGroupDs.TopElement.Image.HorizontalBurgerMenu = true;
+                    ViewModel.MosaicGroupDS.Header.Entity.BurgerMenuModel.Horizontal = true;
                 } else {
                     ApplySmoothVisibilityOverScale(typeof(ESkillLevel), _listViewSkillLevelMenu, Visibility.Collapsed);
-                    ViewModel.MosaicSkillDs.TopElement.Image.RotateAngleDelta = -ViewModel.MosaicSkillDs.TopElement.Image.RotateAngleDelta;
+                    ViewModel.MosaicSkillDS.Header.Entity.Model.AnimeDirection = !ViewModel.MosaicSkillDS.Header.Entity.Model.AnimeDirection;
                 }
             }
         }
@@ -327,7 +327,7 @@ namespace fmg {
 
             var h1 = h0;
             if (double.IsNaN(h1)) // WTF!
-                h1 = Enum.GetValues(enumType).Length * (ViewModel.MosaicGroupDs.ImageSize.Height + 2 /* padding */);
+                h1 = Enum.GetValues(enumType).Length * (ViewModel.MosaicGroupDS.ImageSize.Height + 2 /* padding */);
 
             var transformer = new CompositeTransform();
             lv.RenderTransform = transformer;

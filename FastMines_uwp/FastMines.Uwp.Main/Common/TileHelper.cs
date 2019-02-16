@@ -14,7 +14,7 @@ using fmg.uwp.utils.win2d;
 using Size = fmg.common.geom.Size;
 using Rect = Windows.Foundation.Rect;
 using FastMines.Uwp.BackgroundTasks;
-using MosaicsCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsImg.CanvasBmp;
+using MosaicsCanvasBmp = fmg.uwp.img.win2d.MosaicImg.CanvasBmp;
 
 namespace fmg {
 
@@ -161,19 +161,19 @@ namespace fmg {
         public static Tuple<EMosaic, CanvasBitmap> CreateRandomMosaicImage(int w, int h) {
             Random rnd = ThreadLocalRandom.Current;
             var mosaicType = EMosaicEx.FromOrdinal(rnd.Next() % EMosaicEx.GetValues().Length);
-            var bkClr = ColorExt.RandomColor(rnd).Brighter(0.45);
+            var bkClr = Color.RandomColor(rnd).Brighter(0.45);
             var sizeField = mosaicType.SizeIcoField(true);
             sizeField.m += rnd.Next() % 2;
             sizeField.n += rnd.Next() % 3;
             const int bound = 3;
             const int zoomKoef = 1;
-            var img = new MosaicsCanvasBmp(Rc) {
-                MosaicType = mosaicType,
-                SizeField = sizeField,
-                Size = new Size(w * zoomKoef, h * zoomKoef),
-                Padding = new Bound(zoomKoef * bound),
-                BackgroundColor = bkClr
-            };
+            var img = new MosaicsCanvasBmp(Rc);
+            var m = img.Model;
+            m.MosaicType = mosaicType;
+            m.SizeField = sizeField;
+            m.Size = new SizeDouble(w * zoomKoef, h * zoomKoef);
+            m.Padding = new BoundDouble(zoomKoef * bound);
+            m.BackgroundColor = bkClr;
             var bmp = img.Image;
             var pw = bmp.Size.Width;
             var ph = bmp.Size.Height;

@@ -7,12 +7,13 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
+using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.mosaic;
 using fmg.core.img;
 using fmg.uwp.utils;
-using MosaicsCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsImg.CanvasBmp;
 using fmg.DataModel.Items;
+using MosaicsCanvasBmp = fmg.uwp.img.win2d.MosaicImg.CanvasBmp;
 
 namespace fmg {
 
@@ -37,7 +38,7 @@ namespace fmg {
             this.SizeChanged += OnPageSizeChanged;
 
             {
-                HSV hsv = new HSV(ImageModelConsts.DefaultForegroundColor) {
+                HSV hsv = new HSV(AnimatedImageModelConst.DefaultForegroundColor) {
                     s = 80,
                     v = 70,
                     a = 170
@@ -81,7 +82,7 @@ namespace fmg {
             var size = Math.Min(ev.NewSize.Height, ev.NewSize.Width);
             var size2 = size / 3.9;
             var wh = (int)Math.Min(Math.Max(100, size2), 200); // TODO: DPI dependency
-            ViewModel.ImageSize = new fmg.common.geom.Size(wh, wh);
+            ViewModel.ImageSize = new SizeDouble(wh, wh);
         }
 
         private void OnSelectionChangedGridViewMosaics(object sender, SelectionChangedEventArgs ev) {
@@ -89,27 +90,27 @@ namespace fmg {
         }
 
         private void OnItemClickGridViewMosaics(object sender, ItemClickEventArgs ev) {
-            // invoke after set/change ViewModel.MosaicsDs.CurrentElement
+            // invoke after set/change ViewModel.MosaicDS.CurrentItem
             AsyncRunner.InvokeFromUiLater(() => {
-                var cu = ViewModel.MosaicsDs.CurrentElement;
+                var cu = ViewModel.MosaicDS.CurrentItem;
                 if (cu != null)
                     MosaicData.MosaicType = cu.MosaicType;
             });
         }
 
         public EMosaicGroup CurrentMosaicGroup {
-            //get { return ViewModel.MosaicsDs.CurrentGroup; }
-            set { ViewModel.MosaicsDs.CurrentGroup = value; }
+            //get { return ViewModel.MosaicDS.CurrentGroup; }
+            set { ViewModel.MosaicDS.CurrentGroup = value; }
         }
 
-        public ESkillLevel CurrentSkillLevel {
-            private get { return ViewModel.MosaicsDs.CurrentSkill; }
-            set { ViewModel.MosaicsDs.CurrentSkill = value; }
+        public ESkillLevel? CurrentSkillLevel {
+            private get { return ViewModel.MosaicDS.CurrentSkill; }
+            set { ViewModel.MosaicDS.CurrentSkill = value; }
         }
 
-        public MosaicDataItem CurrentElement {
-            private get { return ViewModel.MosaicsDs.CurrentElement; }
-            set { ViewModel.MosaicsDs.CurrentElement = value; }
+        public MosaicDataItem CurrentItem {
+            private get { return ViewModel.MosaicDS.CurrentItem; }
+            set { ViewModel.MosaicDS.CurrentItem = value; }
         }
 
         private void OnDataContextChangedCanvasControl(FrameworkElement sender, DataContextChangedEventArgs ev) {
@@ -129,7 +130,7 @@ namespace fmg {
 
         private void OnDrawCanvasControl(CanvasControl canvasControl, CanvasDrawEventArgs ev) {
             var img = map[canvasControl];
-            ev.DrawingSession.DrawImage(img.Image, new Rect(0, 0, canvasControl.Width, canvasControl.Height));
+            ev.DrawingSession.DrawImage(img.Image, new Windows.Foundation.Rect(0, 0, canvasControl.Width, canvasControl.Height));
         }
 
         private void StartNewGame() {
@@ -137,7 +138,7 @@ namespace fmg {
             Frame frame = Window.Current.Content as Frame;
             System.Diagnostics.Debug.Assert(frame != null);
 
-            var eMosaic = CurrentElement.MosaicType;
+            var eMosaic = CurrentItem.MosaicType;
             frame.Navigate(typeof(MosaicPage2), MosaicData);
 
             //Window.Current.Content = new MosaicPage();

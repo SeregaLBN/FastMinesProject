@@ -198,8 +198,8 @@ namespace fmg.common {
             return $"argb={A:X2}{R:X2}{G:X2}{B:X2}";
         }
 
-        public static Color RandomColor() {
-            var next = ThreadLocalRandom.Current.Next();
+        public static Color RandomColor(Random rnd = null) {
+            var next = (rnd ?? ThreadLocalRandom.Current).Next();
             return new Color(
                 (byte) ((next & 0xFF) >> 0),
                 (byte) ((next & 0xFF00) >> 8),

@@ -29,7 +29,7 @@ namespace fmg {
             this.Unloaded += OnPageUnloaded;
 
             {
-                HSV hsv = new HSV(ImageModelConsts.DefaultForegroundColor) {
+                HSV hsv = new HSV(AnimatedImageModelConst.DefaultForegroundColor) {
                     s = 80,
                     v = 70,
                     a = 170
@@ -126,7 +126,7 @@ namespace fmg {
         private int GetNeighborNumber() {
             var attr = MosaicHelper.CreateAttributeInstance(MosaicData.MosaicType);
             int max = Enumerable.Range(0, attr.GetDirectionCount())
-                .Select(i => attr.getNeighborNumber(i))
+                .Select(i => attr.GetNeighborNumber(i))
                 .Max();
             return max + 1; // +thisCell
         }

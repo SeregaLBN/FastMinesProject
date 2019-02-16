@@ -164,7 +164,7 @@ namespace fmg {
             compositeMosaic[nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.m)] = saveData.SizeField.m;
             compositeMosaic[nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.n)] = saveData.SizeField.n;
             compositeMosaic[nameof(MosaicInitData.MinesCount)                           ] = saveData.MinesCount;
-            compositeMosaic[nameof(MosaicInitData.Area)                                 ] = saveData.Area;
+            compositeMosaic[nameof(MosaicInitData.Size)                                 ] = saveData.Size;
 
             var lsv = Windows.Storage.ApplicationData.Current.LocalSettings.Values;
             lsv[nameof(MosaicInitData)] = compositeMosaic;
@@ -175,17 +175,17 @@ namespace fmg {
             if (lsv.ContainsKey(nameof(MosaicInitData)))
                 try {
                     Windows.Storage.ApplicationDataCompositeValue compositeMosaic = (Windows.Storage.ApplicationDataCompositeValue)lsv[nameof(MosaicInitData)];
-                    int mosaicTypeOrdinal = (int)   compositeMosaic[nameof(MosaicInitData.MosaicType)];
-                    int sizeFieldM        = (int)   compositeMosaic[nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.m)];
-                    int sizeFieldN        = (int)   compositeMosaic[nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.n)];
-                    int minesCount        = (int)   compositeMosaic[nameof(MosaicInitData.MinesCount)];
-                    double area           = (double)compositeMosaic[nameof(MosaicInitData.Area)];
+                    int mosaicTypeOrdinal = (int)       compositeMosaic[nameof(MosaicInitData.MosaicType)];
+                    int sizeFieldM        = (int)       compositeMosaic[nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.m)];
+                    int sizeFieldN        = (int)       compositeMosaic[nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.n)];
+                    int minesCount        = (int)       compositeMosaic[nameof(MosaicInitData.MinesCount)];
+                    SizeDouble size       = (SizeDouble)compositeMosaic[nameof(MosaicInitData.Size)];
 
                     MosaicInitData loadData = new MosaicInitData();
                     loadData.MosaicType = EMosaicEx.FromOrdinal(mosaicTypeOrdinal);
                     loadData.SizeField  = new Matrisize(sizeFieldM, sizeFieldN);
                     loadData.MinesCount = minesCount;
-                    loadData.Area       = area;
+                    loadData.Size       = size;
                     return loadData;
                 } catch (Exception ex) {
                     LoggerSimple.Put($"Fail load data: {ex.Message}");

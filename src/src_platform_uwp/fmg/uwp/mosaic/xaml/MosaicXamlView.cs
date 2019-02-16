@@ -28,10 +28,12 @@ namespace fmg.uwp.mosaic.xaml {
         private IDictionary<BaseCell, CellShapes> MapCellToShape => _mapCellToShape ?? (_mapCellToShape = new Dictionary<BaseCell, CellShapes>());
         private readonly IDictionary<Color, Brush> _brushCacheMap = new Dictionary<Color, Brush>();
 
-        public MosaicXamlView()
+        public MosaicXamlView(Panel control = null)
             : base(new MosaicDrawModel<ImageSource>())
         {
             _notifier.DeferredNotifications = true;
+            if (control != null)
+                Control = control;
             ChangeSizeImagesMineFlag();
         }
 
@@ -46,12 +48,14 @@ namespace fmg.uwp.mosaic.xaml {
 
         public Panel Control {
             get {
-                if (_control == null) {
-                    _control = new Canvas();
-                    //LoggerSimple.Put("MosaicXamlView.GetControl: new Control");
-                    FillShapes();
-                }
+                if (_control == null)
+                    Control = new Canvas(); // call setter
                 return _control;
+            }
+            private set {
+                _control = value;
+                //LoggerSimple.Put("MosaicXamlView.GetControl: new Control");
+                FillShapes();
             }
         }
 

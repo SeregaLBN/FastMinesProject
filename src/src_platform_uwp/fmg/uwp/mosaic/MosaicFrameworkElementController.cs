@@ -148,7 +148,7 @@ namespace fmg.uwp.mosaic {
         }
 
         /// <summary> Поменять игру на новый уровень сложности </summary>
-        void SetGame(ESkillLevel skill) {
+        public void SetGame(ESkillLevel skill) {
             //if (isPaused())
             //    ChangePause(e);
 
@@ -189,7 +189,7 @@ namespace fmg.uwp.mosaic {
 
         /// <summary> check that mosaic field is placed in the window/page </summary>
         private void RecheckLocation() {
-            AreaOptimal();
+            SizeOptimal();
 
             var o = GetOffset();
             var sizeWinMosaic = Size;
@@ -269,7 +269,7 @@ namespace fmg.uwp.mosaic {
             Model.Area = maxArea;
         }
 
-        void AreaOptimal() {
+        public void SizeOptimal() {
             var sizeControl = GetControlSize();
             var model = Model;
             Model.Area = MosaicHelper.FindAreaBySize(model.MosaicType, model.SizeField, ref sizeControl);
