@@ -12,8 +12,8 @@ using fmg.DataModel.Items;
 using MosaicModel      = fmg.core.img.MosaicAnimatedModel<fmg.common.Nothing>;
 using MosaicView       = fmg.uwp.img.win2d.MosaicImg.CanvasBmp;
 using MosaicController = fmg.uwp.img.win2d.MosaicImg.ControllerBitmap;
-using LogoView       = fmg.uwp.img.win2d.Logo.CanvasBmp;
-using LogoController = fmg.uwp.img.win2d.Logo.ControllerBitmap;
+using LogoView         = fmg.uwp.img.win2d.Logo.CanvasBmp;
+using LogoController   = fmg.uwp.img.win2d.Logo.ControllerBitmap;
 
 namespace fmg.DataModel.DataSources {
 

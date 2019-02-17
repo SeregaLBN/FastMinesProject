@@ -10,7 +10,7 @@ using fmg.core.img;
 
 namespace fmg.DataModel.DataSources {
 
-    /// <summary> base DataSource menu items </summary>
+    /// <summary> Base container for image items </summary>
     public abstract class BaseDataSource<THeader, THeaderId, THeaderModel, THeaderView, THeaderCtrlr,
                                          TItem  ,   TItemId,   TItemModel,   TItemView,   TItemCtrlr>
             : INotifyPropertyChanged, IDisposable
@@ -43,8 +43,10 @@ namespace fmg.DataModel.DataSources {
             this.PropertyChangedSync += OnPropertyChanged;
         }
 
+        /// <summary> the top item that this data source describes </summary>
         public abstract THeader Header { get; }
 
+        /// <summary> list of items </summary>
         public abstract ObservableCollection<TItem> DataSource { get; }
 
         /// <summary> Selected element </summary>

@@ -60,8 +60,7 @@ namespace fmg.DataModel.Items {
             }
         }
 
-        protected void OnBurgerMenuModelPropertyChanged(object sender, PropertyChangedEventArgs ev)
-        {
+        protected void OnBurgerMenuModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             switch (ev.PropertyName) {
             case nameof(BurgerMenuModel.Padding):
                 if (ev is PropertyChangedExEventArgs<BoundDouble> evx)
@@ -72,8 +71,7 @@ namespace fmg.DataModel.Items {
             }
         }
 
-        protected override void Disposing()
-        {
+        protected override void Disposing() {
             Entity.BurgerMenuModel.PropertyChanged -= OnBurgerMenuModelPropertyChanged;
             base.Disposing();
         }

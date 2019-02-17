@@ -16,10 +16,10 @@
                    IsPaneOpen="{x:Bind ViewModel.IsSplitViewPaneOpen, Mode=TwoWay}"
                    DisplayMode="CompactInline"
                    PaneBackground="Beige"
-                   OpenPaneLength="{x:Bind ViewModel.MosaicGroupDs.ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWidthOpenPaneConverter}}"
-                   CompactPaneLength="{x:Bind ViewModel.MosaicGroupDs.ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWidthWithMarginConverter}}">
+                   OpenPaneLength="{x:Bind ViewModel.MosaicGroupDS.ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWidthOpenPaneConverter}}"
+                   CompactPaneLength="{x:Bind ViewModel.MosaicGroupDS.ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWidthWithMarginConverter}}">
             <SplitView.Pane>
-                <ScrollViewer x:Name="_scroller" HorizontalAlignment="Left" VerticalAlignment="Top" Width="{x:Bind ViewModel.MosaicGroupDs.ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWidthOpenPaneConverter}}" >
+                <ScrollViewer x:Name="_scroller" HorizontalAlignment="Left" VerticalAlignment="Top" Width="{x:Bind ViewModel.MosaicGroupDS.ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWidthOpenPaneConverter}}" >
 
                     <StackPanel Orientation="Vertical" >
                         <StackPanel Orientation="Horizontal" Background="{ThemeResource SystemChromeMediumColor}">
@@ -27,11 +27,11 @@
                                           TabIndex="1"
                                           Style="{StaticResource ButtonExtStyle}"
                                           AutomationProperties.Name="Menu"
-                                          ToolTipService.ToolTip="{x:Bind ViewModel.MosaicGroupDs.UnicodeChars, Mode=OneWay}"
+                                          ToolTipService.ToolTip="{x:Bind ViewModel.MosaicGroupDS.UnicodeChars, Mode=OneWay}"
                                           Click="OnClickBttnGroupPanel" >
-                                <canvas:CanvasControl DataContext="{x:Bind ViewModel.MosaicGroupDs.TopElement.Image, Mode=OneWay}"
-                                                      Height="{x:Bind ViewModel.MosaicGroupDs.TopElement.ImageSize, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
-                                                      Width="{x:Bind  ViewModel.MosaicGroupDs.TopElement.ImageSize, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
+                                <canvas:CanvasControl DataContext="{x:Bind ViewModel.MosaicGroupDS.Header, Mode=OneWay}"
+                                                      Height="{x:Bind ViewModel.MosaicGroupDS.Header.Size, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
+                                                      Width="{x:Bind  ViewModel.MosaicGroupDS.Header.Size, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
                                                       Margin="1,1,1,1"
                                                       CreateResources="OnCreateResourcesCanvasControl_MosaicsGroupImg"
                                 />
@@ -41,9 +41,9 @@
                         </StackPanel>
 
                         <ListView x:Name="_listViewMosaicGroupMenu"
-                                  ItemsSource="{x:Bind ViewModel.MosaicGroupDs.DataSource}"
+                                  ItemsSource="{x:Bind ViewModel.MosaicGroupDS.DataSource}"
                                   Tapped="OnListViewMosaicGroupMenuTapped"
-                                  SelectedItem="{x:Bind ViewModel.MosaicGroupDs.CurrentElement, Mode=TwoWay, Converter={StaticResource ObjectToMosaicGroupDataItemConverter}}">
+                                  SelectedItem="{x:Bind ViewModel.MosaicGroupDS.CurrentItem, Mode=TwoWay, Converter={StaticResource ObjectToMosaicGroupDataItemConverter}}">
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
                                     <Setter Property="Padding" Value="0" />
@@ -51,11 +51,11 @@
                             </ListView.ItemContainerStyle>
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="DataModel:MosaicGroupDataItem">
-                                    <StackPanel Orientation="Horizontal" Height="{x:Bind ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeHeightWithMarginConverter}}">
+                                    <StackPanel Orientation="Horizontal" Height="{x:Bind Size, Mode=OneWay, Converter={StaticResource ImageSizeHeightWithMarginConverter}}">
                                         <canvas:CanvasControl
-                                               DataContext="{x:Bind Image, Mode=OneWay}"
-                                               Height="{x:Bind ImageSize, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
-                                               Width="{x:Bind  ImageSize, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
+                                               DataContext="{x:Bind Entity, Mode=OneWay}"
+                                               Height="{x:Bind Size, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
+                                               Width="{x:Bind  Size, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
                                                Margin="1,1,1,1"
                                                CreateResources="OnCreateResourcesCanvasControl_MosaicsGroupImg"
                                                AutomationProperties.Name="{x:Bind Title, Mode=OneWay}" />
@@ -68,13 +68,13 @@
                         <StackPanel Orientation="Horizontal" Background="{ThemeResource SystemChromeMediumColor}" Margin="0,15,0,0">
                             <Button x:Name="_bttnSkillPanel"
                                           Style="{StaticResource ButtonExtStyle}"
-                                          Width="{x:Bind ViewModel.MosaicSkillDs.ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWidthWithMarginConverter}}"
+                                          Width="{x:Bind ViewModel.MosaicSkillDS.ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWidthWithMarginConverter}}"
                                           AutomationProperties.Name="Menu"
                                           ToolTipService.ToolTip="Difficulty level"
                                           Click="OnClickBttnSkillPanel" >
-                                <canvas:CanvasControl DataContext="{x:Bind ViewModel.MosaicSkillDs.TopElement.Image, Mode=OneWay}"
-                                                      Height="{x:Bind ViewModel.MosaicSkillDs.TopElement.ImageSize, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
-                                                      Width="{x:Bind  ViewModel.MosaicSkillDs.TopElement.ImageSize, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
+                                <canvas:CanvasControl DataContext="{x:Bind ViewModel.MosaicSkillDS.Header.Entity, Mode=OneWay}"
+                                                      Height="{x:Bind ViewModel.MosaicSkillDS.Header.Size, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
+                                                      Width="{x:Bind  ViewModel.MosaicSkillDS.Header.Size, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
                                                       Margin="1,1,1,1"
                                                       CreateResources="OnCreateResourcesCanvasControl_MosaicsSkillImg"
                                 />
@@ -89,8 +89,8 @@
                         <ListView x:Name="_listViewSkillLevelMenu"
                                   Visibility="Collapsed"
                                   Tapped="OnListViewSkillLevelMenuTapped"
-                                  ItemsSource="{x:Bind ViewModel.MosaicSkillDs.DataSource}"
-                                  SelectedItem="{x:Bind ViewModel.MosaicSkillDs.CurrentElement, Mode=TwoWay, Converter={StaticResource ObjectToMosaicSkillDataItemConverter}}">
+                                  ItemsSource="{x:Bind ViewModel.MosaicSkillDS.DataSource}"
+                                  SelectedItem="{x:Bind ViewModel.MosaicSkillDS.CurrentItem, Mode=TwoWay, Converter={StaticResource ObjectToMosaicSkillDataItemConverter}}">
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
                                     <Setter Property="Padding" Value="0" />
@@ -99,11 +99,11 @@
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="DataModel:MosaicSkillDataItem">
                                     <StackPanel Orientation="Horizontal"
-                                                Height="{x:Bind ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWidthWithMarginConverter}}" >
+                                                Height="{x:Bind Size, Mode=OneWay, Converter={StaticResource ImageSizeWidthWithMarginConverter}}" >
                                         <canvas:CanvasControl
-                                               DataContext="{x:Bind Image, Mode=OneWay}"
-                                               Height="{x:Bind ImageSize, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
-                                               Width="{x:Bind  ImageSize, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
+                                               DataContext="{x:Bind Entity, Mode=OneWay}"
+                                               Height="{x:Bind Size, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
+                                               Width="{x:Bind  Size, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
                                                Margin="1,1,1,1"
                                                CreateResources="OnCreateResourcesCanvasControl_MosaicsSkillImg"
                                                AutomationProperties.Name="{x:Bind Title, Mode=OneWay}" />

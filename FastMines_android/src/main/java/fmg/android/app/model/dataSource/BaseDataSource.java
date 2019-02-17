@@ -17,6 +17,7 @@ import fmg.core.img.IAnimatedModel;
 import fmg.core.img.IImageView;
 import fmg.core.img.ImageController;
 
+/** Base container for image items */
 public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THeaderModel, THeaderView, THeaderCtrlr>,
                                      THeaderId,
                                      THeaderModel extends IAnimatedModel,
@@ -53,9 +54,11 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
         notifierAsync.addListener(this::onAsyncPropertyChanged);
     }
 
+    /** the top item that this data source describes */
     @Bindable
     public abstract THeader getHeader();
 
+    /** <summary> list of items */
     @Bindable
     public abstract List<TItem> getDataSource();
 
