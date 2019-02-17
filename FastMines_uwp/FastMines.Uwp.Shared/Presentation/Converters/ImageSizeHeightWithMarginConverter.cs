@@ -10,7 +10,9 @@ namespace fmg.common.Converters {
         private static int Addition = 2;
 
         public object Convert(object value, Type targetType, object parameter, string language) {
-            return System.Convert.ToDouble(((Size)value).Width + Addition);
+            if (value is SizeDouble v2)
+                return System.Convert.ToDouble(v2.Height + Addition);
+            return System.Convert.ToDouble(((Size)value).Height + Addition);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language) {

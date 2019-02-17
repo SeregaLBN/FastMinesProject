@@ -65,7 +65,10 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
     /** Selected element */
     @Bindable
     public TItem getCurrentItem() {
-        return getDataSource().get(getCurrentItemPos());
+        int pos = getCurrentItemPos();
+        if (pos < 0)
+            return null;
+        return getDataSource().get(pos);
     }
     public void setCurrentItem(TItem activeItem) {
         setCurrentItemPos(getDataSource().indexOf(activeItem));

@@ -7,6 +7,7 @@ using fmg.DataModel.Items;
 using fmg.common.notyfier;
 using fmg.common.geom;
 using fmg.core.img;
+using fmg.uwp.utils;
 
 namespace fmg.DataModel.DataSources {
 
@@ -37,6 +38,10 @@ namespace fmg.DataModel.DataSources {
         protected readonly NotifyPropertyChanged notifier/*Sync*/;
         private   readonly NotifyPropertyChanged notifierAsync;
 
+        static BaseDataSource() {
+            StaticInitializer.Init();
+        }
+
         protected BaseDataSource() {
             notifier      = new NotifyPropertyChanged(this, ev => PropertyChangedSync?.Invoke(this, ev), false);
             notifierAsync = new NotifyPropertyChanged(this, ev => PropertyChanged    ?.Invoke(this, ev), true);
@@ -51,7 +56,12 @@ namespace fmg.DataModel.DataSources {
 
         /// <summary> Selected element </summary>
         public TItem CurrentItem {
-            get { return DataSource[CurrentItemPos]; }
+            get {
+                var pos = CurrentItemPos;
+                if (pos < 0)
+                    return null;
+                return DataSource[pos];
+            }
             set { CurrentItemPos = DataSource.IndexOf(value); }
         }
 
