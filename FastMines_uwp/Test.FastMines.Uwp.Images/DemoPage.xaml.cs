@@ -388,6 +388,7 @@ namespace Test.FastMines.Uwp.Images {
                                          || (typeof(TImageController) == typeof(WBmpMosaicImageController))
                                          || (typeof(TImageController) == typeof(Win2dMosaicCanvasVirtController))
                                          || (typeof(TImageController) == typeof(MosaicXamlController));
+            bool closed = false;
 
             void onCellTilingHandler(bool applySettings, bool createImgControls, bool resized) {
                 if (isMosaicGameController) // when is this game field...
@@ -466,6 +467,8 @@ namespace Test.FastMines.Uwp.Images {
                                 });
 
                                 void onDraw(CanvasControl s, CanvasDrawEventArgs ev) {
+                                    if (closed)
+                                        return;
                                     var img2 = imgObj.Image; // reload image !!
                                     ev.DrawingSession.DrawImage(img2 as CanvasBitmap, new Windows.Foundation.Rect(0, 0, cnvsCtrl.Width, cnvsCtrl.Height));
                                 }
@@ -511,6 +514,7 @@ namespace Test.FastMines.Uwp.Images {
                 _panel.Tapped         += onTapped;
 
             _onCloseImages = () => {
+                closed = true;
                 _panel.SizeChanged -= onSizeChanged;
                 if (isMosaicGameController)
                     _panel.PointerPressed -= onPointerPressed;
