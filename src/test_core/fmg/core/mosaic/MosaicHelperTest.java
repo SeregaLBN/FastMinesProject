@@ -7,6 +7,8 @@ import org.junit.*;
 import fmg.common.LoggerSimple;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.SizeDouble;
+import fmg.common.notyfier.Signal;
+import fmg.common.ui.Factory;
 import fmg.core.types.EMosaic;
 
 public class MosaicHelperTest {
@@ -15,6 +17,8 @@ public class MosaicHelperTest {
     public static void setup() {
         LoggerSimple.put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         LoggerSimple.put("> MosaicHelperTest::setup");
+
+        MosaicModelTest.StaticInitializer();
     }
 
     @Before
@@ -92,12 +96,28 @@ public class MosaicHelperTest {
 
             // Assert.assertEquals(100, area);
             //Assert.assertTrue(MosaicHelper.AreaPrecision >= (??? - area));
-            Assert.assertTrue(0 < area);
+            Assert.assertTrue(area > 0);
 
             int magicNumber = 8;
             Assert.assertTrue((MosaicHelper.AreaPrecision >= (sizeClientIn.width  - sizeClientOut.width )/magicNumber) ||
                               (MosaicHelper.AreaPrecision >= (sizeClientIn.height - sizeClientOut.height)/magicNumber));
         }
+    }
+
+    @Test
+    public void findAreaBySize_eMosaicTrapezoid3_Test() {
+        Signal signal = new Signal();
+        double[] area = { -1 };
+        Factory.DEFERR_INVOKER.accept(() -> {
+            SizeDouble sizeClientIn = new SizeDouble(169.90442448471225, 313.90196868082262);
+            SizeDouble sizeClientOut = new SizeDouble();
+            area[0] = MosaicHelper.findAreaBySize(EMosaic.eMosaicTrapezoid3, new Matrisize(4, 2), sizeClientIn, sizeClientOut);
+
+            signal.set();
+        });
+
+        Assert.assertTrue(signal.await(1000));
+        Assert.assertTrue(area[0] > 0);
     }
 
 }

@@ -150,12 +150,17 @@ namespace fmg.core.mosaic {
 
             var sizeClientCopy = sizeClient;
             var sizeIter = new SizeDouble();
+            int check = 0;
             var res = FinderD(2000,
                 area => {
+                    System.Diagnostics.Debug.Assert(++check < 100);
                     cellAttr.Area = area;
                     sizeIter = cellAttr.GetSize(mosaicSizeField);
-                    if ((sizeIter.Width  <= sizeClientCopy.Width ) && sizeIter.Width .HasMinDiff(sizeClientCopy.Width) && // меньше с минимальными различиями
-                        (sizeIter.Height <= sizeClientCopy.Height) && sizeIter.Height.HasMinDiff(sizeClientCopy.Height))  // less with minimal differences
+                    if (sizeIter.Width .HasMinDiff(sizeClientCopy.Width) && // меньше с минимальными различиями
+                        (sizeIter.Height <= sizeClientCopy.Height))         // less with minimal differences
+                        return 0;
+                    if ((sizeIter.Width <= sizeClientCopy.Width) &&        // меньше с минимальными различиями
+                        sizeIter.Height.HasMinDiff(sizeClientCopy.Height)) // less with minimal differences
                         return 0;
                     if ((sizeIter.Width < sizeClientCopy.Width) &&
                         (sizeIter.Height < sizeClientCopy.Height))
