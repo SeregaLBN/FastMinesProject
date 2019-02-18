@@ -26,8 +26,8 @@ public class MosaicSkillDataSource extends BaseDataSource<
             MosaicSkillModel model = header.getEntity().getModel();
             model.setPadding(new BoundDouble(3));
             model.setBackgroundColor(Color.Transparent());
-            model.setTotalFrames(60);
-            model.setAnimatePeriod(12900);
+            model.setTotalFrames(260);      // RotateAngleDelta = 1.4
+            model.setAnimatePeriod(12900);  // RedrawInterval = 50
             model.setPolarLights(true);
             model.setAnimated(true);
 
@@ -43,8 +43,8 @@ public class MosaicSkillDataSource extends BaseDataSource<
                     .map(MosaicSkillDataItem::new)
                     .peek(item -> {
                         MosaicSkillModel model = item.getEntity().getModel();
-                        model.setTotalFrames(60);
-                        model.setAnimatePeriod(3600);
+                        model.setTotalFrames(72);     // RotateAngleDelta = 5
+                        model.setAnimatePeriod(3600); // RedrawInterval = 50
                     })
                     .collect(Collectors.toList());
 

@@ -114,6 +114,14 @@ public abstract class AnimatedImageModel implements IAnimatedModel {
     @Override
     public void setAnimated(boolean value) { _innerModel.setAnimated(value); }
 
+//    @Deprecated
+//    public void SetRIandRAD(int redrawInterval/* = 100*/, double rotateAngleDelta/* = 1.4*/) {
+//        double totalFrames = 360 / rotateAngleDelta;
+//        double animatePeriod = totalFrames * redrawInterval;
+//        setTotalFrames((int)totalFrames);
+//        setAnimatePeriod((long)animatePeriod);
+//    }
+
     /** Overall animation period (in milliseconds) */
     @Override
     public long getAnimatePeriod() { return _innerModel.getAnimatePeriod(); }
