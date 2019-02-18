@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
-using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -13,7 +12,7 @@ using fmg.core.mosaic;
 using fmg.core.img;
 using fmg.uwp.utils;
 using fmg.DataModel.Items;
-using MosaicsCanvasBmp = fmg.uwp.img.win2d.MosaicImg.CanvasBmp;
+using MosaicsCanvasBmp = fmg.uwp.img.win2d.MosaicImg.ControllerBitmap;
 
 namespace fmg {
 

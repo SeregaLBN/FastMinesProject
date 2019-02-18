@@ -30,7 +30,9 @@ namespace fmg.DataModel.DataSources {
         /// <summary> Data source - images that describes the elements </summary>
         protected readonly ObservableCollection<TItem> dataSource = new ObservableCollection<TItem>();
         /// <summary> Current item index in {@link #dataSource} </summary>
-        protected int currentItemPos = -1;
+        protected int currentItemPos = NOT_SELECTED_POS;
+
+        private const int NOT_SELECTED_POS = -1;
 
         protected bool Disposed { get; private set; }
         private event PropertyChangedEventHandler PropertyChangedSync;
@@ -69,8 +71,10 @@ namespace fmg.DataModel.DataSources {
         public int CurrentItemPos {
             get { return currentItemPos; }
             set {
-                if ((value < 0) || (value >= DataSource.Count))
-                    throw new ArgumentException("Illegal index of value=" + value);
+                if ((value < 0) || (value >= DataSource.Count)) {
+                    if (value != NOT_SELECTED_POS)
+                        throw new ArgumentException("Illegal index of value=" + value);
+                }
                 if (value == currentItemPos)
                     return;
                 notifier.SetProperty(ref this.currentItemPos, value);

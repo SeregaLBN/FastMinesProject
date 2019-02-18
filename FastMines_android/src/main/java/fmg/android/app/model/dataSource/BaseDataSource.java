@@ -44,8 +44,10 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
     /** Data source - images that describes the elements */
     protected List<TItem> dataSource;
     /** Current item index in {@link #dataSource} */
-    protected int currentItemPos = -1;
+    protected int currentItemPos = NOT_SELECTED_POS;
 
+    private static final int NOT_SELECTED_POS = -1;
+    
     protected final NotifyPropertyChanged notifier/*Sync*/ = new NotifyPropertyChanged(this, false);
     private   final NotifyPropertyChanged notifierAsync    = new NotifyPropertyChanged(this, true);
 
@@ -78,8 +80,10 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
     @Bindable
     public int getCurrentItemPos() { return currentItemPos; }
     public void setCurrentItemPos(int pos) {
-        if ((pos < 0) || (pos >= getDataSource().size()))
-            throw new IllegalArgumentException();
+        if ((pos < 0) || (pos >= getDataSource().size())) {
+            if (pos != NOT_SELECTED_POS)
+                throw new IllegalArgumentException("Illegal index of pos=" + pos);
+        }
         if (pos == currentItemPos)
             return;
         notifier.setProperty(this.currentItemPos, pos, PROPERTY_CURRENT_ITEM_POS);

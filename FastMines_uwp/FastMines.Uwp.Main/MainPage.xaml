@@ -29,7 +29,7 @@
                                           AutomationProperties.Name="Menu"
                                           ToolTipService.ToolTip="{x:Bind ViewModel.MosaicGroupDS.UnicodeChars, Mode=OneWay}"
                                           Click="OnClickBttnGroupPanel" >
-                                <canvas:CanvasControl DataContext="{x:Bind ViewModel.MosaicGroupDS.Header, Mode=OneWay}"
+                                <canvas:CanvasControl DataContext="{x:Bind ViewModel.MosaicGroupDS.Header.Entity, Mode=OneWay}"
                                                       Height="{x:Bind ViewModel.MosaicGroupDS.Header.Size, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
                                                       Width="{x:Bind  ViewModel.MosaicGroupDS.Header.Size, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
                                                       Margin="1,1,1,1"

@@ -158,14 +158,14 @@ namespace fmg {
 
         private void SaveAppData() {
             MosaicInitData saveData = this.MosaicData;
-
-            Windows.Storage.ApplicationDataCompositeValue compositeMosaic = new Windows.Storage.ApplicationDataCompositeValue();
-            compositeMosaic[nameof(MosaicInitData.MosaicType)                           ] = saveData.MosaicType.Ordinal();
-            compositeMosaic[nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.m)] = saveData.SizeField.m;
-            compositeMosaic[nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.n)] = saveData.SizeField.n;
-            compositeMosaic[nameof(MosaicInitData.MinesCount)                           ] = saveData.MinesCount;
-            compositeMosaic[nameof(MosaicInitData.Size)                                 ] = saveData.Size;
-
+            var compositeMosaic = new Windows.Storage.ApplicationDataCompositeValue() {
+                [nameof(MosaicInitData.MosaicType)                            ] = saveData.MosaicType.Ordinal(),
+                [nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.m) ] = saveData.SizeField.m,
+                [nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.n) ] = saveData.SizeField.n,
+                [nameof(MosaicInitData.MinesCount)                            ] = saveData.MinesCount,
+                [nameof(MosaicInitData.Size) + '.' + nameof(SizeDouble.Width )] = saveData.Size.Width,
+                [nameof(MosaicInitData.Size) + '.' + nameof(SizeDouble.Height)] = saveData.Size.Height
+            };
             var lsv = Windows.Storage.ApplicationData.Current.LocalSettings.Values;
             lsv[nameof(MosaicInitData)] = compositeMosaic;
         }
@@ -174,14 +174,15 @@ namespace fmg {
             var lsv = Windows.Storage.ApplicationData.Current.LocalSettings.Values;
             if (lsv.ContainsKey(nameof(MosaicInitData)))
                 try {
-                    Windows.Storage.ApplicationDataCompositeValue compositeMosaic = (Windows.Storage.ApplicationDataCompositeValue)lsv[nameof(MosaicInitData)];
-                    int mosaicTypeOrdinal = (int)       compositeMosaic[nameof(MosaicInitData.MosaicType)];
-                    int sizeFieldM        = (int)       compositeMosaic[nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.m)];
-                    int sizeFieldN        = (int)       compositeMosaic[nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.n)];
-                    int minesCount        = (int)       compositeMosaic[nameof(MosaicInitData.MinesCount)];
-                    SizeDouble size       = (SizeDouble)compositeMosaic[nameof(MosaicInitData.Size)];
+                    var compositeMosaic = (Windows.Storage.ApplicationDataCompositeValue)lsv[nameof(MosaicInitData)];
+                    int mosaicTypeOrdinal = (int)     compositeMosaic[nameof(MosaicInitData.MosaicType)];
+                    int sizeFieldM        = (int)     compositeMosaic[nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.m)];
+                    int sizeFieldN        = (int)     compositeMosaic[nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.n)];
+                    int minesCount        = (int)     compositeMosaic[nameof(MosaicInitData.MinesCount)];
+                    var size = new SizeDouble((double)compositeMosaic[nameof(MosaicInitData.Size) + '.' + nameof(SizeDouble.Width)],
+                                              (double)compositeMosaic[nameof(MosaicInitData.Size) + '.' + nameof(SizeDouble.Height)]);
 
-                    MosaicInitData loadData = new MosaicInitData();
+                    var loadData = new MosaicInitData();
                     loadData.MosaicType = EMosaicEx.FromOrdinal(mosaicTypeOrdinal);
                     loadData.SizeField  = new Matrisize(sizeFieldM, sizeFieldN);
                     loadData.MinesCount = minesCount;
