@@ -40,6 +40,7 @@ sourceSets {
 dependencies {
     implementation project(':FastMines_core')
 
+    testImplementation 'org.openjfx:javafx-controls:11.0.2" // for java 11
     testImplementation project(':FastMines_core').sourceSets.test.output
 
     // Use JUnit test framework
