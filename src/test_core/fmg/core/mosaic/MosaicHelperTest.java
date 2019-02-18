@@ -62,11 +62,11 @@ public class MosaicHelperTest {
         double area = MosaicHelper.findAreaBySize(EMosaic.eMosaicSquare1, new Matrisize(10, 10), sizeClientIn, sizeClientOut);
 
         // Assert.assertEquals(100, area);
-        Assert.assertTrue(MosaicHelper.AreaPrecision >= (100 - area));
+        Assert.assertTrue(MosaicHelper.AREA_PRECISION >= 100 - area);
 
         // Assert.assertEquals(sizeClientIn, sizeClientOut);
-        Assert.assertTrue(MosaicHelper.AreaPrecision >= (sizeClientIn.width  - sizeClientOut.width));
-        Assert.assertTrue(MosaicHelper.AreaPrecision >= (sizeClientIn.height - sizeClientOut.height));
+        Assert.assertTrue(MosaicHelper.AREA_PRECISION >= sizeClientIn.width  - sizeClientOut.width);
+        Assert.assertTrue(MosaicHelper.AREA_PRECISION >= sizeClientIn.height - sizeClientOut.height);
     }
 
     @Test
@@ -76,11 +76,39 @@ public class MosaicHelperTest {
         double area = MosaicHelper.findAreaBySize(EMosaic.eMosaicSquare1, new Matrisize(10, 20), sizeClientIn, sizeClientOut);
 
         // Assert.assertEquals(100, area);
-        Assert.assertTrue(MosaicHelper.AreaPrecision >= (100 - area));
+        Assert.assertTrue(MosaicHelper.AREA_PRECISION >= 100 - area);
 
         // Assert.assertEquals(new SizeDouble(100, 200), sizeClientOut);
-        Assert.assertTrue(MosaicHelper.AreaPrecision >= (100 - sizeClientOut.width));
-        Assert.assertTrue(MosaicHelper.AreaPrecision >= (sizeClientIn.height - sizeClientOut.height));
+        Assert.assertTrue(MosaicHelper.AREA_PRECISION >= 100 - sizeClientOut.width);
+        Assert.assertTrue(MosaicHelper.AREA_PRECISION >= sizeClientIn.height - sizeClientOut.height);
+    }
+
+    @Test
+    public void findAreaBySize_eMosaicSquare1_Test3() {
+        {
+            SizeDouble sizeClientIn = new SizeDouble(200, 400);
+            SizeDouble sizeClientOut = new SizeDouble();
+            double area = MosaicHelper.findAreaBySize(EMosaic.eMosaicSquare1, new Matrisize(10, 10), sizeClientIn, sizeClientOut);
+
+            // Assert.assertEquals(100, area);
+            Assert.assertTrue(MosaicHelper.AREA_PRECISION >= 400 - area);
+
+            // Assert.assertEquals(new SizeDouble(100, 200), sizeClientOut);
+            Assert.assertTrue(MosaicHelper.AREA_PRECISION >= 200 - sizeClientOut.width);
+            Assert.assertTrue(MosaicHelper.AREA_PRECISION >= sizeClientIn.width - sizeClientOut.width);
+        }
+        {
+            SizeDouble sizeClientIn = new SizeDouble(400, 200);
+            SizeDouble sizeClientOut = new SizeDouble();
+            double area = MosaicHelper.findAreaBySize(EMosaic.eMosaicSquare1, new Matrisize(10, 10), sizeClientIn, sizeClientOut);
+
+            // Assert.assertEquals(100, area);
+            Assert.assertTrue(MosaicHelper.AREA_PRECISION >= 400 - area);
+
+            // Assert.assertEquals(new SizeDouble(100, 200), sizeClientOut);
+            Assert.assertTrue(MosaicHelper.AREA_PRECISION >= 200 - sizeClientOut.height);
+            Assert.assertTrue(MosaicHelper.AREA_PRECISION >= sizeClientIn.height - sizeClientOut.height);
+        }
     }
 
     @Test
@@ -99,8 +127,8 @@ public class MosaicHelperTest {
             Assert.assertTrue(area > 0);
 
             int magicNumber = 8;
-            Assert.assertTrue((MosaicHelper.AreaPrecision >= (sizeClientIn.width  - sizeClientOut.width )/magicNumber) ||
-                              (MosaicHelper.AreaPrecision >= (sizeClientIn.height - sizeClientOut.height)/magicNumber));
+            Assert.assertTrue((MosaicHelper.AREA_PRECISION >= (sizeClientIn.width  - sizeClientOut.width )/magicNumber) ||
+                              (MosaicHelper.AREA_PRECISION >= (sizeClientIn.height - sizeClientOut.height)/magicNumber));
         }
     }
 
@@ -118,6 +146,15 @@ public class MosaicHelperTest {
 
         Assert.assertTrue(signal.await(1000));
         Assert.assertTrue(area[0] > 0);
+    }
+
+
+    @Test
+    public void findAreaBySize_eMosaicTriangle1_Test() {
+        SizeDouble sizeClientIn = new SizeDouble(186.89486693318347, 294.28309563827116);
+        SizeDouble sizeClientOut = new SizeDouble();
+        double area= MosaicHelper.findAreaBySize(EMosaic.eMosaicTriangle1, new Matrisize(3, 2), sizeClientIn, sizeClientOut);
+        Assert.assertTrue(area > 0);
     }
 
 }

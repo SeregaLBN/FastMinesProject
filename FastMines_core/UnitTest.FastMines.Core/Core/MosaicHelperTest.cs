@@ -69,6 +69,34 @@ namespace fmg.core.mosaic {
         }
 
         [Test]
+        public void FindAreaBySize_eMosaicSquare1_Test3() {
+            {
+                var sizeClientIn = new SizeDouble(200, 400);
+                var sizeClientOut = sizeClientIn;
+                double area = MosaicHelper.FindAreaBySize(EMosaic.eMosaicSquare1, new Matrisize(10, 10), ref sizeClientOut);
+
+                // Assert.AreEquals(100, area);
+                Assert.GreaterOrEqual(MosaicHelper.AreaPrecision, 400 - area);
+
+                // Assert.assertEquals(new SizeDouble(100, 200), sizeClientOut);
+                Assert.GreaterOrEqual(MosaicHelper.AreaPrecision, 200 - sizeClientOut.Width);
+                Assert.GreaterOrEqual(MosaicHelper.AreaPrecision, sizeClientIn.Width - sizeClientOut.Width);
+            }
+            {
+                var sizeClientIn = new SizeDouble(400, 200);
+                var sizeClientOut = sizeClientIn;
+                double area = MosaicHelper.FindAreaBySize(EMosaic.eMosaicSquare1, new Matrisize(10, 10), ref sizeClientOut);
+
+                // Assert.assertEquals(100, area);
+                Assert.GreaterOrEqual(MosaicHelper.AreaPrecision, 400 - area);
+
+                // Assert.assertEquals(new SizeDouble(100, 200), sizeClientOut);
+                Assert.GreaterOrEqual(MosaicHelper.AreaPrecision, 200 - sizeClientOut.Height);
+                Assert.GreaterOrEqual(MosaicHelper.AreaPrecision, sizeClientIn.Height - sizeClientOut.Height);
+            }
+        }
+
+        [Test]
         public void FindAreaBySize_Random_Test() {
             var r = ThreadLocalRandom.Current;
 
@@ -103,7 +131,16 @@ namespace fmg.core.mosaic {
             });
 
             Assert.IsTrue(await signal.Wait(TimeSpan.FromSeconds(1)));
-            Assert.IsTrue(area > 0);
+            Assert.GreaterOrEqual(area, 0);
+        }
+
+
+        [Test]
+        public void findAreaBySize_eMosaicTriangle1_Test() {
+            var sizeClientIn = new SizeDouble(186.89486693318347, 294.28309563827116);
+            var sizeClientOut = sizeClientIn;
+            double area = MosaicHelper.FindAreaBySize(EMosaic.eMosaicTriangle1, new Matrisize(3, 2), ref sizeClientOut);
+            Assert.GreaterOrEqual(area, 0);
         }
 
     }

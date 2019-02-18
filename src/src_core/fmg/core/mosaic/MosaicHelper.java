@@ -14,7 +14,7 @@ public final class MosaicHelper {
 
     private MosaicHelper() {}
 
-    public static final double AreaPrecision = 0.001;
+    public static final double AREA_PRECISION = 0.001;
 
     private static final String getPackageName() {
         Package pkg = MosaicHelper.class.getPackage();
@@ -170,7 +170,7 @@ public final class MosaicHelper {
             double cmp = func.compareTo(res);
             if (DoubleExt.hasMinDiff(cmp, 0))
                 break;
-            if ((d < AreaPrecision) && DoubleExt.hasMinDiff(cmp, -1))
+            if ((d < AREA_PRECISION) && DoubleExt.hasMinDiff(cmp, -1))
                 break;
 
             boolean resultUp = (cmp < 0);
@@ -202,15 +202,19 @@ public final class MosaicHelper {
             throw new InvalidParameterException("sizeClientIn must be positive");
 
         final SizeDouble sizeIter = new SizeDouble();
+        int[] iterations = { 0 };
         double res = FinderD(2000, (Comparable<Double>)area -> {
+            assert(++iterations[0] < 100);
             cellAttr.setArea(area);
             SizeDouble tmp = cellAttr.getSize(mosaicSizeField);
             sizeIter.width = tmp.width;
             sizeIter.height = tmp.height;
             if (DoubleExt.hasMinDiff(sizeIter.width, sizeClientIn.width) &&
+                (sizeIter.width  <= sizeClientIn.width) &&
                 (sizeIter.height <= sizeClientIn.height))
                 return 0;
-            if ((sizeIter.width <= sizeClientIn.width) &&
+            if ((sizeIter.width  <= sizeClientIn.width) &&
+                (sizeIter.height <= sizeClientIn.height) &&
                 DoubleExt.hasMinDiff(sizeIter.height, sizeClientIn.height))
                 return 0;
             if ((sizeIter.width < sizeClientIn.width) &&
@@ -218,6 +222,8 @@ public final class MosaicHelper {
                 return -1;
             return +1;
         });
+        assert(sizeIter.width  <= sizeClientIn.width);
+        assert(sizeIter.height <= sizeClientIn.height);
         sizeClientOut.width = sizeIter.width;
         sizeClientOut.height = sizeIter.height;
         return res;
