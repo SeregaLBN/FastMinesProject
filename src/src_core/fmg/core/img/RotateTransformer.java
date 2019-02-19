@@ -13,8 +13,9 @@ public class RotateTransformer implements IModelTransformer {
         double rotateAngleDelta = 360.0 / am.getTotalFrames(); // 360° / TotalFrames
         if (!am.getAnimeDirection())
             rotateAngleDelta = -rotateAngleDelta;
-        double rotateAngle = am.getCurrentFrame() * rotateAngleDelta;
-        am.setRotateAngle(rotateAngle);
+
+      //am.setRotateAngle(am.getCurrentFrame() * rotateAngleDelta); // не враховує початкове значення кута
+        am.setRotateAngle(am.getRotateAngle() + rotateAngleDelta);
     }
 
 }

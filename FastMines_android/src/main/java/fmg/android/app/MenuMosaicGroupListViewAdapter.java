@@ -10,7 +10,10 @@ import java.util.List;
 
 import fmg.android.app.databinding.MosaicGroupItemBinding;
 import fmg.android.app.model.items.MosaicGroupDataItem;
+import fmg.android.utils.Cast;
 import fmg.common.LoggerSimple;
+import fmg.core.img.AnimatedImageModel;
+import fmg.core.mosaic.MosaicDrawModel;
 
 public class MenuMosaicGroupListViewAdapter extends RecyclerView.Adapter<MenuMosaicGroupListViewAdapter.ViewHolder> {
 
@@ -37,7 +40,9 @@ public class MenuMosaicGroupListViewAdapter extends RecyclerView.Adapter<MenuMos
 
         // Here I am just highlighting the background
         LoggerSimple.put("  onBindViewHolder pos=" + position);
-        holder.itemView.setBackgroundColor(selected_position == position ? Color.GREEN : Color.RED);
+        boolean selected = selected_position == position;
+        fmg.common.Color clr = selected ? AnimatedImageModel.DefaultBkColor : MosaicDrawModel.DefaultBkColor;
+        holder.itemView.setBackgroundColor(Cast.toColor(clr));
     }
 
     @Override

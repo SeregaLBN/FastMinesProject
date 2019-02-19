@@ -12,8 +12,9 @@ namespace fmg.core.img {
             double rotateAngleDelta = 360.0 / am.TotalFrames; // 360° / TotalFrames
             if (!am.AnimeDirection)
                 rotateAngleDelta = -rotateAngleDelta;
-            double rotateAngle = am.CurrentFrame * rotateAngleDelta;
-            am.RotateAngle = rotateAngle;
+
+          //am.RotateAngle = am.CurrentFrame * rotateAngleDelta; // не враховує початкове значення кута
+            am.RotateAngle += rotateAngleDelta;
         }
 
     }
