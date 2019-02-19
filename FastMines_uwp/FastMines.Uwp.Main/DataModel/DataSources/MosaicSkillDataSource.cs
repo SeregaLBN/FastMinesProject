@@ -42,6 +42,7 @@ namespace fmg.DataModel.DataSources {
                         var model = item.Entity.Model;
                         model.TotalFrames = 72;
                         model.AnimatePeriod = 3600;
+                        OnItemChanged(item);
                         dataSource.Add(item);
                     }
                     notifier.FirePropertyChanged();
@@ -51,23 +52,26 @@ namespace fmg.DataModel.DataSources {
         }
 
         protected override void OnCurrentItemChanged() {
+            foreach (var item in DataSource)
+                OnItemChanged(item);
+        }
+
+        private void OnItemChanged(MosaicSkillDataItem item) {
             // for one selected- start animate; for all other - stop animate
-            foreach (var item in DataSource) {
-                var selected = ReferenceEquals(item, CurrentItem);
-                var model = item.Entity.Model;
-                model.Animated = selected;
-                model.PolarLights = selected;
-                model.BorderColor = selected ? Color.Red : Color.Green;
-                model.BackgroundColor = selected ? AnimatedImageModelConst.DefaultBkColor : MosaicDrawModelConst.DefaultBkColor;
-                model.Padding = new BoundDouble(selected ? 5 : 15);
-                if (!selected)
-                    model.ForegroundColor = AnimatedImageModelConst.DefaultForegroundColor;
-                //else {
-                //    HSV hsv = new HSV(ImageModelConsts.DefaultForegroundColor);
-                //    hsv.s = hsv.v = 100;
-                //    model.ForegroundColor = hsv.ToColor();
-                //}
-            }
+            var selected = ReferenceEquals(item, CurrentItem);
+            var model = item.Entity.Model;
+            model.Animated = selected;
+            model.PolarLights = selected;
+            model.BorderColor = selected ? Color.Red : Color.Green;
+            model.BackgroundColor = selected ? AnimatedImageModelConst.DefaultBkColor : MosaicDrawModelConst.DefaultBkColor;
+            model.Padding = new BoundDouble(selected ? 5 : 15);
+            if (!selected)
+                model.ForegroundColor = AnimatedImageModelConst.DefaultForegroundColor;
+            //else {
+            //    HSV hsv = new HSV(ImageModelConsts.DefaultForegroundColor);
+            //    hsv.s = hsv.v = 100;
+            //    model.ForegroundColor = hsv.ToColor();
+            //}
         }
 
     }

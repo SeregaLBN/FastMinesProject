@@ -206,18 +206,29 @@ namespace fmg {
 
         private void OnCreateResourcesCanvasControl_MosaicsSkillImg(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
             System.Diagnostics.Debug.Assert(canvasControl.DataContext is MosaicsSkillImg);
-            OnCreateResourcesCanvasControl(canvasControl, ev);
+
+            if (ev.Reason == CanvasCreateResourcesReason.FirstTime) {
+                var img = canvasControl.DataContext as MosaicsSkillImg;
+
+                canvasControl.Draw += (sender2, ev2) => {
+                    ev2.DrawingSession.DrawImage(img.Image, new Windows.Foundation.Rect(0, 0, sender2.Width, sender2.Height)); // zoomed size
+                    //ev2.DrawingSession.DrawImage(img.Image, new Windows.Foundation.Rect(0, 0, img.Width, img.Height)); // real size
+                };
+                img.PropertyChanged += (sender3, ev3) => {
+                    if (ev3.PropertyName == nameof(img.Image))
+                        canvasControl.Invalidate();
+                };
+            } else {
+                System.Diagnostics.Debug.Assert(false, "Support me"); // TODO
+            }
         }
 
         private void OnCreateResourcesCanvasControl_MosaicsGroupImg(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
             System.Diagnostics.Debug.Assert(canvasControl.DataContext is MosaicsGroupImg);
-            OnCreateResourcesCanvasControl(canvasControl, ev);
-        }
-        private void OnCreateResourcesCanvasControl(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
+
             if (ev.Reason == CanvasCreateResourcesReason.FirstTime) {
                 var img = canvasControl.DataContext as MosaicsGroupImg;
-                if (img == null)
-                    return;
+
                 canvasControl.Draw += (sender2, ev2) => {
                     ev2.DrawingSession.DrawImage(img.Image, new Windows.Foundation.Rect(0, 0, sender2.Width, sender2.Height)); // zoomed size
                     //ev2.DrawingSession.DrawImage(img.Image, new Windows.Foundation.Rect(0, 0, img.Width, img.Height)); // real size

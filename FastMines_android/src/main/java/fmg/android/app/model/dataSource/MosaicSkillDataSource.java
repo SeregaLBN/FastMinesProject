@@ -45,6 +45,7 @@ public class MosaicSkillDataSource extends BaseDataSource<
                         MosaicSkillModel model = item.getEntity().getModel();
                         model.setTotalFrames(72);     // RotateAngleDelta = 5
                         model.setAnimatePeriod(3600); // RedrawInterval = 50
+                        onItemChanged(item);
                     })
                     .collect(Collectors.toList());
 
@@ -55,23 +56,25 @@ public class MosaicSkillDataSource extends BaseDataSource<
 
     @Override
     protected void onCurrentItemChanged() {
+        getDataSource().forEach(this::onItemChanged);
+    }
+
+    private void onItemChanged(MosaicSkillDataItem item) {
         // for one selected - start animate; for all other - stop animate
-        for (MosaicSkillDataItem item : getDataSource()) {
-            boolean selected = (item.getUniqueId().ordinal() == currentItemPos);
-            MosaicSkillModel model = item.getEntity().getModel();
-            model.setPolarLights(selected);
-            model.setAnimated(selected);
-            model.setBorderColor(selected ? Color.Red() : Color.Green());
-            model.setBackgroundColor(selected ? AnimatedImageModel.DefaultBkColor : MosaicDrawModel.DefaultBkColor);
-            model.setPadding(new BoundDouble(selected ? 5 : 15));
-            if (!selected)
-                model.setForegroundColor(AnimatedImageModel.DefaultForegroundColor);
-//            else {
-//                HSV hsv = new HSV(AnimatedImageModel.DefaultForegroundColor);
-//                hsv.s = hsv.v = 100;
-//                model.setForegroundColor(hsv.toColor());
-//            }
-        }
+        boolean selected = (item.getUniqueId().ordinal() == currentItemPos);
+        MosaicSkillModel model = item.getEntity().getModel();
+        model.setPolarLights(selected);
+        model.setAnimated(selected);
+        model.setBorderColor(selected ? Color.Red() : Color.Green());
+        model.setBackgroundColor(selected ? AnimatedImageModel.DefaultBkColor : MosaicDrawModel.DefaultBkColor);
+        model.setPadding(new BoundDouble(selected ? 5 : 15));
+        if (!selected)
+            model.setForegroundColor(AnimatedImageModel.DefaultForegroundColor);
+//        else {
+//            HSV hsv = new HSV(AnimatedImageModel.DefaultForegroundColor);
+//            hsv.s = hsv.v = 100;
+//            model.setForegroundColor(hsv.toColor());
+//        }
     }
 
 }
