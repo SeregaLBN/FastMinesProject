@@ -42,7 +42,7 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
     /** Images that describes this data source */
     protected THeader header;
     /** Data source - images that describes the elements */
-    protected List<TItem> dataSource;
+    protected List<TItem> dataSource; // TODO??? MutableLiveData<...>
     /** Current item index in {@link #dataSource} */
     protected int currentItemPos = NOT_SELECTED_POS;
 

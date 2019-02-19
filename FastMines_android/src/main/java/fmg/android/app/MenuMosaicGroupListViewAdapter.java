@@ -1,33 +1,35 @@
 package fmg.android.app;
 
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.List;
+import java.beans.PropertyChangeEvent;
 
 import fmg.android.app.databinding.MosaicGroupItemBinding;
+import fmg.android.app.model.dataSource.MosaicGroupDataSource;
 import fmg.android.app.model.items.MosaicGroupDataItem;
 import fmg.android.utils.Cast;
+import fmg.common.Color;
 import fmg.common.LoggerSimple;
-import fmg.core.img.AnimatedImageModel;
-import fmg.core.mosaic.MosaicDrawModel;
 
-public class MenuMosaicGroupListViewAdapter extends RecyclerView.Adapter<MenuMosaicGroupListViewAdapter.ViewHolder> {
+public class MenuMosaicGroupListViewAdapter extends RecyclerView.Adapter<MenuMosaicGroupListViewAdapter.ViewHolder> implements AutoCloseable {
 
-    private final List<MosaicGroupDataItem> items;
+    private final MosaicGroupDataSource mosaicGroupDS;
     private final OnItemClickListener listener;
-    int selected_position = -1; // You have to set this globally in the Adapter class
 
-    public MenuMosaicGroupListViewAdapter(List<MosaicGroupDataItem> items, OnItemClickListener listener) {
-        this.items = items;
+    public MenuMosaicGroupListViewAdapter(MosaicGroupDataSource mosaicGroupDS, OnItemClickListener listener) {
+        this.mosaicGroupDS = mosaicGroupDS;
         this.listener = listener;
+
+        mosaicGroupDS.addListener(this::onMosaicGroupDsPropertyChanged);
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+//        LoggerSimple.put("  MenuMosaicGroupListViewAdapter::onCreateViewHolder");
+
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         MosaicGroupItemBinding binding = MosaicGroupItemBinding.inflate(layoutInflater, parent, false);
         return new ViewHolder(binding);
@@ -36,17 +38,46 @@ public class MenuMosaicGroupListViewAdapter extends RecyclerView.Adapter<MenuMos
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.bind(items.get(position), listener);
+//        LoggerSimple.put("  MenuMosaicGroupListViewAdapter::onBindViewHolder pos=" + position);
+
+        holder.bind(mosaicGroupDS.getDataSource().get(position));
+        if (!holder.binding.getRoot().hasOnClickListeners())
+            holder.binding.getRoot().setOnClickListener(view -> onClickItem(view, holder.getLayoutPosition(), holder.getAdapterPosition()));
 
         // Here I am just highlighting the background
-        LoggerSimple.put("  onBindViewHolder pos=" + position);
-        boolean selected = selected_position == position;
-        fmg.common.Color clr = selected ? AnimatedImageModel.DefaultBkColor : MosaicDrawModel.DefaultBkColor;
+        Color clr = mosaicGroupDS.getDataSource().get(position).getEntity().getModel().getBackgroundColor();
         holder.itemView.setBackgroundColor(Cast.toColor(clr));
     }
 
+    private void onClickItem(View view, int layoutPos, int adapterPos) {
+//        LoggerSimple.put("  MenuMosaicGroupListViewAdapter::OnClickListener: layoutPos={0}, adapterPos={1}", layoutPos, adapterPos);
+
+        listener.onItemClick(view, layoutPos);
+        mosaicGroupDS.setCurrentItemPos(adapterPos);
+    }
+
+    public void onMosaicGroupDsPropertyChanged(PropertyChangeEvent ev) {
+        switch (ev.getPropertyName()) {
+        case MosaicGroupDataSource.PROPERTY_CURRENT_ITEM_POS:
+//            LoggerSimple.put("  MenuMosaicGroupListViewAdapter::onMosaicGroupDsPropertyChanged: ev=" + ev);
+            int oldPos = (Integer)ev.getOldValue();
+            int newPos = (Integer)ev.getNewValue();
+
+//            // Below line is just like a safety check, because sometimes holder could be null,
+//            // in that case, getAdapterPosition() will return RecyclerView.NO_POSITION
+//            if (newPos == RecyclerView.NO_POSITION)
+//                return;
+
+            // Updating old as well as new positions
+            notifyItemChanged(oldPos);
+            notifyItemChanged(newPos);
+
+            break;
+        }
+    }
+
     @Override
-    public int getItemCount() { return items.size(); }
+    public int getItemCount() { return mosaicGroupDS.getDataSource().size(); }
 
     @FunctionalInterface
     interface OnItemClickListener {
@@ -54,37 +85,24 @@ public class MenuMosaicGroupListViewAdapter extends RecyclerView.Adapter<MenuMos
     }
 
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
 
-        private final MosaicGroupItemBinding binding;
+        final MosaicGroupItemBinding binding;
 
         ViewHolder(MosaicGroupItemBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
 
-        void bind(MosaicGroupDataItem mosaicGroupItem, OnItemClickListener listener) {
+        void bind(MosaicGroupDataItem mosaicGroupItem) {
             binding.setMosaicGroupItem(mosaicGroupItem);
-            if (listener != null)
-                binding.getRoot().setOnClickListener(view -> {
-                    listener.onItemClick(view, getLayoutPosition());
-
-                    // Below line is just like a safety check, because sometimes holder could be null,
-                    // in that case, getAdapterPosition() will return RecyclerView.NO_POSITION
-                    if (getAdapterPosition() == RecyclerView.NO_POSITION)
-                        return;
-
-                    // Updating old as well as new positions
-                    LoggerSimple.put("  OnClickListener oldPos=" + selected_position);
-                    notifyItemChanged(selected_position);
-                    selected_position = getAdapterPosition();
-                    notifyItemChanged(selected_position);
-                    LoggerSimple.put("  OnClickListener newPos=" + selected_position);
-
-                });
-
             binding.executePendingBindings();
         }
+    }
+
+    @Override
+    public void close() {
+        mosaicGroupDS.removeListener(this::onMosaicGroupDsPropertyChanged);
     }
 
 }

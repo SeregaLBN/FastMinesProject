@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
     private MainActivityBinding binding;
     private MainMenuViewModel viewModel;
+    private MenuMosaicGroupListViewAdapter menuMosaicGroupListViewAdapter;
 
     static {
         StaticInitializer.init();
@@ -33,16 +34,20 @@ public class MainActivity extends AppCompatActivity {
         binding.executePendingBindings();
 
         binding.mosaicGroupItems.setLayoutManager(new LinearLayoutManager(this));
-        binding.mosaicGroupItems.setAdapter(new MenuMosaicGroupListViewAdapter(viewModel.getMosaicGroupDS().getDataSource(), this::onMenuMosaicGroupItemClick));
+        binding.mosaicGroupItems.setAdapter(menuMosaicGroupListViewAdapter = new MenuMosaicGroupListViewAdapter(viewModel.getMosaicGroupDS(), this::onMenuMosaicGroupItemClick));
 
 
 //        Intent intent = new Intent(this, DemoActivity.class);
 //        startActivity(intent);
     }
 
+    @Override
+    protected void onDestroy() {
+        menuMosaicGroupListViewAdapter.close();
+        super.onDestroy();
+    }
+
     void onMenuMosaicGroupItemClick(View view, int position) {
-        LoggerSimple.put("  onMenuMosaicGroupItemClick: pos={0}", position);
-        viewModel.getMosaicGroupDS().setCurrentItemPos(position);
     }
 
     @BindingAdapter("android:imageBitmap")

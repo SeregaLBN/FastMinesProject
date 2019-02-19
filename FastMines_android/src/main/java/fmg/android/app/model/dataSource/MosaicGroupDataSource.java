@@ -51,6 +51,7 @@ public class MosaicGroupDataSource extends BaseDataSource<
                     MosaicGroupModel model = item.getEntity().getModel();
                     model.setTotalFrames(260);     // rotateAngleDelta = 1.4
                     model.setAnimatePeriod(18000); // RedrawInterval = 70
+                    onItemChanged(item);
                 })
                 .collect(Collectors.toList());
 
@@ -61,23 +62,25 @@ public class MosaicGroupDataSource extends BaseDataSource<
 
     @Override
     protected void onCurrentItemChanged() {
+        getDataSource().forEach(this::onItemChanged);
+    }
+
+    private void onItemChanged(MosaicGroupDataItem item) {
         // for one selected - start animate; for all other - stop animate
-        for (MosaicGroupDataItem item : getDataSource()) {
-            boolean selected = (item.getUniqueId().ordinal() == currentItemPos);
-            MosaicGroupModel model = item.getEntity().getModel();
-            model.setPolarLights(selected);
-            model.setAnimated(selected);
-            model.setBorderColor(selected ? Color.Red() : Color.Green());
-            model.setBackgroundColor(selected ? AnimatedImageModel.DefaultBkColor : MosaicDrawModel.DefaultBkColor);
-            model.setPadding(new BoundDouble(selected ? 5 : 15));
-            if (!selected)
-                model.setForegroundColor(AnimatedImageModel.DefaultForegroundColor);
-//            else {
-//                HSV hsv = new HSV(AnimatedImageModel.DefaultForegroundColor);
-//                hsv.s = hsv.v = 100;
-//                model.setForegroundColor(hsv.toColor());
-//            }
-        }
+        boolean selected = (item.getUniqueId().ordinal() == currentItemPos);
+        MosaicGroupModel model = item.getEntity().getModel();
+        model.setPolarLights(selected);
+        model.setAnimated(selected);
+        model.setBorderColor(selected ? Color.Red() : Color.Green());
+        model.setBackgroundColor(selected ? AnimatedImageModel.DefaultBkColor : MosaicDrawModel.DefaultBkColor);
+        model.setPadding(new BoundDouble(selected ? 5 : 15));
+        if (!selected)
+            model.setForegroundColor(AnimatedImageModel.DefaultForegroundColor);
+//        else {
+//            HSV hsv = new HSV(AnimatedImageModel.DefaultForegroundColor);
+//            hsv.s = hsv.v = 100;
+//            model.setForegroundColor(hsv.toColor());
+//        }
     }
 
     @Bindable
