@@ -32,51 +32,22 @@
     <script type="text/JavaScript" src="../src/src_core/fmg/core/img/RotateLogoTransformer.js"></script>
     <script type="text/JavaScript" src="../src/src_core/fmg/core/img/PolarLightLogoTransformer.js"></script>
 
+    <script type="text/JavaScript" src="../src/src_js/fmg/js/img/svg/svgCommon.js"></script>
     <script type="text/JavaScript" src="../src/src_js/fmg/js/img/svg/Logo.js"></script>
     <script type="text/JavaScript" src="../src/src_js/fmg/js/img/svg/MosaicSkillOrGroupView.js"></script>
     <script type="text/JavaScript" src="../src/src_js/fmg/js/img/svg/MosaicSkillImg.js"></script>
+
+    <script type="text/JavaScript" src="./Settings.js"></script>
+
     <title>FastMines project: images demo</title>
 </head>
 <body>
-<table border="0" style='width: 100%; height: 98%;'>
-<tbody>
-    <tr style='height: 15%;'>
-        <td rowspan="3" style='vertical-align: top; width: 1%; visibility: hidden;'>
-<svg xmlns='http://www.w3.org/2000/svg' version='1.1'
-     style='border: solid 1px red;'
-     preserveAspectRatio='none'
-     onload='initSvg(evt)' />
-</svg>
-        </td>
-        <td>
-            <strong>SVG source</strong>
-            <textarea id="svgSource" style='width: 100%; height: 97%; font-size: 7px'></textarea>
-        </td>
-    </tr>
-    <tr style='height: 75%;'>
-        <td>
-            <strong>XSLT to vector</strong>
-            <textarea id="xsltSource" style="width: 100%; height: 97%; font-size: 10px" ></textarea>
-            <button onclick='tryTransform()' style='float: right;'>Transform</button>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <strong>Vector source</strong>
-            <textarea id="vectorSource" style="width: 100%; height: 97%; font-size: 8px" ></textarea>
-        </td>
-    </tr>
-</tbody>
-</table>
-<!--
-delta HSV.h=<input id='hsv_h' type='number' name='quantity' min='0' max='359' onchange='onDeltaHsvChanged()'>
-      HSV.s=<input id='hsv_s' type='number' name='quantity' min='0' max='255' onchange='onDeltaHsvChanged()'>
-      HSV.v=<input id='hsv_v' type='number' name='quantity' min='0' max='255' onchange='onDeltaHsvChanged()'>
-<br/>
--->
-<button onclick='makeSnapshot()'>snapshot</button>
-<br/>
-<a id='savePng' hidden='true'>save PNG</a>
+
+    <svg xmlns='http://www.w3.org/2000/svg' version='1.1'
+        style='border: solid 1px red;'
+        preserveAspectRatio='none'
+        onload='initSvg(evt)' />
+    </svg>
 
 <script type='text/ecmascript'>
 
@@ -87,92 +58,18 @@ delta HSV.h=<input id='hsv_h' type='number' name='quantity' min='0' max='359' on
 //
 //////////////////////////////////////
 
-/** common settings this SVG */
-var Settings = { };
-Promise.resolve().then(function() {
-    Settings = {
-        width: 108,  // view width
-        height: 108, // view height
-        pad: 108*10/2020, // padding
-
-        testedImageType: 0, // 0 - Logo image ; 1-MosaicSkill image
-
-        animated: !true,
-        animeDirection: true, // clockwise: ↻ or ↺
-        animatePeriod: 2000, // rotate period in msec
-        /** the number of parts of which the one turn */
-        totalFrames: 30, // animate iterations
-
-        borderWidth: 0,
-        backgroundColor: Color.Transparent,
-        foregroundAlpha: 200,  // 0..255 - foreground alpha-chanel color
-
-        /** ESkillLevel */
-        mosaicSkill: null, // ESkillLevel.eBeginner eAmateur eProfi eCrazy eCustom
-
-        showBurgerMenu: true,
-
-        useGradientFill: true, // for Logo
-
-        useRotateTransforming: true,
-        usePolarLightFgTransforming: true,
-
-        useRandom: !true
-    };
-
-    if (Settings.useRandom) {
-
-        var b = function() { return (Math.random() < 0.5); }; // random boolean
-
-        Settings.width = Settings.height = 100 + random(100);
-        Settings.pad = 5 + random(10);
-        Settings.borderWidth = !random(3) ? 0: (0.3 + 2 * Math.random()),
-        Settings.backgroundColor = !random(5) ? Color.Transparent : Color.RandomColor.brighter(0.4),
-        Settings.foregroundAlpha = 150 + random(255-150), // 200  // 0..255 - foreground alpha-chanel color
-        Settings.testedImageType = random(2);
-        Settings.mosaicSkill = (function() {
-                switch (random(6)) {
-                case 0: return ESkillLevel.eBeginner;
-                case 1: return ESkillLevel.eAmateur ;
-                case 2: return ESkillLevel.eProfi   ;
-                case 3: return ESkillLevel.eCrazy   ;
-                case 4: return ESkillLevel.eCustom  ;
-                case 5: return null;
-                default: throw new Error('Bad value');
-                }
-            })();
-        Settings.showBurgerMenu = b();
-        Settings.useGradientFill = b();
-
-        Settings.animated = b();
-        if (Settings.animated) {
-            Settings.animeDirection = b();
-            Settings.animatePeriod = 1500 + random(2500);
-            if (Settings.testedImageType == 1) {
-                Settings.totalFrames = (Settings.mosaicSkill==null)
-                    ? 120 // что бы при calcMode='discrete' не 'дёргалось'
-                    : 30;
-            }
-
-            Settings.useRotateTransforming = b();
-            if (!Settings.useRotateTransforming)
-                Settings.usePolarLightFgTransforming = true; // при анимації мусить бути хоча б один трансформер, інакше не буде анімації
-            else
-                Settings.usePolarLightFgTransforming = b();
-        }
-    }
-
-});
-
 
 function initSvg(evt) {
     if (!window.svgDoc)
         window.svgDoc = evt.target.ownerDocument;
     var svg = evt.target;
-    Promise.resolve().then(function() { work(svg, window.svgDoc); } )
+    work(svg, window.svgDoc);
 }
 
 function work(svg, svgDoc) {
+    Settings.useRandom = true;
+    Settings.modify();
+
     /** /
     {
         console.log('>>>>>>>>>>>>>>>>>>>>>>>');
@@ -191,7 +88,6 @@ function work(svg, svgDoc) {
 
 
     var cntrllr;
-
     switch (Settings.testedImageType) {
     case 0:
         cntrllr = new LogoControllerSvg(svg, svgDoc);
@@ -242,143 +138,6 @@ function work(svg, svgDoc) {
 
     var svgContent = cntrllr.View.getSvgContent();
     console.log(cntrllr.getFileName() + '.svg' + '\n' + svgContent);
-    document.getElementById('svgSource').value = svgContent;
-
-    onLoadXmlDoc('logo_svg_to_vector_android.xsl')
-        .then(
-            function(resp) {
-                document.getElementById('xsltSource').value = resp.xml;
-
-                var xsl = resp.xmlDoc;
-                var xml = parseXml(svgContent);
-                var xmlOut = xslTransform(xml, xsl);
-
-                document.getElementById('vectorSource').value = new XMLSerializer().serializeToString(xmlOut);
-            },
-            function(err) {
-                document.getElementById('xsltSource').value = JSON.stringify(err, null, 3);
-            }
-        ).catch(function(err) {
-            document.getElementById('vectorSource').value = err.toString();
-            console.error(err);
-        });
-}
-
-function tryTransform() {
-    try {
-        var xsl = parseXml(document.getElementById('xsltSource').value);
-        var xml = parseXml(document.getElementById('svgSource').value);
-        var xmlOut = xslTransform(xml, xsl);
-
-        document.getElementById('vectorSource').value = new XMLSerializer().serializeToString(xmlOut);
-    } catch(ex) {
-        document.getElementById('vectorSource').value = ex.toString();
-    }
-}
-
-function makeSnapshot() {
-    var svg = document.querySelector('svg');
-    var html = svg.parentNode.innerHTML;
-    var imgsrc = 'data:image/svg+xml;base64,' + btoa(html);
-
-    var canvas = document.createElement('canvas');
-    svg.parentNode.appendChild(canvas);
-    var context = canvas.getContext('2d');
-    canvas.setAttribute('width' , Settings.width);
-    canvas.setAttribute('height', Settings.height);
-
-    var image = new Image();
-    image.src = imgsrc;
-    image.onload = function() {
-        context.drawImage(image, 0, 0);
-        var canvasdata = canvas.toDataURL('image/png');
-
-        var a = document.getElementById('savePng');
-        a.href = canvasdata;
-        a.download = !Settings.currentImageController
-                          ? 'export_' + Date.now()                        + '.png'
-                          : Settings.currentImageController.getFileName() + '.png';
-        a.hidden = false;
-        //canvas.parentNode.removeChild(canvas);
-     };
-}
-
-function onDeltaHsvChanged() {
-    reloadSvg();
-}
-function reloadSvg() {
-    var svg = document.querySelector('svg');
-    [...svg.childNodes].forEach(function(n) { svg.removeChild(n); } );
-    Promise.resolve().then(function() { work(svg, window.document); } )
-}
-
-function getSvgContent(svg) {
-    var clean = function() {
-        svg.removeAttribute('onload');
-        svg.removeAttribute('style');
-        return svg;
-    }
-
-    var format = function(node, value) {
-        var indentBefore = new Array(value++ + 1).join('  '),
-            indentAfter  = new Array(value - 1).join('  '),
-            textNode, childNode;
-        for (var i = 0; i < node.children.length; i++) {
-            textNode = document.createTextNode('\n' + indentBefore);
-            childNode = node.children[i];
-            node.insertBefore(textNode, childNode);
-            format(childNode, value);
-            if (node.lastElementChild == childNode) {
-                textNode = document.createTextNode('\n' + indentAfter);
-                node.appendChild(textNode);
-            }
-        }
-        textNode = childNode = null;
-        return node;
-    }
-
-    return format(clean(), 1).outerHTML;
-}
-
-function parseXml(xmlStr) {
-    return new window.DOMParser().parseFromString(xmlStr, "text/xml");
-}
-
-function onLoadXmlDoc(filename) {
-    return new Promise(function(resolve, reject) {
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', filename);
-        //try {xhr.responseType = "msxml-document"} catch(err) {} // Helping IE11
-        xhr.addEventListener("error", function(ev) {
-            reject({failed           : true,
-                    requestReadyState: xhr.readyState,
-                    httpStatus       : xhr.status,
-                    httpStatusText   : xhr.statusText,
-                    responseHeaders  : xhr.getAllResponseHeaders(),
-                    response         : xhr.response
-                  });
-        });
-        xhr.addEventListener("load", function(ev) {
-            var contentType = xhr.getResponseHeader("Content-Type");
-            resolve({failed             : false,
-                     requestReadyState  : xhr.readyState,
-                     httpStatus         : xhr.status,
-                     httpStatusText     : xhr.statusText,
-                     responseHeaders    : xhr.getAllResponseHeaders(),
-                     responseContentType: contentType,
-                     response           : xhr.response,
-                     xml                : (contentType === 'text/xml') ? xhr.responseText : null,
-                     xmlDoc             : (contentType === 'text/xml') ? xhr.responseXML  : null
-                   });
-        });
-        xhr.send();
-    });
-}
-
-function xslTransform(xml, xsl) {
-    var xsltProcessor = new XSLTProcessor();
-    xsltProcessor.importStylesheet(xsl);
-    return xsltProcessor.transformToFragment(xml, document);
 }
 
 </script>

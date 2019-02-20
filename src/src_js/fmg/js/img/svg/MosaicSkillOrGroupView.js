@@ -43,9 +43,6 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
 
         const useKeyTimes = false;
 
-        var addAttributeValue = MosaicSkillOrGroupView.addAttributeValue;
-        var createAnimeteNode = MosaicSkillOrGroupView.createAnimeteNode;
-
         if (!cnxt.shapes) {
             // один раз (самий перший за всі малювання) створюю ноди для фігур з піднодами анімацій
             cnxt.shapes = []; // examples: <path stroke='#400000' stroke-width='0.7' fill-opacity='0.92'> .... </path>
@@ -58,10 +55,10 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
 
                 if (animated) {
                     // examples: <animate attributeName='d' dur='2000ms' repeatCount='indefinite' calcMode='linear' ... />
-                    pathNode.appendChild(createAnimeteNode(svgDoc, 'd', duration, useKeyTimes ? null : (skill==null) ? 'discrete' : 'linear'));
+                    pathNode.appendChild(createAnimateNode(svgDoc, 'd', duration, useKeyTimes ? null : (skill==null) ? 'discrete' : 'linear'));
 
                     // examples: <animate attributeName='fill' dur='2000ms' repeatCount='indefinite' calcMode='linear' ...>
-                    pathNode.appendChild(createAnimeteNode(svgDoc, 'fill', duration, useKeyTimes ? null : (skill==null) ? 'discrete' : 'linear'));
+                    pathNode.appendChild(createAnimateNode(svgDoc, 'fill', duration, useKeyTimes ? null : (skill==null) ? 'discrete' : 'linear'));
                 }
 
                 svg.appendChild(pathNode);
@@ -107,7 +104,7 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
 
                 if (animated) {
                     // examples: <animate attributeName='d' dur='2000ms' repeatCount='indefinite' calcMode='discrete' ... />
-                    pathNode.appendChild(createAnimeteNode(svgDoc, 'd', duration, useKeyTimes ? null : 'discrete'));
+                    pathNode.appendChild(createAnimateNode(svgDoc, 'd', duration, useKeyTimes ? null : 'discrete'));
                 }
 
                 svg.appendChild(pathNode);
@@ -130,25 +127,6 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
             }
         }
 
-    }
-
-    static createAnimeteNode(svgDoc, attributeName, duration, calcMode) {
-        var animateNodeD = svgDoc.createElementNS(MosaicSkillOrGroupView.svgNS, 'animate');
-        animateNodeD.setAttributeNS(null, 'attributeName', attributeName);
-        animateNodeD.setAttributeNS(null, 'dur'          , duration + 'ms');
-        animateNodeD.setAttributeNS(null, 'repeatCount'  , 'indefinite');
-        if (calcMode)
-            animateNodeD.setAttributeNS(null, 'calcMode'  , calcMode); // discrete linear paced spline
-        return animateNodeD;
-    }
-
-    static addAttributeValue(node, attributeName, addonValue) {
-        var addAttributeValue = node.getAttribute(attributeName);
-        if (!addAttributeValue)
-            addAttributeValue = addonValue;
-        else
-            addAttributeValue += ';' + addonValue;
-        node.setAttributeNS(null, attributeName, addAttributeValue);
     }
 
 }

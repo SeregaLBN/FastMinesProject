@@ -1,0 +1,240 @@
+<html>
+<head lang='en'>
+    <meta charset='UTF-8'>
+    <script type="text/JavaScript" src="../../src/src_core/fmg/common/Common.js"></script>
+    <script type="text/JavaScript" src="../../src/src_core/fmg/common/Color.js"></script>
+    <script type="text/JavaScript" src="../../src/src_core/fmg/common/HSV.js"></script>
+    <script type="text/JavaScript" src="../../src/src_core/fmg/common/geom/Point.js"></script>
+    <script type="text/JavaScript" src="../../src/src_core/fmg/common/geom/Size.js"></script>
+    <script type="text/JavaScript" src="../../src/src_core/fmg/common/geom/Rect.js"></script>
+    <script type="text/JavaScript" src="../../src/src_core/fmg/common/geom/Bound.js"></script>
+
+    <script type="text/JavaScript" src="../../src/src_core/fmg/core/img/AnimatedInnerModel.js"></script>
+    <script type="text/JavaScript" src="../../src/src_core/fmg/core/img/AnimatedImageModel.js"></script>
+    <script type="text/JavaScript" src="../../src/src_core/fmg/core/img/LogoModel.js"></script>
+
+    <script type="text/JavaScript" src="../../src/src_core/fmg/core/img/ImageView.js"></script>
+    <script type="text/JavaScript" src="../../src/src_core/fmg/core/img/WithBurgerMenuView.js"></script>
+
+    <script type="text/JavaScript" src="../../src/src_core/fmg/core/img/ImageController.js"></script>
+    <script type="text/JavaScript" src="../../src/src_core/fmg/core/img/AnimatedInnerController.js"></script>
+    <script type="text/JavaScript" src="../../src/src_core/fmg/core/img/AnimatedImgController.js"></script>
+    <script type="text/JavaScript" src="../../src/src_core/fmg/core/img/LogoController.js"></script>
+
+    <script type="text/JavaScript" src="../../src/src_core/fmg/core/img/IModelTransformer.js"></script>
+    <script type="text/JavaScript" src="../../src/src_core/fmg/core/img/RotateTransformer.js"></script>
+    <script type="text/JavaScript" src="../../src/src_core/fmg/core/img/PolarLightFgTransformer.js"></script>
+    <script type="text/JavaScript" src="../../src/src_core/fmg/core/img/RotateLogoTransformer.js"></script>
+    <script type="text/JavaScript" src="../../src/src_core/fmg/core/img/PolarLightLogoTransformer.js"></script>
+
+    <script type="text/JavaScript" src="../../src/src_js/fmg/js/img/svg/svgCommon.js"></script>
+    <script type="text/JavaScript" src="../../src/src_js/fmg/js/img/svg/Logo.js"></script>
+
+    <script type="text/JavaScript" src="../Settings.js"></script>
+
+    <title>FastMines project: XSL Logo image transformer to android xml vector</title>
+</head>
+<body>
+<table border="0" style='width: 100%; height: 98%;'>
+<tbody>
+    <tr style='height: 15%;'>
+        <td rowspan="3" style='vertical-align: top; width: 1%; _visibility: hidden;'>
+<svg xmlns='http://www.w3.org/2000/svg' version='1.1'
+     style='border: solid 1px red;'
+     preserveAspectRatio='none'
+     onload='initSvg(evt)' />
+</svg>
+        </td>
+        <td>
+            <strong>SVG source</strong>
+            <textarea id="svgSource" style='width: 100%; height: 97%; font-size: 7px'></textarea>
+        </td>
+    </tr>
+    <tr style='height: 75%;'>
+        <td>
+            <strong>XSLT to vector</strong>
+            <textarea id="xsltSource" style="width: 100%; height: 97%; font-size: 10px" ></textarea>
+            <button onclick='tryTransform()' style='float: right;'>Transform</button>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <strong>Vector source</strong>
+            <textarea id="vectorSource" style="width: 100%; height: 97%; font-size: 8px" ></textarea>
+        </td>
+    </tr>
+</tbody>
+</table>
+<!--
+delta HSV.h=<input id='hsv_h' type='number' name='quantity' min='0' max='359' onchange='onDeltaHsvChanged()'>
+      HSV.s=<input id='hsv_s' type='number' name='quantity' min='0' max='255' onchange='onDeltaHsvChanged()'>
+      HSV.v=<input id='hsv_v' type='number' name='quantity' min='0' max='255' onchange='onDeltaHsvChanged()'>
+<br/>
+-->
+<button onclick='makeSnapshot()'>snapshot</button>
+<br/>
+<a id='savePng' hidden='true'>save PNG</a>
+
+<script type='text/ecmascript'>
+
+//////////////////////////////////////
+//
+// execute in latest Firefox or Chrome
+// see console output
+//
+//////////////////////////////////////
+
+function initSvg(evt) {
+    if (!window.svgDoc)
+        window.svgDoc = evt.target.ownerDocument;
+    var svg = evt.target;
+    work(svg, window.svgDoc);
+}
+
+function work(svg, svgDoc) {
+    svg.setAttributeNS(null, 'viewBox', '0 0 ' + Settings.width + ' ' + Settings.height);
+    svg.setAttributeNS(null, 'width'  , Settings.width);
+    svg.setAttributeNS(null, 'height' , Settings.height);
+
+
+    var cntrllr = new LogoControllerSvg(svg, svgDoc);
+    Settings.currentImageController = cntrllr;
+
+    cntrllr.useRotateTransforming(Settings.useRotateTransforming);
+    cntrllr.usePolarLightFgTransforming(Settings.usePolarLightFgTransforming);
+
+    // 1. configure image from settings
+    var model = cntrllr.Model;
+    model.size.width  = Settings.width;
+    model.size.height = Settings.height;
+    model.padding = Settings.pad;
+    if (model instanceof AnimatedImageModel) {
+        model.borderWidth       = Settings.borderWidth;
+        model.backgroundColor   = Settings.backgroundColor;
+        model.foregroundColor.a = Settings.foregroundAlpha;
+
+        if (model instanceof LogoModel) {
+            model.useGradient = Settings.useGradientFill;
+        }
+    } else {
+        throw new Error('implement me...');
+    }
+
+    cntrllr.image; // call draw
+
+    var svgContent = cntrllr.View.getSvgContent();
+    console.log(cntrllr.getFileName() + '.svg' + '\n' + svgContent);
+    document.getElementById('svgSource').value = svgContent;
+
+    onLoadXmlDoc('logo_svg_to_vector_android.xsl')
+        .then(
+            function(resp) {
+                document.getElementById('xsltSource').value = resp.xml;
+
+                var xsl = resp.xmlDoc;
+                var xml = parseXml(svgContent);
+                var xmlOut = xslTransform(xml, xsl);
+
+                document.getElementById('vectorSource').value = new XMLSerializer().serializeToString(xmlOut);
+            },
+            function(err) {
+                document.getElementById('xsltSource').value = JSON.stringify(err, null, 3);
+            }
+        ).catch(function(err) {
+            document.getElementById('vectorSource').value = err.toString();
+            console.error(err);
+        });
+}
+
+function tryTransform() {
+    try {
+        var xsl = parseXml(document.getElementById('xsltSource').value);
+        var xml = parseXml(document.getElementById('svgSource').value);
+        var xmlOut = xslTransform(xml, xsl);
+
+        document.getElementById('vectorSource').value = new XMLSerializer().serializeToString(xmlOut);
+    } catch(ex) {
+        document.getElementById('vectorSource').value = ex.toString();
+    }
+}
+
+function makeSnapshot() {
+    var svg = document.querySelector('svg');
+    var html = svg.parentNode.innerHTML;
+    var imgsrc = 'data:image/svg+xml;base64,' + btoa(html);
+
+    var canvas = document.createElement('canvas');
+    svg.parentNode.appendChild(canvas);
+    var context = canvas.getContext('2d');
+    canvas.setAttribute('width' , Settings.width);
+    canvas.setAttribute('height', Settings.height);
+
+    var image = new Image();
+    image.src = imgsrc;
+    image.onload = function() {
+        context.drawImage(image, 0, 0);
+        var canvasdata = canvas.toDataURL('image/png');
+
+        var a = document.getElementById('savePng');
+        a.href = canvasdata;
+        a.download = !Settings.currentImageController
+                          ? 'export_' + Date.now()                        + '.png'
+                          : Settings.currentImageController.getFileName() + '.png';
+        a.hidden = false;
+        //canvas.parentNode.removeChild(canvas);
+     };
+}
+
+function onDeltaHsvChanged() {
+    reloadSvg();
+}
+function reloadSvg() {
+    var svg = document.querySelector('svg');
+    [...svg.childNodes].forEach(function(n) { svg.removeChild(n); } );
+    Promise.resolve().then(function() { work(svg, window.document); } )
+}
+
+function parseXml(xmlStr) {
+    return new window.DOMParser().parseFromString(xmlStr, "text/xml");
+}
+
+function onLoadXmlDoc(filename) {
+    return new Promise(function(resolve, reject) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', filename);
+        //try {xhr.responseType = "msxml-document"} catch(err) {} // Helping IE11
+        xhr.addEventListener("error", function(ev) {
+            reject({failed           : true,
+                    requestReadyState: xhr.readyState,
+                    httpStatus       : xhr.status,
+                    httpStatusText   : xhr.statusText,
+                    responseHeaders  : xhr.getAllResponseHeaders(),
+                    response         : xhr.response
+                  });
+        });
+        xhr.addEventListener("load", function(ev) {
+            var contentType = xhr.getResponseHeader("Content-Type");
+            resolve({failed             : false,
+                     requestReadyState  : xhr.readyState,
+                     httpStatus         : xhr.status,
+                     httpStatusText     : xhr.statusText,
+                     responseHeaders    : xhr.getAllResponseHeaders(),
+                     responseContentType: contentType,
+                     response           : xhr.response,
+                     xml                : (contentType === 'text/xml') ? xhr.responseText : null,
+                     xmlDoc             : (contentType === 'text/xml') ? xhr.responseXML  : null
+                   });
+        });
+        xhr.send();
+    });
+}
+
+function xslTransform(xml, xsl) {
+    var xsltProcessor = new XSLTProcessor();
+    xsltProcessor.importStylesheet(xsl);
+    return xsltProcessor.transformToFragment(xml, document);
+}
+
+</script>
+</body>
+</html>

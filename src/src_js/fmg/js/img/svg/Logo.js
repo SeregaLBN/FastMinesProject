@@ -41,9 +41,6 @@ class Logo extends ImageView {
 
         const useKeyTimes = false;
 
-        var addAttributeValue = MosaicSkillOrGroupView.addAttributeValue;
-        var createAnimeteNode = MosaicSkillOrGroupView.createAnimeteNode;
-
         // один раз створюю необхідні ноди
         if (!cnxt.ownRays) {
             var names = ['ownRays', 'innerTr'];
@@ -59,11 +56,11 @@ class Logo extends ImageView {
 
                     if (animated) {
                         // examples: <animate attributeName='d' dur='2000ms' repeatCount='indefinite' calcMode='linear' ... />
-                        pathNode.appendChild(createAnimeteNode(svgDoc, 'd', duration, useKeyTimes ? null : 'linear'));
+                        pathNode.appendChild(createAnimateNode(svgDoc, 'd', duration, useKeyTimes ? null : 'linear'));
 
                         if (!useGradient)
                             // examples: <animate attributeName='fill' dur='2000ms' repeatCount='indefinite' calcMode='linear' ...>
-                            pathNode.appendChild(createAnimeteNode(svgDoc, 'fill', duration, useKeyTimes ? null : 'linear'));
+                            pathNode.appendChild(createAnimateNode(svgDoc, 'fill', duration, useKeyTimes ? null : 'linear'));
                     }
 
                     svg.appendChild(pathNode);
@@ -78,11 +75,11 @@ class Logo extends ImageView {
                     lineNode.setAttributeNS(null, 'stroke-width', zoomAverage*borderWidth);
                     lineNode.setAttributeNS(null, 'stroke-linecap', 'round');
                     if (animated) {
-                        lineNode.appendChild(createAnimeteNode(svgDoc, 'stroke', duration, useKeyTimes ? null : 'linear'));
-                        lineNode.appendChild(createAnimeteNode(svgDoc, 'x1'    , duration, useKeyTimes ? null : 'linear'));
-                        lineNode.appendChild(createAnimeteNode(svgDoc, 'y1'    , duration, useKeyTimes ? null : 'linear'));
-                        lineNode.appendChild(createAnimeteNode(svgDoc, 'x2'    , duration, useKeyTimes ? null : 'linear'));
-                        lineNode.appendChild(createAnimeteNode(svgDoc, 'y2'    , duration, useKeyTimes ? null : 'linear'));
+                        lineNode.appendChild(createAnimateNode(svgDoc, 'stroke', duration, useKeyTimes ? null : 'linear'));
+                        lineNode.appendChild(createAnimateNode(svgDoc, 'x1'    , duration, useKeyTimes ? null : 'linear'));
+                        lineNode.appendChild(createAnimateNode(svgDoc, 'y1'    , duration, useKeyTimes ? null : 'linear'));
+                        lineNode.appendChild(createAnimateNode(svgDoc, 'x2'    , duration, useKeyTimes ? null : 'linear'));
+                        lineNode.appendChild(createAnimateNode(svgDoc, 'y2'    , duration, useKeyTimes ? null : 'linear'));
                     }
 
                     svg.appendChild(lineNode);
@@ -112,12 +109,12 @@ class Logo extends ImageView {
                         linearGradientNode.setAttributeNS(null, 'gradientUnits', 'userSpaceOnUse');
 
                         if (animated) {
-                            linearGradientNode.appendChild(createAnimeteNode(svgDoc, 'x1'        , duration, useKeyTimes ? null : 'linear'));
-                            linearGradientNode.appendChild(createAnimeteNode(svgDoc, 'y1'        , duration, useKeyTimes ? null : 'linear'));
-                            linearGradientNode.appendChild(createAnimeteNode(svgDoc, 'x2'        , duration, useKeyTimes ? null : 'linear'));
-                            linearGradientNode.appendChild(createAnimeteNode(svgDoc, 'y2'        , duration, useKeyTimes ? null : 'linear'));
-                            stopNodeRun       .appendChild(createAnimeteNode(svgDoc, 'stop-color', duration, useKeyTimes ? null : 'linear'));
-                            stopNodeEnd       .appendChild(createAnimeteNode(svgDoc, 'stop-color', duration, useKeyTimes ? null : 'linear'));
+                            linearGradientNode.appendChild(createAnimateNode(svgDoc, 'x1'        , duration, useKeyTimes ? null : 'linear'));
+                            linearGradientNode.appendChild(createAnimateNode(svgDoc, 'y1'        , duration, useKeyTimes ? null : 'linear'));
+                            linearGradientNode.appendChild(createAnimateNode(svgDoc, 'x2'        , duration, useKeyTimes ? null : 'linear'));
+                            linearGradientNode.appendChild(createAnimateNode(svgDoc, 'y2'        , duration, useKeyTimes ? null : 'linear'));
+                            stopNodeRun       .appendChild(createAnimateNode(svgDoc, 'stop-color', duration, useKeyTimes ? null : 'linear'));
+                            stopNodeEnd       .appendChild(createAnimateNode(svgDoc, 'stop-color', duration, useKeyTimes ? null : 'linear'));
                         }
 
                         defsNode.appendChild(linearGradientNode);
