@@ -126,7 +126,8 @@ function work(svg, svgDoc) {
     console.log(cntrllr.getFileName() + '.svg' + '\n' + svgContent);
     document.getElementById('svgSource').value = svgContent;
 
-    onLoadXmlDoc('logo_svg_to_vector_android.xsl')
+    var xslSrc = 'logo_svg_to_vector_android.xsl';
+    onLoadXmlDoc(xslSrc)
         .then(
             function(resp) {
                 document.getElementById('xsltSource').value = resp.xml;
@@ -138,11 +139,12 @@ function work(svg, svgDoc) {
                 document.getElementById('vectorSource').value = new XMLSerializer().serializeToString(xmlOut);
             },
             function(err) {
-                document.getElementById('xsltSource').value = JSON.stringify(err, null, 3);
+                document.getElementById('xsltSource').value = //JSON.stringify(err, null, 3) + '\n\n' +
+                    "Insert the contents of the file '" + xslSrc + "' manually and press button 'Transform'";
             }
         ).catch(function(err) {
-            document.getElementById('vectorSource').value = err.toString();
             console.error(err);
+            document.getElementById('vectorSource').value = err.toString();
         });
 }
 
