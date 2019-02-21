@@ -108,6 +108,8 @@ public abstract class BaseDataItem<T,
     }
 
     BoundDouble zoomPadding(BoundDouble pad) {
+        if (pad == null)
+            return null;
         double zoom = getZoom();
         return new BoundDouble(pad.left * zoom, pad.top * zoom, pad.right * zoom, pad.bottom * zoom);
     }

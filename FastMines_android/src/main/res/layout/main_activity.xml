@@ -23,6 +23,7 @@
             android:layout_margin="8dp"
             android:text="Mosaic groups"
             android:drawableLeft="@android:drawable/ic_menu_rotate"
+            app:headerImage="@{viewModel.mosaicGroupDS.header.image}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"

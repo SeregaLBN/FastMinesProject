@@ -1,13 +1,17 @@
 package fmg.android.app;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.res.Resources;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import fmg.android.app.databinding.MainActivityBinding;
@@ -53,6 +57,18 @@ public class MainActivity extends AppCompatActivity {
     @BindingAdapter("android:imageBitmap")
     public static void loadImage(ImageView iv, Bitmap bitmap) {
         iv.setImageBitmap(bitmap);
+    }
+
+    @BindingAdapter("headerImage")
+    public static void headerImage(Button bttn, Bitmap bitmap) {
+        Drawable img = new BitmapDrawable(Resources.getSystem(), bitmap);
+
+//        bttn.setBackground(img);
+
+//        img.setBounds(0, 0, 60, 60);
+//        bttn.setCompoundDrawables(img, null, null, null);
+
+        bttn.setCompoundDrawablesWithIntrinsicBounds(img, null, null, null);
     }
 
 }
