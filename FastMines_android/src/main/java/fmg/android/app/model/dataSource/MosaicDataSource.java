@@ -121,30 +121,29 @@ public class MosaicDataSource extends BaseDataSource<
         if (skill != null)
             mi.setSkillLevel(skill);
         MosaicAnimatedModel<?> model = mi.getEntity().getModel();
-        PenBorder pen = model.getPenBorder();
-        pen.setWidth(1);
-        pen.setColorShadow(Color.Black());
-        pen.setColorLight( Color.Black());
-        model.setBackgroundColor(MosaicDrawModel.DefaultBkColor);
-        model.setPadding(new BoundDouble(15));
-        model.setAnimatePeriod(534); // RedrawInterval = 5,
-        model.setTotalFrames(107);   // RotateAngleDelta = 3.37
+        model.getPenBorder().setWidth(1);
+        model.setAnimatePeriod(2500);
+        model.setTotalFrames(70);
+        applySelection(mi);
         return mi;
     }
 
     @Override
     protected void onCurrentItemChanged() {
-        // for one selected - start animate; for all other - stop animate
-        for (MosaicDataItem item : getDataSource()) {
-            boolean selected = (item.getUniqueId().ordinal() == currentItemPos);
-            MosaicAnimatedModel<?> model = item.getEntity().getModel();
-            model.setAnimated(selected);
-            model.getPenBorder().setColorLight (selected ? Color.White() : Color.Black());
-            model.getPenBorder().setColorShadow(selected ? Color.White() : Color.Black());
-            model.setBackgroundColor(selected ? AnimatedImageModel.DefaultBkColor : MosaicDrawModel.DefaultBkColor);
-            model.setPadding(new BoundDouble(model.getSize().width * (selected ? 10 : 5) /*/(mi.SkillLevel.Ordinal() + 1)*/ / 100));
-            model.setRotateAngle(0);
-        }
+        for (MosaicDataItem mi : getDataSource())
+            applySelection(mi);
+    }
+
+    /** for one selected item - start animate; for all other - stop animate */
+    private void applySelection(MosaicDataItem item) {
+        boolean selected = (item.getUniqueId().ordinal() == currentItemPos);
+        MosaicAnimatedModel<?> model = item.getEntity().getModel();
+        model.setAnimated(selected);
+        model.getPenBorder().setColorLight (selected ? Color.White() : Color.Black());
+        model.getPenBorder().setColorShadow(selected ? Color.White() : Color.Black());
+        model.setBackgroundColor(selected ? AnimatedImageModel.DefaultBkColor : MosaicDrawModel.DefaultBkColor);
+        model.setPadding(new BoundDouble(model.getSize().width * (selected ? 10 : 5) /*/(mi.SkillLevel.Ordinal() + 1)*/ / 100));
+        model.setRotateAngle(0);
     }
 
     @Override

@@ -113,30 +113,29 @@ namespace fmg.DataModel.DataSources {
             if (skill.HasValue)
                 mi.SkillLevel = skill.Value;
             var model = mi.Entity.Model;
-            var pen = model.PenBorder;
-            pen.Width = 1;
-            pen.ColorShadow = Color.Black;
-            pen.ColorLight = Color.Black;
-            model.BackgroundColor = MosaicDrawModelConst.DefaultBkColor;
-            model.Padding = new BoundDouble(15);
-            model.AnimatePeriod = 534; // RedrawInterval = 5,
-            model.TotalFrames = 107;   // RotateAngleDelta = 3.37
+            model.PenBorder.Width = 1;
+            model.AnimatePeriod = 2500;
+            model.TotalFrames = 70;
+            ApplySelection(mi);
             return mi;
         }
 
         protected override void OnCurrentItemChanged() {
             //LoggerSimple.Put("MosaicDataSource::OnCurrentItemChanged: CurrentElement={0}; itemPos={1}", CurrentItem?.MosaicType, CurrentItemPos);
-            // for one selected- start animate; for all other - stop animate
-            foreach (var mi in DataSource) {
-                var selected = ReferenceEquals(mi, CurrentItem);
-                var model = mi.Entity.Model;
-                model.Animated = selected;
-                model.PenBorder.ColorLight =
-                model.PenBorder.ColorShadow = selected ? Color.White : Color.Black;
-                model.BackgroundColor = selected ? AnimatedImageModelConst.DefaultBkColor : MosaicDrawModelConst.DefaultBkColor;
-                model.Padding = new BoundDouble(model.Size.Width * (selected ? 10 : 5) /*/(mi.SkillLevel.Ordinal() + 1)*/ / 100);
-                model.RotateAngle = 0;
-            }
+            foreach (var mi in DataSource)
+                ApplySelection(mi);
+        }
+
+        /// <summary> for one selected item - start animate; for all other - stop animate </summary>
+        private void ApplySelection(MosaicDataItem item) {
+            var selected = ReferenceEquals(item, CurrentItem);
+            var model = item.Entity.Model;
+            model.Animated = selected;
+            model.PenBorder.ColorLight =
+            model.PenBorder.ColorShadow = selected ? Color.White : Color.Black;
+            model.BackgroundColor = selected ? AnimatedImageModelConst.DefaultBkColor : MosaicDrawModelConst.DefaultBkColor;
+            model.Padding = new BoundDouble(model.Size.Width * (selected ? 10 : 5) /*/(mi.SkillLevel.Ordinal() + 1)*/ / 100);
+            model.RotateAngle = 0;
         }
 
         protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {

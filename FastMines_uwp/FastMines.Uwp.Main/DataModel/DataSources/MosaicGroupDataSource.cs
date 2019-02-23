@@ -43,7 +43,7 @@ namespace fmg.DataModel.DataSources {
                         var model = item.Entity.Model;
                         model.TotalFrames = 260;
                         model.AnimatePeriod = 18000;
-                        OnItemChanged(item);
+                        ApplySelection(item);
                         dataSource.Add(item);
                     }
                     notifier.FirePropertyChanged();
@@ -54,11 +54,11 @@ namespace fmg.DataModel.DataSources {
 
         protected override void OnCurrentItemChanged() {
             foreach (var item in DataSource)
-                OnItemChanged(item);
+                ApplySelection(item);
         }
 
-        private void OnItemChanged(MosaicGroupDataItem item) {
-            // for one selected - start animate; for all other - stop animate
+        /// <summary> for one selected item - start animate; for all other - stop animate </summary>
+        private void ApplySelection(MosaicGroupDataItem item) {
             var selected = ReferenceEquals(item, CurrentItem);
             var model = item.Entity.Model;
             model.PolarLights = selected;

@@ -45,7 +45,7 @@ public class MosaicSkillDataSource extends BaseDataSource<
                         MosaicSkillModel model = item.getEntity().getModel();
                         model.setTotalFrames(72);     // RotateAngleDelta = 5
                         model.setAnimatePeriod(3600); // RedrawInterval = 50
-                        onItemChanged(item);
+                        applySelection(item);
                     })
                     .collect(Collectors.toList());
 
@@ -56,11 +56,11 @@ public class MosaicSkillDataSource extends BaseDataSource<
 
     @Override
     protected void onCurrentItemChanged() {
-        getDataSource().forEach(this::onItemChanged);
+        getDataSource().forEach(this::applySelection);
     }
 
-    private void onItemChanged(MosaicSkillDataItem item) {
-        // for one selected - start animate; for all other - stop animate
+    /** for one selected item - start animate; for all other - stop animate */
+    private void applySelection(MosaicSkillDataItem item) {
         boolean selected = (item.getUniqueId().ordinal() == currentItemPos);
         MosaicSkillModel model = item.getEntity().getModel();
         model.setPolarLights(selected);

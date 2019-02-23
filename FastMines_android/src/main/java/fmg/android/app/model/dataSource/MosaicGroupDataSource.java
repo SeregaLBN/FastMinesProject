@@ -51,7 +51,7 @@ public class MosaicGroupDataSource extends BaseDataSource<
                     MosaicGroupModel model = item.getEntity().getModel();
                     model.setTotalFrames(260);     // rotateAngleDelta = 1.4
                     model.setAnimatePeriod(18000); // RedrawInterval = 70
-                    onItemChanged(item);
+                    applySelection(item);
                 })
                 .collect(Collectors.toList());
 
@@ -62,11 +62,11 @@ public class MosaicGroupDataSource extends BaseDataSource<
 
     @Override
     protected void onCurrentItemChanged() {
-        getDataSource().forEach(this::onItemChanged);
+        getDataSource().forEach(this::applySelection);
     }
 
-    private void onItemChanged(MosaicGroupDataItem item) {
-        // for one selected - start animate; for all other - stop animate
+    /** for one selected item - start animate; for all other - stop animate */
+    private void applySelection(MosaicGroupDataItem item) {
         boolean selected = (item.getUniqueId().ordinal() == currentItemPos);
         MosaicGroupModel model = item.getEntity().getModel();
         model.setPolarLights(selected);
