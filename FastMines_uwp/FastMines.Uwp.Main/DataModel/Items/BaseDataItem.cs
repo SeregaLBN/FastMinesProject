@@ -49,15 +49,19 @@ namespace fmg.DataModel.Items {
                 var old = this.entity;
                 if (notifier.SetProperty(ref entity, value)) {
                     if (old != null) {
+                        old      .PropertyChanged -= OnControllerPropertyChanged;
                         old.Model.PropertyChanged -= OnModelPropertyChanged;
                         old.Dispose();
                     }
                     if (entity != null) {
+                        entity      .PropertyChanged += OnControllerPropertyChanged;
                         entity.Model.PropertyChanged += OnModelPropertyChanged;
                     }
                 }
             }
         }
+
+        public CanvasBitmap Image => Entity.Image;
 
         public SizeDouble Size {
             get {
@@ -94,6 +98,17 @@ namespace fmg.DataModel.Items {
         protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             // refire as async event
             notifierAsync.FirePropertyChanged(ev);
+        }
+
+        protected void OnControllerPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, Entity));
+            notifier.FirePropertyChanged(nameof(this.Entity));
+
+            switch (ev.PropertyName) {
+            case nameof(Entity.Image):
+                notifier.FirePropertyChanged(nameof(this.Image));
+                break;
+            }
         }
 
         protected void OnModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {

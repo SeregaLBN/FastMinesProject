@@ -45,6 +45,7 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
     protected List<TItem> dataSource; // TODO??? MutableLiveData<...>
     /** Current item index in {@link #dataSource} */
     protected int currentItemPos = NOT_SELECTED_POS;
+    private boolean disposed;
 
     private static final int NOT_SELECTED_POS = -1;
     
@@ -128,8 +129,11 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
         }
     }
 
+    protected boolean isDisposed() { return disposed; }
+
     @Override
     public void close() {
+        disposed = true;
         if (header != null)
             header.close();
         if (dataSource != null) {

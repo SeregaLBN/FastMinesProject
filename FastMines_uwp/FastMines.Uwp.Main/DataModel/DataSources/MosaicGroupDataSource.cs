@@ -37,7 +37,7 @@ namespace fmg.DataModel.DataSources {
 
         public override ObservableCollection<MosaicGroupDataItem> DataSource {
             get {
-                if (!dataSource.Any()) {
+                if (!dataSource.Any() && !Disposed) {
                     foreach( var e in EMosaicGroupEx.GetValues()) {
                         var item = new MosaicGroupDataItem(e);
                         var model = item.Entity.Model;

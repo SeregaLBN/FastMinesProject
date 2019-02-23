@@ -44,7 +44,7 @@ public class MosaicGroupDataSource extends BaseDataSource<
 
     @Override
     public List<MosaicGroupDataItem> getDataSource() {
-        if ((dataSource == null) || dataSource.isEmpty()) {
+        if (!isDisposed() && ((dataSource == null) || dataSource.isEmpty())) {
             dataSource = Stream.of(EMosaicGroup.values())
                 .map(MosaicGroupDataItem::new)
                 .peek(item -> {

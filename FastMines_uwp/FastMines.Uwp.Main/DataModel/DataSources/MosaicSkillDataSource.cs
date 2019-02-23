@@ -36,7 +36,7 @@ namespace fmg.DataModel.DataSources {
 
         public override ObservableCollection<MosaicSkillDataItem> DataSource {
             get {
-                if (!dataSource.Any()) {
+                if (!dataSource.Any() && !Disposed) {
                     foreach (var e in ESkillLevelEx.GetValues()) {
                         var item = new MosaicSkillDataItem(e);
                         var model = item.Entity.Model;

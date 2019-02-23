@@ -53,7 +53,7 @@ public class MosaicDataSource extends BaseDataSource<
 
     @Override
     public List<MosaicDataItem> getDataSource() {
-        if ((dataSource == null) || dataSource.isEmpty())
+        if (!isDisposed() && ((dataSource == null) || dataSource.isEmpty()))
             reloadDataSource();
         return dataSource;
     }

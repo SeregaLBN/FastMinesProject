@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using Avalonia.Controls;
 using Avalonia.Media;
@@ -8,7 +7,6 @@ using Avalonia.Rendering;
 using fmg.common.geom;
 using fmg.core.img;
 using fmg.core.types;
-using fmg.ava.utils;
 
 namespace fmg.ava.img {
 

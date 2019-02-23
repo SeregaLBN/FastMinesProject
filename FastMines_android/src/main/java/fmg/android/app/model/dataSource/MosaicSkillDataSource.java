@@ -38,7 +38,7 @@ public class MosaicSkillDataSource extends BaseDataSource<
 
     @Override
     public List<MosaicSkillDataItem> getDataSource() {
-        if ((dataSource == null) || dataSource.isEmpty()) {
+        if (!isDisposed() && ((dataSource == null) || dataSource.isEmpty())) {
             dataSource = Stream.of(ESkillLevel.values())
                     .map(MosaicSkillDataItem::new)
                     .peek(item -> {

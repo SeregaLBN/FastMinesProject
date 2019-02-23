@@ -6,7 +6,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
@@ -28,7 +27,7 @@ namespace fmg {
         internal const int MenuTextWidth = 110;
 
         /// <summary> Model (a common model between all the pages in the application) </summary>
-        public MosaicInitData MosaicData { get; private set; }
+        public MosaicInitData InitData { get; private set; }
         /// <summary> View-Model </summary>
         public MainMenuViewModel ViewModel { get; } = new MainMenuViewModel();
         public Frame RightFrame => this._frame;
@@ -47,7 +46,7 @@ namespace fmg {
             base.OnNavigatedTo(ev);
 
             System.Diagnostics.Debug.Assert(ev.Parameter is MosaicInitData);
-            MosaicData = (ev.Parameter as MosaicInitData) ?? new MosaicInitData();
+            InitData = (ev.Parameter as MosaicInitData) ?? new MosaicInitData();
         }
 
         private void OnPageLoaded(object sender, RoutedEventArgs e) {
@@ -56,13 +55,13 @@ namespace fmg {
             ViewModel.MosaicGroupDS.PropertyChanged += OnMosaicGroupDsPropertyChanged;
             ViewModel.MosaicSkillDS.PropertyChanged += OnMosaicSkillDsPropertyChanged;
 
-            ViewModel.MosaicGroupDS.CurrentItem = ViewModel.MosaicGroupDS.DataSource.First(x => x.MosaicGroup == MosaicData.MosaicType.GetGroup());
-            ViewModel.MosaicSkillDS.CurrentItem = ViewModel.MosaicSkillDS.DataSource.First(x => x.SkillLevel == MosaicData.SkillLevel);
+            ViewModel.MosaicGroupDS.CurrentItem = ViewModel.MosaicGroupDS.DataSource.First(x => x.MosaicGroup == InitData.MosaicType.GetGroup());
+            ViewModel.MosaicSkillDS.CurrentItem = ViewModel.MosaicSkillDS.DataSource.First(x => x.SkillLevel == InitData.SkillLevel);
 
             var smp = RightFrame?.Content as SelectMosaicPage;
             if (smp != null) {
                 var ds = smp.ViewModel.MosaicDS;
-                ds.CurrentItem = ds.DataSource.First(x => x.MosaicType == MosaicData.MosaicType);
+                ds.CurrentItem = ds.DataSource.First(x => x.MosaicType == InitData.MosaicType);
             }
 
             ApplyButtonColorSmoothTransition(_bttnGroupPanel, ViewModel.MosaicGroupDS.Header.Entity.Model);
@@ -103,29 +102,29 @@ namespace fmg {
                 smp = RightFrame.Content as SelectMosaicPage;
             }
             smp.CurrentMosaicGroup = mosaicGroup;
-            smp.MosaicData = this.MosaicData;
-            smp.CurrentSkillLevel = this.MosaicData.SkillLevel;
-            smp.CurrentItem = (this.MosaicData.MosaicType.GetGroup() == mosaicGroup)
-                                    ? smp.ViewModel.MosaicDS.DataSource.First(x => x.MosaicType == this.MosaicData.MosaicType)
+            smp.MosaicData = this.InitData;
+            smp.CurrentSkillLevel = this.InitData.SkillLevel;
+            smp.CurrentItem = (this.InitData.MosaicType.GetGroup() == mosaicGroup)
+                                    ? smp.ViewModel.MosaicDS.DataSource.First(x => x.MosaicType == this.InitData.MosaicType)
                                     : null;
         }
         private void ShowCustomSkillPage() {
             RightFrame.SourcePageType = typeof(CustomSkillPage);
             var csp = RightFrame.Content as CustomSkillPage;
-            csp.MosaicData = this.MosaicData;
+            csp.MosaicData = this.InitData;
         }
         private void ShowHypnosisLogoPage() {
             LoggerSimple.Put("TODO:  redirect to ShowHypnosisLogoPage...");
         }
 
-        private void OnPropertyCurrentElementChanged(bool senderIsMosaicGroup, MosaicGroupDataItem currentGroupItem, MosaicSkillDataItem currentSkillItem) {
+        private void OnPropertyCurrenItemChanged(bool senderIsMosaicGroup, MosaicGroupDataItem currentGroupItem, MosaicSkillDataItem currentSkillItem) {
             if ((currentGroupItem == null) || (currentSkillItem == null)) {
                 ShowHypnosisLogoPage();
                 return;
             }
 
             if (currentSkillItem.SkillLevel.Value != ESkillLevel.eCustom)
-                MosaicData.SkillLevel = currentSkillItem.SkillLevel.Value;
+                InitData.SkillLevel = currentSkillItem.SkillLevel.Value;
 
             if (!senderIsMosaicGroup && (currentSkillItem.SkillLevel == ESkillLevel.eCustom))
                 ShowCustomSkillPage();
@@ -138,7 +137,7 @@ namespace fmg {
             switch (ev.PropertyName) {
             case nameof(ViewModel.MosaicGroupDS.CurrentItem):
                 var currentGroupItem = ViewModel.MosaicSkillDS.CurrentItem;
-                OnPropertyCurrentElementChanged(true, ((MosaicGroupDataSource)sender).CurrentItem, currentGroupItem);
+                OnPropertyCurrenItemChanged(true, ((MosaicGroupDataSource)sender).CurrentItem, currentGroupItem);
                 break;
             }
         }
@@ -148,7 +147,7 @@ namespace fmg {
             switch(ev.PropertyName) {
             case nameof(ViewModel.MosaicSkillDS.CurrentItem):
                 var currentSkillItem = ((MosaicSkillDataSource)sender).CurrentItem;
-                OnPropertyCurrentElementChanged(false, ViewModel.MosaicGroupDS.CurrentItem, currentSkillItem);
+                OnPropertyCurrenItemChanged(false, ViewModel.MosaicGroupDS.CurrentItem, currentSkillItem);
                 break;
             }
         }

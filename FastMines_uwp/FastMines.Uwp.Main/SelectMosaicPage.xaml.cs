@@ -4,6 +4,7 @@ using System.Reactive.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
 using fmg.common.geom;
@@ -12,7 +13,6 @@ using fmg.core.mosaic;
 using fmg.core.img;
 using fmg.uwp.utils;
 using fmg.DataModel.Items;
-using MosaicsCanvasBmp = fmg.uwp.img.win2d.MosaicImg.ControllerBitmap;
 
 namespace fmg {
 
@@ -115,21 +115,22 @@ namespace fmg {
         private void OnDataContextChangedCanvasControl(FrameworkElement sender, DataContextChangedEventArgs ev) {
             if (ev.NewValue == null)
                 return;
+
             var canvasControl = sender as CanvasControl;
-            System.Diagnostics.Debug.Assert(ev.NewValue is MosaicsCanvasBmp);
+            System.Diagnostics.Debug.Assert(ev.NewValue is CanvasBitmap);
             if (map.ContainsKey(canvasControl))
-                map[canvasControl] = ev.NewValue as MosaicsCanvasBmp;
+                map[canvasControl] = ev.NewValue as CanvasBitmap;
             else
-                map.Add(canvasControl, ev.NewValue as MosaicsCanvasBmp);
+                map.Add(canvasControl, ev.NewValue as CanvasBitmap);
             canvasControl.Invalidate();
             ev.Handled = true;
         }
 
-        IDictionary<CanvasControl, MosaicsCanvasBmp> map = new Dictionary<CanvasControl, MosaicsCanvasBmp>();
+        IDictionary<CanvasControl, CanvasBitmap> map = new Dictionary<CanvasControl, CanvasBitmap>();
 
         private void OnDrawCanvasControl(CanvasControl canvasControl, CanvasDrawEventArgs ev) {
             var img = map[canvasControl];
-            ev.DrawingSession.DrawImage(img.Image, new Windows.Foundation.Rect(0, 0, canvasControl.Width, canvasControl.Height));
+            ev.DrawingSession.DrawImage(img, new Windows.Foundation.Rect(0, 0, canvasControl.Width, canvasControl.Height));
         }
 
         private void StartNewGame() {

@@ -133,6 +133,7 @@ public abstract class BaseDataItem<T,
 
     protected void onControllerPropertyChanged(PropertyChangeEvent ev) {
         assert (ev.getSource() == getEntity());
+        notifier.firePropertyChanged(PROPERTY_ENTITY);
 
         switch (ev.getPropertyName()) {
         case IImageController.PROPERTY_IMAGE:

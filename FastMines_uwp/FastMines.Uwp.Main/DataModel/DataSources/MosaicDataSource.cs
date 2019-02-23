@@ -45,7 +45,7 @@ namespace fmg.DataModel.DataSources {
 
         public override ObservableCollection<MosaicDataItem> DataSource {
             get {
-                if ((dataSource == null) || !dataSource.Any())
+                if (!Disposed && ((dataSource == null) || !dataSource.Any()))
                     ReloadDataSource();
                 return dataSource;
             }
@@ -125,17 +125,17 @@ namespace fmg.DataModel.DataSources {
         }
 
         protected override void OnCurrentItemChanged() {
-            //LoggerSimple.Put("MosaicsDataSource::OnCurrentElementChanged: CurrentElement=" + CurrentElement?.MosaicType);
+            //LoggerSimple.Put("MosaicDataSource::OnCurrentItemChanged: CurrentElement={0}; itemPos={1}", CurrentItem?.MosaicType, CurrentItemPos);
             // for one selected- start animate; for all other - stop animate
             foreach (var mi in DataSource) {
                 var selected = ReferenceEquals(mi, CurrentItem);
-                var img = mi.Entity.Model;
-                img.Animated = selected;
-                img.PenBorder.ColorLight =
-                img.PenBorder.ColorShadow = selected ? Color.White : Color.Black;
-                img.BackgroundColor = selected ? AnimatedImageModelConst.DefaultBkColor : MosaicDrawModelConst.DefaultBkColor;
-                img.Padding = new BoundDouble(img.Size.Width * (selected ? 10 : 5) /*/(mi.SkillLevel.Ordinal() + 1)*/ / 100);
-                img.RotateAngle = 0;
+                var model = mi.Entity.Model;
+                model.Animated = selected;
+                model.PenBorder.ColorLight =
+                model.PenBorder.ColorShadow = selected ? Color.White : Color.Black;
+                model.BackgroundColor = selected ? AnimatedImageModelConst.DefaultBkColor : MosaicDrawModelConst.DefaultBkColor;
+                model.Padding = new BoundDouble(model.Size.Width * (selected ? 10 : 5) /*/(mi.SkillLevel.Ordinal() + 1)*/ / 100);
+                model.RotateAngle = 0;
             }
         }
 
