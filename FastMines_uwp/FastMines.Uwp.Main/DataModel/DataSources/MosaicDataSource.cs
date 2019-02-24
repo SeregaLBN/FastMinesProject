@@ -62,9 +62,10 @@ namespace fmg.DataModel.DataSources {
         }
 
         private void ReloadDataSource() {
+            //LoggerSimple.Put("> " + nameof(MosaicDataSource) + "::" + nameof(ReloadDataSource));
             IList<EMosaic> newEntities = CurrentGroup.HasValue
-                    ? EMosaicEx.GetValues().ToList()
-                    : CurrentGroup.Value.GetMosaics().ToList();
+                    ? CurrentGroup.Value.GetMosaics().ToList()
+                    : EMosaicEx.GetValues().ToList();
 
             if ((dataSource == null) || !dataSource.Any()) {
                 // first load all
@@ -101,6 +102,7 @@ namespace fmg.DataModel.DataSources {
                 } else {
                     var mi = MakeItem(mosaicType);
                     mi.Size = size; //  restore
+                    dataSource.Add(mi);
                 }
             }
             notifier.FirePropertyChanged(null, dataSource, nameof(DataSource));
@@ -121,7 +123,7 @@ namespace fmg.DataModel.DataSources {
         }
 
         protected override void OnCurrentItemChanged() {
-            //LoggerSimple.Put("MosaicDataSource::OnCurrentItemChanged: CurrentElement={0}; itemPos={1}", CurrentItem?.MosaicType, CurrentItemPos);
+            //LoggerSimple.Put("> " + nameof(MosaicDataSource) + "::" + nameof(OnCurrentItemChanged) + ": CurrentElement={0}; itemPos={1}", CurrentItem?.MosaicType, CurrentItemPos);
             foreach (var mi in DataSource)
                 ApplySelection(mi);
         }

@@ -71,7 +71,7 @@ namespace fmg {
         private void OnPageUnloaded(object sender, RoutedEventArgs ev) {
             this.Unloaded -= OnPageUnloaded;
 
-            //System.Diagnostics.Debug.WriteLine("OnClosing");
+            //LoggerSimple.Put("> " + nameof(MainPage) + "::" + nameof(OnClosing));
             ViewModel.MosaicGroupDS.PropertyChanged -= OnMosaicGroupDsPropertyChanged;
             ViewModel.MosaicSkillDS.PropertyChanged -= OnMosaicSkillDsPropertyChanged;
 
@@ -82,14 +82,14 @@ namespace fmg {
         }
 
         private void OnListViewMosaicGroupMenuTapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs ev) {
-            //LoggerSimple.Put("OnListViewMosaicGroupMenuTapped");
+            //LoggerSimple.Put("> " + nameof(MainPage) + "::" + nameof(OnListViewMosaicGroupMenuTapped));
             var listView = (ListView)sender;
             if (!(RightFrame.Content is SelectMosaicPage))
                 ShowSelectMosaicPage(EMosaicGroupEx.FromIndex(listView.SelectedIndex));
         }
 
         private void OnListViewSkillLevelMenuTapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs ev) {
-            //LoggerSimple.Put("OnListViewSkillLevelMenuTapped");
+            //LoggerSimple.Put("> " + nameof(MainPage) + "::" + nameof(OnListViewSkillLevelMenuTapped));
             var listView = (ListView)sender;
             if ((listView.SelectedIndex == ESkillLevel.eCustom.Ordinal()) && !(RightFrame.Content is CustomSkillPage))
                 ShowCustomSkillPage();
@@ -126,14 +126,16 @@ namespace fmg {
             if (currentSkillItem.SkillLevel.Value != ESkillLevel.eCustom)
                 InitData.SkillLevel = currentSkillItem.SkillLevel.Value;
 
-            if (!senderIsMosaicGroup && (currentSkillItem.SkillLevel == ESkillLevel.eCustom))
+            if (!senderIsMosaicGroup && (currentSkillItem.SkillLevel == ESkillLevel.eCustom)) {
                 ShowCustomSkillPage();
-            else
+            } else {
+                //LoggerSimple.Put("> " + nameof(MainPage) + "::" + nameof(OnPropertyCurrenItemChanged) + ": " + currentGroupItem.MosaicGroup);
                 ShowSelectMosaicPage(currentGroupItem.MosaicGroup.Value);
+            }
         }
 
         private void OnMosaicGroupDsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            //LoggerSimple.Put("MosaicGroupDataSource::" + ev.PropertyName);
+            //LoggerSimple.Put("> " + nameof(MainPage) + "::" + nameof(OnMosaicGroupDsPropertyChanged) + ": ev.Name=" + ev.PropertyName);
             switch (ev.PropertyName) {
             case nameof(ViewModel.MosaicGroupDS.CurrentItem):
                 var currentGroupItem = ViewModel.MosaicSkillDS.CurrentItem;
@@ -143,8 +145,8 @@ namespace fmg {
         }
 
         private void OnMosaicSkillDsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            //LoggerSimple.Put("MosaicSkillDataSource::" + ev.PropertyName);
-            switch(ev.PropertyName) {
+            //LoggerSimple.Put("> " + nameof(MainPage) + "::" + nameof(OnMosaicSkillDsPropertyChanged) + ": ev.Name=" + ev.PropertyName);
+            switch (ev.PropertyName) {
             case nameof(ViewModel.MosaicSkillDS.CurrentItem):
                 var currentSkillItem = ((MosaicSkillDataSource)sender).CurrentItem;
                 OnPropertyCurrenItemChanged(false, ViewModel.MosaicGroupDS.CurrentItem, currentSkillItem);

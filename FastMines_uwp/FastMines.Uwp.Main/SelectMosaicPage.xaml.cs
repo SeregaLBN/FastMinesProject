@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Reactive.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
 using fmg.common.geom;
@@ -13,6 +14,7 @@ using fmg.core.mosaic;
 using fmg.core.img;
 using fmg.uwp.utils;
 using fmg.DataModel.Items;
+using MosaicsCanvasCtrllr = fmg.uwp.img.win2d.MosaicImg.ControllerBitmap;
 
 namespace fmg {
 
@@ -26,11 +28,13 @@ namespace fmg {
         public SolidColorBrush BorderColorStartBttn;
         private bool _closed;
         private IDisposable _sizeChangedObservable;
+        IDictionary<CanvasControl, MosaicsCanvasCtrllr> mapBindingControlToController = new Dictionary<CanvasControl, MosaicsCanvasCtrllr>();
 
         public SelectMosaicPage() {
             this.InitializeComponent();
             MosaicData = new MosaicInitData();
             ViewModel = new MosaicGroupViewModel();
+            ViewModel.MosaicDS.DataSource.CollectionChanged += OnMosaicDsCollectionChanged;
 
           //this.Loaded += OnPageLoaded;
             this.Unloaded += OnPageUnloaded;
@@ -61,6 +65,8 @@ namespace fmg {
         private void OnPageUnloaded(object sender, RoutedEventArgs ev) {
             this.Unloaded -= OnPageUnloaded;
             _closed = true;
+            ViewModel.MosaicDS.DataSource.CollectionChanged -= OnMosaicDsCollectionChanged;
+            ViewModel.Dispose();
             _sizeChangedObservable?.Dispose();
 
             Bindings.StopTracking();
@@ -117,19 +123,37 @@ namespace fmg {
                 return;
 
             var canvasControl = sender as CanvasControl;
-            System.Diagnostics.Debug.Assert(ev.NewValue is CanvasBitmap);
-            if (map.ContainsKey(canvasControl))
-                map[canvasControl] = ev.NewValue as CanvasBitmap;
+            System.Diagnostics.Debug.Assert(ev.NewValue is MosaicsCanvasCtrllr);
+            if (mapBindingControlToController.ContainsKey(canvasControl))
+                mapBindingControlToController[canvasControl] = ev.NewValue as MosaicsCanvasCtrllr;
             else
-                map.Add(canvasControl, ev.NewValue as CanvasBitmap);
+                mapBindingControlToController.Add(canvasControl, ev.NewValue as MosaicsCanvasCtrllr);
             canvasControl.Invalidate();
             ev.Handled = true;
         }
 
-        IDictionary<CanvasControl, CanvasBitmap> map = new Dictionary<CanvasControl, CanvasBitmap>();
+        private void OnMosaicDsCollectionChanged(object sender, NotifyCollectionChangedEventArgs ev) {
+            // verify mapBindingControlToController and remove obsolete bindings
+            if (ev.OldItems == null)
+                return;
+            foreach (var item in ev.OldItems) {
+                System.Diagnostics.Debug.Assert(item is MosaicDataItem);
+                var mi = (MosaicDataItem)item;
+                var pair = mapBindingControlToController.FirstOrDefault(kv => ReferenceEquals(kv.Value, mi));
+                if (pair.Key != null)
+                    mapBindingControlToController.Remove(pair.Key);
+            }
+        }
 
-        private void OnDrawCanvasControl(CanvasControl canvasControl, CanvasDrawEventArgs ev) {
-            var img = map[canvasControl];
+
+        public void OnDrawCanvasControl(CanvasControl canvasControl, CanvasDrawEventArgs ev) {
+            if (!mapBindingControlToController.ContainsKey(canvasControl))
+                return;
+            var ctrllr = mapBindingControlToController[canvasControl];
+            if (ctrllr.Disposed)
+                return;
+            var img = ctrllr.Image;
+            System.Diagnostics.Debug.Assert(img != null); // null where is disposed
             ev.DrawingSession.DrawImage(img, new Windows.Foundation.Rect(0, 0, canvasControl.Width, canvasControl.Height));
         }
 
@@ -151,7 +175,7 @@ namespace fmg {
         }
 
         private void OnClickBttnStartGame(object sender, RoutedEventArgs ev) {
-            LoggerSimple.Put("OnClickBttnStartGame");
+            LoggerSimple.Put("> " + nameof(SelectMosaicPage) + "::" + nameof(OnClickBttnStartGame));
             StartNewGame();
         }
 

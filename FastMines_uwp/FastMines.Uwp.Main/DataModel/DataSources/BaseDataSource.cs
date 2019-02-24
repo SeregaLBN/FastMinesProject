@@ -64,13 +64,17 @@ namespace fmg.DataModel.DataSources {
                     return null;
                 return DataSource[pos];
             }
-            set { CurrentItemPos = DataSource.IndexOf(value); }
+            set {
+                //LoggerSimple.Put("> " + this.GetType().Name + "::" + nameof(CurrentItem) + ": value=" + ((value==null) ? "null" : value.ToString()));
+                CurrentItemPos = DataSource.IndexOf(value);
+            }
         }
 
         /// <summary> Selected index of element </summary>
         public int CurrentItemPos {
             get { return currentItemPos; }
             set {
+                //LoggerSimple.Put("> " + this.GetType().Name + "::" + nameof(CurrentItemPos) + ": value=" + value);
                 if ((value < 0) || (value >= DataSource.Count)) {
                     if (value != NOT_SELECTED_POS)
                         throw new ArgumentException("Illegal index of value=" + value);

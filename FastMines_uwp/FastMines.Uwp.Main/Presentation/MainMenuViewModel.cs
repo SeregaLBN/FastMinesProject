@@ -20,6 +20,7 @@ namespace fmg.common {
             ToggleSplitViewPaneCommand = new Command(() => IsSplitViewPaneOpen = !IsSplitViewPaneOpen);
 
             mosaicGroupDS.PropertyChanged += OnMosaicGroupDsPropertyChanged;
+            mosaicSkillDS.PropertyChanged += OnMosaicSkillDsPropertyChanged;
             notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev), false);
         }
 
@@ -33,8 +34,14 @@ namespace fmg.common {
         public MosaicGroupDataSource MosaicGroupDS => mosaicGroupDS;
         public MosaicSkillDataSource MosaicSkillDS => mosaicSkillDS;
 
+        private void OnMosaicSkillDsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            System.Diagnostics.Debug.Assert(sender is MosaicSkillDataSource);
+            notifier.FirePropertyChanged(nameof(this.MosaicSkillDS));
+        }
+
         private void OnMosaicGroupDsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             System.Diagnostics.Debug.Assert(sender is MosaicGroupDataSource);
+            notifier.FirePropertyChanged(nameof(this.MosaicGroupDS));
             switch (ev.PropertyName) {
             case nameof(MosaicDataSource.CurrentItem): {
                     //// auto-close split view pane
@@ -50,6 +57,7 @@ namespace fmg.common {
             Disposed = true;
 
             mosaicGroupDS.PropertyChanged -= OnMosaicGroupDsPropertyChanged;
+            mosaicSkillDS.PropertyChanged -= OnMosaicSkillDsPropertyChanged;
             mosaicGroupDS.Dispose();
             mosaicSkillDS.Dispose();
 

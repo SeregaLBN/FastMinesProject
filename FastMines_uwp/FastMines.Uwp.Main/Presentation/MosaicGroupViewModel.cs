@@ -27,6 +27,7 @@ namespace fmg.common {
         }
 
         private void OnMosaicDsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            notifier.FirePropertyChanged(nameof(this.MosaicDS));
             if (ev.PropertyName == nameof(MosaicDataSource.ImageSize)) {
                 // ! notify parent container
                 notifier.FirePropertyChanged<SizeDouble>(ev, nameof(this.ImageSize));
