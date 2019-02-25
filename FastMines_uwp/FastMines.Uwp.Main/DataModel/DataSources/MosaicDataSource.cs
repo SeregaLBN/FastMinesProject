@@ -81,6 +81,7 @@ namespace fmg.DataModel.DataSources {
             // Перегружаю не всё, а только то, что нужно. Остальное - обновляю.
             var size = ImageSize; // save
             int pos = CurrentItemPos; // save
+            //LoggerSimple.Put("  " + nameof(MosaicDataSource) + "::" + nameof(ReloadDataSource) + ": saved item pos=" + pos);
             int oldSize = dataSource.Count();
             int newSize = newEntities.Count();
             int max = Math.Max(oldSize, newSize);
@@ -107,6 +108,7 @@ namespace fmg.DataModel.DataSources {
             }
             notifier.FirePropertyChanged(null, dataSource, nameof(DataSource));
             CurrentItemPos = Math.Min(pos, dataSource.Count() - 1); // restore pos
+            //LoggerSimple.Put("  " + nameof(MosaicDataSource) + "::" + nameof(ReloadDataSource) + ": restored item pos=" + CurrentItemPos);
         }
 
         private MosaicDataItem MakeItem(EMosaic mosaicType) {

@@ -108,7 +108,7 @@ namespace fmg.DataModel.DataSources {
             switch (ev.PropertyName) {
             case nameof(this.CurrentItemPos):
                 OnCurrentItemChanged();
-                notifier.FirePropertyChanged(nameof(CurrentItem));
+                notifier.FirePropertyChanged(null, CurrentItem, nameof(CurrentItem));
                 break;
             }
         }

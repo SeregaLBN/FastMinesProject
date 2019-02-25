@@ -104,9 +104,8 @@ namespace fmg {
             smp.CurrentMosaicGroup = mosaicGroup;
             smp.MosaicData = this.InitData;
             smp.CurrentSkillLevel = this.InitData.SkillLevel;
-            smp.CurrentItem = (this.InitData.MosaicType.GetGroup() == mosaicGroup)
-                                    ? smp.ViewModel.MosaicDS.DataSource.First(x => x.MosaicType == this.InitData.MosaicType)
-                                    : null;
+            if (this.InitData.MosaicType.GetGroup() == mosaicGroup)
+                smp.CurrentItem = smp.ViewModel.MosaicDS.DataSource.First(x => x.MosaicType == this.InitData.MosaicType);
         }
         private void ShowCustomSkillPage() {
             RightFrame.SourcePageType = typeof(CustomSkillPage);
