@@ -170,8 +170,8 @@ public class DemoActivity extends AppCompatActivity {
                 images.forEach(img -> _td.applySettings(img, testTransparent[0]));
             }
 
-            double sizeW = innerLayout.getWidth();  // _innerLayout.getMeasuredWidth();
-            double sizeH = innerLayout.getHeight(); // _innerLayout.getMeasuredHeight();
+            double sizeW = innerLayout.getWidth();  // innerLayout.getMeasuredWidth();
+            double sizeH = innerLayout.getHeight(); // innerLayout.getMeasuredHeight();
             RectDouble rc = new RectDouble(MARGIN, MARGIN, sizeW - MARGIN * 2, sizeH - MARGIN * 2); // inner rect where drawing images as tiles
 
             TestDrawing.CellTilingResult ctr = _td.cellTiling(rc, images, testTransparent[0]);
@@ -248,14 +248,14 @@ public class DemoActivity extends AppCompatActivity {
            onCellTilingHandler.apply(true, false, false);
            return true;
         };
-//        _innerLayout.getViewTreeObserver().addOnGlobalLayoutListener(onSizeChanged);
+//        innerLayout.getViewTreeObserver().addOnGlobalLayoutListener(onSizeChanged);
         if (isMosaicGameController)
             innerLayout.setOnClickListener(onClick);
         else
             innerLayout.setOnTouchListener(onTouch);
 
         _onCloseImages = () -> {
-//            _innerLayout.getViewTreeObserver().removeOnGlobalLayoutListener(onSizeChanged);
+//            innerLayout.getViewTreeObserver().removeOnGlobalLayoutListener(onSizeChanged);
             if (isMosaicGameController)
                 innerLayout.setOnClickListener(null);
             else

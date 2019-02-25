@@ -47,6 +47,7 @@ dependencies {
     implementation "android.arch.lifecycle:runtime:1.1.1"
     implementation "android.arch.lifecycle:extensions:1.1.1"
 
+    implementation 'com.android.support:support-v4:28.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'org.awaitility:awaitility:3.1.5'
     androidTestImplementation 'io.reactivex.rxjava2:rxjava:2.2.5'

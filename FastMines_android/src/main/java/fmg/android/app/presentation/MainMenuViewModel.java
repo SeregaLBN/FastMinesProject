@@ -1,6 +1,11 @@
 package fmg.android.app.presentation;
 
 import android.arch.lifecycle.ViewModel;
+import android.databinding.Bindable;
+import android.databinding.BindingAdapter;
+import android.databinding.ObservableField;
+import android.view.View;
+import android.view.ViewGroup;
 
 import java.beans.PropertyChangeEvent;
 

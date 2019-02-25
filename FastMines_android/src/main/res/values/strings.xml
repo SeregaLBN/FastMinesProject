@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">FastMines</string>
+    <string name="mosaic_group_item">MosaicGroupItem</string>
+    <string name="mosaics">Mosaics</string>
 </resources>

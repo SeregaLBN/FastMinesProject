@@ -1,5 +1,7 @@
 package fmg.android.utils;
 
+import android.content.res.Resources;
+
 import java.util.List;
 
 /**
@@ -49,5 +51,15 @@ public final class Cast {
 
     public static              int toColor(fmg.common.Color clr) { return (clr.getA() & 0xFF) << 24 | (clr.getR() & 0xFF) << 16 | (clr.getG() & 0xFF) << 8 | (clr.getB() & 0xFF); }
     public static fmg.common.Color toColor(             int clr) { return new fmg.common.Color(clr); }
+
+
+    public static float pxToDp(float px) {
+        return px / Resources.getSystem().getDisplayMetrics().density;
+    }
+
+    public static float dpToPx(float dp) {
+        //return android.util.TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, Resources.getSystem().getDisplayMetrics());
+        return dp * Resources.getSystem().getDisplayMetrics().density;
+    }
 
 }
