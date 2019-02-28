@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <variable name="mosaicGroupItem"
-            type="fmg.android.app.model.items.MosaicGroupDataItem" />
+        <variable name="mosaicSkillItem"
+            type="fmg.android.app.model.items.MosaicSkillDataItem" />
     </data>
 
     <LinearLayout
@@ -23,9 +23,9 @@
             android:layout_margin="1dp"
             android:padding="0dp"
             android:scaleType="fitCenter"
-            android:imageBitmap="@{mosaicGroupItem.image}"
-            app:layout_sizeToHeight="@{mosaicGroupItem.size}"
-            app:layout_sizeToWidth="@{mosaicGroupItem.size}"
+            android:imageBitmap="@{mosaicSkillItem.image}"
+            app:layout_sizeToHeight="@{mosaicSkillItem.size}"
+            app:layout_sizeToWidth="@{mosaicSkillItem.size}"
             tools:src="@android:drawable/progress_indeterminate_horizontal" />
 
         <TextView
@@ -42,8 +42,8 @@
             android:gravity="center_vertical|center"
             android:maxLines="1"
             android:textSize="15sp"
-            android:text="@{mosaicGroupItem.title}"
-            tools:text="Mosaic group title" />
+            android:text="@{mosaicSkillItem.title}"
+            tools:text="Sklill level name" />
 
     </LinearLayout>
 

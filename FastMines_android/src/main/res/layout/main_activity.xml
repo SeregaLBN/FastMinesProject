@@ -44,6 +44,7 @@
                     android:background="@color/SystemChromeMediumColorLight"
                     android:clickable="true"
                     android:onClick="onMosaicGroupHeaderClick"
+                    app:tooltip="@{viewModel.mosaicGroupDS.unicodeChars}"
                 >
 
                     <ImageView
@@ -86,6 +87,8 @@
                     tools:listitem="@layout/mosaic_group_item" />
             </LinearLayout>
 
+            <!-- ___________________________________________________________________________ -->
+
             <!-- menu part of mosaic skill -->
             <LinearLayout
                 android:layout_weight="0.6"
@@ -93,8 +96,59 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <!-- TODO mosaic skill header -->
-                <!-- TODO mosaic skill items -->
+                <!-- mosaic skill header -->
+                <LinearLayout
+                    android:id="@+id/panelMosaicSkillHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_sizeToHeight="@{viewModel.mosaicSkillDS.header.size}"
+                    android:orientation="horizontal"
+                    android:layout_margin="0dp"
+                    android:padding="0dp"
+                    android:background="@color/SystemChromeMediumColorLight"
+                    android:clickable="true"
+                    android:onClick="onMosaicSkillHeaderClick"
+                    tooltip="Difficulty level"
+                    >
+
+                    <ImageView
+                        android:id="@+id/bttnMosaicSkillHeader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="1dp"
+                        android:padding="0dp"
+                        android:scaleType="fitCenter"
+                        android:imageBitmap="@{viewModel.mosaicSkillDS.header.image}"
+                        app:layout_sizeToHeight="@{viewModel.mosaicSkillDS.header.size}"
+                        app:layout_sizeToWidth="@{viewModel.mosaicSkillDS.header.size}"
+                        android:layout_gravity="center"
+                        tools:src="@android:drawable/progress_indeterminate_horizontal" />
+
+                    <TextView
+                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical|center"
+                        android:maxLines="1"
+                        android:textSize="15sp"
+                        android:layout_marginLeft="12px"
+                        android:layout_marginTop="6px"
+                        android:layout_marginRight="0px"
+                        android:layout_marginBottom="6px"
+                        android:padding="0dp"
+                        android:textStyle="bold"
+                        android:text="@string/skill" />
+                </LinearLayout>
+
+                <!-- mosaic Skill items -->
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rvMosaicSkillItems"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="0px"
+                    android:padding="0dp"
+                    android:indeterminate="true"
+                    tools:listitem="@layout/mosaic_skill_item" />
             </LinearLayout>
 
         </LinearLayout>

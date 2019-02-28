@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private MainActivityBinding binding;
     private MainMenuViewModel viewModel;
     private MenuMosaicGroupListViewAdapter menuMosaicGroupListViewAdapter;
+    private MenuMosaicSkillListViewAdapter menuMosaicSkillListViewAdapter;
 
     SizeDouble cachedSizeActivity = new SizeDouble(-1, -1);
 
@@ -57,7 +59,9 @@ public class MainActivity extends AppCompatActivity {
         binding.executePendingBindings();
 
         binding.rvMosaicGroupItems.setLayoutManager(new LinearLayoutManager(this));
+        binding.rvMosaicSkillItems.setLayoutManager(new LinearLayoutManager(this));
         binding.rvMosaicGroupItems.setAdapter(menuMosaicGroupListViewAdapter = new MenuMosaicGroupListViewAdapter(viewModel.getMosaicGroupDS(), this::onMenuMosaicGroupItemClick));
+        binding.rvMosaicSkillItems.setAdapter(menuMosaicSkillListViewAdapter = new MenuMosaicSkillListViewAdapter(viewModel.getMosaicSkillDS(), this::onMenuMosaicSkillItemClick));
 
         binding.rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(this::onGlobalLayoutListener);
 
@@ -75,12 +79,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void onMosaicGroupHeaderClick(View v) {
+        Toast.makeText(this, "onMosaicGroupHeaderClick", Toast.LENGTH_LONG).show();
         // does something very interesting
 //        int s = 100 + ThreadLocalRandom.current().nextInt(100);
 //        viewModel.getMosaicGroupDS().setImageSize(new SizeDouble(s, s));
     }
 
-    void onMenuMosaicGroupItemClick(View view, int position) {
+    void onMosaicSkillHeaderClick(View v) {
+        Toast.makeText(this, "onMosaicSkillHeaderClick", Toast.LENGTH_LONG).show();
+    }
+
+    void onMenuMosaicSkillItemClick(View v, int position) {
+        Toast.makeText(this, "onMosaicSkillHeaderClick " + position, Toast.LENGTH_LONG).show();
+    }
+
+    void onMenuMosaicGroupItemClick(View v, int position) {
+        Toast.makeText(this, "onMenuMosaicGroupItemClick " + position, Toast.LENGTH_LONG).show();
     }
 
     private static void ApplyViewColorSmoothTransition(View view, AnimatedImageModel model) {

@@ -1,19 +1,14 @@
 package fmg.android.app.presentation;
 
-import android.content.res.Resources;
 import android.databinding.BindingAdapter;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.support.v7.widget.AppCompatImageButton;
+import android.support.v7.widget.TooltipCompat;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import fmg.android.app.MainActivity;
 import fmg.android.utils.Cast;
-import fmg.common.LoggerSimple;
 import fmg.common.geom.SizeDouble;
 
 public final class Converters {
@@ -30,7 +25,7 @@ public final class Converters {
         ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
         layoutParams.width = (int)(size.width + Cast.dpToPx(additionDp));
         view.setLayoutParams(layoutParams);
-        LoggerSimple.put("Converters::setLayoutMainMenuWidth: size={0}, set layout.width={1} for {2}.id={3}", size, layoutParams.width, view.getClass().getSimpleName(), view.getId());
+//        LoggerSimple.put("Converters::setLayoutMainMenuWidth: size={0}, set layout.width={1} for {2}.id={3}", size, layoutParams.width, view.getClass().getSimpleName(), view.getId());
     }
 
     @BindingAdapter("layout_sizeToWidth")
@@ -38,7 +33,7 @@ public final class Converters {
         ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
         layoutParams.width = (int)size.width;
         view.setLayoutParams(layoutParams);
-        LoggerSimple.put("Converters::setLayoutSizeToWidth: size={0}, set layout.width={1} for {2}.id={3}", size, layoutParams.width, view.getClass().getSimpleName(), view.getId());
+//        LoggerSimple.put("Converters::setLayoutSizeToWidth: size={0}, set layout.width={1} for {2}.id={3}", size, layoutParams.width, view.getClass().getSimpleName(), view.getId());
     }
 
     @BindingAdapter("layout_sizeToHeight")
@@ -46,7 +41,7 @@ public final class Converters {
         ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
         layoutParams.height = (int)size.height;
         view.setLayoutParams(layoutParams);
-        LoggerSimple.put("Converters::setLayoutSizeToHeight: size={0}, set layout.height={1} for {2}.id={3}", size, layoutParams.height, view.getClass().getSimpleName(), view.getId());
+//        LoggerSimple.put("Converters::setLayoutSizeToHeight: size={0}, set layout.height={1} for {2}.id={3}", size, layoutParams.height, view.getClass().getSimpleName(), view.getId());
     }
 
     @BindingAdapter("android:imageBitmap")
@@ -71,5 +66,11 @@ public final class Converters {
 //        Drawable img = new BitmapDrawable(Resources.getSystem(), bitmap);
 //        bttn.setImageDrawable(img);
 //    }
+
+    @BindingAdapter("tooltip")
+    public static void setTooltip(View view, String hint) {
+        //view.setTooltipText(hint);
+        TooltipCompat.setTooltipText(view, hint);
+    }
 
 }
