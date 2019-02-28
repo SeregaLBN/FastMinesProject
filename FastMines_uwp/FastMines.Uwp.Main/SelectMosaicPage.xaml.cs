@@ -24,7 +24,7 @@ namespace fmg {
         /// <summary> Model (a common model between all the pages in the application) </summary>
         public MosaicInitData MosaicData { get; set; }
         /// <summary> View-Model </summary>
-        public MosaicGroupViewModel ViewModel { get; private set; }
+        public MosaicsViewModel ViewModel { get; private set; }
         public SolidColorBrush BorderColorStartBttn;
         private bool _closed;
         private IDisposable _sizeChangedObservable;
@@ -33,7 +33,7 @@ namespace fmg {
         public SelectMosaicPage() {
             this.InitializeComponent();
             MosaicData = new MosaicInitData();
-            ViewModel = new MosaicGroupViewModel();
+            ViewModel = new MosaicsViewModel();
             ViewModel.MosaicDS.DataSource.CollectionChanged += OnMosaicDsCollectionChanged;
 
           //this.Loaded += OnPageLoaded;

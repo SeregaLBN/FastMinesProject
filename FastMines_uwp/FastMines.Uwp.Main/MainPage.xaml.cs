@@ -52,6 +52,8 @@ namespace fmg {
         private void OnPageLoaded(object sender, RoutedEventArgs e) {
             this.Loaded -= OnPageLoaded;
 
+            //var dpi = Cast.ToDpi(100);
+
             ViewModel.MosaicGroupDS.PropertyChanged += OnMosaicGroupDsPropertyChanged;
             ViewModel.MosaicSkillDS.PropertyChanged += OnMosaicSkillDsPropertyChanged;
 

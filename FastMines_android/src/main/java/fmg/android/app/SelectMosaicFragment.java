@@ -9,11 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import fmg.android.app.presentation.MosaicGroupViewModel;
+import fmg.android.app.presentation.MosaicsViewModel;
 
 public class SelectMosaicFragment extends Fragment {
 
-    private MosaicGroupViewModel viewModel;
+    private MosaicsViewModel viewModel;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -23,7 +23,7 @@ public class SelectMosaicFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        viewModel = ViewModelProviders.of(this).get(MosaicGroupViewModel.class);
+        viewModel = ViewModelProviders.of(this).get(MosaicsViewModel.class);
         // TODO: Use the ViewModel
     }
 
