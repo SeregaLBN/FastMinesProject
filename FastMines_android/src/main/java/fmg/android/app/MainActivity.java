@@ -22,6 +22,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import fmg.android.app.databinding.MainActivityBinding;
 import fmg.android.app.presentation.MainMenuViewModel;
+import fmg.android.utils.Cast;
 import fmg.android.utils.StaticInitializer;
 import fmg.common.LoggerSimple;
 import fmg.common.geom.BoundDouble;
@@ -29,7 +30,7 @@ import fmg.common.geom.SizeDouble;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final int MenuTextWidth = 110;
+    public static final int MenuTextWidthDp = 90; // dp
     public static boolean MenuIsFullWidth = true;
 
     private MainActivityBinding binding;
@@ -68,8 +69,8 @@ public class MainActivity extends AppCompatActivity {
 
     void onMosaicGroupHeaderClick(View v) {
         // does something very interesting
-        int s = 100 + ThreadLocalRandom.current().nextInt(100);
-        viewModel.getMosaicGroupDS().setImageSize(new SizeDouble(s, s));
+//        int s = 100 + ThreadLocalRandom.current().nextInt(100);
+//        viewModel.getMosaicGroupDS().setImageSize(new SizeDouble(s, s));
     }
 
     void onMenuMosaicGroupItemClick(View view, int position) {
@@ -85,26 +86,41 @@ public class MainActivity extends AppCompatActivity {
 
     private void onActivitySizeChanged(SizeDouble newSize) {
         LoggerSimple.put("> MainActivity::onActivitySizeChanged: newSize={0}", newSize);
-        final int minSize = 50;
-        final int topElemHeight = 48;
-        final int pad = 3;
+        final float minSize       = Cast.dpToPx(45);
+        final float maxSize       = Cast.dpToPx(80);
+        final float topElemHeight = Cast.dpToPx(40);
+        final float pad           = Cast.dpToPx(2);
         assert (topElemHeight <= minSize);
 
         double size = Math.min(newSize.height, newSize.width);
         double size1 = size/7;
-        double wh = Math.min(Math.max(minSize, size1), 100); // TODO: DPI dependency
-        viewModel.getMosaicGroupDS().setImageSize(new SizeDouble(wh, wh));
-        viewModel.getMosaicSkillDS().setImageSize(new SizeDouble(wh, wh));
+        double wh = Math.min(Math.max(minSize, size1), maxSize);
 
-        viewModel.getMosaicGroupDS().getHeader().setSize(new SizeDouble(wh, topElemHeight));
-        viewModel.getMosaicSkillDS().getHeader().setSize(new SizeDouble(wh, topElemHeight));
-        viewModel.getMosaicGroupDS().getHeader().setPadding(new BoundDouble(pad, pad, wh - topElemHeight + pad, pad)); // left margin
-        viewModel.getMosaicSkillDS().getHeader().setPadding(new BoundDouble(pad, pad, wh - topElemHeight + pad, pad)); // left margin
+        SizeDouble sizeItem = new SizeDouble(wh, wh);
+        viewModel.getMosaicGroupDS().setImageSize(sizeItem);
+        viewModel.getMosaicSkillDS().setImageSize(sizeItem);
+
+        SizeDouble sizeHeader = new SizeDouble(wh, topElemHeight);
+        viewModel.getMosaicGroupDS().getHeader().setSize(sizeHeader);
+        viewModel.getMosaicSkillDS().getHeader().setSize(sizeHeader);
+
+        BoundDouble padHeader = new BoundDouble(pad, pad, wh - topElemHeight + pad, pad); // left margin
+        viewModel.getMosaicGroupDS().getHeader().setPadding(padHeader);
+        viewModel.getMosaicSkillDS().getHeader().setPadding(padHeader);
 
         double whBurger = topElemHeight / 2 + Math.min(topElemHeight / 2 - pad, Math.max(0, (wh - 1.5 * topElemHeight)));
         BoundDouble padBurger = new BoundDouble(wh - whBurger, topElemHeight - whBurger, pad, pad);
         viewModel.getMosaicGroupDS().getHeader().setPaddingBurgerMenu(padBurger); // right-bottom margin
         viewModel.getMosaicSkillDS().getHeader().setPaddingBurgerMenu(padBurger); // right-bottom margin
+
+        LoggerSimple.put("< MainActivity::onActivitySizeChanged: " +
+                "sizeItem={0}, " +
+                "sizeHeader={1}/{4}, " +
+                "padHeader={2}, " +
+                "padBurger={3}",
+                sizeItem, sizeHeader, padHeader, padBurger,
+                viewModel.getMosaicGroupDS().getHeader().getSize()
+        );
     }
 
 }

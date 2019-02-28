@@ -20,9 +20,9 @@
 
         <!-- left main menu -->
         <LinearLayout
-            app:layout_mainMenuWidth="@{viewModel.mosaicGroupDS.imageSize}"
-            android:layout_width="120dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            app:layout_mainMenuWidth="@{viewModel.mosaicGroupDS.imageSize}"
             android:orientation="vertical">
 
             <!-- menu part of mosaic group -->
@@ -35,29 +35,43 @@
                 <!-- mosaic group header -->
                 <LinearLayout
                     android:id="@+id/panelMosaicGroupHeader"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@android:drawable/btn_default"
+                    app:layout_sizeToHeight="@{viewModel.mosaicGroupDS.header.size}"
+                    android:orientation="horizontal"
+                    android:layout_margin="0dp"
+                    android:padding="0dp"
+                    android:background="@color/SystemChromeMediumColorLight"
                     android:clickable="true"
-                    android:orientation="horizontal">
+                    android:onClick="onMosaicGroupHeaderClick"
+                >
 
-                    <Button
+                    <ImageView
                         android:id="@+id/bttnMosaicGroupHeader"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_margin="1dp"
-                        android:drawableStart="@android:drawable/ic_menu_rotate"
-                        android:onClick="onMosaicGroupHeaderClick"
-                        app:headerImage="@{viewModel.mosaicGroupDS.header.image}"
-                        app:layout_sizeToHight="@{viewModel.mosaicGroupDS.header.size}"
-                        app:layout_sizeToWidth="@{viewModel.mosaicGroupDS.header.size}"/>
-
-                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:textSize="17dp"
-                        android:layout_margin="5dp"
+                        android:layout_margin="1dp"
+                        android:padding="0dp"
+                        android:scaleType="fitCenter"
+                        android:imageBitmap="@{viewModel.mosaicGroupDS.header.image}"
+                        app:layout_sizeToHeight="@{viewModel.mosaicGroupDS.header.size}"
+                        app:layout_sizeToWidth="@{viewModel.mosaicGroupDS.header.size}"
+                        android:layout_gravity="center"
+                        tools:src="@android:drawable/progress_indeterminate_horizontal" />
+
+                    <TextView
+                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical|center"
+                        android:maxLines="1"
+                        android:textSize="15sp"
+                        android:layout_marginLeft="12px"
+                        android:layout_marginTop="6px"
+                        android:layout_marginRight="0px"
+                        android:layout_marginBottom="6px"
+                        android:padding="0dp"
+                        android:textStyle="bold"
                         android:text="@string/mosaics" />
                 </LinearLayout>
 
@@ -66,7 +80,8 @@
                     android:id="@+id/rvMosaicGroupItems"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
+                    android:layout_margin="0px"
+                    android:padding="0dp"
                     android:indeterminate="true"
                     tools:listitem="@layout/mosaic_group_item" />
             </LinearLayout>

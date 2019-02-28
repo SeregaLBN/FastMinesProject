@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
+import android.graphics.Rect;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -47,6 +48,12 @@ abstract class MosaicSkillOrGroupView<TImage, TImageModel extends AnimatedImageM
             if (!bkClr.isTransparent())
                 g.drawColor(Cast.toColor(bkClr));
         }
+
+        Rect rc = new Rect(0,0, (int)getModel().getSize().width, (int)getModel().getSize().height);
+        g.drawRect(rc, new Paint(Paint.ANTI_ALIAS_FLAG) {{
+            this.setStyle(Paint.Style.STROKE);
+            setStrokeWidth(1.5f);
+            setColor(android.graphics.Color.RED);}});
 
         float bw = (float)m.getBorderWidth();
         boolean needDrawPerimeterBorder = (!m.getBorderColor().isTransparent() && (bw > 0));
