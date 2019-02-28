@@ -22,11 +22,16 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import fmg.android.app.databinding.MainActivityBinding;
 import fmg.android.app.presentation.MainMenuViewModel;
+import fmg.android.utils.AsyncRunner;
 import fmg.android.utils.Cast;
 import fmg.android.utils.StaticInitializer;
+import fmg.common.Color;
 import fmg.common.LoggerSimple;
 import fmg.common.geom.BoundDouble;
+import fmg.common.geom.DoubleExt;
 import fmg.common.geom.SizeDouble;
+import fmg.common.geom.util.FigureHelper;
+import fmg.core.img.AnimatedImageModel;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -58,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
 
 //        Intent intent = new Intent(this, DemoActivity.class);
 //        startActivity(intent);
+
+        ApplyViewColorSmoothTransition(binding.panelMosaicGroupHeader, viewModel.getMosaicGroupDS().getHeader().getEntity().getModel());
     }
 
     @Override
@@ -74,6 +81,58 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void onMenuMosaicGroupItemClick(View view, int position) {
+    }
+
+    private static void ApplyViewColorSmoothTransition(View view, AnimatedImageModel model) {
+        int[] flag = { 0 };
+        Color clrFrom = model.getBackgroundColor(); //Color.Coral;
+        Color clrTo = Color.BlueViolet();
+        long fullTimeMsec = 1500, repeatTimeMsec = 100;
+        double[] currStepAngle = { 0 };
+        double deltaStepAngle = 360.0 * repeatTimeMsec / fullTimeMsec;
+        view.setOnCapturedPointerListener((ev, ev3) -> {
+            flag[0] = 1; // start entered
+            Runnable r = () -> {
+                Color clrCurr;
+                if (currStepAngle[0] >= 360) {
+                    flag[0] = 0; // stop
+                    clrCurr = clrTo;
+                } else {
+                    currStepAngle[0] += deltaStepAngle;
+                    double sin = FigureHelper.toRadian(Math.sin(currStepAngle[0] / 4));
+                    clrCurr = new Color((byte)(clrFrom.getA() + sin * (clrTo.getA() - clrFrom.getA())),
+                            (byte)(clrFrom.getR() + sin * (clrTo.getR() - clrFrom.getR())),
+                            (byte)(clrFrom.getG() + sin * (clrTo.getG() - clrFrom.getG())),
+                            (byte)(clrFrom.getB() + sin * (clrTo.getB() - clrFrom.getB())));
+                }
+                model.setBackgroundColor(clrCurr);
+                view.setBackgroundColor(Cast.toColor(clrCurr));
+            };
+            AsyncRunner.RepeatNoWait(r, repeatTimeMsec, () -> flag[0] != 1);
+
+            return false;
+        });
+        /** /
+        view.PointerExited += (s, ev3) => {
+            flag = 2; // start exited
+            Action r = () => {
+                Color clrCurr;
+                if (currStepAngle <= 0) {
+                    flag = 0; // stop
+                    clrCurr = clrFrom;
+                } else {
+                    currStepAngle -= deltaStepAngle;
+                    var cos = Math.Cos((currStepAngle / 4).ToRadian());
+                    clrCurr = new Color((byte)(clrTo.A - (1 - cos * (clrFrom.A - clrTo.A))),
+                            (byte)(clrTo.R - (1 - cos * (clrFrom.R - clrTo.R))),
+                            (byte)(clrTo.G - (1 - cos * (clrFrom.G - clrTo.G))),
+                            (byte)(clrTo.B - (1 - cos * (clrFrom.B - clrTo.B))));
+                }
+                model.BackgroundColor = clrCurr;
+            };
+            r.RepeatNoWait(TimeSpan.FromMilliseconds(repeatTimeMsec), () => flag != 2);
+        };
+        /**/
     }
 
     private void onGlobalLayoutListener() {
