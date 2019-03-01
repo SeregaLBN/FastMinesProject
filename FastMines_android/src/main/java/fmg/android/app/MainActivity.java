@@ -132,11 +132,12 @@ public class MainActivity extends AppCompatActivity {
                         clrCurr = clrFrom;
                         LoggerSimple.put("< ApplyViewColorSmoothTransition: frm={0}", clrFrom);
                     } else {
-                        double cos = Math.cos(FigureHelper.toRadian(currStepAngle[0] / 4));
-                        clrCurr = new Color((int)(clrTo.getA() - (1 - cos * (clrFrom.getA() - clrTo.getA()))),
-                                            (int)(clrTo.getR() - (1 - cos * (clrFrom.getR() - clrTo.getR()))),
-                                            (int)(clrTo.getG() - (1 - cos * (clrFrom.getG() - clrTo.getG()))),
-                                            (int)(clrTo.getB() - (1 - cos * (clrFrom.getB() - clrTo.getB()))));
+                        double cos = //Math.cos(FigureHelper.toRadian(currStepAngle[0] / 4));
+                                   1 - Math.sin(FigureHelper.toRadian(currStepAngle[0] / 4));
+                        clrCurr = new Color((int)(clrTo.getA() + cos * (clrFrom.getA() - clrTo.getA())),
+                                            (int)(clrTo.getR() + cos * (clrFrom.getR() - clrTo.getR())),
+                                            (int)(clrTo.getG() + cos * (clrFrom.getG() - clrTo.getG())),
+                                            (int)(clrTo.getB() + cos * (clrFrom.getB() - clrTo.getB())));
                     }
                 }
 //                LoggerSimple.put("  ApplyViewColorSmoothTransition: clr={0}", clrCurr);
