@@ -46,6 +46,7 @@
                     android:tooltipText="@{viewModel.mosaicGroupDS.unicodeChars}"
                 >
                     <!--
+                    android:background="@drawable/pressed_layout"
                     android:onClick="onMosaicGroupHeaderClick"
                     -->
 

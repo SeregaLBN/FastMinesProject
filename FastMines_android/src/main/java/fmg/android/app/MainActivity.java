@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static void ApplyViewColorSmoothTransition(View view, AnimatedImageModel model) {
         int[] flag = { 0 };
-        Color clrFrom = Cast.toColor(((ColorDrawable)view.getBackground()).getColor());//model.getBackgroundColor(); //Color.Coral;
+        Color clrFrom = model.getBackgroundColor(); //Cast.toColor(((ColorDrawable)view.getBackground()).getColor());//Color.Coral;
         Color clrTo = Color.BlueViolet();
         long fullTimeMsec = 350, repeatTimeMsec = 20;
         double[] currStepAngle = { 0 };
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 //                LoggerSimple.put("  ApplyViewColorSmoothTransition: clr={0}", clrCurr);
                 model.setBackgroundColor(clrCurr);
-                view.setBackgroundColor(Cast.toColor(clrCurr));
+//                view.setBackgroundColor(Cast.toColor(clrCurr));
             };
             LoggerSimple.put("> ApplyViewColorSmoothTransition: frm={0}", clrFrom);
             AsyncRunner.Repeat(r, repeatTimeMsec, () -> flag[0] == 0);
