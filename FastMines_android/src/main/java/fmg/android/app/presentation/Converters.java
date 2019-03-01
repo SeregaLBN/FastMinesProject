@@ -67,10 +67,4 @@ public final class Converters {
 //        bttn.setImageDrawable(img);
 //    }
 
-    @BindingAdapter("tooltip")
-    public static void setTooltip(View view, String hint) {
-        //view.setTooltipText(hint);
-        TooltipCompat.setTooltipText(view, hint);
-    }
-
 }
