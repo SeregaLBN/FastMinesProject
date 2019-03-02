@@ -102,50 +102,47 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, "onMenuMosaicGroupItemClick " + position, Toast.LENGTH_LONG).show();
     }
 
+
     private static void ApplyViewColorSmoothTransition(View view, AnimatedImageModel model) {
-        int[] flag = { 0 };
-        Color clrFrom = model.getBackgroundColor(); //Cast.toColor(((ColorDrawable)view.getBackground()).getColor());//Color.Coral;
-        Color clrTo = Color.BlueViolet();
-        long fullTimeMsec = 350, repeatTimeMsec = 20;
+        int[] dir = { 0 }; // direction smooth transition (0 - exit; 1 - forward; -1 - reverse)
+        Color clrStart = model.getBackgroundColor(); //Cast.toColor(((ColorDrawable)view.getBackground()).getColor());//Color.Coral;
+        Color clrStop = Color.BlueViolet();
+        long fullTimeMsec = 250, repeatTimeMsec = 10;
         double[] currStepAngle = { 0 };
         double deltaStepAngle = 360.0 * repeatTimeMsec / fullTimeMsec;
         Runnable handler= () -> {
             Runnable r = () -> {
+                assert dir[0] != 0;
+                if (dir[0] == 0)
+                    return;
+                boolean forward = dir[0] == 1;
+                Color clrFrom = forward ? clrStart : clrStop;
+                Color clrTo   = forward ? clrStop  : clrStart;
                 Color clrCurr;
-                if (flag[0] == 1) {
-                    currStepAngle[0] += deltaStepAngle;
-                    if (currStepAngle[0] >= 360) {
-                        flag[0] = 2;  // start exited
-                        clrCurr = clrTo;
-                        LoggerSimple.put("+ ApplyViewColorSmoothTransition:  to={0}", clrTo);
-                    } else {
-                        double sin = Math.sin(FigureHelper.toRadian(currStepAngle[0] / 4));
-                        clrCurr = new Color((int)(clrFrom.getA() + sin * (clrTo.getA() - clrFrom.getA())),
-                                            (int)(clrFrom.getR() + sin * (clrTo.getR() - clrFrom.getR())),
-                                            (int)(clrFrom.getG() + sin * (clrTo.getG() - clrFrom.getG())),
-                                            (int)(clrFrom.getB() + sin * (clrTo.getB() - clrFrom.getB())));
-                    }
+                currStepAngle[0] += dir[0] * deltaStepAngle;
+                if (forward ? (currStepAngle[0] >= 360)
+                            : (currStepAngle[0] <= 0))
+                {
+                    dir[0] = forward ? -1 // forward direction smooth transition.
+                                     : 0; // exit smooth transition
+                    clrCurr = clrTo;
+//                    LoggerSimple.put("{0} ApplyViewColorSmoothTransition: {1}={2}", forward ? "+" : "<", forward ? "  to" : "from", clrCurr);
                 } else {
-                    currStepAngle[0] -= deltaStepAngle;
-                    if (currStepAngle[0] <= 0) {
-                        flag[0] = 0;  // stop
-                        clrCurr = clrFrom;
-                        LoggerSimple.put("< ApplyViewColorSmoothTransition: frm={0}", clrFrom);
-                    } else {
-                        double cos = //Math.cos(FigureHelper.toRadian(currStepAngle[0] / 4));
-                                   1 - Math.sin(FigureHelper.toRadian(currStepAngle[0] / 4));
-                        clrCurr = new Color((int)(clrTo.getA() + cos * (clrFrom.getA() - clrTo.getA())),
-                                            (int)(clrTo.getR() + cos * (clrFrom.getR() - clrTo.getR())),
-                                            (int)(clrTo.getG() + cos * (clrFrom.getG() - clrTo.getG())),
-                                            (int)(clrTo.getB() + cos * (clrFrom.getB() - clrTo.getB())));
-                    }
+                    double rad = FigureHelper.toRadian(currStepAngle[0] / 4);
+                    double koef = forward ? Math.sin(rad)
+                                          : //Math.cos(rad);
+                                            1 - Math.sin(rad);
+                    clrCurr = new Color((int)(clrFrom.getA() + koef * (clrTo.getA() - clrFrom.getA())),
+                                        (int)(clrFrom.getR() + koef * (clrTo.getR() - clrFrom.getR())),
+                                        (int)(clrFrom.getG() + koef * (clrTo.getG() - clrFrom.getG())),
+                                        (int)(clrFrom.getB() + koef * (clrTo.getB() - clrFrom.getB())));
                 }
 //                LoggerSimple.put("  ApplyViewColorSmoothTransition: clr={0}", clrCurr);
                 model.setBackgroundColor(clrCurr);
 //                view.setBackgroundColor(Cast.toColor(clrCurr));
             };
-            LoggerSimple.put("> ApplyViewColorSmoothTransition: frm={0}", clrFrom);
-            AsyncRunner.Repeat(r, repeatTimeMsec, () -> flag[0] == 0);
+//            LoggerSimple.put("> ApplyViewColorSmoothTransition: strt={0}", clrStart);
+            AsyncRunner.Repeat(r, repeatTimeMsec, () -> dir[0] == 0);
         };
         /** /
         Runnable pointerEntered = () -> {
@@ -161,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
             return false;
         });
         /**/
-        flag[0] = 1; // start entered
+        dir[0] = 1; // forward direction smooth transition
         handler.run();
     }
 
