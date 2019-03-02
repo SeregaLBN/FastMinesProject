@@ -1,36 +1,25 @@
 package fmg.android.app;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.res.Resources;
-import android.databinding.Bindable;
-import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
-import android.databinding.Observable;
-import android.databinding.ObservableField;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.HashMap;
+import java.util.Map;
 
 import fmg.android.app.databinding.MainActivityBinding;
 import fmg.android.app.presentation.MainMenuViewModel;
+import fmg.android.app.presentation.SmoothHelper;
 import fmg.android.utils.AsyncRunner;
 import fmg.android.utils.Cast;
 import fmg.android.utils.StaticInitializer;
 import fmg.common.Color;
 import fmg.common.LoggerSimple;
 import fmg.common.geom.BoundDouble;
-import fmg.common.geom.DoubleExt;
 import fmg.common.geom.SizeDouble;
 import fmg.common.geom.util.FigureHelper;
 import fmg.core.img.AnimatedImageModel;
@@ -69,8 +58,6 @@ public class MainActivity extends AppCompatActivity {
 
         binding.rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(this::onGlobalLayoutListener);
 
-//        ApplyViewColorSmoothTransition(binding.panelMosaicGroupHeader, viewModel.getMosaicGroupDS().getHeader().getEntity().getModel());
-
 //        Intent intent = new Intent(this, DemoActivity.class);
 //        startActivity(intent);
     }
@@ -83,14 +70,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void onMosaicGroupHeaderClick(View v) {
-        ApplyViewColorSmoothTransition(v, viewModel.getMosaicGroupDS().getHeader().getEntity().getModel());
+        SmoothHelper.runColorSmoothTransition(v, viewModel.getMosaicGroupDS().getHeader().getEntity().getModel());
         Toast.makeText(this, "onMosaicGroupHeaderClick", Toast.LENGTH_LONG).show();
-        // does something very interesting
+
 //        int s = 100 + ThreadLocalRandom.current().nextInt(100);
 //        viewModel.getMosaicGroupDS().setImageSize(new SizeDouble(s, s));
     }
 
     void onMosaicSkillHeaderClick(View v) {
+        SmoothHelper.runColorSmoothTransition(v, viewModel.getMosaicSkillDS().getHeader().getEntity().getModel());
         Toast.makeText(this, "onMosaicSkillHeaderClick", Toast.LENGTH_LONG).show();
     }
 
@@ -102,65 +90,6 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, "onMenuMosaicGroupItemClick " + position, Toast.LENGTH_LONG).show();
     }
 
-
-    private static void ApplyViewColorSmoothTransition(View view, AnimatedImageModel model) {
-        int[] dir = { 0 }; // direction smooth transition (0 - exit; 1 - forward; -1 - reverse)
-        Color clrStart = model.getBackgroundColor(); //Cast.toColor(((ColorDrawable)view.getBackground()).getColor());//Color.Coral;
-        Color clrStop = Color.BlueViolet();
-        long fullTimeMsec = 250, repeatTimeMsec = 10;
-        double[] currStepAngle = { 0 };
-        double deltaStepAngle = 360.0 * repeatTimeMsec / fullTimeMsec;
-        Runnable handler= () -> {
-            Runnable r = () -> {
-                assert dir[0] != 0;
-                if (dir[0] == 0)
-                    return;
-                boolean forward = dir[0] == 1;
-                Color clrFrom = forward ? clrStart : clrStop;
-                Color clrTo   = forward ? clrStop  : clrStart;
-                Color clrCurr;
-                currStepAngle[0] += dir[0] * deltaStepAngle;
-                if (forward ? (currStepAngle[0] >= 360)
-                            : (currStepAngle[0] <= 0))
-                {
-                    dir[0] = forward ? -1 // forward direction smooth transition.
-                                     : 0; // exit smooth transition
-                    clrCurr = clrTo;
-//                    LoggerSimple.put("{0} ApplyViewColorSmoothTransition: {1}={2}", forward ? "+" : "<", forward ? "  to" : "from", clrCurr);
-                } else {
-                    double rad = FigureHelper.toRadian(currStepAngle[0] / 4);
-                    double koef = forward ? Math.sin(rad)
-                                          : //Math.cos(rad);
-                                            1 - Math.sin(rad);
-                    clrCurr = new Color((int)(clrFrom.getA() + koef * (clrTo.getA() - clrFrom.getA())),
-                                        (int)(clrFrom.getR() + koef * (clrTo.getR() - clrFrom.getR())),
-                                        (int)(clrFrom.getG() + koef * (clrTo.getG() - clrFrom.getG())),
-                                        (int)(clrFrom.getB() + koef * (clrTo.getB() - clrFrom.getB())));
-                }
-//                LoggerSimple.put("  ApplyViewColorSmoothTransition: clr={0}", clrCurr);
-                model.setBackgroundColor(clrCurr);
-//                view.setBackgroundColor(Cast.toColor(clrCurr));
-            };
-//            LoggerSimple.put("> ApplyViewColorSmoothTransition: strt={0}", clrStart);
-            AsyncRunner.Repeat(r, repeatTimeMsec, () -> dir[0] == 0);
-        };
-        /** /
-        Runnable pointerEntered = () -> {
-            flag[0] = 1; // start entered
-            handler.run();
-        };
-        Runnable pointerExited = () -> {
-            flag[0] = 2;
-            handler.run();
-        };
-        view.setOnCapturedPointerListener((ev, ev3) -> {
-            pointerEntered.run();
-            return false;
-        });
-        /**/
-        dir[0] = 1; // forward direction smooth transition
-        handler.run();
-    }
 
     private void onGlobalLayoutListener() {
         SizeDouble newSize = new SizeDouble(binding.rootLayout.getWidth(), binding.rootLayout.getHeight());
