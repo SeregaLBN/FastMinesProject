@@ -2,11 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
 using Avalonia.Animation;
-using fmg.core.img;
 
 namespace fmg.ava.img {
 
-    public class Animator : IAnimator, IDisposable {
+    public class Animator : fmg.core.img.IAnimator, IDisposable {
 
         private class SubscribeInfo {
             public bool active = true;    // enabled?
@@ -15,6 +14,7 @@ namespace fmg.ava.img {
         }
         private readonly IDisposable _unsubscribe;
         private readonly IDictionary<object /* subscriber */, SubscribeInfo> _subscribers;
+        private readonly Animatable animatable;
 
         private static Animator _singleton;
         public static Animator Singleton { get { // not synchronized. since should work only in the thread of the UI.
@@ -24,8 +24,11 @@ namespace fmg.ava.img {
         } }
 
         private Animator() {
-           _subscribers = new Dictionary<object, SubscribeInfo>();
-           _unsubscribe = Animate.Timer.Subscribe(
+            _subscribers = new Dictionary<object, SubscribeInfo>();
+            animatable = new Animatable {
+                Clock = new Clock()
+            };
+            _unsubscribe = animatable.Clock.Subscribe(
                 value => {
                     var currentTime = DateTime.Now;
                     foreach (var item in _subscribers) {
@@ -41,8 +44,9 @@ namespace fmg.ava.img {
 
         public void Subscribe(object subscriber, Action<TimeSpan /* time from start subscribe */> subscriberCallbackMethod) {
             if (!_subscribers.ContainsKey(subscriber)) {
-                var info = new SubscribeInfo();
-                info.callback = subscriberCallbackMethod;
+                var info = new SubscribeInfo {
+                    callback = subscriberCallbackMethod
+                };
                 _subscribers.Add(subscriber, info);
             } else {
                 var info = _subscribers[subscriber];
@@ -66,6 +70,7 @@ namespace fmg.ava.img {
         public void Dispose() {
             _unsubscribe.Dispose();
             _subscribers.Clear();
+            animatable.Clock = null;
         }
 
     }

@@ -53,7 +53,7 @@ namespace Test.FastMines.Ava.Images {
         }
 
         private void InitializeComponent() {
-            AvaloniaXamlLoaderPortableXaml.Load(this);
+            AvaloniaXamlLoader.Load(this);
 
             IControl imgCtrl = ((StackPanel)Content).Children.First();
 

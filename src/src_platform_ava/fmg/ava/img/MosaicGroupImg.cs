@@ -55,7 +55,7 @@ namespace fmg.ava.img {
 
             protected override RenderTargetBitmap CreateImage() {
                 //var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-                return new RenderTargetBitmap((int)Size.Width, (int)Size.Height);
+                return new RenderTargetBitmap(new Avalonia.PixelSize((int)Size.Width, (int)Size.Height));
             }
 
             protected override void DrawBody() {
