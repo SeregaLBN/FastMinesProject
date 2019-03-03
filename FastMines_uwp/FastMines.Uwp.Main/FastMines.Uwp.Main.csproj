@@ -120,6 +120,7 @@
     <Compile Include="Presentation\Converters\ObjectToMosaicGroupDataItemConverter.cs" />
     <Compile Include="Presentation\Converters\ObjectToMosaicSkillDataItemConverter.cs" />
     <Compile Include="Presentation\MosaicsViewModel.cs" />
+    <Compile Include="Presentation\SmoothHelper.cs" />
     <Compile Include="SelectMosaicPage.xaml.cs">
       <DependentUpon>SelectMosaicPage.xaml</DependentUpon>
     </Compile>

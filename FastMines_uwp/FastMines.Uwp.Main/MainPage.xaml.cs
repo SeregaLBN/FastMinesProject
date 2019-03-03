@@ -13,10 +13,10 @@ using fmg.common.geom;
 using fmg.common.geom.util;
 using fmg.core.types;
 using fmg.core.mosaic;
-using fmg.core.img;
 using fmg.uwp.utils;
 using fmg.DataModel.Items;
 using fmg.DataModel.DataSources;
+using FastMines.Uwp.Main.Presentation;
 using MosaicsSkillImg = fmg.uwp.img.win2d.MosaicSkillImg.ControllerBitmap;
 using MosaicsGroupImg = fmg.uwp.img.win2d.MosaicGroupImg.ControllerBitmap;
 
@@ -66,8 +66,8 @@ namespace fmg {
                 ds.CurrentItem = ds.DataSource.First(x => x.MosaicType == InitData.MosaicType);
             }
 
-            ApplyButtonColorSmoothTransition(_bttnGroupPanel, ViewModel.MosaicGroupDS.Header.Entity.Model);
-            ApplyButtonColorSmoothTransition(_bttnSkillPanel, ViewModel.MosaicSkillDS.Header.Entity.Model);
+            SmoothHelper.ApplyButtonColorSmoothTransition(_bttnGroupPanel, ViewModel.MosaicGroupDS.Header.Entity.Model);
+            SmoothHelper.ApplyButtonColorSmoothTransition(_bttnSkillPanel, ViewModel.MosaicSkillDS.Header.Entity.Model);
         }
 
         private void OnPageUnloaded(object sender, RoutedEventArgs ev) {
@@ -244,56 +244,9 @@ namespace fmg {
             }
         }
 
-        private void ApplyButtonColorSmoothTransition(Button bttn, AnimatedImageModel model) {
-            int flag = 0;
-            var clrFrom = model.BackgroundColor; //Color.Coral;
-            var clrTo = Color.BlueViolet;
-            double fullTimeMsec = 1500, repeatTimeMsec = 100;
-            double currStepAngle = 0;
-            double deltaStepAngle = 360.0 / (fullTimeMsec / repeatTimeMsec);
-            bttn.PointerEntered += (s, ev3) => {
-                flag = 1; // start entered
-                Action r = () => {
-                    Color clrCurr;
-                    if (currStepAngle >= 360) {
-                        flag = 0; // stop
-                        clrCurr = clrTo;
-                    } else {
-                        currStepAngle += deltaStepAngle;
-                        var sin = Math.Sin((currStepAngle / 4).ToRadian());
-                        clrCurr = new Color((byte)(clrFrom.A + sin * (clrTo.A - clrFrom.A)),
-                                            (byte)(clrFrom.R + sin * (clrTo.R - clrFrom.R)),
-                                            (byte)(clrFrom.G + sin * (clrTo.G - clrFrom.G)),
-                                            (byte)(clrFrom.B + sin * (clrTo.B - clrFrom.B)));
-                    }
-                    model.BackgroundColor = clrCurr;
-                };
-                r.RepeatNoWait(TimeSpan.FromMilliseconds(repeatTimeMsec), () => flag != 1);
-            };
-            bttn.PointerExited += (s, ev3) => {
-                flag = 2; // start exited
-                Action r = () => {
-                    Color clrCurr;
-                    if (currStepAngle <= 0) {
-                        flag = 0; // stop
-                        clrCurr = clrFrom;
-                    } else {
-                        currStepAngle -= deltaStepAngle;
-                        var cos = Math.Cos((currStepAngle / 4).ToRadian());
-                        clrCurr = new Color((byte)(clrTo.A - (1 - cos * (clrFrom.A - clrTo.A))),
-                                            (byte)(clrTo.R - (1 - cos * (clrFrom.R - clrTo.R))),
-                                            (byte)(clrTo.G - (1 - cos * (clrFrom.G - clrTo.G))),
-                                            (byte)(clrTo.B - (1 - cos * (clrFrom.B - clrTo.B))));
-                    }
-                    model.BackgroundColor = clrCurr;
-                };
-                r.RepeatNoWait(TimeSpan.FromMilliseconds(repeatTimeMsec), () => flag != 2);
-            };
-        }
-
         private void OnClickBttnGroupPanel(object sender, RoutedEventArgs e) {
             if (_listViewMosaicGroupMenu.Visibility == Visibility.Collapsed) {
-                ApplySmoothVisibilityOverScale(typeof(EMosaicGroup), _listViewMosaicGroupMenu, Visibility.Visible);
+                SmoothHelper.ApplySmoothVisibilityOverScale(_listViewMosaicGroupMenu, Visibility.Visible, LvGroupHeight);
                 ViewModel.MosaicGroupDS.Header.Entity.BurgerMenuModel.Horizontal = false;
             } else {
                 _splitView.IsPaneOpen = !_splitView.IsPaneOpen;
@@ -301,83 +254,33 @@ namespace fmg {
             }
         }
 
+        double LvGroupHeight() => Enum.GetValues(typeof(EMosaicGroup)).Length * (ViewModel.MosaicGroupDS.ImageSize.Height + 2 /* padding */);
+        double LvSkillHeight() => Enum.GetValues(typeof(ESkillLevel )).Length * (ViewModel.MosaicSkillDS.ImageSize.Height + 2 /* padding */);
+
         private void OnClickBttnSkillPanel(object sender, RoutedEventArgs e) {
-            Func<bool> isVisibleScrollerFunc = () => !_scroller.ScrollableHeight.HasMinDiff(_scroller.VerticalOffset);
+            bool isVisibleScrollerFunc() => !_scroller.ScrollableHeight.HasMinDiff(_scroller.VerticalOffset);
             bool isVisibleScroller = isVisibleScrollerFunc();
             if (_listViewSkillLevelMenu.Visibility == Visibility.Collapsed) {
                 if (isVisibleScroller) {
-                    ApplySmoothVisibilityOverScale(typeof(ESkillLevel), _listViewSkillLevelMenu, Visibility.Visible);
-                    ApplySmoothVisibilityOverScale(typeof(EMosaicGroup), _listViewMosaicGroupMenu, Visibility.Collapsed);
+                    SmoothHelper.ApplySmoothVisibilityOverScale(_listViewSkillLevelMenu , Visibility.Visible  , LvSkillHeight);
+                    SmoothHelper.ApplySmoothVisibilityOverScale(_listViewMosaicGroupMenu, Visibility.Collapsed, LvGroupHeight);
                 } else {
-                    ApplySmoothVisibilityOverScale(typeof(ESkillLevel), _listViewSkillLevelMenu, Visibility.Visible,
+                    SmoothHelper.ApplySmoothVisibilityOverScale(_listViewSkillLevelMenu, Visibility.Visible, LvSkillHeight,
                         () => {
                             if (isVisibleScrollerFunc())
-                                ApplySmoothVisibilityOverScale(typeof(EMosaicGroup), _listViewMosaicGroupMenu, Visibility.Collapsed);
+                                SmoothHelper.ApplySmoothVisibilityOverScale(_listViewMosaicGroupMenu, Visibility.Collapsed, LvGroupHeight);
                         });
                 }
                 ViewModel.MosaicSkillDS.Header.Entity.Model.AnimeDirection = !ViewModel.MosaicSkillDS.Header.Entity.Model.AnimeDirection;
             } else {
                 if (isVisibleScroller && (_listViewMosaicGroupMenu.Visibility == Visibility.Visible)) {
-                    ApplySmoothVisibilityOverScale(typeof(EMosaicGroup), _listViewMosaicGroupMenu, Visibility.Collapsed);
+                    SmoothHelper.ApplySmoothVisibilityOverScale(_listViewMosaicGroupMenu, Visibility.Collapsed, LvGroupHeight);
                     ViewModel.MosaicGroupDS.Header.Entity.BurgerMenuModel.Horizontal = true;
                 } else {
-                    ApplySmoothVisibilityOverScale(typeof(ESkillLevel), _listViewSkillLevelMenu, Visibility.Collapsed);
+                    SmoothHelper.ApplySmoothVisibilityOverScale(_listViewSkillLevelMenu, Visibility.Collapsed, LvSkillHeight);
                     ViewModel.MosaicSkillDS.Header.Entity.Model.AnimeDirection = !ViewModel.MosaicSkillDS.Header.Entity.Model.AnimeDirection;
                 }
             }
-        }
-
-        /// <summary> set pseudo-async ListView.Visibility = target </summary>
-        private void ApplySmoothVisibilityOverScale(Type enumType, ListView lv, Visibility target, Action postAction = null) {
-            if (lv.Visibility == target)
-                return;
-
-            // save
-            var original = lv.RenderTransform;
-            if (original is CompositeTransform)
-                return; // already called for this list
-            var h0 = lv.Height;
-
-            var h1 = h0;
-            if (double.IsNaN(h1)) // WTF!
-                h1 = Enum.GetValues(enumType).Length * (ViewModel.MosaicGroupDS.ImageSize.Height + 2 /* padding */);
-
-            var transformer = new CompositeTransform();
-            lv.RenderTransform = transformer;
-
-            var toVisible = (target == Visibility.Visible);
-            if (toVisible) {
-                transformer.ScaleX = transformer.ScaleY = 0.01;
-                lv.Height = 0.1;        // first  - set min height
-                lv.Visibility = target; // second - set Visibility.Visible before smooting
-            } else {
-                transformer.ScaleX = transformer.ScaleY = 1;
-            }
-
-            var angle = 0.0;
-            Action r = () => {
-                angle += 12.345;
-
-                if (angle < 90) { // repeat?
-                    var scale = toVisible
-                        ? Math.Sin(angle.ToRadian())
-                        : Math.Cos(angle.ToRadian());
-                    transformer.ScaleX = transformer.ScaleY = scale;
-                    lv.Height = h1 * scale;
-                } else {
-                    // stop it
-
-                    if (!toVisible)
-                        lv.Visibility = target;          // first - set Visibility.Collapsed after smooting
-
-                    // restore
-                    lv.RenderTransform = original; // mark to stop repeat
-                    lv.Height = h0;                     // second - restore original height
-
-                    postAction?.Invoke();
-                }
-            };
-            r.RepeatNoWait(TimeSpan.FromMilliseconds(50), () => ReferenceEquals(lv.RenderTransform, original));
         }
 
     }

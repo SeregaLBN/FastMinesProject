@@ -12,6 +12,7 @@ import fmg.core.img.AnimatedImageModel;
 
 public final class SmoothHelper {
     private SmoothHelper() {}
+
     private static class SmoothContext {
         int dir = 0; // direction smooth transition (0 - exit; 1 - forward; -1 - reverse)
         Color clrStart;
@@ -55,8 +56,8 @@ public final class SmoothHelper {
             } else {
                 double rad = FigureHelper.toRadian(ctx.currentStepAngle / 4);
                 double koef = forward ? Math.sin(rad)
-                        : //Math.cos(rad);
-                        1 - Math.sin(rad);
+                                      : //Math.cos(rad);
+                                        1 - Math.sin(rad);
                 clrCurr = new Color((int)(clrFrom.getA() + koef * (clrTo.getA() - clrFrom.getA())),
                                     (int)(clrFrom.getR() + koef * (clrTo.getR() - clrFrom.getR())),
                                     (int)(clrFrom.getG() + koef * (clrTo.getG() - clrFrom.getG())),
