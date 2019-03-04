@@ -17,56 +17,43 @@ namespace FastMines.Uwp.Main.Presentation {
 
         public static void ApplyButtonColorSmoothTransition(Button bttn, AnimatedImageModel model) {
             int dir = 0; // direction smooth transition (0 - exit; 1 - forward; -1 - reverse)
+            const double fullTimeMsec = 700, repeatTimeMsec = 30;
+            const double deltaStepAngle = 360.0 / (fullTimeMsec / repeatTimeMsec);
+            double currStepAngle = 0;
             var clrStart = model.BackgroundColor; //Color.Coral;
             var clrStop = Color.BlueViolet;
-            double fullTimeMsec = 700, repeatTimeMsec = 30;
-            double currStepAngle = 0;
-            double deltaStepAngle = 360.0 / (fullTimeMsec / repeatTimeMsec);
 
-            bttn.PointerEntered += (s, ev3) => {
-                dir = 1; // start entered
-                Action r = () => {
-                    Color clrFrom = clrStart;
-                    Color clrTo = clrStop;
+
+            void handler(bool forward) {
+                dir = forward ? 1  // start entered
+                             : -1; // start exited
+                void run() {
+                    Color clrFrom = forward ? clrStart : clrStop;
+                    Color clrTo   = forward ? clrStop  : clrStart;
                     Color clrCurr;
-                    if (currStepAngle >= 360) {
+                    currStepAngle += dir * deltaStepAngle;
+                    if (forward ? (currStepAngle >= 360)
+                                : (currStepAngle <= 0))
+                    {
                         dir = 0; // stop
                         clrCurr = clrTo;
                     } else {
-                        currStepAngle += deltaStepAngle;
                         var rad = (currStepAngle / 4).ToRadian();
-                        var koef = Math.Sin(rad);
+                        var koef = forward ? Math.Sin(rad)
+                                           : //Math.Cos(rad);
+                                             1 - Math.Sin(rad);
                         clrCurr = new Color((byte)(clrFrom.A + koef * (clrTo.A - clrFrom.A)),
                                             (byte)(clrFrom.R + koef * (clrTo.R - clrFrom.R)),
                                             (byte)(clrFrom.G + koef * (clrTo.G - clrFrom.G)),
                                             (byte)(clrFrom.B + koef * (clrTo.B - clrFrom.B)));
                     }
                     model.BackgroundColor = clrCurr;
-                };
-                r.Repeat(TimeSpan.FromMilliseconds(repeatTimeMsec), () => dir != 1);
-            };
-            bttn.PointerExited += (s, ev3) => {
-                dir = -1; // start exited
-                Action r = () => {
-                    Color clrFrom = clrStop;
-                    Color clrTo = clrStart;
-                    Color clrCurr;
-                    if (currStepAngle <= 0) {
-                        dir = 0; // stop
-                        clrCurr = clrTo;
-                    } else {
-                        currStepAngle -= deltaStepAngle;
-                        var rad = (currStepAngle / 4).ToRadian();
-                        var koef = Math.Cos(rad);//1 - Math.Sin(rad); //
-                        clrCurr = new Color((byte)(clrFrom.A + koef * (clrTo.A - clrFrom.A)),
-                                            (byte)(clrFrom.R + koef * (clrTo.R - clrFrom.R)),
-                                            (byte)(clrFrom.G + koef * (clrTo.G - clrFrom.G)),
-                                            (byte)(clrFrom.B + koef * (clrTo.B - clrFrom.B)));
-                    }
-                    model.BackgroundColor = clrCurr;
-                };
-                r.Repeat(TimeSpan.FromMilliseconds(repeatTimeMsec), () => dir != -1);
-            };
+                }
+                ((Action)run).Repeat(TimeSpan.FromMilliseconds(repeatTimeMsec), () => forward ? (dir != 1) : (dir != -1));
+            }
+
+            bttn.PointerEntered += (s, ev3) => handler(true);
+            bttn.PointerExited  += (s, ev3) => handler(false);
         }
 
         /// <summary> set pseudo-async ListView.Visibility = target </summary>
@@ -97,7 +84,7 @@ namespace FastMines.Uwp.Main.Presentation {
             }
 
             var angle = 0.0;
-            Action r = () => {
+            void run() {
                 angle += 12.345;
 
                 if (angle < 90) { // repeat?
@@ -118,8 +105,8 @@ namespace FastMines.Uwp.Main.Presentation {
 
                     postAction?.Invoke();
                 }
-            };
-            r.Repeat(TimeSpan.FromMilliseconds(50), () => ReferenceEquals(lv.RenderTransform, original));
+            }
+            ((Action)run).Repeat(TimeSpan.FromMilliseconds(50), () => ReferenceEquals(lv.RenderTransform, original));
         }
 
     }
