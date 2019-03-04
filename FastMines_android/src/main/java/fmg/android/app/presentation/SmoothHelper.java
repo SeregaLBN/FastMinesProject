@@ -27,16 +27,18 @@ public final class SmoothHelper {
             ctx.clrStart = model.getBackgroundColor(); //Cast.toColor(((ColorDrawable)view.getBackground()).getColor());//Color.Coral;
             mapViewSmooth.put(view, ctx);
         }
-        final long fullTimeMSec = 250, repeatTimeMSec = 10;
+        final long fullTimeMSec = 150, repeatTimeMSec = 10;
         final double deltaStepAngle = 360.0 * repeatTimeMSec / fullTimeMSec;
         final Color clrStop = Color.BlueViolet();
 
         SmoothContext ctx = mapViewSmooth.get(view);
         boolean isExecuted = (ctx.dir != 0);
-        ctx.dir = 1; // forward direction smooth transition
-
         if (isExecuted) // if already executed
             return;
+
+//        ctx.dir = 1; // forward direction smooth transition
+        ctx.dir = -1; // backward direction smooth transition
+        ctx.currentStepAngle = 360;
 
         AsyncRunner.Repeat(() -> {
             assert ctx.dir != 0;
@@ -67,6 +69,5 @@ public final class SmoothHelper {
             //view.setBackgroundColor(Cast.toColor(clrCurr));
         }, repeatTimeMSec, () -> ctx.dir == 0);
     }
-
 
 }

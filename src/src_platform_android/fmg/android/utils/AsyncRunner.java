@@ -20,7 +20,7 @@ public final class AsyncRunner {
             run.run();
             RunWithDelay(run2[0], delayMs); // repeat
         };
-        RunWithDelay(run2[0], delayMs); // start
+        run2[0].run(); // start
     }
 
 }
