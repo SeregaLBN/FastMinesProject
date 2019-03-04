@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
 
         binding.rvMosaicGroupItems.setLayoutManager(new LinearLayoutManager(this));
         binding.rvMosaicSkillItems.setLayoutManager(new LinearLayoutManager(this));
+//        binding.rvMosaicGroupItems.setNestedScrollingEnabled(false);
+//        binding.rvMosaicSkillItems.setNestedScrollingEnabled(false);
         binding.rvMosaicGroupItems.setAdapter(menuMosaicGroupListViewAdapter = new MenuMosaicGroupListViewAdapter(viewModel.getMosaicGroupDS(), this::onMenuMosaicGroupItemClick));
         binding.rvMosaicSkillItems.setAdapter(menuMosaicSkillListViewAdapter = new MenuMosaicSkillListViewAdapter(viewModel.getMosaicSkillDS(), this::onMenuMosaicSkillItemClick));
 

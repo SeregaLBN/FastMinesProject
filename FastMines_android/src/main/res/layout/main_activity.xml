@@ -19,17 +19,20 @@
         tools:context=".MainActivity">
 
         <!-- left main menu -->
-        <LinearLayout
+        <ScrollView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
             app:layout_mainMenuWidth="@{viewModel.mosaicGroupDS.imageSize}"
             android:orientation="vertical">
 
             <!-- menu part of mosaic group -->
             <LinearLayout
-                android:layout_weight="0.4"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <!-- mosaic group header -->
@@ -80,23 +83,29 @@
                 </LinearLayout>
 
                 <!-- mosaic group items -->
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rvMosaicGroupItems"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="0px"
-                    android:padding="0dp"
-                    android:indeterminate="true"
-                    tools:listitem="@layout/mosaic_group_item" />
+                    android:layout_height="wrap_content">
+                    <!--https://stackoverflow.com/questions/27083091/recyclerview-inside-scrollview-is-not-working-->
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rvMosaicGroupItems"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="0px"
+                        android:padding="0dp"
+                        android:indeterminate="true"
+                        tools:listitem="@layout/mosaic_group_item" />
+                </RelativeLayout>
             </LinearLayout>
 
             <!-- ___________________________________________________________________________ -->
 
             <!-- menu part of mosaic skill -->
             <LinearLayout
-                android:layout_weight="0.6"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
                 android:orientation="vertical">
 
                 <!-- mosaic skill header -->
@@ -144,17 +153,24 @@
                 </LinearLayout>
 
                 <!-- mosaic Skill items -->
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rvMosaicSkillItems"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="0px"
-                    android:padding="0dp"
-                    android:indeterminate="true"
-                    tools:listitem="@layout/mosaic_skill_item" />
+                    android:layout_height="wrap_content" >
+                    <!--https://stackoverflow.com/questions/27083091/recyclerview-inside-scrollview-is-not-working-->
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rvMosaicSkillItems"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="0px"
+                        android:padding="0dp"
+                        android:indeterminate="true"
+                        tools:listitem="@layout/mosaic_skill_item" />
+                </RelativeLayout>
             </LinearLayout>
 
         </LinearLayout>
+        </ScrollView>
 
         <!-- select mosaic fragment -->
         <fragment class="fmg.android.app.SelectMosaicFragment"
