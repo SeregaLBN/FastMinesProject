@@ -16,49 +16,56 @@ namespace FastMines.Uwp.Main.Presentation {
     public static class SmoothHelper {
 
         public static void ApplyButtonColorSmoothTransition(Button bttn, AnimatedImageModel model) {
-            int flag = 0;
-            var clrFrom = model.BackgroundColor; //Color.Coral;
-            var clrTo = Color.BlueViolet;
-            double fullTimeMsec = 1500, repeatTimeMsec = 100;
+            int dir = 0; // direction smooth transition (0 - exit; 1 - forward; -1 - reverse)
+            var clrStart = model.BackgroundColor; //Color.Coral;
+            var clrStop = Color.BlueViolet;
+            double fullTimeMsec = 700, repeatTimeMsec = 30;
             double currStepAngle = 0;
             double deltaStepAngle = 360.0 / (fullTimeMsec / repeatTimeMsec);
+
             bttn.PointerEntered += (s, ev3) => {
-                flag = 1; // start entered
+                dir = 1; // start entered
                 Action r = () => {
+                    Color clrFrom = clrStart;
+                    Color clrTo = clrStop;
                     Color clrCurr;
                     if (currStepAngle >= 360) {
-                        flag = 0; // stop
+                        dir = 0; // stop
                         clrCurr = clrTo;
                     } else {
                         currStepAngle += deltaStepAngle;
-                        var sin = Math.Sin((currStepAngle / 4).ToRadian());
-                        clrCurr = new Color((byte)(clrFrom.A + sin * (clrTo.A - clrFrom.A)),
-                                            (byte)(clrFrom.R + sin * (clrTo.R - clrFrom.R)),
-                                            (byte)(clrFrom.G + sin * (clrTo.G - clrFrom.G)),
-                                            (byte)(clrFrom.B + sin * (clrTo.B - clrFrom.B)));
+                        var rad = (currStepAngle / 4).ToRadian();
+                        var koef = Math.Sin(rad);
+                        clrCurr = new Color((byte)(clrFrom.A + koef * (clrTo.A - clrFrom.A)),
+                                            (byte)(clrFrom.R + koef * (clrTo.R - clrFrom.R)),
+                                            (byte)(clrFrom.G + koef * (clrTo.G - clrFrom.G)),
+                                            (byte)(clrFrom.B + koef * (clrTo.B - clrFrom.B)));
                     }
                     model.BackgroundColor = clrCurr;
                 };
-                r.RepeatNoWait(TimeSpan.FromMilliseconds(repeatTimeMsec), () => flag != 1);
+                r.Repeat(TimeSpan.FromMilliseconds(repeatTimeMsec), () => dir != 1);
             };
             bttn.PointerExited += (s, ev3) => {
-                flag = 2; // start exited
+                dir = -1; // start exited
                 Action r = () => {
+                    Color clrFrom = clrStop;
+                    Color clrTo = clrStart;
                     Color clrCurr;
                     if (currStepAngle <= 0) {
-                        flag = 0; // stop
-                        clrCurr = clrFrom;
+                        dir = 0; // stop
+                        clrCurr = clrTo;
                     } else {
                         currStepAngle -= deltaStepAngle;
-                        var cos = Math.Cos((currStepAngle / 4).ToRadian());
-                        clrCurr = new Color((byte)(clrTo.A - (1 - cos * (clrFrom.A - clrTo.A))),
-                                            (byte)(clrTo.R - (1 - cos * (clrFrom.R - clrTo.R))),
-                                            (byte)(clrTo.G - (1 - cos * (clrFrom.G - clrTo.G))),
-                                            (byte)(clrTo.B - (1 - cos * (clrFrom.B - clrTo.B))));
+                        var rad = (currStepAngle / 4).ToRadian();
+                        var koef = Math.Cos(rad);//1 - Math.Sin(rad); //
+                        clrCurr = new Color((byte)(clrFrom.A + koef * (clrTo.A - clrFrom.A)),
+                                            (byte)(clrFrom.R + koef * (clrTo.R - clrFrom.R)),
+                                            (byte)(clrFrom.G + koef * (clrTo.G - clrFrom.G)),
+                                            (byte)(clrFrom.B + koef * (clrTo.B - clrFrom.B)));
                     }
                     model.BackgroundColor = clrCurr;
                 };
-                r.RepeatNoWait(TimeSpan.FromMilliseconds(repeatTimeMsec), () => flag != 2);
+                r.Repeat(TimeSpan.FromMilliseconds(repeatTimeMsec), () => dir != -1);
             };
         }
 
@@ -112,7 +119,7 @@ namespace FastMines.Uwp.Main.Presentation {
                     postAction?.Invoke();
                 }
             };
-            r.RepeatNoWait(TimeSpan.FromMilliseconds(50), () => ReferenceEquals(lv.RenderTransform, original));
+            r.Repeat(TimeSpan.FromMilliseconds(50), () => ReferenceEquals(lv.RenderTransform, original));
         }
 
     }

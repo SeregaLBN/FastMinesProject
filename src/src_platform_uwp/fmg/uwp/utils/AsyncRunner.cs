@@ -37,14 +37,14 @@ namespace fmg.uwp.utils {
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
-        public static void RepeatNoWait(this Action run, TimeSpan delay, Func<bool> cancelation) {
+        public static void Repeat(this Action run, TimeSpan delay, Func<bool> cancelation) {
             void run2() {
                 if (cancelation())
                     return;
                 run();
                 ((Action)run2).RunWithDelayNoWait(delay); // repeat
             }
-            ((Action)run2).RunWithDelayNoWait(delay); // start
+            run2(); // start
         }
 
     }

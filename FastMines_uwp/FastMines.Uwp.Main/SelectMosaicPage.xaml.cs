@@ -54,7 +54,7 @@ namespace fmg {
                     hsv.h += 10;
                     BorderColorStartBttn.Color = hsv.ToColor().ToWinColor();
                 };
-                run.RepeatNoWait(TimeSpan.FromMilliseconds(100), () => _closed);
+                run.Repeat(TimeSpan.FromMilliseconds(100), () => _closed);
             }
         }
 

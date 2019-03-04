@@ -82,7 +82,7 @@ namespace Test.FastMines.Uwp.Images {
                 hsv.h += 10;
                 applyColor(hsv.ToWinColor());
             };
-            run.RepeatNoWait(TimeSpan.FromMilliseconds(100), () => false);
+            run.Repeat(TimeSpan.FromMilliseconds(100), () => false);
         }
         /**/
 
