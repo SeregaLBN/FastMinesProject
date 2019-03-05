@@ -2,7 +2,6 @@ package fmg.android.app.presentation;
 
 import android.databinding.BindingAdapter;
 import android.graphics.Bitmap;
-import android.support.v7.widget.TooltipCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -12,35 +11,40 @@ import fmg.android.utils.Cast;
 import fmg.common.geom.SizeDouble;
 
 public final class Converters {
-
     private Converters() {}
 
+    public static void setViewWidth(View view, double width) {
+        ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+        layoutParams.width = (int)width;
+        view.setLayoutParams(layoutParams);
+    }
+
+    public static void setViewHeight(View view, double height) {
+        ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+        layoutParams.height = (int)height;
+        view.setLayoutParams(layoutParams);
+    }
 
     @BindingAdapter("layout_mainMenuWidth")
-    public static void setLayoutMainMenuWidth(View view, SizeDouble size) {
-        float additionDp = MainActivity.MenuIsFullWidth
-                ? MainActivity.MenuTextWidthDp + Cast.pxToDp(12) // vertical scrollbar width
-                : Cast.pxToDp(2);
+    public static void setLayoutMainMenuWidth(View view, MainMenuViewModel.SplitViewPane splitViewPane) {
+        float additionPx = splitViewPane.isOpen()
+                ? Cast.dpToPx(MainActivity.MenuTextWidthDp) + 12 // vertical scrollbar width
+                : Cast.dpToPx(2);
 
-        ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-        layoutParams.width = (int)(size.width + Cast.dpToPx(additionDp));
-        view.setLayoutParams(layoutParams);
+        SizeDouble size = splitViewPane.getImageSize();
+        setViewWidth(view, size.width + additionPx);
 //        LoggerSimple.put("Converters::setLayoutMainMenuWidth: size={0}, set layout.width={1} for {2}.id={3}", size, layoutParams.width, view.getClass().getSimpleName(), view.getId());
     }
 
     @BindingAdapter("layout_sizeToWidth")
     public static void setLayoutSizeToWidth(View view, SizeDouble size) {
-        ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-        layoutParams.width = (int)size.width;
-        view.setLayoutParams(layoutParams);
+        setViewWidth(view, size.width);
 //        LoggerSimple.put("Converters::setLayoutSizeToWidth: size={0}, set layout.width={1} for {2}.id={3}", size, layoutParams.width, view.getClass().getSimpleName(), view.getId());
     }
 
     @BindingAdapter("layout_sizeToHeight")
     public static void setLayoutSizeToHeight(View view, SizeDouble size) {
-        ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-        layoutParams.height = (int)size.height;
-        view.setLayoutParams(layoutParams);
+        setViewHeight(view, size.height);
 //        LoggerSimple.put("Converters::setLayoutSizeToHeight: size={0}, set layout.height={1} for {2}.id={3}", size, layoutParams.height, view.getClass().getSimpleName(), view.getId());
     }
 

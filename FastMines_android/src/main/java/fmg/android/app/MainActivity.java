@@ -2,32 +2,28 @@ package fmg.android.app;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
+import android.view.Window;
 import android.widget.Toast;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.function.Supplier;
 
 import fmg.android.app.databinding.MainActivityBinding;
 import fmg.android.app.presentation.MainMenuViewModel;
 import fmg.android.app.presentation.SmoothHelper;
-import fmg.android.utils.AsyncRunner;
 import fmg.android.utils.Cast;
 import fmg.android.utils.StaticInitializer;
-import fmg.common.Color;
-import fmg.common.LoggerSimple;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.common.geom.util.FigureHelper;
-import fmg.core.img.AnimatedImageModel;
+import fmg.core.types.EMosaicGroup;
+import fmg.core.types.ESkillLevel;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final int MenuTextWidthDp = 90; // dp
-    public static boolean MenuIsFullWidth = true;
 
     private MainActivityBinding binding;
     private MainMenuViewModel viewModel;
@@ -43,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         binding = DataBindingUtil.setContentView(this, R.layout.main_activity);
         viewModel = ViewModelProviders.of(this).get(MainMenuViewModel.class);
         binding.setViewModel(viewModel);
@@ -73,15 +71,53 @@ public class MainActivity extends AppCompatActivity {
 
     void onMosaicGroupHeaderClick(View v) {
         SmoothHelper.runColorSmoothTransition(v, viewModel.getMosaicGroupDS().getHeader().getEntity().getModel());
-        Toast.makeText(this, "onMosaicGroupHeaderClick", Toast.LENGTH_LONG).show();
 
-//        int s = 100 + ThreadLocalRandom.current().nextInt(100);
-//        viewModel.getMosaicGroupDS().setImageSize(new SizeDouble(s, s));
+        if (binding.rvMosaicGroupItems.getVisibility() == View.GONE) {
+            SmoothHelper.applySmoothVisibilityOverScale(binding.rvMosaicGroupItems, true, this::getLvGroupHeight, null);
+            viewModel.getMosaicGroupDS().getHeader().getEntity().getBurgerMenuModel().setHorizontal(false);
+        } else {
+            viewModel.setSplitViewPaneOpen(!viewModel.isSplitViewPaneOpen());
+            viewModel.getMosaicGroupDS().getHeader().getEntity().getModel().setAnimeDirection(
+                    !viewModel.getMosaicGroupDS().getHeader().getEntity().getModel().getAnimeDirection());
+        }
     }
+
+    double getLvGroupHeight() { return EMosaicGroup.values().length * (viewModel.getMosaicGroupDS().getImageSize().height + Cast.dpToPx(2) /* padding */); }
+    double getLvSkillHeight() { return ESkillLevel .values().length * (viewModel.getMosaicSkillDS().getImageSize().height + Cast.dpToPx(2) /* padding */); }
 
     void onMosaicSkillHeaderClick(View v) {
         SmoothHelper.runColorSmoothTransition(v, viewModel.getMosaicSkillDS().getHeader().getEntity().getModel());
-        Toast.makeText(this, "onMosaicSkillHeaderClick", Toast.LENGTH_LONG).show();
+
+        Supplier<Boolean> isVisibleScrollerFunc = () -> {
+            int viewHeight = binding.menuScroller.getMeasuredHeight();
+            int contentHeight = binding.menuScroller.getChildAt(0).getHeight();
+            boolean scrollable = (viewHeight - contentHeight < 0);
+            return scrollable;
+        };
+        boolean isVisibleScroller = isVisibleScrollerFunc.get();
+        if (binding.rvMosaicSkillItems.getVisibility() == View.GONE) {
+            if (isVisibleScroller) {
+                SmoothHelper.applySmoothVisibilityOverScale(binding.rvMosaicSkillItems, true , this::getLvSkillHeight, null);
+                SmoothHelper.applySmoothVisibilityOverScale(binding.rvMosaicGroupItems, false, this::getLvGroupHeight, null);
+            } else {
+                SmoothHelper.applySmoothVisibilityOverScale(binding.rvMosaicSkillItems, true, this::getLvSkillHeight,
+                        () -> {
+                            if (isVisibleScrollerFunc.get())
+                                SmoothHelper.applySmoothVisibilityOverScale(binding.rvMosaicGroupItems, false, this::getLvGroupHeight, null);
+                        });
+            }
+            viewModel.getMosaicSkillDS().getHeader().getEntity().getModel().setAnimeDirection(
+                    !viewModel.getMosaicSkillDS().getHeader().getEntity().getModel().getAnimeDirection());
+        } else {
+            if (isVisibleScroller && (binding.rvMosaicGroupItems.getVisibility() == View.VISIBLE)) {
+                SmoothHelper.applySmoothVisibilityOverScale(binding.rvMosaicGroupItems, false, this::getLvGroupHeight, null);
+                viewModel.getMosaicGroupDS().getHeader().getEntity().getBurgerMenuModel().setHorizontal(true);
+            } else {
+                SmoothHelper.applySmoothVisibilityOverScale(binding.rvMosaicSkillItems, false, this::getLvSkillHeight, null);
+                viewModel.getMosaicSkillDS().getHeader().getEntity().getModel().setAnimeDirection(
+                        !viewModel.getMosaicSkillDS().getHeader().getEntity().getModel().getAnimeDirection());
+            }
+        }
     }
 
     void onMenuMosaicSkillItemClick(View v, int position) {
@@ -102,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onActivitySizeChanged(SizeDouble newSize) {
-        LoggerSimple.put("> MainActivity::onActivitySizeChanged: newSize={0}", newSize);
+//        LoggerSimple.put("> MainActivity::onActivitySizeChanged: newSize={0}", newSize);
         final float minSize       = Cast.dpToPx(45);
         final float maxSize       = Cast.dpToPx(80);
         final float topElemHeight = Cast.dpToPx(40);
@@ -130,14 +166,14 @@ public class MainActivity extends AppCompatActivity {
         viewModel.getMosaicGroupDS().getHeader().setPaddingBurgerMenu(padBurger); // right-bottom margin
         viewModel.getMosaicSkillDS().getHeader().setPaddingBurgerMenu(padBurger); // right-bottom margin
 
-        LoggerSimple.put("< MainActivity::onActivitySizeChanged: " +
-                "sizeItem={0}, " +
-                "sizeHeader={1}/{4}, " +
-                "padHeader={2}, " +
-                "padBurger={3}",
-                sizeItem, sizeHeader, padHeader, padBurger,
-                viewModel.getMosaicGroupDS().getHeader().getSize()
-        );
+//        LoggerSimple.put("< MainActivity::onActivitySizeChanged: " +
+//                "sizeItem={0}, " +
+//                "sizeHeader={1}/{4}, " +
+//                "padHeader={2}, " +
+//                "padBurger={3}",
+//                sizeItem, sizeHeader, padHeader, padBurger,
+//                viewModel.getMosaicGroupDS().getHeader().getSize()
+//        );
     }
 
 }

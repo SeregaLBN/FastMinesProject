@@ -78,7 +78,7 @@ namespace FastMines.Uwp.Main.Presentation {
             if (toVisible) {
                 transformer.ScaleX = transformer.ScaleY = 0.01;
                 lv.Height = 0.1;        // first  - set min height
-                lv.Visibility = target; // second - set Visibility.Visible before smooting
+                lv.Visibility = target; // second - set Visibility.Visible before smoothing
             } else {
                 transformer.ScaleX = transformer.ScaleY = 1;
             }
@@ -97,7 +97,7 @@ namespace FastMines.Uwp.Main.Presentation {
                     // stop it
 
                     if (!toVisible)
-                        lv.Visibility = target;    // first - set Visibility.Collapsed after smooting
+                        lv.Visibility = target;    // first - set Visibility.Collapsed after smoothing
 
                     // restore
                     lv.RenderTransform = original; // mark to stop repeat
