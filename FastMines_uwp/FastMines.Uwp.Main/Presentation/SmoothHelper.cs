@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
 using fmg.common;
 using fmg.core.img;
 using fmg.common.geom.util;
 using fmg.uwp.utils;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
 
 namespace FastMines.Uwp.Main.Presentation {
 
@@ -90,7 +86,8 @@ namespace FastMines.Uwp.Main.Presentation {
                 if (angle < 90) { // repeat?
                     var scale = toVisible
                         ? Math.Sin(angle.ToRadian())
-                        : Math.Cos(angle.ToRadian());
+                        : //Math.Cos(angle.ToRadian());
+                          1 - Math.Sin(angle.ToRadian());
                     transformer.ScaleX = transformer.ScaleY = scale;
                     lv.Height = h1 * scale;
                 } else {

@@ -11,7 +11,6 @@ using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.uwp.utils.win2d;
-using Size = fmg.common.geom.Size;
 using Rect = Windows.Foundation.Rect;
 using FastMines.Uwp.BackgroundTasks;
 using MosaicsCanvasBmp = fmg.uwp.img.win2d.MosaicImg.CanvasBmp;
@@ -25,7 +24,7 @@ namespace fmg {
 
         private static ICanvasResourceCreator Rc => CanvasDevice.GetSharedDevice();
 
-        public static async void RegisterBackgroundTask() {
+        public static async Task RegisterBackgroundTask() {
             try {
                 var backgroundAccessStatus = await BackgroundExecutionManager.RequestAccessAsync();
                 if (backgroundAccessStatus == BackgroundAccessStatus.AllowedMayUseActiveRealTimeConnectivity ||
@@ -202,7 +201,7 @@ namespace fmg {
                     FastMinesTileUpdater.Location);
         }
 
-        public async static void OnBackgroundTaskCompleted(BackgroundTaskRegistration sender, BackgroundTaskCompletedEventArgs args) {
+        public static void OnBackgroundTaskCompleted(BackgroundTaskRegistration sender, BackgroundTaskCompletedEventArgs args) {
             //await RemakeXmlAnew();
         }
 

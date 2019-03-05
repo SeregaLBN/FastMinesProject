@@ -8,8 +8,8 @@ namespace fmg.core.img {
 
     public static class AnimatedImageModelConst {
 
-        public static readonly Color DefaultBkColor = Color.DarkOrange;
-        public static readonly Color DefaultForegroundColor = Color.Orchid; // Color.LightSeaGreen;
+        public static readonly Color DefaultBkColor = Color.DarkOrange; // Color.Coral; // 
+        public static readonly Color DefaultForegroundColor = Color.LightSeaGreen; // Color.Orchid; // 
         public const int DefaultImageSize = 100;
         public const int DefaultPadding = (int)(DefaultImageSize * 0.05); // 5%
 

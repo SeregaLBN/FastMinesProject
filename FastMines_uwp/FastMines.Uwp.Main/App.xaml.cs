@@ -12,6 +12,9 @@ using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.mosaic;
+using Windows.UI.ViewManagement;
+using fmg.core.img;
+using fmg.uwp.utils;
 
 namespace fmg {
 
@@ -44,6 +47,27 @@ namespace fmg {
                 //this.DebugSettings.EnableFrameRateCounter = true;
             }
 #endif
+
+
+            // you need to add a reference to the correspondent Extension:
+            //  * Windows Mobile Extensions for the UWP
+            //  * Windows Desktop Extensions for the UWP
+
+            //PC customization
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView")) {
+                var titleBar = ApplicationView.GetForCurrentView().TitleBar;
+                if (titleBar != null) {
+                    titleBar.BackgroundColor =
+                    titleBar.ButtonBackgroundColor = AnimatedImageModelConst.DefaultBkColor.ToWinColor();
+                }
+            }
+            //Mobile customization
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar")) {
+                var statusBar = StatusBar.GetForCurrentView();
+                if (statusBar != null)
+                    statusBar.BackgroundColor = AnimatedImageModelConst.DefaultBkColor.ToWinColor();
+            }
+
 
             Frame rootFrame = Window.Current.Content as Frame;
             // Do not repeat app initialization when the Window already has content,

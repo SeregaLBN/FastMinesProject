@@ -62,11 +62,13 @@ namespace fmg.DataModel.DataSources {
             var model = item.Entity.Model;
             model.Animated = selected;
             model.PolarLights = selected;
-            model.BorderColor = selected ? Color.Red : Color.Green;
+            model.BorderColor = selected ? Color.LawnGreen : Color.IndianRed;
             model.BackgroundColor = selected ? AnimatedImageModelConst.DefaultBkColor : MosaicDrawModelConst.DefaultBkColor;
             model.Padding = new BoundDouble(selected ? 5 : 15);
             if (!selected)
-                model.ForegroundColor = AnimatedImageModelConst.DefaultForegroundColor;
+                model.ForegroundColor = AnimatedImageModelConst.DefaultForegroundColor.Brighter();
+            else
+                model.ForegroundColor = Color.Orchid;
             //else {
             //    HSV hsv = new HSV(ImageModelConsts.DefaultForegroundColor);
             //    hsv.s = hsv.v = 100;
