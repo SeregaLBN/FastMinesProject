@@ -12,8 +12,8 @@ import fmg.common.notyfier.NotifyPropertyChanged;
 /** MVC: model. Common animated image characteristics. */
 public abstract class AnimatedImageModel implements IAnimatedModel {
 
-    public static final Color DefaultBkColor         = Color.DarkOrange();
-    public static final Color DefaultForegroundColor = Color.Orchid();
+    public static final Color DefaultBkColor         = Color.DarkOrange(); // Color.Coral(); //
+    public static final Color DefaultForegroundColor = Color.LightSeaGreen(); // Color.Orchid(); //
     public static final int   DefaultImageSize = 100;
     public static final int   DefaultPadding = (int)(DefaultImageSize * 0.05); // 5%
 

@@ -71,11 +71,11 @@ public class MosaicGroupDataSource extends BaseDataSource<
         MosaicGroupModel model = item.getEntity().getModel();
         model.setPolarLights(selected);
         model.setAnimated(selected);
-        model.setBorderColor(selected ? Color.Red() : Color.Green());
+        model.setBorderColor(selected ? Color.LawnGreen() : Color.IndianRed());
         model.setBackgroundColor(selected ? AnimatedImageModel.DefaultBkColor : MosaicDrawModel.DefaultBkColor);
         model.setPadding(new BoundDouble(selected ? 5 : 15));
         if (!selected)
-            model.setForegroundColor(AnimatedImageModel.DefaultForegroundColor);
+            model.setForegroundColor(AnimatedImageModel.DefaultForegroundColor.brighter());
 //        else {
 //            HSV hsv = new HSV(AnimatedImageModel.DefaultForegroundColor);
 //            hsv.s = hsv.v = 100;
