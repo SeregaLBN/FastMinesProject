@@ -16,7 +16,8 @@
         android:layout_height="match_parent"
         android:orientation="horizontal"
         android:id="@+id/rootLayout"
-        tools:context=".MainActivity">
+        tools:context=".MainActivity"
+        android:baselineAligned="false">
 
         <!-- left main menu -->
         <ScrollView
@@ -65,22 +66,23 @@
                         app:layout_sizeToHeight="@{viewModel.mosaicGroupDS.header.size}"
                         app:layout_sizeToWidth="@{viewModel.mosaicGroupDS.header.size}"
                         android:layout_gravity="center"
-                        tools:src="@android:drawable/progress_indeterminate_horizontal" />
+                        tools:src="@android:drawable/progress_indeterminate_horizontal"
+                        android:contentDescription="@string/mosaic_group_header" />
 
                     <TextView
                         android:layout_weight="1"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:gravity="center_vertical|center"
                         android:maxLines="1"
                         android:textSize="15sp"
-                        android:layout_marginLeft="12px"
-                        android:layout_marginTop="6px"
-                        android:layout_marginRight="0px"
-                        android:layout_marginBottom="6px"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginTop="1dp"
+                        android:layout_marginRight="3dp"
+                        android:layout_marginBottom="1dp"
                         android:padding="0dp"
                         android:textStyle="bold"
-                        android:text="@string/mosaics" />
+                        android:text="@string/mosaic_groups" />
                 </LinearLayout>
 
                 <!-- mosaic group items -->
@@ -135,19 +137,20 @@
                         app:layout_sizeToHeight="@{viewModel.mosaicSkillDS.header.size}"
                         app:layout_sizeToWidth="@{viewModel.mosaicSkillDS.header.size}"
                         android:layout_gravity="center"
-                        tools:src="@android:drawable/progress_indeterminate_horizontal" />
+                        tools:src="@android:drawable/progress_indeterminate_horizontal"
+                        android:contentDescription="@string/mosaic_skill_header" />
 
                     <TextView
                         android:layout_weight="1"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:gravity="center_vertical|center"
                         android:maxLines="1"
                         android:textSize="15sp"
-                        android:layout_marginLeft="12px"
-                        android:layout_marginTop="6px"
-                        android:layout_marginRight="0px"
-                        android:layout_marginBottom="6px"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginTop="1dp"
+                        android:layout_marginRight="3dp"
+                        android:layout_marginBottom="1dp"
                         android:padding="0dp"
                         android:textStyle="bold"
                         android:text="@string/skill" />

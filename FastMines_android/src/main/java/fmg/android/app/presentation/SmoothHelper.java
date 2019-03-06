@@ -134,11 +134,10 @@ public final class SmoothHelper {
                 .setDuration(0); // mark as called
 
         double h = calcHeight.get();
-        LoggerSimple.put("height=" + h);
+//        LoggerSimple.put("height=" + h);
         if (targetIsVisible) {
             Converters.setViewHeight(menuView, 0.1); // first  - set min height
             menuView.setVisibility(View.VISIBLE);           // second - set Visibility.Visible before smoothing
-        } else {
         }
 
         AsyncRunner.RunWithDelay(() -> {

@@ -9,7 +9,7 @@ import fmg.android.app.model.dataSource.MosaicGroupDataSource;
 import fmg.android.app.model.dataSource.MosaicSkillDataSource;
 import fmg.common.geom.SizeDouble;
 
-/** ViewModel for {@link fmg.android.app.SelectMosaicActivity} */
+/** ViewModel for {@link fmg.android.app.SelectMosaicFragment} */
 public class MosaicsViewModel extends ViewModel {
 
     private final MosaicDataSource mosaicDS = new MosaicDataSource();

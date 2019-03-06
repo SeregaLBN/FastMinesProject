@@ -23,7 +23,7 @@ import fmg.core.types.ESkillLevel;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final int MenuTextWidthDp = 90; // dp
+    public static final int MenuTextWidthDp = 95; // dp
 
     private MainActivityBinding binding;
     private MainMenuViewModel viewModel;

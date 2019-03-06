@@ -28,7 +28,7 @@ public final class Converters {
     @BindingAdapter("layout_mainMenuWidth")
     public static void setLayoutMainMenuWidth(View view, MainMenuViewModel.SplitViewPane splitViewPane) {
         float additionPx = splitViewPane.isOpen()
-                ? Cast.dpToPx(MainActivity.MenuTextWidthDp) + 12 // vertical scrollbar width
+                ? Cast.dpToPx(MainActivity.MenuTextWidthDp) + 0 // vertical scrollbar width
                 : Cast.dpToPx(2);
 
         SizeDouble size = splitViewPane.getImageSize();
