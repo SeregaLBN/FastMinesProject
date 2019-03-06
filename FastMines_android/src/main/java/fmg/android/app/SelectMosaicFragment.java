@@ -77,7 +77,7 @@ public class SelectMosaicFragment extends Fragment {
     }
 
     private void onFragmentSizeChanged(SizeDouble newSize) {
-        LoggerSimple.put("> SelectMosaicFragment::onFragmentSizeChanged: newSize={0}", newSize);
+//        LoggerSimple.put("> SelectMosaicFragment::onFragmentSizeChanged: newSize={0}", newSize);
     }
 
 }

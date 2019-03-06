@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
             SmoothHelper.applySmoothVisibilityOverScale(binding.rvMosaicGroupItems, true, this::getLvGroupHeight, null);
             viewModel.getMosaicGroupDS().getHeader().getEntity().getBurgerMenuModel().setHorizontal(false);
         } else {
-            viewModel.setSplitViewPaneOpen(!viewModel.isSplitViewPaneOpen());
+            viewModel.getSplitViewPane().setOpen(!viewModel.getSplitViewPane().isOpen());
             viewModel.getMosaicGroupDS().getHeader().getEntity().getModel().setAnimeDirection(
                     !viewModel.getMosaicGroupDS().getHeader().getEntity().getModel().getAnimeDirection());
         }

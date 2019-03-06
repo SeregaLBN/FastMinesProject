@@ -182,4 +182,23 @@ public final class SmoothHelper {
         }, 2);
     }
 
+    public static void runWidthSmoothTransition(MainMenuViewModel.SplitViewPane splitPane) {
+        final long fullTimeMSec = 150, repeatTimeMSec = 10;
+        final double deltaStepAngle = 360.0 * repeatTimeMSec / fullTimeMSec;
+
+        if (splitPane.isSmoothInProgress()) { // if already executed
+//            LoggerSimple.put("< SmoothHelper::runWidthSmoothTransition: exit - already executed");
+            return;
+        }
+
+        AsyncRunner.Repeat(() -> {
+//            LoggerSimple.put(" SmoothHelper::runWidthSmoothTransition: run lambda => currentStepAngle=" + splitPane.getCurrentStepAngle());
+            boolean forward = splitPane.isOpen();
+            splitPane.setCurrentStepAngle(
+                    splitPane.getCurrentStepAngle()
+                          + (forward ? +deltaStepAngle
+                                     : -deltaStepAngle));
+        }, repeatTimeMSec, () -> splitPane.isSmoothIsFinished());
+    }
+
 }

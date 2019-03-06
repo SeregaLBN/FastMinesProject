@@ -3,17 +3,16 @@ package fmg.android.app.presentation;
 import android.arch.lifecycle.ViewModel;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
-import android.databinding.BindingAdapter;
-import android.databinding.ObservableField;
-import android.view.View;
-import android.view.ViewGroup;
 
 import java.beans.PropertyChangeEvent;
 
 import fmg.android.app.BR;
+import fmg.android.app.MainActivity;
 import fmg.android.app.model.dataSource.MosaicGroupDataSource;
 import fmg.android.app.model.dataSource.MosaicSkillDataSource;
-import fmg.common.geom.SizeDouble;
+import fmg.android.utils.Cast;
+import fmg.common.LoggerSimple;
+import fmg.common.geom.util.FigureHelper;
 
 /** ViewModel for {@link fmg.android.app.MainActivity} */
 public class MainMenuViewModel extends ViewModel {
@@ -21,31 +20,69 @@ public class MainMenuViewModel extends ViewModel {
     private final MosaicGroupDataSource mosaicGroupDS = new MosaicGroupDataSource();
     private final MosaicSkillDataSource mosaicSkillDS = new MosaicSkillDataSource();
     private final SplitViewPane splitViewPane = new SplitViewPane();
-    private boolean isSplitViewPaneOpen = true;
 
     public class SplitViewPane extends BaseObservable {
 
-        /** change open split pane event */ // live hack
+        private boolean open = true;
+        private double currentStepAngle = open ? 360 : 0; // smooth angle
+
         @Bindable
-        public SplitViewPane getOpened() { return this; }
+        public SplitViewPane getSelf() { return this; }
+        void fireEvent() {
+//            LoggerSimple.put("> SplitViewPane::fireEvent");
+            notifyPropertyChanged(BR.self);
+        }
 
-        void fireOpenedEvent() { notifyPropertyChanged(BR.opened); }
+        public boolean isOpen() { return open; }
+        public void   setOpen(boolean opened) {
+            if (this.open == opened)
+                return;
+//            LoggerSimple.put("> SplitViewPane::setOpen: opened={0}", opened);
+            this.open = opened;
+            getSplitViewPane().fireEvent();
+            SmoothHelper.runWidthSmoothTransition(this);
+        }
 
-        public boolean isOpen() { return isSplitViewPaneOpen; }
-        public SizeDouble getImageSize() { return MainMenuViewModel.this.getMosaicGroupDS().getImageSize(); }
+        boolean isSmoothInProgress() {
+            boolean b = (currentStepAngle > 0) &&  (currentStepAngle < 360);
+//            LoggerSimple.put("> SplitViewPane::isSmoothInProgress: return {0}", b);
+            return b;
+        }
+
+        boolean isSmoothIsFinished() {
+            boolean b = isOpen()
+                    ? (currentStepAngle >= 360)
+                    : (currentStepAngle <= 0);
+//            LoggerSimple.put("> SplitViewPane::isSmoothIsFinished: return {0}", b);
+            return b;
+        }
+
+        public double getCurrentStepAngle() { return currentStepAngle; }
+        public void setCurrentStepAngle(double currentStepAngle) {
+            this.currentStepAngle = isOpen()
+                    ? Math.min(360, currentStepAngle)
+                    : Math.max(0  , currentStepAngle);
+//            LoggerSimple.put("> SplitViewPane::setCurrentStepAngle: currentStepAngle={0}; this.currentStepAngle={1}", currentStepAngle, this.currentStepAngle);
+            getSplitViewPane().fireEvent();
+        }
+
+        public double getPaneWidth() {
+            double rad = FigureHelper.toRadian(currentStepAngle / 4);
+            double koef = isOpen()
+                    ? Math.sin(rad)
+                    : 1 - Math.cos(rad);
+            double val = MainMenuViewModel.this.getMosaicGroupDS().getImageSize().width
+                    + koef * Cast.dpToPx(MainActivity.MenuTextWidthDp)
+                    + 0; // vertical scrollbar width
+//            LoggerSimple.put("> SplitViewPane::getPaneWidth: currStepAngle={0}; koef={1}; return {2}", currentStepAngle, koef, val);
+            return val;
+        }
+
     }
 
 
     public MainMenuViewModel() {
         mosaicGroupDS.addListener(this::onMosaicGroupDsPropertyChanged);
-    }
-
-    public boolean isSplitViewPaneOpen() { return isSplitViewPaneOpen; }
-    public void   setSplitViewPaneOpen(boolean opened) {
-        if (isSplitViewPaneOpen != opened) {
-            isSplitViewPaneOpen = opened;
-            getSplitViewPane().fireOpenedEvent();
-        }
     }
 
     public MosaicGroupDataSource getMosaicGroupDS() { return mosaicGroupDS; }
@@ -57,7 +94,7 @@ public class MainMenuViewModel extends ViewModel {
 
         switch (ev.getPropertyName()) {
         case MosaicGroupDataSource.PROPERTY_IMAGE_SIZE:
-            getSplitViewPane().fireOpenedEvent();
+            getSplitViewPane().fireEvent();
             break;
         case MosaicGroupDataSource.PROPERTY_CURRENT_ITEM:
             //// auto-close split view pane
