@@ -31,7 +31,11 @@ public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicAnimatedModel<Vo
     public void    setMosaicType(EMosaic mosaicType) {        setUniqueId(mosaicType); }
 
     @Bindable
-    public ESkillLevel getSkillLevel() { return skillLevel; }
+    public ESkillLevel getSkillLevel() {
+        if (skillLevel == null)
+            setSkillLevel(ESkillLevel.eBeginner);
+        return skillLevel;
+    }
     public void setSkillLevel(ESkillLevel skillLevel) {
         if (skillLevel == null)
             throw new IllegalArgumentException("Value of type " + ESkillLevel.class.getSimpleName() + " must be defined");

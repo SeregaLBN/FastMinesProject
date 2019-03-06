@@ -27,10 +27,9 @@ public class MainActivity extends AppCompatActivity {
 
     private MainActivityBinding binding;
     private MainMenuViewModel viewModel;
-    private MenuMosaicGroupListViewAdapter menuMosaicGroupListViewAdapter;
-    private MenuMosaicSkillListViewAdapter menuMosaicSkillListViewAdapter;
-
-    SizeDouble cachedSizeActivity = new SizeDouble(-1, -1);
+    private MosaicGroupListViewAdapter mosaicGroupListViewAdapter;
+    private MosaicSkillListViewAdapter mosaicSkillListViewAdapter;
+    private SizeDouble cachedSizeActivity = new SizeDouble(-1, -1);
 
     static {
         StaticInitializer.init();
@@ -39,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         binding = DataBindingUtil.setContentView(this, R.layout.main_activity);
         viewModel = ViewModelProviders.of(this).get(MainMenuViewModel.class);
@@ -50,8 +49,8 @@ public class MainActivity extends AppCompatActivity {
         binding.rvMosaicSkillItems.setLayoutManager(new LinearLayoutManager(this));
 //        binding.rvMosaicGroupItems.setNestedScrollingEnabled(false);
 //        binding.rvMosaicSkillItems.setNestedScrollingEnabled(false);
-        binding.rvMosaicGroupItems.setAdapter(menuMosaicGroupListViewAdapter = new MenuMosaicGroupListViewAdapter(viewModel.getMosaicGroupDS(), this::onMenuMosaicGroupItemClick));
-        binding.rvMosaicSkillItems.setAdapter(menuMosaicSkillListViewAdapter = new MenuMosaicSkillListViewAdapter(viewModel.getMosaicSkillDS(), this::onMenuMosaicSkillItemClick));
+        binding.rvMosaicGroupItems.setAdapter(mosaicGroupListViewAdapter = new MosaicGroupListViewAdapter(viewModel.getMosaicGroupDS(), this::onMenuMosaicGroupItemClick));
+        binding.rvMosaicSkillItems.setAdapter(mosaicSkillListViewAdapter = new MosaicSkillListViewAdapter(viewModel.getMosaicSkillDS(), this::onMenuMosaicSkillItemClick));
 
         binding.panelMosaicGroupHeader.setOnClickListener(this::onMosaicGroupHeaderClick);
         binding.panelMosaicSkillHeader.setOnClickListener(this::onMosaicSkillHeaderClick);
@@ -65,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         binding.rootLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this::onGlobalLayoutListener);
-        menuMosaicGroupListViewAdapter.close();
+        mosaicGroupListViewAdapter.close();
         super.onDestroy();
     }
 

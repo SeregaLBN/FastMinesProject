@@ -13,12 +13,12 @@ import fmg.android.app.model.items.MosaicSkillDataItem;
 import fmg.android.utils.Cast;
 import fmg.common.Color;
 
-public class MenuMosaicSkillListViewAdapter extends RecyclerView.Adapter<MenuMosaicSkillListViewAdapter.ViewHolder> implements AutoCloseable {
+public class MosaicSkillListViewAdapter extends RecyclerView.Adapter<MosaicSkillListViewAdapter.ViewHolder> implements AutoCloseable {
 
     private final MosaicSkillDataSource mosaicSkillDS;
     private final OnItemClickListener listener;
 
-    public MenuMosaicSkillListViewAdapter(MosaicSkillDataSource mosaicSkillDS, OnItemClickListener listener) {
+    public MosaicSkillListViewAdapter(MosaicSkillDataSource mosaicSkillDS, OnItemClickListener listener) {
         this.mosaicSkillDS = mosaicSkillDS;
         this.listener = listener;
 

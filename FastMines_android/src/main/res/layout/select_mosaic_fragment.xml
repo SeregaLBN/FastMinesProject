@@ -1,13 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".SelectMosaicFragment">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
+    <data>
+        <import type="android.view.View"/>
+
+        <variable
+            name="viewModel"
+            type="fmg.android.app.presentation.MosaicsViewModel" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/rootLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Hello" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-</FrameLayout>
+        <!-- mosaic header -->
+        <LinearLayout
+            android:id="@+id/panelMosaicHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_sizeToHeight="@{viewModel.mosaicDS.header.size}"
+            android:orientation="horizontal"
+            android:layout_margin="0dp"
+            android:padding="0dp"
+            android:background="@color/SystemChromeMediumColorLight"
+            >
+
+            <ImageView
+                android:layout_weight="1"
+                android:id="@+id/bttnMosaicHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:padding="0dp"
+                android:scaleType="fitCenter"
+                android:imageBitmap="@{viewModel.mosaicDS.header.image}"
+                app:layout_sizeToHeight="@{viewModel.mosaicDS.header.size}"
+                app:layout_sizeToWidth="@{viewModel.mosaicDS.header.size}"
+                android:layout_gravity="center"
+                tools:src="@android:drawable/progress_indeterminate_horizontal"
+                android:contentDescription="@string/mosaic_header" />
+
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|left"
+                android:maxLines="1"
+                android:textSize="15sp"
+                android:layout_marginLeft="3dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginRight="3dp"
+                android:layout_marginBottom="1dp"
+                android:padding="0dp"
+                android:textStyle="bold"
+                android:text="@string/mosaics" />
+        </LinearLayout>
+
+        <!-- mosaic items -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <!--https://stackoverflow.com/questions/27083091/recyclerview-inside-scrollview-is-not-working-->
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rvMosaicItems"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="0px"
+                android:padding="0dp"
+                android:indeterminate="true"
+                tools:listitem="@layout/mosaic_item"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+</layout >

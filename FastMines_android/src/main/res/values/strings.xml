@@ -1,8 +1,12 @@
 <resources>
     <string name="app_name">FastMines</string>
+    <string name="mosaic_header">MosaicHeader</string>
     <string name="mosaic_group_header">MosaicGroupHeader</string>
     <string name="mosaic_skill_header">MosaicSkillHeader</string>
+    <string name="mosaic_item">MosaicItem</string>
     <string name="mosaic_group_item">MosaicGroupItem</string>
+    <string name="mosaic_skill_item">MosaicSkillItem</string>
+    <string name="mosaics">Mosaics</string>
     <string name="mosaic_groups">Groups</string>
-    <string name="skill">Skill</string>
+    <string name="mosaic_skills">Skills</string>
 </resources>

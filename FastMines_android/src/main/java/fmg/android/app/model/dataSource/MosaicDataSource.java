@@ -44,7 +44,7 @@ public class MosaicDataSource extends BaseDataSource<
             model.setPadding(new BoundDouble(3));
             model.setBackgroundColor(Color.Transparent());
             model.setPolarLights(true);
-            model.setAnimated(true);
+            model.setAnimated(!true);
 
             notifier.firePropertyChanged(null, header, PROPERTY_HEADER);
         }
@@ -71,7 +71,7 @@ public class MosaicDataSource extends BaseDataSource<
     }
 
     private void reloadDataSource() {
-        List<EMosaic> newEntities = (getCurrentGroup() == null)
+        List<EMosaic> newEntities = (getCurrentGroup() != null)
                 ? getCurrentGroup().getMosaics()
                 : Stream.of(EMosaic.values()).collect(Collectors.toList());
 
