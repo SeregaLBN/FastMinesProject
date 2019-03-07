@@ -2,82 +2,138 @@ package fmg.android.app.presentation;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.animation.PropertyValuesHolder;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
 import fmg.android.utils.AsyncRunner;
-import fmg.android.utils.Cast;
 import fmg.common.Color;
-import fmg.common.LoggerSimple;
 import fmg.common.geom.util.FigureHelper;
 import fmg.core.img.AnimatedImageModel;
 
 public final class SmoothHelper {
     private SmoothHelper() {}
 
-    private static class SmoothContext {
-        int dir = 0; // direction smooth transition (0 - exit; 1 - forward; -1 - reverse)
-        Color clrStart;
-        double currentStepAngle = 0;
+    public static class Context {
+        private boolean forward = true;
+        private double currentStepAngle = forward ? 360 : 0; // smooth angle
+
+        public boolean isForward() { return forward; }
+        public void   setForward(boolean forward) {
+            if (this.forward == forward)
+                return;
+            this.forward = forward;
+        }
+
+        public boolean isSmoothInProgress() {
+            return (currentStepAngle > 0) &&  (currentStepAngle < 360);
+        }
+
+        public boolean isSmoothIsFinished() {
+            return isForward()
+                    ? (currentStepAngle >= 360)
+                    : (currentStepAngle <= 0);
+        }
+
+        public void pullTrigger() { setCurrentStepAngle(forward ? 0 : 360); }
+        public double getCurrentStepAngle() { return currentStepAngle; }
+        public void setCurrentStepAngle(double currentStepAngle) {
+            this.currentStepAngle = isForward()
+                    ? Math.min(360, currentStepAngle)
+                    : Math.max(0  , currentStepAngle);
+        }
+
+        public double getSmoothCoefficient() {
+            double rad = FigureHelper.toRadian(getCurrentStepAngle() / 4);
+            return //context.isForward() ?
+                    Math.sin(rad)
+                    //: 1 - Math.cos(rad)
+                    ;
+        }
+
     }
 
-    private static Map<View, SmoothContext> mapViewSmooth = new HashMap<>();
+    private static class SmoothTransition {
+        private final long fullTimeMSec;
+        private final long repeatTimeMSec;
 
-    public static void runColorSmoothTransition(View view, AnimatedImageModel model) {
-        if (!mapViewSmooth.containsKey(view)) {
-            SmoothContext ctx = new SmoothContext();
-            ctx.clrStart = model.getBackgroundColor(); //Cast.toColor(((ColorDrawable)view.getBackground()).getColor());//Color.Coral;
-            mapViewSmooth.put(view, ctx);
+        public SmoothTransition(long fullTimeMSec/*= 250*/, long repeatTimeMSec/*= 10*/) {
+            this.fullTimeMSec = fullTimeMSec;
+            this.repeatTimeMSec = repeatTimeMSec;
         }
-        final long fullTimeMSec = 150, repeatTimeMSec = 10;
-        final double deltaStepAngle = 360.0 * repeatTimeMSec / fullTimeMSec;
+
+        void onStartExecute(Context context) { context.pullTrigger(); }
+        void onIteration() {}
+        void onEndExecution() {}
+
+        public boolean execute(Context context) {
+            final double deltaStepAngle = 360.0 * repeatTimeMSec / fullTimeMSec;
+            final Color clrStop = Color.BlueViolet();
+
+            if (context.isSmoothInProgress()) // if already executed
+                return false;
+
+            onStartExecute(context);
+
+            AsyncRunner.Repeat(() -> {
+                context.setCurrentStepAngle(context.getCurrentStepAngle() + (context.isForward() ? +1 : -1) * deltaStepAngle);
+
+                onIteration();
+
+                if (context.isSmoothIsFinished())
+                    onEndExecution();
+            }, repeatTimeMSec, () -> context.isSmoothIsFinished());
+
+            return true;
+        }
+    }
+
+    private static class ColorContext extends Context {
+        Color clrStart;
+    }
+
+    private static Map<AnimatedImageModel, ColorContext> mapColorSmooth = new HashMap<>();
+
+    public static void runColorSmoothTransition(AnimatedImageModel model) {
+        if (!mapColorSmooth.containsKey(model)) {
+            ColorContext context = new ColorContext();
+            context.clrStart = model.getBackgroundColor(); //Color.Coral;
+            mapColorSmooth.put(model, context);
+        }
+
+        ColorContext context = mapColorSmooth.get(model);
         final Color clrStop = Color.BlueViolet();
 
-        SmoothContext ctx = mapViewSmooth.get(view);
-        boolean isExecuted = (ctx.dir != 0);
-        if (isExecuted) // if already executed
-            return;
+        context.setForward(true);
+        new SmoothTransition(250, 10) {
 
-//        ctx.dir = 1; // forward direction smooth transition
-        ctx.dir = -1; // backward direction smooth transition
-        ctx.currentStepAngle = 360;
+            @Override
+            void onIteration() {
+                Color clrFrom = context.clrStart;
+                Color clrTo   = clrStop;
 
-        AsyncRunner.Repeat(() -> {
-            assert ctx.dir != 0;
-            if (ctx.dir == 0)
-                return;
-            boolean forward = ctx.dir == 1;
-            Color clrFrom = forward ? ctx.clrStart : clrStop;
-            Color clrTo   = forward ? clrStop  : ctx.clrStart;
-            Color clrCurr;
-            ctx.currentStepAngle += ctx.dir * deltaStepAngle;
-            if (forward ? (ctx.currentStepAngle >= 360)
-                        : (ctx.currentStepAngle <= 0))
-            {
-                ctx.dir = forward ? -1 // forward direction smooth transition.
-                                  : 0; // exit smooth transition
-                clrCurr = clrTo;
-            } else {
-                double rad = FigureHelper.toRadian(ctx.currentStepAngle / 4);
-                double koef = forward ? Math.sin(rad)
-                                      : //Math.cos(rad);
-                                        1 - Math.sin(rad);
-                clrCurr = new Color((int)(clrFrom.getA() + koef * (clrTo.getA() - clrFrom.getA())),
-                                    (int)(clrFrom.getR() + koef * (clrTo.getR() - clrFrom.getR())),
-                                    (int)(clrFrom.getG() + koef * (clrTo.getG() - clrFrom.getG())),
-                                    (int)(clrFrom.getB() + koef * (clrTo.getB() - clrFrom.getB())));
+                double coef = context.getSmoothCoefficient();
+//                LoggerSimple.put("  forward={0}; currStepAngle={1}, coef={2}", context.isForward(), context.getCurrentStepAngle(), coef);
+
+                Color clrCurr = new Color((int)(clrFrom.getA() + coef * (clrTo.getA() - clrFrom.getA())),
+                                          (int)(clrFrom.getR() + coef * (clrTo.getR() - clrFrom.getR())),
+                                          (int)(clrFrom.getG() + coef * (clrTo.getG() - clrFrom.getG())),
+                                          (int)(clrFrom.getB() + coef * (clrTo.getB() - clrFrom.getB())));
+                model.setBackgroundColor(clrCurr);
             }
-            model.setBackgroundColor(clrCurr);
-            //view.setBackgroundColor(Cast.toColor(clrCurr));
-        }, repeatTimeMSec, () -> ctx.dir == 0);
+
+            @Override
+            void onEndExecution() {
+                if (!context.isForward())
+                    return;
+                context.setForward(false);
+                execute(context);
+            }
+
+        }.execute(context);
     }
 
     public static void applySmoothVisibilityOverScaleOld(View menuView, boolean targetIsVisible, Supplier<Double> calcHeight, Runnable postAction) {
@@ -182,23 +238,8 @@ public final class SmoothHelper {
         }, 2);
     }
 
-    public static void runWidthSmoothTransition(MainMenuViewModel.SplitViewPane splitPane) {
-        final long fullTimeMSec = 150, repeatTimeMSec = 10;
-        final double deltaStepAngle = 360.0 * repeatTimeMSec / fullTimeMSec;
-
-        if (splitPane.isSmoothInProgress()) { // if already executed
-//            LoggerSimple.put("< SmoothHelper::runWidthSmoothTransition: exit - already executed");
-            return;
-        }
-
-        AsyncRunner.Repeat(() -> {
-//            LoggerSimple.put(" SmoothHelper::runWidthSmoothTransition: run lambda => currentStepAngle=" + splitPane.getCurrentStepAngle());
-            boolean forward = splitPane.isOpen();
-            splitPane.setCurrentStepAngle(
-                    splitPane.getCurrentStepAngle()
-                          + (forward ? +deltaStepAngle
-                                     : -deltaStepAngle));
-        }, repeatTimeMSec, () -> splitPane.isSmoothIsFinished());
+    public static void runSmoothTransition(Context context, long fullTimeMSec/*= 150*/, long repeatTimeMSec/*= 10*/) {
+        new SmoothTransition(fullTimeMSec, repeatTimeMSec).execute(context);
     }
 
 }

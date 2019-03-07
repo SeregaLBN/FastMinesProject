@@ -86,7 +86,7 @@ public class SelectMosaicFragment extends Fragment {
             subjSizeChanged = PublishSubject.create();
             sizeChangedObservable = subjSizeChanged.debounce(200, TimeUnit.MILLISECONDS)
                     .subscribe(ev -> {
-                        LoggerSimple.put("  SelectMosaicFragment::onGlobalLayoutListener: Debounce: onNext: ev=" + ev);
+//                        LoggerSimple.put("  SelectMosaicFragment::onGlobalLayoutListener: Debounce: onNext: ev=" + ev);
                         Factory.DEFERR_INVOKER.accept(() -> onFragmentSizeChanged(ev));
                     }, ex -> {
                         LoggerSimple.put("  SelectMosaicFragment::onGlobalLayoutListener: Debounce: onError: " + ex);

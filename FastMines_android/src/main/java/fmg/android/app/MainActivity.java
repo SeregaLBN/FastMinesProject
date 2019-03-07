@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void onMosaicGroupHeaderClick(View v) {
-        SmoothHelper.runColorSmoothTransition(v, viewModel.getMosaicGroupDS().getHeader().getEntity().getModel());
+        SmoothHelper.runColorSmoothTransition(viewModel.getMosaicGroupDS().getHeader().getEntity().getModel());
 
         if (binding.rvMosaicGroupItems.getVisibility() == View.GONE) {
             SmoothHelper.applySmoothVisibilityOverScale(binding.rvMosaicGroupItems, true, this::getLvGroupHeight, null);
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
     double getLvSkillHeight() { return ESkillLevel .values().length * (viewModel.getMosaicSkillDS().getImageSize().height + Cast.dpToPx(2) /* padding */); }
 
     void onMosaicSkillHeaderClick(View v) {
-        SmoothHelper.runColorSmoothTransition(v, viewModel.getMosaicSkillDS().getHeader().getEntity().getModel());
+        SmoothHelper.runColorSmoothTransition(viewModel.getMosaicSkillDS().getHeader().getEntity().getModel());
 
         Supplier<Boolean> isVisibleScrollerFunc = () -> {
             int viewHeight = binding.menuScroller.getMeasuredHeight();

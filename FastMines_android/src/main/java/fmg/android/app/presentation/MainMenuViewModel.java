@@ -23,59 +23,39 @@ public class MainMenuViewModel extends ViewModel {
 
     public class SplitViewPane extends BaseObservable {
 
-        private boolean open = true;
-        private double currentStepAngle = open ? 360 : 0; // smooth angle
+        class SmoothContext extends SmoothHelper.Context {
+
+            @Override
+            public void setForward(boolean forward) {
+                super.setForward(forward);
+                SplitViewPane.this.fireEvent();
+            }
+
+            @Override
+            public void setCurrentStepAngle(double currentStepAngle) {
+                super.setCurrentStepAngle(currentStepAngle);
+                SplitViewPane.this.fireEvent();
+            }
+        }
+
+        private SmoothContext context = new SmoothContext();
 
         @Bindable
         public SplitViewPane getSelf() { return this; }
         void fireEvent() {
-//            LoggerSimple.put("> SplitViewPane::fireEvent");
             notifyPropertyChanged(BR.self);
         }
 
-        public boolean isOpen() { return open; }
+        public boolean isOpen() { return context.isForward(); }
         public void   setOpen(boolean opened) {
-            if (this.open == opened)
-                return;
-//            LoggerSimple.put("> SplitViewPane::setOpen: opened={0}", opened);
-            this.open = opened;
-            getSplitViewPane().fireEvent();
-            SmoothHelper.runWidthSmoothTransition(this);
+            context.setForward(opened);
+            SmoothHelper.runSmoothTransition(context, 150, 10);
         }
-
-        boolean isSmoothInProgress() {
-            boolean b = (currentStepAngle > 0) &&  (currentStepAngle < 360);
-//            LoggerSimple.put("> SplitViewPane::isSmoothInProgress: return {0}", b);
-            return b;
-        }
-
-        boolean isSmoothIsFinished() {
-            boolean b = isOpen()
-                    ? (currentStepAngle >= 360)
-                    : (currentStepAngle <= 0);
-//            LoggerSimple.put("> SplitViewPane::isSmoothIsFinished: return {0}", b);
-            return b;
-        }
-
-        public double getCurrentStepAngle() { return currentStepAngle; }
-        public void setCurrentStepAngle(double currentStepAngle) {
-            this.currentStepAngle = isOpen()
-                    ? Math.min(360, currentStepAngle)
-                    : Math.max(0  , currentStepAngle);
-//            LoggerSimple.put("> SplitViewPane::setCurrentStepAngle: currentStepAngle={0}; this.currentStepAngle={1}", currentStepAngle, this.currentStepAngle);
-            getSplitViewPane().fireEvent();
-        }
-
         public double getPaneWidth() {
-            double rad = FigureHelper.toRadian(currentStepAngle / 4);
-            double koef = isOpen()
-                    ? Math.sin(rad)
-                    : 1 - Math.cos(rad);
-            double val = MainMenuViewModel.this.getMosaicGroupDS().getImageSize().width
-                    + koef * Cast.dpToPx(MainActivity.MenuTextWidthDp)
+            double coef = context.getSmoothCoefficient();
+            return MainMenuViewModel.this.getMosaicGroupDS().getImageSize().width
+                    + coef * Cast.dpToPx(MainActivity.MenuTextWidthDp)
                     + 0; // vertical scrollbar width
-//            LoggerSimple.put("> SplitViewPane::getPaneWidth: currStepAngle={0}; koef={1}; return {2}", currentStepAngle, koef, val);
-            return val;
         }
 
     }
