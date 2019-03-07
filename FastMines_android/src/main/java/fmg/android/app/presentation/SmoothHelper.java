@@ -136,6 +136,7 @@ public final class SmoothHelper {
         }.execute(context);
     }
 
+    @Deprecated // example of view animate
     public static void applySmoothVisibilityOverScaleOld(View menuView, boolean targetIsVisible, Supplier<Double> calcHeight, Runnable postAction) {
         final int MENU_ANIMATION_DURATION = 500;
         if (targetIsVisible) {
@@ -196,46 +197,42 @@ public final class SmoothHelper {
             menuView.setVisibility(View.VISIBLE);           // second - set Visibility.Visible before smoothing
         }
 
-        AsyncRunner.RunWithDelay(() -> {
-            double[] angle = { 0.0 };
-            Runnable[] run = { null };
-            run[0] = () -> {
-                double a = (angle[0] += 12.345);
+        Context context = new Context();
+        context.setForward(targetIsVisible);
 
-                if (a < 90) { // repeat?
-                    double rad = FigureHelper.toRadian(a);
-                    double scale = targetIsVisible
-                            ? Math.sin(rad)
-                            : //Math.cos(rad);
-                             1 - Math.sin(rad);
-                    double hScaled = h * scale;
-                    menuView.animate()
-                            .scaleX((float)scale)
-                            .scaleY((float)scale)
-                            .translationX((float)-(menuView.getWidth() * (1 - scale) / 2))
-                            .translationY((float)-((h - hScaled) / 2));
-                    Converters.setViewHeight(menuView, hScaled);
-                } else {
-                    // stop it
+        new SmoothTransition(360, 50) {
 
-                    if (!targetIsVisible)
-                        menuView.setVisibility(View.GONE); // first - set Visibility.Collapsed after smoothing
+            @Override
+            void onIteration() {
+                double scale = context.getSmoothCoefficient();
+                double hScaled = h * scale;
+                menuView.animate()
+                        .scaleX((float)scale)
+                        .scaleY((float)scale)
+                        .translationX((float)-(menuView.getWidth() * (1 - scale) / 2))
+                        .translationY((float)-((h - hScaled) / 2));
+                Converters.setViewHeight(menuView, hScaled);
+            }
 
-                    // restore
-                    menuView.animate()
-                            .translationX(targetIsVisible ? 0 : -menuView.getWidth())
-                            .translationY(targetIsVisible ? 0 : (float)-h)
-                            .scaleX(targetIsVisible ? 1 : 0.01f)
-                            .scaleY(targetIsVisible ? 1 : 0.01f);
-                    AsyncRunner.RunWithDelay(() -> menuView.animate().setDuration(original), 1); // mark to stop repeat
-                    Converters.setViewHeight(menuView, ViewGroup.LayoutParams.WRAP_CONTENT);//h); // second - restore original height
+            @Override
+            void onEndExecution() {
+                if (!targetIsVisible)
+                    menuView.setVisibility(View.GONE); // first - set Visibility.Collapsed after smoothing
 
-                    if (postAction != null)
-                        postAction.run();
-                }
-            };
-            AsyncRunner.Repeat(run[0], 50, () -> menuView.animate().getDuration() == original);
-        }, 2);
+                // restore
+                menuView.animate()
+                        .translationX(targetIsVisible ? 0 : -menuView.getWidth())
+                        .translationY(targetIsVisible ? 0 : (float)-h)
+                        .scaleX(targetIsVisible ? 1 : 0.01f)
+                        .scaleY(targetIsVisible ? 1 : 0.01f);
+                AsyncRunner.RunWithDelay(() -> menuView.animate().setDuration(original), 1); // mark to stop repeat
+                Converters.setViewHeight(menuView, ViewGroup.LayoutParams.WRAP_CONTENT);//h); // second - restore original height
+
+                if (postAction != null)
+                    postAction.run();
+            }
+
+        }.execute(context);
     }
 
     public static void runSmoothTransition(Context context, long fullTimeMSec/*= 150*/, long repeatTimeMSec/*= 10*/) {

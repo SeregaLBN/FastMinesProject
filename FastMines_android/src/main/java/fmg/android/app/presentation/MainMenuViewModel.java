@@ -49,7 +49,7 @@ public class MainMenuViewModel extends ViewModel {
         public boolean isOpen() { return context.isForward(); }
         public void   setOpen(boolean opened) {
             context.setForward(opened);
-            SmoothHelper.runSmoothTransition(context, 150, 10);
+            SmoothHelper.runSmoothTransition(context, 350, 50);
         }
         public double getPaneWidth() {
             double coef = context.getSmoothCoefficient();
