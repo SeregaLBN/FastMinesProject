@@ -246,7 +246,7 @@ namespace fmg {
 
         private void OnClickBttnGroupPanel(object sender, RoutedEventArgs e) {
             if (_listViewMosaicGroupMenu.Visibility == Visibility.Collapsed) {
-                SmoothHelper.ApplySmoothVisibilityOverScale(_listViewMosaicGroupMenu, Visibility.Visible, LvGroupHeight);
+                SmoothHelper.ApplySmoothVisibilityOverScale(_listViewMosaicGroupMenu, true, LvGroupHeight);
                 ViewModel.MosaicGroupDS.Header.Entity.BurgerMenuModel.Horizontal = false;
             } else {
                 _splitView.IsPaneOpen = !_splitView.IsPaneOpen;
@@ -262,22 +262,22 @@ namespace fmg {
             bool isVisibleScroller = isVisibleScrollerFunc();
             if (_listViewSkillLevelMenu.Visibility == Visibility.Collapsed) {
                 if (isVisibleScroller) {
-                    SmoothHelper.ApplySmoothVisibilityOverScale(_listViewSkillLevelMenu , Visibility.Visible  , LvSkillHeight);
-                    SmoothHelper.ApplySmoothVisibilityOverScale(_listViewMosaicGroupMenu, Visibility.Collapsed, LvGroupHeight);
+                    SmoothHelper.ApplySmoothVisibilityOverScale(_listViewSkillLevelMenu , true , LvSkillHeight);
+                    SmoothHelper.ApplySmoothVisibilityOverScale(_listViewMosaicGroupMenu, false, LvGroupHeight);
                 } else {
-                    SmoothHelper.ApplySmoothVisibilityOverScale(_listViewSkillLevelMenu, Visibility.Visible, LvSkillHeight,
+                    SmoothHelper.ApplySmoothVisibilityOverScale(_listViewSkillLevelMenu, true, LvSkillHeight,
                         () => {
                             if (isVisibleScrollerFunc())
-                                SmoothHelper.ApplySmoothVisibilityOverScale(_listViewMosaicGroupMenu, Visibility.Collapsed, LvGroupHeight);
+                                SmoothHelper.ApplySmoothVisibilityOverScale(_listViewMosaicGroupMenu, false, LvGroupHeight);
                         });
                 }
                 ViewModel.MosaicSkillDS.Header.Entity.Model.AnimeDirection = !ViewModel.MosaicSkillDS.Header.Entity.Model.AnimeDirection;
             } else {
                 if (isVisibleScroller && (_listViewMosaicGroupMenu.Visibility == Visibility.Visible)) {
-                    SmoothHelper.ApplySmoothVisibilityOverScale(_listViewMosaicGroupMenu, Visibility.Collapsed, LvGroupHeight);
+                    SmoothHelper.ApplySmoothVisibilityOverScale(_listViewMosaicGroupMenu, false, LvGroupHeight);
                     ViewModel.MosaicGroupDS.Header.Entity.BurgerMenuModel.Horizontal = true;
                 } else {
-                    SmoothHelper.ApplySmoothVisibilityOverScale(_listViewSkillLevelMenu, Visibility.Collapsed, LvSkillHeight);
+                    SmoothHelper.ApplySmoothVisibilityOverScale(_listViewSkillLevelMenu, false, LvSkillHeight);
                     ViewModel.MosaicSkillDS.Header.Entity.Model.AnimeDirection = !ViewModel.MosaicSkillDS.Header.Entity.Model.AnimeDirection;
                 }
             }

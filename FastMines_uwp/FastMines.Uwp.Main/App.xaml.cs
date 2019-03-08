@@ -55,6 +55,8 @@ namespace fmg {
 
             //PC customization
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView")) {
+                ApplicationView.GetForCurrentView().SetPreferredMinSize(new Windows.Foundation.Size(350, 560));
+
                 var titleBar = ApplicationView.GetForCurrentView().TitleBar;
                 if (titleBar != null) {
                     titleBar.BackgroundColor =

@@ -3,58 +3,135 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
 using fmg.common;
-using fmg.core.img;
 using fmg.common.geom.util;
+using fmg.core.img;
 using fmg.uwp.utils;
 
 namespace FastMines.Uwp.Main.Presentation {
 
     public static class SmoothHelper {
 
-        public static void ApplyButtonColorSmoothTransition(Button bttn, AnimatedImageModel model) {
-            int dir = 0; // direction smooth transition (0 - exit; 1 - forward; -1 - reverse)
-            const double fullTimeMsec = 700, repeatTimeMsec = 30;
-            const double deltaStepAngle = 360.0 / (fullTimeMsec / repeatTimeMsec);
-            double currStepAngle = 0;
-            var clrStart = model.BackgroundColor; //Color.Coral;
-            var clrStop = Color.BlueViolet;
+        public class Context {
+            private bool forward = true;
+            private double currentStepAngle; // smooth angle
 
-
-            void handler(bool forward) {
-                dir = forward ? 1  // start entered
-                             : -1; // start exited
-                void run() {
-                    Color clrFrom = forward ? clrStart : clrStop;
-                    Color clrTo   = forward ? clrStop  : clrStart;
-                    Color clrCurr;
-                    currStepAngle += dir * deltaStepAngle;
-                    if (forward ? (currStepAngle >= 360)
-                                : (currStepAngle <= 0))
-                    {
-                        dir = 0; // stop
-                        clrCurr = clrTo;
-                    } else {
-                        var rad = (currStepAngle / 4).ToRadian();
-                        var koef = forward ? Math.Sin(rad)
-                                           : //Math.Cos(rad);
-                                             1 - Math.Sin(rad);
-                        clrCurr = new Color((byte)(clrFrom.A + koef * (clrTo.A - clrFrom.A)),
-                                            (byte)(clrFrom.R + koef * (clrTo.R - clrFrom.R)),
-                                            (byte)(clrFrom.G + koef * (clrTo.G - clrFrom.G)),
-                                            (byte)(clrFrom.B + koef * (clrTo.B - clrFrom.B)));
-                    }
-                    model.BackgroundColor = clrCurr;
+            public bool Forward {
+                get { return forward; }
+                set {
+                    if (forward == value)
+                        return;
+                    forward = value;
                 }
-                ((Action)run).Repeat(TimeSpan.FromMilliseconds(repeatTimeMsec), () => forward ? (dir != 1) : (dir != -1));
             }
 
+            public bool IsSmoothInProgress => (currentStepAngle > 0) && (currentStepAngle < 360);
+
+            public bool IsSmoothIsFinished => Forward
+                        ? (currentStepAngle >= 360)
+                        : (currentStepAngle <= 0);
+
+            public double CurrentStepAngle {
+                get { return currentStepAngle; }
+                set {
+                    currentStepAngle = Forward
+                            ? Math.Min(360, value)
+                            : Math.Max(0, value);
+                }
+            }
+
+            public double SmoothCoefficient { get {
+                double rad = (CurrentStepAngle / 4).ToRadian();
+                return //context.Forward ?
+                        Math.Sin(rad)
+                        //: 1 - Math.Cos(rad)
+                        ;
+            } }
+
+        }
+
+        private class SmoothTransition<TContext> where TContext : Context {
+            protected readonly TContext context;
+            private readonly long fullTimeMSec;
+            private readonly long repeatTimeMSec;
+            private readonly Action onIteration;
+            private readonly Action onEndExecution;
+
+            public SmoothTransition(TContext context,
+                long fullTimeMSec/*= 250*/,
+                long repeatTimeMSec/*= 10*/,
+                Action onIteration = null,
+                Action onEndExecution = null)
+            {
+                this.context = context;
+                this.fullTimeMSec = fullTimeMSec;
+                this.repeatTimeMSec = repeatTimeMSec;
+                this.onIteration    = onIteration;
+                this.onEndExecution = onEndExecution;
+            }
+
+            protected virtual void OnIteration()    { onIteration?.Invoke(); }
+            protected virtual void OnEndExecution() { onEndExecution?.Invoke(); }
+
+            public void Execute() {
+                var deltaStepAngle = 360.0 * repeatTimeMSec / fullTimeMSec;
+
+                if (context.IsSmoothInProgress) // if already executed
+                    return;
+
+                context.CurrentStepAngle = context.Forward ? 0 : 360;
+                AsyncRunner.Repeat(() => {
+                    context.CurrentStepAngle = context.CurrentStepAngle + (context.Forward ? +1 : -1) * deltaStepAngle;
+
+                    OnIteration();
+
+                    if (context.IsSmoothIsFinished)
+                        OnEndExecution();
+                }, TimeSpan.FromMilliseconds(repeatTimeMSec), () => context.IsSmoothIsFinished);
+            }
+        }
+
+        private class ColorContext : Context {
+            internal Color clrStart;
+            internal Color clrStop;
+        }
+        public static void ApplyButtonColorSmoothTransition(Button bttn, AnimatedImageModel model) {
+            var context = new ColorContext() {
+                clrStart = model.BackgroundColor, //Color.Coral;
+                clrStop = Color.BlueViolet
+            };
+            var colorSmoothTransition = new SmoothTransition<ColorContext>(context, 250, 10,
+                //onIteration
+                () => {
+                    Color clrFrom = context.clrStart;
+                    Color clrTo = context.clrStop;
+
+                    double coef = context.SmoothCoefficient;
+                    //LoggerSimple.Put("  forward={0}; currStepAngle={1}, coef={2}", context.Forward, context.CurrentStepAngle, coef);
+                    var clrCurr = new Color((byte)(clrFrom.A + coef * (clrTo.A - clrFrom.A)),
+                                            (byte)(clrFrom.R + coef * (clrTo.R - clrFrom.R)),
+                                            (byte)(clrFrom.G + coef * (clrTo.G - clrFrom.G)),
+                                            (byte)(clrFrom.B + coef * (clrTo.B - clrFrom.B)));
+                    model.BackgroundColor = clrCurr;
+                //},
+                ////onEndExecution
+                //() => {
+                //    if (!context.Forward)
+                //        return;
+                //    context.Forward = false;
+                //    Execute(context);
+                });
+
+            void handler(bool forward) {
+                context.Forward = forward;
+                colorSmoothTransition.Execute();
+            }
             bttn.PointerEntered += (s, ev3) => handler(true);
             bttn.PointerExited  += (s, ev3) => handler(false);
         }
 
-        /// <summary> set pseudo-async ListView.Visibility = target </summary>
-        public static void ApplySmoothVisibilityOverScale(ListView lv, Visibility target, Func<double> calcHeight, Action postAction = null) {
-            if (lv.Visibility == target)
+        /// <summary> set pseudo-async ListView.Visibility = targetIsVisible ? Visibility.Visible : Visibility.Collapsed </summary>
+        public static void ApplySmoothVisibilityOverScale(ListView lv, bool targetIsVisible, Func<double> calcHeight, Action postAction = null) {
+            if (lv.Visibility == (targetIsVisible ? Visibility.Visible : Visibility.Collapsed))
                 return;
 
             // save
@@ -70,40 +147,39 @@ namespace FastMines.Uwp.Main.Presentation {
             var transformer = new CompositeTransform();
             lv.RenderTransform = transformer;
 
-            var toVisible = (target == Visibility.Visible);
-            if (toVisible) {
+            if (targetIsVisible) {
                 transformer.ScaleX = transformer.ScaleY = 0.01;
-                lv.Height = 0.1;        // first  - set min height
-                lv.Visibility = target; // second - set Visibility.Visible before smoothing
+                lv.Height = 0.1;                    // first  - set min height
+                lv.Visibility = Visibility.Visible; // second - set Visibility.Visible before smoothing
             } else {
                 transformer.ScaleX = transformer.ScaleY = 1;
             }
 
-            var angle = 0.0;
-            void run() {
-                angle += 12.345;
+            var context = new Context {
+                Forward = targetIsVisible
+            };
+            new SmoothTransition<Context>(context, 360, 50,
 
-                if (angle < 90) { // repeat?
-                    var scale = toVisible
-                        ? Math.Sin(angle.ToRadian())
-                        : //Math.Cos(angle.ToRadian());
-                          1 - Math.Sin(angle.ToRadian());
+                //onIteration
+                () => {
+                    double scale = context.SmoothCoefficient;
                     transformer.ScaleX = transformer.ScaleY = scale;
-                    lv.Height = h1 * scale;
-                } else {
-                    // stop it
+                    double hScaled = h1 * scale;
+                    lv.Height = hScaled;
+                },
 
-                    if (!toVisible)
-                        lv.Visibility = target;    // first - set Visibility.Collapsed after smoothing
+                //onEndExecution
+               () => {
+                   if (!targetIsVisible)
+                       lv.Visibility = Visibility.Collapsed; // first - set Visibility.Collapsed after smoothing
 
-                    // restore
-                    lv.RenderTransform = original; // mark to stop repeat
-                    lv.Height = h0;                // second - restore original height
+                   // restore
+                   lv.RenderTransform = original; // mark to stop repeat
+                   lv.Height = h0;                // second - restore original height
 
-                    postAction?.Invoke();
-                }
-            }
-            ((Action)run).Repeat(TimeSpan.FromMilliseconds(50), () => ReferenceEquals(lv.RenderTransform, original));
+                   postAction?.Invoke();
+               }
+            ).Execute();
         }
 
     }
