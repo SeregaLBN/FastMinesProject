@@ -339,6 +339,9 @@
     <Compile Include="..\..\src\src_core\fmg\core\mosaic\MosaicImageController.cs">
       <Link>src_fmg.core\mosaic\MosaicImageController.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\IMosaicController.cs">
+      <Link>src_fmg.core\mosaic\IMosaicController.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\mosaic\MosaicController.cs">
       <Link>src_fmg.core\mosaic\MosaicController.cs</Link>
     </Compile>

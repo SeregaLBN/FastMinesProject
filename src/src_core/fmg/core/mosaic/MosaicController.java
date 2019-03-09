@@ -21,6 +21,7 @@ public abstract class MosaicController<TImage, TImageInner,
                                        TMosaicView extends IMosaicView<TImage, TImageInner, TMosaicModel>,
                                        TMosaicModel extends MosaicDrawModel<TImageInner>>
                extends ImageController<TImage, TMosaicView, TMosaicModel>
+          implements IMosaicController<TImage, TImageInner, TMosaicView, TMosaicModel>
 {
 
     /** кол-во мин на поле */
@@ -62,19 +63,25 @@ public abstract class MosaicController<TImage, TImageInner,
     }
 
     /** размер поля в ячейках */
+    @Override
     public Matrisize getSizeField() { return getModel().getSizeField(); }
     /** размер поля в ячейках */
+    @Override
     public void setSizeField(Matrisize newSizeField) { getModel().setSizeField(newSizeField); }
 
     /** узнать тип мозаики
      * (из каких фигур состоит мозаика поля) */
+    @Override
     public EMosaic getMosaicType() { return getModel().getMosaicType(); }
     /** установить тип мозаики */
+    @Override
     public void setMosaicType(EMosaic newMosaicType) { getModel().setMosaicType(newMosaicType); }
 
     /** количество мин */
+    @Override
     public int getMinesCount() { return _minesCount; }
     /** количество мин */
+    @Override
     public void setMinesCount(int newMinesCount) {
         int oldVal = getMinesCount();
         int newVal = Math.max((getGameStatus() == EGameStatus.eGSCreateGame) ? 0 : 1, Math.min(newMinesCount, getMaxMines(getSizeField())));
@@ -169,8 +176,10 @@ public abstract class MosaicController<TImage, TImageInner,
     }
 
     /** ячейка на которой было нажато (но не обязательно что отпущено) */
+    @Override
     public BaseCell getCellDown() { return _cellDown; }
     /** ячейка на которой было нажато (но не обязательно что отпущено) */
+    @Override
     public void setCellDown(BaseCell cellDown) { _cellDown = cellDown; }
 
     /**
