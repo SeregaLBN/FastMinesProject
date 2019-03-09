@@ -4,25 +4,46 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
+using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.mosaic;
 using fmg.uwp.utils;
-using MosaicController = fmg.uwp.mosaic.win2d.MosaicCanvasVirtualControlController;
-using Microsoft.Graphics.Canvas;
+using MosaicVirtController = fmg.uwp.mosaic.win2d.MosaicCanvasVirtualControlController;
+using MosaicSwapController = fmg.uwp.mosaic.win2d.MosaicCanvasSwapChainPanelController;
+using AMosaicController = fmg.core.img.IImageController<
+        Windows.UI.Xaml.FrameworkElement,
+        fmg.core.mosaic.IMosaicView<
+                Windows.UI.Xaml.FrameworkElement,
+                Microsoft.Graphics.Canvas.CanvasBitmap,
+                fmg.core.mosaic.MosaicDrawModel<Microsoft.Graphics.Canvas.CanvasBitmap>>,
+        fmg.core.mosaic.MosaicDrawModel<Microsoft.Graphics.Canvas.CanvasBitmap>>;
+using BMosaicController = fmg.core.mosaic.IMosaicController<
+        Windows.UI.Xaml.FrameworkElement,
+        Microsoft.Graphics.Canvas.CanvasBitmap,
+        fmg.core.mosaic.IMosaicView<
+                Windows.UI.Xaml.FrameworkElement,
+                Microsoft.Graphics.Canvas.CanvasBitmap,
+                fmg.core.mosaic.MosaicDrawModel<Microsoft.Graphics.Canvas.CanvasBitmap>>,
+        fmg.core.mosaic.MosaicDrawModel<Microsoft.Graphics.Canvas.CanvasBitmap>>;
 
 namespace fmg {
 
     public sealed partial class MosaicPage : Page {
 
-        private MosaicController _mosaicController;
+        private BMosaicController _mosaicController;
 
         /// <summary> Mosaic controller </summary>
-        public MosaicController MosaicController {
+        public BMosaicController MosaicController {
             get {
-                if (_mosaicController == null)
-                    MosaicController = new MosaicController(CanvasDevice.GetSharedDevice(), _canvasVirtualControl); // call setter
+                if (_mosaicController == null) {
+                    if (true)
+                        MosaicController = new MosaicVirtController(CanvasDevice.GetSharedDevice(), _canvasVirtualControl); // call setter
+                    else
+                        MosaicController = new MosaicSwapController(CanvasDevice.GetSharedDevice(), _canvasSwapChainPanel); // call setter
+                }
                 return _mosaicController;
             }
             private set {
@@ -36,6 +57,9 @@ namespace fmg {
                 }
             }
         }
+
+        // fix: XamlCompiler error WMC1110: Invalid binding path 'MosaicController.Size' : Property 'Size' can't be found on type 'IMosaicController'
+        public AMosaicController LivehackMosaicController => MosaicController;
 
         public MosaicPage() {
             this.InitializeComponent();
@@ -72,6 +96,9 @@ namespace fmg {
         private void OnMosaicControllerPropertyChanged(object sender, PropertyChangedEventArgs ev) {
         }
 
+        public void OnRegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs ev) {
+            (MosaicController as MosaicVirtController)?.OnRegionsInvalidated(sender, ev);
+        }
 
         private void GoBack() {
             if (this.Frame != null && this.Frame.CanGoBack)
@@ -79,11 +106,13 @@ namespace fmg {
         }
 
         private void OnPageSizeChanged(object sender, RoutedEventArgs e) {
-            MosaicController.SizeOptimal();
+            (MosaicController as MosaicVirtController)?.SizeOptimal();
+            (MosaicController as MosaicSwapController)?.SizeOptimal();
         }
 
         private void OnPageLoaded(object sender, RoutedEventArgs e) {
             Window.Current.CoreWindow.KeyUp += OnKeyUp_CoreWindow;
+            //this.DataContext = MosaicController;
         }
 
         private void OnPageUnloaded(object sender, RoutedEventArgs e) {
@@ -92,8 +121,10 @@ namespace fmg {
             MosaicController = null; // call explicit setter
 
             // Explicitly remove references to allow the Win2D controls to get garbage collected
-            _canvasVirtualControl.RemoveFromVisualTree();
+            _canvasVirtualControl?.RemoveFromVisualTree();
             _canvasVirtualControl = null;
+            _canvasSwapChainPanel?.RemoveFromVisualTree();
+            _canvasSwapChainPanel = null;
 
             Bindings.StopTracking();
         }
@@ -142,20 +173,20 @@ namespace fmg {
             GoBack();
         }
         private void OnClickBttnNewGame___________not_binded(object sender, RoutedEventArgs ev) {
-            MosaicController.GameNew();
+            //MosaicController.GameNew();
         }
 
         private void OnClickBttnSkillBeginner___________not_binded(object sender, RoutedEventArgs ev) {
-            MosaicController.SetGame(ESkillLevel.eBeginner);
+            //MosaicController.SetGame(ESkillLevel.eBeginner);
         }
         private void OnClickBttnSkillAmateur___________not_binded(object sender, RoutedEventArgs ev) {
-            MosaicController.SetGame(ESkillLevel.eAmateur);
+            //MosaicController.SetGame(ESkillLevel.eAmateur);
         }
         private void OnClickBttnSkillProfi___________not_binded(object sender, RoutedEventArgs ev) {
-            MosaicController.SetGame(ESkillLevel.eProfi);
+            //MosaicController.SetGame(ESkillLevel.eProfi);
         }
         private void OnClickBttnSkillCrazy___________not_binded(object sender, RoutedEventArgs ev) {
-            MosaicController.SetGame(ESkillLevel.eCrazy);
+            //MosaicController.SetGame(ESkillLevel.eCrazy);
         }
 
         static string GetCallerName([System.Runtime.CompilerServices.CallerMemberName] string callerName = null) { return callerName; }

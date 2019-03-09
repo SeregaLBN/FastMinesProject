@@ -8,7 +8,7 @@ namespace fmg.core.mosaic {
     /// <typeparam name="TImage">platform specific view/image/picture or other display context/canvas/window/panel</typeparam>
     /// <typeparam name="TImageInner">platform specific view/image/picture or other display context/canvas/window/panel</typeparam>
     /// <typeparam name="TMosaicModel">mosaic data model</typeparam>
-    public interface IMosaicView<TImage, TImageInner, TMosaicModel>
+    public interface IMosaicView<out TImage, out TImageInner, out TMosaicModel>
                     : IImageView<TImage, TMosaicModel>
         where TImage : class
         where TImageInner : class

@@ -7,7 +7,7 @@ namespace fmg.core.img {
     /// <summary> Image MVC: view (displayed view) </summary>
     /// <typeparam name="TImage">platform specific view/image/picture or other display context/canvas/window/panel</typeparam>
     /// <typeparam name="TImageModel">model data for display</typeparam>
-    public interface IImageView<TImage, TImageModel> : INotifyPropertyChanged, IDisposable
+    public interface IImageView<out TImage, out TImageModel> : INotifyPropertyChanged, IDisposable
         where TImage : class
         where TImageModel : IImageModel
     {

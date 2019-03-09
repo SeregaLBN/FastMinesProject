@@ -6,8 +6,8 @@ namespace fmg.core.img {
     /// <typeparam name="TImage">platform specific view/image/picture or other display context/canvas/window/panel</typeparam>
     /// <typeparam name="TImageView">image view</typeparam>
     /// <typeparam name="TImageModel">image model</typeparam>
-    public interface IAnimatedController<TImage, TImageView, TImageModel>
-                      : IImageController<TImage, TImageView, TImageModel>
+    public interface IAnimatedController<out TImage, out TImageView, out TImageModel>
+                      : IImageController<    TImage,     TImageView,     TImageModel>
         where TImage      : class
         where TImageView  : IImageView<TImage, TImageModel>
         where TImageModel : IAnimatedModel

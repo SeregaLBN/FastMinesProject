@@ -163,7 +163,7 @@ namespace fmg {
             System.Diagnostics.Debug.Assert(frame != null);
 
             var eMosaic = CurrentItem.MosaicType;
-            frame.Navigate(typeof(MosaicPage2), MosaicData);
+            frame.Navigate(typeof(MosaicPage), MosaicData);
 
             //Window.Current.Content = new MosaicPage();
             //// Ensure the current window is active

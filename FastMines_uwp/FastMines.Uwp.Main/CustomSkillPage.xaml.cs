@@ -77,7 +77,7 @@ namespace fmg {
             Frame frame = Window.Current.Content as Frame;
             System.Diagnostics.Debug.Assert(frame != null);
 
-            frame.Navigate(typeof(MosaicPage2), MosaicData);
+            frame.Navigate(typeof(MosaicPage), MosaicData);
 
             //Window.Current.Content = new MosaicPage();
             //// Ensure the current window is active

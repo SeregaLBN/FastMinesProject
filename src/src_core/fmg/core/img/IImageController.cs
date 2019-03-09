@@ -8,15 +8,15 @@ namespace fmg.core.img {
     /// <typeparam name="TImage">platform specific view/image/picture or other display context/canvas/window/panel</typeparam>
     /// <typeparam name="TImageView">image view</typeparam>
     /// <typeparam name="TImageModel">image model</typeparam>
-    public interface IImageController<TImage, TImageView, TImageModel> : INotifyPropertyChanged, IDisposable
+    public interface IImageController<out TImage, out TImageView, out TImageModel> : INotifyPropertyChanged, IDisposable
         where TImage      : class
         where TImageView  : IImageView<TImage, TImageModel>
         where TImageModel : IImageModel
     {
 
         TImageModel Model { get; }
-        TImage Image { get; }
-        SizeDouble Size { get; }
+        TImage      Image { get; }
+        SizeDouble  Size  { get; }
 
     }
 
