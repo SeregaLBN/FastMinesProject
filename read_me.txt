@@ -18,6 +18,7 @@
                 ./FastMines.Uwp.Draw.Win2D
                 ./FastMines.Uwp.Draw.XamlElem
                 ./FastMines.Uwp.BackgroundTasks
+                ./UnitTest.FastMines.Uwp
             ./FastMines_Logo                    - C++
             ./FastMines_Ava                     - C#     (can be opened and run in VS Code)
                 ./FastMines.Ava.Draw
@@ -34,18 +35,44 @@ FastMines_xxx - projects of a specific language implementation, for a specific U
    FastMines_jfx      - (  demo  ) - Java FX desktop project                                         (open from the Eclipse workspace / IDEA / VSCode)
    FastMines_uwp      - ( stable ) - C# desktop/tablet/mobile Universal Windows Platform application (open as a Visual Studio solution)
    FastMines_Logo     - (release ) - C++ Win32 proj (generate logo project - raw bitmap)             (open as a Visual Studio solution)
-   FastMines_SVG      - (  demo  ) - SVG-animation FastMines images over JS/SVG/HTML                 (open any IDE/text editor)
+   FastMines_svg      - (  demo  ) - SVG-animation FastMines images over JS/SVG/HTML                 (open any IDE/text editor and view in browser Firefox/Chrome)
    FastMines_Ava      - (try demo) - C# desktop Avalonia project (multiplatform - .NET Core)         (open in VS code / VS)
    ...
 
 
+----------------------------------
+GRADLE lifehacks
+ If you want to import FastMines_android into Eclipse IDE (open without build)
+   * temporarily change in ./build.gradle
+     to   classpath 'com.android.tools.build:gradle:3.2.1'
+     and restore after successful import
+ If you do not want to import FastMines_android into Eclipse IDE
+   * temporarily comment on the following line in ./settings.gradle
+     include ':FastMines_android'
+     and restore after successful import
 
+----------------------------------
+Android Studio
+How to:
+* Open FastMinesProject:
+ 1. Import project (Gradle ...)
+ 2. and select root FastMinesProject directory
 
+Lifehacks:
+If you want successfully build the FastMines_jfx
+ * change internal JDK to external
+   Menu 'File' -> Project Structure... -> SDK Location -> unselect 'Use embedded JDK (recommended)' -> select path to you JDK8 -> Ok
+ * or manualy copy file  jfxrt.jar
+   from external JDK
+      %JAVA_HOME_8%\jre\lib\ext\
+   to
+      you_path\Android Studio\jre\jre\lib\ext\
 
 ----------------------------------
 Eclipse (Java)
 How to:
 * Open FastMinesProject
+  (see up GRADLE lifehacks)
 1. Create new or open existing workspace in different external folder.
 2. Menu 'File' -> Import... -> expand 'Gradle' -> select 'Existing Gradle Project' -> button 'Next >' -> 'Next >' -> in 'Project root directory' click 'Browse...' -> select path ./FastMinesProject -> Ok -> Finish
 
