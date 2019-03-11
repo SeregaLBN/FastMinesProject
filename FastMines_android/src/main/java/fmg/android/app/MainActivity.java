@@ -52,8 +52,8 @@ public class MainActivity extends AppCompatActivity {
         binding.rvMosaicGroupItems.setAdapter(mosaicGroupListViewAdapter = new MosaicGroupListViewAdapter(viewModel.getMosaicGroupDS(), this::onMenuMosaicGroupItemClick));
         binding.rvMosaicSkillItems.setAdapter(mosaicSkillListViewAdapter = new MosaicSkillListViewAdapter(viewModel.getMosaicSkillDS(), this::onMenuMosaicSkillItemClick));
 
-        binding.panelMosaicGroupHeader.setOnClickListener(this::onMosaicGroupHeaderClick);
-        binding.panelMosaicSkillHeader.setOnClickListener(this::onMosaicSkillHeaderClick);
+        binding.panelMosaicGroupHeader.setOnClickListener(this::onMenuMosaicGroupHeaderClick);
+        binding.panelMosaicSkillHeader.setOnClickListener(this::onMenuMosaicSkillHeaderClick);
 
         binding.rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(this::onGlobalLayoutListener);
 
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    void onMosaicGroupHeaderClick(View v) {
+    void onMenuMosaicGroupHeaderClick(View v) {
         SmoothHelper.runColorSmoothTransition(viewModel.getMosaicGroupDS().getHeader().getEntity().getModel());
 
         if (binding.rvMosaicGroupItems.getVisibility() == View.GONE) {
@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
     double getLvGroupHeight() { return EMosaicGroup.values().length * (viewModel.getMosaicGroupDS().getImageSize().height + Cast.dpToPx(2) /* padding */); }
     double getLvSkillHeight() { return ESkillLevel .values().length * (viewModel.getMosaicSkillDS().getImageSize().height + Cast.dpToPx(2) /* padding */); }
 
-    void onMosaicSkillHeaderClick(View v) {
+    void onMenuMosaicSkillHeaderClick(View v) {
         SmoothHelper.runColorSmoothTransition(viewModel.getMosaicSkillDS().getHeader().getEntity().getModel());
 
         Supplier<Boolean> isVisibleScrollerFunc = () -> {

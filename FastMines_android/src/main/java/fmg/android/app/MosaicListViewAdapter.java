@@ -43,9 +43,8 @@ public class MosaicListViewAdapter extends RecyclerView.Adapter<MosaicListViewAd
         if (!holder.binding.getRoot().hasOnClickListeners())
             holder.binding.getRoot().setOnClickListener(view -> onClickItem(view, holder.getLayoutPosition(), holder.getAdapterPosition()));
 
-        // Here I am just highlighting the background
-        Color clr = mosaicDS.getDataSource().get(position).getEntity().getModel().getBackgroundColor();
-        holder.itemView.setBackgroundColor(Cast.toColor(clr));
+//        Color clr = mosaicDS.getDataSource().get(position).getEntity().getModel().getBackgroundColor();
+//        holder.itemView.setBackgroundColor(Cast.toColor(clr));
     }
 
     private void onClickItem(View view, int layoutPos, int adapterPos) {

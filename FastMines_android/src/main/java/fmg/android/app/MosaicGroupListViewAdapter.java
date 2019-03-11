@@ -44,7 +44,6 @@ public class MosaicGroupListViewAdapter extends RecyclerView.Adapter<MosaicGroup
         if (!holder.binding.getRoot().hasOnClickListeners())
             holder.binding.getRoot().setOnClickListener(view -> onClickItem(view, holder.getLayoutPosition(), holder.getAdapterPosition()));
 
-        // Here I am just highlighting the background
         Color clr = mosaicGroupDS.getDataSource().get(position).getEntity().getModel().getBackgroundColor();
         holder.itemView.setBackgroundColor(Cast.toColor(clr));
     }

@@ -43,7 +43,6 @@ public class MosaicSkillListViewAdapter extends RecyclerView.Adapter<MosaicSkill
         if (!holder.binding.getRoot().hasOnClickListeners())
             holder.binding.getRoot().setOnClickListener(view -> onClickItem(view, holder.getLayoutPosition(), holder.getAdapterPosition()));
 
-        // Here I am just highlighting the background
         Color clr = mosaicSkillDS.getDataSource().get(position).getEntity().getModel().getBackgroundColor();
         holder.itemView.setBackgroundColor(Cast.toColor(clr));
     }

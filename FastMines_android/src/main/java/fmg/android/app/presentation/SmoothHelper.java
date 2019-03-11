@@ -19,7 +19,7 @@ public final class SmoothHelper {
 
     public static class Context {
         private boolean forward = true;
-        private double currentStepAngle; // smooth angle
+        private double currentStepAngle = forward ? 360 : 0; // smooth angle
 
         public boolean isForward() { return forward; }
         public void   setForward(boolean forward) {

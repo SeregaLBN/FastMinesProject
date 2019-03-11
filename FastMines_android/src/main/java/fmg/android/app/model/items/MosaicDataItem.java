@@ -103,4 +103,7 @@ public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicAnimatedModel<Vo
                 .sizeTileField(getMosaicType());
     }
 
+    @Override
+    public String getTitle() { return super.getTitle() + " " + getSize(); }
+
 }

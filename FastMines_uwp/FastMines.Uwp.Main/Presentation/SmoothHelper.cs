@@ -13,7 +13,7 @@ namespace FastMines.Uwp.Main.Presentation {
 
         public class Context {
             private bool forward = true;
-            private double currentStepAngle; // smooth angle
+            private double currentStepAngle = forward ? 360 : 0; // smooth angle
 
             public bool Forward {
                 get { return forward; }

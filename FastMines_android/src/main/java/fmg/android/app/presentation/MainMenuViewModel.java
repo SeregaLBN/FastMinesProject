@@ -11,8 +11,6 @@ import fmg.android.app.MainActivity;
 import fmg.android.app.model.dataSource.MosaicGroupDataSource;
 import fmg.android.app.model.dataSource.MosaicSkillDataSource;
 import fmg.android.utils.Cast;
-import fmg.common.LoggerSimple;
-import fmg.common.geom.util.FigureHelper;
 
 /** ViewModel for {@link fmg.android.app.MainActivity} */
 public class MainMenuViewModel extends ViewModel {
@@ -46,11 +44,14 @@ public class MainMenuViewModel extends ViewModel {
             notifyPropertyChanged(BR.self);
         }
 
-        public boolean isOpen() { return context.isForward(); }
+        public boolean isOpen() {
+            return context.isForward();
+        }
         public void   setOpen(boolean opened) {
             context.setForward(opened);
             SmoothHelper.runSmoothTransition(context, 350, 50);
         }
+
         public double getPaneWidth() {
             double coef = context.getSmoothCoefficient();
             return MainMenuViewModel.this.getMosaicGroupDS().getImageSize().width
