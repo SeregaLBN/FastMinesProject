@@ -14,6 +14,7 @@ using fmg.core.mosaic;
 using fmg.core.img;
 using fmg.uwp.utils;
 using fmg.DataModel.Items;
+using FastMines.Uwp.App.Model;
 using MosaicsCanvasCtrllr = fmg.uwp.img.win2d.MosaicImg.ControllerBitmap;
 
 namespace fmg {
@@ -22,7 +23,7 @@ namespace fmg {
     public sealed partial class SelectMosaicPage : Page {
 
         /// <summary> Model (a common model between all the pages in the application) </summary>
-        public MosaicInitData MosaicData { get; set; }
+        public MosaicInitData InitData => MosaicInitDataExt.SharedData;
         /// <summary> View-Model </summary>
         public MosaicsViewModel ViewModel { get; private set; }
         public SolidColorBrush BorderColorStartBttn;
@@ -32,13 +33,19 @@ namespace fmg {
 
         public SelectMosaicPage() {
             this.InitializeComponent();
-            MosaicData = new MosaicInitData();
             ViewModel = new MosaicsViewModel();
             ViewModel.MosaicDS.DataSource.CollectionChanged += OnMosaicDsCollectionChanged;
 
-          //this.Loaded += OnPageLoaded;
+            this.Loaded += OnPageLoaded;
             this.Unloaded += OnPageUnloaded;
             this.SizeChanged += OnPageSizeChanged;
+        }
+
+        private void OnPageLoaded(object sender, RoutedEventArgs e) {
+            this.Loaded -= OnPageLoaded;
+
+            var ds = ViewModel.MosaicDS;
+            ds.CurrentItem = ds.DataSource.First(x => x.MosaicType == InitData.MosaicType);
 
             {
                 HSV hsv = new HSV(AnimatedImageModelConst.DefaultForegroundColor) {
@@ -57,10 +64,6 @@ namespace fmg {
                 run.Repeat(TimeSpan.FromMilliseconds(100), () => _closed);
             }
         }
-
-      //private void OnPageLoaded(object sender, RoutedEventArgs e) {
-      //    this.Loaded -= OnPageLoaded;
-      //}
 
         private void OnPageUnloaded(object sender, RoutedEventArgs ev) {
             this.Unloaded -= OnPageUnloaded;
@@ -90,17 +93,39 @@ namespace fmg {
             ViewModel.ImageSize = new SizeDouble(wh, wh);
         }
 
-        private void OnSelectionChangedGridViewMosaics(object sender, SelectionChangedEventArgs ev) {
+        private void OnMosaicItemSelectionChanged(object sender, SelectionChangedEventArgs ev) {
             //throw new NotImplementedException();
         }
 
-        private void OnItemClickGridViewMosaics(object sender, ItemClickEventArgs ev) {
+        private void OnMosaicItemClick(object sender, ItemClickEventArgs ev) {
             // invoke after set/change ViewModel.MosaicDS.CurrentItem
             AsyncRunner.InvokeFromUiLater(() => {
-                var cu = ViewModel.MosaicDS.CurrentItem;
-                if (cu != null)
-                    MosaicData.MosaicType = cu.MosaicType;
+                var ci = ViewModel.MosaicDS.CurrentItem;
+                if (ci != null)
+                    InitData.MosaicType = ci.MosaicType;
             });
+        }
+
+        private void OnMosaicItemDoubleClick(object sender, Windows.UI.Xaml.Input.DoubleTappedRoutedEventArgs ev) {
+            StartNewGame();
+        }
+
+        private void OnClickBttnStartGame(object sender, RoutedEventArgs ev) {
+            //LoggerSimple.Put("> " + nameof(SelectMosaicPage) + "::" + nameof(OnClickBttnStartGame));
+            StartNewGame();
+        }
+
+        private void StartNewGame() {
+            //Frame frame = this.Frame;
+            Frame frame = Window.Current.Content as Frame;
+            System.Diagnostics.Debug.Assert(frame != null);
+
+            var eMosaic = CurrentItem.MosaicType;
+            frame.Navigate(typeof(MosaicPage), InitData);
+
+            //Window.Current.Content = new MosaicPage();
+            //// Ensure the current window is active
+            //Window.Current.Activate();
         }
 
         public EMosaicGroup CurrentMosaicGroup {
@@ -145,7 +170,6 @@ namespace fmg {
             }
         }
 
-
         public void OnDrawCanvasControl(CanvasControl canvasControl, CanvasDrawEventArgs ev) {
             if (!mapBindingControlToController.ContainsKey(canvasControl))
                 return;
@@ -155,28 +179,6 @@ namespace fmg {
             var img = ctrllr.Image;
             System.Diagnostics.Debug.Assert(img != null); // null where is disposed
             ev.DrawingSession.DrawImage(img, new Windows.Foundation.Rect(0, 0, canvasControl.Width, canvasControl.Height));
-        }
-
-        private void StartNewGame() {
-            //Frame frame = this.Frame;
-            Frame frame = Window.Current.Content as Frame;
-            System.Diagnostics.Debug.Assert(frame != null);
-
-            var eMosaic = CurrentItem.MosaicType;
-            frame.Navigate(typeof(MosaicPage), MosaicData);
-
-            //Window.Current.Content = new MosaicPage();
-            //// Ensure the current window is active
-            //Window.Current.Activate();
-        }
-
-        private void OnDoubleTappedGridViewMosaics(object sender, Windows.UI.Xaml.Input.DoubleTappedRoutedEventArgs e) {
-            StartNewGame();
-        }
-
-        private void OnClickBttnStartGame(object sender, RoutedEventArgs ev) {
-            LoggerSimple.Put("> " + nameof(SelectMosaicPage) + "::" + nameof(OnClickBttnStartGame));
-            StartNewGame();
         }
 
     }

@@ -46,11 +46,11 @@
                       ItemsSource="{x:Bind ViewModel.MosaicDS.DataSource}"
                       SelectedItem="{x:Bind ViewModel.MosaicDS.CurrentItem, Mode=TwoWay, Converter={StaticResource ObjectToMosaicDataItemConverter}}"
                       ItemTemplate="{StaticResource TailTemplate}"
-                      IsItemClickEnabled="True" 
+                      IsItemClickEnabled="True"
                       SelectionMode="Single"
-                      SelectionChanged="OnSelectionChangedGridViewMosaics"
-                      ItemClick="OnItemClickGridViewMosaics"
-                      DoubleTapped="OnDoubleTappedGridViewMosaics" />
+                      SelectionChanged="OnMosaicItemSelectionChanged"
+                      ItemClick="OnMosaicItemClick"
+                      DoubleTapped="OnMosaicItemDoubleClick" />
         </ScrollViewer>
 
         <Grid Grid.Row="1" Grid.Column="1" Margin="0,0,14,12" Background="{x:Bind BorderColorStartBttn, Mode=OneWay}" >

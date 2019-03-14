@@ -106,6 +106,7 @@
     <Compile Include="DataModel\Items\MosaicDataItem.cs" />
     <Compile Include="DataModel\Items\MosaicSkillDataItem.cs" />
     <Compile Include="DataModel\Items\MosaicGroupDataItem.cs" />
+    <Compile Include="DataModel\MosaicInitDataExt.cs" />
     <Compile Include="MosaicPage.xaml.cs">
       <DependentUpon>MosaicPage.xaml</DependentUpon>
     </Compile>

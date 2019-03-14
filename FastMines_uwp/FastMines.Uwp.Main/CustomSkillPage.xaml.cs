@@ -9,13 +9,14 @@ using fmg.core.types;
 using fmg.core.mosaic;
 using fmg.core.img;
 using fmg.uwp.utils;
+using FastMines.Uwp.App.Model;
 
 namespace fmg {
 
     public sealed partial class CustomSkillPage : Page {
 
         /// <summary> Model (a common model between all the pages in the application) </summary>
-        public MosaicInitData MosaicData { get; set; }
+        public MosaicInitData InitData => MosaicInitDataExt.SharedData;
 
         public SolidColorBrush BorderColorStartBttn;
         private bool _closed;
@@ -55,19 +56,18 @@ namespace fmg {
             SliderWidth .Maximum = maxSizeField.m;
             SliderHeight.Maximum = maxSizeField.n;
 
-            MosaicData.PropertyChanged += OnMosaicDataPropertyChanged;
+            InitData.PropertyChanged += OnMosaicDataPropertyChanged;
 
-            SliderWidth .Value = MosaicData.SizeField.m;
-            SliderHeight.Value = MosaicData.SizeField.n;
-            SliderMines .Value = MosaicData.MinesCount;
+            SliderWidth .Value = InitData.SizeField.m;
+            SliderHeight.Value = InitData.SizeField.n;
+            SliderMines .Value = InitData.MinesCount;
             CheckSkillSizeRadioButtons();
             CheckSkillMinesRadioButtons();
         }
 
         private void OnPageUnloaded(object sender, RoutedEventArgs ev) {
             this.Loaded -= OnPageUnloaded;
-            MosaicData.PropertyChanged -= OnMosaicDataPropertyChanged;
-            MosaicData = null;
+            InitData.PropertyChanged -= OnMosaicDataPropertyChanged;
             _closed = true;
             Bindings.StopTracking();
         }
@@ -77,7 +77,7 @@ namespace fmg {
             Frame frame = Window.Current.Content as Frame;
             System.Diagnostics.Debug.Assert(frame != null);
 
-            frame.Navigate(typeof(MosaicPage), MosaicData);
+            frame.Navigate(typeof(MosaicPage), InitData);
 
             //Window.Current.Content = new MosaicPage();
             //// Ensure the current window is active
@@ -90,32 +90,32 @@ namespace fmg {
         }
 
         private void OnSliderValueChangedSizeFieldWidth(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs ev) {
-            MosaicData.SizeField = new Matrisize(Convert.ToInt32(ev.NewValue), MosaicData.SizeField.n);
+            InitData.SizeField = new Matrisize(Convert.ToInt32(ev.NewValue), InitData.SizeField.n);
         }
 
         private void OnSliderValueChangedSizeFieldHeight(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs ev) {
-            MosaicData.SizeField = new Matrisize(MosaicData.SizeField.m, Convert.ToInt32(ev.NewValue));
+            InitData.SizeField = new Matrisize(InitData.SizeField.m, Convert.ToInt32(ev.NewValue));
         }
 
         private void OnMosaicDataPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs ev) {
             switch (ev.PropertyName) {
-            case nameof(MosaicData.SizeField):
+            case nameof(InitData.SizeField):
                 CalcSliderMinesMax();
                 CheckSkillSizeRadioButtons();
                 CheckSkillMinesRadioButtons();
                 break;
-            case nameof(MosaicData.MosaicType):
+            case nameof(InitData.MosaicType):
                 CalcSliderMinesMax();
                 CheckSkillMinesRadioButtons();
                 break;
-            case nameof(MosaicData.MinesCount):
+            case nameof(InitData.MinesCount):
                 CheckSkillMinesRadioButtons();
                 break;
             }
         }
 
         private void CalcSliderMinesMax() {
-            int max = MosaicData.SizeField.m * MosaicData.SizeField.n - GetNeighborNumber();
+            int max = InitData.SizeField.m * InitData.SizeField.n - GetNeighborNumber();
             SliderMines.Maximum = max;
             if (SliderMines.Value > max)
                 SliderMines.Value = max;
@@ -124,7 +124,7 @@ namespace fmg {
         }
 
         private int GetNeighborNumber() {
-            var attr = MosaicHelper.CreateAttributeInstance(MosaicData.MosaicType);
+            var attr = MosaicHelper.CreateAttributeInstance(InitData.MosaicType);
             int max = Enumerable.Range(0, attr.GetDirectionCount())
                 .Select(i => attr.GetNeighborNumber(i))
                 .Max();
@@ -136,7 +136,7 @@ namespace fmg {
         /// <returns>max размер поля мозаики</returns>
         private Matrisize CalcMaxMosaicSize(double area) {
             var sizeMosaic = CalcMosaicWindowSize(ScreenResolutionHelper.GetDesktopSize());
-            return MosaicHelper.FindSizeByArea(MosaicData.MosaicType, area, sizeMosaic);
+            return MosaicHelper.FindSizeByArea(InitData.MosaicType, area, sizeMosaic);
         }
         /// <summary> узнать размер окна мозаики при указанном размере окна проекта </summary>
         SizeDouble CalcMosaicWindowSize(Size sizeMainWindow) {
@@ -158,18 +158,18 @@ namespace fmg {
             System.Diagnostics.Debug.Assert(sender is RadioButton);
             var rb = (RadioButton)sender;
             var skillLevel = ESkillLevelEx.FromOrdinal(Convert.ToInt32(rb.Tag.ToString()));
-            MosaicData.MinesCount = skillLevel.GetNumberMines(MosaicData.MosaicType, MosaicData.SizeField);
+            InitData.MinesCount = skillLevel.GetNumberMines(InitData.MosaicType, InitData.SizeField);
         }
 
         private void OnRadioButtonSkillSizeChecked(object sender, RoutedEventArgs ev) {
             System.Diagnostics.Debug.Assert(sender is RadioButton);
             var rb = (RadioButton)sender;
             var skillLevel = ESkillLevelEx.FromOrdinal(Convert.ToInt32(rb.Tag.ToString()));
-            MosaicData.SizeField = skillLevel.GetDefaultSize();
+            InitData.SizeField = skillLevel.GetDefaultSize();
         }
 
         private void CheckSkillSizeRadioButtons() {
-            var size = MosaicData.SizeField;
+            var size = InitData.SizeField;
             rbSizeBeginner    .IsChecked = (size == ESkillLevel.eBeginner.GetDefaultSize());
             rbSizeAmateur     .IsChecked = (size == ESkillLevel.eAmateur .GetDefaultSize());
             rbSizeProfessional.IsChecked = (size == ESkillLevel.eProfi   .GetDefaultSize());
@@ -177,9 +177,9 @@ namespace fmg {
         }
 
         private void CheckSkillMinesRadioButtons() {
-            var mines = MosaicData.MinesCount;
-            var type  = MosaicData.MosaicType;
-            var size  = MosaicData.SizeField;
+            var mines = InitData.MinesCount;
+            var type  = InitData.MosaicType;
+            var size  = InitData.SizeField;
             rbMinesBeginner    .IsChecked = (mines == ESkillLevel.eBeginner.GetNumberMines(type, size));
             rbMinesAmateur     .IsChecked = (mines == ESkillLevel.eAmateur.GetNumberMines(type, size));
             rbMinesProfessional.IsChecked = (mines == ESkillLevel.eProfi.GetNumberMines(type, size));

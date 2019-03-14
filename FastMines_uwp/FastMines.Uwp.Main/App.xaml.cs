@@ -15,6 +15,7 @@ using fmg.core.mosaic;
 using Windows.UI.ViewManagement;
 using fmg.core.img;
 using fmg.uwp.utils;
+using FastMines.Uwp.App.Model;
 
 namespace fmg {
 
@@ -24,7 +25,7 @@ namespace fmg {
     sealed partial class App : Application {
 
         /// <summary> Model (a common model between all the pages in the application) </summary>
-        public MosaicInitData MosaicData { get; private set; }
+        public MosaicInitData InitData { get; private set; }
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -101,8 +102,8 @@ namespace fmg {
 
             if (rootFrame.Content == null) {
                 // create a common model between all the pages in the application
-                this.MosaicData = LoadAppData();
-                if (!rootFrame.Navigate(typeof(MainPage), this.MosaicData)) {
+                this.InitData = LoadAppData();
+                if (!rootFrame.Navigate(typeof(MainPage), this.InitData)) {
                     throw new Exception("Failed to create initial page ;(");
                 }
             }
@@ -183,42 +184,11 @@ namespace fmg {
         }
 
         private void SaveAppData() {
-            MosaicInitData saveData = this.MosaicData;
-            var compositeMosaic = new Windows.Storage.ApplicationDataCompositeValue() {
-                [nameof(MosaicInitData.MosaicType)                            ] = saveData.MosaicType.Ordinal(),
-                [nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.m) ] = saveData.SizeField.m,
-                [nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.n) ] = saveData.SizeField.n,
-                [nameof(MosaicInitData.MinesCount)                            ] = saveData.MinesCount,
-                [nameof(MosaicInitData.Size) + '.' + nameof(SizeDouble.Width )] = saveData.Size.Width,
-                [nameof(MosaicInitData.Size) + '.' + nameof(SizeDouble.Height)] = saveData.Size.Height
-            };
-            var lsv = Windows.Storage.ApplicationData.Current.LocalSettings.Values;
-            lsv[nameof(MosaicInitData)] = compositeMosaic;
+            MosaicInitDataExt.Save(Windows.Storage.ApplicationData.Current.LocalSettings.Values, this.InitData);
         }
 
         private MosaicInitData LoadAppData() {
-            var lsv = Windows.Storage.ApplicationData.Current.LocalSettings.Values;
-            if (lsv.ContainsKey(nameof(MosaicInitData)))
-                try {
-                    var compositeMosaic = (Windows.Storage.ApplicationDataCompositeValue)lsv[nameof(MosaicInitData)];
-                    int mosaicTypeOrdinal = (int)     compositeMosaic[nameof(MosaicInitData.MosaicType)];
-                    int sizeFieldM        = (int)     compositeMosaic[nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.m)];
-                    int sizeFieldN        = (int)     compositeMosaic[nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.n)];
-                    int minesCount        = (int)     compositeMosaic[nameof(MosaicInitData.MinesCount)];
-                    var size = new SizeDouble((double)compositeMosaic[nameof(MosaicInitData.Size) + '.' + nameof(SizeDouble.Width)],
-                                              (double)compositeMosaic[nameof(MosaicInitData.Size) + '.' + nameof(SizeDouble.Height)]);
-
-                    var loadData = new MosaicInitData();
-                    loadData.MosaicType = EMosaicEx.FromOrdinal(mosaicTypeOrdinal);
-                    loadData.SizeField  = new Matrisize(sizeFieldM, sizeFieldN);
-                    loadData.MinesCount = minesCount;
-                    loadData.Size       = size;
-                    return loadData;
-                } catch (Exception ex) {
-                    LoggerSimple.Put($"Fail load data: {ex.Message}");
-                    System.Diagnostics.Debug.Assert(false, ex.Message);
-                }
-            return new MosaicInitData();
+            return MosaicInitDataExt.Load(Windows.Storage.ApplicationData.Current.LocalSettings.Values);
         }
 
 

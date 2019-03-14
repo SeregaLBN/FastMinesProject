@@ -83,7 +83,7 @@ public enum EMosaic {
         for (EMosaic item: EMosaic.values())
             if (item.index == index)
                 return item;
-        throw new IllegalArgumentException("Invalid paramenter value " + index);
+        throw new IllegalArgumentException("Invalid parameter value " + index);
     }
     public int getIndex() { return index; }
 

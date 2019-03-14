@@ -26,7 +26,7 @@
 
                         <!-- mosaic group header -->
                         <StackPanel Orientation="Horizontal" Background="{ThemeResource SystemChromeMediumColor}">
-                            <Button x:Name="panelMosaicGroupHeader"
+                            <Button x:Name="panelMenuMosaicGroupHeader"
                                           TabIndex="1"
                                           Style="{StaticResource ButtonExtStyle}"
                                           AutomationProperties.Name="Menu"
@@ -44,9 +44,9 @@
                         </StackPanel>
 
                         <!-- mosaic group items -->
-                        <ListView x:Name="lvMosaicGroupItems"
+                        <ListView x:Name="lvMenuMosaicGroupItems"
                                   ItemsSource="{x:Bind ViewModel.MosaicGroupDS.DataSource}"
-                                  Tapped="OnListViewMosaicGroupMenuTapped"
+                                  Tapped="OnMenuMosaicGroupItemClick"
                                   SelectedItem="{x:Bind ViewModel.MosaicGroupDS.CurrentItem, Mode=TwoWay, Converter={StaticResource ObjectToMosaicGroupDataItemConverter}}">
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
@@ -74,7 +74,7 @@
                         <!-- menu part of mosaic skill -->
                         <!-- mosaic skill header -->
                         <StackPanel Orientation="Horizontal" Background="{ThemeResource SystemChromeMediumColor}" Margin="0,10,0,0">
-                            <Button x:Name="panelMosaicSkillHeader"
+                            <Button x:Name="panelMenuMosaicSkillHeader"
                                           Style="{StaticResource ButtonExtStyle}"
                                           Width="{x:Bind ViewModel.MosaicSkillDS.ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWidthWithMarginConverter}}"
                                           AutomationProperties.Name="Menu"
@@ -96,9 +96,9 @@
                         </StackPanel>
 
                         <!-- mosaic Skill items -->
-                        <ListView x:Name="lvMosaicSkillItems"
+                        <ListView x:Name="lvMenuMosaicSkillItems"
                                   Visibility="Collapsed"
-                                  Tapped="OnListViewSkillLevelMenuTapped"
+                                  Tapped="OnMenuMosaicSkillItemClick"
                                   ItemsSource="{x:Bind ViewModel.MosaicSkillDS.DataSource}"
                                   SelectedItem="{x:Bind ViewModel.MosaicSkillDS.CurrentItem, Mode=TwoWay, Converter={StaticResource ObjectToMosaicSkillDataItemConverter}}">
                             <ListView.ItemContainerStyle>
@@ -128,7 +128,7 @@
                 </ScrollViewer>
             </SplitView.Pane>
             <SplitView.Content>
-                <Frame x:Name="_frame" >
+                <Frame x:Name="rightFrame" >
                 </Frame>
             </SplitView.Content>
         </SplitView>

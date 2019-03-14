@@ -3,19 +3,18 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
 using fmg.common.geom;
-using fmg.common.geom.util;
 using fmg.core.types;
 using fmg.core.mosaic;
 using fmg.uwp.utils;
 using fmg.DataModel.Items;
 using fmg.DataModel.DataSources;
+using FastMines.Uwp.App.Model;
 using FastMines.Uwp.Main.Presentation;
 using MosaicsSkillImg = fmg.uwp.img.win2d.MosaicSkillImg.ControllerBitmap;
 using MosaicsGroupImg = fmg.uwp.img.win2d.MosaicGroupImg.ControllerBitmap;
@@ -27,10 +26,10 @@ namespace fmg {
         internal const int MenuTextWidth = 110;
 
         /// <summary> Model (a common model between all the pages in the application) </summary>
-        public MosaicInitData InitData { get; private set; }
+        public MosaicInitData InitData => MosaicInitDataExt.SharedData;
         /// <summary> View-Model </summary>
         public MainMenuViewModel ViewModel { get; } = new MainMenuViewModel();
-        public Frame RightFrame => this._frame;
+        public Frame RightFrame => this.rightFrame;
         private IDisposable _sizeChangedObservable;
 
 
@@ -46,7 +45,7 @@ namespace fmg {
             base.OnNavigatedTo(ev);
 
             System.Diagnostics.Debug.Assert(ev.Parameter is MosaicInitData);
-            InitData = (ev.Parameter as MosaicInitData) ?? new MosaicInitData();
+            //InitData = (ev.Parameter as MosaicInitData) ?? new MosaicInitData();
         }
 
         private void OnPageLoaded(object sender, RoutedEventArgs e) {
@@ -58,16 +57,10 @@ namespace fmg {
             ViewModel.MosaicSkillDS.PropertyChanged += OnMosaicSkillDsPropertyChanged;
 
             ViewModel.MosaicGroupDS.CurrentItem = ViewModel.MosaicGroupDS.DataSource.First(x => x.MosaicGroup == InitData.MosaicType.GetGroup());
-            ViewModel.MosaicSkillDS.CurrentItem = ViewModel.MosaicSkillDS.DataSource.First(x => x.SkillLevel == InitData.SkillLevel);
+            ViewModel.MosaicSkillDS.CurrentItem = ViewModel.MosaicSkillDS.DataSource.First(x => x.SkillLevel  == InitData.SkillLevel);
 
-            var smp = RightFrame?.Content as SelectMosaicPage;
-            if (smp != null) {
-                var ds = smp.ViewModel.MosaicDS;
-                ds.CurrentItem = ds.DataSource.First(x => x.MosaicType == InitData.MosaicType);
-            }
-
-            SmoothHelper.ApplyButtonColorSmoothTransition(panelMosaicGroupHeader, ViewModel.MosaicGroupDS.Header.Entity.Model);
-            SmoothHelper.ApplyButtonColorSmoothTransition(panelMosaicSkillHeader, ViewModel.MosaicSkillDS.Header.Entity.Model);
+            SmoothHelper.ApplyButtonColorSmoothTransition(panelMenuMosaicGroupHeader, ViewModel.MosaicGroupDS.Header.Entity.Model);
+            SmoothHelper.ApplyButtonColorSmoothTransition(panelMenuMosaicSkillHeader, ViewModel.MosaicSkillDS.Header.Entity.Model);
         }
 
         private void OnPageUnloaded(object sender, RoutedEventArgs ev) {
@@ -83,15 +76,54 @@ namespace fmg {
             Bindings.StopTracking();
         }
 
-        private void OnListViewMosaicGroupMenuTapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs ev) {
-            //LoggerSimple.Put("> " + nameof(MainPage) + "::" + nameof(OnListViewMosaicGroupMenuTapped));
+        private void OnMenuMosaicGroupHeaderClick(object sender, RoutedEventArgs e) {
+            if (lvMenuMosaicGroupItems.Visibility == Visibility.Collapsed) {
+                SmoothHelper.ApplySmoothVisibilityOverScale(lvMenuMosaicGroupItems, true, LvGroupHeight);
+                ViewModel.MosaicGroupDS.Header.Entity.BurgerMenuModel.Horizontal = false;
+            } else {
+                _splitView.IsPaneOpen = !_splitView.IsPaneOpen;
+                ViewModel.MosaicGroupDS.Header.Entity.Model.AnimeDirection = !ViewModel.MosaicGroupDS.Header.Entity.Model.AnimeDirection;
+            }
+        }
+
+        double LvGroupHeight() => Enum.GetValues(typeof(EMosaicGroup)).Length * (ViewModel.MosaicGroupDS.ImageSize.Height + 2 /* padding */);
+        double LvSkillHeight() => Enum.GetValues(typeof(ESkillLevel )).Length * (ViewModel.MosaicSkillDS.ImageSize.Height + 2 /* padding */);
+
+        private void OnMenuMosaicSkillHeaderClick(object sender, RoutedEventArgs e) {
+            bool isVisibleScrollerFunc() => !_scroller.ScrollableHeight.HasMinDiff(_scroller.VerticalOffset);
+            bool isVisibleScroller = isVisibleScrollerFunc();
+            if (lvMenuMosaicSkillItems.Visibility == Visibility.Collapsed) {
+                if (isVisibleScroller) {
+                    SmoothHelper.ApplySmoothVisibilityOverScale(lvMenuMosaicSkillItems, true , LvSkillHeight);
+                    SmoothHelper.ApplySmoothVisibilityOverScale(lvMenuMosaicGroupItems, false, LvGroupHeight);
+                } else {
+                    SmoothHelper.ApplySmoothVisibilityOverScale(lvMenuMosaicSkillItems, true, LvSkillHeight,
+                        () => {
+                            if (isVisibleScrollerFunc())
+                                SmoothHelper.ApplySmoothVisibilityOverScale(lvMenuMosaicGroupItems, false, LvGroupHeight);
+                        });
+                }
+                ViewModel.MosaicSkillDS.Header.Entity.Model.AnimeDirection = !ViewModel.MosaicSkillDS.Header.Entity.Model.AnimeDirection;
+            } else {
+                if (isVisibleScroller && (lvMenuMosaicGroupItems.Visibility == Visibility.Visible)) {
+                    SmoothHelper.ApplySmoothVisibilityOverScale(lvMenuMosaicGroupItems, false, LvGroupHeight);
+                    ViewModel.MosaicGroupDS.Header.Entity.BurgerMenuModel.Horizontal = true;
+                } else {
+                    SmoothHelper.ApplySmoothVisibilityOverScale(lvMenuMosaicSkillItems, false, LvSkillHeight);
+                    ViewModel.MosaicSkillDS.Header.Entity.Model.AnimeDirection = !ViewModel.MosaicSkillDS.Header.Entity.Model.AnimeDirection;
+                }
+            }
+        }
+
+        private void OnMenuMosaicGroupItemClick(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs ev) {
+            //LoggerSimple.Put("> " + nameof(MainPage) + "::" + nameof(OnMenuMosaicGroupItemClick));
             var listView = (ListView)sender;
             if (!(RightFrame.Content is SelectMosaicPage))
                 ShowSelectMosaicPage(EMosaicGroupEx.FromIndex(listView.SelectedIndex));
         }
 
-        private void OnListViewSkillLevelMenuTapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs ev) {
-            //LoggerSimple.Put("> " + nameof(MainPage) + "::" + nameof(OnListViewSkillLevelMenuTapped));
+        private void OnMenuMosaicSkillItemClick(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs ev) {
+            //LoggerSimple.Put("> " + nameof(MainPage) + "::" + nameof(OnMenuMosaicSkillItemClick));
             var listView = (ListView)sender;
             if ((listView.SelectedIndex == ESkillLevel.eCustom.Ordinal()) && !(RightFrame.Content is CustomSkillPage))
                 ShowCustomSkillPage();
@@ -104,21 +136,18 @@ namespace fmg {
                 smp = RightFrame.Content as SelectMosaicPage;
             }
             smp.CurrentMosaicGroup = mosaicGroup;
-            smp.MosaicData = this.InitData;
             smp.CurrentSkillLevel = this.InitData.SkillLevel;
             if (this.InitData.MosaicType.GetGroup() == mosaicGroup)
                 smp.CurrentItem = smp.ViewModel.MosaicDS.DataSource.First(x => x.MosaicType == this.InitData.MosaicType);
         }
         private void ShowCustomSkillPage() {
             RightFrame.SourcePageType = typeof(CustomSkillPage);
-            var csp = RightFrame.Content as CustomSkillPage;
-            csp.MosaicData = this.InitData;
         }
         private void ShowHypnosisLogoPage() {
-            LoggerSimple.Put("TODO:  redirect to ShowHypnosisLogoPage...");
+            LoggerSimple.Put("TODO:  redirect to HypnosisLogoFragment...");
         }
 
-        private void OnPropertyCurrenItemChanged(bool senderIsMosaicGroup, MosaicGroupDataItem currentGroupItem, MosaicSkillDataItem currentSkillItem) {
+        private void OnMenuCurrentItemChanged(bool senderIsMosaicGroup, MosaicGroupDataItem currentGroupItem, MosaicSkillDataItem currentSkillItem) {
             if ((currentGroupItem == null) || (currentSkillItem == null)) {
                 ShowHypnosisLogoPage();
                 return;
@@ -130,7 +159,7 @@ namespace fmg {
             if (!senderIsMosaicGroup && (currentSkillItem.SkillLevel == ESkillLevel.eCustom)) {
                 ShowCustomSkillPage();
             } else {
-                //LoggerSimple.Put("> " + nameof(MainPage) + "::" + nameof(OnPropertyCurrenItemChanged) + ": " + currentGroupItem.MosaicGroup);
+                //LoggerSimple.Put("> " + nameof(MainPage) + "::" + nameof(OnMenuCurrentItemChanged) + ": " + currentGroupItem.MosaicGroup);
                 ShowSelectMosaicPage(currentGroupItem.MosaicGroup.Value);
             }
         }
@@ -139,8 +168,8 @@ namespace fmg {
             //LoggerSimple.Put("> " + nameof(MainPage) + "::" + nameof(OnMosaicGroupDsPropertyChanged) + ": ev.Name=" + ev.PropertyName);
             switch (ev.PropertyName) {
             case nameof(ViewModel.MosaicGroupDS.CurrentItem):
-                var currentGroupItem = ViewModel.MosaicSkillDS.CurrentItem;
-                OnPropertyCurrenItemChanged(true, ((MosaicGroupDataSource)sender).CurrentItem, currentGroupItem);
+                var currentGroupItem = ((MosaicGroupDataSource)sender).CurrentItem;
+                OnMenuCurrentItemChanged(true, currentGroupItem, ViewModel.MosaicSkillDS.CurrentItem);
                 break;
             }
         }
@@ -150,7 +179,7 @@ namespace fmg {
             switch (ev.PropertyName) {
             case nameof(ViewModel.MosaicSkillDS.CurrentItem):
                 var currentSkillItem = ((MosaicSkillDataSource)sender).CurrentItem;
-                OnPropertyCurrenItemChanged(false, ViewModel.MosaicGroupDS.CurrentItem, currentSkillItem);
+                OnMenuCurrentItemChanged(false, ViewModel.MosaicGroupDS.CurrentItem, currentSkillItem);
                 break;
             }
         }
@@ -241,45 +270,6 @@ namespace fmg {
                 };
             } else {
                 System.Diagnostics.Debug.Assert(false, "Support me"); // TODO
-            }
-        }
-
-        private void OnMenuMosaicGroupHeaderClick(object sender, RoutedEventArgs e) {
-            if (lvMosaicGroupItems.Visibility == Visibility.Collapsed) {
-                SmoothHelper.ApplySmoothVisibilityOverScale(lvMosaicGroupItems, true, LvGroupHeight);
-                ViewModel.MosaicGroupDS.Header.Entity.BurgerMenuModel.Horizontal = false;
-            } else {
-                _splitView.IsPaneOpen = !_splitView.IsPaneOpen;
-                ViewModel.MosaicGroupDS.Header.Entity.Model.AnimeDirection = !ViewModel.MosaicGroupDS.Header.Entity.Model.AnimeDirection;
-            }
-        }
-
-        double LvGroupHeight() => Enum.GetValues(typeof(EMosaicGroup)).Length * (ViewModel.MosaicGroupDS.ImageSize.Height + 2 /* padding */);
-        double LvSkillHeight() => Enum.GetValues(typeof(ESkillLevel )).Length * (ViewModel.MosaicSkillDS.ImageSize.Height + 2 /* padding */);
-
-        private void OnMenuMosaicSkillHeaderClick(object sender, RoutedEventArgs e) {
-            bool isVisibleScrollerFunc() => !_scroller.ScrollableHeight.HasMinDiff(_scroller.VerticalOffset);
-            bool isVisibleScroller = isVisibleScrollerFunc();
-            if (lvMosaicSkillItems.Visibility == Visibility.Collapsed) {
-                if (isVisibleScroller) {
-                    SmoothHelper.ApplySmoothVisibilityOverScale(lvMosaicSkillItems, true , LvSkillHeight);
-                    SmoothHelper.ApplySmoothVisibilityOverScale(lvMosaicGroupItems, false, LvGroupHeight);
-                } else {
-                    SmoothHelper.ApplySmoothVisibilityOverScale(lvMosaicSkillItems, true, LvSkillHeight,
-                        () => {
-                            if (isVisibleScrollerFunc())
-                                SmoothHelper.ApplySmoothVisibilityOverScale(lvMosaicGroupItems, false, LvGroupHeight);
-                        });
-                }
-                ViewModel.MosaicSkillDS.Header.Entity.Model.AnimeDirection = !ViewModel.MosaicSkillDS.Header.Entity.Model.AnimeDirection;
-            } else {
-                if (isVisibleScroller && (lvMosaicGroupItems.Visibility == Visibility.Visible)) {
-                    SmoothHelper.ApplySmoothVisibilityOverScale(lvMosaicGroupItems, false, LvGroupHeight);
-                    ViewModel.MosaicGroupDS.Header.Entity.BurgerMenuModel.Horizontal = true;
-                } else {
-                    SmoothHelper.ApplySmoothVisibilityOverScale(lvMosaicSkillItems, false, LvSkillHeight);
-                    ViewModel.MosaicSkillDS.Header.Entity.Model.AnimeDirection = !ViewModel.MosaicSkillDS.Header.Entity.Model.AnimeDirection;
-                }
             }
         }
 

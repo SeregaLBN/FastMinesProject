@@ -1090,7 +1090,7 @@ public class Main extends JFrame {
             mosaicCtrllr.setSizeField(spm.getSizeField());
             mosaicCtrllr.setMosaicType(spm.getMosaicType());
             mosaicCtrllr.setMinesCount(spm.getMinesCount());
-            setMosaicSize(spm.getSize());
+            setMosaicSize(spm.getSizeMosaic());
 
             setActiveUserId(spm.getActiveUserId());
             getPlayerManageDlg().setDoNotAskStartupChecked(spm.isDoNotAskStartup());
@@ -1474,7 +1474,7 @@ public class Main extends JFrame {
             spm.setSizeField(getMosaicController().getSizeField());
             spm.setMosaicType(getMosaicController().getMosaicType());
             spm.setMinesCount(getMosaicController().getMinesCount());
-            spm.setSize(getMosaicController().getSize());
+            spm.setSizeMosaic(getMosaicController().getSize());
 
             spm.setActiveUserId(getActiveUserId());
             spm.setDoNotAskStartup(getPlayerManageDlg().isDoNotAskStartupChecked());

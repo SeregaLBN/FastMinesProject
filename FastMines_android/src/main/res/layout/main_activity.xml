@@ -39,7 +39,7 @@
 
                 <!-- mosaic group header -->
                 <LinearLayout
-                    android:id="@+id/panelMosaicGroupHeader"
+                    android:id="@+id/panelMenuMosaicGroupHeader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_sizeToHeight="@{viewModel.mosaicGroupDS.header.size}"
@@ -92,7 +92,7 @@
                     <!--https://stackoverflow.com/questions/27083091/recyclerview-inside-scrollview-is-not-working-->
 
                     <android.support.v7.widget.RecyclerView
-                        android:id="@+id/rvMosaicGroupItems"
+                        android:id="@+id/rvMenuMosaicGroupItems"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="0px"
@@ -113,7 +113,7 @@
 
                 <!-- mosaic skill header -->
                 <LinearLayout
-                    android:id="@+id/panelMosaicSkillHeader"
+                    android:id="@+id/panelMenuMosaicSkillHeader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_sizeToHeight="@{viewModel.mosaicSkillDS.header.size}"
@@ -163,7 +163,7 @@
                     <!--https://stackoverflow.com/questions/27083091/recyclerview-inside-scrollview-is-not-working-->
 
                     <android.support.v7.widget.RecyclerView
-                        android:id="@+id/rvMosaicSkillItems"
+                        android:id="@+id/rvMenuMosaicSkillItems"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="0px"
@@ -176,12 +176,12 @@
         </LinearLayout>
         </ScrollView>
 
-        <!-- select mosaic fragment -->
-        <fragment class="fmg.android.app.SelectMosaicFragment"
-            android:id="@+id/_frame"
+        <!-- frame for fragment -->
+        <FrameLayout android:id="@+id/rightFrame"
             android:layout_weight="1"
             android:layout_width="0px"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:background="?android:attr/detailsElementBackground" />
 
     </LinearLayout>
 

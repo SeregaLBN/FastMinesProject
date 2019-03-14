@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel;
 using fmg.common.geom;
 using fmg.common.notyfier;
@@ -6,24 +7,38 @@ using fmg.core.types;
 namespace fmg.core.mosaic {
 
     /// <summary> Mosaic data </summary>
-    public class MosaicInitData : INotifyPropertyChanged {
+    public class MosaicInitData : INotifyPropertyChanged, IDisposable {
 
         public const double AREA_MINIMUM = 230;
 
-        private EMosaic   _mosaicType = EMosaic.eMosaicSquare1;
-        private Matrisize _sizeField  = ESkillLevel.eBeginner.GetDefaultSize();
-        private int       _minesCount = ESkillLevel.eBeginner.GetNumberMines(EMosaic.eMosaicSquare1);
-        private SizeDouble size = new SizeDouble(500, 500);
+        public const int MIN_SIZE_FIELD_M = 3;
+        public const int MAX_SIZE_FIELD_M = 3000;
+        public const int MIN_SIZE_FIELD_N = 3;
+        public const int MAX_SIZE_FIELD_N = 3000;
 
-        private bool _lockFireSkill = false;
+        public const EMosaic       DEFAULT_MOSAIC_TYPE  = EMosaic.eMosaicSquare1;
+        public const ESkillLevel   DEFAULT_SKILL_LEVEL  = ESkillLevel.eBeginner;
+        public static readonly int DEFAULT_SIZE_FIELD_M = DEFAULT_SKILL_LEVEL.GetDefaultSize().m;
+        public static readonly int DEFAULT_SIZE_FIELD_N = DEFAULT_SKILL_LEVEL.GetDefaultSize().n;
+        public static readonly int DEFAULT_MINES_COUNT  = DEFAULT_SKILL_LEVEL.GetNumberMines(DEFAULT_MOSAIC_TYPE);
+
+        private EMosaic   _mosaicType = DEFAULT_MOSAIC_TYPE;
+        private Matrisize _sizeField  = new Matrisize(DEFAULT_SIZE_FIELD_M, DEFAULT_SIZE_FIELD_N);
+        private int       _minesCount = DEFAULT_MINES_COUNT;
+
+        private bool lockChanging = false;
 
         protected bool Disposed { get; private set; }
-        public event PropertyChangedEventHandler PropertyChanged;
+        private event PropertyChangedEventHandler PropertyChangedSync;
+        public  event PropertyChangedEventHandler PropertyChanged/*Async*/;
         protected readonly NotifyPropertyChanged _notifier;
+        private   readonly NotifyPropertyChanged _notifierAsync;
 
 
         public MosaicInitData() {
-            _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
+            _notifier = new NotifyPropertyChanged(this, ev => PropertyChangedSync?.Invoke(this, ev), false);
+            _notifierAsync = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev), true);
+            this.PropertyChangedSync += OnPropertyChanged;
         }
 
 
@@ -46,10 +61,18 @@ namespace fmg.core.mosaic {
         public Matrisize SizeField {
             get { return _sizeField; }
             set {
+                if (value.m < MIN_SIZE_FIELD_M)
+                    throw new ArgumentException("Size field M must be larger " + MIN_SIZE_FIELD_M);
+                if (value.n < MIN_SIZE_FIELD_N)
+                    throw new ArgumentException("Size field N must be larger " + MIN_SIZE_FIELD_N);
+                if (value.m > MAX_SIZE_FIELD_M)
+                    throw new ArgumentException("Size field M must be less " + (MAX_SIZE_FIELD_M + 1));
+                if (value.n > MAX_SIZE_FIELD_N)
+                    throw new ArgumentException("Size field N must be less " + (MAX_SIZE_FIELD_N + 1));
                 var skillOld = SkillLevel;
                 if (_notifier.SetProperty(ref _sizeField, value)) {
                     var skillNew = SkillLevel;
-                    if (!_lockFireSkill && (skillNew != skillOld))
+                    if (!lockChanging && (skillNew != skillOld))
                         _notifier.FirePropertyChanged(skillOld, skillNew, nameof(SkillLevel));
                 }
             }
@@ -61,15 +84,10 @@ namespace fmg.core.mosaic {
                 var skillOld = SkillLevel;
                 if (_notifier.SetProperty(ref _minesCount, value)) {
                     var skillNew = SkillLevel;
-                    if (!_lockFireSkill && (skillNew != skillOld))
+                    if (!lockChanging && (skillNew != skillOld))
                         _notifier.FirePropertyChanged(skillOld, skillNew, nameof(SkillLevel));
                 }
             }
-        }
-
-        public SizeDouble Size {
-            get { return size; }
-            set { _notifier.SetProperty(ref size, value); }
         }
 
         public ESkillLevel SkillLevel {
@@ -91,18 +109,38 @@ namespace fmg.core.mosaic {
                 if (skillOld == value)
                     return;
 
-                _lockFireSkill = true;
+                lockChanging = true;
                 {
                     MinesCount = value.GetNumberMines(MosaicType);
                     SizeField = value.GetDefaultSize();
                 }
-                _lockFireSkill = false;
+                lockChanging = false;
 
                 var skillNew = SkillLevel;
                 System.Diagnostics.Debug.Assert(value == skillNew);
                 System.Diagnostics.Debug.Assert(value != skillOld);
                 _notifier.FirePropertyChanged(skillOld, skillNew, nameof(SkillLevel));
             }
+        }
+
+        protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            // refire as async event
+            _notifierAsync.FirePropertyChanged(ev);
+        }
+
+        /// <summary>  Dispose managed resources </summary>/
+        protected virtual void Disposing() {
+            this.PropertyChangedSync -= OnPropertyChanged;
+            _notifier.Dispose();
+            _notifierAsync.Dispose();
+        }
+
+        public void Dispose() {
+            if (Disposed)
+                return;
+            Disposed = true;
+            Disposing();
+            GC.SuppressFinalize(this);
         }
 
     }

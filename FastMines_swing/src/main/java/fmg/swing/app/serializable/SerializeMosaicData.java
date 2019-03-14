@@ -18,8 +18,6 @@ public class SerializeMosaicData extends MosaicInitData implements Externalizabl
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeLong(VERSION);
-        out.writeDouble(getSize().width);
-        out.writeDouble(getSize().height);
         out.writeInt(getMosaicType().getIndex());
         out.writeInt(getSizeField().m);
         out.writeInt(getSizeField().n);
@@ -37,7 +35,6 @@ public class SerializeMosaicData extends MosaicInitData implements Externalizabl
             setMinesCount(in.readInt());
             break;
         case (int)VERSION:
-            setSize(new SizeDouble(in.readDouble(), in.readDouble()));
             setMosaicType(EMosaic.fromIndex(in.readInt()));
             setSizeField(new Matrisize(in.readInt(), in.readInt()));
             setMinesCount(in.readInt());

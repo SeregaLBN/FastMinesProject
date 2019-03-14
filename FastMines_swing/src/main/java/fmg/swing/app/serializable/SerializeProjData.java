@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.Point;
+import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
 import fmg.core.types.EMosaic;
 import fmg.core.types.draw.EShowElement;
@@ -12,7 +13,7 @@ import fmg.core.types.draw.EShowElement;
 /** Данные проекта, записываемые/считываемые в/из файл(а) */
 public class SerializeProjData implements Externalizable {
 
-    private static final long VERSION = 2;
+    private static final long VERSION = 3;
 
     private SerializeMosaicData mosaicData;
 
@@ -24,6 +25,7 @@ public class SerializeProjData implements Externalizable {
     private boolean useUnknown;
     private boolean usePause;
     private Point location;
+    private SizeDouble sizeMosaic;
     private boolean systemTheme;
 
     public SerializeProjData() { setDefaults(); }
@@ -70,6 +72,8 @@ public class SerializeProjData implements Externalizable {
         out.writeBoolean(usePause);
         out.writeInt(location.x);
         out.writeInt(location.y);
+        out.writeDouble(sizeMosaic.width);
+        out.writeDouble(sizeMosaic.height);
     }
 
     @Override
@@ -92,6 +96,7 @@ public class SerializeProjData implements Externalizable {
         usePause = in.readBoolean();
         location.x = in.readInt();
         location.y = in.readInt();
+        sizeMosaic = new SizeDouble(in.readDouble(), in.readDouble());
     }
 
     /**
@@ -138,8 +143,8 @@ public class SerializeProjData implements Externalizable {
     public int getMinesCount() { return mosaicData.getMinesCount(); }
     public void setMinesCount(int minesCount) { mosaicData.setMinesCount(minesCount); }
 
-    public SizeDouble getSize() { return mosaicData.getSize(); }
-    public void setSize(SizeDouble size) { mosaicData.setSize(size); }
+    public SizeDouble getSizeMosaic() { return sizeMosaic; }
+    public void setSizeMosaic(SizeDouble size) { this.sizeMosaic = size; }
 
     public boolean getShowElement(EShowElement key) { return eShowElements[key.ordinal()]; }
     public void setShowElement(EShowElement key, boolean val) { this.eShowElements[key.ordinal()] = val; }

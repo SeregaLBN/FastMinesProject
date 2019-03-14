@@ -7,21 +7,23 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import java.beans.PropertyChangeEvent;
 import java.util.concurrent.TimeUnit;
 
 import fmg.android.app.databinding.SelectMosaicFragmentBinding;
-import fmg.android.app.presentation.MainMenuViewModel;
+import fmg.android.app.model.MosaicInitDataExt;
+import fmg.android.app.model.items.MosaicDataItem;
 import fmg.android.app.presentation.MosaicsViewModel;
 import fmg.common.LoggerSimple;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.Factory;
+import fmg.core.mosaic.MosaicInitData;
+import fmg.core.types.EMosaicGroup;
+import fmg.core.types.ESkillLevel;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -29,11 +31,15 @@ import io.reactivex.subjects.Subject;
 public class SelectMosaicFragment extends Fragment {
 
     private SelectMosaicFragmentBinding binding;
-    private MosaicsViewModel viewModel;
+    /** View-Model */
+    public MosaicsViewModel viewModel;
     private MosaicListViewAdapter mosaicListViewAdapter;
     private Subject<SizeDouble> subjSizeChanged;
     private Disposable sizeChangedObservable;
 
+
+    public MosaicInitData getInitData() { return MosaicInitDataExt.getSharedData(); }
+    //public void setInitData(MosaicInitData initData) { MosaicInitDataExt.getSharedData().copyFrom(initData); }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -44,6 +50,7 @@ public class SelectMosaicFragment extends Fragment {
         binding.setViewModel(viewModel);
         binding.executePendingBindings();
 
+        // TODO try StaggeredGridLayoutManager
         binding.rvMosaicItems.setLayoutManager(new GridLayoutManager(this.getContext(), 2));
         binding.rvMosaicItems.setAdapter(mosaicListViewAdapter = new MosaicListViewAdapter(viewModel.getMosaicDS(), this::onMosaicItemClick));
 
@@ -51,8 +58,7 @@ public class SelectMosaicFragment extends Fragment {
 
         binding.rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(this::onGlobalLayoutListener);
 
-        View view = binding.getRoot();
-        return view;
+        return binding.getRoot();
     }
 
     @Override
@@ -69,13 +75,6 @@ public class SelectMosaicFragment extends Fragment {
         if (sizeChangedObservable != null)
             sizeChangedObservable.dispose();
         super.onDestroy();
-    }
-
-    void onMosaicHeaderClick(View v) {
-    }
-
-    void onMosaicItemClick(View v, int position) {
-        Toast.makeText(this.getContext(), "onMosaicItemClick " + position, Toast.LENGTH_LONG).show();
     }
 
 
@@ -101,4 +100,57 @@ public class SelectMosaicFragment extends Fragment {
 //        LoggerSimple.put("> SelectMosaicFragment::onFragmentSizeChanged: newSize={0}", newSize);
     }
 
+
+    void onMosaicHeaderClick(View v) {
+    }
+
+    void onMosaicItemClick(View v, int position) {
+        Toast.makeText(this.getContext(), "onMosaicItemClick " + position, Toast.LENGTH_LONG).show();
+
+        // invoke after set/change ViewModel.MosaicDS.CurrentItem
+        Factory.DEFERR_INVOKER.accept(() -> {
+            MosaicDataItem ci = viewModel.getMosaicDS().getCurrentItem();
+            if (ci != null)
+                getInitData().setMosaicType(ci.getMosaicType());
+        });
+    }
+
+    // TODO bind to double click
+    private void onMosaicItemDoubleClick(/*DoubleTappedRoutedEventArgs e*/) {
+        StartNewGame();
+    }
+
+    // TODO bind to button
+    private void onClickBttnStartGame(/*object sender, RoutedEventArgs ev*/) {
+        //LoggerSimple.put("> SelectMosaicFragment::OnClickBttnStartGame");
+        StartNewGame();
+    }
+
+    private void StartNewGame() {
+//        //Frame frame = this.Frame;
+//        Frame frame = Window.Current.Content as Frame;
+//        System.Diagnostics.Debug.Assert(frame != null);
+//
+//        var eMosaic = CurrentItem.MosaicType;
+//        frame.Navigate(typeof(MosaicPage), InitData);
+//
+//        //Window.Current.Content = new MosaicPage();
+//        //// Ensure the current window is active
+//        //Window.Current.Activate();
+    }
+
+    public EMosaicGroup getCurrentMosaicGroup() { return viewModel.getMosaicDS().getCurrentGroup(); }
+    public void setCurrentMosaicGroup(EMosaicGroup currentGroup) {
+        viewModel.getMosaicDS().setCurrentGroup(currentGroup);
+    }
+
+    private ESkillLevel getCurrentSkillLevel() { return viewModel.getMosaicDS().getCurrentSkill(); }
+    public void setCurrentSkillLevel(ESkillLevel newSkill) {
+        viewModel.getMosaicDS().setCurrentSkill(newSkill);
+    }
+
+    private MosaicDataItem getCurrentItem() { return viewModel.getMosaicDS().getCurrentItem(); }
+    public void setCurrentItem(MosaicDataItem newItem) {
+        viewModel.getMosaicDS().setCurrentItem(newItem);
+    }
 }

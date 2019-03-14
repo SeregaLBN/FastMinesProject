@@ -1,23 +1,37 @@
 package fmg.android.app;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
 
+import java.beans.PropertyChangeEvent;
 import java.util.function.Supplier;
 
 import fmg.android.app.databinding.MainActivityBinding;
+import fmg.android.app.model.MosaicInitDataExt;
+import fmg.android.app.model.dataSource.MosaicGroupDataSource;
+import fmg.android.app.model.dataSource.MosaicSkillDataSource;
+import fmg.android.app.model.items.MosaicGroupDataItem;
+import fmg.android.app.model.items.MosaicSkillDataItem;
 import fmg.android.app.presentation.MainMenuViewModel;
 import fmg.android.app.presentation.SmoothHelper;
 import fmg.android.utils.Cast;
 import fmg.android.utils.StaticInitializer;
+import fmg.common.LoggerSimple;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
+import fmg.common.ui.Factory;
+import fmg.core.mosaic.MosaicInitData;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
 
@@ -26,43 +40,75 @@ public class MainActivity extends AppCompatActivity {
     public static final int MenuTextWidthDp = 95; // dp
 
     private MainActivityBinding binding;
+    /** View-Model */
     private MainMenuViewModel viewModel;
     private MosaicGroupListViewAdapter mosaicGroupListViewAdapter;
     private MosaicSkillListViewAdapter mosaicSkillListViewAdapter;
     private SizeDouble cachedSizeActivity = new SizeDouble(-1, -1);
 
-    static {
-        StaticInitializer.init();
-    }
+    public MosaicInitData getInitData() { return MosaicInitDataExt.getSharedData(); }
+    //public void setInitData(MosaicInitData initData) { MosaicInitDataExt.getSharedData().copyFrom(initData); }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         binding = DataBindingUtil.setContentView(this, R.layout.main_activity);
         viewModel = ViewModelProviders.of(this).get(MainMenuViewModel.class);
         binding.setViewModel(viewModel);
         binding.executePendingBindings();
 
-        binding.rvMosaicGroupItems.setLayoutManager(new LinearLayoutManager(this));
-        binding.rvMosaicSkillItems.setLayoutManager(new LinearLayoutManager(this));
-//        binding.rvMosaicGroupItems.setNestedScrollingEnabled(false);
-//        binding.rvMosaicSkillItems.setNestedScrollingEnabled(false);
-        binding.rvMosaicGroupItems.setAdapter(mosaicGroupListViewAdapter = new MosaicGroupListViewAdapter(viewModel.getMosaicGroupDS(), this::onMenuMosaicGroupItemClick));
-        binding.rvMosaicSkillItems.setAdapter(mosaicSkillListViewAdapter = new MosaicSkillListViewAdapter(viewModel.getMosaicSkillDS(), this::onMenuMosaicSkillItemClick));
+        binding.rvMenuMosaicGroupItems.setLayoutManager(new LinearLayoutManager(this));
+        binding.rvMenuMosaicSkillItems.setLayoutManager(new LinearLayoutManager(this));
+        binding.rvMenuMosaicGroupItems.setAdapter(mosaicGroupListViewAdapter = new MosaicGroupListViewAdapter(viewModel.getMosaicGroupDS(), this::onMenuMosaicGroupItemClick));
+        binding.rvMenuMosaicSkillItems.setAdapter(mosaicSkillListViewAdapter = new MosaicSkillListViewAdapter(viewModel.getMosaicSkillDS(), this::onMenuMosaicSkillItemClick));
 
-        binding.panelMosaicGroupHeader.setOnClickListener(this::onMenuMosaicGroupHeaderClick);
-        binding.panelMosaicSkillHeader.setOnClickListener(this::onMenuMosaicSkillHeaderClick);
+        binding.panelMenuMosaicGroupHeader.setOnClickListener(this::onMenuMosaicGroupHeaderClick);
+        binding.panelMenuMosaicSkillHeader.setOnClickListener(this::onMenuMosaicSkillHeaderClick);
 
         binding.rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(this::onGlobalLayoutListener);
+
+
+        viewModel.getMosaicGroupDS().addListener(this::onMosaicGroupDsPropertyChanged);
+        viewModel.getMosaicSkillDS().addListener(this::onMosaicSkillDsPropertyChanged);
+
+        viewModel.getMosaicGroupDS().setCurrentItem(viewModel.getMosaicGroupDS().getDataSource().stream().filter(x -> x.getMosaicGroup() == getInitData().getMosaicType().getGroup()).findFirst().get());
+        viewModel.getMosaicSkillDS().setCurrentItem(viewModel.getMosaicSkillDS().getDataSource().stream().filter(x -> x.getSkillLevel()  == getInitData().getSkillLevel()           ).findFirst().get());
+
+        if (savedInstanceState == null) {
+            // initial setup
+            // navigate to SelectMosaicFragment
+            SelectMosaicFragment smf = new SelectMosaicFragment();
+            Bundle intentBundle = getIntent().getExtras();
+            smf.setArguments(intentBundle);
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.rightFrame, smf)
+                    .commit();
+        }
+//        var smp = RightFrame?.Content as SelectMosaicPage;
+//        if (smp != null) {
+//            var ds = smp.ViewModel.MosaicDS;
+//            ds.CurrentItem = ds.DataSource.First(x => x.MosaicType == InitData.MosaicType);
+//        }
+
+
 
 //        Intent intent = new Intent(this, DemoActivity.class);
 //        startActivity(intent);
     }
 
     @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        MosaicInitDataExt.save(savedInstanceState, getInitData());
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
     protected void onDestroy() {
+        viewModel.getMosaicGroupDS().removeListener(this::onMosaicGroupDsPropertyChanged);
+        viewModel.getMosaicSkillDS().removeListener(this::onMosaicSkillDsPropertyChanged);
+
         binding.rootLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this::onGlobalLayoutListener);
         mosaicGroupListViewAdapter.close();
         super.onDestroy();
@@ -71,8 +117,8 @@ public class MainActivity extends AppCompatActivity {
     void onMenuMosaicGroupHeaderClick(View v) {
         SmoothHelper.runColorSmoothTransition(viewModel.getMosaicGroupDS().getHeader().getEntity().getModel());
 
-        if (binding.rvMosaicGroupItems.getVisibility() == View.GONE) {
-            SmoothHelper.applySmoothVisibilityOverScale(binding.rvMosaicGroupItems, true, this::getLvGroupHeight, null);
+        if (binding.rvMenuMosaicGroupItems.getVisibility() == View.GONE) {
+            SmoothHelper.applySmoothVisibilityOverScale(binding.rvMenuMosaicGroupItems, true, this::getLvGroupHeight, null);
             viewModel.getMosaicGroupDS().getHeader().getEntity().getBurgerMenuModel().setHorizontal(false);
         } else {
             viewModel.getSplitViewPane().setOpen(!viewModel.getSplitViewPane().isOpen());
@@ -94,25 +140,25 @@ public class MainActivity extends AppCompatActivity {
             return scrollable;
         };
         boolean isVisibleScroller = isVisibleScrollerFunc.get();
-        if (binding.rvMosaicSkillItems.getVisibility() == View.GONE) {
+        if (binding.rvMenuMosaicSkillItems.getVisibility() == View.GONE) {
             if (isVisibleScroller) {
-                SmoothHelper.applySmoothVisibilityOverScale(binding.rvMosaicSkillItems, true , this::getLvSkillHeight, null);
-                SmoothHelper.applySmoothVisibilityOverScale(binding.rvMosaicGroupItems, false, this::getLvGroupHeight, null);
+                SmoothHelper.applySmoothVisibilityOverScale(binding.rvMenuMosaicSkillItems, true , this::getLvSkillHeight, null);
+                SmoothHelper.applySmoothVisibilityOverScale(binding.rvMenuMosaicGroupItems, false, this::getLvGroupHeight, null);
             } else {
-                SmoothHelper.applySmoothVisibilityOverScale(binding.rvMosaicSkillItems, true, this::getLvSkillHeight,
+                SmoothHelper.applySmoothVisibilityOverScale(binding.rvMenuMosaicSkillItems, true, this::getLvSkillHeight,
                         () -> {
                             if (isVisibleScrollerFunc.get())
-                                SmoothHelper.applySmoothVisibilityOverScale(binding.rvMosaicGroupItems, false, this::getLvGroupHeight, null);
+                                SmoothHelper.applySmoothVisibilityOverScale(binding.rvMenuMosaicGroupItems, false, this::getLvGroupHeight, null);
                         });
             }
             viewModel.getMosaicSkillDS().getHeader().getEntity().getModel().setAnimeDirection(
                     !viewModel.getMosaicSkillDS().getHeader().getEntity().getModel().getAnimeDirection());
         } else {
-            if (isVisibleScroller && (binding.rvMosaicGroupItems.getVisibility() == View.VISIBLE)) {
-                SmoothHelper.applySmoothVisibilityOverScale(binding.rvMosaicGroupItems, false, this::getLvGroupHeight, null);
+            if (isVisibleScroller && (binding.rvMenuMosaicGroupItems.getVisibility() == View.VISIBLE)) {
+                SmoothHelper.applySmoothVisibilityOverScale(binding.rvMenuMosaicGroupItems, false, this::getLvGroupHeight, null);
                 viewModel.getMosaicGroupDS().getHeader().getEntity().getBurgerMenuModel().setHorizontal(true);
             } else {
-                SmoothHelper.applySmoothVisibilityOverScale(binding.rvMosaicSkillItems, false, this::getLvSkillHeight, null);
+                SmoothHelper.applySmoothVisibilityOverScale(binding.rvMenuMosaicSkillItems, false, this::getLvSkillHeight, null);
                 viewModel.getMosaicSkillDS().getHeader().getEntity().getModel().setAnimeDirection(
                         !viewModel.getMosaicSkillDS().getHeader().getEntity().getModel().getAnimeDirection());
             }
@@ -125,6 +171,77 @@ public class MainActivity extends AppCompatActivity {
 
     void onMenuMosaicGroupItemClick(View v, int position) {
         Toast.makeText(this, "onMenuMosaicGroupItemClick " + position, Toast.LENGTH_LONG).show();
+    }
+
+    private void showSelectMosaicFragment(EMosaicGroup mosaicGroup) {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.rightFrame);
+        if (true)
+            return;
+        SelectMosaicFragment smf;
+        if (fragment instanceof SelectMosaicFragment) {
+            smf = (SelectMosaicFragment)fragment;
+        } else {
+            // Execute a transaction, replacing any existing fragment with this one inside the frame.
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.rightFrame, smf = new SelectMosaicFragment());
+            if (fragment != null)
+                ft.detach(fragment);
+            ft.addToBackStack(null);
+            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            ft.commit();
+        }
+        Factory.DEFERR_INVOKER.accept(() -> {
+//            smf.setCurrentMosaicGroup(mosaicGroup);
+//            smf.setInitData(this.getInitData());
+//            smf.setCurrentSkillLevel(this.initData.getSkillLevel());
+//            if (this.getInitData().getMosaicType().getGroup() == mosaicGroup)
+//                smf.setCurrentItem(smf.viewModel.getMosaicDS().getDataSource().stream().filter(x -> x.getMosaicType() == this.getInitData().getMosaicType()).findAny().get());
+        });
+    }
+
+    private void showCustomSkillFragment() {
+        LoggerSimple.put("TODO:  redirect to CustomSkillFragment...");
+    }
+
+    private void showHypnosisLogoFragment() {
+        LoggerSimple.put("TODO:  redirect to HypnosisLogoFragment...");
+    }
+
+    private void onMenuCurrentItemChanged(boolean senderIsMosaicGroup, MosaicGroupDataItem currentGroupItem, MosaicSkillDataItem currentSkillItem) {
+        if ((currentGroupItem == null) || (currentSkillItem == null)) {
+            showHypnosisLogoFragment();
+            return;
+        }
+
+        if (currentSkillItem.getSkillLevel() != ESkillLevel.eCustom)
+            getInitData().setSkillLevel(currentSkillItem.getSkillLevel());
+
+        if (!senderIsMosaicGroup && (currentSkillItem.getSkillLevel() == ESkillLevel.eCustom)) {
+            showCustomSkillFragment();
+        } else {
+            //LoggerSimple.put("> MainActivity::onMenuCurrentItemChanged: " + currentGroupItem.getMosaicGroup());
+            showSelectMosaicFragment(currentGroupItem.getMosaicGroup());
+        }
+    }
+
+    private void onMosaicGroupDsPropertyChanged(PropertyChangeEvent ev) {
+        //LoggerSimple.put("> MainActivity::onMosaicGroupDsPropertyChanged: ev.Name=" + ev.getPropertyName());
+        switch (ev.getPropertyName()) {
+        case MosaicGroupDataSource.PROPERTY_CURRENT_ITEM:
+            MosaicSkillDataItem currentGroupItem = viewModel.getMosaicSkillDS().getCurrentItem();
+            onMenuCurrentItemChanged(true, ((MosaicGroupDataSource)ev.getSource()).getCurrentItem(), currentGroupItem);
+            break;
+        }
+    }
+
+    private void onMosaicSkillDsPropertyChanged(PropertyChangeEvent ev) {
+        //LoggerSimple.put("> MainActivity::onMosaicSkillDsPropertyChanged: ev.Name=" + ev.getPropertyName());
+        switch (ev.getPropertyName()) {
+        case MosaicSkillDataSource.PROPERTY_CURRENT_ITEM:
+            MosaicSkillDataItem currentSkillItem = ((MosaicSkillDataSource)ev.getSource()).getCurrentItem();
+            onMenuCurrentItemChanged(false, viewModel.getMosaicGroupDS().getCurrentItem(), currentSkillItem);
+            break;
+        }
     }
 
 
