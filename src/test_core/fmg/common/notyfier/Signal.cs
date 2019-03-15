@@ -2,9 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace fmg.core.mosaic {
+namespace fmg.common.notifier {
 
-    class Signal : IDisposable {
+    public class Signal : IDisposable {
         private readonly SemaphoreSlim signal = new SemaphoreSlim(0, 1);
         /// <summary> set signal </summary>
         public void Set() { signal.Release(); }

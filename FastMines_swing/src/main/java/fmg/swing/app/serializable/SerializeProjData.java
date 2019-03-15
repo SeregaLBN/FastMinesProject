@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.Point;
-import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
 import fmg.core.types.EMosaic;
 import fmg.core.types.draw.EShowElement;

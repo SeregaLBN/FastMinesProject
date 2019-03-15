@@ -6,7 +6,6 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 import fmg.common.geom.Matrisize;
-import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicInitData;
 import fmg.core.types.EMosaic;
 

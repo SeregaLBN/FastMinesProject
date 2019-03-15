@@ -20,6 +20,9 @@
         <Compile Include="..\..\src\test_core\fmg\common\notyfier\NotifyPropertyChangedTest.cs">
             <Link>test_fmg.common\notyfier\NotifyPropertyChangedTest.cs</Link>
         </Compile>
+        <Compile Include="..\..\src\test_core\fmg\common\notyfier\PropertyChangeExecutor.cs">
+            <Link>test_fmg.common\notyfier\PropertyChangeExecutor.cs</Link>
+        </Compile>
         <Compile Include="..\..\src\test_core\fmg\common\notyfier\Signal.cs">
             <Link>test_fmg.common\notyfier\Signal.cs</Link>
         </Compile>

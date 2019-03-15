@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using fmg.core.types;
-using fmg.common.geom;
 using fmg.common;
+using fmg.common.geom;
 using fmg.common.ui;
+using fmg.common.notifier;
+using fmg.core.types;
 
 namespace fmg.core.mosaic {
 

@@ -4,6 +4,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using fmg.common.notifier;
 using fmg.core.mosaic;
 
 namespace fmg.common.notyfier {

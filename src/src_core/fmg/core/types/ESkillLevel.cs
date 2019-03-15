@@ -163,6 +163,14 @@ namespace fmg.core.types {
             return size;
         }
 
+        public static ESkillLevel CalcSkillLevel(EMosaic mosaicType, Matrisize sizeField, int minesCount) {
+            if ((sizeField == ESkillLevel.eBeginner.GetDefaultSize()) && (minesCount == ESkillLevel.eBeginner.GetNumberMines(mosaicType))) return ESkillLevel.eBeginner;
+            if ((sizeField == ESkillLevel.eAmateur .GetDefaultSize()) && (minesCount == ESkillLevel.eAmateur .GetNumberMines(mosaicType))) return ESkillLevel.eAmateur;
+            if ((sizeField == ESkillLevel.eProfi   .GetDefaultSize()) && (minesCount == ESkillLevel.eProfi   .GetNumberMines(mosaicType))) return ESkillLevel.eProfi;
+            if ((sizeField == ESkillLevel.eCrazy   .GetDefaultSize()) && (minesCount == ESkillLevel.eCrazy   .GetNumberMines(mosaicType))) return ESkillLevel.eCrazy;
+            return ESkillLevel.eCustom;
+        }
+
     }
 
 }

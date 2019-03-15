@@ -139,7 +139,7 @@ public class MosaicInitData implements INotifyPropertyChanged, AutoCloseable {
                 {
                     ESkillLevel skillOld = ESkillLevel.calcSkillLevel(mosaicType, (Matrisize)ev.getOldValue(), minesCount);
                     ESkillLevel skillNew = getSkillLevel();
-                    if (!lockChanging && (skillNew != skillOld))
+                    if (skillNew != skillOld)
                         _notifier.firePropertyChanged(skillOld, skillNew, PROPERTY_SKILL_LEVEL);
                 }
                 break;
@@ -147,7 +147,7 @@ public class MosaicInitData implements INotifyPropertyChanged, AutoCloseable {
                 {
                     ESkillLevel skillOld = ESkillLevel.calcSkillLevel(mosaicType, sizeField, (int)ev.getOldValue());
                     ESkillLevel skillNew = getSkillLevel();
-                    if (!lockChanging && (skillNew != skillOld))
+                    if (skillNew != skillOld)
                         _notifier.firePropertyChanged(skillOld, skillNew, PROPERTY_SKILL_LEVEL);
                 }
                 break;

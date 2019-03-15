@@ -44,18 +44,7 @@ namespace fmg.core.mosaic {
 
         public EMosaic MosaicType {
             get { return _mosaicType; }
-            set {
-                var skillOld = SkillLevel;
-                if (_notifier.SetProperty(ref _mosaicType, value)) {
-                    if (skillOld == ESkillLevel.eCustom) {
-                        var skillNew = SkillLevel;
-                        if (skillNew != skillOld)
-                            _notifier.FirePropertyChanged(skillOld, skillNew, nameof(SkillLevel));
-                    } else {
-                        SkillLevel = skillOld;
-                    }
-                }
-            }
+            set { _notifier.SetProperty(ref _mosaicType, value); }
         }
 
         public Matrisize SizeField {
@@ -69,52 +58,36 @@ namespace fmg.core.mosaic {
                     throw new ArgumentException("Size field M must be less " + (MAX_SIZE_FIELD_M + 1));
                 if (value.n > MAX_SIZE_FIELD_N)
                     throw new ArgumentException("Size field N must be less " + (MAX_SIZE_FIELD_N + 1));
-                var skillOld = SkillLevel;
-                if (_notifier.SetProperty(ref _sizeField, value)) {
-                    var skillNew = SkillLevel;
-                    if (!lockChanging && (skillNew != skillOld))
-                        _notifier.FirePropertyChanged(skillOld, skillNew, nameof(SkillLevel));
-                }
+                _notifier.SetProperty(ref _sizeField, value);
             }
         }
 
         public int MinesCount {
             get { return _minesCount; }
-            set {
-                var skillOld = SkillLevel;
-                if (_notifier.SetProperty(ref _minesCount, value)) {
-                    var skillNew = SkillLevel;
-                    if (!lockChanging && (skillNew != skillOld))
-                        _notifier.FirePropertyChanged(skillOld, skillNew, nameof(SkillLevel));
-                }
-            }
+            set { _notifier.SetProperty(ref _minesCount, value); }
         }
 
         public ESkillLevel SkillLevel {
             get {
-                if ((SizeField == ESkillLevel.eBeginner.GetDefaultSize()) && (MinesCount == ESkillLevel.eBeginner.GetNumberMines(MosaicType)))
-                    return ESkillLevel.eBeginner;
-                if ((SizeField == ESkillLevel.eAmateur.GetDefaultSize()) && (MinesCount == ESkillLevel.eAmateur.GetNumberMines(MosaicType)))
-                    return ESkillLevel.eAmateur;
-                if ((SizeField == ESkillLevel.eProfi.GetDefaultSize()) && (MinesCount == ESkillLevel.eProfi.GetNumberMines(MosaicType)))
-                    return ESkillLevel.eProfi;
-                if ((SizeField == ESkillLevel.eCrazy.GetDefaultSize()) && (MinesCount == ESkillLevel.eCrazy.GetNumberMines(MosaicType)))
-                    return ESkillLevel.eCrazy;
-                return ESkillLevel.eCustom;
+                return ESkillLevelEx.CalcSkillLevel(MosaicType, SizeField, MinesCount);
             }
             set {
                 if (value == ESkillLevel.eCustom)
-                    throw new System.ArgumentException("Custom skill level not recognized");
+                    throw new ArgumentException("Custom skill level not recognized");
+                if (lockChanging)
+                    throw new InvalidOperationException("Illegal usage");
+
                 var skillOld = SkillLevel;
                 if (skillOld == value)
                     return;
 
                 lockChanging = true;
-                {
+                try {
                     MinesCount = value.GetNumberMines(MosaicType);
                     SizeField = value.GetDefaultSize();
+                } finally {
+                    lockChanging = false;
                 }
-                lockChanging = false;
 
                 var skillNew = SkillLevel;
                 System.Diagnostics.Debug.Assert(value == skillNew);
@@ -126,6 +99,45 @@ namespace fmg.core.mosaic {
         protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             // refire as async event
             _notifierAsync.FirePropertyChanged(ev);
+
+            if (lockChanging)
+                return;
+            lockChanging = true;
+            try {
+                switch(ev.PropertyName) {
+                case nameof(this.MosaicType):
+                    {
+                        var skillOld = ESkillLevelEx.CalcSkillLevel((ev as PropertyChangedExEventArgs<EMosaic>).OldValue, SizeField, MinesCount);
+                        if (skillOld == ESkillLevel.eCustom) {
+                            var skillNew = SkillLevel;
+                            if (skillNew != skillOld)
+                                _notifier.FirePropertyChanged(skillOld, skillNew, nameof(this.SkillLevel));
+                        } else {
+                            // restore mines count for new mosaic type
+                            MinesCount = skillOld.GetNumberMines(MosaicType);
+                        }
+                    }
+                    break;
+                case nameof(this.SizeField):
+                    {
+                        var skillOld = ESkillLevelEx.CalcSkillLevel(MosaicType, (ev as PropertyChangedExEventArgs<Matrisize>).OldValue, MinesCount);
+                        var skillNew = SkillLevel;
+                        if (skillNew != skillOld)
+                            _notifier.FirePropertyChanged(skillOld, skillNew, nameof(this.SkillLevel));
+                    }
+                    break;
+                case nameof(this.MinesCount):
+                    {
+                        var skillOld = ESkillLevelEx.CalcSkillLevel(MosaicType, SizeField, (ev as PropertyChangedExEventArgs<int>).OldValue);
+                        var skillNew = SkillLevel;
+                        if (skillNew != skillOld)
+                            _notifier.FirePropertyChanged(skillOld, skillNew, nameof(this.SkillLevel));
+                    }
+                    break;
+                }
+            } finally {
+                lockChanging = false;
+            }
         }
 
         /// <summary>  Dispose managed resources </summary>/

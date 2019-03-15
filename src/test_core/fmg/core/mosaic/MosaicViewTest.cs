@@ -7,6 +7,7 @@ using NUnit.Framework;
 using fmg.common;
 using fmg.common.ui;
 using fmg.common.geom;
+using fmg.common.notifier;
 using fmg.core.mosaic.cells;
 using DummyImage = System.Object;
 using MosaicTestModel = fmg.core.mosaic.MosaicDrawModel<object>;
