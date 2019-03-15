@@ -17,18 +17,7 @@ using MosaicTestModel = fmg.core.mosaic.MosaicDrawModel<object>;
 
 namespace fmg.core.mosaic {
 
-    class Signal : IDisposable {
-        private readonly SemaphoreSlim signal = new SemaphoreSlim(0, 1);
-        /// <summary> set signal </summary>
-        public void Set() { signal.Release(); }
-        ///// <summary> unset signal </summary>
-        //public void Reset() { signal.Dispose(); signal = new SemaphoreSlim(0, 1); }
-        /// <summary> wait for signal </summary>
-        public async Task<bool> Wait(TimeSpan ts) { return await signal.WaitAsync(ts); }
-        public void Dispose() { signal.Dispose(); }
-    }
-
-    public class MosaicModelTest {
+    public class MosaicInitDataTest {
 
         /// <summary> double precision </summary>
         internal const double P = 0.001;

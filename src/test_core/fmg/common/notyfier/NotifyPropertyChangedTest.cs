@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Linq;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using fmg.common.ui;
 using fmg.core.mosaic;
 
 namespace fmg.common.notyfier {
