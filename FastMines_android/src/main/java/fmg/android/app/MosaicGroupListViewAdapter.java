@@ -51,8 +51,8 @@ public class MosaicGroupListViewAdapter extends RecyclerView.Adapter<MosaicGroup
     private void onClickItem(View view, int layoutPos, int adapterPos) {
 //        LoggerSimple.put("  MenuMosaicGroupListViewAdapter::OnClickListener: layoutPos={0}, adapterPos={1}", layoutPos, adapterPos);
 
+        mosaicGroupDS.setCurrentItemPos(adapterPos); // change current item before call listener
         listener.onItemClick(view, layoutPos);
-        mosaicGroupDS.setCurrentItemPos(adapterPos);
     }
 
     public void onMosaicGroupDsPropertyChanged(PropertyChangeEvent ev) {

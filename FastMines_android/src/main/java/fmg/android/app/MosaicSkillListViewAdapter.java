@@ -50,8 +50,8 @@ public class MosaicSkillListViewAdapter extends RecyclerView.Adapter<MosaicSkill
     private void onClickItem(View view, int layoutPos, int adapterPos) {
 //        LoggerSimple.put("  MenuMosaicSkillListViewAdapter::OnClickListener: layoutPos={0}, adapterPos={1}", layoutPos, adapterPos);
 
+        mosaicSkillDS.setCurrentItemPos(adapterPos); // change current item before call listener
         listener.onItemClick(view, layoutPos);
-        mosaicSkillDS.setCurrentItemPos(adapterPos);
     }
 
     public void onMosaicSkillDsPropertyChanged(PropertyChangeEvent ev) {

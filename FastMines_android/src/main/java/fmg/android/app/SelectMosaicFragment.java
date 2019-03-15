@@ -153,4 +153,5 @@ public class SelectMosaicFragment extends Fragment {
     public void setCurrentItem(MosaicDataItem newItem) {
         viewModel.getMosaicDS().setCurrentItem(newItem);
     }
+
 }

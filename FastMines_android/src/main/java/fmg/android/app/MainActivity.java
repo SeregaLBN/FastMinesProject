@@ -21,6 +21,7 @@ import fmg.android.app.databinding.MainActivityBinding;
 import fmg.android.app.model.MosaicInitDataExt;
 import fmg.android.app.model.dataSource.MosaicGroupDataSource;
 import fmg.android.app.model.dataSource.MosaicSkillDataSource;
+import fmg.android.app.model.items.MosaicDataItem;
 import fmg.android.app.model.items.MosaicGroupDataItem;
 import fmg.android.app.model.items.MosaicSkillDataItem;
 import fmg.android.app.presentation.MainMenuViewModel;
@@ -86,12 +87,6 @@ public class MainActivity extends AppCompatActivity {
                     .add(R.id.rightFrame, smf)
                     .commit();
         }
-//        var smp = RightFrame?.Content as SelectMosaicPage;
-//        if (smp != null) {
-//            var ds = smp.ViewModel.MosaicDS;
-//            ds.CurrentItem = ds.DataSource.First(x => x.MosaicType == InitData.MosaicType);
-//        }
-
 
 
 //        Intent intent = new Intent(this, DemoActivity.class);
@@ -165,12 +160,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    void onMenuMosaicSkillItemClick(View v, int position) {
-        Toast.makeText(this, "onMenuMosaicSkillItemClick " + position, Toast.LENGTH_LONG).show();
-    }
-
     void onMenuMosaicGroupItemClick(View v, int position) {
         Toast.makeText(this, "onMenuMosaicGroupItemClick " + position, Toast.LENGTH_LONG).show();
+    }
+
+    void onMenuMosaicSkillItemClick(View v, int position) {
+        Toast.makeText(this, "onMenuMosaicSkillItemClick " + position, Toast.LENGTH_LONG).show();
+
+        MosaicSkillDataItem msd = viewModel.getMosaicSkillDS().getCurrentItem();
+        getInitData().setSkillLevel(msd.getSkillLevel());
     }
 
     private void showSelectMosaicFragment(EMosaicGroup mosaicGroup) {

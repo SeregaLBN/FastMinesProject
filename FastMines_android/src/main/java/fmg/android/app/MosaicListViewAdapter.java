@@ -50,8 +50,8 @@ public class MosaicListViewAdapter extends RecyclerView.Adapter<MosaicListViewAd
     private void onClickItem(View view, int layoutPos, int adapterPos) {
 //        LoggerSimple.put("  MenuMosaicListViewAdapter::OnClickListener: layoutPos={0}, adapterPos={1}", layoutPos, adapterPos);
 
+        mosaicDS.setCurrentItemPos(adapterPos); // change current item before call listener
         listener.onItemClick(view, layoutPos);
-        mosaicDS.setCurrentItemPos(adapterPos);
     }
 
     public void onMosaicDsPropertyChanged(PropertyChangeEvent ev) {

@@ -225,7 +225,7 @@ public final class SmoothHelper {
     }
 
     public static void runSmoothTransition(Context context, long fullTimeMSec/*= 150*/, long repeatTimeMSec/*= 10*/) {
-        new SmoothTransition(context, fullTimeMSec, repeatTimeMSec).execute();
+        new SmoothTransition<>(context, fullTimeMSec, repeatTimeMSec).execute();
     }
 
 }

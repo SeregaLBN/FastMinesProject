@@ -8,6 +8,8 @@ import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.beans.PropertyChangeEvent;
+
 import fmg.android.app.model.MosaicInitDataExt;
 import fmg.android.utils.StaticInitializer;
 import fmg.common.LoggerSimple;
@@ -28,17 +30,19 @@ public class App extends Application implements LifecycleObserver {
         StaticInitializer.init();
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         load();
+
+        getInitData().addListener(this::onInitDataPropertyChange);
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    private void onAppForegrounded() {
+        LoggerSimple.put("App in foreground");
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     private void onAppBackgrounded() {
         LoggerSimple.put("App in background");
         save();
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    private void onAppForegrounded() {
-        LoggerSimple.put("App in foreground");
     }
 
     private void save() {
@@ -51,6 +55,10 @@ public class App extends Application implements LifecycleObserver {
 
     private SharedPreferences getSharedPreferences() {
         return this.getSharedPreferences(MosaicPreferenceFileName, Context.MODE_PRIVATE);
+    }
+
+    private void onInitDataPropertyChange(PropertyChangeEvent ev) {
+        LoggerSimple.put("  FastMinesApp::onInitDataPropertyChange: ev={0}", ev);
     }
 
 }

@@ -35,7 +35,7 @@ public class Matrisize {
 
     @Override
     public String toString() {
-        return super.toString() + "[m="+m+", n="+n+"]";
+        return getClass().getSimpleName() + "[m="+m+", n="+n+"]";
     }
 
 }
