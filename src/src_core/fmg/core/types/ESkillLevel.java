@@ -156,4 +156,12 @@ eCrazy      281
         return size;
     }
 
+    public static ESkillLevel calcSkillLevel(EMosaic mosaicType, Matrisize sizeField, int minesCount) {
+        if (sizeField.equals(eBeginner.getDefaultSize()) && (minesCount == eBeginner.getNumberMines(mosaicType))) return eBeginner;
+        if (sizeField.equals(eAmateur .getDefaultSize()) && (minesCount == eAmateur .getNumberMines(mosaicType))) return eAmateur;
+        if (sizeField.equals(eProfi   .getDefaultSize()) && (minesCount == eProfi   .getNumberMines(mosaicType))) return eProfi;
+        if (sizeField.equals(eCrazy   .getDefaultSize()) && (minesCount == eCrazy   .getNumberMines(mosaicType))) return eCrazy;
+        return eCustom;
+    }
+
 }
