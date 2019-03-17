@@ -87,6 +87,39 @@ namespace fmg.common.notyfier {
             Assert.AreEqual(prefix + (countFiredEvents-1), firedValue);
         }
 
+        class SomeProperty<T> : INotifyPropertyChanged {
+            public event PropertyChangedEventHandler PropertyChanged;
+            private readonly NotifyPropertyChanged _notifier;
+            internal SomeProperty(T property) {
+                this.property = property;
+                _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev), true);
+            }
+            private T  property;
+            public  T  Property {
+                get => property;
+                set { _notifier.SetProperty(ref property, value); }
+            }
+        }
+
+        [Test]
+        public async Task CheckForNoEventTest() {
+            LoggerSimple.Put("> " + nameof(CheckForNoEventTest));
+
+            const int initialValue = 1;
+            var data = new SomeProperty<int>(initialValue);
+            await new PropertyChangeExecutor<SomeProperty<int>>(data).Run(TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(1000),
+                () => {
+                    LoggerSimple.Put("    data.Property={0}", data.Property);
+                    data.Property = initialValue + 123;
+                    LoggerSimple.Put("    data.Property={0}", data.Property);
+                    data.Property = initialValue; // restore original value
+                    LoggerSimple.Put("    data.Property={0}", data.Property);
+                }, modifiedProperties => {
+                    LoggerSimple.Put("  checking...");
+                    Assert.AreEqual(0, modifiedProperties.Count);
+                });
+        }
+
     }
 
 }

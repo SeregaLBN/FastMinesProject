@@ -115,4 +115,43 @@ public class NotifyPropertyChangedTest {
         return signal;
     }
 
+    static class SomeProperty<T> implements INotifyPropertyChanged {
+        private final NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this, true);
+        SomeProperty(T property) {
+            this.property = property;
+        }
+        private T  property;
+        public T getProperty() { return property; }
+        public void setProperty(T value) {
+            _notifier.setProperty(property, value, "Property");
+        }
+        @Override
+        public void addListener(PropertyChangeListener listener) {
+            _notifier.addListener(listener);
+        }
+        @Override
+        public void removeListener(PropertyChangeListener listener) {
+            _notifier.removeListener(listener);
+        }
+    }
+
+    @Test
+    public void checkForNoEventTest() {
+        LoggerSimple.put("> checkForNoEventTest");
+
+        final int initialValue = 1;
+        SomeProperty<Integer> data = new SomeProperty<>(initialValue);
+        new PropertyChangeExecutor<SomeProperty<Integer>>(data).run(100, 1000,
+            () -> {
+                LoggerSimple.put("    data.Property={0}", data.getProperty());
+                data.setProperty(initialValue + 123);
+                LoggerSimple.put("    data.Property={0}", data.getProperty());
+                data.setProperty(initialValue); // restore original value
+                LoggerSimple.put("    data.Property={0}", data.getProperty());
+            }, modifiedProperties -> {
+                LoggerSimple.put("  checking...");
+                Assert.assertEquals(0, modifiedProperties.size());
+            });
+    }
+
 }

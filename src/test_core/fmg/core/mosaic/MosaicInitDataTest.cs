@@ -97,8 +97,8 @@ namespace fmg.core.mosaic {
                         Assert.AreEqual(1, modifiedProperties[nameof(MosaicInitData.MosaicType)]);
                         Assert.IsTrue(!modifiedProperties.ContainsKey(nameof(MosaicInitData.MinesCount)));
                         Assert.AreEqual(1, modifiedProperties.Count); // only MosaicInitData.PROPERTY_MINES_COUNT and MosaicInitData.PROPERTY_MOSAIC_TYPE
-                        Assert.AreEqual(EMosaic.eMosaicRhombus1, initData.MosaicType);
-                        Assert.AreEqual(initData.SkillLevel.GetNumberMines(EMosaic.eMosaicRhombus1), initData.MinesCount);
+                        Assert.AreEqual(EMosaic.eMosaicHexagon1, initData.MosaicType);
+                        Assert.AreEqual(initData.SkillLevel.GetNumberMines(EMosaic.eMosaicHexagon1), initData.MinesCount);
                     });
             }
         }

@@ -99,8 +99,20 @@ public final class NotifyPropertyChanged implements AutoCloseable//, INotifyProp
             boolean shedule;
             {
                 Pair<Object /* old value */, Object /* new value */> event = _deferrNotifications.get(propertyName);
-                shedule = (event == null);
-                event = new Pair<>((event == null) ? oldValue : event.first, newValue);
+                boolean isFirstEvent = (event == null); // this is the first event with this name?
+                if (isFirstEvent) {
+                    event = new Pair<>(oldValue, newValue);
+                } else {
+                    @SuppressWarnings("unchecked")
+                    T realOldValue = (T)event.first; // restore real old value
+                    if ((realOldValue != null) && realOldValue.equals(newValue)) {
+                        // Nothing to fire. First event OldValue and last event NewValue is same objects.
+                        _deferrNotifications.remove(propertyName); // HINT_1
+                        return;
+                    }
+                    event = new Pair<>(realOldValue, newValue);
+                }
+                shedule = isFirstEvent;
                 _deferrNotifications.put(propertyName, event); // Re-save only the last event (with initial old value)
             }
             if (shedule) {
@@ -118,6 +130,8 @@ public final class NotifyPropertyChanged implements AutoCloseable//, INotifyProp
                     if (_disposed || isHolded())
                         return;
 
+                    if (!_deferrNotifications.containsKey(propertyName))
+                        return; // event alrady deleted (see HINT_1)
                     Pair<Object /* old value */, Object /* new value */> event = _deferrNotifications.remove(propertyName);
                     if (event == null)
                         System.err.println("hmmm... invalid usage ;(");

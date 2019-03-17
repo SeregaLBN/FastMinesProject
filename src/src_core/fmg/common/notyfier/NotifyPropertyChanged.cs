@@ -89,13 +89,39 @@ namespace fmg.common.notyfier {
                 fireOwnerEvent(ev);
                 //LoggerSimple.Put($"< FirePropertyChanged: {_owner.GetType().Name}: PropertyName={ev.PropertyName}");
             } else {
-                bool shedule = !_deferrNotifications.ContainsKey(ev.PropertyName);
-                _deferrNotifications[ev.PropertyName] = ev; // Re-save only the last event.
+                bool shedule;
+                {
+                    PropertyChangedEventArgs oldEvent;
+                    PropertyChangedEventArgs newEvent;
+                    bool isFirstEvent = !_deferrNotifications.TryGetValue(ev.PropertyName, out oldEvent);
+                    if (isFirstEvent) {
+                        newEvent = ev;
+                    } else {
+                        if (ev is IPropertyValuesComparable evExt) {
+                            newEvent = evExt.CombineValues(oldEvent);
+                            if (newEvent == null) {
+                                newEvent = ev;
+                            } else {
+                                if ((newEvent as IPropertyValuesComparable).IsValuesEqual()) {
+                                    // Nothing to fire. First event OldValue and last event NewValue is same objects.
+                                    _deferrNotifications.Remove(ev.PropertyName); // HINT_1
+                                    return;
+                                }
+                            }
+                        } else {
+                            newEvent = ev;
+                        }
+                    }
+                    shedule = isFirstEvent;
+                    _deferrNotifications[ev.PropertyName] = newEvent; // Re-save only the last event.
+                }
                 if (shedule)
                     Factory.DEFERR_INVOKER(() => {
                         if (_disposed || Holded())
                             return;
-                        PropertyChangedEventArgs ev2 = _deferrNotifications[ev.PropertyName];
+                        PropertyChangedEventArgs ev2;
+                        if (!_deferrNotifications.TryGetValue(ev.PropertyName, out ev2))
+                            return; // event alrady deleted (see HINT_1)
                         if ((ev2 == null) || !_deferrNotifications.Remove(ev.PropertyName))
                             //System.Diagnostics.Trace.TraceError("hmmm... invalid usage ;(");
                             System.Diagnostics.Debug.Assert(false, "hmmm... invalid usage ;(");

@@ -21,8 +21,8 @@ namespace fmg.common.notyfier {
         }
 
         /// <summary> unit test executor </summary>
-        /// <param name="notificationsTimeoutMs">timeout call validator if you do not receive a notification</param>
-        /// <param name="maxWaitTimeoutMs">maximum timeout to wait for all notifications</param>
+        /// <param name="notificationsTimeout">timeout call validator if you do not receive a notification</param>
+        /// <param name="maxWaitTimeout">maximum timeout to wait for all notifications</param>
         /// <param name="modificator">data modifier (executable in UI thread)</param>
         /// <param name="validator">data validator (executable in current thread)</param>
         /// <returns></returns>
@@ -40,8 +40,9 @@ namespace fmg.common.notyfier {
                     ev => {
                         string name = ev.EventArgs.PropertyName;
                         LoggerSimple.Put("PropertyChangeExecutor::OnDataPropertyChanged: ev=" + ev.EventArgs);
-                        if (modifiedProperties.ContainsKey(name))
-                            modifiedProperties[name] = 1 + modifiedProperties[name];
+                        int oldValue = 0;
+                        if (modifiedProperties.TryGetValue(name, out oldValue))
+                            modifiedProperties[name] = 1 + oldValue;
                         else
                             modifiedProperties.Add(name, 1);
                     }))
