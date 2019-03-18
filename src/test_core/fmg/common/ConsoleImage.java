@@ -30,10 +30,10 @@ public final class ConsoleImage {
         int w = img.getWidth();
         int h = img.getHeight();
         for (int row = 0; row < h; row++) {
-           StringBuilder line = new StringBuilder();
-           for (int col = 0; col < w; col++)
-              line.append((img.getRGB(col, row) == -1) ? " " : "█");
-           out.println(line.toString());
+            StringBuilder line = new StringBuilder();
+            for (int col = 0; col < w; col++)
+                line.append((img.getRGB(col, row) == -1) ? " " : "█");
+            out.println(line.toString());
         }
     }
 
