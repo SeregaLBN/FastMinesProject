@@ -70,27 +70,27 @@ public class MosaicModelTest {
             Assert.assertTrue(!model.getMatrix().isEmpty());
             Assert.assertTrue(model.getCellAttr() == model.getMatrix().get(0).getAttr()); // reference equals
 
-            new PropertyChangeExecutor<>(model).run(100, 200,
+            new PropertyChangeExecutor<>(model).run(100, 1000,
                 () -> {
                     model.setSizeField(new Matrisize(15, 10));
                 }, modifiedProperties -> {
                     LoggerSimple.put("  checking...");
-                    Assert.assertTrue(modifiedProperties.containsKey(MosaicGameModel.PROPERTY_SIZE_FIELD));
-                    Assert.assertEquals(1, modifiedProperties.get(   MosaicGameModel.PROPERTY_SIZE_FIELD).first.intValue());
-                    Assert.assertTrue(modifiedProperties.containsKey(MosaicGameModel.PROPERTY_MATRIX));
-                    Assert.assertEquals(1, modifiedProperties.get(   MosaicGameModel.PROPERTY_MATRIX).first.intValue());
+                    Assert.assertTrue  (   modifiedProperties.containsKey(MosaicGameModel.PROPERTY_SIZE_FIELD));
+                    Assert.assertEquals(1, modifiedProperties.get        (MosaicGameModel.PROPERTY_SIZE_FIELD).first.intValue());
+                    Assert.assertTrue  (   modifiedProperties.containsKey(MosaicGameModel.PROPERTY_MATRIX));
+                    Assert.assertEquals(1, modifiedProperties.get        (MosaicGameModel.PROPERTY_MATRIX).first.intValue());
                     Assert.assertEquals(2, modifiedProperties.size());
                 });
 
-            new PropertyChangeExecutor<>(model).run(100, 200,
+            new PropertyChangeExecutor<>(model).run(100, 1000,
                 () -> {
                     model.setArea(12345);
                 }, modifiedProperties -> {
                     LoggerSimple.put("  checking...");
-                    Assert.assertTrue(modifiedProperties.containsKey(MosaicGameModel.PROPERTY_AREA));
-                    Assert.assertEquals(1, modifiedProperties.get(   MosaicGameModel.PROPERTY_AREA).first.intValue());
-                    Assert.assertTrue(modifiedProperties.containsKey(MosaicGameModel.PROPERTY_CELL_ATTR));
-                    Assert.assertEquals(1, modifiedProperties.get(   MosaicGameModel.PROPERTY_CELL_ATTR).first.intValue());
+                    Assert.assertTrue  (   modifiedProperties.containsKey(MosaicGameModel.PROPERTY_AREA));
+                    Assert.assertEquals(1, modifiedProperties.get(        MosaicGameModel.PROPERTY_AREA).first.intValue());
+                    Assert.assertTrue  (   modifiedProperties.containsKey(MosaicGameModel.PROPERTY_CELL_ATTR));
+                    Assert.assertEquals(1, modifiedProperties.get(        MosaicGameModel.PROPERTY_CELL_ATTR).first.intValue());
                     Assert.assertEquals(2, modifiedProperties.size());
                 });
         }
@@ -106,15 +106,24 @@ public class MosaicModelTest {
                     changeModel(model);
                 }, modifiedProperties -> {
                     LoggerSimple.put("  checking...");
-                    Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(IImageModel    .PROPERTY_SIZE            ).first);
-                    Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(MosaicGameModel.PROPERTY_AREA            ).first);
-                    Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(MosaicGameModel.PROPERTY_CELL_ATTR       ).first);
-                    Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(MosaicGameModel.PROPERTY_MOSAIC_TYPE     ).first);
-                    Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(MosaicGameModel.PROPERTY_MATRIX          ).first);
-                    Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(MosaicDrawModel.PROPERTY_BACKGROUND_COLOR).first);
-                    Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(MosaicDrawModel.PROPERTY_BACKGROUND_FILL ).first);
-                    Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(MosaicDrawModel.PROPERTY_COLOR_TEXT      ).first);
-                    Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(MosaicDrawModel.PROPERTY_PEN_BORDER      ).first);
+                    Assert.assertTrue  (                    modifiedProperties.containsKey(IImageModel    .PROPERTY_SIZE            ));
+                    Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        IImageModel    .PROPERTY_SIZE            ).first);
+                    Assert.assertTrue  (                    modifiedProperties.containsKey(MosaicGameModel.PROPERTY_AREA            ));
+                    Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        MosaicGameModel.PROPERTY_AREA            ).first);
+                    Assert.assertTrue  (                    modifiedProperties.containsKey(MosaicGameModel.PROPERTY_CELL_ATTR       ));
+                    Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        MosaicGameModel.PROPERTY_CELL_ATTR       ).first);
+                    Assert.assertTrue  (                    modifiedProperties.containsKey(MosaicGameModel.PROPERTY_MOSAIC_TYPE     ));
+                    Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        MosaicGameModel.PROPERTY_MOSAIC_TYPE     ).first);
+                    Assert.assertTrue  (                    modifiedProperties.containsKey(MosaicGameModel.PROPERTY_MATRIX          ));
+                    Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        MosaicGameModel.PROPERTY_MATRIX          ).first);
+                    Assert.assertTrue  (                    modifiedProperties.containsKey(MosaicDrawModel.PROPERTY_BACKGROUND_COLOR));
+                    Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        MosaicDrawModel.PROPERTY_BACKGROUND_COLOR).first);
+                    Assert.assertTrue  (                    modifiedProperties.containsKey(MosaicDrawModel.PROPERTY_BACKGROUND_FILL ));
+                    Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        MosaicDrawModel.PROPERTY_BACKGROUND_FILL ).first);
+                    Assert.assertTrue  (                    modifiedProperties.containsKey(MosaicDrawModel.PROPERTY_COLOR_TEXT      ));
+                    Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        MosaicDrawModel.PROPERTY_COLOR_TEXT      ).first);
+                    Assert.assertTrue  (                    modifiedProperties.containsKey(MosaicDrawModel.PROPERTY_PEN_BORDER      ));
+                    Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        MosaicDrawModel.PROPERTY_PEN_BORDER      ).first);
                 });
         }
     }

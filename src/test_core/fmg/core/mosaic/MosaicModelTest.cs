@@ -4,16 +4,13 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
 using NUnit.Framework;
 using fmg.common;
 using fmg.common.geom;
 using fmg.common.ui;
 using fmg.core.types;
 using fmg.core.img;
-using fmg.common.notifier;
 using fmg.common.notyfier;
-//using DummyImage = System.Object;
 using MosaicTestModel = fmg.core.mosaic.MosaicDrawModel<object>;
 
 namespace fmg.core.mosaic {
@@ -58,27 +55,27 @@ namespace fmg.core.mosaic {
             LoggerSimple.Put("> MosaicGameModelPropertyChangedTest");
 
             using (var model = new MosaicGameModel()) {
-                await new PropertyChangeExecutor<MosaicGameModel>(model).Run(200, 22200,
+                await new PropertyChangeExecutor<MosaicGameModel>(model).Run(100, 1000,
                     () => {
                         model.SizeField = new Matrisize(15, 10);
                     }, modifiedProperties => {
                         LoggerSimple.Put("  checking...");
-                        Assert.IsTrue(modifiedProperties.ContainsKey(nameof(MosaicGameModel.SizeField)));
-                        Assert.AreEqual(1, modifiedProperties[       nameof(MosaicGameModel.SizeField)]);
-                        Assert.IsTrue(modifiedProperties.ContainsKey(nameof(MosaicGameModel.Matrix)));
-                        Assert.AreEqual(1, modifiedProperties[       nameof(MosaicGameModel.Matrix)]);
+                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.SizeField)));
+                        Assert.AreEqual(1, modifiedProperties[            nameof(MosaicGameModel.SizeField)]);
+                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Matrix)));
+                        Assert.AreEqual(1, modifiedProperties[            nameof(MosaicGameModel.Matrix)]);
                         Assert.AreEqual(2, modifiedProperties.Count);
                     });
 
-                await new PropertyChangeExecutor<MosaicGameModel>(model).Run(100, 200,
+                await new PropertyChangeExecutor<MosaicGameModel>(model).Run(100, 1000,
                     () => {
                         model.Area = 12345;
                     }, modifiedProperties => {
                         LoggerSimple.Put("  checking...");
-                        Assert.IsTrue(modifiedProperties.ContainsKey(nameof(MosaicGameModel.Area)));
-                        Assert.AreEqual(1, modifiedProperties[       nameof(MosaicGameModel.Area)]);
-                        Assert.IsTrue(modifiedProperties.ContainsKey(nameof(MosaicGameModel.CellAttr)));
-                        Assert.AreEqual(1, modifiedProperties[       nameof(MosaicGameModel.CellAttr)]);
+                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Area)));
+                        Assert.AreEqual(1, modifiedProperties[            nameof(MosaicGameModel.Area)]);
+                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.CellAttr)));
+                        Assert.AreEqual(1, modifiedProperties[            nameof(MosaicGameModel.CellAttr)]);
                         Assert.AreEqual(2, modifiedProperties.Count);
                     });
             }
@@ -90,20 +87,29 @@ namespace fmg.core.mosaic {
             LoggerSimple.Put("> mosaicDrawModelPropertyChangedTest");
 
             using (var model = new MosaicTestModel()) {
-                await new PropertyChangeExecutor<MosaicGameModel>(model).Run(100, 200,
+                await new PropertyChangeExecutor<MosaicGameModel>(model).Run(100, 1000,
                     () => {
                         ChangeModel(model);
                     }, modifiedProperties => {
                         LoggerSimple.Put("  checking...");
-                        Assert.AreEqual(true, 1 <= modifiedProperties[nameof(IImageModel.Size)]);
-                        Assert.AreEqual(1, modifiedProperties[nameof(MosaicGameModel.Area)]);
-                        Assert.AreEqual(1, modifiedProperties[nameof(MosaicGameModel.CellAttr)]);
-                        Assert.AreEqual(1, modifiedProperties[nameof(MosaicGameModel.MosaicType)]);
-                        Assert.AreEqual(1, modifiedProperties[nameof(MosaicGameModel.Matrix)]);
-                        Assert.AreEqual(1, modifiedProperties[nameof(MosaicTestModel.BackgroundColor)]);
-                        Assert.AreEqual(1, modifiedProperties[nameof(MosaicTestModel.BkFill)]);
-                        Assert.AreEqual(1, modifiedProperties[nameof(MosaicTestModel.ColorText)]);
-                        Assert.AreEqual(1, modifiedProperties[nameof(MosaicTestModel.PenBorder)]);
+                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(IImageModel.Size)));
+                        Assert.AreEqual(1, modifiedProperties[            nameof(IImageModel.Size)]);
+                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Area)));
+                        Assert.AreEqual(1, modifiedProperties[            nameof(MosaicGameModel.Area)]);
+                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.CellAttr)));
+                        Assert.AreEqual(1, modifiedProperties[            nameof(MosaicGameModel.CellAttr)]);
+                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.MosaicType)));
+                        Assert.AreEqual(1, modifiedProperties[            nameof(MosaicGameModel.MosaicType)]);
+                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Matrix)));
+                        Assert.AreEqual(1, modifiedProperties[            nameof(MosaicGameModel.Matrix)]);
+                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicTestModel.BackgroundColor)));
+                        Assert.AreEqual(1, modifiedProperties[            nameof(MosaicTestModel.BackgroundColor)]);
+                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicTestModel.BkFill)));
+                        Assert.AreEqual(1, modifiedProperties[            nameof(MosaicTestModel.BkFill)]);
+                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicTestModel.ColorText)));
+                        Assert.AreEqual(1, modifiedProperties[            nameof(MosaicTestModel.ColorText)]);
+                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicTestModel.PenBorder)));
+                        Assert.AreEqual(1, modifiedProperties[            nameof(MosaicTestModel.PenBorder)]);
                     });
             }
         }
