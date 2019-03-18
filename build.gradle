@@ -66,6 +66,46 @@ subprojects {
 }
 */
 
+
+def printLogo() {
+    try {
+        def fmgCanonicalLogo = './res/Logo/Logo_2020x2020.png'
+        def img = javax.imageio.ImageIO.read(new File(new URL(new File(rootProject.projectDir.absolutePath).toURI().toURL(), fmgCanonicalLogo).toURI()))
+
+        // scaleToConsole
+        def inImg = img
+        int inW = inImg.getWidth()
+        int inH = inImg.getHeight()
+        int maxIn = Math.max(inW, inH)
+        int maxOut = 35 + java.util.concurrent.ThreadLocalRandom.current().nextInt(25)
+        int outW = inW*maxOut/maxIn
+        int outH = (int)(0.6 * inH*maxOut/maxIn) // fix console char size
+        def outImg = new java.awt.image.BufferedImage(outW, outH, java.awt.image.BufferedImage.TYPE_USHORT_GRAY)
+        def g = outImg.createGraphics()
+        g.setColor(java.awt.Color.WHITE)
+        g.fillRect(0, 0, outW, outH)
+        g.drawImage(inImg, 0, 0, outW, outH, null)
+        outImg.flush()
+        g.dispose();
+        img = outImg
+
+        // printImage
+        int w = img.getWidth()
+        int h = img.getHeight()
+        for (int row = 0; row < h; row++) {
+           StringBuilder line = new StringBuilder()
+           for (int col = 0; col < w; col++)
+              line.append((img.getRGB(col, row) == -1) ? " " : "█")
+           println(line.toString())
+        }
+
+    } catch (Exception ex) {
+        System.err.println("printLogo failed: " + ex.getMessage())
+        //ex.printStackTrace(System.err)
+    }
+}
+printLogo();
+
 // ================ GIT part begin ==========================
 def getGitRepoPath() {
     new File(new URL(new File(rootProject.projectDir.absolutePath).toURI().toURL(), './.git').toURI()).absolutePath
