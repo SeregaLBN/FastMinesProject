@@ -63,16 +63,16 @@ namespace fmg.core.mosaic {
             LoggerSimple.Put("> " + nameof(CheckIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest));
 
             using (var initData = CreateMosaicInitData()) {
-                await new PropertyChangeExecutor<MosaicInitData>(initData).Run(TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(1000),
+                await new PropertyChangeExecutor<MosaicInitData>(initData).Run(100, 1000,
                     () => {
                         initData.MosaicType = EMosaic.eMosaicRhombus1;
                     }, modifiedProperties => {
                         LoggerSimple.Put("  checking...");
                         Assert.IsTrue(modifiedProperties.ContainsKey(nameof(MosaicInitData.MosaicType)));
-                        Assert.AreEqual(1, modifiedProperties[nameof(MosaicInitData.MosaicType)]);
+                        Assert.AreEqual(1, modifiedProperties[       nameof(MosaicInitData.MosaicType)]);
                         Assert.IsTrue(modifiedProperties.ContainsKey(nameof(MosaicInitData.MinesCount)));
-                        Assert.AreEqual(1, modifiedProperties[nameof(MosaicInitData.MinesCount)]);
-                        Assert.AreEqual(2, modifiedProperties.Count); // only MosaicInitData.PROPERTY_MINES_COUNT and MosaicInitData.PROPERTY_MOSAIC_TYPE
+                        Assert.AreEqual(1, modifiedProperties[       nameof(MosaicInitData.MinesCount)]);
+                        Assert.AreEqual(2, modifiedProperties.Count);
                         Assert.AreEqual(EMosaic.eMosaicRhombus1, initData.MosaicType);
                         Assert.AreEqual(initData.SkillLevel.GetNumberMines(EMosaic.eMosaicRhombus1), initData.MinesCount);
                     });
@@ -84,7 +84,7 @@ namespace fmg.core.mosaic {
             LoggerSimple.Put("> " + nameof(CheckNoRepeatNotificationsTest));
 
             using (var initData = CreateMosaicInitData()) {
-                await new PropertyChangeExecutor<MosaicInitData>(initData).Run(TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(1000),
+                await new PropertyChangeExecutor<MosaicInitData>(initData).Run(100, 1000,
                     () => {
                         LoggerSimple.Put("    initData.minesCount={0}", initData.MinesCount);
                         initData.MosaicType = EMosaic.eMosaicRhombus1;
@@ -93,10 +93,10 @@ namespace fmg.core.mosaic {
                         LoggerSimple.Put("    initData.minesCount={0}", initData.MinesCount);
                     }, modifiedProperties => {
                         LoggerSimple.Put("  checking...");
-                        Assert.IsTrue(modifiedProperties.ContainsKey(nameof(MosaicInitData.MosaicType)));
-                        Assert.AreEqual(1, modifiedProperties[nameof(MosaicInitData.MosaicType)]);
+                        Assert.IsTrue(modifiedProperties.ContainsKey( nameof(MosaicInitData.MosaicType)));
+                        Assert.AreEqual(1, modifiedProperties[        nameof(MosaicInitData.MosaicType)]);
                         Assert.IsTrue(!modifiedProperties.ContainsKey(nameof(MosaicInitData.MinesCount)));
-                        Assert.AreEqual(1, modifiedProperties.Count); // only MosaicInitData.PROPERTY_MINES_COUNT and MosaicInitData.PROPERTY_MOSAIC_TYPE
+                        Assert.AreEqual(1, modifiedProperties.Count);
                         Assert.AreEqual(EMosaic.eMosaicHexagon1, initData.MosaicType);
                         Assert.AreEqual(initData.SkillLevel.GetNumberMines(EMosaic.eMosaicHexagon1), initData.MinesCount);
                     });

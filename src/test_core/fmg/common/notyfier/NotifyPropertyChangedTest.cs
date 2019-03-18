@@ -69,8 +69,8 @@ namespace fmg.common.notyfier {
                 int countFiredEvents = 3 + ThreadLocalRandom.Current.Next(10);
                 string prefix = " Value ";
                 await new PropertyChangeExecutor<SimpleProperty>(data).Run(
-                    TimeSpan.FromMilliseconds(200),
-                    TimeSpan.FromMilliseconds(1000),
+                    200,
+                    1000,
                     () => {
                         for (int i = 0; i < countFiredEvents; ++i)
                             data.Property = prefix + i;
@@ -93,8 +93,8 @@ namespace fmg.common.notyfier {
             const int initialValue = 1;
             using (var data = new SimpleProperty(initialValue, true)) {
                 await new PropertyChangeExecutor<SimpleProperty>(data).Run(
-                    TimeSpan.FromMilliseconds(100),
-                    TimeSpan.FromMilliseconds(1000),
+                    100,
+                    1000,
                     () => {
                         LoggerSimple.Put("    data.Property={0}", data.Property);
                         data.Property = initialValue + 123;
