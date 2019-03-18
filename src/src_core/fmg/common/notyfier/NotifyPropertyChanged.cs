@@ -17,22 +17,11 @@ namespace fmg.common.notyfier {
         public bool DeferredNotifications { get; set; }
         private readonly IDictionary<string /* propertyName */, PropertyChangedEventArgs> _deferrNotifications = new Dictionary<string, PropertyChangedEventArgs>();
         private bool _disposed;
-        private int _holded;
 
         public NotifyPropertyChanged(INotifyPropertyChanged owner, Action<PropertyChangedEventArgs> fireOwnerEvent, bool deferredNotifications = false) {
             _owner = owner;
             _fireOwnerEvent = fireOwnerEvent;
             DeferredNotifications = deferredNotifications;
-        }
-
-
-        /// <summary> set notifer to pause </summary>
-        public IDisposable Hold() {
-            ++_holded; // lock
-            return new PlainFree { _onDispose = () => --_holded }; // unlock
-        }
-        public bool Holded() {
-            return _holded != 0;
         }
 
 
@@ -55,8 +44,7 @@ namespace fmg.common.notyfier {
 
             var tmp = storage;
             storage = value;
-            if (!Holded())
-                FirePropertyChanged(tmp, value, propertyName);
+            FirePropertyChanged(tmp, value, propertyName);
             return true;
         }
 
@@ -77,7 +65,7 @@ namespace fmg.common.notyfier {
         }
 
         public void FirePropertyChanged(PropertyChangedEventArgs ev) {
-            if (_disposed || Holded())
+            if (_disposed)
                 return;
 
             void fireOwnerEvent(PropertyChangedEventArgs ev3) {
@@ -117,7 +105,7 @@ namespace fmg.common.notyfier {
                 }
                 if (shedule)
                     Factory.DEFERR_INVOKER(() => {
-                        if (_disposed || Holded())
+                        if (_disposed)
                             return;
                         PropertyChangedEventArgs ev2;
                         if (!_deferrNotifications.TryGetValue(ev.PropertyName, out ev2))

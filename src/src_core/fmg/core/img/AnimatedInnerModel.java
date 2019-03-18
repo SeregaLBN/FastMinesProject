@@ -64,10 +64,6 @@ final class AnimatedInnerModel implements IAnimatedModel {
         _notifier.setProperty(_currentFrame, value, PROPERTY_CURRENT_FRAME);
     }
 
-    protected AutoCloseable hold() {
-        return _notifier.hold();
-    }
-
     @Override
     public void close() {
         _notifier.close();

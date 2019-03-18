@@ -12,7 +12,7 @@ using fmg.core.types;
 namespace fmg.core.img {
 
     /// <summary> Representable <see cref="EMosaic"/> as animated image </summary>
-    public class MosaicAnimatedModel<TImageInner> 
+    public class MosaicAnimatedModel<TImageInner>
                    : MosaicDrawModel<TImageInner>, IAnimatedModel
         where TImageInner : class
     {
@@ -30,6 +30,7 @@ namespace fmg.core.img {
         private readonly IList<double /* angle offset */ > _prepareList = new List<double>();
         private readonly List<RotatedCellContext> _rotatedElements = new List<RotatedCellContext>();
         private readonly AnimatedInnerModel _innerModel = new AnimatedInnerModel();
+        private bool _hackLock = false;
 
         public MosaicAnimatedModel() {
             _innerModel.PropertyChanged += OnInnerModelPropertyChanged;
@@ -76,6 +77,8 @@ namespace fmg.core.img {
         }
 
         protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            if (_hackLock)
+                return;
             base.OnPropertyChanged(sender, ev);
             switch (ev.PropertyName) {
             case nameof(this.RotateMode):
@@ -144,7 +147,8 @@ namespace fmg.core.img {
                 PointDouble center = cell.GetCenter();
                 Coord coord = cell.GetCoord();
 
-                using (var pause = Hold()) {
+                _hackLock = true;
+                try {
                     // modify
                     attr.Area = cntxt.area;
 
@@ -158,6 +162,8 @@ namespace fmg.core.img {
 
                     // restore
                     attr.Area = area;
+                } finally {
+                    _hackLock = false;
                 }
             }
 
@@ -191,7 +197,8 @@ namespace fmg.core.img {
             var colorLight = pb.ColorLight;
             var colorShadow = pb.ColorShadow;
 
-            using (var pause = Hold()) {
+            _hackLock = true;
+            try {
                 // modify
                 pb.Width = 2 * borderWidth;
                 pb.ColorLight = colorLight.Darker(0.5);
@@ -207,6 +214,8 @@ namespace fmg.core.img {
                 pb.Width = borderWidth;
                 pb.ColorLight = colorLight;
                 pb.ColorShadow = colorShadow;
+            } finally {
+                _hackLock = false;
             }
         }
 
@@ -301,6 +310,9 @@ namespace fmg.core.img {
         }
 
         protected override void OnCellAttributePropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            if (_hackLock)
+                return;
+
             base.OnCellAttributePropertyChanged(sender, ev);
 
             string propName = ev.PropertyName;
@@ -320,19 +332,6 @@ namespace fmg.core.img {
         protected void OnInnerModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             // refire
             _notifier.FirePropertyChanged(ev);
-        }
-
-
-        /** off notifier */
-        protected override IDisposable Hold() {
-            var a0 = base.Hold();
-            var a1 = _innerModel.Hold();
-            return new PlainFree() {
-                _onDispose = () => {
-                    a0.Dispose();
-                    a1.Dispose();
-                }
-            };
         }
 
         protected override void Disposing() {

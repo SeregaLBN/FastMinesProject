@@ -18,7 +18,6 @@ public final class NotifyPropertyChanged implements AutoCloseable//, INotifyProp
     private final boolean _deferredNotifications;
     private final Map<String /* propertyName */, Pair<Object /* old value */, Object /* new value */>> _deferrNotifications = new HashMap<>();
     private boolean _disposed = false;
-    private int _holded;
 
     public NotifyPropertyChanged(INotifyPropertyChanged owner) { this(owner, false); }
     public NotifyPropertyChanged(INotifyPropertyChanged owner, boolean deferredNotifications) {
@@ -29,15 +28,6 @@ public final class NotifyPropertyChanged implements AutoCloseable//, INotifyProp
 
     public void addListener   (PropertyChangeListener listener) { _propertyChanges.   addPropertyChangeListener(listener); }
     public void removeListener(PropertyChangeListener listener) { _propertyChanges.removePropertyChangeListener(listener); }
-
-    /** set notifer to pause */
-    public AutoCloseable hold() {
-        ++_holded; // lock
-        return () -> --_holded; // unlock
-    }
-    public boolean isHolded() {
-        return _holded != 0;
-    }
 
 
     /** Set the value to the specified property  and throw event to listeners */
@@ -67,8 +57,7 @@ public final class NotifyPropertyChanged implements AutoCloseable//, INotifyProp
             throw new RuntimeException(ex);
         }
 
-        if (!isHolded())
-            firePropertyChanged(oldValue, newValue, propertyName);
+        firePropertyChanged(oldValue, newValue, propertyName);
         return true;
     }
 
@@ -89,7 +78,7 @@ public final class NotifyPropertyChanged implements AutoCloseable//, INotifyProp
     }
 
     public <T> void firePropertyChanged(T oldValue, T newValue, String propertyName) {
-        if (_disposed || isHolded())
+        if (_disposed)
             return;
 
         if (!_deferredNotifications) {
@@ -127,7 +116,7 @@ public final class NotifyPropertyChanged implements AutoCloseable//, INotifyProp
                             .collect(Collectors.joining("\n   ")));
                 /**/
                 Factory.DEFERR_INVOKER.accept(() -> {
-                    if (_disposed || isHolded())
+                    if (_disposed)
                         return;
 
                     if (!_deferrNotifications.containsKey(propertyName))

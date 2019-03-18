@@ -37,6 +37,7 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
     private final List<Double /* angle offset */ > _prepareList = new ArrayList<>();
     private final List<RotatedCellContext> _rotatedElements = new ArrayList<>();
     private final AnimatedInnerModel _innerModel = new AnimatedInnerModel();
+    private boolean hackLock = false;
 
     public MosaicAnimatedModel() {
         _innerModel.addListener(this::onInnerModelPropertyChanged);
@@ -82,6 +83,8 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
 
     @Override
     protected void onPropertyChanged(PropertyChangeEvent ev) {
+        if (hackLock)
+            return;
         super.onPropertyChanged(ev);
         switch (ev.getPropertyName()) {
         case PROPERTY_ROTATE_MODE:
@@ -152,7 +155,8 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
             PointDouble center = cell.getCenter();
             Coord coord = cell.getCoord();
 
-            try (AutoCloseable pause = hold()) {
+            hackLock = true;
+            try {
                 // modify
                 attr.setArea(cntxt.area);
 
@@ -164,8 +168,8 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
 
                 // restore
                 attr.setArea(area);
-            } catch (Exception ex) {
-                ex.printStackTrace();
+            } finally {
+                hackLock = false;
             }
         });
 
@@ -198,7 +202,9 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
         double borderWidth = pb.getWidth();
         Color colorLight  = pb.getColorLight();
         Color colorShadow = pb.getColorShadow();
-        try (AutoCloseable pause = hold()) {
+
+        hackLock = true;
+        try {
             // modify
             pb.setWidth(2 * borderWidth);
             pb.setColorLight(colorLight.darker(0.5));
@@ -214,8 +220,8 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
             pb.setWidth(borderWidth);
             pb.setColorLight(colorLight);
             pb.setColorShadow(colorShadow);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } finally {
+            hackLock = false;
         }
     }
 
@@ -262,7 +268,7 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
         double area = getArea();
 
         if (!_prepareList.isEmpty()) {
-            List<Double> copyList = new ArrayList<Double>(_prepareList);
+            List<Double> copyList = new ArrayList<>(_prepareList);
             for (int i = copyList.size()-1; i >= 0; --i) {
                 double angleOffset = copyList.get(i);
                 if ((rotateDelta >= 0)
@@ -309,6 +315,9 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
 
     @Override
     protected void onCellAttributePropertyChanged(PropertyChangeEvent ev) {
+        if (hackLock)
+            return;
+
         super.onCellAttributePropertyChanged(ev);
 
         String propName = ev.getPropertyName();
@@ -328,17 +337,6 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
     protected void onInnerModelPropertyChanged(PropertyChangeEvent ev) {
         // refire
         _notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
-    }
-
-    /** off notifier */
-    @Override
-    protected AutoCloseable hold() {
-        AutoCloseable a0 = super.hold();
-        AutoCloseable a1 = _innerModel.hold();
-        return () -> {
-            a0.close();
-            a1.close();
-        };
     }
 
     @Override

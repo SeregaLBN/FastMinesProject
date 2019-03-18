@@ -156,18 +156,6 @@ namespace fmg.core.mosaic {
             _notifier.FirePropertyChanged(nameof(this.CellAttr));
         }
 
-        /// <summary> off notifier </summary>
-        protected virtual IDisposable Hold() {
-            var a1 = _notifier.Hold();
-            var a2 = CellAttr.Hold();
-            return new PlainFree() {
-                _onDispose = () => {
-                    a1.Dispose();
-                    a2.Dispose();
-                }
-            };
-        }
-
         /// <summary>  Dispose managed resources </summary>/
         protected virtual void Disposing() {
             this.PropertyChangedSync -= OnPropertyChanged;

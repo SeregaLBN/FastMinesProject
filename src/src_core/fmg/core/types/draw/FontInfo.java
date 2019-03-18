@@ -86,11 +86,6 @@ public class FontInfo implements INotifyPropertyChanged {
         return "FontInfo{fontName=" + _name + ", isBold=" + _bold + ", size=" + _size + "}";
     }
 
-    /** off notifier */
-    public AutoCloseable hold() {
-        return _notifier.hold();
-    }
-
     @Override
     public void addListener(PropertyChangeListener listener) {
         _notifier.addListener(listener);

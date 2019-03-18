@@ -79,11 +79,6 @@ public class PenBorder implements INotifyPropertyChanged {
                 && _colorLight.equals(penObj._colorLight);
     }
 
-    /** off notifier */
-    public AutoCloseable hold() {
-        return _notifier.hold();
-    }
-
     @Override
     public void addListener(PropertyChangeListener listener) {
         _notifier.addListener(listener);

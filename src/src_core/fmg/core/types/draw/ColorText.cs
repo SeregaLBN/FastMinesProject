@@ -70,11 +70,6 @@ namespace fmg.core.types.draw {
             _notifier.SetProperty(ref _colorClose[i], colorClose, "ColorClose.#" + i);
         }
 
-        /// <summary> off notifer </summary>
-        public IDisposable Hold() {
-            return _notifier.Hold();
-        }
-
         public void Dispose() {
             _notifier.Dispose();
             GC.SuppressFinalize(this);
