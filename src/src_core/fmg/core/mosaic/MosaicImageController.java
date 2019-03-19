@@ -5,7 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import fmg.core.img.*;
 import fmg.core.types.draw.PenBorder;
 
-/** MVC: mosaic image controller. Base implementation */
+/** MVC: mosaic animated image controller. Base implementation */
 public abstract class MosaicImageController<TImage,        TMosaicView extends MosaicView<TImage, Void, MosaicAnimatedModel<Void>>>
                    extends MosaicController<TImage, Void,  TMosaicView,                                 MosaicAnimatedModel<Void>>
              implements IAnimatedController<TImage,        TMosaicView,                                 MosaicAnimatedModel<Void>>
@@ -16,7 +16,7 @@ public abstract class MosaicImageController<TImage,        TMosaicView extends M
         super(view);
         MosaicAnimatedModel<Void> model = getModel();
         _innerController = new AnimatedInnerController<>(model);
-        addModelTransformer(new MosaicRotateTransformer());
+        useRotateTransforming(true);
 
         PenBorder pen = model.getPenBorder();
         pen.setColorLight(pen.getColorShadow());
@@ -30,6 +30,19 @@ public abstract class MosaicImageController<TImage,        TMosaicView extends M
     @Override
     public void removeModelTransformer(Class<? extends IModelTransformer> transformerClass) {
         _innerController.removeModelTransformer(transformerClass);
+    }
+
+    @Override
+    public void useRotateTransforming(boolean enable) {
+        if (enable)
+            addModelTransformer(new MosaicRotateTransformer());
+        else
+            removeModelTransformer(MosaicRotateTransformer.class);
+    }
+
+    @Override
+    public void usePolarLightFgTransforming(boolean enable) {
+        throw new UnsupportedOperationException();
     }
 
 }

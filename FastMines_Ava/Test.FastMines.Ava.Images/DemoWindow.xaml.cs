@@ -10,6 +10,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using fmg.common.notyfier;
+using fmg.core.img;
 using fmg.ava.img;
 
 namespace Test.FastMines.Ava.Images {

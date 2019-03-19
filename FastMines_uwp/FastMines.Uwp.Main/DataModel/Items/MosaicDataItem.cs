@@ -2,6 +2,7 @@
 using Microsoft.Graphics.Canvas;
 using fmg.common.geom;
 using fmg.core.types;
+using fmg.core.img;
 using MosaicModel      = fmg.core.img.MosaicAnimatedModel<fmg.common.Nothing>;
 using MosaicView       = fmg.uwp.img.win2d.MosaicImg.CanvasBmp;
 using MosaicController = fmg.uwp.img.win2d.MosaicImg.ControllerBitmap;
@@ -40,7 +41,7 @@ namespace fmg.DataModel.Items {
                     m.MosaicType = MosaicType;
                     m.SizeField = sizeField;
                     m.Padding = new BoundDouble(5 * Zoom());
-                    m.RotateMode = MosaicModel.ERotateMode.someCells;
+                    m.RotateMode = EMosaicRotateMode.someCells;
                     //m.BackgroundColor = MosaicDrawModelConst.DefaultBkColor;
                     m.PenBorder.Width = 3 * Zoom();
                     //m.RotateAngle = 45 * ThreadLocalRandom.Current.Next(7);

@@ -13,7 +13,7 @@ import fmg.core.types.EMosaic;
  */
 public interface IMosaicController<TImage, TImageInner,
                                    TMosaicView extends IMosaicView<TImage, TImageInner, TMosaicModel>,
-                                   TMosaicModel extends MosaicDrawModel<TImageInner>>
+                                   TMosaicModel extends IMosaicDrawModel<TImageInner>>
           extends IImageController<TImage, TMosaicView, TMosaicModel>
 {
 
@@ -38,5 +38,7 @@ public interface IMosaicController<TImage, TImageInner,
     /** ячейка на которой было нажато (но не обязательно что отпущено) */
     void setCellDown(BaseCell cellDown);
 
+    /** Подготовиться к началу игры - сбросить все ячейки */
+    boolean gameNew();
 
 }

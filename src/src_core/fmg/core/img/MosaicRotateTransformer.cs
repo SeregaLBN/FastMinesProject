@@ -8,7 +8,7 @@ namespace fmg.core.img {
     {
         public void Execute(IAnimatedModel model) {
             if (!(model is MosaicAnimatedModel<TImage> mam))
-                throw new Exception("Illegal usage transformer");
+                throw new InvalidOperationException("Illegal usage transformer");
 
             double rotateAngleDelta = 360.0 / mam.TotalFrames; // 360° / TotalFrames
             //if (!mam.AnimeDirection)
@@ -17,10 +17,10 @@ namespace fmg.core.img {
             mam.RotateAngle = rotateAngle;
 
             switch (mam.RotateMode) {
-            case MosaicAnimatedModel<TImage>.ERotateMode.fullMatrix:
+            case EMosaicRotateMode.fullMatrix:
                 mam.RotateMatrix();
                 break;
-            case MosaicAnimatedModel<TImage>.ERotateMode.someCells:
+            case EMosaicRotateMode.someCells:
                 mam.UpdateAnglesOffsets(rotateAngleDelta);
                 mam.RotateCells();
                 break;

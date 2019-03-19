@@ -41,6 +41,10 @@ public final class AnimatedInnerController<TImage,
     public void addListener(PropertyChangeListener listener)    { throw new UnsupportedOperationException(); }
     @Override
     public void removeListener(PropertyChangeListener listener) { throw new UnsupportedOperationException(); }
+    @Override
+    public void useRotateTransforming(boolean enable)           { throw new UnsupportedOperationException(); }
+    @Override
+    public void usePolarLightFgTransforming(boolean enable)     { throw new UnsupportedOperationException(); }
     // #region: end unusable code
 
 

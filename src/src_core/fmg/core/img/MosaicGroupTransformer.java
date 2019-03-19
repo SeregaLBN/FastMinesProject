@@ -8,7 +8,7 @@ public class MosaicGroupTransformer implements IModelTransformer {
     @Override
     public void execute(IAnimatedModel model) {
         if (!(model instanceof MosaicGroupModel))
-            throw new RuntimeException("Illegal usage transformer");
+            throw new IllegalArgumentException("Illegal usage transformer");
 
         MosaicGroupModel m = (MosaicGroupModel)model;
 

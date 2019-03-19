@@ -1,15 +1,10 @@
 package fmg.core.mosaic;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.HashMap;
-import java.util.Map;
 
 import fmg.common.Color;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.common.notyfier.INotifyPropertyChanged;
-import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.core.img.IImageModel;
 import fmg.core.types.draw.ColorText;
 import fmg.core.types.draw.FontInfo;
@@ -20,7 +15,7 @@ import fmg.core.types.draw.PenBorder;
  *
  * @param <TImageInner> platform specific view/image/picture or other display context/canvas/window/panel
  **/
-public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IImageModel {
+public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IMosaicDrawModel<TImageInner> {
 
     /** Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера. Переопределяется одним из MVC-наследником. */
     public static Color DefaultBkColor = Color.Gray().brighter();
@@ -67,12 +62,15 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
     public static final String PROPERTY_FONT_INFO        = "FontInfo";
     public static final String PROPERTY_BACKGROUND_COLOR = "BackgroundColor";
 
+    @Override
     public boolean getAutoFit() { return _autoFit; }
+    @Override
     public void setAutoFit(boolean autoFit) {
         _notifier.setProperty(this._autoFit, autoFit, PROPERTY_AUTO_FIT);
     }
 
     /** get mosaic size in pixels */
+    @Override
     public SizeDouble getMosaicSize() {
         return getCellAttr().getSize(getSizeField());
     }
@@ -113,6 +111,7 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
 
     /** Offset to mosaic.
      * Определяется Padding'ом  и, дополнительно, смещением к мозаике (т.к. мозаика равномерно вписана в InnerSize) */
+    @Override
     public SizeDouble getMosaicOffset() {
         BoundDouble pad = getPadding();
         SizeDouble offset     = new SizeDouble(pad.left, pad.top);
@@ -126,6 +125,7 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
     }
 
     /** set offset to mosaic */
+    @Override
     public void setMosaicOffset(SizeDouble offset) {
         BoundDouble pad = getPadding();
         SizeDouble oldOffset = new SizeDouble(pad.left, pad.top);
@@ -147,21 +147,25 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
         }
     }
 
+    @Override
     public TImageInner getImgMine() { return _imgMine; }
     public void setImgMine(TImageInner img) {
         _notifier.setProperty(this._imgMine, img, PROPERTY_IMG_MINE);
     }
 
+    @Override
     public TImageInner getImgFlag() { return _imgFlag; }
     public void setImgFlag(TImageInner img) {
         _notifier.setProperty(this._imgFlag, img, PROPERTY_IMG_FLAG);
     }
 
+    @Override
     public ColorText getColorText() {
         if (_colorText == null)
             setColorText(new ColorText());
         return _colorText;
     }
+    @Override
     public void setColorText(ColorText colorText) {
         ColorText old = this._colorText;
         if (_notifier.setProperty(old, colorText, PROPERTY_COLOR_TEXT)) {
@@ -172,11 +176,13 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
         }
     }
 
+    @Override
     public PenBorder getPenBorder() {
         if (_penBorder == null)
             setPenBorder(new PenBorder());
         return _penBorder;
     }
+    @Override
     public void setPenBorder(PenBorder penBorder) {
         PenBorder old = this._penBorder;
         if (_notifier.setProperty(old, penBorder, PROPERTY_PEN_BORDER)) {
@@ -187,71 +193,14 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
         }
     }
 
-    /** всё что относиться к заливке фоном ячееек */
-    public static class BackgroundFill implements AutoCloseable, INotifyPropertyChanged {
-        /** режим заливки фона ячеек */
-        private int _mode = 0;
-        /** кэшированные цвета фона ячеек
-         * <br/> Нет цвета? - создасться с нужной интенсивностью! */
-        private final Map<Integer, Color> _colors = new HashMap<Integer, Color>() {
-            private static final long serialVersionUID = 1L;
-            @Override
-            public Color get(Object key) {
-                assert key instanceof Integer;
-                Color res = super.get(key);
-                if (res == null) {
-                    res = Color.RandomColor().brighter(0.45);
-                    super.put((Integer)key, res);
-                }
-                return res;
-            }
-         };
-
-        public static final String PROPERTY_MODE = "Mode";
-        protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
-
-        /** режим заливки фона ячеек */
-        public int getMode() { return _mode; }
-
-        /** режим заливки фона ячеек
-         * @param newFillMode
-         *  <li> 0 - цвет заливки фона по-умолчанию
-         *  <li> not 0 - радуга %)
-         */
-        public void setMode(int newFillMode) {
-            if (_notifier.setProperty(_mode, newFillMode, PROPERTY_MODE))
-                _colors.clear();
-        }
-
-        /** кэшированные цвета фона ячеек
-         * <br/> Нет цвета? - создасться с нужной интенсивностью! */
-        public Map<Integer, Color> getColors() {
-            return _colors;
-        }
-
-        @Override
-        public void close() {
-            _notifier.close();
-            _colors.clear();
-        }
-
-        @Override
-        public void addListener(PropertyChangeListener listener) {
-            _notifier.addListener(listener);
-        }
-        @Override
-        public void removeListener(PropertyChangeListener listener) {
-            _notifier.removeListener(listener);
-        }
-
-    }
-
+    @Override
     public BackgroundFill getBackgroundFill() {
         if (_backgroundFill == null)
             setBackgroundFill(new BackgroundFill());
         return _backgroundFill;
     }
-    private void setBackgroundFill(BackgroundFill backgroundFill) {
+    @Override
+    public void setBackgroundFill(BackgroundFill backgroundFill) {
         BackgroundFill old = this._backgroundFill;
         if (_notifier.setProperty(old, backgroundFill, PROPERTY_BACKGROUND_FILL)) {
             if (old != null)
@@ -261,11 +210,13 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
         }
     }
 
+    @Override
     public FontInfo getFontInfo() {
         if (_fontInfo == null)
             setFontInfo(new FontInfo());
         return _fontInfo;
     }
+    @Override
     public void setFontInfo(FontInfo fontInfo) {
         FontInfo old = this._fontInfo;
         if (_notifier.setProperty(old, fontInfo, PROPERTY_FONT_INFO)) {
@@ -276,16 +227,19 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IIm
         }
     }
 
+    @Override
     public Color getBackgroundColor() {
         if (_backgroundColor == null)
             setBackgroundColor(DefaultBkColor);
         return _backgroundColor;
     }
 
+    @Override
     public void setBackgroundColor(Color color) {
         _notifier.setProperty(_backgroundColor, color, PROPERTY_BACKGROUND_COLOR);
     }
 
+    @Override
     public TImageInner getImgBckgrnd() { return _imgBckgrnd; }
     public void setImgBckgrnd(TImageInner imgBckgrnd) {
         _notifier.setProperty(this._imgBckgrnd, imgBckgrnd, PROPERTY_IMG_BCKGRND);

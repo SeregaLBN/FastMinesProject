@@ -31,10 +31,10 @@ namespace fmg.uwp.img.wbmp {
 
             _useBackgroundColor = true;
             switch (model.RotateMode) {
-            case MosaicAnimatedModel<Nothing>.ERotateMode.fullMatrix:
+            case EMosaicRotateMode.fullMatrix:
                 DrawModified(model.Matrix);
                 break;
-            case MosaicAnimatedModel<Nothing>.ERotateMode.someCells:
+            case EMosaicRotateMode.someCells:
                 // draw static part
                 DrawModified(model.GetNotRotatedCells());
 

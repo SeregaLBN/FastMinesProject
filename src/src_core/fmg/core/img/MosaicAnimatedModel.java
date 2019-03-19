@@ -21,16 +21,12 @@ import fmg.core.mosaic.cells.BaseCell.BaseAttribute;
 import fmg.core.types.draw.PenBorder;
 
 /** Representable {@link fmg.core.types.EMosaic} as animated image */
-public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInner> implements IAnimatedModel {
+public class MosaicAnimatedModel<TImageInner>
+     extends MosaicDrawModel<TImageInner>
+ implements IMosaicAnimatedModel<TImageInner>
+{
 
-    public enum ERotateMode {
-        /** rotate full matrix (all cells) */
-        fullMatrix,
-        /** rotate some cells (independently of each other) */
-        someCells
-    }
-
-    private ERotateMode _rotateMode = ERotateMode.fullMatrix;
+    private EMosaicRotateMode _rotateMode = EMosaicRotateMode.fullMatrix;
     /** 0° .. +360° */
     private double _rotateAngle;
     /** list of offsets rotation angles prepared for cells */
@@ -70,11 +66,15 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
     @Override
     public void setCurrentFrame(int value) { _innerModel.setCurrentFrame(value); }
 
-    public ERotateMode getRotateMode() { return _rotateMode; }
-    public void setRotateMode(ERotateMode value) { _notifier.setProperty(_rotateMode, value, PROPERTY_ROTATE_MODE); }
+    @Override
+    public EMosaicRotateMode getRotateMode() { return _rotateMode; }
+    @Override
+    public void setRotateMode(EMosaicRotateMode value) { _notifier.setProperty(_rotateMode, value, PROPERTY_ROTATE_MODE); }
 
     /** 0° .. +360° */
+    @Override
     public double getRotateAngle() { return _rotateAngle; }
+    @Override
     public void setRotateAngle(double value) {
         _notifier.setProperty(_rotateAngle, AnimatedImageModel.fixAngle(value), PROPERTY_ROTATE_ANGLE);
     }
@@ -89,7 +89,7 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
         switch (ev.getPropertyName()) {
         case PROPERTY_ROTATE_MODE:
         case PROPERTY_SIZE_FIELD:
-            if (getRotateMode() == ERotateMode.someCells)
+            if (getRotateMode() == EMosaicRotateMode.someCells)
                 randomRotateElemenIndex();
             break;
         default:
@@ -97,7 +97,7 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
         }
     }
 
-    /** ///////////// ================= PART {@link ERotateMode#fullMatrix} ======================= ///////////// */
+    /** ///////////// ================= PART {@link EMosaicRotateMode#fullMatrix} ======================= ///////////// */
 
     public void rotateMatrix() { rotateMatrix(true); }
     private void rotateMatrix(boolean reinit) {
@@ -113,7 +113,7 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
         _notifier.firePropertyChanged(PROPERTY_MATRIX);
     }
 
-    /** ///////////// ================= PART {@link ERotateMode#someCells} ======================= ///////////// */
+    /** ///////////// ================= PART {@link EMosaicRotateMode#someCells} ======================= ///////////// */
 
     private boolean _rotateCellAlterantive;
 
@@ -331,6 +331,8 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
                 //updateAnglesOffsets(rotateAngleDelta);
                 //rotateCells();
                 break;
+            default:
+                throw new RuntimeException("Unsupported RotateMode=" + getRotateMode());
             }
     }
 

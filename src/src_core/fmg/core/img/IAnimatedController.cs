@@ -13,8 +13,12 @@ namespace fmg.core.img {
         where TImageModel : IAnimatedModel
     {
 
-        void RemoveModelTransformer(Type /** extends IModelTransformer */ transformerClass);
         void AddModelTransformer(IModelTransformer transformer);
+        void RemoveModelTransformer(Type /** extends IModelTransformer */ transformerClass);
+
+        void UseRotateTransforming(bool enable);
+
+        void UsePolarLightFgTransforming(bool enable);
 
     }
 

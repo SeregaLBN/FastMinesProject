@@ -9,7 +9,7 @@ namespace fmg.core.img {
 
         public void Execute(IAnimatedModel model) {
             if (!(model is LogoModel lm))
-                throw new Exception("Illegal usage transformer");
+                throw new InvalidOperationException("Illegal usage transformer");
 
             lm.Rays.Clear();
             lm.Inn.Clear();

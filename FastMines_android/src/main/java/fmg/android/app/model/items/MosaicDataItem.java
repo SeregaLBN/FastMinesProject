@@ -8,6 +8,7 @@ import fmg.android.app.BR;
 import fmg.android.img.MosaicImg;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.Matrisize;
+import fmg.core.img.IMosaicAnimatedModel;
 import fmg.core.img.MosaicAnimatedModel;
 import fmg.core.mosaic.MosaicGameModel;
 import fmg.core.types.EMosaic;
@@ -51,7 +52,7 @@ public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicAnimatedModel<Vo
             m.setMosaicType(getMosaicType());
             m.setSizeField(sizeField);
             m.setPadding(new BoundDouble(5 * getZoom()));
-            m.setRotateMode(MosaicAnimatedModel.ERotateMode.someCells);
+            m.setRotateMode(IMosaicAnimatedModel.EMosaicRotateMode.someCells);
 //            m.setBackgroundColor(MosaicDrawModel.DefaultBkColor);
             m.getPenBorder().setWidth(3 * getZoom());
 //            m.setRotateAngle(45 * ThreadLocalRandom.current().nextInt(7));

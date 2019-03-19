@@ -99,6 +99,12 @@
     <Compile Include="..\..\src\src_core\fmg\core\mosaic\MosaicGameModel.cs">
       <Link>src_fmg.core\mosaic\MosaicGameModel.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\BackgroundFill.cs">
+      <Link>src_fmg.core\mosaic\BackgroundFill.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\IMosaicDrawModel.cs">
+      <Link>src_fmg.core\mosaic\IMosaicDrawModel.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\mosaic\MosaicDrawModel.cs">
       <Link>src_fmg.core\mosaic\MosaicDrawModel.cs</Link>
     </Compile>
@@ -146,6 +152,9 @@
     </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\img\MosaicGroupModel.cs">
       <Link>src_fmg.core\img\MosaicGroupModel.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\IMosaicAnimatedModel.cs">
+      <Link>src_fmg.core\img\IMosaicAnimatedModel.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\img\MosaicAnimatedModel.cs">
       <Link>src_fmg.core\img\MosaicAnimatedModel.cs</Link>

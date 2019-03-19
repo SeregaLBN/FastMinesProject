@@ -4,13 +4,15 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
+import java.util.function.IntToDoubleFunction;
+import java.util.function.IntUnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import fmg.common.Color;
 import fmg.common.geom.*;
-import fmg.core.img.MosaicAnimatedModel.ERotateMode;
-import fmg.core.mosaic.MosaicDrawModel;
+import fmg.core.img.IMosaicAnimatedModel.EMosaicRotateMode;
+import fmg.core.mosaic.IMosaicDrawModel;
 import fmg.core.mosaic.MosaicGameModel;
 
 public class TestDrawing {
@@ -61,10 +63,12 @@ public class TestDrawing {
             lm.setUseGradient(true);
         }
 
-        if (ctrller instanceof AnimatedImgController<?, ?, ?>) {
-            AnimatedImgController<?, ?, ?> aic = (AnimatedImgController<?, ?, ?>)ctrller;
-            aic.useRotateTransforming(true);
-            aic.usePolarLightFgTransforming(true);
+        if (ctrller instanceof IAnimatedController) { // if (ctrller instanceof AnimatedImgController)
+            IAnimatedController<?,?,?> aic = (IAnimatedController<?,?,?>)ctrller;
+            if (aic.getModel() instanceof AnimatedImageModel) {
+                aic.useRotateTransforming(true);
+                aic.usePolarLightFgTransforming(true);
+            }
         }
 
 
@@ -87,13 +91,14 @@ public class TestDrawing {
                 am.setTotalFrames(40 + r(20));
             }
         }
-        if (ctrller instanceof AnimatedImgController) {
-            AnimatedImgController<?,?,?> aCtrller = (AnimatedImgController<?,?,?>)ctrller;
-            if (aCtrller.getModel().isAnimated()) {
-                aCtrller.useRotateTransforming(bl());
-                aCtrller.usePolarLightFgTransforming(bl());
+        if (ctrller instanceof IAnimatedController) { // if (ctrller instanceof AnimatedImgController)
+            IAnimatedController<?,?,?> aic = (IAnimatedController<?,?,?>)ctrller;
+            IAnimatedModel animModel = aic.getModel();
+            if ((animModel instanceof AnimatedImageModel) && animModel.isAnimated()) {
+                aic.useRotateTransforming(bl());
+                aic.usePolarLightFgTransforming(bl());
                 if (bl())
-                    aCtrller.addModelTransformer(new PolarLightBkTransformer());
+                    aic.addModelTransformer(new PolarLightBkTransformer());
             }
         }
 
@@ -135,8 +140,8 @@ public class TestDrawing {
             MosaicGameModel mgm = (MosaicGameModel)model;
             mgm.setSizeField(new Matrisize(3+r(2), 3 + r(2)));
 
-            if (model instanceof MosaicDrawModel<?>) {
-                MosaicDrawModel<?> mdm = (MosaicDrawModel<?>)model;
+            if (model instanceof IMosaicDrawModel) {
+                IMosaicDrawModel<?> mdm = (IMosaicDrawModel<?>)model;
                 mdm.setBackgroundColor(bkClr);
 
                 mdm.getBackgroundFill().setMode(1 + r(mdm.getCellAttr().getMaxBackgroundFillModeValue()));
@@ -147,10 +152,10 @@ public class TestDrawing {
                 double padTopBottom = r((int)(size.height/3));
                 mdm.setPadding(new BoundDouble(padLeftRight, padTopBottom, padLeftRight, padTopBottom));
 
-                if (model instanceof MosaicAnimatedModel) {
-                    MosaicAnimatedModel<?> mam = (MosaicAnimatedModel<?>)model;
+                if (model instanceof IMosaicAnimatedModel) {
+                    IMosaicAnimatedModel<?> mam = (IMosaicAnimatedModel<?>)model;
 
-                    ERotateMode[] eRotateModes = ERotateMode.values();
+                    EMosaicRotateMode[] eRotateModes = EMosaicRotateMode.values();
                     mam.setRotateMode(eRotateModes[r(eRotateModes.length)]);
                 }
             }
@@ -175,14 +180,12 @@ public class TestDrawing {
         int len = images.size();
 
         // max tiles in one column
-        Function<Integer, Integer> mtoc = colsTotal -> {
-            return (int)Math.ceil(len / (double)colsTotal);
-        };
+        IntUnaryOperator mtoc = colsTotal -> (int)Math.ceil(len / (double)colsTotal);
 
         // для предполагаемого кол-ва рядков нахожу макс кол-во плиток в строке
         // и возвращаю отношение меньшей стороны к большей
-        Function<Integer, Double> f = colsTotal -> {
-            int mCnt = mtoc.apply(colsTotal);
+        IntToDoubleFunction f = colsTotal -> {
+            int mCnt = mtoc.applyAsInt(colsTotal);
             double tailW = rc.width / colsTotal;
             double tailH = rc.height / mCnt;
             return (tailW < tailH)
@@ -196,7 +199,7 @@ public class TestDrawing {
             // ищу оптимальное кол-во рядков для расположения плиток. Оптимальным считаю такое расположение,
             // при котором плитки будут наибольше похожими на квадрат (т.е. отношение меньшей стороны к большей будет максимальней)
             for (int i=1; i<=len; ++i) {
-                double xy = f.apply(i);
+                double xy = f.applyAsDouble(i);
                 if (xy < xToY)
                     break;
                 colsOpt = i;

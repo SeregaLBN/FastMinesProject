@@ -17,7 +17,7 @@ import fmg.common.geom.RectDouble;
 import fmg.common.geom.RegionDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicDrawModel;
-import fmg.core.mosaic.MosaicDrawModel.BackgroundFill;
+import fmg.core.mosaic.BackgroundFill;
 import fmg.core.mosaic.MosaicView;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EClose;

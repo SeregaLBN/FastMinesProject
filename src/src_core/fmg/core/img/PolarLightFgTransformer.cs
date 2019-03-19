@@ -8,7 +8,7 @@ namespace fmg.core.img {
 
         public void Execute(IAnimatedModel model) {
             if (!(model is AnimatedImageModel am))
-                throw new Exception("Illegal usage transformer");
+                throw new InvalidOperationException("Illegal usage transformer");
 
             if (!am.PolarLights)
                 return;

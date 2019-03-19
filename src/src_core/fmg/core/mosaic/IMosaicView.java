@@ -10,7 +10,7 @@ import fmg.core.mosaic.cells.BaseCell;
  * @param <TImageInner> platform specific view/image/picture or other display context/canvas/window/panel
  * @param <TMosaicModel> mosaic data model
  */
-public interface IMosaicView<TImage, TImageInner, TMosaicModel extends MosaicDrawModel<TImageInner>>
+public interface IMosaicView<TImage, TImageInner, TMosaicModel extends IMosaicDrawModel<TImageInner>>
           extends IImageView<TImage, TMosaicModel>
 {
 

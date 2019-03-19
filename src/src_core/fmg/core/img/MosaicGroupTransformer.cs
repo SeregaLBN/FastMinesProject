@@ -8,7 +8,7 @@ namespace fmg.core.img {
 
         public void Execute(IAnimatedModel model) {
             if (!(model is MosaicGroupModel m))
-                throw new Exception("Illegal usage transformer");
+                throw new InvalidOperationException("Illegal usage transformer");
 
             if (MosaicGroupModel.varMosaicGroupAsValueOthers1 && (m.MosaicGroup == EMosaicGroup.eOthers)) {
                 bool castling = false;

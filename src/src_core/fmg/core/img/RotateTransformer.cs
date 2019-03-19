@@ -7,7 +7,7 @@ namespace fmg.core.img {
 
         public void Execute(IAnimatedModel model) {
             if (!(model is AnimatedImageModel am))
-                throw new Exception("Illegal usage transformer");
+                throw new InvalidOperationException("Illegal usage transformer");
 
             double rotateAngleDelta = 360.0 / am.TotalFrames; // 360° / TotalFrames
             if (!am.AnimeDirection)

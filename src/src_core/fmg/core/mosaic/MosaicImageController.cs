@@ -18,6 +18,7 @@ namespace fmg.core.mosaic {
         {
             var model = Model;
             _innerController = new AnimatedInnerController<TImage, TMosaicView, MosaicAnimatedModel<Nothing>>(model);
+            UseRotateTransforming(true);
             AddModelTransformer(new MosaicRotateTransformer<Nothing>());
 
             var pen = model.PenBorder;
@@ -30,6 +31,17 @@ namespace fmg.core.mosaic {
         }
         public void RemoveModelTransformer(Type /* extends IModelTransformer */ transformerClass) {
             _innerController.RemoveModelTransformer(transformerClass);
+        }
+
+        public void UseRotateTransforming(bool enable) {
+            if (enable)
+                AddModelTransformer(new MosaicRotateTransformer<Nothing>());
+            else
+                RemoveModelTransformer(typeof(MosaicRotateTransformer<Nothing>));
+        }
+
+        public void UsePolarLightFgTransforming(bool enable) {
+            throw new NotSupportedException();
         }
 
     }

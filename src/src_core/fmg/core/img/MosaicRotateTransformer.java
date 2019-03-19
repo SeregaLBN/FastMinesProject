@@ -6,7 +6,7 @@ public class MosaicRotateTransformer implements IModelTransformer {
     @Override
     public void execute(IAnimatedModel model) {
         if (!(model instanceof MosaicAnimatedModel<?>))
-            throw new RuntimeException("Illegal usage transformer");
+            throw new IllegalArgumentException("Illegal usage transformer");
 
         MosaicAnimatedModel<?> mam = (MosaicAnimatedModel<?>)model;
 
@@ -24,6 +24,8 @@ public class MosaicRotateTransformer implements IModelTransformer {
             mam.updateAnglesOffsets(rotateAngleDelta);
             mam.rotateCells();
             break;
+        default:
+            throw new RuntimeException("Unsupported RotateMode=" + mam.getRotateMode());
         }
     }
 

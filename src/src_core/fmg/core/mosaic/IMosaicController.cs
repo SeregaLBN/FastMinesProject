@@ -15,7 +15,7 @@ namespace fmg.core.mosaic {
         where TImage : class
         where TImageInner : class
         where TMosaicView : IMosaicView<TImage, TImageInner, TMosaicModel>
-        where TMosaicModel : MosaicDrawModel<TImageInner>
+        where TMosaicModel : IMosaicDrawModel<TImageInner>
     {
 
         /// <summary> размер поля в ячейках </summary>
@@ -29,6 +29,9 @@ namespace fmg.core.mosaic {
 
         /// <summary> ячейка на которой было нажато (но не обязательно что отпущено) </summary>
         BaseCell CellDown { get; set; }
+
+        /// <summary> Подготовиться к началу игры - сбросить все ячейки </summary>
+        bool GameNew();
 
     }
 

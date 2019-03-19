@@ -13,17 +13,12 @@ namespace fmg.core.img {
 
     /// <summary> Representable <see cref="EMosaic"/> as animated image </summary>
     public class MosaicAnimatedModel<TImageInner>
-                   : MosaicDrawModel<TImageInner>, IAnimatedModel
+                   : MosaicDrawModel<TImageInner>,
+                IMosaicAnimatedModel<TImageInner>
         where TImageInner : class
     {
-        public enum ERotateMode {
-            /// <summary> rotate full matrix (all cells) </summary>
-            fullMatrix,
-            /// <summary> rotate some cells (independently of each other) </summary>
-            someCells
-        }
 
-        private ERotateMode _rotateMode = ERotateMode.fullMatrix;
+        private EMosaicRotateMode _rotateMode = EMosaicRotateMode.fullMatrix;
         /// <summary> 0° .. +360° </summary>
         private double _rotateAngle;
         /// <summary> list of offsets rotation angles prepared for cells </summary>
@@ -58,7 +53,7 @@ namespace fmg.core.img {
             set { _innerModel.CurrentFrame = value; }
         }
 
-        public ERotateMode RotateMode {
+        public EMosaicRotateMode RotateMode {
             get { return _rotateMode; }
             set { _notifier.SetProperty(ref _rotateMode, value); }
         }
@@ -83,13 +78,13 @@ namespace fmg.core.img {
             switch (ev.PropertyName) {
             case nameof(this.RotateMode):
             case nameof(this.SizeField):
-                if (RotateMode == ERotateMode.someCells)
+                if (RotateMode == EMosaicRotateMode.someCells)
                     RandomRotateElemenIndex();
                 break;
             }
         }
 
-        /** ///////////// ================= PART <see cref="ERotateMode.fullMatrix"/> ======================= ///////////// */
+        /** ///////////// ================= PART <see cref="EMosaicRotateMode.fullMatrix"/> ======================= ///////////// */
 
         public void RotateMatrix() { RotateMatrix(true); }
         private void RotateMatrix(bool reinit) {
@@ -105,7 +100,7 @@ namespace fmg.core.img {
             _notifier.FirePropertyChanged(nameof(MosaicGameModel.Matrix));
         }
 
-        /** ///////////// ================= PART <see cref="ERotateMode.someCells"/> ======================= ///////////// */
+        /** ///////////// ================= PART <see cref="EMosaicRotateMode.someCells"/> ======================= ///////////// */
 
         private bool _rotateCellAlterantive;
 
@@ -318,14 +313,16 @@ namespace fmg.core.img {
             string propName = ev.PropertyName;
             if (nameof(BaseCell.BaseAttribute.Area) == propName)
                 switch (RotateMode) {
-                case MosaicAnimatedModel<TImageInner>.ERotateMode.fullMatrix:
+                case EMosaicRotateMode.fullMatrix:
                     if (!_rotateAngle.HasMinDiff(0))
                         RotateMatrix(false);
                     break;
-                case MosaicAnimatedModel<TImageInner>.ERotateMode.someCells:
+                case EMosaicRotateMode.someCells:
                     //UpdateAnglesOffsets(rotateAngleDelta);
                     //RotateCells();
                     break;
+                default:
+                    throw new Exception("Unsupported RotateMode=" + RotateMode);
                 }
         }
 

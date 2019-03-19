@@ -12,7 +12,7 @@ namespace fmg.core.img {
             : base(imageView)
         { }
 
-        public override void UseRotateTransforming(bool enable) {
+        public void UseRotateTransforming(bool enable) {
             base.UseRotateTransforming(enable);
             if (enable)
                 AddModelTransformer(new RotateLogoTransformer());
@@ -20,8 +20,8 @@ namespace fmg.core.img {
                 RemoveModelTransformer(typeof(RotateLogoTransformer));
         }
 
-        public override void UsePolarLightFgTransforming(bool enable) {
-            //base.UsePolarLightFgTransforming(enable); // hide super implementation!
+        public void UsePolarLightFgTransforming(bool enable) {
+            //base.UsePolarLightFgTransforming(enable); // don`t call!
             if (enable)
                 AddModelTransformer(new PolarLightLogoTransformer());
             else

@@ -8,7 +8,7 @@ public class PolarLightLogoTransformer implements IModelTransformer {
     @Override
     public void execute(IAnimatedModel model) {
         if (!(model instanceof LogoModel))
-            throw new RuntimeException("Illegal usage transformer");
+            throw new IllegalArgumentException("Illegal usage transformer");
 
         LogoModel lm = (LogoModel)model;
 

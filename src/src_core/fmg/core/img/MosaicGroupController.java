@@ -8,9 +8,9 @@ import fmg.core.types.EMosaicGroup;
  * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
  * @param <TImageView> MVC view
  */
-public abstract class MosaicGroupController< TImage,
-                                             TImageView extends WithBurgerMenuView<TImage, MosaicGroupModel>>
-               extends AnimatedImgController<TImage, TImageView, MosaicGroupModel>
+public abstract class MosaicGroupController<TImage,
+                                            TImageView extends WithBurgerMenuView<TImage, MosaicGroupModel>>
+              extends AnimatedImgController<TImage, TImageView, MosaicGroupModel>
 {
 
     protected MosaicGroupController(boolean showBurgerMenu, TImageView imageView) {

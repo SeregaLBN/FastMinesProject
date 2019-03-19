@@ -22,7 +22,7 @@ import fmg.common.geom.Matrisize;
 import fmg.common.geom.Rect;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.*;
-import fmg.core.img.MosaicAnimatedModel.ERotateMode;
+import fmg.core.img.IMosaicAnimatedModel.EMosaicRotateMode;
 import fmg.core.img.SmileModel.EFaceType;
 import fmg.core.mosaic.*;
 import fmg.core.types.*;
@@ -325,7 +325,7 @@ public class Main extends JFrame {
                         imgModel.setSizeField(val.sizeIcoField(true));
                         imgModel.setSize(new SizeDouble(MenuHeightWithIcon*ZoomQualityFactor, MenuHeightWithIcon*ZoomQualityFactor));
                         mosaicsImages.put(val, img);
-                        imgModel.setRotateMode(ERotateMode.someCells);
+                        imgModel.setRotateMode(EMosaicRotateMode.someCells);
                         imgModel.getPenBorder().setWidth(1);// * ZoomQualityFactor);
                         Color borderColor = Color.RandomColor().darker(0.4);
                         imgModel.getPenBorder().setColorLight(borderColor);

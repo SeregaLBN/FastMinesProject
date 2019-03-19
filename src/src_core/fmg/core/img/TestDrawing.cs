@@ -4,6 +4,20 @@ using System.Linq;
 using fmg.common;
 using fmg.common.geom;
 using fmg.core.mosaic;
+using IImageController = fmg.core.img.IImageController<
+        object,
+        fmg.core.img.IImageView<
+                object,
+                fmg.core.img.IImageModel>,
+        fmg.core.img.IImageModel>;
+using IAnimatedController = fmg.core.img.IAnimatedController<
+        object,
+        fmg.core.img.IImageView<
+                object,
+                fmg.core.img.IAnimatedModel>,
+        fmg.core.img.IAnimatedModel>;
+using IMosaicDrawModel     = fmg.core.mosaic.IMosaicDrawModel<object>;
+using IMosaicAnimatedModel = fmg.core.img.IMosaicAnimatedModel<object>;
 
 namespace fmg.core.img {
 
@@ -20,20 +34,7 @@ namespace fmg.core.img {
             this.titlePrefix = titlePrefix;
         }
 
-        public void ApplySettings<TImage,
-                                  TMosaicImageInner,
-                                  TImageView,
-                                  TAImageView, 
-                                  TImageModel,
-                                  TAnimatedModel>
-                        (IImageController<TImage, TImageView, TImageModel> ctrller, bool testTransparent)
-            where TImage : class
-            where TMosaicImageInner : class
-            where TImageView : IImageView<TImage, TImageModel>
-            where TAImageView : IImageView<TImage, TAnimatedModel>
-            where TImageModel : IImageModel
-            where TAnimatedModel : IAnimatedModel
-        {
+        public void ApplySettings(IImageController ctrller, bool testTransparent) {
 
             ///////////////////////
             //                   //
@@ -62,7 +63,7 @@ namespace fmg.core.img {
                     lm.UseGradient = true;
                 }
 
-                if (ctrller is AnimatedImgController<TImage, TAImageView, TAnimatedModel> aic) {
+                if ((ctrller is IAnimatedController aic) && (aic.Model is AnimatedImageModel)) {
                     aic.UseRotateTransforming(true);
                     aic.UsePolarLightFgTransforming(true);
                 }
@@ -88,13 +89,12 @@ namespace fmg.core.img {
                         am.TotalFrames = 40 + R(20);
                     }
                 }
-                if (ctrller is AnimatedImgController<TImage, TAImageView, TAnimatedModel> aCtrller) {
-                    //if (IsSubClassOfGeneric(typeof(AnimatedImgController<>), ctrller.GetType())) {
-                    if (aCtrller.Model.Animated) {
-                        aCtrller.UseRotateTransforming(Bl);
-                        aCtrller.UsePolarLightFgTransforming(Bl);
+                if ((ctrller is IAnimatedController aic) && (aic.Model is AnimatedImageModel)) {
+                    if (aic.Model.Animated) {
+                        aic.UseRotateTransforming(Bl);
+                        aic.UsePolarLightFgTransforming(Bl);
                         if (Bl)
-                            aCtrller.AddModelTransformer(new PolarLightBkTransformer());
+                            aic.AddModelTransformer(new PolarLightBkTransformer());
                     }
                 }
 
@@ -133,7 +133,7 @@ namespace fmg.core.img {
                 if (model is MosaicGameModel mgm) {
                     mgm.SizeField = new Matrisize(3 + R(2), 3 + R(2));
 
-                    if (model is MosaicDrawModel<TMosaicImageInner> mdm) {
+                    if (model is IMosaicDrawModel mdm) {
                         mdm.BackgroundColor = bkClr;
 
                         mdm.BkFill.Mode = 1 + R(mdm.CellAttr.GetMaxBackgroundFillModeValue());
@@ -144,11 +144,11 @@ namespace fmg.core.img {
                         double padTopBottom = R((int)(size.Height / 3));
                         mdm.Padding = new BoundDouble(padLeftRight, padTopBottom, padLeftRight, padTopBottom);
 
-                        if (model is MosaicAnimatedModel<TMosaicImageInner> mam) {
-                            Type clazzERotateMode = typeof(MosaicAnimatedModel<TMosaicImageInner>.ERotateMode);
+                        if (model is IMosaicAnimatedModel mam) {
+                            Type clazzERotateMode = typeof(EMosaicRotateMode);
                             var arr = Enum.GetValues(clazzERotateMode);
                             var val = arr.GetValue(R(arr.Length));
-                            mam.RotateMode = (MosaicAnimatedModel<TMosaicImageInner>.ERotateMode)val;
+                            mam.RotateMode = (EMosaicRotateMode)val;
                         }
                     }
                 }
@@ -162,23 +162,13 @@ namespace fmg.core.img {
             public PointDouble imageOffset;
         }
 
-        public class CellTilingResult<TImage, TImageController, TImageView, TImageModel>
-            where TImage : class
-            where TImageController : IImageController<TImage, TImageView, TImageModel>
-            where TImageView : IImageView<TImage, TImageModel>
-            where TImageModel : IImageModel
-        {
+        public class CellTilingResult {
             public SizeDouble imageSize;
             public Size tableSize;
-            public Func<TImageController /* image */, CellTilingInfo> itemCallback;
+            public Func<IImageController /* image */, CellTilingInfo> itemCallback;
         }
 
-        public CellTilingResult<TImage, TImageController, TImageView, TImageModel> CellTiling<TImage, TImageController, TImageView, TImageModel>(RectDouble rc, IList<TImageController> images, bool testTransparent)
-            where TImage : class
-            where TImageController : IImageController<TImage, TImageView, TImageModel>
-            where TImageView : IImageView<TImage, TImageModel>
-            where TImageModel : IImageModel
-        {
+        public CellTilingResult CellTiling(RectDouble rc, IList<IImageController> images, bool testTransparent) {
             int len = images.Count;
 
             // max tiles in one column
@@ -222,7 +212,7 @@ namespace fmg.core.img {
             var imgSize = new SizeDouble(dx - 2 * pad + addonX,  // dx - 2*pad;
                                          dy - 2 * pad + addonY); // dy - 2*pad;
 
-            CellTilingInfo itemCallback(TImageController item) {
+            CellTilingInfo itemCallback(IImageController item) {
                 int pos = images.IndexOf(item);
                 if (pos == -1)
                     throw new Exception("Illegal usage...");
@@ -243,19 +233,14 @@ namespace fmg.core.img {
                 };
             }
 
-            return new CellTilingResult<TImage, TImageController, TImageView, TImageModel> {
+            return new CellTilingResult {
                 imageSize = imgSize,
                 tableSize = new Size(cols, rows),
                 itemCallback = itemCallback
             };
         }
 
-        public string GetTitle<TImage, TImageController, TImageView, TImageModel>(List<TImageController> images)
-            where TImage : class
-            where TImageController : IImageController<TImage, TImageView, TImageModel>
-            where TImageView : IImageView<TImage, TImageModel>
-            where TImageModel : IImageModel
-        {
+        public string GetTitle(List<IImageController> images) {
             string friendlyName(Type type) {
                 var all = type.FullName.Split('.');
                 return string.Join(".", all.Skip(all.Length - 2)

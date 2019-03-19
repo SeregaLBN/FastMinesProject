@@ -6,7 +6,7 @@ public class RotateTransformer implements IModelTransformer {
     @Override
     public void execute(IAnimatedModel model) {
         if (!(model instanceof AnimatedImageModel))
-            throw new RuntimeException("Illegal usage transformer");
+            throw new IllegalArgumentException("Illegal usage transformer");
 
         AnimatedImageModel am = (AnimatedImageModel)model;
 

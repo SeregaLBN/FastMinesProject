@@ -35,6 +35,8 @@ namespace fmg.core.img {
         public TImageModel Model { get { throw new NotImplementedException(); } }
         public TImage      Image { get { throw new NotImplementedException(); } }
         public SizeDouble  Size  { get { throw new NotImplementedException(); } }
+        public void UseRotateTransforming(bool enable)       { throw new NotImplementedException(); }
+        public void UsePolarLightFgTransforming(bool enable) { throw new NotImplementedException(); }
         #endregion: end unusable code
 
 

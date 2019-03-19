@@ -28,6 +28,7 @@ public abstract class AnimatedImgController<TImage,
         _innerController.removeModelTransformer(transformerClass);
     }
 
+    @Override
     public void useRotateTransforming(boolean enable) {
         if (enable)
             addModelTransformer(new RotateTransformer());
@@ -35,6 +36,7 @@ public abstract class AnimatedImgController<TImage,
             removeModelTransformer(RotateTransformer.class);
     }
 
+    @Override
     public void usePolarLightFgTransforming(boolean enable) {
         if (enable)
             addModelTransformer(new PolarLightFgTransformer());
