@@ -28,14 +28,14 @@ namespace fmg.core.img {
             _innerController.RemoveModelTransformer(transformerClass);
         }
 
-        public void UseRotateTransforming(bool enable) {
+        public virtual void UseRotateTransforming(bool enable) {
             if (enable)
                 AddModelTransformer(new RotateTransformer());
             else
                 RemoveModelTransformer(typeof(RotateTransformer));
         }
 
-        public void UsePolarLightFgTransforming(bool enable) {
+        public virtual void UsePolarLightFgTransforming(bool enable) {
             if (enable)
                 AddModelTransformer(new PolarLightFgTransformer());
             else
