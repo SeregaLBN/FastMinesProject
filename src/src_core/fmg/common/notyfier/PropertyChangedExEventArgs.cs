@@ -36,7 +36,7 @@ namespace fmg.common.notyfier {
         }
 
         public override string ToString() {
-            return string.Format($"{GetType().Name}=[PropertyName={PropertyName}; type={typeof(T).Name}; OldValue={OldValue}; NewValue={NewValue}]");
+            return $"{GetType().Name}={{PropertyName={PropertyName}; type={typeof(T).Name}; OldValue={OldValue}; NewValue={NewValue}}}";
         }
 
     }
