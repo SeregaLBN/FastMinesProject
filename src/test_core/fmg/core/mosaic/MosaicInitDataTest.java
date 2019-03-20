@@ -64,7 +64,6 @@ public class MosaicInitDataTest {
                 () -> {
                     initData.setMosaicType(EMosaic.eMosaicRhombus1);
                 }, modifiedProperties -> {
-                    LoggerSimple.put("  checking...");
                     Assert.assertTrue  (   modifiedProperties.containsKey(MosaicInitData.PROPERTY_MOSAIC_TYPE));
                     Assert.assertEquals(1, modifiedProperties.get(        MosaicInitData.PROPERTY_MOSAIC_TYPE).first.intValue());
                     Assert.assertTrue  (   modifiedProperties.containsKey(MosaicInitData.PROPERTY_MINES_COUNT));
@@ -88,7 +87,6 @@ public class MosaicInitDataTest {
                     initData.setMosaicType(EMosaic.eMosaicHexagon1);
                     LoggerSimple.put("    initData.minesCount={0}", initData.getMinesCount());
                 }, modifiedProperties -> {
-                    LoggerSimple.put("  checking...");
                     Assert.assertTrue  (   modifiedProperties.containsKey(MosaicInitData.PROPERTY_MOSAIC_TYPE));
                     Assert.assertEquals(1, modifiedProperties.get(        MosaicInitData.PROPERTY_MOSAIC_TYPE).first.intValue());
                     Assert.assertTrue  (  !modifiedProperties.containsKey(MosaicInitData.PROPERTY_MINES_COUNT));

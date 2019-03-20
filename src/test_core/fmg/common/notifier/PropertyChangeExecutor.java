@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import fmg.common.LoggerSimple;
 import fmg.common.Pair;
-import fmg.common.notifier.INotifyPropertyChanged;
 import fmg.common.ui.Factory;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.PublishSubject;
@@ -64,6 +64,8 @@ public class PropertyChangeExecutor<T extends INotifyPropertyChanged> {
             Factory.DEFERR_INVOKER.accept(modificator);
             if (!signal.await(maxWaitTimeoutMs))
                 throw new RuntimeException("Wait timeout " + maxWaitTimeoutMs + "ms.");
+
+            LoggerSimple.put("  checking... modifiedProperties=[{0}]", modifiedProperties.entrySet().stream().map(kv -> kv.getKey()+":"+kv.getValue().first).collect(Collectors.joining("; ")));
             validator.accept(modifiedProperties);
         } finally {
             data.removeListener(onDataPropertyChanged);

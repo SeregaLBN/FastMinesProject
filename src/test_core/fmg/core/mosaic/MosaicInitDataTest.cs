@@ -72,7 +72,6 @@ namespace fmg.core.mosaic {
                     () => {
                         initData.MosaicType = EMosaic.eMosaicRhombus1;
                     }, modifiedProperties => {
-                        LoggerSimple.Put("  checking...");
                         Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicInitData.MosaicType)));
                         Assert.AreEqual(1, modifiedProperties[            nameof(MosaicInitData.MosaicType)]);
                         Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicInitData.MinesCount)));
@@ -97,7 +96,6 @@ namespace fmg.core.mosaic {
                         initData.MosaicType = EMosaic.eMosaicHexagon1;
                         LoggerSimple.Put("    initData.minesCount={0}", initData.MinesCount);
                     }, modifiedProperties => {
-                        LoggerSimple.Put("  checking...");
                         Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicInitData.MosaicType)));
                         Assert.AreEqual(1, modifiedProperties[            nameof(MosaicInitData.MosaicType)]);
                         Assert.IsTrue  (  !modifiedProperties.ContainsKey(nameof(MosaicInitData.MinesCount)));

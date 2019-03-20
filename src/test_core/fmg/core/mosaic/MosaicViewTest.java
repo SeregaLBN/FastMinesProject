@@ -61,7 +61,6 @@ public class MosaicViewTest {
                 () -> {
                     view.getModel().setSize(new SizeDouble(TEST_SIZE_W, TEST_SIZE_H));
                 }, modifiedProperties -> {
-                    LoggerSimple.put("  checking...");
                     Assert.assertTrue  (                    modifiedProperties.containsKey(IImageView.PROPERTY_MODEL));
                     Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        IImageView.PROPERTY_MODEL).first);
                     Assert.assertTrue  (                    modifiedProperties.containsKey(IImageView.PROPERTY_SIZE ));
@@ -98,7 +97,6 @@ public class MosaicViewTest {
                () -> {
                    MosaicModelTest.changeModel(m);
                }, modifiedProperties -> {
-                   LoggerSimple.put("  checking...");
                    img[0] = view.getImage();
                    Assert.assertNotNull(img[0]);
                    Assert.assertEquals(1, view.getDrawCount());
@@ -109,7 +107,6 @@ public class MosaicViewTest {
                () -> {
                    m.setSize(new SizeDouble(TEST_SIZE_W, TEST_SIZE_H));
                }, modifiedProperties -> {
-                   LoggerSimple.put("  checking...");
                    Assert.assertEquals(img[0], view.getImage());
                    Assert.assertEquals(1, view.getDrawCount());
                });
@@ -119,7 +116,6 @@ public class MosaicViewTest {
                () -> {
                    m.setSize(new SizeDouble(TEST_SIZE_W + 1, TEST_SIZE_H));
                }, modifiedProperties -> {
-                   LoggerSimple.put("  checking...");
                    Assert.assertNotEquals(img[0], view.getImage());
                    Assert.assertNotNull(view.getImage());
                    Assert.assertEquals(2, view.getDrawCount());
@@ -136,7 +132,6 @@ public class MosaicViewTest {
                () -> {
                    MosaicModelTest.changeModel(view.getModel());
                }, modifiedProperties -> {
-                   LoggerSimple.put("  checking...");
                    Assert.assertTrue  (                    modifiedProperties.containsKey(IImageView.PROPERTY_IMAGE));
                    Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        IImageView.PROPERTY_IMAGE).first);
                    Assert.assertEquals(0, view.getDrawCount());

@@ -60,7 +60,6 @@ namespace fmg.core.mosaic {
                     () => {
                         view.Model.Size = new SizeDouble(TEST_SIZE_W, TEST_SIZE_H);
                     }, modifiedProperties => {
-                        LoggerSimple.Put("  checking...");
                         Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(view.Model)));
                         Assert.AreEqual(1, modifiedProperties[            nameof(view.Model)]);
                         Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(view.Size)));
@@ -96,7 +95,6 @@ namespace fmg.core.mosaic {
                     () => {
                         MosaicModelTest.ChangeModel(m);
                     }, modifiedProperties => {
-                        LoggerSimple.Put("  checking...");
                         img = view.Image;
                         Assert.NotNull(img);
                         Assert.AreEqual(1, view.DrawCount);
@@ -107,7 +105,6 @@ namespace fmg.core.mosaic {
                     () => {
                         m.Size = new SizeDouble(TEST_SIZE_W, TEST_SIZE_H);
                     }, modifiedProperties => {
-                        LoggerSimple.Put("  checking...");
                         Assert.AreEqual(true, ReferenceEquals(img, view.Image));
                         Assert.AreEqual(1, view.DrawCount);
                     });
@@ -117,7 +114,6 @@ namespace fmg.core.mosaic {
                     () => {
                         m.Size = new SizeDouble(TEST_SIZE_W + 1, TEST_SIZE_H);
                     }, modifiedProperties => {
-                        LoggerSimple.Put("  checking...");
                         Assert.AreNotEqual(img, view.Image);
                         Assert.NotNull(view.Image);
                         Assert.AreEqual(2, view.DrawCount);
@@ -134,7 +130,6 @@ namespace fmg.core.mosaic {
                     () => {
                         MosaicModelTest.ChangeModel(view.Model);
                     }, modifiedProperties => {
-                        LoggerSimple.Put("  checking...");
                         Assert.IsTrue(     modifiedProperties.ContainsKey(nameof(view.Image)));
                         Assert.AreEqual(1, modifiedProperties[            nameof(view.Image)]);
                         Assert.AreEqual(0, view.DrawCount);

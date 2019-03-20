@@ -65,7 +65,6 @@ public class MosaicModelTest {
                 () -> {
                     model.setSizeField(new Matrisize(15, 10));
                 }, modifiedProperties -> {
-                    LoggerSimple.put("  checking...");
                     Assert.assertTrue  (   modifiedProperties.containsKey(MosaicGameModel.PROPERTY_SIZE_FIELD));
                     Assert.assertEquals(1, modifiedProperties.get        (MosaicGameModel.PROPERTY_SIZE_FIELD).first.intValue());
                     Assert.assertTrue  (   modifiedProperties.containsKey(MosaicGameModel.PROPERTY_MATRIX));
@@ -77,7 +76,6 @@ public class MosaicModelTest {
                 () -> {
                     model.setArea(12345);
                 }, modifiedProperties -> {
-                    LoggerSimple.put("  checking...");
                     Assert.assertTrue  (   modifiedProperties.containsKey(MosaicGameModel.PROPERTY_AREA));
                     Assert.assertEquals(1, modifiedProperties.get(        MosaicGameModel.PROPERTY_AREA).first.intValue());
                     Assert.assertTrue  (   modifiedProperties.containsKey(MosaicGameModel.PROPERTY_CELL_ATTR));
@@ -96,7 +94,6 @@ public class MosaicModelTest {
                 () -> {
                     changeModel(model);
                 }, modifiedProperties -> {
-                    LoggerSimple.put("  checking...");
                     Assert.assertTrue  (                    modifiedProperties.containsKey(IImageModel    .PROPERTY_SIZE            ));
                     Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        IImageModel    .PROPERTY_SIZE            ).first);
                     Assert.assertTrue  (                    modifiedProperties.containsKey(MosaicGameModel.PROPERTY_AREA            ));
@@ -121,6 +118,8 @@ public class MosaicModelTest {
 
     @Test
     public void mosaicDrawModelAsIsTest() {
+        LoggerSimple.put("> MosaicModelTest::mosaicDrawModelAsIsTest");
+
         try (MosaicTestModel model = new MosaicTestModel()) {
             Assert.assertEquals(EMosaic.eMosaicSquare1, model.getMosaicType());
             Assert.assertEquals(new Matrisize(10, 10), model.getSizeField());
@@ -130,6 +129,8 @@ public class MosaicModelTest {
 
     @Test
     public void autoFitTrueCheckAffectsToPaddingTest() {
+        LoggerSimple.put("> MosaicModelTest::autoFitTrueCheckAffectsToPaddingTest");
+
         try (MosaicTestModel model = new MosaicTestModel()) {
             // set property
             model.setAutoFit(true);
@@ -149,6 +150,8 @@ public class MosaicModelTest {
 
     @Test
     public void autoFitTrueCheckAffectsTest() {
+        LoggerSimple.put("> MosaicModelTest::autoFitTrueCheckAffectsTest");
+
         Supplier<MosaicTestModel> createTestModel = () -> {
             MosaicTestModel model = new MosaicTestModel();
             // set property
@@ -414,6 +417,8 @@ public class MosaicModelTest {
 
     @Test
     public void autoFitFalseCheckAffectsTest() {
+        LoggerSimple.put("> MosaicModelTest::autoFitFalseCheckAffectsTest");
+
         Supplier<MosaicTestModel> createTestModel = () -> {
             MosaicTestModel model = new MosaicTestModel();
             // set property
@@ -646,10 +651,19 @@ public class MosaicModelTest {
         LoggerSimple.put("> MosaicModelTest::mosaicNoChangedTest");
 
         try (MosaicTestModel model = new MosaicTestModel()) {
-            SizeDouble size = model.getSize(); // implicit call setter Size
-            Assert.assertNotNull(size);
-            //Thread.sleep(20);
 
+            // step 1: init
+            new PropertyChangeExecutor<>(model).run(100, 1000,
+                    () -> {
+                        SizeDouble size = model.getSize(); // implicit call setter Size
+                        Assert.assertNotNull(size);
+                    }, modifiedProperties -> {
+                        Assert.assertTrue  (   modifiedProperties.containsKey(MosaicDrawModel.PROPERTY_SIZE));
+                        Assert.assertEquals(1, modifiedProperties.get        (MosaicDrawModel.PROPERTY_SIZE).first.intValue());
+                        Assert.assertTrue(1 <= modifiedProperties.size());
+                    });
+
+            // step 2: check no changes
             new PropertyChangeExecutor<>(model).run(100, 1000,
                 () -> {
                     model.setSize(new SizeDouble(model.getSize()));
@@ -657,7 +671,6 @@ public class MosaicModelTest {
                     model.setSizeField(new Matrisize(model.getSizeField()));
                     model.setPadding(model.getPadding()==null ? null : new BoundDouble(model.getPadding()));
                 }, modifiedProperties -> {
-                    LoggerSimple.put("  checking...");
                     Assert.assertTrue(modifiedProperties.isEmpty());
                 });
         }

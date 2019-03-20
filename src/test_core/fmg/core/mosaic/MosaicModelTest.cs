@@ -26,7 +26,7 @@ namespace fmg.core.mosaic {
         [OneTimeSetUp]
         public void Setup() {
             LoggerSimple.Put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-            LoggerSimple.Put(">" + nameof(MosaicModelTest) + "::" + nameof(Setup));
+            LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(Setup));
 
             StaticInitializer();
 
@@ -47,14 +47,13 @@ namespace fmg.core.mosaic {
 
         [Test]
         public async Task MosaicGameModelPropertyChangedTest() {
-            LoggerSimple.Put("> MosaicGameModelPropertyChangedTest");
+            LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(MosaicGameModelPropertyChangedTest));
 
             using (var model = new MosaicGameModel()) {
                 await new PropertyChangeExecutor<MosaicGameModel>(model).Run(100, 1000,
                     () => {
                         model.SizeField = new Matrisize(15, 10);
                     }, modifiedProperties => {
-                        LoggerSimple.Put("  checking...");
                         Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.SizeField)));
                         Assert.AreEqual(1, modifiedProperties[            nameof(MosaicGameModel.SizeField)]);
                         Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Matrix)));
@@ -66,7 +65,6 @@ namespace fmg.core.mosaic {
                     () => {
                         model.Area = 12345;
                     }, modifiedProperties => {
-                        LoggerSimple.Put("  checking...");
                         Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Area)));
                         Assert.AreEqual(1, modifiedProperties[            nameof(MosaicGameModel.Area)]);
                         Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.CellAttr)));
@@ -79,14 +77,13 @@ namespace fmg.core.mosaic {
         [Test]
       //[Retry(100)]
         public async Task MosaicDrawModelPropertyChangedTest() {
-            LoggerSimple.Put("> mosaicDrawModelPropertyChangedTest");
+            LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(MosaicDrawModelPropertyChangedTest));
 
             using (var model = new MosaicTestModel()) {
                 await new PropertyChangeExecutor<MosaicGameModel>(model).Run(100, 1000,
                     () => {
                         ChangeModel(model);
                     }, modifiedProperties => {
-                        LoggerSimple.Put("  checking...");
                         Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(IImageModel.Size)));
                         Assert.AreEqual(1, modifiedProperties[            nameof(IImageModel.Size)]);
                         Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Area)));
@@ -111,6 +108,8 @@ namespace fmg.core.mosaic {
 
         [Test]
         public void MosaicDrawModelAsIsTest() {
+            LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(MosaicDrawModelAsIsTest));
+
             using (var model = new MosaicTestModel()) {
                 Assert.AreEqual(EMosaic.eMosaicSquare1, model.MosaicType);
                 Assert.AreEqual(new Matrisize(10, 10), model.SizeField);
@@ -120,6 +119,8 @@ namespace fmg.core.mosaic {
 
         [Test]
         public void AutoFitTrueCheckAffectsToPaddingTest() {
+            LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(AutoFitTrueCheckAffectsToPaddingTest));
+
             using (var model = new MosaicTestModel()) {
                 // set property
                 model.AutoFit = true;
@@ -139,6 +140,8 @@ namespace fmg.core.mosaic {
 
         [Test]
         public void AutoFitTrueCheckAffectsTest() {
+            LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(AutoFitTrueCheckAffectsTest));
+
             MosaicTestModel createTestModel() {
                 var model = new MosaicTestModel {
                     // set property
@@ -406,6 +409,8 @@ namespace fmg.core.mosaic {
 
         [Test]
         public void AutoFitFalseCheckAffectsTest() {
+            LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(AutoFitFalseCheckAffectsTest));
+
             MosaicTestModel createTestModel() {
                 var model = new MosaicTestModel {
                     // set property
@@ -636,13 +641,21 @@ namespace fmg.core.mosaic {
 
         [Test]
         public async Task MosaicNoChangedTest() {
-            LoggerSimple.Put("> MosaicNoChangedTest");
+            LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(MosaicNoChangedTest));
 
             using (var model = new MosaicTestModel()) {
-                var size = model.Size; // implicit call setter Size
-                Assert.IsNotNull(size);
-                //await Task.Delay(TimeSpan.FromMilliseconds(50));
+                // step 1: init
+                await new PropertyChangeExecutor<MosaicGameModel>(model).Run(100, 1000,
+                    () => {
+                        var size = model.Size; // implicit call setter Size
+                        Assert.IsNotNull(size);
+                    }, modifiedProperties => {
+                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(model.Size)));
+                        Assert.AreEqual(1, modifiedProperties[            nameof(model.Size)]);
+                        Assert.LessOrEqual(1, modifiedProperties.Count);
+                    });
 
+                // step 2: check no changes
                 await new PropertyChangeExecutor<MosaicGameModel>(model).Run(100, 1000,
                     () => {
                         model.Size = model.Size;
@@ -650,7 +663,6 @@ namespace fmg.core.mosaic {
                         model.SizeField = model.SizeField;
                         model.Padding = model.Padding;
                     }, modifiedProperties => {
-                        LoggerSimple.Put("  checking...");
                         Assert.IsFalse(modifiedProperties.Any());
                     });
             }

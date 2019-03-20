@@ -14,7 +14,7 @@ namespace fmg.core.mosaic {
         [SetUp]
         public void Setup() {
             LoggerSimple.Put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-            LoggerSimple.Put("> MosaicHelperTest::Setup");
+            LoggerSimple.Put("> " + nameof(MosaicHelperTest) + "::" + nameof(Setup));
 
             MosaicModelTest.StaticInitializer();
         }

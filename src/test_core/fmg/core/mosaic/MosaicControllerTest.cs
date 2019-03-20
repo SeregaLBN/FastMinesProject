@@ -59,7 +59,6 @@ namespace fmg.core.mosaic {
                     () => {
                         MosaicModelTest.ChangeModel(ctrlr.Model);
                     }, modifiedProperties => {
-                        LoggerSimple.Put("  checking...");
                         Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(ctrlr.Image)));
                         Assert.AreEqual(1, modifiedProperties[            nameof(ctrlr.Image)]);
                     });

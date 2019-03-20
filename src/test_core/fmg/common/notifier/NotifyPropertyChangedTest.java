@@ -6,8 +6,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.junit.*;
 
 import fmg.common.LoggerSimple;
-import fmg.common.notifier.INotifyPropertyChanged;
-import fmg.common.notifier.NotifyPropertyChanged;
 import fmg.core.mosaic.MosaicModelTest;
 import io.reactivex.Flowable;
 
@@ -81,7 +79,6 @@ public class NotifyPropertyChangedTest {
                     for (int i = 0; i < countFiredEvents; ++i)
                         data.setProperty(prefix + i);
                 }, modifiedProperties -> {
-                    LoggerSimple.put("  checking...");
                     int countOfProperties = modifiedProperties.size();
                     Assert.assertEquals(1, countOfProperties);
                     int countReceivedEvents= modifiedProperties.values().iterator().next().first;
@@ -98,7 +95,7 @@ public class NotifyPropertyChangedTest {
 
         final int initialValue = 1;
         try (SimpleProperty data = new SimpleProperty(initialValue, true)) {
-            new PropertyChangeExecutor<SimpleProperty>(data).run(100, 1000,
+            new PropertyChangeExecutor<>(data).run(100, 1000,
                 () -> {
                     LoggerSimple.put("    data.Property={0}", data.getProperty());
                     data.setProperty(initialValue + 123);
@@ -106,7 +103,6 @@ public class NotifyPropertyChangedTest {
                     data.setProperty(initialValue); // restore original value
                     LoggerSimple.put("    data.Property={0}", data.getProperty());
                 }, modifiedProperties -> {
-                    LoggerSimple.put("  checking...");
                     Assert.assertEquals(0, modifiedProperties.size());
                 });
         }

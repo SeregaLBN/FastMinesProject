@@ -54,7 +54,6 @@ public class MosaicControllerTest {
                () -> {
                    MosaicModelTest.changeModel(ctrlr.getModel());
                }, modifiedProperties -> {
-                   LoggerSimple.put("  checking...");
                    Assert.assertTrue  (                    modifiedProperties.containsKey(IImageController.PROPERTY_IMAGE));
                    Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        IImageController.PROPERTY_IMAGE).first);
                });

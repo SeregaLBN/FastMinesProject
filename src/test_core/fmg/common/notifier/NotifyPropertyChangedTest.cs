@@ -75,7 +75,6 @@ namespace fmg.common.notifier {
                         for (int i = 0; i < countFiredEvents; ++i)
                             data.Property = prefix + i;
                     }, modifiedProperties => {
-                        LoggerSimple.Put("  checking...");
                         int countOfProperties = modifiedProperties.Count;
                         Assert.AreEqual(1, countOfProperties);
                         int countReceivedEvents = modifiedProperties.Values.ToList()[0];
@@ -102,7 +101,6 @@ namespace fmg.common.notifier {
                         data.Property = initialValue; // restore original value
                         LoggerSimple.Put("    data.Property={0}", data.Property);
                     }, modifiedProperties => {
-                        LoggerSimple.Put("  checking...");
                         Assert.AreEqual(0, modifiedProperties.Count);
                     });
             }

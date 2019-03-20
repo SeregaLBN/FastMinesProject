@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reactive.Linq;
@@ -58,6 +59,8 @@ namespace fmg.common.notifier {
                         Factory.DEFERR_INVOKER(modificator);
                         if (!await signal.Wait(TimeSpan.FromMilliseconds(maxWaitTimeoutMs)))
                             throw new Exception("Wait timeout " + maxWaitTimeoutMs + "ms.");
+
+                        LoggerSimple.Put("  checking... {0}=[{1}]", nameof(modifiedProperties), String.Join(",", modifiedProperties.Select(kv => kv.Key+":"+kv.Value)));
                         validator(modifiedProperties);
                     }
                 }
