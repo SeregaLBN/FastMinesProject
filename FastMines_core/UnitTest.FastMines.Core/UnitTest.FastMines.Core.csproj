@@ -41,6 +41,9 @@
         <Compile Include="..\..\src\test_core\fmg\core\mosaic\MosaicInitDataTest.cs">
             <Link>test_fmg.core\mosaic\MosaicInitDataTest.cs</Link>
         </Compile>
+        <Compile Include="..\..\src\test_core\fmg\common\SimpleUiThreadLoop.cs ">
+            <Link>test_fmg.common\SimpleUiThreadLoop.cs </Link>
+        </Compile>
     </ItemGroup>
 
 </Project>
