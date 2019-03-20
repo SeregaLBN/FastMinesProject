@@ -2,15 +2,10 @@ package fmg.core.mosaic;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import org.junit.*;
 
 import fmg.common.LoggerSimple;
 import fmg.common.notifier.PropertyChangeExecutor;
-import fmg.common.ui.Factory;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
 import io.reactivex.Flowable;
@@ -18,20 +13,12 @@ import io.reactivex.Flowable;
 public class MosaicInitDataTest {
 
 
-    public static void StaticInitializer() {
-//        ExecutorService scheduler = Executors.newScheduledThreadPool(1);
-//        Factory.DEFERR_INVOKER = scheduler::execute;
-
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        Factory.DEFERR_INVOKER = run -> scheduler.schedule(run, 10, TimeUnit.MILLISECONDS);
-    }
-
     @BeforeClass
     public static void setup() {
         LoggerSimple.put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         LoggerSimple.put("> MosaicInitDataTest::setup");
 
-        StaticInitializer();
+        MosaicModelTest.StaticInitializer();
 
         Flowable.just("UI factory inited...").subscribe(LoggerSimple::put);
     }

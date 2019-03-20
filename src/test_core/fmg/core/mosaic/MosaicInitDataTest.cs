@@ -19,17 +19,12 @@ namespace fmg.core.mosaic {
 
     public class MosaicInitDataTest {
 
-        internal static void StaticInitializer() {
-            //Factory.DEFERR_INVOKER = doRun => Task.Run(doRun);
-            Factory.DEFERR_INVOKER = doRun => Task.Delay(10).ContinueWith(t => doRun());
-        }
-
         [OneTimeSetUp]
         public void Setup() {
             LoggerSimple.Put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             LoggerSimple.Put(">" + nameof(MosaicInitDataTest) + "::" + nameof(Setup));
 
-            StaticInitializer();
+            MosaicModelTest.StaticInitializer();
 
             //Observable.Just("UI factory inited...").Subscribe(LoggerSimple.Put);
         }
