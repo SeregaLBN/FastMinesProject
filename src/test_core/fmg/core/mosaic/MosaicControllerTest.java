@@ -1,25 +1,15 @@
 package fmg.core.mosaic;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 import org.junit.*;
 
 import fmg.common.LoggerSimple;
 import fmg.common.geom.Matrisize;
-import fmg.common.notifier.Signal;
-import fmg.common.ui.Factory;
+import fmg.common.notifier.PropertyChangeExecutor;
 import fmg.core.img.IImageController;
 import fmg.core.types.EGameStatus;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EPlayInfo;
 import io.reactivex.Flowable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
 
 class MosaicTestController extends MosaicController<DummyImage, DummyImage, MosaicTestView, MosaicTestModel> {
     MosaicTestController() { super(new MosaicTestView()); }
@@ -57,42 +47,24 @@ public class MosaicControllerTest {
 
     @Test
     public void propertyChangedTest() {
+        LoggerSimple.put("> MosaicControllerTest::propertyChangedTest");
+
         try (MosaicTestController ctrlr = new MosaicTestController()) {
-            Map<String /* property name */, Integer /* count */> modifiedProperties = new HashMap<>();
-
-            Subject<PropertyChangeEvent> subject = PublishSubject.create();
-            PropertyChangeListener onCtrlPropertyChanged = ev -> {
-                String name = ev.getPropertyName();
-                LoggerSimple.put("  propertyChangedTest: onCtrlPropertyChanged: ev.name=" + name);
-                modifiedProperties.put(name, 1 + (modifiedProperties.containsKey(name) ? modifiedProperties.get(name) : 0));
-                subject.onNext(ev);
-            };
-            ctrlr.addListener(onCtrlPropertyChanged);
-
-            Signal signal = new Signal();
-            Disposable dis = subject.timeout(100, TimeUnit.MILLISECONDS)
-                    .subscribe(ev -> {
-                        LoggerSimple.put("onNext: ev=" + ev);
-                    }, ex -> {
-                        LoggerSimple.put("onError: " + ex);
-                        signal.set();
-                    });
-
-            modifiedProperties.clear();
-            Factory.DEFERR_INVOKER.accept(() -> MosaicModelTest.changeModel(ctrlr.getModel()));
-
-            Assert.assertTrue(signal.await(1000));
-
-            LoggerSimple.put("  propertyChangedTest: checking...");
-            Assert.assertEquals(1, modifiedProperties.get(IImageController.PROPERTY_IMAGE).intValue());
-
-            ctrlr.removeListener(onCtrlPropertyChanged);
-            dis.dispose();
+            new PropertyChangeExecutor<>(ctrlr).run(100, 1000,
+               () -> {
+                   MosaicModelTest.changeModel(ctrlr.getModel());
+               }, modifiedProperties -> {
+                   LoggerSimple.put("  checking...");
+                   Assert.assertTrue  (                    modifiedProperties.containsKey(IImageController.PROPERTY_IMAGE));
+                   Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        IImageController.PROPERTY_IMAGE).first);
+               });
         }
     }
 
     @Test
     public void readinessAtTheStartTest() {
+        LoggerSimple.put("> MosaicControllerTest::readinessAtTheStartTest");
+
         final int defArea = 500;
         try (MosaicTestController ctrlr = new MosaicTestController()) {
             Assert.assertEquals(defArea, ctrlr.getModel().getArea(), P);

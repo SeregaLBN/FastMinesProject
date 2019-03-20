@@ -31,7 +31,7 @@ namespace fmg.core.mosaic {
         [SetUp]
         public void Setup() {
             LoggerSimple.Put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-            LoggerSimple.Put("> MosaicControllerTest::Setup");
+            LoggerSimple.Put("> " + nameof(MosaicControllerTest) + "::" + nameof(Setup));
 
             MosaicModelTest.StaticInitializer();
 
@@ -52,41 +52,24 @@ namespace fmg.core.mosaic {
 
         [Test]
         public async Task PropertyChangedTest() {
+            LoggerSimple.Put("> " + nameof(MosaicControllerTest) + "::" + nameof(PropertyChangedTest));
+
             using (var ctrlr = new MosaicTestController()) {
-                var modifiedProperties = new Dictionary<string /* property name */, int /* count */>();
-
-                using (var signal = new Signal()) {
-                    var ob = Observable
-                        .FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(h => ctrlr.PropertyChanged += h, h => ctrlr.PropertyChanged -= h);
-                    using (ob.Subscribe(
-                        ev => {
-                            var name = ev.EventArgs.PropertyName;
-                            LoggerSimple.Put("  PropertyChangedTest: onCtrlPropertyChanged: ev.name=" + name);
-                            modifiedProperties[name] = 1 + (modifiedProperties.ContainsKey(name) ? modifiedProperties[name] : 0);
-                        }))
-                    {
-                        using (ob.Timeout(TimeSpan.FromMilliseconds(50))
-                            .Subscribe(ev => {
-                                LoggerSimple.Put("onNext:");
-                            }, ex => {
-                                LoggerSimple.Put("onError: " + ex);
-                                signal.Set();
-                            }))
-                        {
-                            Factory.DEFERR_INVOKER(() => MosaicModelTest.ChangeModel(ctrlr.Model));
-
-                            Assert.IsTrue(await signal.Wait(TimeSpan.FromSeconds(1)));
-                        }
-                    }
-                }
-
-                LoggerSimple.Put("  PropertyChangedTest: checking...");
-                Assert.AreEqual(1, modifiedProperties[nameof(ctrlr.Image)]);
+                await new PropertyChangeExecutor<MosaicTestController>(ctrlr).Run(100, 1000,
+                    () => {
+                        MosaicModelTest.ChangeModel(ctrlr.Model);
+                    }, modifiedProperties => {
+                        LoggerSimple.Put("  checking...");
+                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(ctrlr.Image)));
+                        Assert.AreEqual(1, modifiedProperties[            nameof(ctrlr.Image)]);
+                    });
             }
         }
 
         [Test]
         public void ReadinessAtTheStartTest() {
+            LoggerSimple.Put("> " + nameof(MosaicControllerTest) + "::" + nameof(ReadinessAtTheStartTest));
+
             const int defArea = 500;
             using (var ctrlr = new MosaicTestController()) {
                 Assert.AreEqual(defArea, ctrlr.Model.Area, P);
