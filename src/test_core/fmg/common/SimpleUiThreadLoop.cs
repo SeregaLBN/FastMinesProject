@@ -5,16 +5,13 @@ using System.Threading;
 namespace fmg.common {
 
     /// <summary> very simple UI thread loop emulation </summary>
-    public class SimpleUiThreadLoop : IDisposable {
+    public class SimpleUiThreadLoop {
 
         private static SimpleUiThreadLoop Instance { get; } = new SimpleUiThreadLoop();
         public static void AddTask(Action task) { Instance._pool.QueueTask(task); }
 
-        private SimpleUiThreadLoop() { }
-
         private readonly Pool _pool = new Pool(1);
-
-        public void Dispose() { _pool.Dispose(); }
+        private SimpleUiThreadLoop() { }
 
     }
 
