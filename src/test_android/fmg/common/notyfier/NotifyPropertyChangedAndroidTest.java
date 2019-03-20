@@ -1,4 +1,4 @@
-package fmg.common.notyfier;
+package fmg.common.notifier;
 
 import android.content.Context;
 import android.os.Looper;

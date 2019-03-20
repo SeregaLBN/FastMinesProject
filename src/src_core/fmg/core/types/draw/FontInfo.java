@@ -3,8 +3,8 @@ package fmg.core.types.draw;
 import java.beans.PropertyChangeListener;
 
 import fmg.common.geom.DoubleExt;
-import fmg.common.notyfier.INotifyPropertyChanged;
-import fmg.common.notyfier.NotifyPropertyChanged;
+import fmg.common.notifier.INotifyPropertyChanged;
+import fmg.common.notifier.NotifyPropertyChanged;
 
 /** minimal font descripton */
 public class FontInfo implements INotifyPropertyChanged {

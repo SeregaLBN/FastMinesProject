@@ -4,7 +4,7 @@ import java.beans.PropertyChangeListener;
 
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.common.notyfier.NotifyPropertyChanged;
+import fmg.common.notifier.NotifyPropertyChanged;
 
 /** MVC: inner model. Animated image characteristics. */
 final class AnimatedInnerModel implements IAnimatedModel {

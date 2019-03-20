@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel;
 using Microsoft.Graphics.Canvas;
 using fmg.common;
-using fmg.common.notyfier;
+using fmg.common.notifier;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.img;

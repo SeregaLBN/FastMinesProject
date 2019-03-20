@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Windows.Input;
 using fmg.DataModel.DataSources;
-using fmg.common.notyfier;
+using fmg.common.notifier;
 
 namespace fmg.common {
 

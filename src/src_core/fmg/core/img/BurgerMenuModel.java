@@ -11,7 +11,7 @@ import fmg.common.geom.BoundDouble;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.common.notyfier.NotifyPropertyChanged;
+import fmg.common.notifier.NotifyPropertyChanged;
 
 /** MVC: model of representable menu as horizontal or vertical lines */
 public final class BurgerMenuModel implements IAnimatedModel {

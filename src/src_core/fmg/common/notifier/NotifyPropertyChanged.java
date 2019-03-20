@@ -1,4 +1,4 @@
-package fmg.common.notyfier;
+package fmg.common.notifier;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;

@@ -4,8 +4,8 @@ import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 
 import fmg.common.Color;
-import fmg.common.notyfier.INotifyPropertyChanged;
-import fmg.common.notyfier.NotifyPropertyChanged;
+import fmg.common.notifier.INotifyPropertyChanged;
+import fmg.common.notifier.NotifyPropertyChanged;
 import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
 

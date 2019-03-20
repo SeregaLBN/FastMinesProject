@@ -14,7 +14,6 @@ using fmg.core.types;
 using fmg.core.img;
 //using DummyImage = System.Object;
 using MosaicTestModel = fmg.core.mosaic.MosaicDrawModel<object>;
-using fmg.common.notyfier;
 
 namespace fmg.core.mosaic {
 

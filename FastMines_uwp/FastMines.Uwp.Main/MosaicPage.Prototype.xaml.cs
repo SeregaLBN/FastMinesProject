@@ -7,7 +7,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 using fmg.common;
 using fmg.common.geom;
-using fmg.common.notyfier;
+using fmg.common.notifier;
 using fmg.core.mosaic;
 using fmg.core.types;
 using fmg.uwp.utils;

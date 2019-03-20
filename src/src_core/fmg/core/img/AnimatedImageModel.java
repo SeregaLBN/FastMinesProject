@@ -7,7 +7,7 @@ import fmg.common.Color;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.DoubleExt;
 import fmg.common.geom.SizeDouble;
-import fmg.common.notyfier.NotifyPropertyChanged;
+import fmg.common.notifier.NotifyPropertyChanged;
 
 /** MVC: model. Common animated image characteristics. */
 public abstract class AnimatedImageModel implements IAnimatedModel {

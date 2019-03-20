@@ -17,14 +17,14 @@
    <Import Project="..\..\FastMines_core\FastMines.Core\FastMines.Core.projitems" Label="Shared" />
 
     <ItemGroup>
-        <Compile Include="..\..\src\test_core\fmg\common\notyfier\NotifyPropertyChangedTest.cs">
-            <Link>test_fmg.common\notyfier\NotifyPropertyChangedTest.cs</Link>
+        <Compile Include="..\..\src\test_core\fmg\common\notifier\NotifyPropertyChangedTest.cs">
+            <Link>test_fmg.common\notifier\NotifyPropertyChangedTest.cs</Link>
         </Compile>
-        <Compile Include="..\..\src\test_core\fmg\common\notyfier\PropertyChangeExecutor.cs">
-            <Link>test_fmg.common\notyfier\PropertyChangeExecutor.cs</Link>
+        <Compile Include="..\..\src\test_core\fmg\common\notifier\PropertyChangeExecutor.cs">
+            <Link>test_fmg.common\notifier\PropertyChangeExecutor.cs</Link>
         </Compile>
-        <Compile Include="..\..\src\test_core\fmg\common\notyfier\Signal.cs">
-            <Link>test_fmg.common\notyfier\Signal.cs</Link>
+        <Compile Include="..\..\src\test_core\fmg\common\notifier\Signal.cs">
+            <Link>test_fmg.common\notifier\Signal.cs</Link>
         </Compile>
         <Compile Include="..\..\src\test_core\fmg\core\mosaic\MosaicControllerTest.cs">
             <Link>test_fmg.core\mosaic\MosaicControllerTest.cs</Link>

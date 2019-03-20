@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel;
 using fmg.common.geom;
-using fmg.common.notyfier;
+using fmg.common.notifier;
 
 namespace fmg.core.types.draw {
 

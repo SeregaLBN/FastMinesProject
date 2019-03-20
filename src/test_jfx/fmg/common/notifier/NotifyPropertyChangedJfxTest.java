@@ -1,8 +1,9 @@
-package fmg.common.notyfier;
+package fmg.common.notifier;
 
 import org.junit.BeforeClass;
 
 import fmg.common.LoggerSimple;
+import fmg.common.notifier.NotifyPropertyChangedTest;
 import fmg.jfx.utils.StaticInitializer;
 import io.reactivex.Flowable;
 

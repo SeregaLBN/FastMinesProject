@@ -15,7 +15,7 @@ import fmg.common.LoggerSimple;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.SizeDouble;
-import fmg.common.notyfier.PropertyChangeExecutor;
+import fmg.common.notifier.PropertyChangeExecutor;
 import fmg.common.ui.Factory;
 import fmg.core.img.IImageModel;
 import fmg.core.types.EMosaic;

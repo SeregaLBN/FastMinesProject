@@ -1,4 +1,4 @@
-package fmg.common.notyfier;
+package fmg.common.notifier;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 
 import fmg.common.LoggerSimple;
 import fmg.common.Pair;
+import fmg.common.notifier.INotifyPropertyChanged;
 import fmg.common.ui.Factory;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.PublishSubject;

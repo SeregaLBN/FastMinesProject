@@ -1,6 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
-using fmg.common.notyfier;
+using fmg.common.notifier;
 using fmg.DataModel.DataSources;
 using fmg.common.geom;
 

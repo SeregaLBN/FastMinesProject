@@ -1,5 +1,5 @@
 using fmg.common;
-using fmg.common.notyfier;
+using fmg.common.notifier;
 using System;
 using System.ComponentModel;
 

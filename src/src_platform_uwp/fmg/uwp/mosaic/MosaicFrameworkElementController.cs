@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using fmg.common;
 using fmg.common.geom;
-using fmg.common.notyfier;
+using fmg.common.notifier;
 using fmg.common.Converters;
 using fmg.core.mosaic;
 using fmg.core.types;

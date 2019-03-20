@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace fmg.common.notyfier {
+namespace fmg.common.notifier {
 
     public interface IPropertyValuesComparable {
 

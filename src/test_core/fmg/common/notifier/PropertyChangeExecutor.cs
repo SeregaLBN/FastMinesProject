@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using fmg.common.ui;
 using fmg.common.notifier;
 
-namespace fmg.common.notyfier {
+namespace fmg.common.notifier {
 
     /// <summary> Simple UnitTest wrapper for testing {@link INotifyPropertyChanged} objects </summary>
     /// <typeparam name="T">the tested object</typeparam>

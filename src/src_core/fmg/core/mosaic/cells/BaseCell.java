@@ -28,8 +28,8 @@ import java.util.Map;
 
 import fmg.common.Color;
 import fmg.common.geom.*;
-import fmg.common.notyfier.INotifyPropertyChanged;
-import fmg.common.notyfier.NotifyPropertyChanged;
+import fmg.common.notifier.INotifyPropertyChanged;
+import fmg.common.notifier.NotifyPropertyChanged;
 import fmg.core.types.ClickCellResult;
 import fmg.core.types.EClose;
 import fmg.core.types.EOpen;

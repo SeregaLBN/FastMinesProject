@@ -1,7 +1,7 @@
 package fmg.core.img;
 
 import fmg.common.geom.SizeDouble;
-import fmg.common.notyfier.INotifyPropertyChanged;
+import fmg.common.notifier.INotifyPropertyChanged;
 
 /**
  * Image MVC: controller

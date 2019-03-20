@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.*;
 
 import fmg.common.LoggerSimple;
-import fmg.common.notyfier.PropertyChangeExecutor;
+import fmg.common.notifier.PropertyChangeExecutor;
 import fmg.common.ui.Factory;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;

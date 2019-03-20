@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using fmg.common.ui;
 
-namespace fmg.common.notyfier {
+namespace fmg.common.notifier {
 
     /// <summary> Notifies owner clients that a owner property value has changed </summary>
 #if WINDOWS_UWP

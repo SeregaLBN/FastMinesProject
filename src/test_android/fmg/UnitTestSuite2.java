@@ -5,7 +5,7 @@ import org.junit.runners.Suite;
 
 import fmg.android.mosaic.MosaicModelAndroidTest;
 import fmg.android.mosaic.MosaicViewAndroidTest;
-import fmg.common.notyfier.NotifyPropertyChangedAndroidTest;
+import fmg.common.notifier.NotifyPropertyChangedAndroidTest;
 
 // Runs all unit tests.
 @RunWith(Suite.class)

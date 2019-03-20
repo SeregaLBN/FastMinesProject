@@ -87,11 +87,11 @@
     <Compile Include="..\..\src\src_core\fmg\common\LoggerSimple.cs">
       <Link>src_fmg.common\LoggerSimple.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\common\notyfier\NotifyPropertyChanged.cs">
-      <Link>src_fmg.common\notyfier\NotifyPropertyChanged.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\common\notifier\NotifyPropertyChanged.cs">
+      <Link>src_fmg.common\notifier\NotifyPropertyChanged.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\common\notyfier\PropertyChangedExEventArgs.cs">
-      <Link>src_fmg.common\notyfier\PropertyChangedExEventArgs.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\common\notifier\PropertyChangedExEventArgs.cs">
+      <Link>src_fmg.common\notifier\PropertyChangedExEventArgs.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\mosaic\IMosaic.cs">
       <Link>src_fmg.core\mosaic\IMosaic.cs</Link>

@@ -10,7 +10,7 @@ import org.junit.*;
 
 import fmg.common.LoggerSimple;
 import fmg.common.geom.Matrisize;
-import fmg.common.notyfier.Signal;
+import fmg.common.notifier.Signal;
 import fmg.common.ui.Factory;
 import fmg.core.img.IImageController;
 import fmg.core.types.EGameStatus;

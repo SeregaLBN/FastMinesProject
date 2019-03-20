@@ -28,8 +28,8 @@ import java.util.List;
 
 import fmg.common.geom.Coord;
 import fmg.common.geom.Matrisize;
-import fmg.common.notyfier.INotifyPropertyChanged;
-import fmg.common.notyfier.NotifyPropertyChanged;
+import fmg.common.notifier.INotifyPropertyChanged;
+import fmg.common.notifier.NotifyPropertyChanged;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EMosaic;
 

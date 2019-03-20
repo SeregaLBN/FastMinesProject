@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Collections.ObjectModel;
 using Microsoft.Graphics.Canvas;
 using fmg.DataModel.Items;
-using fmg.common.notyfier;
+using fmg.common.notifier;
 using fmg.common.geom;
 using fmg.core.img;
 using fmg.uwp.utils;

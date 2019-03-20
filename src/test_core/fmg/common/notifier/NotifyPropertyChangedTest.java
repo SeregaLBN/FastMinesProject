@@ -1,4 +1,4 @@
-package fmg.common.notyfier;
+package fmg.common.notifier;
 
 import java.beans.PropertyChangeListener;
 import java.util.concurrent.ThreadLocalRandom;
@@ -6,6 +6,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.junit.*;
 
 import fmg.common.LoggerSimple;
+import fmg.common.notifier.INotifyPropertyChanged;
+import fmg.common.notifier.NotifyPropertyChanged;
 import fmg.core.mosaic.MosaicModelTest;
 import io.reactivex.Flowable;
 

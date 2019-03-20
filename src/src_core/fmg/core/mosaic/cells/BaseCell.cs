@@ -24,7 +24,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using fmg.common;
 using fmg.common.geom;
-using fmg.common.notyfier;
+using fmg.common.notifier;
 using fmg.core.types;
 using fmg.core.types.click;
 

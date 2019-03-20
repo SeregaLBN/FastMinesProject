@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
-using fmg.common.notyfier;
+using fmg.common.notifier;
 using fmg.common.geom;
 using fmg.core.mosaic;
 using fmg.core.mosaic.cells;

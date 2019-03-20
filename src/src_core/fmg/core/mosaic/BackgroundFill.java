@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fmg.common.Color;
-import fmg.common.notyfier.INotifyPropertyChanged;
-import fmg.common.notyfier.NotifyPropertyChanged;
+import fmg.common.notifier.INotifyPropertyChanged;
+import fmg.common.notifier.NotifyPropertyChanged;
 
 /** all that apply to the background fill of cells */
 public class BackgroundFill implements AutoCloseable, INotifyPropertyChanged {

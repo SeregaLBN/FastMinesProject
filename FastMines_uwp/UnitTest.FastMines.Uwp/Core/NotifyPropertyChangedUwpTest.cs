@@ -6,7 +6,7 @@ using Windows.ApplicationModel.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using fmg.uwp.utils;
 
-namespace fmg.common.notyfier {
+namespace fmg.common.notifier {
 
     [TestClass]
     public class NotifyPropertyChangedUwpTest {

@@ -10,7 +10,7 @@ using fmg.common.geom;
 using fmg.common.ui;
 using fmg.core.types;
 using fmg.core.img;
-using fmg.common.notyfier;
+using fmg.common.notifier;
 using MosaicTestModel = fmg.core.mosaic.MosaicDrawModel<object>;
 
 namespace fmg.core.mosaic {

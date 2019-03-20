@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using fmg.core.mosaic;
 
-namespace fmg.common.notyfier {
+namespace fmg.common.notifier {
 
     public class NotifyPropertyChangedTest {
 
