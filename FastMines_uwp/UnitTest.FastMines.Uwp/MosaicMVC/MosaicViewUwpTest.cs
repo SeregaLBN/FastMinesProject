@@ -44,7 +44,7 @@ namespace fmg.core.mosaic {
     }
 
     [TestClass]
-    public class MosaicViewTest {
+    public class MosaicViewUwpTest {
 
         [TestInitialize]
         public void Setup() {
