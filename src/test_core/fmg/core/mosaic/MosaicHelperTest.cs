@@ -21,6 +21,8 @@ namespace fmg.core.mosaic {
 
         [Test]
         public void FindSizeByArea_eMosaicSquare1_Test() {
+            LoggerSimple.Put(">" + nameof(MosaicHelperTest) + "::" + nameof(FindSizeByArea_eMosaicSquare1_Test));
+
             {
                 var sizeClient = new SizeDouble(100, 100);
                 var sizeField = MosaicHelper.FindSizeByArea(EMosaic.eMosaicSquare1, 100, sizeClient);
@@ -43,6 +45,8 @@ namespace fmg.core.mosaic {
 
         [Test]
         public void FindAreaBySize_eMosaicSquare1_Test1() {
+            LoggerSimple.Put(">" + nameof(MosaicHelperTest) + "::" + nameof(FindAreaBySize_eMosaicSquare1_Test1));
+
             var sizeClientIn = new SizeDouble(100, 100);
             var sizeClientOut = sizeClientIn;
             var area = MosaicHelper.FindAreaBySize(EMosaic.eMosaicSquare1, new Matrisize(10, 10), ref sizeClientOut);
@@ -57,6 +61,8 @@ namespace fmg.core.mosaic {
 
         [Test]
         public void FindAreaBySize_eMosaicSquare1_Test2() {
+            LoggerSimple.Put(">" + nameof(MosaicHelperTest) + "::" + nameof(FindAreaBySize_eMosaicSquare1_Test2));
+
             var sizeClientIn = new SizeDouble(200, 200);
             var sizeClientOut = sizeClientIn;
             var area = MosaicHelper.FindAreaBySize(EMosaic.eMosaicSquare1, new Matrisize(10, 20), ref sizeClientOut);
@@ -71,6 +77,8 @@ namespace fmg.core.mosaic {
 
         [Test]
         public void FindAreaBySize_eMosaicSquare1_Test3() {
+            LoggerSimple.Put(">" + nameof(MosaicHelperTest) + "::" + nameof(FindAreaBySize_eMosaicSquare1_Test3));
+
             {
                 var sizeClientIn = new SizeDouble(200, 400);
                 var sizeClientOut = sizeClientIn;
@@ -99,6 +107,8 @@ namespace fmg.core.mosaic {
 
         [Test]
         public void FindAreaBySize_Random_Test() {
+            LoggerSimple.Put(">" + nameof(MosaicHelperTest) + "::" + nameof(FindAreaBySize_Random_Test));
+
             var r = ThreadLocalRandom.Current;
 
             for (var i = 0; i < 1000; ++i) {
@@ -121,6 +131,8 @@ namespace fmg.core.mosaic {
 
         [Test]
         public async Task FindAreaBySize_eMosaicTrapezoid3_Test() {
+            LoggerSimple.Put(">" + nameof(MosaicHelperTest) + "::" + nameof(FindAreaBySize_eMosaicTrapezoid3_Test));
+
             var signal = new Signal();
             double area = -1;
             UiInvoker.Deferred(() => {
@@ -135,9 +147,10 @@ namespace fmg.core.mosaic {
             Assert.GreaterOrEqual(area, 0);
         }
 
-
         [Test]
         public void findAreaBySize_eMosaicTriangle1_Test() {
+            LoggerSimple.Put(">" + nameof(MosaicHelperTest) + "::" + nameof(findAreaBySize_eMosaicTriangle1_Test));
+
             var sizeClientIn = new SizeDouble(186.89486693318347, 294.28309563827116);
             var sizeClientOut = sizeClientIn;
             double area = MosaicHelper.FindAreaBySize(EMosaic.eMosaicTriangle1, new Matrisize(3, 2), ref sizeClientOut);

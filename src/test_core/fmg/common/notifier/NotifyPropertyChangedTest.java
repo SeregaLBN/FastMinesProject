@@ -54,6 +54,8 @@ public class NotifyPropertyChangedTest {
 
     @Test
     public void notifyPropertyChangedSyncTest() {
+        LoggerSimple.put("> NotifyPropertyChangedTest::notifyPropertyChangedSyncTest");
+
         try (SimpleProperty data = new SimpleProperty(-1, false)) {
             int countFiredEvents = 3 + ThreadLocalRandom.current().nextInt(10);
             int[] countReceivedEvents = { 0 };
@@ -70,6 +72,8 @@ public class NotifyPropertyChangedTest {
 
     @Test
     public void notifyPropertyChangedAsyncTest() {
+        LoggerSimple.put("> NotifyPropertyChangedTest::notifyPropertyChangedAsyncTest");
+
         final int initialValue = 1;
         try (SimpleProperty data = new SimpleProperty(initialValue, true)) {
             final int countFiredEvents = 3 + ThreadLocalRandom.current().nextInt(10);
@@ -91,7 +95,7 @@ public class NotifyPropertyChangedTest {
 
     @Test
     public void checkForNoEventTest() {
-        LoggerSimple.put("> checkForNoEventTest");
+        LoggerSimple.put("> NotifyPropertyChangedTest::checkForNoEventTest");
 
         final int initialValue = 1;
         try (SimpleProperty data = new SimpleProperty(initialValue, true)) {

@@ -48,6 +48,8 @@ namespace fmg.common.notifier {
 
         [Test]
         public void NotifyPropertyChangedSyncTest() {
+            LoggerSimple.Put(">" + nameof(NotifyPropertyChangedTest) + "::" + nameof(NotifyPropertyChangedSyncTest));
+
             using (var data = new SimpleProperty(-1, false)) {
                 int countFiredEvents = 3 + ThreadLocalRandom.Current.Next(10);
                 int countReceivedEvents = 0;
@@ -64,6 +66,8 @@ namespace fmg.common.notifier {
 
         [Test]
         public async Task NotifyPropertyChangedAsyncTest() {
+            LoggerSimple.Put(">" + nameof(NotifyPropertyChangedTest) + "::" + nameof(NotifyPropertyChangedAsyncTest));
+
             const int initialValue = 1;
             using (var data = new SimpleProperty(initialValue, true)) {
                 int countFiredEvents = 3 + ThreadLocalRandom.Current.Next(10);
@@ -87,7 +91,7 @@ namespace fmg.common.notifier {
 
         [Test]
         public async Task CheckForNoEventTest() {
-            LoggerSimple.Put("> " + nameof(CheckForNoEventTest));
+            LoggerSimple.Put(">" + nameof(NotifyPropertyChangedTest) + "::" + nameof(CheckForNoEventTest));
 
             const int initialValue = 1;
             using (var data = new SimpleProperty(initialValue, true)) {
