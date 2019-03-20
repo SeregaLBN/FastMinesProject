@@ -55,7 +55,7 @@ public class MosaicModelTest {
 
     @Test
     public void mosaicGameModelPropertyChangedTest() {
-        LoggerSimple.put("> mosaicGameModelPropertyChangedTest");
+        LoggerSimple.put("> MosaicModelTest::mosaicGameModelPropertyChangedTest");
 
         try (MosaicGameModel model = new MosaicGameModel()) {
             Assert.assertTrue(!model.getMatrix().isEmpty());
@@ -89,7 +89,7 @@ public class MosaicModelTest {
 
     @Test
     public void mosaicDrawModelPropertyChangedTest() {
-        LoggerSimple.put("> mosaicDrawModelPropertyChangedTest");
+        LoggerSimple.put("> MosaicModelTest::mosaicDrawModelPropertyChangedTest");
 
         try (MosaicTestModel model = new MosaicTestModel()) {
             new PropertyChangeExecutor<>(model).run(100, 1000,
@@ -643,7 +643,7 @@ public class MosaicModelTest {
 
     @Test
     public void mosaicNoChangedTest() throws InterruptedException {
-        LoggerSimple.put("> mosaicNoChangedTest");
+        LoggerSimple.put("> MosaicModelTest::mosaicNoChangedTest");
 
         try (MosaicTestModel model = new MosaicTestModel()) {
             SizeDouble size = model.getSize(); // implicit call setter Size

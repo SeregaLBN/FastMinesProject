@@ -22,7 +22,7 @@ namespace fmg.core.mosaic {
         [OneTimeSetUp]
         public void Setup() {
             LoggerSimple.Put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-            LoggerSimple.Put(">" + nameof(MosaicInitDataTest) + "::" + nameof(Setup));
+            LoggerSimple.Put("> " + nameof(MosaicInitDataTest) + "::" + nameof(Setup));
 
             MosaicModelTest.StaticInitializer();
 
@@ -53,8 +53,19 @@ namespace fmg.core.mosaic {
 
 
         [Test]
+        public void CheckTheImpossibilitySetCustomSkillLevelTest() {
+            LoggerSimple.Put("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckTheImpossibilitySetCustomSkillLevelTest));
+            using (var initData = CreateMosaicInitData()) try {
+                initData.SkillLevel = ESkillLevel.eCustom;
+                Assert.Fail();
+            } catch (Exception ex) {
+                Assert.AreEqual(typeof(ArgumentException), ex.GetType());
+            }
+        }
+
+        [Test]
         public async Task CheckIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest() {
-            LoggerSimple.Put("> " + nameof(CheckIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest));
+            LoggerSimple.Put("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest));
 
             using (var initData = CreateMosaicInitData()) {
                 await new PropertyChangeExecutor<MosaicInitData>(initData).Run(100, 1000,
@@ -75,7 +86,7 @@ namespace fmg.core.mosaic {
 
         [Test]
         public async Task CheckNoRepeatNotificationsTest() {
-            LoggerSimple.Put("> " + nameof(CheckNoRepeatNotificationsTest));
+            LoggerSimple.Put("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckNoRepeatNotificationsTest));
 
             using (var initData = CreateMosaicInitData()) {
                 await new PropertyChangeExecutor<MosaicInitData>(initData).Run(100, 1000,

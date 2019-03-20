@@ -1,9 +1,5 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using System.ComponentModel;
-using System.Collections.Generic;
-using System.Reactive.Linq;
 using NUnit.Framework;
 using fmg.common;
 using fmg.common.geom;

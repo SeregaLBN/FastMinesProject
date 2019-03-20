@@ -1,23 +1,15 @@
 package fmg.core.mosaic;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.Collection;
 
-import org.awaitility.Awaitility;
 import org.junit.*;
 
 import fmg.common.LoggerSimple;
 import fmg.common.geom.SizeDouble;
-import fmg.common.notifier.Signal;
-import fmg.common.ui.Factory;
+import fmg.common.notifier.PropertyChangeExecutor;
 import fmg.core.img.IImageView;
 import fmg.core.mosaic.cells.BaseCell;
 import io.reactivex.Flowable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
 
 class MosaicTestView extends MosaicView<DummyImage, DummyImage, MosaicTestModel> {
     MosaicTestView() { super(new MosaicTestModel()); }
@@ -62,29 +54,29 @@ public class MosaicViewTest {
 
     @Test
     public void propertyChangedTest() {
-        List<String> modifiedProperties = new ArrayList<>();
-        PropertyChangeListener onViewPropertyChanged = ev -> {
-            LoggerSimple.put("  MosaicTestView::propertyChangedTest: onViewPropertyChanged: ev.name=" + ev.getPropertyName());
-            modifiedProperties.add(ev.getPropertyName());
-        };
+        LoggerSimple.put("> MosaicTestView::propertyChangedTest");
 
         try (MosaicTestView view = new MosaicTestView()) {
-            view.addListener(onViewPropertyChanged);
-
-            Factory.DEFERR_INVOKER.accept(() -> view.getModel().setSize(new SizeDouble(TEST_SIZE_W, TEST_SIZE_H)));
-
-            Awaitility.await().atMost(200, TimeUnit.MILLISECONDS).until(() ->
-                modifiedProperties.contains(IImageView.PROPERTY_MODEL) &&
-                modifiedProperties.contains(IImageView.PROPERTY_SIZE)  &&
-                modifiedProperties.contains(IImageView.PROPERTY_IMAGE)
-            );
-
-            view.removeListener(onViewPropertyChanged);
+            new PropertyChangeExecutor<>(view).run(100, 1000,
+                () -> {
+                    view.getModel().setSize(new SizeDouble(TEST_SIZE_W, TEST_SIZE_H));
+                }, modifiedProperties -> {
+                    LoggerSimple.put("  checking...");
+                    Assert.assertTrue  (                    modifiedProperties.containsKey(IImageView.PROPERTY_MODEL));
+                    Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        IImageView.PROPERTY_MODEL).first);
+                    Assert.assertTrue  (                    modifiedProperties.containsKey(IImageView.PROPERTY_SIZE ));
+                    Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        IImageView.PROPERTY_SIZE ).first);
+                    Assert.assertTrue  (                    modifiedProperties.containsKey(IImageView.PROPERTY_IMAGE));
+                    Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        IImageView.PROPERTY_IMAGE).first);
+                    Assert.assertEquals(                3 , modifiedProperties.size());
+                });
         }
     }
 
     @Test
     public void readinessAtTheStartTest() {
+        LoggerSimple.put("> MosaicTestView::readinessAtTheStartTest");
+
         try (MosaicTestView view = new MosaicTestView()) {
             Assert.assertEquals(0, view.getDrawCount());
             Assert.assertNotNull(view.getImage());
@@ -94,70 +86,63 @@ public class MosaicViewTest {
 
     @Test
     public void multipleChangeModelOneDrawViewTest() throws InterruptedException {
+        LoggerSimple.put("> MosaicTestView::multipleChangeModelOneDrawViewTest");
+
         try (MosaicTestView view = new MosaicTestView()) {
             Assert.assertEquals(0, view.getDrawCount());
 
+            DummyImage[] img = { null };
+
             MosaicTestModel m = view.getModel();
-            Factory.DEFERR_INVOKER.accept(() -> MosaicModelTest.changeModel(m));
-
-            Thread.sleep(100); // TODO replace sleep
-
-            DummyImage img = view.getImage();
-            Assert.assertNotNull(img);
-            Assert.assertEquals(1, view.getDrawCount());
+            new PropertyChangeExecutor<>(view).run(100, 1000,
+               () -> {
+                   MosaicModelTest.changeModel(m);
+               }, modifiedProperties -> {
+                   LoggerSimple.put("  checking...");
+                   img[0] = view.getImage();
+                   Assert.assertNotNull(img[0]);
+                   Assert.assertEquals(1, view.getDrawCount());
+               });
 
             // test no change
-            Factory.DEFERR_INVOKER.accept(() -> m.setSize(new SizeDouble(TEST_SIZE_W, TEST_SIZE_H)));
-            Thread.sleep(100); // TODO replace sleep
-            Assert.assertEquals(img, view.getImage());
-            Assert.assertEquals(1, view.getDrawCount());
+            new PropertyChangeExecutor<>(view).run(100, 1000,
+               () -> {
+                   m.setSize(new SizeDouble(TEST_SIZE_W, TEST_SIZE_H));
+               }, modifiedProperties -> {
+                   LoggerSimple.put("  checking...");
+                   Assert.assertEquals(img[0], view.getImage());
+                   Assert.assertEquals(1, view.getDrawCount());
+               });
 
             // test change
-            Factory.DEFERR_INVOKER.accept(() -> m.setSize(new SizeDouble(TEST_SIZE_W + 1, TEST_SIZE_H)));
-            Awaitility.await().atMost(200, TimeUnit.MILLISECONDS).until(() ->
-                !img.equals(view.getImage()) &&
-                (view.getDrawCount() == 2)
-            );
-            Assert.assertNotNull(view.getImage());
+            new PropertyChangeExecutor<>(view).run(100, 1000,
+               () -> {
+                   m.setSize(new SizeDouble(TEST_SIZE_W + 1, TEST_SIZE_H));
+               }, modifiedProperties -> {
+                   LoggerSimple.put("  checking...");
+                   Assert.assertNotEquals(img[0], view.getImage());
+                   Assert.assertNotNull(view.getImage());
+                   Assert.assertEquals(2, view.getDrawCount());
+               });
         }
     }
 
     @Test
     public void oneNotificationOfImageChangedTest() {
+        LoggerSimple.put("> MosaicTestView::oneNotificationOfImageChangedTest");
+
         try (MosaicTestView view = new MosaicTestView()) {
-            Map<String /* property name */, Integer /* count */> modifiedProperties = new HashMap<>();
-
-            Subject<PropertyChangeEvent> subject = PublishSubject.create();
-            PropertyChangeListener onViewPropertyChanged = ev -> {
-                String name = ev.getPropertyName();
-                LoggerSimple.put("  oneNotificationOfImageChangedTest: onViewPropertyChanged: ev.name=" + name);
-                modifiedProperties.put(name, 1 + (modifiedProperties.containsKey(name) ? modifiedProperties.get(name) : 0));
-                subject.onNext(ev);
-            };
-            view.addListener(onViewPropertyChanged);
-
-            Signal signal = new Signal();
-            Disposable dis = subject.timeout(100, TimeUnit.MILLISECONDS)
-                    .subscribe(ev -> {
-                        LoggerSimple.put("onNext: ev=" + ev);
-                    }, ex -> {
-                        LoggerSimple.put("onError: " + ex);
-                        signal.set();
-                    });
-
-            modifiedProperties.clear();
-            Factory.DEFERR_INVOKER.accept(() -> MosaicModelTest.changeModel(view.getModel()));
-
-            Assert.assertTrue(signal.await(1000));
-
-            LoggerSimple.put("  oneNotificationOfImageChangedTest: checking...");
-            Assert.assertEquals(1, modifiedProperties.get(IImageView.PROPERTY_IMAGE).intValue());
-            Assert.assertEquals(0, view.getDrawCount());
-            view.getImage(); // call the implicit draw method
-            Assert.assertEquals(1, view.getDrawCount());
-
-            view.removeListener(onViewPropertyChanged);
-            dis.dispose();
+            new PropertyChangeExecutor<>(view).run(100, 1000,
+               () -> {
+                   MosaicModelTest.changeModel(view.getModel());
+               }, modifiedProperties -> {
+                   LoggerSimple.put("  checking...");
+                   Assert.assertTrue  (                    modifiedProperties.containsKey(IImageView.PROPERTY_IMAGE));
+                   Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        IImageView.PROPERTY_IMAGE).first);
+                   Assert.assertEquals(0, view.getDrawCount());
+                   view.getImage(); // call the implicit draw method
+                   Assert.assertEquals(1, view.getDrawCount());
+               });
         }
     }
 

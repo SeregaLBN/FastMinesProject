@@ -47,7 +47,7 @@ public class MosaicInitDataTest {
 
     @Test
     public void checkTheImpossibilitySetCustomSkillLevelTest() {
-        LoggerSimple.put("> checkTheImpossibilitySetCustomSkillLevelTest");
+        LoggerSimple.put("> MosaicInitDataTest::checkTheImpossibilitySetCustomSkillLevelTest");
         try (MosaicInitData initData = createMosaicInitData()) {
             initData.setSkillLevel(ESkillLevel.eCustom);
             Assert.fail();
@@ -58,7 +58,7 @@ public class MosaicInitDataTest {
 
     @Test
     public void checkIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest() {
-        LoggerSimple.put("> checkIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest");
+        LoggerSimple.put("> MosaicInitDataTest::checkIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest");
         try (MosaicInitData initData = createMosaicInitData()) {
             new PropertyChangeExecutor<>(initData).run(100, 1000,
                 () -> {
@@ -78,7 +78,7 @@ public class MosaicInitDataTest {
 
     @Test
     public void checkNoRepeatNotificationsTest() {
-        LoggerSimple.put("> checkNoRepeatNotificationsTest");
+        LoggerSimple.put("> MosaicInitDataTest::checkNoRepeatNotificationsTest");
         try (MosaicInitData initData = createMosaicInitData()) {
             new PropertyChangeExecutor<>(initData).run(100, 1000,
                 () -> {
