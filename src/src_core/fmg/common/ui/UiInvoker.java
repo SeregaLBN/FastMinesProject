@@ -5,8 +5,9 @@ import java.util.function.Supplier;
 
 import fmg.core.img.IAnimator;
 
-/** Factory of UI timers/animators/deffer invokers */
+/** Factory of UI timers/animators/deferred invokers */
 public final class Factory {
+    private Factory() {}
 
     /** Delayed execution in the thread of the user interface. */
     public static Consumer<Runnable> DEFERR_INVOKER = run -> {
