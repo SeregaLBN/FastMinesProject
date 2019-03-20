@@ -24,8 +24,7 @@ namespace fmg.core.mosaic {
         internal const int TEST_SIZE_H = 789;
 
         internal static void StaticInitializer() {
-            //Factory.DEFERR_INVOKER = doRun => Task.Run(doRun);
-            Factory.DEFERR_INVOKER = doRun => Task.Delay(10).ContinueWith(t => doRun());
+            Factory.DEFERR_INVOKER = SimpleUiThreadLoop.AddTask;
         }
 
         [OneTimeSetUp]
