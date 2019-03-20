@@ -1,17 +1,13 @@
 package fmg.android.app;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
-import android.view.Window;
 import android.widget.Toast;
 
 import java.beans.PropertyChangeEvent;
@@ -21,17 +17,15 @@ import fmg.android.app.databinding.MainActivityBinding;
 import fmg.android.app.model.MosaicInitDataExt;
 import fmg.android.app.model.dataSource.MosaicGroupDataSource;
 import fmg.android.app.model.dataSource.MosaicSkillDataSource;
-import fmg.android.app.model.items.MosaicDataItem;
 import fmg.android.app.model.items.MosaicGroupDataItem;
 import fmg.android.app.model.items.MosaicSkillDataItem;
 import fmg.android.app.presentation.MainMenuViewModel;
 import fmg.android.app.presentation.SmoothHelper;
 import fmg.android.utils.Cast;
-import fmg.android.utils.StaticInitializer;
 import fmg.common.LoggerSimple;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.common.ui.Factory;
+import fmg.common.ui.UiInvoker;
 import fmg.core.mosaic.MosaicInitData;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
@@ -188,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
             ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             ft.commit();
         }
-        Factory.DEFERR_INVOKER.accept(() -> {
+        UiInvoker.DEFERRED.accept(() -> {
 //            smf.setCurrentMosaicGroup(mosaicGroup);
 //            smf.setInitData(this.getInitData());
 //            smf.setCurrentSkillLevel(this.initData.getSkillLevel());

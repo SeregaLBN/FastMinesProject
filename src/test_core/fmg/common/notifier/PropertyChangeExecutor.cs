@@ -56,7 +56,7 @@ namespace fmg.common.notifier {
                             signal.Set();
                         }))
                     {
-                        Factory.DEFERR_INVOKER(modificator);
+                        UiInvoker.Deferred(modificator);
                         if (!await signal.Wait(TimeSpan.FromMilliseconds(maxWaitTimeoutMs)))
                             throw new Exception("Wait timeout " + maxWaitTimeoutMs + "ms.");
 

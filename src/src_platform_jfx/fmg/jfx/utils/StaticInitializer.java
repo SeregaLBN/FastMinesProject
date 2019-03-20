@@ -1,6 +1,6 @@
 package fmg.jfx.utils;
 
-import fmg.common.ui.Factory;
+import fmg.common.ui.UiInvoker;
 import fmg.jfx.img.Animator;
 
 public final class StaticInitializer {
@@ -8,9 +8,9 @@ public final class StaticInitializer {
     private StaticInitializer() {}
 
     static {
-        Factory.DEFERR_INVOKER = javafx.application.Platform::runLater;
-        Factory.GET_ANIMATOR = Animator::getSingleton;
-        Factory.TIMER_CREATOR = Timer::new;
+        UiInvoker.DEFERRED = javafx.application.Platform::runLater;
+        UiInvoker.ANIMATOR = Animator::getSingleton;
+        UiInvoker.TIMER_CREATOR = Timer::new;
     }
 
     public static void init() {

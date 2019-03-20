@@ -33,7 +33,7 @@ import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.common.ui.Factory;
+import fmg.common.ui.UiInvoker;
 import fmg.core.img.IImageController;
 import fmg.core.img.SmileModel.EFaceType;
 import fmg.core.img.TestDrawing;
@@ -191,8 +191,8 @@ public final class DemoApp extends Application {
             prevImagesBtn.setOnAction(    ev -> onNextImages(false));
             refreshButton.setOnAction(    ev -> onNextImages(null));
             nextImagesBtn.setOnAction(    ev -> onNextImages(true));
-            Factory.DEFERR_INVOKER.accept(() -> onNextImages(null));
-            Factory.DEFERR_INVOKER.accept(nextImagesBtn::requestFocus);
+            UiInvoker.DEFERRED.accept(() -> onNextImages(null));
+            UiInvoker.DEFERRED.accept(nextImagesBtn::requestFocus);
         }
         { // center
             canvas = new Canvas(300, 300);

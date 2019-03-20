@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fmg.common.geom.SizeDouble;
-import fmg.common.ui.Factory;
+import fmg.common.ui.UiInvoker;
 
 /**
  * MVC controller. Base animation controller.
@@ -65,14 +65,14 @@ public final class AnimatedInnerController<TImage,
             _animationWasUsed = true;
             if ((Boolean)ev.getNewValue()) {
                 TImageModel model = _model;
-                Factory.GET_ANIMATOR.get().subscribe(this, timeFromStartSubscribe -> {
+                UiInvoker.ANIMATOR.get().subscribe(this, timeFromStartSubscribe -> {
                     long mod = timeFromStartSubscribe % model.getAnimatePeriod();
                     long frame = mod * model.getTotalFrames() / model.getAnimatePeriod();
                     //System.out.println("ANIMATOR : " + getClass().getSimpleName() + ": "+ timeFromStartSubscribe);
                     model.setCurrentFrame((int)frame);
                 });
             } else {
-                Factory.GET_ANIMATOR.get().pause(this);
+                UiInvoker.ANIMATOR.get().pause(this);
             }
             break;
         case IAnimatedModel.PROPERTY_CURRENT_FRAME:
@@ -86,8 +86,8 @@ public final class AnimatedInnerController<TImage,
     @Override
     public void close() {
         _model.removeListener(this::onPropertyModelChanged);
-        if (_animationWasUsed) // do not call Factory.GET_ANIMATOR if it is not already used
-            Factory.GET_ANIMATOR.get().unsubscribe(this);
+        if (_animationWasUsed) // do not call UiInvoker.ANIMATOR if it is not already used
+            UiInvoker.ANIMATOR.get().unsubscribe(this);
         _transformers.clear();
     }
 

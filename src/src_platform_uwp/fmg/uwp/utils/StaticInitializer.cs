@@ -11,9 +11,9 @@ namespace fmg.uwp.utils {
     public static class StaticInitializer {
 
         static StaticInitializer() {
-            Factory.DEFERR_INVOKER = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
-            Factory.GET_ANIMATOR = () => Animator.Singleton;
-            Factory.TIMER_CREATOR = () => new Timer();
+            UiInvoker.Deferred = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
+            UiInvoker.Animator = () => Animator.Singleton;
+            UiInvoker.TimerCreator = () => new Timer();
 
             try {
                 var uiSettings = new UISettings();

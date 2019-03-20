@@ -20,7 +20,7 @@ import fmg.android.app.model.items.MosaicDataItem;
 import fmg.android.app.presentation.MosaicsViewModel;
 import fmg.common.LoggerSimple;
 import fmg.common.geom.SizeDouble;
-import fmg.common.ui.Factory;
+import fmg.common.ui.UiInvoker;
 import fmg.core.mosaic.MosaicInitData;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
@@ -87,7 +87,7 @@ public class SelectMosaicFragment extends Fragment {
             sizeChangedObservable = subjSizeChanged.debounce(200, TimeUnit.MILLISECONDS)
                     .subscribe(ev -> {
 //                        LoggerSimple.put("  SelectMosaicFragment::onGlobalLayoutListener: Debounce: onNext: ev=" + ev);
-                        Factory.DEFERR_INVOKER.accept(() -> onFragmentSizeChanged(ev));
+                        UiInvoker.DEFERRED.accept(() -> onFragmentSizeChanged(ev));
                     }, ex -> {
                         LoggerSimple.put("  SelectMosaicFragment::onGlobalLayoutListener: Debounce: onError: " + ex);
                     });
@@ -108,7 +108,7 @@ public class SelectMosaicFragment extends Fragment {
         Toast.makeText(this.getContext(), "onMosaicItemClick " + position, Toast.LENGTH_LONG).show();
 
         // invoke after set/change ViewModel.MosaicDS.CurrentItem
-        Factory.DEFERR_INVOKER.accept(() -> {
+        UiInvoker.DEFERRED.accept(() -> {
             MosaicDataItem ci = viewModel.getMosaicDS().getCurrentItem();
             if (ci != null)
                 getInitData().setMosaicType(ci.getMosaicType());

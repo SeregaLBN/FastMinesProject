@@ -8,7 +8,7 @@ import fmg.common.LoggerSimple;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.SizeDouble;
 import fmg.common.notifier.Signal;
-import fmg.common.ui.Factory;
+import fmg.common.ui.UiInvoker;
 import fmg.core.types.EMosaic;
 
 public class MosaicHelperTest {
@@ -136,7 +136,7 @@ public class MosaicHelperTest {
     public void findAreaBySize_eMosaicTrapezoid3_Test() {
         Signal signal = new Signal();
         double[] area = { -1 };
-        Factory.DEFERR_INVOKER.accept(() -> {
+        UiInvoker.DEFERRED.accept(() -> {
             SizeDouble sizeClientIn = new SizeDouble(169.90442448471225, 313.90196868082262);
             SizeDouble sizeClientOut = new SizeDouble();
             area[0] = MosaicHelper.findAreaBySize(EMosaic.eMosaicTrapezoid3, new Matrisize(4, 2), sizeClientIn, sizeClientOut);

@@ -123,7 +123,7 @@ namespace fmg.core.mosaic {
         public async Task FindAreaBySize_eMosaicTrapezoid3_Test() {
             var signal = new Signal();
             double area = -1;
-            Factory.DEFERR_INVOKER(() => {
+            UiInvoker.Deferred(() => {
                 var sizeClientIn = new SizeDouble(169.90442448471225, 313.90196868082262);
                 SizeDouble sizeClientOut = sizeClientIn;
                 area = MosaicHelper.FindAreaBySize(EMosaic.eMosaicTrapezoid3, new Matrisize(4, 2), ref sizeClientOut);

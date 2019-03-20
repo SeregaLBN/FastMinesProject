@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import fmg.common.Pair;
-import fmg.common.ui.Factory;
+import fmg.common.ui.UiInvoker;
 
 /** Notifies owner clients that a owner property value has changed */
 public final class NotifyPropertyChanged implements AutoCloseable//, INotifyPropertyChanged
@@ -115,12 +115,12 @@ public final class NotifyPropertyChanged implements AutoCloseable//, INotifyProp
                           //.filter(x -> !x.contains(".firePropertyChanged("))
                             .collect(Collectors.joining("\n   ")));
                 /**/
-                Factory.DEFERR_INVOKER.accept(() -> {
+                UiInvoker.DEFERRED.accept(() -> {
                     if (_disposed)
                         return;
 
                     if (!_deferrNotifications.containsKey(propertyName))
-                        return; // event alrady deleted (see HINT_1)
+                        return; // event already deleted (see HINT_1)
                     Pair<Object /* old value */, Object /* new value */> event = _deferrNotifications.remove(propertyName);
                     if (event == null)
                         System.err.println("hmmm... invalid usage ;(");

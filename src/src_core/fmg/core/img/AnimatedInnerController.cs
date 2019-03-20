@@ -55,14 +55,14 @@ namespace fmg.core.img {
                 _animationWasUsed = true;
                 if ((ev as PropertyChangedExEventArgs<bool>).NewValue) {
                     TImageModel model = _model;
-                    Factory.GET_ANIMATOR().Subscribe(this, timeFromStartSubscribe => {
+                    UiInvoker.Animator().Subscribe(this, timeFromStartSubscribe => {
                         var mod = timeFromStartSubscribe.TotalMilliseconds % model.AnimatePeriod;
                         var frame = mod * model.TotalFrames / model.AnimatePeriod;
                         model.CurrentFrame = (int)frame;
                         //System.Diagnostics.Debug.WriteLine("ANIMATOR : CurrentFrame" + frame + "/" + model.TotalFrames);
                     });
                 } else {
-                    Factory.GET_ANIMATOR().Pause(this);
+                    UiInvoker.Animator().Pause(this);
                 }
                 break;
             case nameof(IAnimatedModel.CurrentFrame):
@@ -76,8 +76,8 @@ namespace fmg.core.img {
 
         public void Dispose() {
             _model.PropertyChanged -= OnPropertyModelChanged;
-            if (_animationWasUsed) // do not call Factory.GET_ANIMATOR if it is not already used
-                Factory.GET_ANIMATOR().Unsubscribe(this);
+            if (_animationWasUsed) // do not call UiInvoker.Animator if it is not already used
+                UiInvoker.Animator().Unsubscribe(this);
             _transformers.Clear();
             GC.SuppressFinalize(this);
         }

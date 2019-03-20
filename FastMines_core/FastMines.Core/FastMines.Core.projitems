@@ -9,8 +9,8 @@
     <Import_RootNamespace>FastMines.Core</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\src\src_core\fmg\common\ui\Factory.cs">
-      <Link>src_fmg.common\ui\Factory.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\common\ui\UiInvoker.cs">
+      <Link>src_fmg.common\ui\UiInvoker.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_core\fmg\common\ui\ITimer.cs">
       <Link>src_fmg.common\ui\ITimer.cs</Link>

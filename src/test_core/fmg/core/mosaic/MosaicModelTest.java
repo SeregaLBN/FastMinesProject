@@ -11,7 +11,7 @@ import fmg.common.geom.BoundDouble;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.SizeDouble;
 import fmg.common.notifier.PropertyChangeExecutor;
-import fmg.common.ui.Factory;
+import fmg.common.ui.UiInvoker;
 import fmg.core.img.IImageModel;
 import fmg.core.types.EMosaic;
 import io.reactivex.Flowable;
@@ -28,7 +28,7 @@ public class MosaicModelTest {
     static final int TEST_SIZE_H = 789;
 
     public static void StaticInitializer() {
-        Factory.DEFERR_INVOKER = SimpleUiThreadLoop::addTask;
+        UiInvoker.DEFERRED = SimpleUiThreadLoop::addTask;
     }
 
     @BeforeClass

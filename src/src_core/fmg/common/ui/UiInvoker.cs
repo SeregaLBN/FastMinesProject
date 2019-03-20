@@ -3,23 +3,23 @@ using fmg.core.img;
 
 namespace fmg.common.ui {
 
-    /// <summary> Factory of UI timers/animators/deffer invokers </summary>
-    public static class Factory {
+    /// <summary> Factory of UI timers/animators/deferred invokers </summary>
+    public static class UiInvoker {
 
         /// <summary> Delayed execution in the thread of the user interface. </summary>
-        public static Action<Action> DEFERR_INVOKER = doRun => {
+        public static Action<Action> Deferred = doRun => {
             throw new NotImplementedException();
             //System.Diagnostics.Debug.WriteLine("need redefine!");
             //doRun();
         };
 
         /// <summary> Platform-dependent factory of <see cref="IAnimator"/>. Set from outside... </summary>
-        public static Func<IAnimator> GET_ANIMATOR = () => {
+        public static Func<IAnimator> Animator = () => {
             throw new NotImplementedException();
         };
 
         /// <summary> Platform-dependent factory of <see cref="ITimer"/>. Set from outside... </summary>
-        public static Func<ITimer> TIMER_CREATOR = () => {
+        public static Func<ITimer> TimerCreator = () => {
             throw new NotImplementedException();
         };
 

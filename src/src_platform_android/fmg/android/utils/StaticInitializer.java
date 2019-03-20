@@ -7,15 +7,15 @@ import android.util.Log;
 import fmg.android.img.Animator;
 import fmg.common.Color;
 import fmg.common.LoggerSimple;
-import fmg.common.ui.Factory;
+import fmg.common.ui.UiInvoker;
 import fmg.core.mosaic.MosaicDrawModel;
 
 public final class StaticInitializer {
 
     static {
-        Factory.DEFERR_INVOKER = new Handler(Looper.getMainLooper())::post;
-        Factory.GET_ANIMATOR = Animator::getSingleton;
-        Factory.TIMER_CREATOR = Timer::new;
+        UiInvoker.DEFERRED = new Handler(Looper.getMainLooper())::post;
+        UiInvoker.ANIMATOR = Animator::getSingleton;
+        UiInvoker.TIMER_CREATOR = Timer::new;
 
         MosaicDrawModel.DefaultBkColor = new Color(0xFFEEEEEE); // #EEEEEE or #FAFAFA
 

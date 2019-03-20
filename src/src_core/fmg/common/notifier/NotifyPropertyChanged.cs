@@ -104,12 +104,12 @@ namespace fmg.common.notifier {
                     _deferrNotifications[ev.PropertyName] = newEvent; // Re-save only the last event.
                 }
                 if (shedule)
-                    Factory.DEFERR_INVOKER(() => {
+                    UiInvoker.Deferred(() => {
                         if (_disposed)
                             return;
                         PropertyChangedEventArgs ev2;
                         if (!_deferrNotifications.TryGetValue(ev.PropertyName, out ev2))
-                            return; // event alrady deleted (see HINT_1)
+                            return; // event already deleted (see HINT_1)
                         if ((ev2 == null) || !_deferrNotifications.Remove(ev.PropertyName))
                             //System.Diagnostics.Trace.TraceError("hmmm... invalid usage ;(");
                             System.Diagnostics.Debug.Assert(false, "hmmm... invalid usage ;(");

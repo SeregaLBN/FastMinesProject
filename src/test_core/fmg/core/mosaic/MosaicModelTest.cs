@@ -20,7 +20,7 @@ namespace fmg.core.mosaic {
         internal const int TEST_SIZE_H = 789;
 
         internal static void StaticInitializer() {
-            Factory.DEFERR_INVOKER = SimpleUiThreadLoop.AddTask;
+            UiInvoker.Deferred = SimpleUiThreadLoop.AddTask;
         }
 
         [OneTimeSetUp]

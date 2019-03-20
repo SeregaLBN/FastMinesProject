@@ -7,9 +7,9 @@ namespace fmg.ava.utils {
     static class StaticInitializer {
 
         static StaticInitializer() {
-            Factory.DEFERR_INVOKER = doRun => Dispatcher.UIThread.InvokeAsync(() => doRun(), DispatcherPriority.Normal);
-            Factory.GET_ANIMATOR = () => Animator.Singleton;
-            Factory.TIMER_CREATOR = () => new Timer();
+            UiInvoker.Deferred = doRun => Dispatcher.UIThread.InvokeAsync(() => doRun(), DispatcherPriority.Normal);
+            UiInvoker.Animator = () => Animator.Singleton;
+            UiInvoker.TimerCreator = () => new Timer();
         }
 
         public static void Init() {

@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 import fmg.common.LoggerSimple;
 import fmg.common.Pair;
-import fmg.common.ui.Factory;
+import fmg.common.ui.UiInvoker;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -61,7 +61,7 @@ public class PropertyChangeExecutor<T extends INotifyPropertyChanged> {
                 LoggerSimple.put("timeout after " + notificationsTimeoutMs + "ms.");
                 signal.set();
             });
-            Factory.DEFERR_INVOKER.accept(modificator);
+            UiInvoker.DEFERRED.accept(modificator);
             if (!signal.await(maxWaitTimeoutMs))
                 throw new RuntimeException("Wait timeout " + maxWaitTimeoutMs + "ms.");
 
