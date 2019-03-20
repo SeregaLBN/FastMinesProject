@@ -1,17 +1,12 @@
 package fmg.core.mosaic;
 
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import org.junit.*;
 
 import fmg.common.Color;
 import fmg.common.LoggerSimple;
+import fmg.common.SimpleUiThreadLoop;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.SizeDouble;
@@ -33,11 +28,7 @@ public class MosaicModelTest {
     static final int TEST_SIZE_H = 789;
 
     public static void StaticInitializer() {
-//        ExecutorService scheduler = Executors.newScheduledThreadPool(1);
-//        Factory.DEFERR_INVOKER = scheduler::execute;
-
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        Factory.DEFERR_INVOKER = run -> scheduler.schedule(run, 10, TimeUnit.MILLISECONDS);
+        Factory.DEFERR_INVOKER = SimpleUiThreadLoop::addTask;
     }
 
     @BeforeClass
@@ -657,24 +648,18 @@ public class MosaicModelTest {
         try (MosaicTestModel model = new MosaicTestModel()) {
             SizeDouble size = model.getSize(); // implicit call setter Size
             Assert.assertNotNull(size);
-            Thread.sleep(20); // TODO replace sleep
+            //Thread.sleep(20);
 
-            List<String> modifiedProperties = new ArrayList<>();
-            PropertyChangeListener onModelPropertyChanged = ev -> {
-                LoggerSimple.put("  MosaicNoChangedTest: onModelPropertyChanged: ev.name=" + ev.getPropertyName());
-                modifiedProperties.add(ev.getPropertyName());
-            };
-            model.addListener(onModelPropertyChanged);
-
-            model.setSize(new SizeDouble(model.getSize()));
-            model.setArea(model.getArea());
-            model.setSizeField(new Matrisize(model.getSizeField()));
-            model.setPadding(model.getPadding()==null ? null : new BoundDouble(model.getPadding()));
-
-            Thread.sleep(200); // TODO replace sleep
-            Assert.assertTrue(modifiedProperties.isEmpty());
-
-            model.removeListener(onModelPropertyChanged);
+            new PropertyChangeExecutor<>(model).run(100, 1000,
+                () -> {
+                    model.setSize(new SizeDouble(model.getSize()));
+                    model.setArea(model.getArea());
+                    model.setSizeField(new Matrisize(model.getSizeField()));
+                    model.setPadding(model.getPadding()==null ? null : new BoundDouble(model.getPadding()));
+                }, modifiedProperties -> {
+                    LoggerSimple.put("  checking...");
+                    Assert.assertTrue(modifiedProperties.isEmpty());
+                });
         }
     }
 

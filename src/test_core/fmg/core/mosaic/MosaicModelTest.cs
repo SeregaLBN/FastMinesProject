@@ -645,24 +645,18 @@ namespace fmg.core.mosaic {
             using (var model = new MosaicTestModel()) {
                 var size = model.Size; // implicit call setter Size
                 Assert.IsNotNull(size);
-                await Task.Delay(TimeSpan.FromMilliseconds(50));
+                //await Task.Delay(TimeSpan.FromMilliseconds(50));
 
-                var modifiedProperties = new List<string>();
-                void onModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-                    LoggerSimple.Put("  MosaicNoChangedTest: onModelPropertyChanged: ev.name=" + ev.PropertyName);
-                    modifiedProperties.Add(ev.PropertyName);
-                }
-                model.PropertyChanged += onModelPropertyChanged;
-
-                model.Size = model.Size;
-                model.Area = model.Area;
-                model.SizeField = model.SizeField;
-                model.Padding = model.Padding;
-
-                await Task.Delay(TimeSpan.FromMilliseconds(200));
-                Assert.IsFalse(modifiedProperties.Any());
-
-                model.PropertyChanged -= onModelPropertyChanged;
+                await new PropertyChangeExecutor<MosaicGameModel>(model).Run(100, 1000,
+                    () => {
+                        model.Size = model.Size;
+                        model.Area = model.Area;
+                        model.SizeField = model.SizeField;
+                        model.Padding = model.Padding;
+                    }, modifiedProperties => {
+                        LoggerSimple.Put("  checking...");
+                        Assert.IsFalse(modifiedProperties.Any());
+                    });
             }
         }
 
