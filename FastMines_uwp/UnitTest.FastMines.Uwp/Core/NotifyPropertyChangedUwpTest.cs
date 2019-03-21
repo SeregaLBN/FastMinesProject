@@ -9,38 +9,35 @@ using fmg.uwp.utils;
 namespace fmg.common.notifier {
 
     [TestClass]
-    public class NotifyPropertyChangedUwpTest {
+    public class NotifyPropertyChangedUwpTest : NotifyPropertyChangedTest {
+
+        public override void AssertEqual(int expected, int actual) {
+            Assert.AreEqual(expected, actual);
+        }
+        public override void AssertEqual(object expected, object actual) {
+            Assert.AreEqual(expected, actual);
+        }
 
         [TestInitialize]
-        public void Setup() {
+        public override void Setup() {
+            base.Setup();
+
             StaticInitializer.Init();
         }
 
         [TestMethod]
-        public async Task NotifyPropertyChangedAsyncTest() {
-            int countFiredEvents = 3 + new Random(Environment.TickCount).Next(10);
-            int countReceivedEvents = 0;
-            object firedValue = null;
+        public override void NotifyPropertyChangedSyncTest() {
+            base.NotifyPropertyChangedSyncTest();
+        }
 
-            void listener(PropertyChangedEventArgs ev) {
-                ++countReceivedEvents;
-                firedValue = (ev as PropertyChangedExEventArgs<string>).NewValue;
-            }
-            const string prefix = "Value ";
-            using (var notifier = new NotifyPropertyChanged(null, listener, true)) {
-                for (int i=0; i<countFiredEvents; ++i)
-                    notifier.FirePropertyChanged(null, prefix + i, "propertyName");
+        [TestMethod]
+        public override async Task NotifyPropertyChangedAsyncTest() {
+            await base.NotifyPropertyChangedAsyncTest();
+        }
 
-                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-                    CoreDispatcherPriority.Low,
-                    () => {
-                        // none
-                    });
-            }
-
-
-            Assert.AreEqual(1, countReceivedEvents);
-            Assert.AreEqual(prefix + (countFiredEvents-1), firedValue);
+        [TestMethod]
+        public override async Task CheckForNoEventTest() {
+            await base.CheckForNoEventTest();
         }
 
     }

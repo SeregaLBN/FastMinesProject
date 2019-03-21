@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using System.Collections.Generic;
-using NUnit.Framework;
 using fmg.common;
 using fmg.common.geom;
 using fmg.common.notifier;
@@ -24,13 +23,19 @@ namespace fmg.core.mosaic {
         }
     }
 
-    public class MosaicViewTest {
+    public abstract class MosaicViewTest {
 
         internal const int TEST_SIZE_W = MosaicModelTest.TEST_SIZE_W;
         internal const int TEST_SIZE_H = MosaicModelTest.TEST_SIZE_H;
 
-        [SetUp]
-        public void Setup() {
+        protected abstract void AssertEqual(int    expected, int    actual);
+        protected abstract void AssertEqual(double expected, double actual, double delta);
+        protected abstract void AssertEqual(object expected, object actual);
+        protected abstract void AssertNotNull(object anObject);
+        protected abstract void AssertTrue(bool condition);
+        protected abstract void AssertNotEqual(object expected, object actual);
+
+        public virtual void Setup() {
             LoggerSimple.Put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             LoggerSimple.Put("> " + nameof(MosaicViewTest) + "::" + nameof(Setup));
 
@@ -39,20 +44,17 @@ namespace fmg.core.mosaic {
           //Observable.Just("UI factory inited...").Subscribe(LoggerSimple.Put);
         }
 
-        [SetUp]
-        public void Before() {
+        public virtual void Before() {
             LoggerSimple.Put("======================================================");
         }
 
-        [OneTimeTearDown]
-        public void After() {
+        public virtual void After() {
             LoggerSimple.Put("======================================================");
             LoggerSimple.Put("< " + nameof(MosaicViewTest) + " closed");
             LoggerSimple.Put("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         }
 
-        [Test]
-        public async Task PropertyChangedTest() {
+        public virtual async Task PropertyChangedTest() {
             LoggerSimple.Put("> " + nameof(MosaicViewTest) + "::" + nameof(PropertyChangedTest));
 
             using (var view = new MosaicTestView()) {
@@ -60,33 +62,31 @@ namespace fmg.core.mosaic {
                     () => {
                         view.Model.Size = new SizeDouble(TEST_SIZE_W, TEST_SIZE_H);
                     }, modifiedProperties => {
-                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(view.Model)));
-                        Assert.AreEqual(1, modifiedProperties[            nameof(view.Model)]);
-                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(view.Size)));
-                        Assert.AreEqual(1, modifiedProperties[            nameof(view.Size)]);
-                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(view.Image)));
-                        Assert.AreEqual(3, modifiedProperties.Count);
+                        AssertTrue (   modifiedProperties.ContainsKey(nameof(view.Model)));
+                        AssertEqual(1, modifiedProperties[            nameof(view.Model)]);
+                        AssertTrue (   modifiedProperties.ContainsKey(nameof(view.Size)));
+                        AssertEqual(1, modifiedProperties[            nameof(view.Size)]);
+                        AssertTrue (   modifiedProperties.ContainsKey(nameof(view.Image)));
+                        AssertEqual(3, modifiedProperties.Count);
                     });
             }
         }
 
-        [Test]
-        public void ReadinessAtTheStartTest() {
+        public virtual void ReadinessAtTheStartTest() {
             LoggerSimple.Put("> " + nameof(MosaicViewTest) + "::" + nameof(ReadinessAtTheStartTest));
 
             using (var view = new MosaicTestView()) {
-                Assert.AreEqual(0, view.DrawCount);
-                Assert.NotNull(view.Image);
-                Assert.AreEqual(1, view.DrawCount);
+                AssertEqual(0, view.DrawCount);
+                AssertNotNull(view.Image);
+                AssertEqual(1, view.DrawCount);
             }
         }
 
-        [Test]
-        public async Task MultipleChangeModelOneDrawViewTest() {
+        public virtual async Task MultipleChangeModelOneDrawViewTest() {
             LoggerSimple.Put("> " + nameof(MosaicViewTest) + "::" + nameof(MultipleChangeModelOneDrawViewTest));
 
             using (var view = new MosaicTestView()) {
-                Assert.AreEqual(0, view.DrawCount);
+                AssertEqual(0, view.DrawCount);
 
                 DummyImage img = null;
 
@@ -96,8 +96,8 @@ namespace fmg.core.mosaic {
                         MosaicModelTest.ChangeModel(m);
                     }, modifiedProperties => {
                         img = view.Image;
-                        Assert.NotNull(img);
-                        Assert.AreEqual(1, view.DrawCount);
+                        AssertNotNull(img);
+                        AssertEqual(1, view.DrawCount);
                     });
 
                 // test no change
@@ -105,8 +105,8 @@ namespace fmg.core.mosaic {
                     () => {
                         m.Size = new SizeDouble(TEST_SIZE_W, TEST_SIZE_H);
                     }, modifiedProperties => {
-                        Assert.AreEqual(true, ReferenceEquals(img, view.Image));
-                        Assert.AreEqual(1, view.DrawCount);
+                        AssertEqual(true, ReferenceEquals(img, view.Image));
+                        AssertEqual(1, view.DrawCount);
                     });
 
                 // test change
@@ -114,15 +114,14 @@ namespace fmg.core.mosaic {
                     () => {
                         m.Size = new SizeDouble(TEST_SIZE_W + 1, TEST_SIZE_H);
                     }, modifiedProperties => {
-                        Assert.AreNotEqual(img, view.Image);
-                        Assert.NotNull(view.Image);
-                        Assert.AreEqual(2, view.DrawCount);
+                        AssertNotEqual(img, view.Image);
+                        AssertNotNull(view.Image);
+                        AssertEqual(2, view.DrawCount);
                     });
             }
         }
 
-        [Test]
-        public async Task OneNotificationOfImageChangedTest() {
+        public virtual async Task OneNotificationOfImageChangedTest() {
             LoggerSimple.Put("> " + nameof(MosaicViewTest) + "::" + nameof(OneNotificationOfImageChangedTest));
 
             using (var view = new MosaicTestView()) {
@@ -130,11 +129,11 @@ namespace fmg.core.mosaic {
                     () => {
                         MosaicModelTest.ChangeModel(view.Model);
                     }, modifiedProperties => {
-                        Assert.IsTrue(     modifiedProperties.ContainsKey(nameof(view.Image)));
-                        Assert.AreEqual(1, modifiedProperties[            nameof(view.Image)]);
-                        Assert.AreEqual(0, view.DrawCount);
+                        AssertTrue(     modifiedProperties.ContainsKey(nameof(view.Image)));
+                        AssertEqual(1, modifiedProperties[            nameof(view.Image)]);
+                        AssertEqual(0, view.DrawCount);
                         var img = view.Image; // call the implicit draw method
-                        Assert.AreEqual(1, view.DrawCount);
+                        AssertEqual(1, view.DrawCount);
                     });
             }
         }

@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using NUnit.Framework;
 using fmg.common;
 using fmg.common.geom;
 using fmg.common.ui;
@@ -11,7 +10,7 @@ using MosaicTestModel = fmg.core.mosaic.MosaicDrawModel<object>;
 
 namespace fmg.core.mosaic {
 
-    public class MosaicModelTest {
+    public abstract class MosaicModelTest {
 
         /// <summary> double precision </summary>
         internal const double P = 0.001;
@@ -19,12 +18,19 @@ namespace fmg.core.mosaic {
         internal const int TEST_SIZE_W = 456;
         internal const int TEST_SIZE_H = 789;
 
+        protected abstract void AssertEqual(int    expected, int    actual);
+        protected abstract void AssertEqual(double expected, double actual, double delta);
+        protected abstract void AssertEqual(object expected, object actual);
+        protected abstract void AssertNotNull(object anObject);
+        protected abstract void AssertTrue(bool condition);
+        protected abstract void AssertFalse(bool condition);
+        protected abstract void AssertLessOrEqual(int valToBeLess, int valToBeGreater);
+
         internal static void StaticInitializer() {
             UiInvoker.Deferred = SimpleUiThreadLoop.AddTask;
         }
 
-        [OneTimeSetUp]
-        public void Setup() {
+        public virtual void Setup() {
             LoggerSimple.Put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(Setup));
 
@@ -33,20 +39,17 @@ namespace fmg.core.mosaic {
             //Observable.Just("UI factory inited...").Subscribe(LoggerSimple.Put);
         }
 
-        [SetUp]
-        public void Before() {
+        public virtual void Before() {
             LoggerSimple.Put("======================================================");
         }
 
-        [OneTimeTearDown]
-        public void After() {
+        public virtual void After() {
             LoggerSimple.Put("======================================================");
             LoggerSimple.Put("< " + nameof(MosaicModelTest) + " closed");
             LoggerSimple.Put("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         }
 
-        [Test]
-        public async Task MosaicGameModelPropertyChangedTest() {
+        public virtual async Task MosaicGameModelPropertyChangedTest() {
             LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(MosaicGameModelPropertyChangedTest));
 
             using (var model = new MosaicGameModel()) {
@@ -54,29 +57,27 @@ namespace fmg.core.mosaic {
                     () => {
                         model.SizeField = new Matrisize(15, 10);
                     }, modifiedProperties => {
-                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.SizeField)));
-                        Assert.AreEqual(1, modifiedProperties[            nameof(MosaicGameModel.SizeField)]);
-                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Matrix)));
-                        Assert.AreEqual(1, modifiedProperties[            nameof(MosaicGameModel.Matrix)]);
-                        Assert.AreEqual(2, modifiedProperties.Count);
+                        AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.SizeField)));
+                        AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.SizeField)]);
+                        AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Matrix)));
+                        AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.Matrix)]);
+                        AssertEqual(2, modifiedProperties.Count);
                     });
 
                 await new PropertyChangeExecutor<MosaicGameModel>(model).Run(100, 1000,
                     () => {
                         model.Area = 12345;
                     }, modifiedProperties => {
-                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Area)));
-                        Assert.AreEqual(1, modifiedProperties[            nameof(MosaicGameModel.Area)]);
-                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.CellAttr)));
-                        Assert.AreEqual(1, modifiedProperties[            nameof(MosaicGameModel.CellAttr)]);
-                        Assert.AreEqual(2, modifiedProperties.Count);
+                        AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Area)));
+                        AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.Area)]);
+                        AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.CellAttr)));
+                        AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.CellAttr)]);
+                        AssertEqual(2, modifiedProperties.Count);
                     });
             }
         }
 
-        [Test]
-      //[Retry(100)]
-        public async Task MosaicDrawModelPropertyChangedTest() {
+        public virtual async Task MosaicDrawModelPropertyChangedTest() {
             LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(MosaicDrawModelPropertyChangedTest));
 
             using (var model = new MosaicTestModel()) {
@@ -84,41 +85,39 @@ namespace fmg.core.mosaic {
                     () => {
                         ChangeModel(model);
                     }, modifiedProperties => {
-                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(IImageModel.Size)));
-                        Assert.AreEqual(1, modifiedProperties[            nameof(IImageModel.Size)]);
-                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Area)));
-                        Assert.AreEqual(1, modifiedProperties[            nameof(MosaicGameModel.Area)]);
-                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.CellAttr)));
-                        Assert.AreEqual(1, modifiedProperties[            nameof(MosaicGameModel.CellAttr)]);
-                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.MosaicType)));
-                        Assert.AreEqual(1, modifiedProperties[            nameof(MosaicGameModel.MosaicType)]);
-                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Matrix)));
-                        Assert.AreEqual(1, modifiedProperties[            nameof(MosaicGameModel.Matrix)]);
-                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicTestModel.BackgroundColor)));
-                        Assert.AreEqual(1, modifiedProperties[            nameof(MosaicTestModel.BackgroundColor)]);
-                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicTestModel.BkFill)));
-                        Assert.AreEqual(1, modifiedProperties[            nameof(MosaicTestModel.BkFill)]);
-                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicTestModel.ColorText)));
-                        Assert.AreEqual(1, modifiedProperties[            nameof(MosaicTestModel.ColorText)]);
-                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(MosaicTestModel.PenBorder)));
-                        Assert.AreEqual(1, modifiedProperties[            nameof(MosaicTestModel.PenBorder)]);
+                        AssertTrue (   modifiedProperties.ContainsKey(nameof(IImageModel.Size)));
+                        AssertEqual(1, modifiedProperties[            nameof(IImageModel.Size)]);
+                        AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Area)));
+                        AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.Area)]);
+                        AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.CellAttr)));
+                        AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.CellAttr)]);
+                        AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.MosaicType)));
+                        AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.MosaicType)]);
+                        AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Matrix)));
+                        AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.Matrix)]);
+                        AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicTestModel.BackgroundColor)));
+                        AssertEqual(1, modifiedProperties[            nameof(MosaicTestModel.BackgroundColor)]);
+                        AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicTestModel.BkFill)));
+                        AssertEqual(1, modifiedProperties[            nameof(MosaicTestModel.BkFill)]);
+                        AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicTestModel.ColorText)));
+                        AssertEqual(1, modifiedProperties[            nameof(MosaicTestModel.ColorText)]);
+                        AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicTestModel.PenBorder)));
+                        AssertEqual(1, modifiedProperties[            nameof(MosaicTestModel.PenBorder)]);
                     });
             }
         }
 
-        [Test]
-        public void MosaicDrawModelAsIsTest() {
+        public virtual void MosaicDrawModelAsIsTest() {
             LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(MosaicDrawModelAsIsTest));
 
             using (var model = new MosaicTestModel()) {
-                Assert.AreEqual(EMosaic.eMosaicSquare1, model.MosaicType);
-                Assert.AreEqual(new Matrisize(10, 10), model.SizeField);
-                Assert.AreEqual(model.CellAttr.GetSize(model.SizeField), model.Size);
+                AssertEqual(EMosaic.eMosaicSquare1, model.MosaicType);
+                AssertEqual(new Matrisize(10, 10), model.SizeField);
+                AssertEqual(model.CellAttr.GetSize(model.SizeField), model.Size);
             }
         }
 
-        [Test]
-        public void AutoFitTrueCheckAffectsToPaddingTest() {
+        public virtual void AutoFitTrueCheckAffectsToPaddingTest() {
             LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(AutoFitTrueCheckAffectsToPaddingTest));
 
             using (var model = new MosaicTestModel()) {
@@ -131,15 +130,14 @@ namespace fmg.core.mosaic {
                 model.Size = new SizeDouble(500, 700);
 
                 // check dependency
-                Assert.AreEqual(50.0, model.Padding.Left);
-                Assert.AreEqual(50.0, model.Padding.Right);
-                Assert.AreEqual(70.0, model.Padding.Top);
-                Assert.AreEqual(70.0, model.Padding.Bottom);
+                AssertEqual(50.0, model.Padding.Left);
+                AssertEqual(50.0, model.Padding.Right);
+                AssertEqual(70.0, model.Padding.Top);
+                AssertEqual(70.0, model.Padding.Bottom);
             }
         }
 
-        [Test]
-        public void AutoFitTrueCheckAffectsTest() {
+        public virtual void AutoFitTrueCheckAffectsTest() {
             LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(AutoFitTrueCheckAffectsTest));
 
             MosaicTestModel createTestModel() {
@@ -151,22 +149,22 @@ namespace fmg.core.mosaic {
 
                 // default check
                 var size = model.Size;
-                Assert.AreEqual(1000, size.Width , P);
-                Assert.AreEqual(1000, size.Height, P);
+                AssertEqual(1000, size.Width , P);
+                AssertEqual(1000, size.Height, P);
 
                 var mosaicSize = model.MosaicSize;
-                Assert.AreEqual(1000, mosaicSize.Width , P);
-                Assert.AreEqual(1000, mosaicSize.Height, P);
+                AssertEqual(1000, mosaicSize.Width , P);
+                AssertEqual(1000, mosaicSize.Height, P);
 
                 var mosaicOffset = model.MosaicOffset;
-                Assert.AreEqual(0, mosaicOffset.Width , P);
-                Assert.AreEqual(0, mosaicOffset.Height, P);
+                AssertEqual(0, mosaicOffset.Width , P);
+                AssertEqual(0, mosaicOffset.Height, P);
 
                 var padding = model.Padding;
-                Assert.AreEqual(0, padding.Left  , P);
-                Assert.AreEqual(0, padding.Top   , P);
-                Assert.AreEqual(0, padding.Right , P);
-                Assert.AreEqual(0, padding.Bottom, P);
+                AssertEqual(0, padding.Left  , P);
+                AssertEqual(0, padding.Top   , P);
+                AssertEqual(0, padding.Right , P);
+                AssertEqual(0, padding.Bottom, P);
 
                 return model;
             }
@@ -177,22 +175,22 @@ namespace fmg.core.mosaic {
 
                 // check dependency (evenly expanded)
                 var size = model.Size;
-                Assert.AreEqual(700, size.Width , P);
-                Assert.AreEqual(500, size.Height, P);
+                AssertEqual(700, size.Width , P);
+                AssertEqual(500, size.Height, P);
 
                 var mosaicSize = model.MosaicSize;
-                Assert.AreEqual(500, mosaicSize.Width , P);
-                Assert.AreEqual(500, mosaicSize.Height, P);
+                AssertEqual(500, mosaicSize.Width , P);
+                AssertEqual(500, mosaicSize.Height, P);
 
                 var mosaicOffset = model.MosaicOffset;
-                Assert.AreEqual(100, mosaicOffset.Width , P);
-                Assert.AreEqual(  0, mosaicOffset.Height, P);
+                AssertEqual(100, mosaicOffset.Width , P);
+                AssertEqual(  0, mosaicOffset.Height, P);
 
                 var padding = model.Padding;
-                Assert.AreEqual(0, padding.Left  , P);
-                Assert.AreEqual(0, padding.Top   , P);
-                Assert.AreEqual(0, padding.Right , P);
-                Assert.AreEqual(0, padding.Bottom, P);
+                AssertEqual(0, padding.Left  , P);
+                AssertEqual(0, padding.Top   , P);
+                AssertEqual(0, padding.Right , P);
+                AssertEqual(0, padding.Bottom, P);
             }
 
             using (var model = createTestModel()) {
@@ -202,22 +200,22 @@ namespace fmg.core.mosaic {
 
                 // check dependency (evenly expanded)
                 var size = model.Size;
-                Assert.AreEqual(700, size.Width , P);
-                Assert.AreEqual(500, size.Height, P);
+                AssertEqual(700, size.Width , P);
+                AssertEqual(500, size.Height, P);
 
                 var mosaicSize = model.MosaicSize;
-                Assert.AreEqual(450, mosaicSize.Width , P);
-                Assert.AreEqual(450, mosaicSize.Height, P);
+                AssertEqual(450, mosaicSize.Width , P);
+                AssertEqual(450, mosaicSize.Height, P);
 
                 var mosaicOffset = model.MosaicOffset;
-                Assert.AreEqual(160 , mosaicOffset.Width , P);
-                Assert.AreEqual(37.5, mosaicOffset.Height, P);
+                AssertEqual(160 , mosaicOffset.Width , P);
+                AssertEqual(37.5, mosaicOffset.Height, P);
 
                 var padding = model.Padding;
-                Assert.AreEqual(105 , padding.Left  , P);
-                Assert.AreEqual(37.5, padding.Top   , P);
-                Assert.AreEqual(35  , padding.Right , P);
-                Assert.AreEqual(12.5, padding.Bottom, P);
+                AssertEqual(105 , padding.Left  , P);
+                AssertEqual(37.5, padding.Top   , P);
+                AssertEqual(35  , padding.Right , P);
+                AssertEqual(12.5, padding.Bottom, P);
             }
 
             using (var model = createTestModel()) {
@@ -227,22 +225,22 @@ namespace fmg.core.mosaic {
 
                 // check dependency (evenly expanded)
                 var size = model.Size;
-                Assert.AreEqual(700, size.Width , P);
-                Assert.AreEqual(500, size.Height, P);
+                AssertEqual(700, size.Width , P);
+                AssertEqual(500, size.Height, P);
 
                 var mosaicSize = model.MosaicSize;
-                Assert.AreEqual(525, mosaicSize.Width , P);
-                Assert.AreEqual(500, mosaicSize.Height, P);
+                AssertEqual(525, mosaicSize.Width , P);
+                AssertEqual(500, mosaicSize.Height, P);
 
                 var mosaicOffset = model.MosaicOffset;
-                Assert.AreEqual(87.5, mosaicOffset.Width , P);
-                Assert.AreEqual(   0, mosaicOffset.Height, P);
+                AssertEqual(87.5, mosaicOffset.Width , P);
+                AssertEqual(   0, mosaicOffset.Height, P);
 
                 var padding = model.Padding;
-                Assert.AreEqual(0, padding.Left  , P);
-                Assert.AreEqual(0, padding.Top   , P);
-                Assert.AreEqual(0, padding.Right , P);
-                Assert.AreEqual(0, padding.Bottom, P);
+                AssertEqual(0, padding.Left  , P);
+                AssertEqual(0, padding.Top   , P);
+                AssertEqual(0, padding.Right , P);
+                AssertEqual(0, padding.Bottom, P);
             }
 
             using (var model = createTestModel()) {
@@ -253,22 +251,22 @@ namespace fmg.core.mosaic {
 
                 // check dependency (evenly expanded)
                 var size = model.Size;
-                Assert.AreEqual(700, size.Width , P);
-                Assert.AreEqual(500, size.Height, P);
+                AssertEqual(700, size.Width , P);
+                AssertEqual(500, size.Height, P);
 
                 var mosaicSize = model.MosaicSize;
-                Assert.AreEqual(350, mosaicSize.Width , P);
-                Assert.AreEqual(500, mosaicSize.Height, P);
+                AssertEqual(350, mosaicSize.Width , P);
+                AssertEqual(500, mosaicSize.Height, P);
 
                 var mosaicOffset = model.MosaicOffset;
-                Assert.AreEqual(175, mosaicOffset.Width , P);
-                Assert.AreEqual(  0, mosaicOffset.Height, P);
+                AssertEqual(175, mosaicOffset.Width , P);
+                AssertEqual(  0, mosaicOffset.Height, P);
 
                 var padding = model.Padding;
-                Assert.AreEqual(0, padding.Left  , P);
-                Assert.AreEqual(0, padding.Top   , P);
-                Assert.AreEqual(0, padding.Right , P);
-                Assert.AreEqual(0, padding.Bottom, P);
+                AssertEqual(0, padding.Left  , P);
+                AssertEqual(0, padding.Top   , P);
+                AssertEqual(0, padding.Right , P);
+                AssertEqual(0, padding.Bottom, P);
             }
 
             using (var model = createTestModel()) {
@@ -280,22 +278,22 @@ namespace fmg.core.mosaic {
 
                 // check dependency (evenly expanded)
                 var size = model.Size;
-                Assert.AreEqual(700, size.Width , P);
-                Assert.AreEqual(500, size.Height, P);
+                AssertEqual(700, size.Width , P);
+                AssertEqual(500, size.Height, P);
 
                 var mosaicSize = model.MosaicSize;
-                Assert.AreEqual(280, mosaicSize.Width , P);
-                Assert.AreEqual(400, mosaicSize.Height, P);
+                AssertEqual(280, mosaicSize.Width , P);
+                AssertEqual(400, mosaicSize.Height, P);
 
                 var mosaicOffset = model.MosaicOffset;
-                Assert.AreEqual(260, mosaicOffset.Width , P);
-                Assert.AreEqual( 75, mosaicOffset.Height, P);
+                AssertEqual(260, mosaicOffset.Width , P);
+                AssertEqual( 75, mosaicOffset.Height, P);
 
                 var padding = model.Padding;
-                Assert.AreEqual(150, padding.Left  , P);
-                Assert.AreEqual( 75, padding.Top   , P);
-                Assert.AreEqual( 50, padding.Right , P);
-                Assert.AreEqual( 25, padding.Bottom, P);
+                AssertEqual(150, padding.Left  , P);
+                AssertEqual( 75, padding.Top   , P);
+                AssertEqual( 50, padding.Right , P);
+                AssertEqual( 25, padding.Bottom, P);
             }
 
             using (var model = createTestModel()) {
@@ -307,22 +305,22 @@ namespace fmg.core.mosaic {
 
                 // check dependency (evenly expanded)
                 var size = model.Size;
-                Assert.AreEqual(700, size.Width , P);
-                Assert.AreEqual(500, size.Height, P);
+                AssertEqual(700, size.Width , P);
+                AssertEqual(500, size.Height, P);
 
                 var mosaicSize = model.MosaicSize;
-                Assert.AreEqual(420, mosaicSize.Width , P);
-                Assert.AreEqual(600, mosaicSize.Height, P);
+                AssertEqual(420, mosaicSize.Width , P);
+                AssertEqual(600, mosaicSize.Height, P);
 
                 var mosaicOffset = model.MosaicOffset;
-                Assert.AreEqual( 90, mosaicOffset.Width , P);
-                Assert.AreEqual(-75, mosaicOffset.Height, P);
+                AssertEqual( 90, mosaicOffset.Width , P);
+                AssertEqual(-75, mosaicOffset.Height, P);
 
                 var padding = model.Padding;
-                Assert.AreEqual(-150, padding.Left  , P);
-                Assert.AreEqual(- 75, padding.Top   , P);
-                Assert.AreEqual(- 50, padding.Right , P);
-                Assert.AreEqual(- 25, padding.Bottom, P);
+                AssertEqual(-150, padding.Left  , P);
+                AssertEqual(- 75, padding.Top   , P);
+                AssertEqual(- 50, padding.Right , P);
+                AssertEqual(- 25, padding.Bottom, P);
             }
 
             using (var model = createTestModel()) {
@@ -335,22 +333,22 @@ namespace fmg.core.mosaic {
 
                 // check dependency (evenly expanded)
                 var size = model.Size;
-                Assert.AreEqual(105, size.Width , P);
-                Assert.AreEqual(150, size.Height, P);
+                AssertEqual(105, size.Width , P);
+                AssertEqual(150, size.Height, P);
 
                 var mosaicSize = model.MosaicSize;
-                Assert.AreEqual(105, mosaicSize.Width , P);
-                Assert.AreEqual(150, mosaicSize.Height, P);
+                AssertEqual(105, mosaicSize.Width , P);
+                AssertEqual(150, mosaicSize.Height, P);
 
                 var mosaicOffset = model.MosaicOffset;
-                Assert.AreEqual(0, mosaicOffset.Width , P);
-                Assert.AreEqual(0, mosaicOffset.Height, P);
+                AssertEqual(0, mosaicOffset.Width , P);
+                AssertEqual(0, mosaicOffset.Height, P);
 
                 var padding = model.Padding;
-                Assert.AreEqual(0, padding.Left  , P);
-                Assert.AreEqual(0, padding.Top   , P);
-                Assert.AreEqual(0, padding.Right , P);
-                Assert.AreEqual(0, padding.Bottom, P);
+                AssertEqual(0, padding.Left  , P);
+                AssertEqual(0, padding.Top   , P);
+                AssertEqual(0, padding.Right , P);
+                AssertEqual(0, padding.Bottom, P);
             }
 
             using (var model = createTestModel()) {
@@ -363,22 +361,22 @@ namespace fmg.core.mosaic {
 
                 // check dependency (evenly expanded)
                 var size = model.Size;
-                Assert.AreEqual(305, size.Width , P);
-                Assert.AreEqual(250, size.Height, P);
+                AssertEqual(305, size.Width , P);
+                AssertEqual(250, size.Height, P);
 
                 var mosaicSize = model.MosaicSize;
-                Assert.AreEqual(105, mosaicSize.Width , P);
-                Assert.AreEqual(150, mosaicSize.Height, P);
+                AssertEqual(105, mosaicSize.Width , P);
+                AssertEqual(150, mosaicSize.Height, P);
 
                 var mosaicOffset = model.MosaicOffset;
-                Assert.AreEqual(150, mosaicOffset.Width , P);
-                Assert.AreEqual( 75, mosaicOffset.Height, P);
+                AssertEqual(150, mosaicOffset.Width , P);
+                AssertEqual( 75, mosaicOffset.Height, P);
 
                 var padding = model.Padding;
-                Assert.AreEqual(150, padding.Left  , P);
-                Assert.AreEqual( 75, padding.Top   , P);
-                Assert.AreEqual( 50, padding.Right , P);
-                Assert.AreEqual( 25, padding.Bottom, P);
+                AssertEqual(150, padding.Left  , P);
+                AssertEqual( 75, padding.Top   , P);
+                AssertEqual( 50, padding.Right , P);
+                AssertEqual( 25, padding.Bottom, P);
             }
 
 
@@ -388,27 +386,26 @@ namespace fmg.core.mosaic {
 
                 // check dependency (evenly expanded)
                 var size = model.Size;
-                Assert.AreEqual(1000, size.Width , P);
-                Assert.AreEqual(1000, size.Height, P);
+                AssertEqual(1000, size.Width , P);
+                AssertEqual(1000, size.Height, P);
 
                 var mosaicSize = model.MosaicSize;
-                Assert.AreEqual(1000, mosaicSize.Width , P);
-                Assert.AreEqual(1000, mosaicSize.Height, P);
+                AssertEqual(1000, mosaicSize.Width , P);
+                AssertEqual(1000, mosaicSize.Height, P);
 
                 var mosaicOffset = model.MosaicOffset;
-                Assert.AreEqual(200, mosaicOffset.Width , P);
-                Assert.AreEqual(300, mosaicOffset.Height, P);
+                AssertEqual(200, mosaicOffset.Width , P);
+                AssertEqual(300, mosaicOffset.Height, P);
 
                 var padding = model.Padding;
-                Assert.AreEqual( 200, padding.Left  , P);
-                Assert.AreEqual( 300, padding.Top   , P);
-                Assert.AreEqual(-200, padding.Right , P);
-                Assert.AreEqual(-300, padding.Bottom, P);
+                AssertEqual( 200, padding.Left  , P);
+                AssertEqual( 300, padding.Top   , P);
+                AssertEqual(-200, padding.Right , P);
+                AssertEqual(-300, padding.Bottom, P);
             }
         }
 
-        [Test]
-        public void AutoFitFalseCheckAffectsTest() {
+        public virtual void AutoFitFalseCheckAffectsTest() {
             LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(AutoFitFalseCheckAffectsTest));
 
             MosaicTestModel createTestModel() {
@@ -420,22 +417,22 @@ namespace fmg.core.mosaic {
 
                 // default check
                 var size = model.Size;
-                Assert.AreEqual(1000, size.Width , P);
-                Assert.AreEqual(1000, size.Height, P);
+                AssertEqual(1000, size.Width , P);
+                AssertEqual(1000, size.Height, P);
 
                 var mosaicSize = model.MosaicSize;
-                Assert.AreEqual(1000, mosaicSize.Width , P);
-                Assert.AreEqual(1000, mosaicSize.Height, P);
+                AssertEqual(1000, mosaicSize.Width , P);
+                AssertEqual(1000, mosaicSize.Height, P);
 
                 var mosaicOffset = model.MosaicOffset;
-                Assert.AreEqual(0, mosaicOffset.Width , P);
-                Assert.AreEqual(0, mosaicOffset.Height, P);
+                AssertEqual(0, mosaicOffset.Width , P);
+                AssertEqual(0, mosaicOffset.Height, P);
 
                 var padding = model.Padding;
-                Assert.AreEqual(0, padding.Left  , P);
-                Assert.AreEqual(0, padding.Top   , P);
-                Assert.AreEqual(0, padding.Right , P);
-                Assert.AreEqual(0, padding.Bottom, P);
+                AssertEqual(0, padding.Left  , P);
+                AssertEqual(0, padding.Top   , P);
+                AssertEqual(0, padding.Right , P);
+                AssertEqual(0, padding.Bottom, P);
 
                 return model;
             }
@@ -446,22 +443,22 @@ namespace fmg.core.mosaic {
 
                 // check dependency (evenly expanded)
                 var size = model.Size;
-                Assert.AreEqual(1000, size.Width , P);
-                Assert.AreEqual(1000, size.Height, P);
+                AssertEqual(1000, size.Width , P);
+                AssertEqual(1000, size.Height, P);
 
                 var mosaicSize = model.MosaicSize;
-                Assert.AreEqual(1000, mosaicSize.Width , P);
-                Assert.AreEqual(1000, mosaicSize.Height, P);
+                AssertEqual(1000, mosaicSize.Width , P);
+                AssertEqual(1000, mosaicSize.Height, P);
 
                 var mosaicOffset = model.MosaicOffset;
-                Assert.AreEqual(200, mosaicOffset.Width , P);
-                Assert.AreEqual(300, mosaicOffset.Height, P);
+                AssertEqual(200, mosaicOffset.Width , P);
+                AssertEqual(300, mosaicOffset.Height, P);
 
                 var padding = model.Padding;
-                Assert.AreEqual( 200, padding.Left  , P);
-                Assert.AreEqual( 300, padding.Top   , P);
-                Assert.AreEqual(-200, padding.Right , P);
-                Assert.AreEqual(-300, padding.Bottom, P);
+                AssertEqual( 200, padding.Left  , P);
+                AssertEqual( 300, padding.Top   , P);
+                AssertEqual(-200, padding.Right , P);
+                AssertEqual(-300, padding.Bottom, P);
             }
 
             using (var model = createTestModel()) {
@@ -471,22 +468,22 @@ namespace fmg.core.mosaic {
 
                 // check dependency (evenly expanded)
                 var size = model.Size;
-                Assert.AreEqual(700, size.Width , P);
-                Assert.AreEqual(500, size.Height, P);
+                AssertEqual(700, size.Width , P);
+                AssertEqual(500, size.Height, P);
 
                 var mosaicSize = model.MosaicSize;
-                Assert.AreEqual(500, mosaicSize.Width , P);
-                Assert.AreEqual(500, mosaicSize.Height, P);
+                AssertEqual(500, mosaicSize.Width , P);
+                AssertEqual(500, mosaicSize.Height, P);
 
                 var mosaicOffset = model.MosaicOffset;
-                Assert.AreEqual(100, mosaicOffset.Width , P);
-                Assert.AreEqual(  0, mosaicOffset.Height, P);
+                AssertEqual(100, mosaicOffset.Width , P);
+                AssertEqual(  0, mosaicOffset.Height, P);
 
                 var padding = model.Padding;
-                Assert.AreEqual(100, padding.Left  , P);
-                Assert.AreEqual(  0, padding.Top   , P);
-                Assert.AreEqual(100, padding.Right , P);
-                Assert.AreEqual(  0, padding.Bottom, P);
+                AssertEqual(100, padding.Left  , P);
+                AssertEqual(  0, padding.Top   , P);
+                AssertEqual(100, padding.Right , P);
+                AssertEqual(  0, padding.Bottom, P);
             }
 
             using (var model = createTestModel()) {
@@ -496,22 +493,22 @@ namespace fmg.core.mosaic {
 
                 // check dependency (evenly expanded)
                 var size = model.Size;
-                Assert.AreEqual(700, size.Width , P);
-                Assert.AreEqual(500, size.Height, P);
+                AssertEqual(700, size.Width , P);
+                AssertEqual(500, size.Height, P);
 
                 var mosaicSize = model.MosaicSize;
-                Assert.AreEqual(525, mosaicSize.Width , P);
-                Assert.AreEqual(500, mosaicSize.Height, P);
+                AssertEqual(525, mosaicSize.Width , P);
+                AssertEqual(500, mosaicSize.Height, P);
 
                 var mosaicOffset = model.MosaicOffset;
-                Assert.AreEqual(87.5, mosaicOffset.Width , P);
-                Assert.AreEqual(   0, mosaicOffset.Height, P);
+                AssertEqual(87.5, mosaicOffset.Width , P);
+                AssertEqual(   0, mosaicOffset.Height, P);
 
                 var padding = model.Padding;
-                Assert.AreEqual(87.5, padding.Left  , P);
-                Assert.AreEqual(   0, padding.Top   , P);
-                Assert.AreEqual(87.5, padding.Right , P);
-                Assert.AreEqual(   0, padding.Bottom, P);
+                AssertEqual(87.5, padding.Left  , P);
+                AssertEqual(   0, padding.Top   , P);
+                AssertEqual(87.5, padding.Right , P);
+                AssertEqual(   0, padding.Bottom, P);
             }
 
             using (var model = createTestModel()) {
@@ -522,22 +519,22 @@ namespace fmg.core.mosaic {
 
                 // check dependency (evenly expanded)
                 var size = model.Size;
-                Assert.AreEqual(700, size.Width , P);
-                Assert.AreEqual(500, size.Height, P);
+                AssertEqual(700, size.Width , P);
+                AssertEqual(500, size.Height, P);
 
                 var mosaicSize = model.MosaicSize;
-                Assert.AreEqual(350, mosaicSize.Width , P);
-                Assert.AreEqual(500, mosaicSize.Height, P);
+                AssertEqual(350, mosaicSize.Width , P);
+                AssertEqual(500, mosaicSize.Height, P);
 
                 var mosaicOffset = model.MosaicOffset;
-                Assert.AreEqual(175, mosaicOffset.Width , P);
-                Assert.AreEqual(  0, mosaicOffset.Height, P);
+                AssertEqual(175, mosaicOffset.Width , P);
+                AssertEqual(  0, mosaicOffset.Height, P);
 
                 var padding = model.Padding;
-                Assert.AreEqual(175, padding.Left  , P);
-                Assert.AreEqual(  0, padding.Top   , P);
-                Assert.AreEqual(175, padding.Right , P);
-                Assert.AreEqual(  0, padding.Bottom, P);
+                AssertEqual(175, padding.Left  , P);
+                AssertEqual(  0, padding.Top   , P);
+                AssertEqual(175, padding.Right , P);
+                AssertEqual(  0, padding.Bottom, P);
             }
 
             using (var model = createTestModel()) {
@@ -549,22 +546,22 @@ namespace fmg.core.mosaic {
 
                 // check dependency (evenly expanded)
                 var size = model.Size;
-                Assert.AreEqual(700, size.Width , P);
-                Assert.AreEqual(500, size.Height, P);
+                AssertEqual(700, size.Width , P);
+                AssertEqual(500, size.Height, P);
 
                 var mosaicSize = model.MosaicSize;
-                Assert.AreEqual(350, mosaicSize.Width , P);
-                Assert.AreEqual(500, mosaicSize.Height, P);
+                AssertEqual(350, mosaicSize.Width , P);
+                AssertEqual(500, mosaicSize.Height, P);
 
                 var mosaicOffset = model.MosaicOffset;
-                Assert.AreEqual(-15, mosaicOffset.Width , P);
-                Assert.AreEqual(-40, mosaicOffset.Height, P);
+                AssertEqual(-15, mosaicOffset.Width , P);
+                AssertEqual(-40, mosaicOffset.Height, P);
 
                 var padding = model.Padding;
-                Assert.AreEqual(-15, padding.Left  , P);
-                Assert.AreEqual(-40, padding.Top   , P);
-                Assert.AreEqual(365, padding.Right , P);
-                Assert.AreEqual( 40, padding.Bottom, P);
+                AssertEqual(-15, padding.Left  , P);
+                AssertEqual(-40, padding.Top   , P);
+                AssertEqual(365, padding.Right , P);
+                AssertEqual( 40, padding.Bottom, P);
             }
 
             using (var model = createTestModel()) {
@@ -577,22 +574,22 @@ namespace fmg.core.mosaic {
 
                 // check dependency (evenly expanded)
                 var size = model.Size;
-                Assert.AreEqual(700, size.Width , P);
-                Assert.AreEqual(500, size.Height, P);
+                AssertEqual(700, size.Width , P);
+                AssertEqual(500, size.Height, P);
 
                 var mosaicSize = model.MosaicSize;
-                Assert.AreEqual(157.5, mosaicSize.Width , P);
-                Assert.AreEqual(225  , mosaicSize.Height, P);
+                AssertEqual(157.5, mosaicSize.Width , P);
+                AssertEqual(225  , mosaicSize.Height, P);
 
                 var mosaicOffset = model.MosaicOffset;
-                Assert.AreEqual(-15, mosaicOffset.Width , P);
-                Assert.AreEqual(-40, mosaicOffset.Height, P);
+                AssertEqual(-15, mosaicOffset.Width , P);
+                AssertEqual(-40, mosaicOffset.Height, P);
 
                 var padding = model.Padding;
-                Assert.AreEqual(-15  , padding.Left  , P);
-                Assert.AreEqual(-40  , padding.Top   , P);
-                Assert.AreEqual(557.5, padding.Right , P);
-                Assert.AreEqual(315  , padding.Bottom, P);
+                AssertEqual(-15  , padding.Left  , P);
+                AssertEqual(-40  , padding.Top   , P);
+                AssertEqual(557.5, padding.Right , P);
+                AssertEqual(315  , padding.Bottom, P);
             }
 
             using (var model = createTestModel()) {
@@ -606,22 +603,22 @@ namespace fmg.core.mosaic {
 
                 // check dependency (evenly expanded)
                 var size = model.Size;
-                Assert.AreEqual(700, size.Width , P);
-                Assert.AreEqual(500, size.Height, P);
+                AssertEqual(700, size.Width , P);
+                AssertEqual(500, size.Height, P);
 
                 var mosaicSize = model.MosaicSize;
-                Assert.AreEqual(280, mosaicSize.Width , P);
-                Assert.AreEqual(400, mosaicSize.Height, P);
+                AssertEqual(280, mosaicSize.Width , P);
+                AssertEqual(400, mosaicSize.Height, P);
 
                 var mosaicOffset = model.MosaicOffset;
-                Assert.AreEqual(260, mosaicOffset.Width , P);
-                Assert.AreEqual( 75, mosaicOffset.Height, P);
+                AssertEqual(260, mosaicOffset.Width , P);
+                AssertEqual( 75, mosaicOffset.Height, P);
 
                 var padding = model.Padding;
-                Assert.AreEqual(150, padding.Left  , P);
-                Assert.AreEqual( 75, padding.Top   , P);
-                Assert.AreEqual( 50, padding.Right , P);
-                Assert.AreEqual( 25, padding.Bottom, P);
+                AssertEqual(150, padding.Left  , P);
+                AssertEqual( 75, padding.Top   , P);
+                AssertEqual( 50, padding.Right , P);
+                AssertEqual( 25, padding.Bottom, P);
             }
         }
 
@@ -639,8 +636,7 @@ namespace fmg.core.mosaic {
             m.PenBorder.Width = 2;
         }
 
-        [Test]
-        public async Task MosaicNoChangedTest() {
+        public virtual async Task MosaicNoChangedTest() {
             LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(MosaicNoChangedTest));
 
             using (var model = new MosaicTestModel()) {
@@ -648,11 +644,11 @@ namespace fmg.core.mosaic {
                 await new PropertyChangeExecutor<MosaicGameModel>(model).Run(100, 1000,
                     () => {
                         var size = model.Size; // implicit call setter Size
-                        Assert.IsNotNull(size);
+                        AssertNotNull(size);
                     }, modifiedProperties => {
-                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(model.Size)));
-                        Assert.AreEqual(1, modifiedProperties[            nameof(model.Size)]);
-                        Assert.LessOrEqual(1, modifiedProperties.Count);
+                        AssertTrue (   modifiedProperties.ContainsKey(nameof(model.Size)));
+                        AssertEqual(1, modifiedProperties[            nameof(model.Size)]);
+                        AssertLessOrEqual(1, modifiedProperties.Count);
                     });
 
                 // step 2: check no changes
@@ -663,7 +659,7 @@ namespace fmg.core.mosaic {
                         model.SizeField = model.SizeField;
                         model.Padding = model.Padding;
                     }, modifiedProperties => {
-                        Assert.IsFalse(modifiedProperties.Any());
+                        AssertFalse(modifiedProperties.Any());
                     });
             }
         }

@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using fmg.common.ui;
-using fmg.common.notifier;
 
 namespace fmg.common.notifier {
 

@@ -120,6 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\NotifyPropertyChangedUwpTest.cs" />
+    <Compile Include="MosaicMVC\MosaicControllerUwpTest.cs" />
     <Compile Include="MosaicMVC\MosaicViewUwpTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitTestApp.xaml.cs">
@@ -186,7 +187,7 @@
     <PreBuildEvent>rd /s /q $(ProjectDir)res
 mklink /j $(ProjectDir)res $(SolutionDir)res</PreBuildEvent>
   </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

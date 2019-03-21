@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.ComponentModel;
 using System.Linq;
-using System.Reactive.Linq;
-using NUnit.Framework;
 using fmg.common;
 using fmg.common.geom;
-using fmg.common.ui;
 using fmg.common.notifier;
 using fmg.core.types;
 using DummyImage = System.Object;
@@ -23,13 +18,19 @@ namespace fmg.core.mosaic {
         }
     }
 
-    public class MosaicControllerTest {
+    public abstract class MosaicControllerTest {
 
         /// <summary> double precision </summary>
         private const double P = MosaicModelTest.P;
 
-        [SetUp]
-        public void Setup() {
+        protected abstract void AssertEqual(int    expected, int    actual);
+        protected abstract void AssertEqual(double expected, double actual, double delta);
+        protected abstract void AssertEqual(object expected, object actual);
+        protected abstract void AssertNotNull(object anObject);
+        protected abstract void AssertTrue(bool condition);
+        protected abstract void AssertFalse(bool condition);
+
+        public virtual void Setup() {
             LoggerSimple.Put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             LoggerSimple.Put("> " + nameof(MosaicControllerTest) + "::" + nameof(Setup));
 
@@ -38,20 +39,17 @@ namespace fmg.core.mosaic {
           //Observable.Just("UI factory inited...").Subscribe(LoggerSimple.Put);
         }
 
-        [SetUp]
-        public void Before() {
+        public virtual void Before() {
             LoggerSimple.Put("======================================================");
         }
 
-        [OneTimeTearDown]
-        public void After() {
+        public virtual void After() {
             LoggerSimple.Put("======================================================");
             LoggerSimple.Put("< " + nameof(MosaicControllerTest) + " closed");
             LoggerSimple.Put("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         }
 
-        [Test]
-        public async Task PropertyChangedTest() {
+        public virtual async Task PropertyChangedTest() {
             LoggerSimple.Put("> " + nameof(MosaicControllerTest) + "::" + nameof(PropertyChangedTest));
 
             using (var ctrlr = new MosaicTestController()) {
@@ -59,36 +57,35 @@ namespace fmg.core.mosaic {
                     () => {
                         MosaicModelTest.ChangeModel(ctrlr.Model);
                     }, modifiedProperties => {
-                        Assert.IsTrue  (   modifiedProperties.ContainsKey(nameof(ctrlr.Image)));
-                        Assert.AreEqual(1, modifiedProperties[            nameof(ctrlr.Image)]);
+                        AssertTrue (   modifiedProperties.ContainsKey(nameof(ctrlr.Image)));
+                        AssertEqual(1, modifiedProperties[            nameof(ctrlr.Image)]);
                     });
             }
         }
 
-        [Test]
-        public void ReadinessAtTheStartTest() {
+        public virtual void ReadinessAtTheStartTest() {
             LoggerSimple.Put("> " + nameof(MosaicControllerTest) + "::" + nameof(ReadinessAtTheStartTest));
 
             const int defArea = 500;
             using (var ctrlr = new MosaicTestController()) {
-                Assert.AreEqual(defArea, ctrlr.Model.Area, P);
-                Assert.AreEqual(null, ctrlr.CellDown);
-                Assert.AreEqual(0, ctrlr.CountClick);
-                Assert.AreEqual(0, ctrlr.CountFlag);
-                Assert.AreEqual(10, ctrlr.CountMinesLeft);
-                Assert.AreEqual(0, ctrlr.CountOpen);
-                Assert.AreEqual(0, ctrlr.CountUnknown);
-                Assert.AreEqual(EGameStatus.eGSReady, ctrlr.GameStatus);
-                Assert.NotNull(ctrlr.Image);
-                Assert.NotNull(ctrlr.Matrix);
-                Assert.IsTrue(ctrlr.Matrix.Any());
-                Assert.AreEqual(EMosaic.eMosaicSquare1, ctrlr.MosaicType);
-                Assert.AreEqual(EPlayInfo.ePlayerUnknown, ctrlr.PlayInfo);
-                Assert.NotNull(ctrlr.RepositoryMines);
-                Assert.IsFalse(ctrlr.RepositoryMines.Any());
-                Assert.AreEqual(Math.Sqrt(defArea) * 10, ctrlr.Size.Width, P);
-                Assert.AreEqual(Math.Sqrt(defArea) * 10, ctrlr.Size.Height, P);
-                Assert.AreEqual(new Matrisize(10, 10), ctrlr.SizeField);
+                AssertEqual(defArea, ctrlr.Model.Area, P);
+                AssertEqual(null, ctrlr.CellDown);
+                AssertEqual(0, ctrlr.CountClick);
+                AssertEqual(0, ctrlr.CountFlag);
+                AssertEqual(10, ctrlr.CountMinesLeft);
+                AssertEqual(0, ctrlr.CountOpen);
+                AssertEqual(0, ctrlr.CountUnknown);
+                AssertEqual(EGameStatus.eGSReady, ctrlr.GameStatus);
+                AssertNotNull(ctrlr.Image);
+                AssertNotNull(ctrlr.Matrix);
+                AssertTrue(ctrlr.Matrix.Any());
+                AssertEqual(EMosaic.eMosaicSquare1, ctrlr.MosaicType);
+                AssertEqual(EPlayInfo.ePlayerUnknown, ctrlr.PlayInfo);
+                AssertNotNull(ctrlr.RepositoryMines);
+                AssertFalse(ctrlr.RepositoryMines.Any());
+                AssertEqual(Math.Sqrt(defArea) * 10, ctrlr.Size.Width, P);
+                AssertEqual(Math.Sqrt(defArea) * 10, ctrlr.Size.Height, P);
+                AssertEqual(new Matrisize(10, 10), ctrlr.SizeField);
             }
         }
 

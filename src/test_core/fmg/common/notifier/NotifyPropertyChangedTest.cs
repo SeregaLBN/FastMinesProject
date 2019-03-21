@@ -24,8 +24,8 @@ namespace fmg.common.notifier {
         }
 
 
-        public abstract void AssertEqual(int    expected, int    actual);
-        public abstract void AssertEqual(object expected, object actual);
+        protected abstract void AssertEqual(int    expected, int    actual);
+        protected abstract void AssertEqual(object expected, object actual);
 
         public virtual void Setup() {
             LoggerSimple.Put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
