@@ -20,6 +20,9 @@
         <Compile Include="..\..\src\test_core\fmg\common\notifier\NotifyPropertyChangedTest.cs">
             <Link>test_fmg.common\notifier\NotifyPropertyChangedTest.cs</Link>
         </Compile>
+        <Compile Include="..\..\src\test_core\fmg\common\notifier\NotifyPropertyChangedNUnitTest.cs">
+            <Link>test_fmg.common\notifier\NotifyPropertyChangedNUnitTest.cs</Link>
+        </Compile>
         <Compile Include="..\..\src\test_core\fmg\common\notifier\PropertyChangeExecutor.cs">
             <Link>test_fmg.common\notifier\PropertyChangeExecutor.cs</Link>
         </Compile>
@@ -29,17 +32,32 @@
         <Compile Include="..\..\src\test_core\fmg\core\mosaic\MosaicControllerTest.cs">
             <Link>test_fmg.core\mosaic\MosaicControllerTest.cs</Link>
         </Compile>
+        <Compile Include="..\..\src\test_core\fmg\core\mosaic\MosaicControllerNUnitTest.cs">
+            <Link>test_fmg.core\mosaic\MosaicControllerNUnitTest.cs</Link>
+        </Compile>
         <Compile Include="..\..\src\test_core\fmg\core\mosaic\MosaicHelperTest.cs">
             <Link>test_fmg.core\mosaic\MosaicHelperTest.cs</Link>
+        </Compile>
+        <Compile Include="..\..\src\test_core\fmg\core\mosaic\MosaicHelperNUnitTest.cs">
+            <Link>test_fmg.core\mosaic\MosaicHelperNUnitTest.cs</Link>
         </Compile>
         <Compile Include="..\..\src\test_core\fmg\core\mosaic\MosaicModelTest.cs">
             <Link>test_fmg.core\mosaic\MosaicModelTest.cs</Link>
         </Compile>
+        <Compile Include="..\..\src\test_core\fmg\core\mosaic\MosaicModelNUnitTest.cs">
+            <Link>test_fmg.core\mosaic\MosaicModelNUnitTest.cs</Link>
+        </Compile>
         <Compile Include="..\..\src\test_core\fmg\core\mosaic\MosaicViewTest.cs">
             <Link>test_fmg.core\mosaic\MosaicViewTest.cs</Link>
         </Compile>
+        <Compile Include="..\..\src\test_core\fmg\core\mosaic\MosaicViewNUnitTest.cs">
+            <Link>test_fmg.core\mosaic\MosaicViewNUnitTest.cs</Link>
+        </Compile>
         <Compile Include="..\..\src\test_core\fmg\core\mosaic\MosaicInitDataTest.cs">
             <Link>test_fmg.core\mosaic\MosaicInitDataTest.cs</Link>
+        </Compile>
+        <Compile Include="..\..\src\test_core\fmg\core\mosaic\MosaicInitDataNUnitTest.cs">
+            <Link>test_fmg.core\mosaic\MosaicInitDataNUnitTest.cs</Link>
         </Compile>
         <Compile Include="..\..\src\test_core\fmg\common\SimpleUiThreadLoop.cs ">
             <Link>test_fmg.common\SimpleUiThreadLoop.cs </Link>

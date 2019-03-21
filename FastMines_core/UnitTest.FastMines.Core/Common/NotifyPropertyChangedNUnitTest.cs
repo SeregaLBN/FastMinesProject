@@ -2,11 +2,12 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using NUnit.Framework;
 using fmg.core.mosaic;
 
 namespace fmg.common.notifier {
 
-    public abstract class NotifyPropertyChangedTest {
+    public class NotifyPropertyChangedNUnitTest : NotifyPropertyChangedTest {
 
         class SimpleProperty : INotifyPropertyChanged, IDisposable {
             public event PropertyChangedEventHandler PropertyChanged;
@@ -23,11 +24,8 @@ namespace fmg.common.notifier {
             public void Dispose() { notifier.Dispose();  }
         }
 
-
-        public abstract void AssertEqual(int    expected, int    actual);
-        public abstract void AssertEqual(object expected, object actual);
-
-        public virtual void Setup() {
+        [OneTimeSetUp]
+        public void Setup() {
             LoggerSimple.Put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             LoggerSimple.Put(">" + nameof(NotifyPropertyChangedTest) + "::" + nameof(Setup));
 
@@ -36,17 +34,20 @@ namespace fmg.common.notifier {
             //Observable.Just("UI factory inited...").Subscribe(LoggerSimple.Put);
         }
 
-        public virtual void Before() {
+        [SetUp]
+        public void Before() {
             LoggerSimple.Put("======================================================");
         }
 
-        public virtual void After() {
+        [OneTimeTearDown]
+        public void After() {
             LoggerSimple.Put("======================================================");
             LoggerSimple.Put("< " + nameof(NotifyPropertyChangedTest) + " closed");
             LoggerSimple.Put("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         }
 
-        public virtual void NotifyPropertyChangedSyncTest() {
+        [Test]
+        public void NotifyPropertyChangedSyncTest() {
             LoggerSimple.Put(">" + nameof(NotifyPropertyChangedTest) + "::" + nameof(NotifyPropertyChangedSyncTest));
 
             using (var data = new SimpleProperty(-1, false)) {
@@ -59,11 +60,12 @@ namespace fmg.common.notifier {
                     data.Property = i;
                 data.PropertyChanged -= listener;
 
-                AssertEqual(countFiredEvents, countReceivedEvents);
+                Assert.AreEqual(countFiredEvents, countReceivedEvents);
             }
         }
 
-        public virtual async Task NotifyPropertyChangedAsyncTest() {
+        [Test]
+        public async Task NotifyPropertyChangedAsyncTest() {
             LoggerSimple.Put(">" + nameof(NotifyPropertyChangedTest) + "::" + nameof(NotifyPropertyChangedAsyncTest));
 
             const int initialValue = 1;
@@ -78,16 +80,17 @@ namespace fmg.common.notifier {
                             data.Property = prefix + i;
                     }, modifiedProperties => {
                         int countOfProperties = modifiedProperties.Count;
-                        AssertEqual(1, countOfProperties);
+                        Assert.AreEqual(1, countOfProperties);
                         int countReceivedEvents = modifiedProperties.Values.ToList()[0];
-                        AssertEqual(1, countReceivedEvents);
+                        Assert.AreEqual(1, countReceivedEvents);
                         object lastFiredValue = data.Property;
-                        AssertEqual(prefix + (countFiredEvents - 1), lastFiredValue);
+                        Assert.AreEqual(prefix + (countFiredEvents - 1), lastFiredValue);
                     });
             }
         }
 
-        public virtual async Task CheckForNoEventTest() {
+        [Test]
+        public async Task CheckForNoEventTest() {
             LoggerSimple.Put(">" + nameof(NotifyPropertyChangedTest) + "::" + nameof(CheckForNoEventTest));
 
             const int initialValue = 1;
@@ -102,7 +105,7 @@ namespace fmg.common.notifier {
                         data.Property = initialValue; // restore original value
                         LoggerSimple.Put("    data.Property={0}", data.Property);
                     }, modifiedProperties => {
-                        AssertEqual(0, modifiedProperties.Count);
+                        Assert.AreEqual(0, modifiedProperties.Count);
                     });
             }
         }
