@@ -2,12 +2,12 @@
    "version": "2.0.0",
    "tasks": [
         {
-            "label": "build UnitTest.FastMines.Core",
+            "label": "build UnitTest.FastMines.NUnit",
             "command": "dotnet",
             "type": "process",
             "args": [
                 "test",
-                "${workspaceFolder}/FastMines_core/UnitTest.FastMines.Core/UnitTest.FastMines.Core.csproj"
+                "${workspaceFolder}/FastMines_core/UnitTest.FastMines.NUnit/UnitTest.FastMines.NUnit.csproj"
             ],
             "problemMatcher": "$msCompile"
         },

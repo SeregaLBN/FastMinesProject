@@ -21,10 +21,10 @@
             "name": "C# NUnit: test FastMinest NUnitTests - .NET Core Launch (console)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build UnitTest.FastMines.Core",
-            "program": "${workspaceFolder}/FastMines_core/UnitTest.FastMines.Core/bin/Debug/netcoreapp2.0/UnitTest.FastMines.Core.dll",
+            "preLaunchTask": "build UnitTest.FastMines.NUnit",
+            "program": "${workspaceFolder}/FastMines_core/UnitTest.FastMines.NUnit/bin/Debug/netcoreapp2.0/UnitTest.FastMines.NUnit.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/FastMines_core/UnitTest.FastMines.Core",
+            "cwd": "${workspaceFolder}/FastMines_core/UnitTest.FastMines.NUnit",
             "console": "internalConsole",
             "stopAtEntry": false,
             "internalConsoleOptions": "openOnSessionStart"

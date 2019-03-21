@@ -10,6 +10,7 @@
             ./FastMines_core                    - C#
                 ./FastMines.Core
                 ./UnitTest.FastMines.Core
+                ./UnitTest.FastMines.NUnit
             ./FastMines_uwp                     - C#
                 ./FastMines.Uwp.Main
                 ./FastMines.Uwp.Shared

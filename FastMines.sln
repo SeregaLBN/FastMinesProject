@@ -30,7 +30,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Ava", "Ava", "{E8D26177-F66
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.Ava.Draw", "FastMines_Ava\FastMines.Ava.Draw\FastMines.Ava.Draw.shproj", "{196FA595-153B-4435-8E9B-46C36BAC1A2E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest.FastMines.Core", "FastMines_core\UnitTest.FastMines.Core\UnitTest.FastMines.Core.csproj", "{31716C7E-3D9D-45B7-A14B-4592DFA01B32}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest.FastMines.NUnit", "FastMines_core\UnitTest.FastMines.NUnit\UnitTest.FastMines.NUnit.csproj", "{31716C7E-3D9D-45B7-A14B-4592DFA01B32}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest.FastMines.Uwp", "FastMines_uwp\UnitTest.FastMines.Uwp\UnitTest.FastMines.Uwp.csproj", "{8C21001F-DA6B-4BD8-931C-CE55DD4B538B}"
 EndProject
