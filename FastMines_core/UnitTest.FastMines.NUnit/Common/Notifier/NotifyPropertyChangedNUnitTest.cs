@@ -1,9 +1,15 @@
 ﻿using System.Threading.Tasks;
 using NUnit.Framework;
+using fmg.common.ui;
 
 namespace fmg.common.notifier {
 
     public class NotifyPropertyChangedNUnitTest : NotifyPropertyChangedTest {
+
+        internal static void StaticInitializer() {
+            UiInvoker.Deferred = SimpleUiThreadLoop.AddTask;
+            LoggerSimple.Put("Simple UI factory inited...");
+        }
 
         protected override void AssertEqual(int expected, int actual) {
             Assert.AreEqual(expected, actual);
@@ -15,6 +21,7 @@ namespace fmg.common.notifier {
         [OneTimeSetUp]
         public override void Setup() {
             base.Setup();
+            StaticInitializer();
         }
 
         [SetUp]

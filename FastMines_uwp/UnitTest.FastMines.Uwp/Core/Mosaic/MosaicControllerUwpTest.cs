@@ -1,40 +1,28 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using System.Reactive.Linq;
-using System.Collections.Generic;
-using Windows.UI.Core;
-using Windows.ApplicationModel.Core;
+﻿using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using fmg.common;
-using fmg.common.geom;
-using fmg.core.types;
-using fmg.core.mosaic.cells;
 using fmg.uwp.utils;
-using DummyImage = System.Object;
 
 namespace fmg.core.mosaic {
 
     [TestClass]
     public class MosaicControllerUwpTest: MosaicControllerTest {
 
-        public override void AssertEqual(int expected, int actual) {
+        protected override void AssertEqual(int expected, int actual) {
             Assert.AreEqual(expected, actual);
         }
-        public override void AssertEqual(object expected, object actual) {
+        protected override void AssertEqual(object expected, object actual) {
             Assert.AreEqual(expected, actual);
         }
-        public override void AssertEqual(double expected, double actual, double delta) {
+        protected override void AssertEqual(double expected, double actual, double delta) {
             Assert.AreEqual(expected, actual, delta);
         }
-        public override void AssertNotNull(object anObject) {
+        protected override void AssertNotNull(object anObject) {
             Assert.IsNotNull(anObject);
         }
-        public override void AssertTrue(bool condition) {
+        protected override void AssertTrue(bool condition) {
             Assert.IsTrue(condition);
         }
-        public override void AssertFalse(bool condition) {
+        protected override void AssertFalse(bool condition) {
             Assert.IsFalse(condition);
         }
 

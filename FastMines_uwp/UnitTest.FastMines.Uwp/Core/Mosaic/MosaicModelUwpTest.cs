@@ -1,10 +1,11 @@
 ﻿using System.Threading.Tasks;
-using NUnit.Framework;
-using fmg.common.notifier;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using fmg.uwp.utils;
 
 namespace fmg.core.mosaic {
 
-    public class MosaicModelNUnitTest : MosaicModelTest {
+    [TestClass]
+    public class MosaicModelUwpTest : MosaicModelTest {
 
         protected override void AssertEqual(int expected, int actual) {
             Assert.AreEqual(expected, actual);
@@ -16,7 +17,7 @@ namespace fmg.core.mosaic {
             Assert.AreEqual(expected, actual, delta);
         }
         protected override void AssertNotNull(object anObject) {
-            Assert.NotNull(anObject);
+            Assert.IsNotNull(anObject);
         }
         protected override void AssertTrue(bool condition) {
             Assert.IsTrue(condition);
@@ -25,58 +26,48 @@ namespace fmg.core.mosaic {
             Assert.IsFalse(condition);
         }
         protected override void AssertLessOrEqual(int valToBeLess, int valToBeGreater) {
-            Assert.LessOrEqual(valToBeLess, valToBeGreater);
+            Assert.IsTrue(valToBeLess <= valToBeGreater);
         }
 
 
-        [OneTimeSetUp]
+        [TestInitialize]
         public override void Setup() {
             base.Setup();
-            NotifyPropertyChangedNUnitTest.StaticInitializer();
+            StaticInitializer.Init();
         }
 
-        [SetUp]
-        public override void Before() {
-            base.Before();
-        }
-
-        [OneTimeTearDown]
-        public override void After() {
-            base.After();
-        }
-
-        [Test]
+        [TestMethod]
         public override async Task MosaicGameModelPropertyChangedTest() {
             await base.MosaicGameModelPropertyChangedTest();
         }
 
-        [Test]
-      //[Retry(100)]
+        [TestMethod]
+        //[Retry(100)]
         public override async Task MosaicDrawModelPropertyChangedTest() {
             await base.MosaicDrawModelPropertyChangedTest();
         }
 
-        [Test]
+        [TestMethod]
         public override void MosaicDrawModelAsIsTest() {
             base.MosaicDrawModelAsIsTest();
         }
 
-        [Test]
+        [TestMethod]
         public override void AutoFitTrueCheckAffectsToPaddingTest() {
             base.AutoFitTrueCheckAffectsToPaddingTest();
         }
 
-        [Test]
+        [TestMethod]
         public override void AutoFitTrueCheckAffectsTest() {
             base.AutoFitTrueCheckAffectsTest();
         }
 
-        [Test]
+        [TestMethod]
         public override void AutoFitFalseCheckAffectsTest() {
             base.AutoFitFalseCheckAffectsTest();
         }
 
-        [Test]
+        [TestMethod]
         public override async Task MosaicNoChangedTest() {
             await base.MosaicNoChangedTest();
         }

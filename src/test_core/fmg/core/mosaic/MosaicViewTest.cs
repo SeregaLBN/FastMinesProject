@@ -38,10 +38,6 @@ namespace fmg.core.mosaic {
         public virtual void Setup() {
             LoggerSimple.Put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             LoggerSimple.Put("> " + nameof(MosaicViewTest) + "::" + nameof(Setup));
-
-            MosaicModelTest.StaticInitializer();
-
-          //Observable.Just("UI factory inited...").Subscribe(LoggerSimple.Put);
         }
 
         public virtual void Before() {

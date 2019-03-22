@@ -1,10 +1,11 @@
 ﻿using System.Threading.Tasks;
-using NUnit.Framework;
-using fmg.common.notifier;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using fmg.uwp.utils;
 
 namespace fmg.core.mosaic {
 
-    public class MosaicHelperNUnitTest : MosaicHelperTest {
+    [TestClass]
+    public class MosaicHelperUwpTest : MosaicHelperTest {
 
         protected override void AssertEqual(object expected, object actual) {
             Assert.AreEqual(expected, actual);
@@ -13,59 +14,49 @@ namespace fmg.core.mosaic {
             Assert.IsTrue(condition);
         }
         protected override void AssertLess(double valToBeLess, double valToBeGreater) {
-            Assert.Less(valToBeLess, valToBeGreater);
+            Assert.IsTrue(valToBeLess < valToBeGreater);
         }
         protected override void AssertGreaterOrEqual(double valToBeGreater, double valToBeLess) {
-            Assert.GreaterOrEqual(valToBeGreater, valToBeLess);
+            Assert.IsTrue(valToBeGreater >= valToBeLess);
         }
 
-        [OneTimeSetUp]
+        [TestInitialize]
         public override void Setup() {
             base.Setup();
-            NotifyPropertyChangedNUnitTest.StaticInitializer();
+            StaticInitializer.Init();
         }
 
-        [SetUp]
-        public override void Before() {
-            base.Before();
-        }
-
-        [OneTimeTearDown]
-        public override void After() {
-            base.After();
-        }
-
-        [Test]
+        [TestMethod]
         public override void FindSizeByArea_eMosaicSquare1_Test() {
             base.FindSizeByArea_eMosaicSquare1_Test();
         }
 
-        [Test]
+        [TestMethod]
         public override void FindAreaBySize_eMosaicSquare1_Test1() {
             base.FindAreaBySize_eMosaicSquare1_Test1();
         }
 
-        [Test]
+        [TestMethod]
         public override void FindAreaBySize_eMosaicSquare1_Test2() {
             base.FindAreaBySize_eMosaicSquare1_Test2();
         }
 
-        [Test]
+        [TestMethod]
         public override void FindAreaBySize_eMosaicSquare1_Test3() {
             base.FindAreaBySize_eMosaicSquare1_Test3();
         }
 
-        [Test]
+        [TestMethod]
         public override void FindAreaBySize_Random_Test() {
             base.FindAreaBySize_Random_Test();
         }
 
-        [Test]
+        [TestMethod]
         public override async Task FindAreaBySize_eMosaicTrapezoid3_Test() {
             await base.FindAreaBySize_eMosaicTrapezoid3_Test();
         }
 
-        [Test]
+        [TestMethod]
         public override void FindAreaBySize_eMosaicTriangle1_Test() {
             base.FindAreaBySize_eMosaicTriangle1_Test();
         }

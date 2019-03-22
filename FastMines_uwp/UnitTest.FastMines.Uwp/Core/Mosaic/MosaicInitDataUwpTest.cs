@@ -1,10 +1,11 @@
 ﻿using System.Threading.Tasks;
-using NUnit.Framework;
-using fmg.common.notifier;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using fmg.uwp.utils;
 
 namespace fmg.core.mosaic {
 
-    public class MosaicInitDataNUnitTest : MosaicInitDataTest {
+    [TestClass]
+    public class MosaicInitDataUwpTest : MosaicInitDataTest {
 
         protected override void AssertEqual(int expected, int actual) {
             Assert.AreEqual(expected, actual);
@@ -19,33 +20,23 @@ namespace fmg.core.mosaic {
             Assert.Fail();
         }
 
-        [OneTimeSetUp]
+        [TestInitialize]
         public override void Setup() {
             base.Setup();
-            NotifyPropertyChangedNUnitTest.StaticInitializer();
+            StaticInitializer.Init();
         }
 
-        [SetUp]
-        public override void Before() {
-            base.Before();
-        }
-
-        [OneTimeTearDown]
-        public override void After() {
-            base.After();
-        }
-
-        [Test]
+        [TestMethod]
         public override void CheckTheImpossibilitySetCustomSkillLevelTest() {
             base.CheckTheImpossibilitySetCustomSkillLevelTest();
         }
 
-        [Test]
+        [TestMethod]
         public override async Task CheckIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest() {
             await base.CheckIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest();
         }
 
-        [Test]
+        [TestMethod]
         public override async Task CheckNoRepeatNotificationsTest() {
             await base.CheckNoRepeatNotificationsTest();
         }

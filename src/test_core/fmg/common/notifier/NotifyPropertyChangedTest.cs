@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using fmg.core.mosaic;
 
 namespace fmg.common.notifier {
 
@@ -30,10 +29,6 @@ namespace fmg.common.notifier {
         public virtual void Setup() {
             LoggerSimple.Put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             LoggerSimple.Put(">" + nameof(NotifyPropertyChangedTest) + "::" + nameof(Setup));
-
-            MosaicModelTest.StaticInitializer();
-
-            //Observable.Just("UI factory inited...").Subscribe(LoggerSimple.Put);
         }
 
         public virtual void Before() {

@@ -34,6 +34,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest.FastMines.NUnit", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest.FastMines.Uwp", "FastMines_uwp\UnitTest.FastMines.Uwp\UnitTest.FastMines.Uwp.csproj", "{8C21001F-DA6B-4BD8-931C-CE55DD4B538B}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UnitTest.FastMines.Core", "FastMines_core\UnitTest.FastMines.Core\UnitTest.FastMines.Core.shproj", "{E7F1F5C2-78F2-4777-AE7C-715655FBC06A}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		FastMines_Ava\FastMines.Ava.Draw\FastMines.Ava.Draw.projitems*{196fa595-153b-4435-8e9b-46c36bac1a2e}*SharedItemsImports = 13
@@ -44,6 +46,7 @@ Global
 		FastMines_uwp\FastMines.Uwp.Draw.XamlElem\FastMines.Uwp.Draw.XamlElem.projitems*{758fc9e6-177d-4231-8aff-2bda5b7dab54}*SharedItemsImports = 4
 		FastMines_uwp\FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{758fc9e6-177d-4231-8aff-2bda5b7dab54}*SharedItemsImports = 4
 		FastMines_core\FastMines.Core\FastMines.Core.projitems*{8c21001f-da6b-4bd8-931c-ce55dd4b538b}*SharedItemsImports = 4
+		FastMines_core\UnitTest.FastMines.Core\UnitTest.FastMines.Core.projitems*{8c21001f-da6b-4bd8-931c-ce55dd4b538b}*SharedItemsImports = 4
 		FastMines_uwp\FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{8c21001f-da6b-4bd8-931c-ce55dd4b538b}*SharedItemsImports = 4
 		FastMines_uwp\FastMines.Uwp.Draw.XamlElem\FastMines.Uwp.Draw.XamlElem.projitems*{9db7237d-bfae-4767-8202-8e54977978a0}*SharedItemsImports = 13
 		FastMines_core\FastMines.Core\FastMines.Core.projitems*{9dfd73db-d187-4471-98ba-713996c8a257}*SharedItemsImports = 13
@@ -53,6 +56,7 @@ Global
 		FastMines_uwp\FastMines.Uwp.Draw.XamlElem\FastMines.Uwp.Draw.XamlElem.projitems*{babb709f-6e07-49ee-85f4-9dfa1e5126ef}*SharedItemsImports = 4
 		FastMines_uwp\FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{babb709f-6e07-49ee-85f4-9dfa1e5126ef}*SharedItemsImports = 4
 		FastMines_uwp\FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.projitems*{c8694177-a4fb-44dd-afaf-db029e94f037}*SharedItemsImports = 13
+		FastMines_core\UnitTest.FastMines.Core\UnitTest.FastMines.Core.projitems*{e7f1f5c2-78f2-4777-ae7c-715655fbc06a}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -291,6 +295,7 @@ Global
 		{196FA595-153B-4435-8E9B-46C36BAC1A2E} = {E8D26177-F66D-4F97-9AB4-A02C30D77CFD}
 		{31716C7E-3D9D-45B7-A14B-4592DFA01B32} = {6C78E2F6-4321-4C89-9312-AA367B07205C}
 		{8C21001F-DA6B-4BD8-931C-CE55DD4B538B} = {6C78E2F6-4321-4C89-9312-AA367B07205C}
+		{E7F1F5C2-78F2-4777-AE7C-715655FBC06A} = {6C78E2F6-4321-4C89-9312-AA367B07205C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {03A3D190-56B2-48D0-8228-09E6621B36AC}

@@ -1,10 +1,15 @@
-﻿using System.Threading.Tasks;
-using NUnit.Framework;
-using fmg.common.notifier;
+﻿using System;
+using System.Threading.Tasks;
+using System.Reactive.Linq;
+using Windows.UI.Core;
+using Windows.ApplicationModel.Core;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using fmg.uwp.utils;
 
 namespace fmg.core.mosaic {
 
-    public class MosaicViewNUnitTest : MosaicViewTest {
+    [TestClass]
+    public class MosaicViewUwpTest  : MosaicViewTest {
 
         protected override void AssertEqual(int expected, int actual) {
             Assert.AreEqual(expected, actual);
@@ -16,7 +21,7 @@ namespace fmg.core.mosaic {
             Assert.AreEqual(expected, actual, delta);
         }
         protected override void AssertNotNull(object anObject) {
-            Assert.NotNull(anObject);
+            Assert.IsNotNull(anObject);
         }
         protected override void AssertTrue(bool condition) {
             Assert.IsTrue(condition);
@@ -25,40 +30,45 @@ namespace fmg.core.mosaic {
             Assert.AreNotEqual(expected, actual);
         }
 
-        [SetUp]
+        [TestInitialize]
         public override void Setup() {
-            base.Setup();
-            NotifyPropertyChangedNUnitTest.StaticInitializer();
+            StaticInitializer.Init();
         }
 
-        [SetUp]
-        public override void Before() {
-            base.Before();
-        }
-
-        [OneTimeTearDown]
-        public override void After() {
-            base.After();
-        }
-
-        [Test]
+        [TestMethod]
         public override async Task PropertyChangedTest() {
             await base.PropertyChangedTest();
         }
 
-        [Test]
+        [TestMethod]
         public override void ReadinessAtTheStartTest() {
             base.ReadinessAtTheStartTest();
         }
 
-        [Test]
+        [TestMethod]
         public override async Task MultipleChangeModelOneDrawViewTest() {
             await base.MultipleChangeModelOneDrawViewTest();
         }
 
-        [Test]
+        [TestMethod]
         public override async Task OneNotificationOfImageChangedTest() {
             await base.OneNotificationOfImageChangedTest();
+        }
+
+
+        [TestMethod]
+        public async Task IdiotoTest() {
+            var noTimeout = false;
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                CoreDispatcherPriority.High,
+                async () => {
+                    var signal = new fmg.common.notifier.Signal();
+            //Assert.AreEqual(2, 3);
+                    signal.Set();
+                    noTimeout = await signal.Wait(TimeSpan.FromSeconds(5));
+                    signal.Dispose();
+                });
+            Assert.IsTrue(noTimeout);
         }
 
     }

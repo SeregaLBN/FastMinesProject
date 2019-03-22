@@ -3,8 +3,6 @@ using System.Threading.Tasks;
 using fmg.common;
 using fmg.common.notifier;
 using fmg.core.types;
-//using DummyImage = System.Object;
-using MosaicTestModel = fmg.core.mosaic.MosaicDrawModel<object>;
 
 namespace fmg.core.mosaic {
 
@@ -18,10 +16,6 @@ namespace fmg.core.mosaic {
         public virtual void Setup() {
             LoggerSimple.Put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             LoggerSimple.Put("> " + nameof(MosaicInitDataTest) + "::" + nameof(Setup));
-
-            MosaicModelTest.StaticInitializer();
-
-            //Observable.Just("UI factory inited...").Subscribe(LoggerSimple.Put);
         }
 
         public virtual void Before() {

@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using fmg.common;
 using fmg.common.geom;
-using fmg.common.ui;
 using fmg.core.types;
 using fmg.core.img;
 using fmg.common.notifier;
@@ -26,17 +25,9 @@ namespace fmg.core.mosaic {
         protected abstract void AssertFalse(bool condition);
         protected abstract void AssertLessOrEqual(int valToBeLess, int valToBeGreater);
 
-        internal static void StaticInitializer() {
-            UiInvoker.Deferred = SimpleUiThreadLoop.AddTask;
-        }
-
         public virtual void Setup() {
             LoggerSimple.Put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(Setup));
-
-            StaticInitializer();
-
-            //Observable.Just("UI factory inited...").Subscribe(LoggerSimple.Put);
         }
 
         public virtual void Before() {

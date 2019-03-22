@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using NUnit.Framework;
+using fmg.common.notifier;
 
 namespace fmg.core.mosaic {
 
@@ -27,6 +28,7 @@ namespace fmg.core.mosaic {
         [OneTimeSetUp]
         public override void Setup() {
             base.Setup();
+            NotifyPropertyChangedNUnitTest.StaticInitializer();
         }
 
         [SetUp]

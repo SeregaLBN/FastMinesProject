@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>e7f1f5c2-78f2-4777-ae7c-715655fbc06a</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>UnitTest.FastMines.Core</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+        <Compile Include="..\..\src\test_core\fmg\common\notifier\NotifyPropertyChangedTest.cs">
+            <Link>test_fmg.common\notifier\NotifyPropertyChangedTest.cs</Link>
+        </Compile>
+        <Compile Include="..\..\src\test_core\fmg\common\notifier\PropertyChangeExecutor.cs">
+            <Link>test_fmg.common\notifier\PropertyChangeExecutor.cs</Link>
+        </Compile>
+        <Compile Include="..\..\src\test_core\fmg\common\notifier\Signal.cs">
+            <Link>test_fmg.common\notifier\Signal.cs</Link>
+        </Compile>
+        <Compile Include="..\..\src\test_core\fmg\core\mosaic\MosaicControllerTest.cs">
+            <Link>test_fmg.core\mosaic\MosaicControllerTest.cs</Link>
+        </Compile>
+        <Compile Include="..\..\src\test_core\fmg\core\mosaic\MosaicHelperTest.cs">
+            <Link>test_fmg.core\mosaic\MosaicHelperTest.cs</Link>
+        </Compile>
+        <Compile Include="..\..\src\test_core\fmg\core\mosaic\MosaicModelTest.cs">
+            <Link>test_fmg.core\mosaic\MosaicModelTest.cs</Link>
+        </Compile>
+        <Compile Include="..\..\src\test_core\fmg\core\mosaic\MosaicViewTest.cs">
+            <Link>test_fmg.core\mosaic\MosaicViewTest.cs</Link>
+        </Compile>
+        <Compile Include="..\..\src\test_core\fmg\core\mosaic\MosaicInitDataTest.cs">
+            <Link>test_fmg.core\mosaic\MosaicInitDataTest.cs</Link>
+        </Compile>
+  </ItemGroup>
+</Project>
