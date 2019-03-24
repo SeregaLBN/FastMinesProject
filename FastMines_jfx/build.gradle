@@ -2,14 +2,14 @@ apply plugin: 'java'
 apply plugin: 'application'
 
 //#if use Java 11
-    // TODO see https://stackoverflow.com/questions/52569724/javafx-11-create-a-jar-file-with-gradle
-    //          https://stackoverflow.com/questions/52144931/how-to-add-javafx-runtime-to-eclipse-in-java-11
-    // to use only gradle config (without manually set javafx sdk)
-    sourceCompatibility = '1.11'
-    targetCompatibility = '1.11'
+//    // TODO see https://stackoverflow.com/questions/52569724/javafx-11-create-a-jar-file-with-gradle
+//    //          https://stackoverflow.com/questions/52144931/how-to-add-javafx-runtime-to-eclipse-in-java-11
+//    // to use only gradle config (without manually set javafx sdk)
+//    sourceCompatibility = '1.11'
+//    targetCompatibility = '1.11'
 //#if else use Java 8
-//  sourceCompatibility = JavaVersion.VERSION_1_8
-//  targetCompatibility = JavaVersion.VERSION_1_8
+  sourceCompatibility = JavaVersion.VERSION_1_8
+  targetCompatibility = JavaVersion.VERSION_1_8
 //#endif
 
 compileJava.options.encoding = 'UTF-8'
@@ -30,17 +30,17 @@ mainClassName = "fmg.jfx.Demo"
 //version = '0.0.1'
 
 //#if use Java 11
-repositories {
-    flatDir {
-        // 1. download https://gluonhq.com/products/javafx/
-        // 2. define system environment variable: example JAVAFX_HOME = youPath/Java/javafx-sdk-11.0.2
-        dirs System.getenv('JAVAFX_HOME') + '/lib'
-        // to run fmg.jfx.app.DemoApp from Eclipse:
-        //   1. open 'Run Configurations'
-        //   2. in tab 'Arguments' in block 'VM arguments' add next
-        //      --module-path "${env_var:JAVAFX_HOME}\lib" --add-modules=javafx.controls
-    }
-}
+//repositories {
+//    flatDir {
+//        // 1. download https://gluonhq.com/products/javafx/
+//        // 2. define system environment variable: example JAVAFX_HOME = youPath/Java/javafx-sdk-11.0.2
+//        dirs System.getenv('JAVAFX_HOME') + '/lib'
+//        // to run fmg.jfx.app.DemoApp from Eclipse:
+//        //   1. open 'Run Configurations'
+//        //   2. in tab 'Arguments' in block 'VM arguments' add next
+//        //      --module-path "${env_var:JAVAFX_HOME}\lib" --add-modules=javafx.controls
+//    }
+//}
 //#endif
 
 sourceSets {
@@ -75,10 +75,10 @@ dependencies {
     implementation project(':FastMines_core')
 
 //#if use Java 11
-    compile name: 'javafx.base'
-    compile name: 'javafx.controls'
-    compile name: 'javafx.graphics'
-    testCompile name : 'javafx.swing' //(use in unit test)
+//    compile name: 'javafx.base'
+//    compile name: 'javafx.controls'
+//    compile name: 'javafx.graphics'
+//    testCompile name : 'javafx.swing' //(use in unit test)
 //#endif
 
     //implementation 'org.openjfx:javafx-base:11.0.2:${platform}' // for java 11
