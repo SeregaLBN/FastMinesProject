@@ -14,21 +14,22 @@ using fmg.uwp.utils.win2d;
 using Rect = Windows.Foundation.Rect;
 using FastMines.Uwp.BackgroundTasks;
 using MosaicsCanvasBmp = fmg.uwp.img.win2d.MosaicImg.CanvasBmp;
+using fmg.uwp.utils;
 
 namespace fmg {
 
    public static class TileHelper {
 
-        private static readonly string TaskName = typeof(FastMinesTileUpdater).Name;
-        private static readonly string TaskEntryPoint = typeof(FastMinesTileUpdater).FullName;
+        private static readonly string TaskName = typeof(TileUpdater).Name;
+        private static readonly string TaskEntryPoint = typeof(TileUpdater).FullName;
 
         private static ICanvasResourceCreator Rc => CanvasDevice.GetSharedDevice();
 
         public static async Task RegisterBackgroundTask() {
             try {
                 var backgroundAccessStatus = await BackgroundExecutionManager.RequestAccessAsync();
-                if (backgroundAccessStatus == BackgroundAccessStatus.AllowedMayUseActiveRealTimeConnectivity ||
-                    backgroundAccessStatus == BackgroundAccessStatus.AllowedWithAlwaysOnRealTimeConnectivity)
+                if (backgroundAccessStatus == BackgroundAccessStatus.AlwaysAllowed ||
+                    backgroundAccessStatus == BackgroundAccessStatus.AllowedSubjectToSystemPolicy)
                 {
                     await RemakeXmlAnew();
 
@@ -52,7 +53,7 @@ namespace fmg {
             var xml = await GetXmlString(part);
             if (string.IsNullOrEmpty(xml))
                 return;
-            var file = await FastMinesTileUpdater.Location.CreateFileAsync(FastMinesTileUpdater.GetXmlFileName(part), CreationCollisionOption.ReplaceExisting);
+            var file = await TileUpdater.Location.CreateFileAsync(TileUpdater.GetXmlFileName(part), CreationCollisionOption.ReplaceExisting);
             await FileIO.WriteTextAsync(file, xml, UnicodeEncoding.Utf8);
         }
 
@@ -98,7 +99,7 @@ namespace fmg {
         private static async Task<string> GetImagePath(int part, int primary, int w, int h) {
             StorageFile storageFile;
             if (primary != 0) {
-                var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
+                float dpi = await AsyncRunner.ExecuteFromUiLaterAsync(() => DisplayInformation.GetForCurrentView().LogicalDpi, Windows.UI.Core.CoreDispatcherPriority.Low);
                 var bmp = new CanvasRenderTarget(Rc, w, h, dpi);
                 using (var ds = bmp.CreateDrawingSession()) {
                     {
@@ -106,6 +107,7 @@ namespace fmg {
                             (primary == 2)
                                 ? Resources.GetImgLogoPng("TileSq150", 100, Rc)
                                 : Resources.GetImgLogoPng("TileSq150", 150, Rc));
+                        System.Diagnostics.Debug.Assert(bmpLogo != null);
                         var rcLogoRegion = new Rect {
                             X = 0,
                             Y = 0,
@@ -135,9 +137,9 @@ namespace fmg {
                         ds.DrawImage(bmpLogo, rcDestLogo, new Rect(0, 0, bmpLogo.Size.Width, bmpLogo.Size.Height));
                     }
 
-                    var img1 = CreateRandomMosaicImage(w / 2, h / 2);
-                    var img2 = CreateRandomMosaicImage(w / 2, h / 2);
-                    var img3 = CreateRandomMosaicImage(w / 2, h / 2);
+                    var img1 = await AsyncRunner.ExecuteFromUiLaterAsync(() => CreateRandomMosaicImage(w / 2, h / 2), Windows.UI.Core.CoreDispatcherPriority.Low);
+                    var img2 = await AsyncRunner.ExecuteFromUiLaterAsync(() => CreateRandomMosaicImage(w / 2, h / 2), Windows.UI.Core.CoreDispatcherPriority.Low);
+                    var img3 = await AsyncRunner.ExecuteFromUiLaterAsync(() => CreateRandomMosaicImage(w / 2, h / 2), Windows.UI.Core.CoreDispatcherPriority.Low);
                     var bmp1 = img1.Item2;
                     var bmp2 = img2.Item2;
                     var bmp3 = img3.Item2;
@@ -151,7 +153,7 @@ namespace fmg {
                     storageFile = await SaveToFileMosaic(part, /*w + "x" + h, */bmp, "Combi" + img1.Item1.GetIndex() + img2.Item1.GetIndex() + img3.Item1.GetIndex());
                 }
             } else {
-                var img = CreateRandomMosaicImage(w, h);
+                var img = await AsyncRunner.ExecuteFromUiLaterAsync(() => CreateRandomMosaicImage(w, h), Windows.UI.Core.CoreDispatcherPriority.Low);
                 storageFile = await SaveToFileMosaic(part, /*w + "x" + h, */img.Item2, img.Item1);
             }
             return "ms-appdata:///local/" + storageFile.DisplayName;
@@ -183,22 +185,22 @@ namespace fmg {
             return new Tuple<EMosaic, CanvasBitmap>(mosaicType, bmp);
         }
 
-        private static async Task<StorageFile> SaveToFileLogo(int part, CanvasBitmap CanvasBitmap) {
-            return await SaveToFile(part, "logo", CanvasBitmap);
+        private static async Task<StorageFile> SaveToFileLogo(int part, CanvasBitmap canvasBitmap) {
+            return await SaveToFile(part, "logo", canvasBitmap);
         }
-        private static async Task<StorageFile> SaveToFileMosaic(int part, /*string filePrefix, */CanvasBitmap CanvasBitmap, EMosaic mosaicType) {
-            return await SaveToFileMosaic(part, CanvasBitmap, mosaicType.GetMosaicClassName());
+        private static async Task<StorageFile> SaveToFileMosaic(int part, /*string filePrefix, */CanvasBitmap canvasBitmap, EMosaic mosaicType) {
+            return await SaveToFileMosaic(part, canvasBitmap, mosaicType.GetMosaicClassName());
         }
-        private static async Task<StorageFile> SaveToFileMosaic(int part, /*string filePrefix, */CanvasBitmap CanvasBitmap, string fileDescript) {
-            return await SaveToFile(part, /*filePrefix + "_" + */fileDescript, CanvasBitmap);
+        private static async Task<StorageFile> SaveToFileMosaic(int part, /*string filePrefix, */CanvasBitmap canvasBitmap, string fileDescript) {
+            return await SaveToFile(part, /*filePrefix + "_" + */fileDescript, canvasBitmap);
         }
-        private static async Task<StorageFile> SaveToFile(int part, string filePrefix, CanvasBitmap CanvasBitmap) {
-            return await CanvasBitmap.SaveToFile(
-                string.Format("{0}_{1}_{2}x{3}.png",
-                    part,
-                    filePrefix,
-                    CanvasBitmap.Size.Width, CanvasBitmap.Size.Height),
-                    FastMinesTileUpdater.Location);
+        private static async Task<StorageFile> SaveToFile(int part, string filePrefix, CanvasBitmap canvasBitmap) {
+            return await canvasBitmap.SaveToFile(
+                    string.Format("{0}_{1}_{2}x{3}.png",
+                        part,
+                        filePrefix,
+                        canvasBitmap.Size.Width, canvasBitmap.Size.Height),
+                        TileUpdater.Location);
         }
 
         public static void OnBackgroundTaskCompleted(BackgroundTaskRegistration sender, BackgroundTaskCompletedEventArgs args) {
@@ -208,17 +210,17 @@ namespace fmg {
         private async static Task RemakeXmlAnew() {
             // claen obsolete png files
             for (var i=0; i<5; i++) {
-                var xml = await FastMinesTileUpdater.GetXmlString(i);
+                var xml = await TileUpdater.GetXmlString(i);
                 if (string.IsNullOrEmpty(xml))
                     continue;
                 // ms-appdata:///local/*.png
                 var rgx = new Regex(@"ms-appdata:///local/(?<filePng>.+\.png)");
                 foreach (var match in rgx.Matches(xml).Cast<Match>()) {
                     var filePng = match.Groups["filePng"].Value;
-                    if (null == await FastMinesTileUpdater.Location.TryGetItemAsync(filePng))
+                    if (null == await TileUpdater.Location.TryGetItemAsync(filePng))
                         continue; // file doesn't exist
                     try {
-                        var file = await FastMinesTileUpdater.Location.GetFileAsync(filePng);
+                        var file = await TileUpdater.Location.GetFileAsync(filePng);
                         await file.DeleteAsync();
                     } catch (Exception ex) {
                         System.Diagnostics.Debug.WriteLine(string.Format("TileHelper::RemakeXmlAnew: {0}: {1}", ex.GetType().Name, ex.Message));

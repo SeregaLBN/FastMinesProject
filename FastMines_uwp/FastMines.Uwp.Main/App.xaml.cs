@@ -111,7 +111,7 @@ namespace fmg {
             // Ensure the current window is active
             Window.Current.Activate();
 
-            //AsyncRunner.InvokeLater(x => TileHelper.RegisterBackgroundTask(), Windows.System.Threading.WorkItemPriority.Low);
+           AsyncRunner.InvokeLater(x => TileHelper.RegisterBackgroundTask(), Windows.System.Threading.WorkItemPriority.Low);
         }
 
         // handle hardware back button press

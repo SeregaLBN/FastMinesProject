@@ -127,23 +127,23 @@
     <Content Include="..\..\res\Font\NirmalaUI_30.png">
       <Link>res\Font\NirmalaUI_30.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\UWP\SplashScreen\Logo.scale-200.png">
-      <Link>res\Logo\UWP\SplashScreen\Logo.scale-200.png</Link>
+    <Content Include="..\..\res\Logo\SplashScreen\Logo.scale-200.png">
+      <Link>res\Logo\SplashScreen\Logo.scale-200.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\UWP\StoreTile\Logo.scale-100.png">
-      <Link>res\Logo\UWP\StoreTile\Logo.scale-100.png</Link>
+    <Content Include="..\..\res\Logo\StoreTile\Logo.scale-100.png">
+      <Link>res\Logo\StoreTile\Logo.scale-100.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\UWP\TileSq150\Logo.scale-200.png">
-      <Link>res\Logo\UWP\TileSq150\Logo.scale-200.png</Link>
+    <Content Include="..\..\res\Logo\TileSq150\Logo.scale-200.png">
+      <Link>res\Logo\TileSq150\Logo.scale-200.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\UWP\TileSq44\Logo.scale-200.png">
-      <Link>res\Logo\UWP\TileSq44\Logo.scale-200.png</Link>
+    <Content Include="..\..\res\Logo\TileSq44\Logo.scale-200.png">
+      <Link>res\Logo\TileSq44\Logo.scale-200.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\UWP\TileSq44\Logo.targetsize-24_altform-unplated.png">
-      <Link>res\Logo\UWP\TileSq44\Logo.targetsize-24_altform-unplated.png</Link>
+    <Content Include="..\..\res\Logo\TileSq44\Logo.targetsize-24_altform-unplated.png">
+      <Link>res\Logo\TileSq44\Logo.targetsize-24_altform-unplated.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\UWP\WideTile\Logo.scale-200.png">
-      <Link>res\Logo\UWP\WideTile\Logo.scale-200.png</Link>
+    <Content Include="..\..\res\Logo\WideTile\Logo.scale-200.png">
+      <Link>res\Logo\WideTile\Logo.scale-200.png</Link>
     </Content>
   </ItemGroup>
   <ItemGroup>

@@ -5,7 +5,7 @@
   <Properties>
     <DisplayName>FastMines</DisplayName>
     <PublisherDisplayName>SeregaLBN</PublisherDisplayName>
-    <Logo>res\Logo\UWP\StoreTile\Logo.png</Logo>
+    <Logo>res\Logo\StoreTile\Logo.png</Logo>
   </Properties>
   <Dependencies>
     <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
@@ -16,22 +16,22 @@
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="FastMines.App">
       <Extensions>
-        <Extension Category="windows.backgroundTasks" EntryPoint="BackgroundTasks.FastMinesTileUpdater">
+        <Extension Category="windows.backgroundTasks" EntryPoint="FastMines.Uwp.BackgroundTasks.TileUpdater">
           <BackgroundTasks>
             <Task Type="timer" />
           </BackgroundTasks>
         </Extension>
       </Extensions>
-      <uap:VisualElements DisplayName="FastMines" Description="FastMines" BackgroundColor="#FF8C00" Square150x150Logo="res\Logo\UWP\TileSq150\Logo.png" Square44x44Logo="res\Logo\UWP\TileSq44\Logo.png">
-        <uap:DefaultTile Wide310x150Logo="res\Logo\UWP\WideTile\Logo.png" Square71x71Logo="res\Logo\UWP\TileSq71\Logo.png" Square310x310Logo="res\Logo\UWP\TileSq310\Logo.png" ShortName="FastMines">
+      <uap:VisualElements DisplayName="FastMines" Description="FastMines" BackgroundColor="#FF8C00" Square150x150Logo="res\Logo\TileSq150\Logo.png" Square44x44Logo="res\Logo\TileSq44\Logo.png">
+        <uap:DefaultTile Wide310x150Logo="res\Logo\WideTile\Logo.png" Square71x71Logo="res\Logo\TileSq71\Logo.png" Square310x310Logo="res\Logo\TileSq310\Logo.png" ShortName="FastMines">
           <uap:ShowNameOnTiles>
             <uap:ShowOn Tile="square150x150Logo" />
             <uap:ShowOn Tile="wide310x150Logo" />
             <uap:ShowOn Tile="square310x310Logo" />
           </uap:ShowNameOnTiles>
         </uap:DefaultTile>
-        <uap:LockScreen Notification="badgeAndTileText" BadgeLogo="res\Logo\UWP\Badge\Logo.png" />
-        <uap:SplashScreen Image="res\Logo\UWP\SplashScreen\Logo.png" BackgroundColor="#FF8C00" />
+        <uap:LockScreen Notification="badgeAndTileText" BadgeLogo="res\Logo\Badge\Logo.png" />
+        <uap:SplashScreen Image="res\Logo\SplashScreen\Logo.png" BackgroundColor="#FF8C00" />
         <uap:InitialRotationPreference>
           <uap:Rotation Preference="portrait" />
           <uap:Rotation Preference="landscape" />

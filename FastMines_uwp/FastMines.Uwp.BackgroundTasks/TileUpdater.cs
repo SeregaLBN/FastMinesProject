@@ -1,6 +1,4 @@
 using System;
-using System.Linq;
-using System.IO;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Storage;
@@ -11,7 +9,7 @@ using Windows.ApplicationModel.Background;
 namespace FastMines.Uwp.BackgroundTasks {
 
     /// <summary> http://msdn.microsoft.com/en-us/library/windows/apps/xaml/jj991805.aspx </summary>
-    public sealed class FastMinesTileUpdater : IBackgroundTask {
+    public sealed class TileUpdater : IBackgroundTask {
 
         public async void Run(IBackgroundTaskInstance taskInstance) {
             // Get a deferral, to prevent the task from closing prematurely while asynchronous code is still running.
@@ -49,7 +47,7 @@ namespace FastMines.Uwp.BackgroundTasks {
         private static async Task<string> GetXmlStringImpl(int part) {
             try {
                 var xmlFileName = GetXmlFileName(part);
-                if (null == await FastMinesTileUpdater.Location.TryGetItemAsync(xmlFileName))
+                if (null == await TileUpdater.Location.TryGetItemAsync(xmlFileName))
                     return null; // file doesn't exist
                 var file = await Location.GetFileAsync(xmlFileName);
                 return await FileIO.ReadTextAsync(file);

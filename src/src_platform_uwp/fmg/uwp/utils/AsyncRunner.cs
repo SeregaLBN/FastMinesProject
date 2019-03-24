@@ -12,6 +12,13 @@ namespace fmg.uwp.utils {
             return Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(priority, action);
         }
 
+        /// <summary> send for execution on the UI thread with result </summary>
+        public static async Task<T> ExecuteFromUiLaterAsync<T>(this Func<T> action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal) {
+            T t = default;
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(priority, () => t = action());
+            return t;
+        }
+
         /// <summary> send for execution on the UI thread, without waiting for the result </summary>
         public static void InvokeFromUiLater(this DispatchedHandler action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal) {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
