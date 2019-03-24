@@ -59,7 +59,7 @@ namespace Test.FastMines.Uwp.Images {
                 //titleBar.ButtonForegroundColor = Colors.White;
                 //titleBar.BackgroundColor = Colors.Blue;
                 //titleBar.ForegroundColor = Colors.White;
-                applyColor = clr => titleBar.ButtonBackgroundColor = clr;
+                applyColor = clr => titleBar.BackgroundColor = titleBar.ButtonBackgroundColor = clr;
             }
         }
         //Mobile customization
