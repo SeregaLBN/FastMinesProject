@@ -5,7 +5,7 @@ using fmg.uwp.utils;
 namespace fmg.core.mosaic {
 
     [TestClass]
-    public class MosaicControllerUwpTest: MosaicControllerTest {
+    public class MosaicControllerUwpTest : MosaicControllerTest {
 
         protected override void AssertEqual(int expected, int actual) {
             Assert.AreEqual(expected, actual);

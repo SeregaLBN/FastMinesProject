@@ -9,7 +9,7 @@ using fmg.uwp.utils;
 namespace fmg.core.mosaic {
 
     [TestClass]
-    public class MosaicViewUwpTest  : MosaicViewTest {
+    public class MosaicViewUwpTest : MosaicViewTest {
 
         protected override void AssertEqual(int expected, int actual) {
             Assert.AreEqual(expected, actual);
@@ -32,6 +32,7 @@ namespace fmg.core.mosaic {
 
         [TestInitialize]
         public override void Setup() {
+            Setup().Setup();
             StaticInitializer.Init();
         }
 

@@ -17,7 +17,7 @@ namespace fmg.common.notifier {
             private object property;
             public object Property {
                 get => property;
-                set { notifier.SetProperty(ref property, value); }
+                set => notifier.SetProperty(ref property, value);
             }
             public void Dispose() { notifier.Dispose();  }
         }
@@ -50,7 +50,7 @@ namespace fmg.common.notifier {
 
                 void listener(object sender, PropertyChangedEventArgs ev) { ++countReceivedEvents; }
                 data.PropertyChanged += listener;
-                for (int i = 0; i < countFiredEvents; ++i)
+                for (var i = 0; i < countFiredEvents; ++i)
                     data.Property = i;
                 data.PropertyChanged -= listener;
 
