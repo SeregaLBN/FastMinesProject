@@ -188,13 +188,12 @@ public class MainActivity extends AppCompatActivity {
             ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             ft.commit();
         }
-        UiInvoker.DEFERRED.accept(() -> {
-//            smf.setCurrentMosaicGroup(mosaicGroup);
-//            smf.setInitData(this.getInitData());
-//            smf.setCurrentSkillLevel(this.initData.getSkillLevel());
-//            if (this.getInitData().getMosaicType().getGroup() == mosaicGroup)
-//                smf.setCurrentItem(smf.viewModel.getMosaicDS().getDataSource().stream().filter(x -> x.getMosaicType() == this.getInitData().getMosaicType()).findAny().get());
-        });
+//        UiInvoker.DEFERRED.accept(() -> {
+            smf.setCurrentMosaicGroup(mosaicGroup);
+            smf.setCurrentSkillLevel(this.getInitData().getSkillLevel());
+            if (this.getInitData().getMosaicType().getGroup() == mosaicGroup)
+                smf.setCurrentItem(smf.viewModel.getMosaicDS().getDataSource().stream().filter(x -> x.getMosaicType() == this.getInitData().getMosaicType()).findAny().get());
+//        });
     }
 
     private void showCustomSkillFragment() {
