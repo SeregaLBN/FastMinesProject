@@ -76,7 +76,7 @@ namespace fmg {
             Bindings.StopTracking();
         }
 
-        private void OnMenuMosaicGroupHeaderClick(object sender, RoutedEventArgs e) {
+        private void OnMenuMosaicGroupHeaderClick(object sender, RoutedEventArgs ev) {
             if (lvMenuMosaicGroupItems.Visibility == Visibility.Collapsed) {
                 SmoothHelper.ApplySmoothVisibilityOverScale(lvMenuMosaicGroupItems, true, LvGroupHeight);
                 ViewModel.MosaicGroupDS.Header.Entity.BurgerMenuModel.Horizontal = false;
@@ -89,7 +89,7 @@ namespace fmg {
         double LvGroupHeight() => Enum.GetValues(typeof(EMosaicGroup)).Length * (ViewModel.MosaicGroupDS.ImageSize.Height + 2 /* padding */);
         double LvSkillHeight() => Enum.GetValues(typeof(ESkillLevel )).Length * (ViewModel.MosaicSkillDS.ImageSize.Height + 2 /* padding */);
 
-        private void OnMenuMosaicSkillHeaderClick(object sender, RoutedEventArgs e) {
+        private void OnMenuMosaicSkillHeaderClick(object sender, RoutedEventArgs ev) {
             bool isVisibleScrollerFunc() => !_scroller.ScrollableHeight.HasMinDiff(_scroller.VerticalOffset);
             bool isVisibleScroller = isVisibleScrollerFunc();
             if (lvMenuMosaicSkillItems.Visibility == Visibility.Collapsed) {
@@ -117,15 +117,17 @@ namespace fmg {
 
         private void OnMenuMosaicGroupItemClick(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs ev) {
             //LoggerSimple.Put("> " + nameof(MainPage) + "::" + nameof(OnMenuMosaicGroupItemClick));
-            var listView = (ListView)sender;
+            System.Diagnostic.Debug.Assert(ReferenceEquals(lvMenuMosaicGroupItems, sender));
+
             if (!(RightFrame.Content is SelectMosaicPage))
-                ShowSelectMosaicPage(EMosaicGroupEx.FromIndex(listView.SelectedIndex));
+                ShowSelectMosaicPage(EMosaicGroupEx.FromIndex(lvMenuMosaicGroupItems.SelectedIndex));
         }
 
         private void OnMenuMosaicSkillItemClick(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs ev) {
             //LoggerSimple.Put("> " + nameof(MainPage) + "::" + nameof(OnMenuMosaicSkillItemClick));
-            var listView = (ListView)sender;
-            if ((listView.SelectedIndex == ESkillLevel.eCustom.Ordinal()) && !(RightFrame.Content is CustomSkillPage))
+            System.Diagnostic.Debug.Assert(ReferenceEquals(lvMenuMosaicSkillItems, sender));
+
+            if ((lvMenuMosaicSkillItems.SelectedIndex == ESkillLevel.eCustom.Ordinal()) && !(RightFrame.Content is CustomSkillPage))
                 ShowCustomSkillPage();
         }
 
