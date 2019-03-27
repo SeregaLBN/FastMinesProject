@@ -117,7 +117,7 @@ namespace fmg {
 
         private void OnMenuMosaicGroupItemClick(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs ev) {
             //LoggerSimple.Put("> " + nameof(MainPage) + "::" + nameof(OnMenuMosaicGroupItemClick));
-            System.Diagnostic.Debug.Assert(ReferenceEquals(lvMenuMosaicGroupItems, sender));
+            System.Diagnostics.Debug.Assert(ReferenceEquals(lvMenuMosaicGroupItems, sender));
 
             if (!(RightFrame.Content is SelectMosaicPage))
                 ShowSelectMosaicPage(EMosaicGroupEx.FromIndex(lvMenuMosaicGroupItems.SelectedIndex));
@@ -125,7 +125,7 @@ namespace fmg {
 
         private void OnMenuMosaicSkillItemClick(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs ev) {
             //LoggerSimple.Put("> " + nameof(MainPage) + "::" + nameof(OnMenuMosaicSkillItemClick));
-            System.Diagnostic.Debug.Assert(ReferenceEquals(lvMenuMosaicSkillItems, sender));
+            System.Diagnostics.Debug.Assert(ReferenceEquals(lvMenuMosaicSkillItems, sender));
 
             if ((lvMenuMosaicSkillItems.SelectedIndex == ESkillLevel.eCustom.Ordinal()) && !(RightFrame.Content is CustomSkillPage))
                 ShowCustomSkillPage();
