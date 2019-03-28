@@ -109,6 +109,7 @@ public class MosaicDataSource extends BaseDataSource<
             } else {
                 MosaicDataItem mi = makeItem(mosaicType);
                 mi.setSize(size); //  restore
+                dataSource.add(mi);
             }
         }
         notifier.firePropertyChanged(null, dataSource, PROPERTY_DATA_SOURCE);

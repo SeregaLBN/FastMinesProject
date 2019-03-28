@@ -5,29 +5,34 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiConsumer;
 
 import fmg.android.app.databinding.MosaicItemBinding;
-import fmg.android.app.model.dataSource.MosaicDataSource;
 import fmg.android.app.model.items.MosaicDataItem;
 import fmg.android.utils.Cast;
 import fmg.common.Color;
 
-public class MosaicListViewAdapter extends RecyclerView.Adapter<MosaicListViewAdapter.ViewHolder> implements AutoCloseable {
+public class MosaicListViewAdapter extends RecyclerView.Adapter<MosaicListViewAdapter.ViewHolder> {
 
-    private final MosaicDataSource mosaicDS;
-    private final OnItemClickListener listener;
+    private final List<MosaicDataItem> items;
+    private final BiConsumer<View, Integer> onItemClick;
 
-    public MosaicListViewAdapter(MosaicDataSource mosaicDS, OnItemClickListener listener) {
-        this.mosaicDS = mosaicDS;
-        this.listener = listener;
+    public MosaicListViewAdapter(List<MosaicDataItem> items, BiConsumer<View, Integer> onItemClick) {
+        this.items = new ArrayList<>(items); // copy!
+        this.onItemClick = onItemClick;
+    }
 
-        mosaicDS.addListener(this::onMosaicDsPropertyChanged);
+    public void updateItems(List<MosaicDataItem> items) {
+        this.items.clear();
+        this.items.addAll(items); // copy!
+        notifyDataSetChanged();
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-//        LoggerSimple.put("  MenuMosaicListViewAdapter::onCreateViewHolder");
+//        LoggerSimple.put("  MosaicListViewAdapter::onCreateViewHolder");
 
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         MosaicItemBinding binding = MosaicItemBinding.inflate(layoutInflater, parent, false);
@@ -37,50 +42,22 @@ public class MosaicListViewAdapter extends RecyclerView.Adapter<MosaicListViewAd
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-//        LoggerSimple.put("  MenuMosaicListViewAdapter::onBindViewHolder pos=" + position);
+//        LoggerSimple.put("  MosaicListViewAdapter::onBindViewHolder pos=" + position);
 
-        holder.bind(mosaicDS.getDataSource().get(position));
+        holder.bind(items.get(position));
         if (!holder.binding.getRoot().hasOnClickListeners())
-            holder.binding.getRoot().setOnClickListener(view -> onClickItem(view, holder.getLayoutPosition(), holder.getAdapterPosition()));
+            holder.binding.getRoot().setOnClickListener(view -> {
+                //LoggerSimple.put("  MosaicListViewAdapter::OnClickListener: layoutPos={0}, adapterPos={1}", holder.getLayoutPosition(), holder.getAdapterPosition());
+                int pos = holder.getLayoutPosition(); // holder.getAdapterPosition();
+                onItemClick.accept(view, pos);
+            });
 
-//        Color clr = mosaicDS.getDataSource().get(position).getEntity().getModel().getBackgroundColor();
+//        Color clr = items.get(position).getEntity().getModel().getBackgroundColor();
 //        holder.itemView.setBackgroundColor(Cast.toColor(clr));
     }
 
-    private void onClickItem(View view, int layoutPos, int adapterPos) {
-//        LoggerSimple.put("  MenuMosaicListViewAdapter::OnClickListener: layoutPos={0}, adapterPos={1}", layoutPos, adapterPos);
-
-        mosaicDS.setCurrentItemPos(adapterPos); // change current item before call listener
-        listener.onItemClick(view, layoutPos);
-    }
-
-    public void onMosaicDsPropertyChanged(PropertyChangeEvent ev) {
-        switch (ev.getPropertyName()) {
-        case MosaicDataSource.PROPERTY_CURRENT_ITEM_POS:
-//            LoggerSimple.put("  MenuMosaicListViewAdapter::onMosaicDsPropertyChanged: ev=" + ev);
-            int oldPos = (Integer)ev.getOldValue();
-            int newPos = (Integer)ev.getNewValue();
-
-//            // Below line is just like a safety check, because sometimes holder could be null,
-//            // in that case, getAdapterPosition() will return RecyclerView.NO_POSITION
-//            if (newPos == RecyclerView.NO_POSITION)
-//                return;
-
-            // Updating old as well as new positions
-            notifyItemChanged(oldPos);
-            notifyItemChanged(newPos);
-
-            break;
-        }
-    }
-
     @Override
-    public int getItemCount() { return mosaicDS.getDataSource().size(); }
-
-    @FunctionalInterface
-    interface OnItemClickListener {
-        void onItemClick(View view, int position);
-    }
+    public int getItemCount() { return items.size(); }
 
 
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -96,11 +73,6 @@ public class MosaicListViewAdapter extends RecyclerView.Adapter<MosaicListViewAd
             binding.setMosaicItem(mosaicItem);
             binding.executePendingBindings();
         }
-    }
-
-    @Override
-    public void close() {
-        mosaicDS.removeListener(this::onMosaicDsPropertyChanged);
     }
 
 }
