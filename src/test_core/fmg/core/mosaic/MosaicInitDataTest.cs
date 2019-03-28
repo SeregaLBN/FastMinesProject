@@ -11,6 +11,7 @@ namespace fmg.core.mosaic {
         protected abstract void AssertEqual(int    expected, int    actual);
         protected abstract void AssertEqual(object expected, object actual);
         protected abstract void AssertTrue(bool condition);
+        protected abstract void AssertFalse(bool condition);
         protected abstract void AssertFail();
 
         public virtual void Setup() {
@@ -57,9 +58,9 @@ namespace fmg.core.mosaic {
                     () => {
                         initData.MosaicType = EMosaic.eMosaicRhombus1;
                     }, modifiedProperties => {
-                        AssertTrue  (   modifiedProperties.ContainsKey(nameof(MosaicInitData.MosaicType)));
+                        AssertTrue  (  modifiedProperties.ContainsKey(nameof(MosaicInitData.MosaicType)));
                         AssertEqual(1, modifiedProperties[            nameof(MosaicInitData.MosaicType)]);
-                        AssertTrue  (   modifiedProperties.ContainsKey(nameof(MosaicInitData.MinesCount)));
+                        AssertTrue  (  modifiedProperties.ContainsKey(nameof(MosaicInitData.MinesCount)));
                         AssertEqual(1, modifiedProperties[            nameof(MosaicInitData.MinesCount)]);
                         AssertEqual(2, modifiedProperties.Count);
                         AssertEqual(EMosaic.eMosaicRhombus1, initData.MosaicType);
@@ -80,12 +81,40 @@ namespace fmg.core.mosaic {
                         initData.MosaicType = EMosaic.eMosaicHexagon1;
                         LoggerSimple.Put("    initData.minesCount={0}", initData.MinesCount);
                     }, modifiedProperties => {
-                        AssertTrue  (   modifiedProperties.ContainsKey(nameof(MosaicInitData.MosaicType)));
+                        AssertTrue  (  modifiedProperties.ContainsKey(nameof(MosaicInitData.MosaicType)));
                         AssertEqual(1, modifiedProperties[            nameof(MosaicInitData.MosaicType)]);
-                        AssertTrue  (  !modifiedProperties.ContainsKey(nameof(MosaicInitData.MinesCount)));
-                        AssertEqual(1, modifiedProperties.Count);
+                        AssertTrue  (  modifiedProperties.ContainsKey(nameof(MosaicInitData.MosaicGroup)));
+                        AssertEqual(1, modifiedProperties[            nameof(MosaicInitData.MosaicGroup)]);
+                        AssertTrue  ( !modifiedProperties.ContainsKey(nameof(MosaicInitData.MinesCount)));
+                        AssertEqual(2, modifiedProperties.Count);
                         AssertEqual(EMosaic.eMosaicHexagon1, initData.MosaicType);
                         AssertEqual(initData.SkillLevel.GetNumberMines(EMosaic.eMosaicHexagon1), initData.MinesCount);
+                    });
+            }
+        }
+
+        public virtual async Task CheckChangedMosaicGroupTest() {
+            LoggerSimple.Put("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckChangedMosaicGroupTest));
+
+            using (var initData = CreateMosaicInitData()) {
+                await new PropertyChangeExecutor<MosaicInitData>(initData).Run(100, 1000,
+                    () => {
+                        initData.MosaicType = EMosaic.eMosaicHexagon1;
+                    }, modifiedProperties => {
+                        AssertTrue(modifiedProperties.ContainsKey(nameof(MosaicInitData.MosaicGroup)));
+                    });
+            }
+        }
+
+        public virtual async Task CheckNoChangedMosaicGroupTest() {
+            LoggerSimple.Put("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckNoChangedMosaicGroupTest));
+
+            using (var initData = CreateMosaicInitData()) {
+                await new PropertyChangeExecutor<MosaicInitData>(initData).Run(100, 1000,
+                    () => {
+                        initData.MosaicType = EMosaic.eMosaicRhombus1;
+                    }, modifiedProperties => {
+                        AssertFalse(modifiedProperties.ContainsKey(nameof(MosaicInitData.MosaicGroup)));
                     });
             }
         }

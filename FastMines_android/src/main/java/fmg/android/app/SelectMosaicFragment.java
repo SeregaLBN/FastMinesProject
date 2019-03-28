@@ -54,7 +54,8 @@ public class SelectMosaicFragment extends Fragment {
 
         // TODO try StaggeredGridLayoutManager
         binding.rvMosaicItems.setLayoutManager(new GridLayoutManager(this.getContext(), 2));
-        binding.rvMosaicItems.setAdapter(mosaicListViewAdapter = new MosaicListViewAdapter(viewModel.getMosaicDS().getDataSource(), this::onMosaicItemClick));
+        mosaicListViewAdapter = new MosaicListViewAdapter(viewModel.getMosaicDS().getDataSource(), this::onMosaicItemClick);
+        binding.rvMosaicItems.setAdapter(mosaicListViewAdapter);
 
         binding.panelMosaicHeader.setOnClickListener(this::onMosaicHeaderClick);
 
