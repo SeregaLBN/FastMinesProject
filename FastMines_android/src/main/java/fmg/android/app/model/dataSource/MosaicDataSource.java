@@ -136,7 +136,7 @@ public class MosaicDataSource extends BaseDataSource<
 
     /** for one selected item - start animate; for all other - stop animate */
     private void applySelection(MosaicDataItem item) {
-        boolean selected = (item.getUniqueId().ordinal() == currentItemPos);
+        boolean selected = item == getCurrentItem(); // check by reference
         MosaicAnimatedModel<?> model = item.getEntity().getModel();
         model.setAnimated(selected);
         model.getPenBorder().setColorLight (selected ? Color.White() : Color.Black());
