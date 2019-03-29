@@ -49,11 +49,13 @@ abstract class MosaicSkillOrGroupView<TImage, TImageModel extends AnimatedImageM
                 g.drawColor(Cast.toColor(bkClr));
         }
 
+        /** / // debug
         Rect rc = new Rect(0,0, (int)getModel().getSize().width, (int)getModel().getSize().height);
         g.drawRect(rc, new Paint(Paint.ANTI_ALIAS_FLAG) {{
             this.setStyle(Paint.Style.STROKE);
             setStrokeWidth(1.5f);
             setColor(android.graphics.Color.RED);}});
+        /**/
 
         float bw = (float)m.getBorderWidth();
         boolean needDrawPerimeterBorder = (!m.getBorderColor().isTransparent() && (bw > 0));

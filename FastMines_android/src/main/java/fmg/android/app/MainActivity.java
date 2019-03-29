@@ -258,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
         //LoggerSimple.put("> MainActivity::onMosaicSkillDsPropertyChanged: ev.Name=" + ev.getPropertyName());
         switch (ev.getPropertyName()) {
         case MosaicSkillDataSource.PROPERTY_CURRENT_ITEM_POS:
-            LoggerSimple.put("  MainActivity::onMosaicSkillDsPropertyChanged: ev=" + ev);
+            //LoggerSimple.put("  MainActivity::onMosaicSkillDsPropertyChanged: ev=" + ev);
             int oldPos = (Integer)ev.getOldValue();
             int newPos = (Integer)ev.getNewValue();
 
