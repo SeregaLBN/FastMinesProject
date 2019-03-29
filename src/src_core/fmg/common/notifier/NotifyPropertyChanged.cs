@@ -127,6 +127,8 @@ namespace fmg.common.notifier {
                 FirePropertyChanged(new PropertyChangedEventArgs(propertyName));
         }
 
+        public bool Disposed => _disposed;
+
         public void Dispose() {
             if (_disposed)
                 return;

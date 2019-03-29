@@ -18,7 +18,7 @@ namespace fmg.DataModel.Items {
         private T uniqueId;
         protected TImageCtrlr entity;
         private string title = "";
-        protected bool Disposed { get; private set; }
+        public bool Disposed { get; private set; }
         private event PropertyChangedEventHandler PropertyChangedSync;
         public  event PropertyChangedEventHandler PropertyChanged/*Async*/;
         protected readonly NotifyPropertyChanged notifier/*Sync*/;
@@ -61,7 +61,16 @@ namespace fmg.DataModel.Items {
             }
         }
 
-        public CanvasBitmap Image => Entity.Image;
+        public CanvasBitmap Image {
+            get {
+                if (Disposed) {
+                    System.Dagnostics.Debug.Assert(false, "Object already disposed! Return faked image...");
+                    return null;
+                }
+
+                return Entity.Image;
+            }
+        }
 
         public SizeDouble Size {
             get {

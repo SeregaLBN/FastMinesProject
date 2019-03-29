@@ -166,6 +166,8 @@ public final class NotifyPropertyChanged implements AutoCloseable//, INotifyProp
                            !Modifier.isStatic(m); });
     }
 
+    public boolean isDisposed() { return _disposed; }
+
     @Override
     public void close() {
         _disposed = true;

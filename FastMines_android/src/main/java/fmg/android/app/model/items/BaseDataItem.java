@@ -3,6 +3,7 @@ package fmg.android.app.model.items;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -78,7 +79,13 @@ public abstract class BaseDataItem<T,
     }
 
     @Bindable
-    public Bitmap getImage() { return getEntity().getImage(); }
+    public Bitmap getImage() {
+        if (isDisposed()) {
+            Log.e("fmg", "Object already disposed! Return faked image...");
+            return android.graphics.Bitmap.createBitmap(1, 1, android.graphics.Bitmap.Config.RGB_565);
+        }
+        return getEntity().getImage();
+    }
 
     @Bindable
     public SizeDouble getSize() {
@@ -166,6 +173,8 @@ public abstract class BaseDataItem<T,
     public void removeListener(PropertyChangeListener listener) {
         notifierAsync.removeListener(listener);
     }
+
+    public boolean isDisposed() { return notifier.isDisposed(); }
 
     @Override
     public void close() {
