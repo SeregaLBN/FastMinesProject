@@ -1,4 +1,4 @@
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -35,6 +35,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest.FastMines.Uwp", "FastMines_uwp\UnitTest.FastMines.Uwp\UnitTest.FastMines.Uwp.csproj", "{8C21001F-DA6B-4BD8-931C-CE55DD4B538B}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UnitTest.FastMines.Core", "FastMines_core\UnitTest.FastMines.Core\UnitTest.FastMines.Core.shproj", "{E7F1F5C2-78F2-4777-AE7C-715655FBC06A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest.FastMines.Ava", "FastMines_Ava\UnitTest.FastMines.Ava\UnitTest.FastMines.Ava.csproj", "{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -279,6 +281,34 @@ Global
 		{8C21001F-DA6B-4BD8-931C-CE55DD4B538B}.Release|x86.ActiveCfg = Release|x86
 		{8C21001F-DA6B-4BD8-931C-CE55DD4B538B}.Release|x86.Build.0 = Release|x86
 		{8C21001F-DA6B-4BD8-931C-CE55DD4B538B}.Release|x86.Deploy.0 = Release|x86
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Debug|ARM.Build.0 = Debug|Any CPU
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Debug|Win32.Build.0 = Debug|Any CPU
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Debug|x64.Build.0 = Debug|Any CPU
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Debug|x86.Build.0 = Debug|Any CPU
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Release|ARM.ActiveCfg = Release|Any CPU
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Release|ARM.Build.0 = Release|Any CPU
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Release|ARM64.Build.0 = Release|Any CPU
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Release|Win32.ActiveCfg = Release|Any CPU
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Release|Win32.Build.0 = Release|Any CPU
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Release|x64.ActiveCfg = Release|Any CPU
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Release|x64.Build.0 = Release|Any CPU
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Release|x86.ActiveCfg = Release|Any CPU
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -297,6 +327,7 @@ Global
 		{31716C7E-3D9D-45B7-A14B-4592DFA01B32} = {6C78E2F6-4321-4C89-9312-AA367B07205C}
 		{8C21001F-DA6B-4BD8-931C-CE55DD4B538B} = {D47E7AF7-77FF-43A6-949A-6B98EB51499D}
 		{E7F1F5C2-78F2-4777-AE7C-715655FBC06A} = {6C78E2F6-4321-4C89-9312-AA367B07205C}
+		{E4AAB50E-92EE-40B5-9A36-657F7E7C0611} = {E8D26177-F66D-4F97-9AB4-A02C30D77CFD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {03A3D190-56B2-48D0-8228-09E6621B36AC}
