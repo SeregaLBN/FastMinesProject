@@ -54,7 +54,7 @@ namespace fmg.uwp.utils.win2d {
 
         public static async Task SaveToFile(this CanvasBitmap canvasBitmap, StorageFile outputFile) {
             using (var stream = await outputFile.OpenAsync(FileAccessMode.ReadWrite)) {
-                var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
+                var dpi = await AsyncRunner.ExecuteFromUiLaterAsync(() => DisplayInformation.GetForCurrentView().LogicalDpi);
                 var device = CanvasDevice.GetSharedDevice();
                 await CanvasImage.SaveAsync(canvasBitmap, canvasBitmap.Bounds, dpi, device, stream, CanvasBitmapFileFormat.Png);
             }
