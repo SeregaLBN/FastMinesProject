@@ -16,6 +16,9 @@ namespace fmg.core.mosaic {
         protected override void AssertTrue(bool condition) {
             Assert.True(condition);
         }
+        protected override void AssertFalse(bool condition) {
+            Assert.False(condition);
+        }
         protected override void AssertFail() {
             //Assert.Fail();
             throw new Exception("Assert.Fail");
@@ -47,6 +50,24 @@ namespace fmg.core.mosaic {
         public override async Task CheckNoRepeatNotificationsTest() {
             Setup();
             await base.CheckNoRepeatNotificationsTest();
+        }
+
+        [Fact]
+        public override async Task CheckChangedMosaicGroupTest() {
+            Setup();
+            await base.CheckChangedMosaicGroupTest();
+        }
+
+        [Fact]
+        public override async Task CheckNoChangedMosaicGroupTest() {
+            Setup();
+            await base.CheckNoChangedMosaicGroupTest();
+        }
+
+        [Fact]
+        public override void CheckRestoreIndexInGroupTest() {
+            Setup();
+            base.CheckRestoreIndexInGroupTest();
         }
 
     }

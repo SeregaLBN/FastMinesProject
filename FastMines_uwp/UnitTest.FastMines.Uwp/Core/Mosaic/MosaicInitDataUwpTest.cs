@@ -54,6 +54,12 @@ namespace fmg.core.mosaic {
             await base.CheckNoChangedMosaicGroupTest();
         }
 
+        [TestMethod]
+        public override void CheckRestoreIndexInGroupTest() {
+            Setup();
+            base.CheckRestoreIndexInGroupTest();
+        }
+
     }
 
 }

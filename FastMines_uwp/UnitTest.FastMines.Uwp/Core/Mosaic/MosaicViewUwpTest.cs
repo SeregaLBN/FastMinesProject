@@ -32,7 +32,7 @@ namespace fmg.core.mosaic {
 
         [TestInitialize]
         public override void Setup() {
-            Setup().Setup();
+            base.Setup();
             StaticInitializer.Init();
         }
 
