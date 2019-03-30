@@ -4,9 +4,12 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.*;
 
+import java.util.List;
+
 import fmg.common.LoggerSimple;
 import fmg.common.notifier.PropertyChangeExecutor;
 import fmg.core.types.EMosaic;
+import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
 import io.reactivex.Flowable;
 
@@ -42,6 +45,8 @@ public class MosaicInitDataTest {
         assertEquals(MosaicInitData.DEFAULT_SIZE_FIELD_N, initData.getSizeField().n);
         assertEquals(MosaicInitData.DEFAULT_MINES_COUNT , initData.getMinesCount());
         assertEquals(MosaicInitData.DEFAULT_SKILL_LEVEL , initData.getSkillLevel());
+
+        assertEquals(MosaicInitData.DEFAULT_MOSAIC_TYPE.getGroup(), initData.getMosaicGroup());
         return initData;
     }
 
@@ -125,4 +130,22 @@ public class MosaicInitDataTest {
         }
     }
 
+    @Test
+    public void checkRestoreIndexInGroupTest() {
+        LoggerSimple.put("> MosaicInitDataTest::checkRestoreIndexInGroupTest");
+
+        try (MosaicInitData initData = createMosaicInitData()) {
+            final int checkOrdinal = 3;
+
+            // 1. select another mosaic in current group
+            List<EMosaic> mosaicsInOldGroup = initData.getMosaicGroup().getMosaics();
+            initData.setMosaicType(mosaicsInOldGroup.get(checkOrdinal));
+
+            // 2. change group
+            initData.setMosaicGroup(EMosaicGroup.eTriangles);
+
+            // 3. check ordinal in new group
+            Assert.assertEquals(checkOrdinal, initData.getMosaicType().getOrdinalInGroup());
+        }
+    }
 }

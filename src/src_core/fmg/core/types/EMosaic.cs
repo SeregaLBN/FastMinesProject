@@ -11,77 +11,77 @@ namespace fmg.core.types {
     public enum EMosaic {
         // ============== Triangles ==============
         /// <summary> Triangle 60°-60°-60° </summary>
-        eMosaicTriangle1           = (300),
+        eMosaicTriangle1           = 300,
 
         /// <summary> Triangle 60°-60°-60° (offset) </summary>
-        eMosaicTriangle2           = (301),
+        eMosaicTriangle2           = 301,
 
         /// <summary> Triangle 45°-90°-45° </summary>
-        eMosaicTriangle3           = (302),
+        eMosaicTriangle3           = 302,
 
         /// <summary> Triangle 30°-30°-120° </summary>
-        eMosaicTriangle4           = (303),
+        eMosaicTriangle4           = 303,
 
         // ============== Quadrangles ==============
         /// <summary> Square 1 </summary>
-        eMosaicSquare1             = (400),
+        eMosaicSquare1             = 400,
 
         /// <summary> Square 2 (offset) </summary>
-        eMosaicSquare2             = (401),
+        eMosaicSquare2             = 401,
 
         /// <summary> Parquet №1 - 'Herring-bone' - Паркет в елку </summary>
-        eMosaicParquet1            = (402),
+        eMosaicParquet1            = 402,
 
         /// <summary> Parquet №2 </summary>
-        eMosaicParquet2            = (403),
+        eMosaicParquet2            = 403,
 
         /// <summary> Trapezoid 1 - 3 трапеции, составляющие равносторонний треугольник </summary>
-        eMosaicTrapezoid1          = (404),
+        eMosaicTrapezoid1          = 404,
 
         /// <summary> Trapezoid 2 - 3 трапеции, составляющие равносторонний треугольник </summary>
-        eMosaicTrapezoid2          = (405),
+        eMosaicTrapezoid2          = 405,
 
         /// <summary> Trapezoid 3 - 8 трапеций, складывающихся в шестигранник </summary>
-        eMosaicTrapezoid3          = (406),
+        eMosaicTrapezoid3          = 406,
 
         /// <summary> Rhombus </summary>
-        eMosaicRhombus1            = (407),
+        eMosaicRhombus1            = 407,
 
         /// <summary> Quadrilateral 120°-90°-60°-90° </summary>
-        eMosaicQuadrangle1         = (408),
+        eMosaicQuadrangle1         = 408,
 
         /// <summary>
         ///   Penrose tilings (rombus 72°-108° & 36°- 144°) - one of the periodic variations.
         ///   <li><a href="http://ru.wikipedia.org/wiki/%D0%9C%D0%BE%D0%B7%D0%B0%D0%B8%D0%BA%D0%B0_%D0%9F%D0%B5%D0%BD%D1%80%D0%BE%D1%83%D0%B7%D0%B0">ru wiki</>
         ///   <li><a href="http://en.wikipedia.org/wiki/Penrose_tiling">en wiki</>
         /// </summary>
-        eMosaicPenrousePeriodic1   = (409),
+        eMosaicPenrousePeriodic1   = 409,
 
         // ============== Pentagons ==============
         // http://en.wikipedia.org/wiki/Pentagonal_tiling
 
         /// <summary> Pentagon (type 2 and 4) </summary>
-        eMosaicPentagonT24         = (500),
+        eMosaicPentagonT24         = 500,
 
         /// <summary> Pentagon (type 5) </summary>
-        eMosaicPentagonT5          = (501),
+        eMosaicPentagonT5          = 501,
 
         /// <summary> Pentagon (type 10) </summary>
-        eMosaicPentagonT10         = (502),
+        eMosaicPentagonT10         = 502,
 
         // ============== Hexagons ==============
         /// <summary> Hexagon </summary>
-        eMosaicHexagon1            = (600),
+        eMosaicHexagon1            = 600,
 
         // ============== Others ==============
         /// <summary> Square-Triangle 1 </summary>
-        eMosaicTrSq1               = (700),
+        eMosaicTrSq1               = 700,
 
         /// <summary> Square-Triangle 2 </summary>
-        eMosaicTrSq2               = (701),
+        eMosaicTrSq2               = 701,
 
         /// <summary> Square-Triangle-Hexagon </summary>
-        eMosaicSqTrHex             = (702)
+        eMosaicSqTrHex             = 702
     }
 
     public static class EMosaicEx {
@@ -278,6 +278,16 @@ namespace fmg.core.types {
                 break;
             }
             return res;
+        }
+
+        public static int GetOrdinalInGroup(this EMosaic self) {
+            var i = 0;
+            foreach (var mosaic in self.GetGroup().GetMosaics())
+                if (mosaic == self)
+                    return i;
+                else
+                    ++i;
+            throw new Exception("inposible");
         }
 
     }

@@ -69,7 +69,9 @@ public class MosaicInitData implements INotifyPropertyChanged, AutoCloseable {
             throw new IllegalArgumentException("Mosaic group can not be null");
         if (mosaicType.getGroup() == mosaicGroup)
             return;
-        setMosaicType(mosaicGroup.getMosaics().get(0));
+        int ordinalInOldGroup = mosaicType.getOrdinalInGroup();
+        int ordinalInNewGroup = Math.min(ordinalInOldGroup, mosaicGroup.getMosaics().size() - 1);
+        setMosaicType(mosaicGroup.getMosaics().get(ordinalInNewGroup));
     }
 
     public Matrisize getSizeField() { return sizeField; }

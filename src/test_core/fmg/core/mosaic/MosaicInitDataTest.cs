@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using fmg.common;
 using fmg.common.notifier;
@@ -36,6 +37,8 @@ namespace fmg.core.mosaic {
             AssertEqual(MosaicInitData.DEFAULT_SIZE_FIELD_N, initData.SizeField.n);
             AssertEqual(MosaicInitData.DEFAULT_MINES_COUNT , initData.MinesCount);
             AssertEqual(MosaicInitData.DEFAULT_SKILL_LEVEL , initData.SkillLevel);
+
+            AssertEqual(MosaicInitData.DEFAULT_MOSAIC_TYPE.GetGroup(), initData.MosaicGroup);
             return initData;
         }
 
@@ -116,6 +119,24 @@ namespace fmg.core.mosaic {
                     }, modifiedProperties => {
                         AssertFalse(modifiedProperties.ContainsKey(nameof(MosaicInitData.MosaicGroup)));
                     });
+            }
+        }
+
+        public virtual void CheckRestoreIndexInGroupTest() {
+            LoggerSimple.Put("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckRestoreIndexInGroupTest));
+
+            using (var initData = CreateMosaicInitData()) {
+                const int checkOrdinal = 3;
+
+                // 1. select another mosaic in current group
+                var mosaicsInOldGroup = initData.MosaicGroup.GetMosaics().ToList();
+                initData.MosaicType = mosaicsInOldGroup[checkOrdinal];
+
+                // 2. change group
+                initData.MosaicGroup = EMosaicGroup.eTriangles;
+
+                // 3. check ordinal in new group
+                AssertEqual(checkOrdinal, initData.MosaicType.GetOrdinalInGroup());
             }
         }
 

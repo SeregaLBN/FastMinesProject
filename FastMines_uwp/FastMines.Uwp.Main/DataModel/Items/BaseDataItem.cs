@@ -64,7 +64,7 @@ namespace fmg.DataModel.Items {
         public CanvasBitmap Image {
             get {
                 if (Disposed) {
-                    System.Dagnostics.Debug.Assert(false, "Object already disposed! Return faked image...");
+                    System.Diagnostics.Debug.Assert(false, "Object already disposed! Return faked image...");
                     return null;
                 }
 
