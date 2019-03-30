@@ -23,10 +23,10 @@ public final class MosaicInitDataExt {
     public static MosaicInitData load(Bundle from) {
         MosaicInitData newData = new MosaicInitData();
         if (from != null) try {
-            newData.setSizeField(new Matrisize(       from.getInt   (KEY__SIZE_FIELD_M),
-                                                      from.getInt   (KEY__SIZE_FIELD_N)));
-            newData.setMosaicType(EMosaic.fromOrdinal(from.getInt   (KEY__MOSAIC_TYPE )));
-            newData.setMinesCount(                    from.getInt   (KEY__MINES_COUNT ));
+            newData.setSizeField(new Matrisize(       from.getInt(KEY__SIZE_FIELD_M),
+                                                      from.getInt(KEY__SIZE_FIELD_N)));
+            newData.setMosaicType(EMosaic.fromOrdinal(from.getInt(KEY__MOSAIC_TYPE )));
+            newData.setMinesCount(                    from.getInt(KEY__MINES_COUNT ));
         } catch(Exception ex) {
             newData = new MosaicInitData(); // reset
             Log.e("fmg", "Can not read mosaic init data from Bundle", ex);
@@ -58,10 +58,10 @@ public final class MosaicInitDataExt {
 
     public static void save(SharedPreferences to, MosaicInitData initData) {
         SharedPreferences.Editor editor = to.edit();
-        editor.putInt  (KEY__SIZE_FIELD_M, initData.getSizeField().m);
-        editor.putInt  (KEY__SIZE_FIELD_N, initData.getSizeField().n);
-        editor.putInt  (KEY__MOSAIC_TYPE , initData.getMosaicType().ordinal());
-        editor.putInt  (KEY__MINES_COUNT , initData.getMinesCount());
+        editor.putInt(KEY__SIZE_FIELD_M, initData.getSizeField().m);
+        editor.putInt(KEY__SIZE_FIELD_N, initData.getSizeField().n);
+        editor.putInt(KEY__MOSAIC_TYPE , initData.getMosaicType().ordinal());
+        editor.putInt(KEY__MINES_COUNT , initData.getMinesCount());
         editor.commit();
     }
 

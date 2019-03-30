@@ -4,9 +4,12 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.*;
 
+import java.util.List;
+
 import fmg.common.LoggerSimple;
 import fmg.common.notifier.PropertyChangeExecutor;
 import fmg.core.types.EMosaic;
+import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
 import io.reactivex.Flowable;
 
@@ -42,6 +45,8 @@ public class MosaicInitDataTest {
         assertEquals(MosaicInitData.DEFAULT_SIZE_FIELD_N, initData.getSizeField().n);
         assertEquals(MosaicInitData.DEFAULT_MINES_COUNT , initData.getMinesCount());
         assertEquals(MosaicInitData.DEFAULT_SKILL_LEVEL , initData.getSkillLevel());
+
+        assertEquals(MosaicInitData.DEFAULT_MOSAIC_TYPE.getGroup(), initData.getMosaicGroup());
         return initData;
     }
 
@@ -89,12 +94,58 @@ public class MosaicInitDataTest {
                 }, modifiedProperties -> {
                     Assert.assertTrue  (   modifiedProperties.containsKey(MosaicInitData.PROPERTY_MOSAIC_TYPE));
                     Assert.assertEquals(1, modifiedProperties.get(        MosaicInitData.PROPERTY_MOSAIC_TYPE).first.intValue());
+                    Assert.assertTrue  (   modifiedProperties.containsKey(MosaicInitData.PROPERTY_MOSAIC_GROUP));
+                    Assert.assertEquals(1, modifiedProperties.get(        MosaicInitData.PROPERTY_MOSAIC_GROUP).first.intValue());
                     Assert.assertTrue  (  !modifiedProperties.containsKey(MosaicInitData.PROPERTY_MINES_COUNT));
-                    Assert.assertEquals(1, modifiedProperties.size());
+                    Assert.assertEquals(2, modifiedProperties.size());
                     Assert.assertEquals(EMosaic.eMosaicHexagon1, initData.getMosaicType());
                     Assert.assertEquals(initData.getSkillLevel().getNumberMines(EMosaic.eMosaicHexagon1), initData.getMinesCount());
                 });
         }
     }
 
+    @Test
+    public void checkChangedMosaicGroupTest() {
+        LoggerSimple.put("> MosaicInitDataTest::checkChangedMosaicGroupTest");
+        try (MosaicInitData initData = createMosaicInitData()) {
+            new PropertyChangeExecutor<>(initData).run(100, 1000,
+                () -> {
+                    initData.setMosaicType(EMosaic.eMosaicHexagon1);
+                }, modifiedProperties -> {
+                    Assert.assertTrue(modifiedProperties.containsKey(MosaicInitData.PROPERTY_MOSAIC_GROUP));
+                });
+        }
+    }
+
+    @Test
+    public void checkNoChangedMosaicGroupTest() {
+        LoggerSimple.put("> MosaicInitDataTest::checkNoChangedMosaicGroupTest");
+        try (MosaicInitData initData = createMosaicInitData()) {
+            new PropertyChangeExecutor<>(initData).run(100, 1000,
+                () -> {
+                    initData.setMosaicType(EMosaic.eMosaicRhombus1);
+                }, modifiedProperties -> {
+                    Assert.assertFalse(modifiedProperties.containsKey(MosaicInitData.PROPERTY_MOSAIC_GROUP));
+                });
+        }
+    }
+
+    @Test
+    public void checkRestoreIndexInGroupTest() {
+        LoggerSimple.put("> MosaicInitDataTest::checkRestoreIndexInGroupTest");
+
+        try (MosaicInitData initData = createMosaicInitData()) {
+            final int checkOrdinal = 3;
+
+            // 1. select another mosaic in current group
+            List<EMosaic> mosaicsInOldGroup = initData.getMosaicGroup().getMosaics();
+            initData.setMosaicType(mosaicsInOldGroup.get(checkOrdinal));
+
+            // 2. change group
+            initData.setMosaicGroup(EMosaicGroup.eTriangles);
+
+            // 3. check ordinal in new group
+            Assert.assertEquals(checkOrdinal, initData.getMosaicType().getOrdinalInGroup());
+        }
+    }
 }
