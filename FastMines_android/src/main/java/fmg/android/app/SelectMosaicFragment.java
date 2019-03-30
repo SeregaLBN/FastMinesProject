@@ -12,10 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.beans.PropertyChangeEvent;
 import java.util.concurrent.TimeUnit;
 
 import fmg.android.app.databinding.SelectMosaicFragmentBinding;
 import fmg.android.app.model.MosaicInitDataExt;
+import fmg.android.app.model.dataSource.MosaicDataSource;
 import fmg.android.app.model.items.MosaicDataItem;
 import fmg.android.app.presentation.MosaicsViewModel;
 import fmg.common.LoggerSimple;
@@ -52,11 +54,13 @@ public class SelectMosaicFragment extends Fragment {
 
         // TODO try StaggeredGridLayoutManager
         binding.rvMosaicItems.setLayoutManager(new GridLayoutManager(this.getContext(), 2));
-        binding.rvMosaicItems.setAdapter(mosaicListViewAdapter = new MosaicListViewAdapter(viewModel.getMosaicDS(), this::onMosaicItemClick));
+        mosaicListViewAdapter = new MosaicListViewAdapter(viewModel.getMosaicDS().getDataSource(), this::onMosaicItemClick);
+        binding.rvMosaicItems.setAdapter(mosaicListViewAdapter);
 
         binding.panelMosaicHeader.setOnClickListener(this::onMosaicHeaderClick);
 
         binding.rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(this::onGlobalLayoutListener);
+        viewModel.getMosaicDS().addListener(this::onMosaicDsPropertyChanged);
 
         return binding.getRoot();
     }
@@ -70,8 +74,8 @@ public class SelectMosaicFragment extends Fragment {
 
     @Override
     public void onDestroy() {
+        viewModel.getMosaicDS().removeListener(this::onMosaicDsPropertyChanged);
         binding.rootLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this::onGlobalLayoutListener);
-        mosaicListViewAdapter.close();
         if (sizeChangedObservable != null)
             sizeChangedObservable.dispose();
         super.onDestroy();
@@ -107,7 +111,10 @@ public class SelectMosaicFragment extends Fragment {
     void onMosaicItemClick(View v, int position) {
         Toast.makeText(this.getContext(), "onMosaicItemClick " + position, Toast.LENGTH_LONG).show();
 
+        viewModel.getMosaicDS().setCurrentItemPos(position); // change current item before call listener
+
         // invoke after set/change ViewModel.MosaicDS.CurrentItem
+        // TODO ????
         UiInvoker.DEFERRED.accept(() -> {
             MosaicDataItem ci = viewModel.getMosaicDS().getCurrentItem();
             if (ci != null)
@@ -152,6 +159,30 @@ public class SelectMosaicFragment extends Fragment {
     private MosaicDataItem getCurrentItem() { return viewModel.getMosaicDS().getCurrentItem(); }
     public void setCurrentItem(MosaicDataItem newItem) {
         viewModel.getMosaicDS().setCurrentItem(newItem);
+    }
+
+    private void onMosaicDsPropertyChanged(PropertyChangeEvent ev) {
+        switch(ev.getPropertyName()) {
+        case MosaicDataSource.PROPERTY_CURRENT_ITEM_POS: {
+                //LoggerSimple.put("  MenuMosaicListViewAdapter::onMosaicDsPropertyChanged: ev=" + ev);
+                int oldPos = (Integer) ev.getOldValue();
+                int newPos = (Integer) ev.getNewValue();
+
+    //            // Below line is just like a safety check, because sometimes holder could be null,
+    //            // in that case, getAdapterPosition() will return RecyclerView.NO_POSITION
+    //            if (newPos == RecyclerView.NO_POSITION)
+    //                return;
+
+                // Updating old as well as new positions
+                mosaicListViewAdapter.notifyItemChanged(oldPos);
+                mosaicListViewAdapter.notifyItemChanged(newPos);
+            }
+            break;
+        case MosaicDataSource.PROPERTY_DATA_SOURCE:
+            mosaicListViewAdapter.updateItems(viewModel.getMosaicDS().getDataSource());
+//            mosaicListViewAdapter.notifyDataSetChanged();
+            break;
+        }
     }
 
 }

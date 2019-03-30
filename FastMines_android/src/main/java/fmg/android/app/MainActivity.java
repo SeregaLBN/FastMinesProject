@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
 
@@ -55,8 +56,12 @@ public class MainActivity extends AppCompatActivity {
 
         binding.rvMenuMosaicGroupItems.setLayoutManager(new LinearLayoutManager(this));
         binding.rvMenuMosaicSkillItems.setLayoutManager(new LinearLayoutManager(this));
-        binding.rvMenuMosaicGroupItems.setAdapter(mosaicGroupListViewAdapter = new MosaicGroupListViewAdapter(viewModel.getMosaicGroupDS(), this::onMenuMosaicGroupItemClick));
-        binding.rvMenuMosaicSkillItems.setAdapter(mosaicSkillListViewAdapter = new MosaicSkillListViewAdapter(viewModel.getMosaicSkillDS(), this::onMenuMosaicSkillItemClick));
+
+        mosaicGroupListViewAdapter = new MosaicGroupListViewAdapter(viewModel.getMosaicGroupDS().getDataSource(), this::onMenuMosaicGroupItemClick);
+        mosaicSkillListViewAdapter = new MosaicSkillListViewAdapter(viewModel.getMosaicSkillDS().getDataSource(), this::onMenuMosaicSkillItemClick);
+
+        binding.rvMenuMosaicGroupItems.setAdapter(mosaicGroupListViewAdapter);
+        binding.rvMenuMosaicSkillItems.setAdapter(mosaicSkillListViewAdapter);
 
         binding.panelMenuMosaicGroupHeader.setOnClickListener(this::onMenuMosaicGroupHeaderClick);
         binding.panelMenuMosaicSkillHeader.setOnClickListener(this::onMenuMosaicSkillHeaderClick);
@@ -99,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
         viewModel.getMosaicSkillDS().removeListener(this::onMosaicSkillDsPropertyChanged);
 
         binding.rootLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this::onGlobalLayoutListener);
-        mosaicGroupListViewAdapter.close();
         super.onDestroy();
     }
 
@@ -155,20 +159,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void onMenuMosaicGroupItemClick(View v, int position) {
-        Toast.makeText(this, "onMenuMosaicGroupItemClick " + position, Toast.LENGTH_LONG).show();
+        viewModel.getMosaicGroupDS().setCurrentItemPos(position);
+
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.rightFrame);
+        if (!(fragment instanceof SelectMosaicFragment))
+            showSelectMosaicFragment(EMosaicGroup.fromOrdinal(position));
     }
 
     void onMenuMosaicSkillItemClick(View v, int position) {
-        Toast.makeText(this, "onMenuMosaicSkillItemClick " + position, Toast.LENGTH_LONG).show();
+        viewModel.getMosaicSkillDS().setCurrentItemPos(position);
 
-        MosaicSkillDataItem msd = viewModel.getMosaicSkillDS().getCurrentItem();
-        getInitData().setSkillLevel(msd.getSkillLevel());
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.rightFrame);
+        if ((position == ESkillLevel.eCustom.ordinal())        ) // && !(fragment instanceof CustomSkillFragment)) // TODO!!!!
+            showCustomSkillFragment();
+
+//        MosaicSkillDataItem msd = viewModel.getMosaicSkillDS().getCurrentItem();
+//        getInitData().setSkillLevel(msd.getSkillLevel());
     }
 
     private void showSelectMosaicFragment(EMosaicGroup mosaicGroup) {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.rightFrame);
-        if (true)
-            return;
+//        if (true)
+//            return;
         SelectMosaicFragment smf;
         if (fragment instanceof SelectMosaicFragment) {
             smf = (SelectMosaicFragment)fragment;
@@ -182,21 +194,22 @@ public class MainActivity extends AppCompatActivity {
             ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             ft.commit();
         }
-        UiInvoker.DEFERRED.accept(() -> {
-//            smf.setCurrentMosaicGroup(mosaicGroup);
-//            smf.setInitData(this.getInitData());
-//            smf.setCurrentSkillLevel(this.initData.getSkillLevel());
+//        UiInvoker.DEFERRED.accept(() -> {
+            smf.setCurrentMosaicGroup(mosaicGroup);
+            smf.setCurrentSkillLevel(this.getInitData().getSkillLevel());
 //            if (this.getInitData().getMosaicType().getGroup() == mosaicGroup)
 //                smf.setCurrentItem(smf.viewModel.getMosaicDS().getDataSource().stream().filter(x -> x.getMosaicType() == this.getInitData().getMosaicType()).findAny().get());
-        });
+//        });
     }
 
     private void showCustomSkillFragment() {
         LoggerSimple.put("TODO:  redirect to CustomSkillFragment...");
+        Toast.makeText(this, "TODO:  redirect to CustomSkillFragment...", Toast.LENGTH_LONG).show();
     }
 
     private void showHypnosisLogoFragment() {
         LoggerSimple.put("TODO:  redirect to HypnosisLogoFragment...");
+        Toast.makeText(this, "TODO:  redirect to HypnosisLogoFragment...", Toast.LENGTH_LONG).show();
     }
 
     private void onMenuCurrentItemChanged(boolean senderIsMosaicGroup, MosaicGroupDataItem currentGroupItem, MosaicSkillDataItem currentSkillItem) {
@@ -219,9 +232,24 @@ public class MainActivity extends AppCompatActivity {
     private void onMosaicGroupDsPropertyChanged(PropertyChangeEvent ev) {
         //LoggerSimple.put("> MainActivity::onMosaicGroupDsPropertyChanged: ev.Name=" + ev.getPropertyName());
         switch (ev.getPropertyName()) {
+        case MosaicGroupDataSource.PROPERTY_CURRENT_ITEM_POS:
+//            LoggerSimple.put("  MainActivity::onMosaicGroupDsPropertyChanged: ev=" + ev);
+            int oldPos = (Integer)ev.getOldValue();
+            int newPos = (Integer)ev.getNewValue();
+
+//            // Below line is just like a safety check, because sometimes holder could be null,
+//            // in that case, getAdapterPosition() will return RecyclerView.NO_POSITION
+//            if (newPos == RecyclerView.NO_POSITION)
+//                return;
+
+            // Updating old as well as new positions
+            mosaicGroupListViewAdapter.notifyItemChanged(oldPos);
+            mosaicGroupListViewAdapter.notifyItemChanged(newPos);
+
+            break;
         case MosaicGroupDataSource.PROPERTY_CURRENT_ITEM:
-            MosaicSkillDataItem currentGroupItem = viewModel.getMosaicSkillDS().getCurrentItem();
-            onMenuCurrentItemChanged(true, ((MosaicGroupDataSource)ev.getSource()).getCurrentItem(), currentGroupItem);
+            MosaicGroupDataItem currentGroupItem = ((MosaicGroupDataSource)ev.getSource()).getCurrentItem();
+            onMenuCurrentItemChanged(true, currentGroupItem, viewModel.getMosaicSkillDS().getCurrentItem());
             break;
         }
     }
@@ -229,6 +257,21 @@ public class MainActivity extends AppCompatActivity {
     private void onMosaicSkillDsPropertyChanged(PropertyChangeEvent ev) {
         //LoggerSimple.put("> MainActivity::onMosaicSkillDsPropertyChanged: ev.Name=" + ev.getPropertyName());
         switch (ev.getPropertyName()) {
+        case MosaicSkillDataSource.PROPERTY_CURRENT_ITEM_POS:
+            //LoggerSimple.put("  MainActivity::onMosaicSkillDsPropertyChanged: ev=" + ev);
+            int oldPos = (Integer)ev.getOldValue();
+            int newPos = (Integer)ev.getNewValue();
+
+//            // Below line is just like a safety check, because sometimes holder could be null,
+//            // in that case, getAdapterPosition() will return RecyclerView.NO_POSITION
+//            if (newPos == RecyclerView.NO_POSITION)
+//                return;
+
+            // Updating old as well as new positions
+            mosaicSkillListViewAdapter.notifyItemChanged(oldPos);
+            mosaicSkillListViewAdapter.notifyItemChanged(newPos);
+
+            break;
         case MosaicSkillDataSource.PROPERTY_CURRENT_ITEM:
             MosaicSkillDataItem currentSkillItem = ((MosaicSkillDataSource)ev.getSource()).getCurrentItem();
             onMenuCurrentItemChanged(false, viewModel.getMosaicGroupDS().getCurrentItem(), currentSkillItem);

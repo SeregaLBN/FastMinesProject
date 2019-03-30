@@ -7,6 +7,7 @@ import fmg.common.geom.Matrisize;
 import fmg.common.notifier.INotifyPropertyChanged;
 import fmg.common.notifier.NotifyPropertyChanged;
 import fmg.core.types.EMosaic;
+import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
 
 /** Mosaic data */
@@ -34,10 +35,11 @@ public class MosaicInitData implements INotifyPropertyChanged, AutoCloseable {
     protected final NotifyPropertyChanged _notifier/*Sync*/ = new NotifyPropertyChanged(this, false);
     private   final NotifyPropertyChanged _notifierAsync    = new NotifyPropertyChanged(this, true);
 
-    public static final String PROPERTY_MOSAIC_TYPE = "MosaicType";
-    public static final String PROPERTY_SIZE_FIELD  = "SizeField";
-    public static final String PROPERTY_MINES_COUNT = "MinesCount";
-    public static final String PROPERTY_SKILL_LEVEL = "SkillLevel";
+    public static final String PROPERTY_MOSAIC_TYPE  = "MosaicType";
+    public static final String PROPERTY_MOSAIC_GROUP = "MosaicGroup";
+    public static final String PROPERTY_SIZE_FIELD   = "SizeField";
+    public static final String PROPERTY_MINES_COUNT  = "MinesCount";
+    public static final String PROPERTY_SKILL_LEVEL  = "SkillLevel";
 
     public MosaicInitData() {
         mosaicType = DEFAULT_MOSAIC_TYPE;
@@ -59,6 +61,17 @@ public class MosaicInitData implements INotifyPropertyChanged, AutoCloseable {
         if (mosaicType == null)
             throw new IllegalArgumentException("Mosaic type can not be null");
         _notifier.setProperty(this.mosaicType, mosaicType, PROPERTY_MOSAIC_TYPE);
+    }
+
+    public EMosaicGroup getMosaicGroup() { return mosaicType.getGroup(); }
+    public void setMosaicGroup(EMosaicGroup mosaicGroup) {
+        if (mosaicGroup == null)
+            throw new IllegalArgumentException("Mosaic group can not be null");
+        if (mosaicType.getGroup() == mosaicGroup)
+            return;
+        int ordinalInOldGroup = mosaicType.getOrdinalInGroup();
+        int ordinalInNewGroup = Math.min(ordinalInOldGroup, mosaicGroup.getMosaics().size() - 1);
+        setMosaicType(mosaicGroup.getMosaics().get(ordinalInNewGroup));
     }
 
     public Matrisize getSizeField() { return sizeField; }
@@ -124,7 +137,11 @@ public class MosaicInitData implements INotifyPropertyChanged, AutoCloseable {
             switch(ev.getPropertyName()) {
             case PROPERTY_MOSAIC_TYPE:
                 {
-                    ESkillLevel skillOld = ESkillLevel.calcSkillLevel((EMosaic)ev.getOldValue(), sizeField, minesCount);
+                    EMosaic old = (EMosaic)ev.getOldValue();
+                    if (old.getGroup() != getMosaicType().getGroup())
+                        _notifier.firePropertyChanged(old.getGroup(), getMosaicType().getGroup(), PROPERTY_MOSAIC_GROUP);
+
+                    ESkillLevel skillOld = ESkillLevel.calcSkillLevel(old, sizeField, minesCount);
                     if (skillOld == ESkillLevel.eCustom) {
                         ESkillLevel skillNew = getSkillLevel();
                         if (skillNew != skillOld)

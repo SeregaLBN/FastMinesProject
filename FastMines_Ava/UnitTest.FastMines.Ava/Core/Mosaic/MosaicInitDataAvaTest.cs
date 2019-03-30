@@ -1,60 +1,70 @@
-﻿using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using fmg.uwp.utils;
+﻿using System;
+using System.Threading.Tasks;
+using Xunit;
+using fmg.ava.utils;
 
 namespace fmg.core.mosaic {
 
-    [TestClass]
-    public class MosaicInitDataUwpTest : MosaicInitDataTest {
+    public class MosaicInitDataAvaTest : MosaicInitDataTest {
 
         protected override void AssertEqual(int expected, int actual) {
-            Assert.AreEqual(expected, actual);
+            Assert.Equal(expected, actual);
         }
         protected override void AssertEqual(object expected, object actual) {
-            Assert.AreEqual(expected, actual);
+            Assert.Equal(expected, actual);
         }
         protected override void AssertTrue(bool condition) {
-            Assert.IsTrue(condition);
+            Assert.True(condition);
         }
         protected override void AssertFalse(bool condition) {
-            Assert.IsFalse(condition);
+            Assert.False(condition);
         }
         protected override void AssertFail() {
-            Assert.Fail();
+            //Assert.Fail();
+            throw new Exception("Assert.Fail");
         }
 
-        [TestInitialize]
+        private bool _tuned;
+
         public override void Setup() {
+            if (_tuned)
+                return;
             base.Setup();
+            _tuned = true;
             StaticInitializer.Init();
         }
 
-        [TestMethod]
+        [Fact]
         public override void CheckTheImpossibilitySetCustomSkillLevelTest() {
+            Setup();
             base.CheckTheImpossibilitySetCustomSkillLevelTest();
         }
 
-        [TestMethod]
+        [Fact]
         public override async Task CheckIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest() {
+            Setup();
             await base.CheckIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest();
         }
 
-        [TestMethod]
+        [Fact]
         public override async Task CheckNoRepeatNotificationsTest() {
+            Setup();
             await base.CheckNoRepeatNotificationsTest();
         }
 
-        [TestMethod]
+        [Fact]
         public override async Task CheckChangedMosaicGroupTest() {
+            Setup();
             await base.CheckChangedMosaicGroupTest();
         }
 
-        [TestMethod]
+        [Fact]
         public override async Task CheckNoChangedMosaicGroupTest() {
+            Setup();
             await base.CheckNoChangedMosaicGroupTest();
         }
 
-        [TestMethod]
+        [Fact]
         public override void CheckRestoreIndexInGroupTest() {
             Setup();
             base.CheckRestoreIndexInGroupTest();

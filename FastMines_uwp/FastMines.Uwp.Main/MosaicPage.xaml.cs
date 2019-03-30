@@ -13,14 +13,14 @@ using fmg.core.mosaic;
 using fmg.uwp.utils;
 using MosaicVirtController = fmg.uwp.mosaic.win2d.MosaicCanvasVirtualControlController;
 using MosaicSwapController = fmg.uwp.mosaic.win2d.MosaicCanvasSwapChainPanelController;
-using AMosaicController = fmg.core.img.IImageController<
+using IImageController = fmg.core.img.IImageController<
         Windows.UI.Xaml.FrameworkElement,
         fmg.core.mosaic.IMosaicView<
                 Windows.UI.Xaml.FrameworkElement,
                 Microsoft.Graphics.Canvas.CanvasBitmap,
                 fmg.core.mosaic.MosaicDrawModel<Microsoft.Graphics.Canvas.CanvasBitmap>>,
         fmg.core.mosaic.MosaicDrawModel<Microsoft.Graphics.Canvas.CanvasBitmap>>;
-using BMosaicController = fmg.core.mosaic.IMosaicController<
+using IMosaicController = fmg.core.mosaic.IMosaicController<
         Windows.UI.Xaml.FrameworkElement,
         Microsoft.Graphics.Canvas.CanvasBitmap,
         fmg.core.mosaic.IMosaicView<
@@ -33,10 +33,10 @@ namespace fmg {
 
     public sealed partial class MosaicPage : Page {
 
-        private BMosaicController _mosaicController;
+        private IMosaicController _mosaicController;
 
         /// <summary> Mosaic controller </summary>
-        public BMosaicController MosaicController {
+        public IMosaicController MosaicController {
             get {
                 if (_mosaicController == null) {
                     if (true)
@@ -59,7 +59,7 @@ namespace fmg {
         }
 
         // fix: XamlCompiler error WMC1110: Invalid binding path 'MosaicController.Size' : Property 'Size' can't be found on type 'IMosaicController'
-        public AMosaicController LivehackMosaicController => MosaicController;
+        public IImageController MosaicImageController => MosaicController;
 
         public MosaicPage() {
             this.InitializeComponent();

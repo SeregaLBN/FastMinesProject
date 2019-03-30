@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.ComponentModel;
 using fmg.common.geom;
 using fmg.common.notifier;
@@ -45,6 +46,17 @@ namespace fmg.core.mosaic {
         public EMosaic MosaicType {
             get { return _mosaicType; }
             set { _notifier.SetProperty(ref _mosaicType, value); }
+        }
+
+        public EMosaicGroup MosaicGroup {
+            get { return _mosaicType.GetGroup(); }
+            set {
+                if (_mosaicType.GetGroup() == value)
+                    return;
+                var ordinalInOldGroup = _mosaicType.GetOrdinalInGroup();
+                var ordinalInNewGroup = Math.Min(ordinalInOldGroup, value.GetMosaics().Count() - 1);
+                MosaicType = value.GetMosaics().ToList()[ordinalInNewGroup];
+            }
         }
 
         public Matrisize SizeField {
@@ -107,7 +119,11 @@ namespace fmg.core.mosaic {
                 switch(ev.PropertyName) {
                 case nameof(this.MosaicType):
                     {
-                        var skillOld = ESkillLevelEx.CalcSkillLevel((ev as PropertyChangedExEventArgs<EMosaic>).OldValue, SizeField, MinesCount);
+                        var old = (ev as PropertyChangedExEventArgs<EMosaic>).OldValue;
+                        if (old.GetGroup() != MosaicType.GetGroup())
+                            _notifier.FirePropertyChanged(old.GetGroup(), MosaicType.GetGroup(), nameof(this.MosaicGroup));
+
+                        var skillOld = ESkillLevelEx.CalcSkillLevel(old, SizeField, MinesCount);
                         if (skillOld == ESkillLevel.eCustom) {
                             var skillNew = SkillLevel;
                             if (skillNew != skillOld)

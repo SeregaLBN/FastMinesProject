@@ -23,7 +23,7 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
                                      THeaderModel extends IAnimatedModel,
                                      THeaderView  extends IImageView<Bitmap, THeaderModel>,
                                      THeaderCtrlr extends ImageController<Bitmap, THeaderView, THeaderModel>,
-                                     
+
                                      TItem   extends BaseDataItem<TItemId, TItemModel, TItemView, TItemCtrlr>,
                                      TItemId,
                                      TItemModel extends IAnimatedModel,
@@ -48,7 +48,7 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
     private boolean disposed;
 
     private static final int NOT_SELECTED_POS = -1;
-    
+
     protected final NotifyPropertyChanged notifier/*Sync*/ = new NotifyPropertyChanged(this, false);
     private   final NotifyPropertyChanged notifierAsync    = new NotifyPropertyChanged(this, true);
 
@@ -104,7 +104,7 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
     }
 
     /** for one selected - start animate; for all other - stop animate */
-    protected  abstract void onCurrentItemChanged();
+    protected abstract void onCurrentItemChanged();
 
     protected void onPropertyChanged(PropertyChangeEvent ev) {
         // refire as async event

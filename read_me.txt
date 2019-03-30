@@ -1,29 +1,30 @@
 ﻿IDE Workspaces / Solutions:
    ./build.gradle  - open (import) in IDE Eclipse / IDEA
          subprojects (Java):
-            ./FastMines_core    - open in Eclipse or IDEA(Android Studio) or VS Code
-            ./FastMines_swing   - open in Eclipse or IDEA(Android Studio) or VS Code
-            ./FastMines_jfx     - open in Eclipse or IDEA(Android Studio) or VS Code
-            ./FastMines_android - open in Android Studio(IDEA)
+            ./FastMines_core    - Core of FastMine project      open in Eclipse or IDEA(Android Studio) or VS Code
+            ./FastMines_swing   - SWING support                 open in Eclipse or IDEA(Android Studio) or VS Code
+            ./FastMines_jfx     - JavaFX support                open in Eclipse or IDEA(Android Studio) or VS Code
+            ./FastMines_android - Android version               open in Android Studio(IDEA)
    ./FastMines.sln  - solutions for Visual Studio 2017
          subprojects in subdirectories:
-            ./FastMines_core                    - C#
-                ./FastMines.Core                        - shared library - common utils  &  core business logic
-                ./UnitTest.FastMines.Core               - shared library for Unit Tests
-                ./UnitTest.FastMines.NUnit              - unit test for FastMines.Core over NUnit
-            ./FastMines_uwp                     - C#
-                ./FastMines.Uwp.Main                    - Main program
-                ./FastMines.Uwp.Shared                  - shared library for all UWP projects
-                ./Test.FastMines.Uwp.Images             - visual check drawing demo-program
-                ./FastMines.Uwp.Draw.Win2D              - shared library (used https://github.com/Microsoft/Win2D)
-                ./FastMines.Uwp.Draw.XamlElem           - shared library (uses a composite mosaic of XAML elements; left as an example)  (obsolete; left as an example)
-                ./FastMines.Uwp.Draw.WBmp               - shared library (used WritableBitmap extension https://github.com/reneschulte/WriteableBitmapEx) (obsolete because brakes; left as an example)
-                ./FastMines.Uwp.BackgroundTasks         - service for main program
-                ./UnitTest.FastMines.Uwp                - unit test for UWP over Microsoft TestFramework
-            ./FastMines_Logo                    - C++
-            ./FastMines_Ava                     - C#     (can be opened and run in VS Code)
-                ./FastMines.Ava.Draw                    - shared library for all Avalonia projects
-                ./Test.FastMines.Ava.Images             - Template for future visual check drawing demo-program
+            ./FastMines_core                    - C#    - Core of FastMines project
+                ./FastMines.Core                            - shared library - common utils  &  core business logic
+                ./UnitTest.FastMines.Core                   - shared library for Unit Tests
+                ./UnitTest.FastMines.NUnit                  - unit test for FastMines.Core over NUnit
+            ./FastMines_uwp                     - C#    - Universal Windows Platform
+                ./FastMines.Uwp.Main                        - Main program
+                ./FastMines.Uwp.Shared                      - shared library for all UWP projects
+                ./Test.FastMines.Uwp.Images                 - visual check drawing demo-program
+                ./FastMines.Uwp.Draw.Win2D                  - shared library (used https://github.com/Microsoft/Win2D)
+                ./FastMines.Uwp.Draw.XamlElem               - shared library (uses a composite mosaic of XAML elements; left as an example)  (obsolete; left as an example)
+                ./FastMines.Uwp.Draw.WBmp                   - shared library (used WritableBitmap extension https://github.com/reneschulte/WriteableBitmapEx) (obsolete because brakes; left as an example)
+                ./FastMines.Uwp.BackgroundTasks             - service for main program
+                ./UnitTest.FastMines.Uwp                    - unit test for UWP over MSTest
+            ./FastMines_Logo                    - C++   - Main logo (canonical)
+            ./FastMines_Ava                     - C#    - Avalonia framework (can be opened and run in VS Code)
+                ./FastMines.Ava.Draw                        - shared library for all Avalonia projects
+                ./Test.FastMines.Ava.Images                 - Template for future visual check drawing demo-program
+                ./UnitTest.FastMines.Ava                    - unit test for UWP over xUnit
 
 ./src - common code base
 ./res - shared resources files

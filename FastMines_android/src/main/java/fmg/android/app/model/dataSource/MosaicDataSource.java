@@ -22,7 +22,6 @@ import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
-import fmg.core.types.draw.PenBorder;
 
 public class MosaicDataSource extends BaseDataSource<
         LogoDataItem  ,    Void,           LogoModel      ,      Logo.Bitmap,      Logo.ControllerBitmap,
@@ -109,6 +108,7 @@ public class MosaicDataSource extends BaseDataSource<
             } else {
                 MosaicDataItem mi = makeItem(mosaicType);
                 mi.setSize(size); //  restore
+                dataSource.add(mi);
             }
         }
         notifier.firePropertyChanged(null, dataSource, PROPERTY_DATA_SOURCE);
@@ -136,7 +136,7 @@ public class MosaicDataSource extends BaseDataSource<
 
     /** for one selected item - start animate; for all other - stop animate */
     private void applySelection(MosaicDataItem item) {
-        boolean selected = (item.getUniqueId().ordinal() == currentItemPos);
+        boolean selected = item == getCurrentItem(); // check by reference
         MosaicAnimatedModel<?> model = item.getEntity().getModel();
         model.setAnimated(selected);
         model.getPenBorder().setColorLight (selected ? Color.White() : Color.Black());

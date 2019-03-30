@@ -247,4 +247,15 @@ public enum EMosaic {
         return res;
     }
 
+
+    public int getOrdinalInGroup() {
+        int i = 0;
+        for (EMosaic mosaic : this.getGroup().getMosaics())
+            if (mosaic == this)
+                return i;
+            else
+                ++i;
+        throw new RuntimeException("inposible");
+    }
+
 }
