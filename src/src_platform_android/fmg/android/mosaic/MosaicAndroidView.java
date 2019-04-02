@@ -48,11 +48,6 @@ public abstract class MosaicAndroidView<TImage,
         _textPaint.setStyle(Paint.Style.FILL);
     }
 
-
-    static {
-        StaticInitializer.init();
-    }
-
     protected void drawAndroid(Canvas g, Collection<BaseCell> toDrawCells, boolean drawBk) {
         assert !_alreadyPainted;
         _alreadyPainted = true;

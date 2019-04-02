@@ -1,38 +1,41 @@
 package fmg.android.img;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
-import fmg.core.img.IImageController;
 import fmg.core.img.MosaicGroupController;
 import fmg.core.img.MosaicGroupModel;
 import fmg.core.types.EMosaicGroup;
 
-/**
- * Representable {@link EMosaicGroup} as image
- * <br>
- * Android impl
- *
- * @param <TImage> Android specific image: {@link android.graphics.Bitmap})
- **/
-public abstract class MosaicGroupImg<TImage> extends MosaicSkillOrGroupView<TImage, MosaicGroupModel> {
+/** Representable {@link EMosaicGroup} as image */
+public final class MosaicGroupImg {
+    private MosaicGroupImg() {}
 
-    /** @param group - may be null. if Null - representable image of EMosaicGroup.class */
-    protected MosaicGroupImg(EMosaicGroup group) {
-        super(new MosaicGroupModel(group));
-    }
+    /**
+     * Representable {@link EMosaicGroup} as image
+     * <br>
+     * Base image view Android implementation
+     *
+     * @param <TImage> Android specific image: {@link android.graphics.Bitmap}
+     **/
+    abstract static class AndroidView<TImage> extends MosaicSkillOrGroupView<TImage, MosaicGroupModel> {
 
-    @Override
-    protected Stream<Pair<Color, Stream<PointDouble>>> getCoords() { return getModel().getCoords(); }
+            /** @param group - may be null. if Null - representable image of EMosaicGroup.class */
+            protected AndroidView(EMosaicGroup group) {
+                super(new MosaicGroupModel(group));
+            }
 
-    @Override
-    public void close() {
-        getModel().close();
-        super.close();
+            @Override
+            protected Stream<Pair<Color, Stream<PointDouble>>> getCoords() { return getModel().getCoords(); }
+
+            @Override
+            public void close() {
+                getModel().close();
+                super.close();
+            }
+
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -40,11 +43,11 @@ public abstract class MosaicGroupImg<TImage> extends MosaicSkillOrGroupView<TIma
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /** MosaicsGroup image view implementation over {@link android.graphics.Bitmap} */
-    public static class Bitmap extends MosaicGroupImg<android.graphics.Bitmap> {
+    public static class BitmapView extends AndroidView<android.graphics.Bitmap> {
 
         private BmpCanvas wrap = new BmpCanvas();
 
-        public Bitmap(EMosaicGroup group) { super(group); }
+        public BitmapView(EMosaicGroup group) { super(group); }
 
         @Override
         protected android.graphics.Bitmap createImage() {
@@ -63,11 +66,11 @@ public abstract class MosaicGroupImg<TImage> extends MosaicSkillOrGroupView<TIma
 
     }
 
-    /** MosaicsGroup image controller implementation for {@link Bitmap} */
-    public static class ControllerBitmap extends MosaicGroupController<android.graphics.Bitmap, Bitmap> {
+    /** MosaicsGroup image controller implementation for {@link BitmapView} */
+    public static class BitmapController extends MosaicGroupController<android.graphics.Bitmap, BitmapView> {
 
-        public ControllerBitmap(EMosaicGroup group) {
-            super(group==null, new MosaicGroupImg.Bitmap(group));
+        public BitmapController(EMosaicGroup group) {
+            super(group==null, new BitmapView(group));
         }
 
         @Override

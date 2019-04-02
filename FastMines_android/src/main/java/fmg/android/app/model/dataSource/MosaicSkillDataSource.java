@@ -14,8 +14,8 @@ import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.types.ESkillLevel;
 
 public class MosaicSkillDataSource extends BaseDataSource<
-        MosaicSkillDataItem, ESkillLevel, MosaicSkillModel, MosaicSkillImg.Bitmap, MosaicSkillImg.ControllerBitmap,
-        MosaicSkillDataItem, ESkillLevel, MosaicSkillModel, MosaicSkillImg.Bitmap, MosaicSkillImg.ControllerBitmap>
+        MosaicSkillDataItem, ESkillLevel, MosaicSkillModel, MosaicSkillImg.BitmapView, MosaicSkillImg.BitmapController,
+        MosaicSkillDataItem, ESkillLevel, MosaicSkillModel, MosaicSkillImg.BitmapView, MosaicSkillImg.BitmapController>
 {
 
     @Override

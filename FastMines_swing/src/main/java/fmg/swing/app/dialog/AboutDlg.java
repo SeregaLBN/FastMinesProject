@@ -11,6 +11,7 @@ import javax.swing.border.EtchedBorder;
 
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
+import fmg.core.img.IImageController;
 import fmg.core.img.LogoModel;
 import fmg.core.img.SmileModel;
 import fmg.swing.img.Logo;
@@ -23,8 +24,8 @@ public class AboutDlg extends JDialog implements AutoCloseable {
     private static final long serialVersionUID = 1L;
     private static final int ImgZoomQuality = 3;
 
-    private Logo.ControllerIcon _logo;
-    private Smile.ControllerIcon _smile;
+    private Logo.IconController _logo;
+    private Smile.IconController _smile;
 
     public AboutDlg(JFrame parent, boolean modal) {
         super(parent, "About", modal);
@@ -114,7 +115,7 @@ public class AboutDlg extends JDialog implements AutoCloseable {
         final int constSize = 48;
         int icoSize = constSize * ImgZoomQuality;
         if (_logo == null)
-            _logo = new Logo.ControllerIcon();
+            _logo = new Logo.IconController();
         LogoModel lm = _logo.getModel();
         lm.setUseGradient(true);
         lm.setSize(new SizeDouble(icoSize, icoSize));
@@ -126,13 +127,13 @@ public class AboutDlg extends JDialog implements AutoCloseable {
         lm.setTotalFrames(250);
         JButton btnLogo = new JButton(ImgUtils.zoom(_logo.getImage(), constSize, constSize));
         _logo.addListener(ev -> {
-            if (Logo.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
+            if (IImageController.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
                 btnLogo.setIcon(ImgUtils.zoom(_logo.getImage(), constSize, constSize));
                 btnLogo.repaint();
             }
         });
 
-        _smile = new Smile.ControllerIcon(SmileModel.EFaceType.Face_Disappointed);
+        _smile = new Smile.IconController(SmileModel.EFaceType.Face_Disappointed);
         _smile.getModel().setSize(new SizeDouble(icoSize, icoSize));
         btnLogo.setPressedIcon(ImgUtils.zoom(_smile.getImage(), constSize, constSize));
         btnLogo.setFocusable(false);

@@ -80,33 +80,33 @@ public class DemoActivity extends AppCompatActivity {
     );}
     public void testMosaicImg     () { testApp(() ->
                                                    //// test single
-                                                   //Stream.of(new MosaicImg.ControllerBitmap() { { setMosaicType(EMosaic.eMosaicSquare1); }})
+                                                   //Stream.of(new MosaicImg.BitmapController() { { setMosaicType(EMosaic.eMosaicSquare1); }})
 
                                                    // test all
                                                    Stream.of(EMosaic.values())
-                                                         .map(e -> new MosaicImg.ControllerBitmap() { { setMosaicType(e); }})
+                                                         .map(e -> new MosaicImg.BitmapController() { { setMosaicType(e); }})
                                      );
     }
     public void testMosaicGroupImg() { testApp(() -> Stream.concat(Stream.of((EMosaicGroup)null), Stream.of(EMosaicGroup.values()))
-                                              .map(e -> new Pair<>(new MosaicGroupImg.ControllerBitmap(e),
-                                                                   new MosaicGroupImg.ControllerBitmap(e)))
+                                              .map(e -> new Pair<>(new MosaicGroupImg.BitmapController(e),
+                                                                   new MosaicGroupImg.BitmapController(e)))
                                               .flatMap(x -> Stream.of(x.first, x.second)));
     }
     public void testMosaicSkillImg() { testApp(() -> Stream.concat(Stream.of((ESkillLevel)null), Stream.of(ESkillLevel.values()))
-                                              .map(e -> new Pair<>(new MosaicSkillImg.ControllerBitmap(e),
-                                                                   new MosaicSkillImg.ControllerBitmap(e)))
+                                              .map(e -> new Pair<>(new MosaicSkillImg.BitmapController(e),
+                                                                   new MosaicSkillImg.BitmapController(e)))
                                               .flatMap(x -> Stream.of(x.first, x.second)));
     }
-    public void testLogo          () { testApp(() -> Stream.of(new Logo.ControllerBitmap()
-                                                             , new Logo.ControllerBitmap()
-                                                             , new Logo.ControllerBitmap()
-                                                             , new Logo.ControllerBitmap())); }
-    public void testMine          () { testApp(() -> Stream.of(new Mine.ControllerBitmap()
-                                                             , new Mine.ControllerBitmap())); }
-    public void testFlag          () { testApp(() -> Stream.of(new Flag.ControllerBitmap()
-                                                             , new Flag.ControllerBitmap())); }
+    public void testLogo          () { testApp(() -> Stream.of(new Logo.BitmapController()
+                                                             , new Logo.BitmapController()
+                                                             , new Logo.BitmapController()
+                                                             , new Logo.BitmapController())); }
+    public void testMine          () { testApp(() -> Stream.of(new Mine.BitmapController()
+                                                             , new Mine.BitmapController())); }
+    public void testFlag          () { testApp(() -> Stream.of(new Flag.BitmapController()
+                                                             , new Flag.BitmapController())); }
     public void testSmile         () { testApp(() -> Stream.of(SmileModel.EFaceType.values())
-                                                         .map(e -> new Smile.ControllerBitmap(e)));
+                                                         .map(e -> new Smile.BitmapController(e)));
     }
     // #endregion
 

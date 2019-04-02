@@ -9,27 +9,33 @@ import fmg.core.img.MosaicSkillController;
 import fmg.core.img.MosaicSkillModel;
 import fmg.core.types.ESkillLevel;
 
-/**
- * Representable {@link fmg.core.types.ESkillLevel} as image
- * <br>
- * JFX impl
- *
- * @param <TImage> JFX specific image: {@link javafx.scene.image.Image} or {@link javafx.scene.canvas.Canvas}
- **/
-public abstract class MosaicSkillImg<TImage> extends MosaicSkillOrGroupView<TImage, MosaicSkillModel> {
+/** Representable {@link fmg.core.types.ESkillLevel} as image */
+public final class MosaicSkillImg {
+    private MosaicSkillImg() {}
 
-    /** @param skill - may be null. if Null - representable image of ESkillLevel.class */
-    protected MosaicSkillImg(ESkillLevel skill) {
-        super(new MosaicSkillModel(skill));
-    }
+    /**
+     * Representable {@link fmg.core.types.ESkillLevel} as image
+     * <br>
+     * Base image view JavaFX implementation
+     *
+     * @param <TImage> JFX specific image: {@link javafx.scene.image.Image} or {@link javafx.scene.canvas.Canvas}
+     **/
+    public abstract static class JfxView<TImage> extends MosaicSkillOrGroupView<TImage, MosaicSkillModel> {
 
-    @Override
-    protected Stream<Pair<Color, Stream<PointDouble>>> getCoords() { return getModel().getCoords(); }
+        /** @param skill - may be null. if Null - representable image of ESkillLevel.class */
+        protected JfxView(ESkillLevel skill) {
+            super(new MosaicSkillModel(skill));
+        }
 
-    @Override
-    public void close() {
-        getModel().close();
-        super.close();
+        @Override
+        protected Stream<Pair<Color, Stream<PointDouble>>> getCoords() { return getModel().getCoords(); }
+
+        @Override
+        public void close() {
+            getModel().close();
+            super.close();
+        }
+
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -37,12 +43,12 @@ public abstract class MosaicSkillImg<TImage> extends MosaicSkillOrGroupView<TIma
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /** MosaicsSkill image view implementation over {@javafx.scene.canvas.Canvas} */
-    public static class Canvas extends MosaicSkillImg<javafx.scene.canvas.Canvas> {
+    public static class CanvasView extends JfxView<javafx.scene.canvas.Canvas> {
 
         private CanvasJfx canvas = new CanvasJfx(this);
 
         /** @param skill - may be null. if Null - representable image of ESkillLevel.class */
-        public Canvas(ESkillLevel skill) { super(skill); }
+        public CanvasView(ESkillLevel skill) { super(skill); }
 
         @Override
         protected javafx.scene.canvas.Canvas createImage() { return canvas.create(); }
@@ -53,12 +59,12 @@ public abstract class MosaicSkillImg<TImage> extends MosaicSkillOrGroupView<TIma
     }
 
     /** MosaicsSkill image view implementation over {@link javafx.scene.image.Image} */
-    public static class Image extends MosaicSkillImg<javafx.scene.image.Image> {
+    public static class ImageJfxView extends JfxView<javafx.scene.image.Image> {
 
         private ImageJfx img = new ImageJfx(this);
 
         /** @param skill - may be null. if Null - representable image of ESkillLevel.class */
-        public Image(ESkillLevel skill) { super(skill); }
+        public ImageJfxView(ESkillLevel skill) { super(skill); }
 
         @Override
         protected javafx.scene.image.Image createImage() {
@@ -74,11 +80,11 @@ public abstract class MosaicSkillImg<TImage> extends MosaicSkillOrGroupView<TIma
 
     }
 
-    /** MosaicsSkill image controller implementation for {@link Canvas} */
-    public static class ControllerCanvas extends MosaicSkillController<javafx.scene.canvas.Canvas, MosaicSkillImg.Canvas> {
+    /** MosaicsSkill image controller implementation for {@link CanvasView} */
+    public static class CanvasController extends MosaicSkillController<javafx.scene.canvas.Canvas, MosaicSkillImg.CanvasView> {
 
-        public ControllerCanvas(ESkillLevel skill) {
-            super(skill == null, new MosaicSkillImg.Canvas(skill));
+        public CanvasController(ESkillLevel skill) {
+            super(skill == null, new MosaicSkillImg.CanvasView(skill));
         }
 
         @Override
@@ -89,11 +95,11 @@ public abstract class MosaicSkillImg<TImage> extends MosaicSkillOrGroupView<TIma
 
     }
 
-    /** MosaicsSkill image controller implementation for {@link Image} */
-    public static class ControllerImage extends MosaicSkillController<javafx.scene.image.Image, MosaicSkillImg.Image> {
+    /** MosaicsSkill image controller implementation for {@link ImageJfxView} */
+    public static class ImageJfxController extends MosaicSkillController<javafx.scene.image.Image, MosaicSkillImg.ImageJfxView> {
 
-        public ControllerImage(ESkillLevel skill) {
-            super(skill == null, new MosaicSkillImg.Image(skill));
+        public ImageJfxController(ESkillLevel skill) {
+            super(skill == null, new MosaicSkillImg.ImageJfxView(skill));
         }
 
         @Override

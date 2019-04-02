@@ -97,8 +97,8 @@ public final class DemoApp extends Application {
                 // variant 2
                 .map(e -> {
                         MosaicImageController<?, ?> ctrlr = ThreadLocalRandom.current().nextBoolean()
-                                ? new MosaicImg.ControllerCanvas()
-                                : new MosaicImg.ControllerImage();
+                                ? new MosaicImg.CanvasController()
+                                : new MosaicImg.ImageJfxController();
                         ctrlr.setMosaicType(e);
                         return ctrlr;
                     }));
@@ -107,8 +107,8 @@ public final class DemoApp extends Application {
         testApp(() ->
             Stream.concat(Stream.of((EMosaicGroup)null),
                           Stream.of(EMosaicGroup.values()))
-                .map(e -> new Pair<>(new MosaicGroupImg.ControllerCanvas (e),
-                                     new MosaicGroupImg.ControllerImage(e)))
+                .map(e -> new Pair<>(new MosaicGroupImg.CanvasController (e),
+                                     new MosaicGroupImg.ImageJfxController(e)))
                 .flatMap(x -> Stream.of(x.first, x.second))
         );
     }
@@ -116,31 +116,31 @@ public final class DemoApp extends Application {
         testApp(() ->
             Stream.concat(Stream.of((ESkillLevel)null),
                           Stream.of(ESkillLevel.values()))
-                .map(e -> new Pair<>(new MosaicSkillImg.ControllerCanvas(e),
-                                     new MosaicSkillImg.ControllerImage(e)))
+                .map(e -> new Pair<>(new MosaicSkillImg.CanvasController(e),
+                                     new MosaicSkillImg.ImageJfxController(e)))
                 .flatMap(x -> Stream.of(x.first, x.second))
         );
     }
     public void testLogo() {
-        testApp(() -> Stream.of(new Logo.ControllerCanvas()
-                              , new Logo.ControllerImage()
-                              , new Logo.ControllerCanvas()
-                              , new Logo.ControllerImage()));
+        testApp(() -> Stream.of(new Logo.CanvasController()
+                              , new Logo.ImageJfxController()
+                              , new Logo.CanvasController()
+                              , new Logo.ImageJfxController()));
     }
     public void testMine() {
-        testApp(() -> Stream.of(new Mine.ControllerCanvas()
-                              , new Mine.ControllerImage()
-                              , new Mine.ControllerCanvas()
-                              , new Mine.ControllerImage()));
+        testApp(() -> Stream.of(new Mine.CanvasController()
+                              , new Mine.ImageJfxController()
+                              , new Mine.CanvasController()
+                              , new Mine.ImageJfxController()));
     }
     public void testFlag() {
-        testApp(() -> Stream.of(new Flag.ControllerCanvas()
-                              , new Flag.ControllerImage()));
+        testApp(() -> Stream.of(new Flag.CanvasController()
+                              , new Flag.ImageJfxController()));
     }
     public void testSmile() {
         testApp(() -> Stream.of(EFaceType.values())
-                    .map(e -> Stream.of(new Smile.ControllerCanvas(e),
-                                        new Smile.ControllerImage(e)))
+                    .map(e -> Stream.of(new Smile.CanvasController(e),
+                                        new Smile.ImageJfxController(e)))
                     .flatMap(x -> x));
     }
     // #endregion

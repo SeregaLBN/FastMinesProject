@@ -30,7 +30,6 @@ import fmg.core.types.EState;
 import fmg.core.types.draw.FontInfo;
 import fmg.core.types.draw.PenBorder;
 import fmg.jfx.utils.Cast;
-import fmg.jfx.utils.StaticInitializer;
 
 /** MVC: view. Abstract JFX implementation */
 public abstract class MosaicJfxView<TImage,
@@ -47,23 +46,6 @@ public abstract class MosaicJfxView<TImage,
     protected MosaicJfxView(TMosaicModel mosaicModel) {
         super(mosaicModel);
     }
-
-
-    static {
-        StaticInitializer.init();
-
-//        try {
-//            javafx.scene.layout.Region region = new Pane();
-//            Background bk = region.getBackground(); // its NULL :(
-//            List<javafx.scene.layout.BackgroundFill> fills = bk.getFills();
-//            javafx.scene.layout.BackgroundFill fill = fills.iterator().next();
-//            Paint p = fill.getFill();
-//            System.out.println("ButtonColor = " + p);
-//        } catch (Exception e) {
-//            MosaicDrawModel.setDefaultBackgroundColor(Color.Gray.brighter());
-//        }
-    }
-
 
     protected void drawJfx(GraphicsContext g, Collection<BaseCell> toDrawCells, boolean drawBk) {
         assert !_alreadyPainted;

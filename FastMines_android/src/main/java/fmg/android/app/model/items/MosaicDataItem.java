@@ -15,7 +15,7 @@ import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
 
 /** Mosaic item for data model */
-public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicAnimatedModel<Void>, MosaicImg.Bitmap, MosaicImg.ControllerBitmap> {
+public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicAnimatedModel<Void>, MosaicImg.BitmapView, MosaicImg.BitmapController> {
 
     public static final String PROPERTY_MOSAIC_TYPE = MosaicGameModel.PROPERTY_MOSAIC_TYPE;
     public static final String PROPERTY_SKILL_LEVEL = "SkillLevel";
@@ -44,10 +44,10 @@ public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicAnimatedModel<Vo
     }
 
     @Override
-    public MosaicImg.ControllerBitmap getEntity() {
+    public MosaicImg.BitmapController getEntity() {
         if (this.entity == null) {
             Matrisize sizeField = getSkillLevel().sizeTileField(getMosaicType());
-            MosaicImg.ControllerBitmap tmp = new MosaicImg.ControllerBitmap();
+            MosaicImg.BitmapController tmp = new MosaicImg.BitmapController();
             MosaicAnimatedModel<?> m = tmp.getModel();
             m.setMosaicType(getMosaicType());
             m.setSizeField(sizeField);
@@ -57,7 +57,7 @@ public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicAnimatedModel<Vo
             m.getPenBorder().setWidth(3 * getZoom());
 //            m.setRotateAngle(45 * ThreadLocalRandom.current().nextInt(7));
 
-//            android.graphics.Bitmap bmp = tmp.getImage();
+//            android.graphics.BitmapView bmp = tmp.getImage();
 //            assert (bmp.getWidth()  == (int)(getSize().width * getZoom()));
 //            assert (bmp.getHeight() == (int)(getSize().height * getZoom()));
             setEntity(tmp);

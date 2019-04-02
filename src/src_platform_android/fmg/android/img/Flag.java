@@ -6,68 +6,67 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
 
-import java.util.Arrays;
-import java.util.List;
-
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.FlagModel;
-import fmg.core.img.IImageController;
 import fmg.core.img.ImageController;
 import fmg.core.img.ImageView;
 import fmg.android.utils.StaticInitializer;
 
 /** Flag image */
-public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
+public final class Flag {
+    private Flag() {}
 
-    public Flag() {
-        super(new FlagModel());
-    }
+    /** Flag image. Base image view Android implementation
+     * @param <TImage> Android specific image: {@link android.graphics.Bitmap} */
+    abstract static class AndroidView<TImage> extends ImageView<TImage, FlagModel> {
 
-    static {
-        StaticInitializer.init();
-    }
+        public AndroidView() {
+            super(new FlagModel());
+        }
 
-    protected void draw(Canvas g) {
-        SizeDouble size = getSize();
-        float h = (float)(size.height / 100.0);
-        float w = (float)(size.width  / 100.0);
+        protected void draw(Canvas g) {
+            SizeDouble size = getSize();
+            float h = (float)(size.height / 100.0);
+            float w = (float)(size.width  / 100.0);
 
-        // perimeter figure points
-        PointF[] p = new PointF[] {
-                new PointF(13.50f * w, 90 * h),
-                new PointF(17.44f * w, 51 * h),
-                new PointF(21.00f * w, 16 * h),
-                new PointF(85.00f * w, 15 * h),
-                new PointF(81.45f * w, 50 * h)};
+            // perimeter figure points
+            PointF[] p = new PointF[] {
+                    new PointF(13.50f * w, 90 * h),
+                    new PointF(17.44f * w, 51 * h),
+                    new PointF(21.00f * w, 16 * h),
+                    new PointF(85.00f * w, 15 * h),
+                    new PointF(81.45f * w, 50 * h)};
 
-        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(Math.max(1, 7*(w+h)/2));
-        paint.setColor(Color.BLACK);
-        g.drawLine(p[0].x, p[0].y, p[1].x, p[1].y, paint);
+            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(Math.max(1, 7*(w+h)/2));
+            paint.setColor(Color.BLACK);
+            g.drawLine(p[0].x, p[0].y, p[1].x, p[1].y, paint);
 
-        paint.setColor(Color.RED);
-        Path path = new Path();
-        path.moveTo(p[2].x, p[2].y);
-        path.cubicTo(95.0f * w, 0 * h,
-                     19.3f * w, 32 * h,
-                     p[3].x, p[3].y);
-        path.cubicTo(77.80f * w, 32.89f * h,
-                     88.05f * w, 22.73f * h,
-                     p[4].x, p[4].y);
-        path.cubicTo(15.83f * w, 67 * h,
-                     91.45f * w, 35 * h,
-                     p[1].x, p[1].y);
-        path.lineTo(p[2].x, p[2].y);
-        path.close();
+            paint.setColor(Color.RED);
+            Path path = new Path();
+            path.moveTo(p[2].x, p[2].y);
+            path.cubicTo(95.0f * w, 0 * h,
+                         19.3f * w, 32 * h,
+                         p[3].x, p[3].y);
+            path.cubicTo(77.80f * w, 32.89f * h,
+                         88.05f * w, 22.73f * h,
+                         p[4].x, p[4].y);
+            path.cubicTo(15.83f * w, 67 * h,
+                         91.45f * w, 35 * h,
+                         p[1].x, p[1].y);
+            path.lineTo(p[2].x, p[2].y);
+            path.close();
 
-        g.drawPath(path, paint);
-    }
+            g.drawPath(path, paint);
+        }
 
-    @Override
-    public void close() {
-        getModel().close();
-        super.close();
+        @Override
+        public void close() {
+            getModel().close();
+            super.close();
+        }
+
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -75,7 +74,7 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /** Flag image view implementation over {@link android.graphics.Bitmap} */
-    static class Bitmap extends Flag<android.graphics.Bitmap> {
+    static class BitmapView extends AndroidView<android.graphics.Bitmap> {
 
         private BmpCanvas wrap = new BmpCanvas();
 
@@ -96,11 +95,11 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
 
     }
 
-    /** Flag image controller implementation for {@link Bitmap} */
-    public static class ControllerBitmap extends ImageController<android.graphics.Bitmap, Flag.Bitmap, FlagModel> {
+    /** Flag image controller implementation for {@link BitmapView} */
+    public static class BitmapController extends ImageController<android.graphics.Bitmap, BitmapView, FlagModel> {
 
-        public ControllerBitmap() {
-            super(new Flag.Bitmap());
+        public BitmapController() {
+            super(new BitmapView());
         }
 
         @Override

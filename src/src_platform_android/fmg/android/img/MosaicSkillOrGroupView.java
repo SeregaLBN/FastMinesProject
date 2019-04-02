@@ -26,10 +26,6 @@ import fmg.android.utils.StaticInitializer;
  */
 abstract class MosaicSkillOrGroupView<TImage, TImageModel extends AnimatedImageModel> extends WithBurgerMenuView<TImage, TImageModel> {
 
-    static {
-        StaticInitializer.init();
-    }
-
     protected MosaicSkillOrGroupView(TImageModel imageModel) {
         super(imageModel);
     }

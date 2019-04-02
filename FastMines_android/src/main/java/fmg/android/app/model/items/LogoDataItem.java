@@ -4,7 +4,7 @@ import fmg.android.img.Logo;
 import fmg.core.img.LogoModel;
 
 /** Logo as data model */
-public class LogoDataItem extends BaseDataItem<Void, LogoModel, Logo.Bitmap, Logo.ControllerBitmap> {
+public class LogoDataItem extends BaseDataItem<Void, LogoModel, Logo.BitmapView, Logo.BitmapController> {
 
     public LogoDataItem() {
         super(null);
@@ -12,9 +12,9 @@ public class LogoDataItem extends BaseDataItem<Void, LogoModel, Logo.Bitmap, Log
     }
 
     @Override
-    public Logo.ControllerBitmap getEntity() {
+    public Logo.BitmapController getEntity() {
         if (this.entity == null) {
-            Logo.ControllerBitmap tmp = new Logo.ControllerBitmap();
+            Logo.BitmapController tmp = new Logo.BitmapController();
             LogoModel m = tmp.getModel();
             m.setBorderWidth(3);
             m.setRotateMode(LogoModel.ERotateMode.color);

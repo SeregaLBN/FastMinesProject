@@ -13,7 +13,7 @@ import fmg.core.img.MosaicGroupModel;
 import fmg.core.types.EMosaicGroup;
 
 /** Mosaic group item for data model */
-public class MosaicGroupDataItem extends BaseDataItem<EMosaicGroup, MosaicGroupModel, MosaicGroupImg.Bitmap, MosaicGroupImg.ControllerBitmap> {
+public class MosaicGroupDataItem extends BaseDataItem<EMosaicGroup, MosaicGroupModel, MosaicGroupImg.BitmapView, MosaicGroupImg.BitmapController> {
 
     public static final String PROPERTY_MOSAIC_GROUP   = "MosaicGroup";
     public static final String PROPERTY_PADDING_BURGER = "PaddingBurgerMenu";
@@ -28,9 +28,9 @@ public class MosaicGroupDataItem extends BaseDataItem<EMosaicGroup, MosaicGroupM
     public void         setMosaicGroup(EMosaicGroup eMosaicGroup) {        setUniqueId(eMosaicGroup); }
 
     @Override
-    public MosaicGroupImg.ControllerBitmap getEntity() {
+    public MosaicGroupImg.BitmapController getEntity() {
         if (this.entity == null) {
-            MosaicGroupImg.ControllerBitmap tmp = new MosaicGroupImg.ControllerBitmap(getMosaicGroup());
+            MosaicGroupImg.BitmapController tmp = new MosaicGroupImg.BitmapController(getMosaicGroup());
             MosaicGroupModel m = tmp.getModel();
             m.setBorderWidth(3);
             m.setRotateAngle(ThreadLocalRandom.current().nextInt(90));

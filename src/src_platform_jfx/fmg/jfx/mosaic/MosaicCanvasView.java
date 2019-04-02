@@ -21,8 +21,8 @@ import fmg.jfx.utils.ImgUtils;
 public class MosaicCanvasView extends MosaicJfxView<Canvas, Image, MosaicDrawModel<Image>> {
 
     private CanvasJfx _canvas = new CanvasJfx(this);
-    private Flag.ControllerImage _imgFlag = new Flag.ControllerImage();
-    private Mine.ControllerImage _imgMine = new Mine.ControllerImage();
+    private Flag.ImageJfxController _imgFlag = new Flag.ImageJfxController();
+    private Mine.ImageJfxController _imgMine = new Mine.ImageJfxController();
 
     public MosaicCanvasView() {
         super(new MosaicDrawModel<Image>());
