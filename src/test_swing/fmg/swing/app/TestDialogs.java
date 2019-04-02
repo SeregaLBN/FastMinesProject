@@ -19,6 +19,7 @@ import fmg.core.types.viewmodel.serializable.PlayersModel;
 import fmg.swing.app.dialog.*;
 import fmg.swing.img.Animator;
 import fmg.swing.mosaic.MosaicJPanelController;
+import fmg.swing.utils.StaticInitializer;
 
 public class TestDialogs {
 
@@ -100,6 +101,8 @@ public class TestDialogs {
 
 
     public static void main(String[] args) {
+        StaticInitializer.init();
+
         JFrame frame = new JFrame("Test dialogs");
         Container pane = frame.getContentPane();
         GridLayout grLayout = new GridLayout(3,2);

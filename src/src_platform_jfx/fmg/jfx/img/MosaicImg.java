@@ -7,56 +7,62 @@ import fmg.core.mosaic.MosaicImageController;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.jfx.mosaic.MosaicJfxView;
 
-/**
- * Representable {@link fmg.core.types.EMosaic} as image
- * <br>
- * base JavaFX implementation
- *
- * @param <TImage> JFX specific image: {@link javafx.scene.image.Image} or {@link javafx.scene.canvas.Canvas}
- */
-public abstract class MosaicImg<TImage>
-          extends MosaicJfxView<TImage, Void, MosaicAnimatedModel<Void>>
-{
-    protected boolean _useBackgroundColor = true;
+/** Representable {@link fmg.core.types.EMosaic} as image */
+public final class MosaicImg {
+    private MosaicImg() {}
 
-    protected MosaicImg() {
-        super(new MosaicAnimatedModel<Void>());
-    }
+    /**
+     * Representable {@link fmg.core.types.EMosaic} as image
+     * <br>
+     * Base image view JavaFX implementation
+     *
+     * @param <TImage> JFX specific image: {@link javafx.scene.image.Image} or {@link javafx.scene.canvas.Canvas}
+     */
+    public abstract static class JfxView<TImage>
+              extends MosaicJfxView<TImage, Void, MosaicAnimatedModel<Void>>
+    {
+        protected boolean _useBackgroundColor = true;
 
-    @Override
-    protected void drawBody() {
-        // super.drawBody(); // !hide super implementation
-
-        MosaicAnimatedModel<Void> model = getModel();
-
-        _useBackgroundColor = true;
-        switch (model.getRotateMode()) {
-        case fullMatrix:
-            drawModified(model.getMatrix());
-            break;
-        case someCells:
-            // draw static part
-            drawModified(model.getNotRotatedCells());
-
-            // draw rotated part
-            _useBackgroundColor = false;
-            model.getRotatedCells(rotatedCells -> drawModified(rotatedCells));
-            break;
+        protected JfxView() {
+            super(new MosaicAnimatedModel<Void>());
         }
-    }
 
-    @Override
-    public void close() {
-        getModel().close();
-        super.close();
+        @Override
+        protected void drawBody() {
+            // super.drawBody(); // !hide super implementation
+
+            MosaicAnimatedModel<Void> model = getModel();
+
+            _useBackgroundColor = true;
+            switch (model.getRotateMode()) {
+            case fullMatrix:
+                drawModified(model.getMatrix());
+                break;
+            case someCells:
+                // draw static part
+                drawModified(model.getNotRotatedCells());
+
+                // draw rotated part
+                _useBackgroundColor = false;
+                model.getRotatedCells(rotatedCells -> drawModified(rotatedCells));
+                break;
+            }
+        }
+
+        @Override
+        public void close() {
+            getModel().close();
+            super.close();
+        }
+
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     // custom implementations
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /** Mosaic image view implementation over {@link javafx.scene.canvas.javafx.scene.canvas.Canvas} */
-    static class Canvas extends MosaicImg<javafx.scene.canvas.Canvas> {
+    /** Mosaic image view implementation over {@link javafx.scene.canvas.CanvasView.scene.canvas.Canvas} */
+    static class CanvasView extends JfxView<javafx.scene.canvas.Canvas> {
 
         private CanvasJfx canvas = new CanvasJfx(this);
 
@@ -73,7 +79,7 @@ public abstract class MosaicImg<TImage>
     }
 
     /** Mosaics image view implementation over {@link javafx.scene.image.Image} */
-    static class Image extends MosaicImg<javafx.scene.image.Image> {
+    static class ImageJfxView extends JfxView<javafx.scene.image.Image> {
 
         private ImageJfx img = new ImageJfx(this);
 
@@ -91,11 +97,11 @@ public abstract class MosaicImg<TImage>
 
     }
 
-    /** Mosaic image controller implementation for {@link Canvas} */
-    public static class ControllerCanvas extends MosaicImageController<javafx.scene.canvas.Canvas, MosaicImg.Canvas> {
+    /** Mosaic image controller implementation for {@link CanvasView} */
+    public static class CanvasController extends MosaicImageController<javafx.scene.canvas.Canvas, MosaicImg.CanvasView> {
 
-        public ControllerCanvas() {
-            super(new MosaicImg.Canvas());
+        public CanvasController() {
+            super(new MosaicImg.CanvasView());
         }
 
         @Override
@@ -106,11 +112,11 @@ public abstract class MosaicImg<TImage>
 
     }
 
-    /** Mosaic image controller implementation for {@link Image} */
-    public static class ControllerImage extends MosaicImageController<javafx.scene.image.Image, MosaicImg.Image> {
+    /** Mosaic image controller implementation for {@link ImageJfxView} */
+    public static class ImageJfxController extends MosaicImageController<javafx.scene.image.Image, MosaicImg.ImageJfxView> {
 
-        public ControllerImage() {
-            super(new MosaicImg.Image());
+        public ImageJfxController() {
+            super(new MosaicImg.ImageJfxView());
         }
 
         @Override

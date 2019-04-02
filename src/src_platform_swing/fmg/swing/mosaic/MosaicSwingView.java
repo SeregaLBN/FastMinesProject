@@ -25,7 +25,6 @@ import fmg.core.types.EState;
 import fmg.core.types.draw.FontInfo;
 import fmg.core.types.draw.PenBorder;
 import fmg.swing.utils.Cast;
-import fmg.swing.utils.StaticInitializer;
 
 /** MVC: view. Abstract SWING implementation
  * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
@@ -46,12 +45,6 @@ public abstract class MosaicSwingView<TImage,
     protected MosaicSwingView(TMosaicModel mosaicModel) {
         super(mosaicModel);
     }
-
-
-    static {
-        StaticInitializer.init();
-    }
-
 
     protected void drawSwing(Graphics2D g, Collection<BaseCell> toDrawCells, boolean drawBk) {
         assert !_alreadyPainted;

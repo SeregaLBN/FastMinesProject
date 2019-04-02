@@ -21,20 +21,16 @@ namespace fmg.uwp.img.win2d {
     public static class Smile {
 
         /// <summary> Smile images. Base view Win2D implementation </summary>
-        public abstract class SmileImageView<TImage> : ImageView<TImage, SmileModel>
+        public abstract class Win2DView<TImage> : ImageView<TImage, SmileModel>
             where TImage : DependencyObject, ICanvasResourceCreator
         {
 
             protected readonly ICanvasResourceCreator _rc;
 
-            protected SmileImageView(EFaceType faceType, ICanvasResourceCreator resourceCreator)
+            protected Win2DView(EFaceType faceType, ICanvasResourceCreator resourceCreator)
                 : base(new SmileModel(faceType))
             {
                 _rc = resourceCreator;
-            }
-
-            static SmileImageView() {
-                StaticInitializer.Init();
             }
 
             protected void Draw(CanvasDrawingSession ds, bool fillBk) {
@@ -380,9 +376,9 @@ namespace fmg.uwp.img.win2d {
         /////////////////////////////////////////////////////////////////////////////////////////////////////
 
         /// <summary> Smile image view implementation over <see cref="CanvasBitmap"/> </summary>
-        public class CanvasBmp : SmileImageView<CanvasBitmap> {
+        public class CanvasBmpView : Win2DView<CanvasBitmap> {
 
-            public CanvasBmp(EFaceType faceType, ICanvasResourceCreator resourceCreator)
+            public CanvasBmpView(EFaceType faceType, ICanvasResourceCreator resourceCreator)
                 : base(faceType, resourceCreator)
             { }
 
@@ -401,9 +397,9 @@ namespace fmg.uwp.img.win2d {
         }
 
         /// <summary> Smile image view implementation over <see cref="CanvasImageSource"/> (XAML <see cref="Windows.UI.Xaml.Media.ImageSource"/> compatible) </summary>
-        public class CanvasImgSrc : SmileImageView<CanvasImageSource> {
+        public class CanvasImgSrcView : Win2DView<CanvasImageSource> {
 
-            public CanvasImgSrc(EFaceType faceType, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
+            public CanvasImgSrcView(EFaceType faceType, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
                 : base(faceType, resourceCreator)
             { }
 
@@ -421,11 +417,11 @@ namespace fmg.uwp.img.win2d {
 
          }
 
-        /// <summary> Smile image controller implementation for <see cref="Smile.CanvasBmp"/> </summary>
-        public class ControllerBitmap : ImageController<CanvasBitmap, Smile.CanvasBmp, SmileModel> {
+        /// <summary> Smile image controller implementation for <see cref="Smile.CanvasBmpView"/> </summary>
+        public class CanvasBmpController : ImageController<CanvasBitmap, Smile.CanvasBmpView, SmileModel> {
 
-            public ControllerBitmap(EFaceType faceType, ICanvasResourceCreator resourceCreator)
-                : base(new Smile.CanvasBmp(faceType, resourceCreator))
+            public CanvasBmpController(EFaceType faceType, ICanvasResourceCreator resourceCreator)
+                : base(new Smile.CanvasBmpView(faceType, resourceCreator))
             { }
 
             protected override void Disposing() {
@@ -435,11 +431,11 @@ namespace fmg.uwp.img.win2d {
 
         }
 
-        /// <summary> Smile image controller implementation for <see cref="Smile.CanvasImgSrc"/> </summary>
-        public class ControllerImgSrc : ImageController<CanvasImageSource, Smile.CanvasImgSrc, SmileModel> {
+        /// <summary> Smile image controller implementation for <see cref="Smile.CanvasImgSrcView"/> </summary>
+        public class CanvasImgSrcController : ImageController<CanvasImageSource, Smile.CanvasImgSrcView, SmileModel> {
 
-            public ControllerImgSrc(EFaceType faceType, ICanvasResourceCreator resourceCreator)
-                : base(new Smile.CanvasImgSrc(faceType, resourceCreator))
+            public CanvasImgSrcController(EFaceType faceType, ICanvasResourceCreator resourceCreator)
+                : base(new Smile.CanvasImgSrcView(faceType, resourceCreator))
             { }
 
             protected override void Disposing() {

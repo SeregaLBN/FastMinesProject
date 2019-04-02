@@ -25,8 +25,8 @@ public class MosaicViewView extends MosaicAndroidView<View, Bitmap, MosaicDrawMo
 
     private final Activity _owner;
     private View _control;
-    private Flag.ControllerBitmap _imgFlag = new Flag.ControllerBitmap();
-    private Mine.ControllerBitmap _imgMine = new Mine.ControllerBitmap();
+    private Flag.BitmapController _imgFlag = new Flag.BitmapController();
+    private Mine.BitmapController _imgMine = new Mine.BitmapController();
     private final Collection<BaseCell> _modifiedCells = new HashSet<>();
 
     public MosaicViewView(Activity owner) {

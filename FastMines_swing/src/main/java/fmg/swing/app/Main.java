@@ -36,10 +36,7 @@ import fmg.swing.app.dialog.*;
 import fmg.swing.app.serializable.SerializeProjData;
 import fmg.swing.img.*;
 import fmg.swing.mosaic.MosaicJPanelController;
-import fmg.swing.utils.Cast;
-import fmg.swing.utils.GuiTools;
-import fmg.swing.utils.ImgUtils;
-import fmg.swing.utils.ScreenResolutionHelper;
+import fmg.swing.utils.*;
 
 /** Main window (Главное окно программы) */
 public class Main extends JFrame {
@@ -53,7 +50,7 @@ public class Main extends JFrame {
     private PausePanel pausePanel;
     private StatusBar  statusBar;
 
-    private Logo.ControllerImage _logo;
+    private Logo.ImageAwtController _logo;
     private PlayersModel players;
     private UUID activeUserId; // current user
     private ChampionsModel champions;
@@ -115,7 +112,7 @@ public class Main extends JFrame {
 
             private JMenuItem anew;
             private Map<ESkillLevel, JRadioButtonMenuItem> skillLevel;
-            private Map<ESkillLevel, MosaicSkillImg.ControllerIcon> skillLevelImages;
+            private Map<ESkillLevel, MosaicSkillImg.IconController> skillLevelImages;
             private JMenuItem playerManage;
             private JMenuItem exit;
 
@@ -169,7 +166,7 @@ public class Main extends JFrame {
                         menuItem.setAccelerator(Main.KeyCombo.getKeyStroke_SkillLevel(val));
                         menuItem.addActionListener(Main.this.getHandlers().getSkillLevelAction(val));
 
-                        MosaicSkillImg.ControllerIcon img = new MosaicSkillImg.ControllerIcon(val);
+                        MosaicSkillImg.IconController img = new MosaicSkillImg.IconController(val);
                         MosaicSkillModel imgModel = img.getModel();
                         double sq = MenuHeightWithIcon*ZoomQualityFactor;
                         imgModel.setSize(new SizeDouble(sq, sq));
@@ -186,7 +183,7 @@ public class Main extends JFrame {
                             Container parent = menuItem.getParent();
                             if ((parent == null) || !parent.isVisible())
                                 return;
-                            if (ev.getPropertyName().equalsIgnoreCase(MosaicSkillImg.PROPERTY_IMAGE)) {
+                            if (ev.getPropertyName().equalsIgnoreCase(IImageController.PROPERTY_IMAGE)) {
                                 setMenuItemIcon(menuItem, img.getImage());
                             }
                         });
@@ -237,9 +234,9 @@ public class Main extends JFrame {
             private static final long serialVersionUID = 1L;
 
             private Map<EMosaicGroup, JMenuItem> mosaicsGroup;
-            private Map<EMosaicGroup, MosaicGroupImg.ControllerIcon> mosaicsGroupImages;
+            private Map<EMosaicGroup, MosaicGroupImg.IconController> mosaicsGroupImages;
             private Map<EMosaic, JRadioButtonMenuItem> mosaics;
-            private Map<EMosaic, MosaicImg.ControllerIcon> mosaicsImages;
+            private Map<EMosaic, MosaicImg.IconController> mosaicsImages;
 
             Mosaics() {
                 super("Mosaics");
@@ -268,7 +265,7 @@ public class Main extends JFrame {
                             //menuItem.add(Box.createRigidArea(new Dimension(100,25)));
                         }
 //                        menuItem.setMnemonic(Main.KeyCombo.getMnemonic_MenuMosaicGroup(val));
-                        MosaicGroupImg.ControllerIcon img = new MosaicGroupImg.ControllerIcon(val);
+                        MosaicGroupImg.IconController img = new MosaicGroupImg.IconController(val);
                         MosaicGroupModel imgModel = img.getModel();
                         double sq = MenuHeightWithIcon*ZoomQualityFactor;
                         imgModel.setSize(new SizeDouble(sq, sq));
@@ -287,7 +284,7 @@ public class Main extends JFrame {
                             Container parent = menuItem.getParent();
                             if ((parent == null) || !parent.isVisible())
                                 return;
-                            if (ev.getPropertyName().equalsIgnoreCase(MosaicGroupImg.PROPERTY_IMAGE)) {
+                            if (ev.getPropertyName().equalsIgnoreCase(IImageController.PROPERTY_IMAGE)) {
                                 setMenuItemIcon(menuItem, img.getImage());
                             }
                         });
@@ -319,7 +316,7 @@ public class Main extends JFrame {
                         menuItem.setAccelerator(Main.KeyCombo.getKeyStroke_Mosaic(val));
                         menuItem.addActionListener(ev -> Main.this.changeGame(val));
 
-                        MosaicImg.ControllerIcon img = new MosaicImg.ControllerIcon();
+                        MosaicImg.IconController img = new MosaicImg.IconController();
                         MosaicAnimatedModel<?> imgModel = img.getModel();
                         imgModel.setMosaicType(val);
                         imgModel.setSizeField(val.sizeIcoField(true));
@@ -337,7 +334,7 @@ public class Main extends JFrame {
                         img.addListener(ev -> {
                             if (!menuItem.getParent().isVisible())
                                 return;
-                            if (ev.getPropertyName().equalsIgnoreCase(MosaicImg.PROPERTY_IMAGE)) {
+                            if (ev.getPropertyName().equalsIgnoreCase(IImageController.PROPERTY_IMAGE)) {
                                 setMenuItemIcon(menuItem, img.getImage());
                             }
                         });
@@ -678,7 +675,7 @@ public class Main extends JFrame {
         private BtnPause btnPause;
 
         private Icon getSmileIco(SmileModel.EFaceType smileType, int size) {
-            try (Smile.ControllerIcon img = new Smile.ControllerIcon(smileType)) {
+            try (Smile.IconController img = new Smile.IconController(smileType)) {
                 img.getModel().setSize(new SizeDouble(300, 300));//size, size);
 //                return smileImages.get(key).getImage();
                 return ImgUtils.zoom(img.getImage(), size, size);
@@ -862,10 +859,10 @@ public class Main extends JFrame {
             this.addMouseListener(Main.this.getHandlers().getPausePanelMouseListener());
         }
 
-        Logo.ControllerIcon _logo;
-        private Logo.ControllerIcon getLogo() {
+        Logo.IconController _logo;
+        private Logo.IconController getLogo() {
             if (_logo == null) {
-                _logo = new Logo.ControllerIcon();
+                _logo = new Logo.IconController();
                 LogoModel model = _logo.getModel();
                 model.setUseGradient(true);
                 model.setPadding(new BoundDouble(3));
@@ -876,7 +873,7 @@ public class Main extends JFrame {
                 _logo.addListener(ev -> {
                     if (!PausePanel.this.isVisible())
                         return;
-                    if (Logo.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
+                    if (IImageController.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
                         PausePanel.this.repaint();
                     }
                 });
@@ -891,7 +888,7 @@ public class Main extends JFrame {
 
             super.paintComponent(g);
             Dimension sizeOutward = this.getSize();
-            Logo.ControllerIcon logo = getLogo();
+            Logo.IconController logo = getLogo();
             double sq = Math.min(sizeOutward.getWidth(), sizeOutward.getHeight());
             logo.getModel().setSize(new SizeDouble(sq, sq));
 
@@ -1020,6 +1017,7 @@ public class Main extends JFrame {
     }
 
     public static void main(String[] args) {
+        StaticInitializer.init();
         //ViewAllEvents();
         //setSysOut();
         //printSystemProperties();
@@ -1126,7 +1124,7 @@ public class Main extends JFrame {
 
         this.setJMenuBar(getMenu());
         this.setTitle("FastMines");
-        this._logo = new Logo.ControllerImage();
+        this._logo = new Logo.ImageAwtController();
         LogoModel logoModel = this._logo.getModel();
         logoModel.setUseGradient(true);
         logoModel.setSize(new SizeDouble(128, 128));
@@ -1151,7 +1149,7 @@ public class Main extends JFrame {
         logoModel.setAnimated(true);
         this.setIconImage(_logo.getImage());
         this._logo.addListener(ev -> {
-            if (Logo.PROPERTY_IMAGE.equals(ev.getPropertyName()))
+            if (IImageController.PROPERTY_IMAGE.equals(ev.getPropertyName()))
                 this.setIconImage(_logo.getImage());
         });
 

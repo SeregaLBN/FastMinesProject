@@ -81,8 +81,8 @@ public class DemoApp  {
              // variant 2
              .map(e -> {
                      MosaicImageController<?, ?> ctrlr = ThreadLocalRandom.current().nextBoolean()
-                         ? new MosaicImg.ControllerIcon ()
-                         : new MosaicImg.ControllerImage();
+                         ? new MosaicImg.IconController ()
+                         : new MosaicImg.ImageAwtController();
                      ctrlr.setMosaicType(e);
                      return ctrlr;
                  }));
@@ -90,37 +90,37 @@ public class DemoApp  {
     public void testMosaicGroupImg() {
         testApp(() -> Stream.concat(Stream.of((EMosaicGroup)null),
                                      Stream.of(EMosaicGroup.values()))
-                 .map(e -> new Pair<>(new MosaicGroupImg.ControllerIcon (e),
-                                      new MosaicGroupImg.ControllerImage(e)))
+                 .map(e -> new Pair<>(new MosaicGroupImg.IconController (e),
+                                      new MosaicGroupImg.ImageAwtController(e)))
                  .flatMap(x -> Stream.of(x.first, x.second)));
     }
     public void testMosaicSkillImg() {
         testApp(() -> Stream.concat(Stream.of((ESkillLevel)null),
                                      Stream.of(ESkillLevel.values()))
-                 .map(e -> new Pair<>(new MosaicSkillImg.ControllerIcon (e),
-                                      new MosaicSkillImg.ControllerImage(e)))
+                 .map(e -> new Pair<>(new MosaicSkillImg.IconController (e),
+                                      new MosaicSkillImg.ImageAwtController(e)))
                  .flatMap(x -> Stream.of(x.first, x.second)));
     }
     public void testLogo() {
-        testApp(() -> Stream.of(new Logo.ControllerIcon()
-                              , new Logo.ControllerImage()
-                              , new Logo.ControllerIcon()
-                              , new Logo.ControllerImage()));
+        testApp(() -> Stream.of(new Logo.IconController()
+                              , new Logo.ImageAwtController()
+                              , new Logo.IconController()
+                              , new Logo.ImageAwtController()));
     }
     public void testMine() {
-        testApp(() -> Stream.of(new Mine.ControllerIcon()
-                              , new Mine.ControllerImage()
-                              , new Mine.ControllerIcon()
-                              , new Mine.ControllerImage()));
+        testApp(() -> Stream.of(new Mine.IconController()
+                              , new Mine.ImageAwtController()
+                              , new Mine.IconController()
+                              , new Mine.ImageAwtController()));
     }
     public void testFlag() {
-        testApp(() -> Stream.of(new Flag.ControllerIcon()
-                              , new Flag.ControllerImage()));
+        testApp(() -> Stream.of(new Flag.IconController()
+                              , new Flag.ImageAwtController()));
     }
     public void testSmile() {
         testApp(() -> Stream.of(EFaceType.values())
-                            .map(e -> Stream.of(new Smile.ControllerIcon(e),
-                                                new Smile.ControllerImage(e)))
+                            .map(e -> Stream.of(new Smile.IconController(e),
+                                                new Smile.ImageAwtController(e)))
                             .flatMap(x -> x));
     }
     // #endregion

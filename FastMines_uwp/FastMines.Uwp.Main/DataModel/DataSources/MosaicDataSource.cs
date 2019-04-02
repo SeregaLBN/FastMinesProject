@@ -10,10 +10,10 @@ using fmg.core.img;
 using fmg.core.mosaic;
 using fmg.DataModel.Items;
 using MosaicModel      = fmg.core.img.MosaicAnimatedModel<fmg.common.Nothing>;
-using MosaicView       = fmg.uwp.img.win2d.MosaicImg.CanvasBmp;
-using MosaicController = fmg.uwp.img.win2d.MosaicImg.ControllerBitmap;
-using LogoView         = fmg.uwp.img.win2d.Logo.CanvasBmp;
-using LogoController   = fmg.uwp.img.win2d.Logo.ControllerBitmap;
+using MosaicView       = fmg.uwp.img.win2d.MosaicImg.CanvasBmpView;
+using MosaicController = fmg.uwp.img.win2d.MosaicImg.CanvasBmpController;
+using LogoView         = fmg.uwp.img.win2d.Logo.CanvasBmpView;
+using LogoController   = fmg.uwp.img.win2d.Logo.CanvasBmpController;
 
 namespace fmg.DataModel.DataSources {
 

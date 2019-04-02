@@ -5,15 +5,16 @@ import fmg.core.img.LogoModel;
 
 /** Mine image on the playing field */
 public final class Mine {
+    private Mine() {}
 
-    /** Mine image controller implementation for {@link Logo.Canvas} */
-    public static class ControllerCanvas extends Logo.ControllerCanvas {
-        public ControllerCanvas() { LogoModel.toMineModel(getModel()); }
+    /** Mine image controller implementation for {@link Logo.CanvasView} */
+    public static class CanvasController extends Logo.CanvasController {
+        public CanvasController() { LogoModel.toMineModel(getModel()); }
     }
 
-    /** Mine image controller implementation for {@link Logo.Image} */
-    public static class ControllerImage extends Logo.ControllerImage {
-        public ControllerImage() { LogoModel.toMineModel(getModel()); }
+    /** Mine image controller implementation for {@link Logo.ImageJfxView} */
+    public static class ImageJfxController extends Logo.ImageJfxController {
+        public ImageJfxController() { LogoModel.toMineModel(getModel()); }
     }
 
 }

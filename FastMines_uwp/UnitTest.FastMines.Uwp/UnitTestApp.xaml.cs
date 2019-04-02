@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using fmg.uwp.utils;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
@@ -46,6 +47,8 @@ namespace UnitTest.FastMines.Uwp
                 this.DebugSettings.EnableFrameRateCounter = true;
             }
 #endif
+
+            StaticInitializer.Init();
 
             Frame rootFrame = Window.Current.Content as Frame;
 

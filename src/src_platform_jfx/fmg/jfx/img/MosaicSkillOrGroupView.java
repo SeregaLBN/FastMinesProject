@@ -12,7 +12,6 @@ import fmg.common.geom.PointDouble;
 import fmg.core.img.AnimatedImageModel;
 import fmg.core.img.WithBurgerMenuView;
 import fmg.jfx.utils.Cast;
-import fmg.jfx.utils.StaticInitializer;
 
 /**
  * MVC: view. Abstract JFX representable {@link fmg.core.types.ESkillLevel} or {@link fmg.core.types.EMosaicGroup} as image
@@ -20,10 +19,6 @@ import fmg.jfx.utils.StaticInitializer;
  * @param <TImageModel> {@link fmg.core.img.MosaicSkillModel} or {@link fmg.core.img.MosaicGroupModel}
  */
 abstract class MosaicSkillOrGroupView<TImage, TImageModel extends AnimatedImageModel> extends WithBurgerMenuView<TImage, TImageModel> {
-
-    static {
-        StaticInitializer.init();
-    }
 
     protected MosaicSkillOrGroupView(TImageModel imageModel) {
         super(imageModel);

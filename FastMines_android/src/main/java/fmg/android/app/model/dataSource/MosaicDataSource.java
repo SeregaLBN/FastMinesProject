@@ -24,8 +24,8 @@ import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
 
 public class MosaicDataSource extends BaseDataSource<
-        LogoDataItem  ,    Void,           LogoModel      ,      Logo.Bitmap,      Logo.ControllerBitmap,
-        MosaicDataItem, EMosaic, MosaicAnimatedModel<Void>, MosaicImg.Bitmap, MosaicImg.ControllerBitmap>
+        LogoDataItem  ,    Void,           LogoModel      , Logo.BitmapView, Logo.BitmapController,
+        MosaicDataItem, EMosaic, MosaicAnimatedModel<Void>, MosaicImg.BitmapView, MosaicImg.BitmapController>
 {
 
     public static final String PROPERTY_CURRENT_GROUP = "CurrentGroup";

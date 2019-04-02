@@ -7,7 +7,6 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using Microsoft.Graphics.Canvas.Geometry;
 using fmg.core.img;
-using fmg.uwp.utils;
 
 namespace fmg.uwp.img.win2d {
 
@@ -16,20 +15,16 @@ namespace fmg.uwp.img.win2d {
 
         /// <summary> Flag image. Base view Win2D implementation </summary>
         /// <typeparam name="TImage">Win2D specific image: <see cref="CanvasBitmap"/> or <see cref="CanvasImageSource"/></typeparam>
-        public abstract class FlagImageView<TImage> : ImageView<TImage, FlagModel>
+        public abstract class Win2DView<TImage> : ImageView<TImage, FlagModel>
             where TImage : DependencyObject, ICanvasResourceCreator
         {
 
             protected readonly ICanvasResourceCreator _rc;
 
-            protected FlagImageView(ICanvasResourceCreator resourceCreator)
+            protected Win2DView(ICanvasResourceCreator resourceCreator)
                 : base(new FlagModel())
             {
                 _rc = resourceCreator;
-            }
-
-            static FlagImageView() {
-                StaticInitializer.Init();
             }
 
             protected void Draw(CanvasDrawingSession ds, bool fillBk) {
@@ -96,9 +91,9 @@ namespace fmg.uwp.img.win2d {
         /////////////////////////////////////////////////////////////////////////////////////////////////////
 
         /// <summary> Flag image view implementation over <see cref="CanvasBitmap"/> </summary>
-        public class CanvasBmp : FlagImageView<CanvasBitmap> {
+        public class CanvasBmpView : Win2DView<CanvasBitmap> {
 
-            public CanvasBmp(ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
+            public CanvasBmpView(ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
                 : base(resourceCreator)
             { }
 
@@ -117,9 +112,9 @@ namespace fmg.uwp.img.win2d {
         }
 
         /// <summary> Flag image view implementation over <see cref="CanvasImageSource"/> (XAML <see cref="Windows.UI.Xaml.Media.ImageSource"/> compatible) </summary>
-        public class CanvasImgSrc : FlagImageView<CanvasImageSource> {
+        public class CanvasImgSrcView : Win2DView<CanvasImageSource> {
 
-            public CanvasImgSrc(ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
+            public CanvasImgSrcView(ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
                 : base(resourceCreator)
             { }
 
@@ -137,11 +132,11 @@ namespace fmg.uwp.img.win2d {
 
         }
 
-        /// <summary> Flag image controller implementation for <see cref="Flag.CanvasBmp"/> </summary>
-        public class ControllerBitmap : ImageController<CanvasBitmap, Flag.CanvasBmp, FlagModel> {
+        /// <summary> Flag image controller implementation for <see cref="Flag.CanvasBmpView"/> </summary>
+        public class CanvasBmpController : ImageController<CanvasBitmap, Flag.CanvasBmpView, FlagModel> {
 
-            public ControllerBitmap(ICanvasResourceCreator resourceCreator)
-                : base(new Flag.CanvasBmp(resourceCreator))
+            public CanvasBmpController(ICanvasResourceCreator resourceCreator)
+                : base(new Flag.CanvasBmpView(resourceCreator))
             { }
 
             protected override void Disposing() {
@@ -151,11 +146,11 @@ namespace fmg.uwp.img.win2d {
 
         }
 
-        /// <summary> Flag image controller implementation for <see cref="Flag.CanvasImgSrc"/> </summary>
-        public class ControllerImgSrc : ImageController<CanvasImageSource, Flag.CanvasImgSrc, FlagModel> {
+        /// <summary> Flag image controller implementation for <see cref="Flag.CanvasImgSrcView"/> </summary>
+        public class CanvasImgSrcController : ImageController<CanvasImageSource, Flag.CanvasImgSrcView, FlagModel> {
 
-            public ControllerImgSrc(ICanvasResourceCreator resourceCreator)
-                : base(new Flag.CanvasImgSrc(resourceCreator))
+            public CanvasImgSrcController(ICanvasResourceCreator resourceCreator)
+                : base(new Flag.CanvasImgSrcView(resourceCreator))
             { }
 
             protected override void Disposing() {

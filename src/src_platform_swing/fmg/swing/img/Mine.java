@@ -4,15 +4,16 @@ import fmg.core.img.LogoModel;
 
 /** Mine image on the playing field */
 public final class Mine {
+    private Mine() {}
 
-    /** Mine image controller implementation for {@link Logo.Icon} */
-    public static class ControllerIcon extends Logo.ControllerIcon {
-        public ControllerIcon() { LogoModel.toMineModel(getModel()); }
+    /** Mine image controller implementation for {@link Logo.IconView} */
+    public static class IconController extends Logo.IconController {
+        public IconController() { LogoModel.toMineModel(getModel()); }
     }
 
-    /** Mine image controller implementation for {@link Logo.Image} */
-    public static class ControllerImage extends Logo.ControllerImage {
-        public ControllerImage() { LogoModel.toMineModel(getModel()); }
+    /** Mine image controller implementation for {@link Logo.ImageAwtView} */
+    public static class ImageAwtController extends Logo.ImageAwtController {
+        public ImageAwtController() { LogoModel.toMineModel(getModel()); }
     }
 
 }

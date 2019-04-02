@@ -37,10 +37,6 @@ namespace fmg.uwp.mosaic.win2d {
             : base(mosaicModel)
         { }
 
-        static MosaicWin2DView() {
-            StaticInitializer.Init();
-        }
-
         protected void DrawWin2D(CanvasDrawingSession ds, ICollection<BaseCell> toDrawCells, bool drawBk) {
             System.Diagnostics.Debug.Assert(!_alreadyPainted);
             _alreadyPainted = true;

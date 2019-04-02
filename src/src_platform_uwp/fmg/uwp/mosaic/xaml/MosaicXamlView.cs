@@ -37,10 +37,6 @@ namespace fmg.uwp.mosaic.xaml {
             ChangeSizeImagesMineFlag();
         }
 
-        static MosaicXamlView() {
-            StaticInitializer.Init();
-        }
-
         protected override Panel CreateImage() {
             // will return once created window
             return Control;

@@ -24,7 +24,8 @@ public class SerializeProjData implements Externalizable {
     private boolean useUnknown;
     private boolean usePause;
     private Point location;
-    private SizeDouble sizeMosaic;
+    private double sizeMosaicWidth;
+    private double sizeMosaicHeight;
     private boolean systemTheme;
 
     public SerializeProjData() { setDefaults(); }
@@ -71,8 +72,8 @@ public class SerializeProjData implements Externalizable {
         out.writeBoolean(usePause);
         out.writeInt(location.x);
         out.writeInt(location.y);
-        out.writeDouble(sizeMosaic.width);
-        out.writeDouble(sizeMosaic.height);
+        out.writeDouble(sizeMosaicWidth);
+        out.writeDouble(sizeMosaicHeight);
     }
 
     @Override
@@ -95,7 +96,8 @@ public class SerializeProjData implements Externalizable {
         usePause = in.readBoolean();
         location.x = in.readInt();
         location.y = in.readInt();
-        sizeMosaic = new SizeDouble(in.readDouble(), in.readDouble());
+        sizeMosaicWidth  = in.readDouble();
+        sizeMosaicHeight = in.readDouble();
     }
 
     /**
@@ -142,8 +144,11 @@ public class SerializeProjData implements Externalizable {
     public int getMinesCount() { return mosaicData.getMinesCount(); }
     public void setMinesCount(int minesCount) { mosaicData.setMinesCount(minesCount); }
 
-    public SizeDouble getSizeMosaic() { return sizeMosaic; }
-    public void setSizeMosaic(SizeDouble size) { this.sizeMosaic = size; }
+    public SizeDouble getSizeMosaic() { return new SizeDouble(sizeMosaicWidth, sizeMosaicHeight); }
+    public void setSizeMosaic(SizeDouble size) {
+        this.sizeMosaicWidth  = size.width;
+        this.sizeMosaicHeight = size.height;
+    }
 
     public boolean getShowElement(EShowElement key) { return eShowElements[key.ordinal()]; }
     public void setShowElement(EShowElement key, boolean val) { this.eShowElements[key.ordinal()] = val; }

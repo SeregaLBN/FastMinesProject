@@ -18,8 +18,8 @@ import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.types.EMosaicGroup;
 
 public class MosaicGroupDataSource extends BaseDataSource<
-        MosaicGroupDataItem, EMosaicGroup, MosaicGroupModel, MosaicGroupImg.Bitmap, MosaicGroupImg.ControllerBitmap,
-        MosaicGroupDataItem, EMosaicGroup, MosaicGroupModel, MosaicGroupImg.Bitmap, MosaicGroupImg.ControllerBitmap>
+        MosaicGroupDataItem, EMosaicGroup, MosaicGroupModel, MosaicGroupImg.BitmapView, MosaicGroupImg.BitmapController,
+        MosaicGroupDataItem, EMosaicGroup, MosaicGroupModel, MosaicGroupImg.BitmapView, MosaicGroupImg.BitmapController>
 {
 
     public static final String PROPERTY_UNICODE_CHARS = "UnicodeChars";

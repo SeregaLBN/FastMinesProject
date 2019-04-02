@@ -15,7 +15,7 @@ class BmpCanvas implements AutoCloseable {
 //      if (_bmp == null)
             _bmp = android.graphics.Bitmap.createBitmap((int)size.width, (int)size.height, android.graphics.Bitmap.Config.ARGB_8888);
 //      else
-//         _bmp.reconfigure((int)size.width, (int)size.height, android.graphics.Bitmap.Config.ARGB_8888);
+//         _bmp.reconfigure((int)size.width, (int)size.height, android.graphics.BitmapView.Config.ARGB_8888);
         _canvas = null;
         return _bmp;
     }

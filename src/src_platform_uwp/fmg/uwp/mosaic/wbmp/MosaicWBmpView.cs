@@ -26,10 +26,6 @@ namespace fmg.uwp.mosaic.wbmp {
             : base(mosaicModel)
         { }
 
-        static MosaicWBmpView() {
-            StaticInitializer.Init();
-        }
-
         protected override WriteableBitmap CreateImage() {
             var s = Model.Size;
             _bmp = new WriteableBitmap((int)s.Width, (int)s.Height);

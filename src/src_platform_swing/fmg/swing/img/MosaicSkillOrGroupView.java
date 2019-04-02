@@ -15,7 +15,6 @@ import fmg.core.img.MosaicGroupModel;
 import fmg.core.img.MosaicSkillModel;
 import fmg.core.img.WithBurgerMenuView;
 import fmg.swing.utils.Cast;
-import fmg.swing.utils.StaticInitializer;
 
 /**
  * MVC: view. Abstract SWING representable {@link fmg.core.types.ESkillLevel} or {@link fmg.core.types.EMosaicGroup} as image
@@ -23,10 +22,6 @@ import fmg.swing.utils.StaticInitializer;
  * @param <TImageModel> {@link MosaicSkillModel} or {@link MosaicGroupModel}
  */
 abstract class MosaicSkillOrGroupView<TImage, TImageModel extends AnimatedImageModel> extends WithBurgerMenuView<TImage, TImageModel> {
-
-    static {
-        StaticInitializer.init();
-    }
 
     protected MosaicSkillOrGroupView(TImageModel imageModel) {
         super(imageModel);

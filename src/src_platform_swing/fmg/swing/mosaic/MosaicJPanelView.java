@@ -30,8 +30,8 @@ import io.reactivex.subjects.Subject;
 public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawModel<Icon>> {
 
     private JPanel _control;
-    private Flag.ControllerIcon _imgFlag = new Flag.ControllerIcon();
-    private Mine.ControllerIcon _imgMine = new Mine.ControllerIcon();
+    private Flag.IconController _imgFlag = new Flag.IconController();
+    private Mine.IconController _imgMine = new Mine.IconController();
     private final Collection<BaseCell> _modifiedCells = new HashSet<>();
 
     boolean zoomFocusToMosaicField = false; // experimental

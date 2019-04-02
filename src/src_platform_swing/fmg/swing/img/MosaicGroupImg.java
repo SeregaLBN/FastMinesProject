@@ -9,27 +9,33 @@ import fmg.core.img.MosaicGroupController;
 import fmg.core.img.MosaicGroupModel;
 import fmg.core.types.EMosaicGroup;
 
-/**
- * Representable {@link fmg.core.types.EMosaicGroup} as image
- * <br>
- * SWING impl
- *
- * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon}
- **/
-public abstract class MosaicGroupImg<TImage> extends MosaicSkillOrGroupView<TImage, MosaicGroupModel> {
+/** Representable {@link fmg.core.types.EMosaicGroup} as image */
+public final class MosaicGroupImg {
+    private MosaicGroupImg() {}
 
-    /** @param group - may be null. if Null - representable image of EMosaicGroup.class */
-    protected MosaicGroupImg(EMosaicGroup group) {
-        super(new MosaicGroupModel(group));
-    }
+    /**
+     * Representable {@link fmg.core.types.EMosaicGroup} as image
+     * <br>
+     * Base image view SWING implementation
+     *
+     * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon}
+     **/
+    public abstract static class SwingView<TImage> extends MosaicSkillOrGroupView<TImage, MosaicGroupModel> {
 
-    @Override
-    protected Stream<Pair<Color, Stream<PointDouble>>> getCoords() { return getModel().getCoords(); }
+        /** @param group - may be null. if Null - representable image of EMosaicGroup.class */
+        protected SwingView(EMosaicGroup group) {
+            super(new MosaicGroupModel(group));
+        }
 
-    @Override
-    public void close() {
-        getModel().close();
-        super.close();
+        @Override
+        protected Stream<Pair<Color, Stream<PointDouble>>> getCoords() { return getModel().getCoords(); }
+
+        @Override
+        public void close() {
+            getModel().close();
+            super.close();
+        }
+
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -37,11 +43,11 @@ public abstract class MosaicGroupImg<TImage> extends MosaicSkillOrGroupView<TIma
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /** MosaicsGroup image view implementation over {@link javax.swing.Icon} */
-    static class Icon extends MosaicGroupImg<javax.swing.Icon> {
+    static class IconView extends SwingView<javax.swing.Icon> {
 
         private IconSwing ico = new IconSwing(this);
 
-        public Icon(EMosaicGroup group) { super(group); }
+        public IconView(EMosaicGroup group) { super(group); }
 
         @Override
         protected javax.swing.Icon createImage() { return ico.create(); }
@@ -59,11 +65,11 @@ public abstract class MosaicGroupImg<TImage> extends MosaicSkillOrGroupView<TIma
     }
 
     /** MosaicsGroup image view implementation over {@link java.awt.Image} */
-    static class Image extends MosaicGroupImg<java.awt.Image> {
+    static class ImageAwtView extends SwingView<java.awt.Image> {
 
         private ImageAwt img = new ImageAwt(this);
 
-        public Image(EMosaicGroup group) { super(group); }
+        public ImageAwtView(EMosaicGroup group) { super(group); }
 
         @Override
         protected java.awt.Image createImage() { return img.create(); }
@@ -73,11 +79,11 @@ public abstract class MosaicGroupImg<TImage> extends MosaicSkillOrGroupView<TIma
 
     }
 
-    /** MosaicsGroup image controller implementation for {@link Icon} */
-    public static class ControllerIcon extends MosaicGroupController<javax.swing.Icon, MosaicGroupImg.Icon> {
+    /** MosaicsGroup image controller implementation for {@link IconView} */
+    public static class IconController extends MosaicGroupController<javax.swing.Icon, MosaicGroupImg.IconView> {
 
-        public ControllerIcon(EMosaicGroup group) {
-            super(group==null, new MosaicGroupImg.Icon(group));
+        public IconController(EMosaicGroup group) {
+            super(group==null, new MosaicGroupImg.IconView(group));
         }
 
         @Override
@@ -88,11 +94,11 @@ public abstract class MosaicGroupImg<TImage> extends MosaicSkillOrGroupView<TIma
 
     }
 
-    /** MosaicsGroup image controller implementation for {@link Image} */
-    public static class ControllerImage extends MosaicGroupController<java.awt.Image, MosaicGroupImg.Image> {
+    /** MosaicsGroup image controller implementation for {@link ImageAwtView} */
+    public static class ImageAwtController extends MosaicGroupController<java.awt.Image, MosaicGroupImg.ImageAwtView> {
 
-        public ControllerImage(EMosaicGroup group) {
-            super(group==null, new MosaicGroupImg.Image(group));
+        public ImageAwtController(EMosaicGroup group) {
+            super(group==null, new MosaicGroupImg.ImageAwtView(group));
         }
 
         @Override

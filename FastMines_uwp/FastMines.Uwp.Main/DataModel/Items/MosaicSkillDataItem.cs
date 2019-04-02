@@ -6,8 +6,8 @@ using fmg.common.notifier;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.img;
-using MosaicSkillView       = fmg.uwp.img.win2d.MosaicSkillImg.CanvasBmp;
-using MosaicSkillController = fmg.uwp.img.win2d.MosaicSkillImg.ControllerBitmap;
+using MosaicSkillView       = fmg.uwp.img.win2d.MosaicSkillImg.CanvasBmpView;
+using MosaicSkillController = fmg.uwp.img.win2d.MosaicSkillImg.CanvasBmpController;
 
 namespace fmg.DataModel.Items {
 

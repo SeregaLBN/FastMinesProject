@@ -7,49 +7,55 @@ import fmg.core.mosaic.MosaicImageController;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.swing.mosaic.MosaicSwingView;
 
-/**
- * Representable {@link fmg.core.types.EMosaic} as image
- * <br>
- * base SWING implementation
- *
- * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon}
- */
-public abstract class MosaicImg<TImage>
-        extends MosaicSwingView<TImage, Void, MosaicAnimatedModel<Void>>
-{
+/** Representable {@link fmg.core.types.EMosaic} as image */
+public final class MosaicImg {
+    private MosaicImg() {}
 
-    protected boolean _useBackgroundColor = true;
+    /**
+     * Representable {@link fmg.core.types.EMosaic} as image
+     * <br>
+     * Base image view SWING implementation
+     *
+     * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon}
+     */
+    public abstract static class SwingView<TImage>
+                   extends MosaicSwingView<TImage, Void, MosaicAnimatedModel<Void>>
+    {
 
-    protected MosaicImg() {
-        super(new MosaicAnimatedModel<Void>());
-    }
+        protected boolean _useBackgroundColor = true;
 
-    @Override
-    protected void drawBody() {
-        //super.drawBody(); // !hide super implementation
-
-        MosaicAnimatedModel<Void> model = getModel();
-
-        _useBackgroundColor = true;
-        switch (model.getRotateMode()) {
-        case fullMatrix:
-            drawModified(model.getMatrix());
-            break;
-        case someCells:
-            // draw static part
-            drawModified(model.getNotRotatedCells());
-
-            // draw rotated part
-            _useBackgroundColor = false;
-            model.getRotatedCells(rotatedCells -> drawModified(rotatedCells));
-            break;
+        protected SwingView() {
+            super(new MosaicAnimatedModel<Void>());
         }
-    }
 
-    @Override
-    public void close() {
-        getModel().close();
-        super.close();
+        @Override
+        protected void drawBody() {
+            //super.drawBody(); // !hide super implementation
+
+            MosaicAnimatedModel<Void> model = getModel();
+
+            _useBackgroundColor = true;
+            switch (model.getRotateMode()) {
+            case fullMatrix:
+                drawModified(model.getMatrix());
+                break;
+            case someCells:
+                // draw static part
+                drawModified(model.getNotRotatedCells());
+
+                // draw rotated part
+                _useBackgroundColor = false;
+                model.getRotatedCells(rotatedCells -> drawModified(rotatedCells));
+                break;
+            }
+        }
+
+        @Override
+        public void close() {
+            getModel().close();
+            super.close();
+        }
+
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,7 +63,7 @@ public abstract class MosaicImg<TImage>
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /** Mosaic image view implementation over {@link javax.swing.Icon} */
-    static class Icon extends MosaicImg<javax.swing.Icon> {
+    static class IconView extends SwingView<javax.swing.Icon> {
 
         private IconSwing ico = new IconSwing(this);
 
@@ -79,7 +85,7 @@ public abstract class MosaicImg<TImage>
     }
 
     /** Mosaics image view implementation over {@link java.awt.Image} */
-    static class Image extends MosaicImg<java.awt.Image> {
+    static class ImageAwtView extends SwingView<java.awt.Image> {
 
         private ImageAwt img = new ImageAwt(this);
 
@@ -93,11 +99,11 @@ public abstract class MosaicImg<TImage>
 
     }
 
-    /** Mosaic image controller implementation for {@link Icon} */
-    public static class ControllerIcon extends MosaicImageController<javax.swing.Icon, MosaicImg.Icon> {
+    /** Mosaic image controller implementation for {@link IconView} */
+    public static class IconController extends MosaicImageController<javax.swing.Icon, MosaicImg.IconView> {
 
-        public ControllerIcon() {
-            super(new MosaicImg.Icon());
+        public IconController() {
+            super(new MosaicImg.IconView());
         }
 
         @Override
@@ -108,11 +114,11 @@ public abstract class MosaicImg<TImage>
 
     }
 
-    /** Mosaic image controller implementation for {@link Image} */
-    public static class ControllerImage extends MosaicImageController<java.awt.Image, MosaicImg.Image> {
+    /** Mosaic image controller implementation for {@link ImageAwtView} */
+    public static class ImageAwtController extends MosaicImageController<java.awt.Image, MosaicImg.ImageAwtView> {
 
-        public ControllerImage() {
-            super(new MosaicImg.Image());
+        public ImageAwtController() {
+            super(new MosaicImg.ImageAwtView());
         }
 
         @Override

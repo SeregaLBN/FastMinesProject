@@ -8,57 +8,62 @@ using fmg.uwp.mosaic.wbmp;
 
 namespace fmg.uwp.img.wbmp {
 
-    /// <summary>
-    /// Representable <see cref="fmg.core.types.EMosaic"/> as image.
-    /// UWP implementation over <see cref="WriteableBitmap"/>.
-    /// </summary>
-    public class MosaicImg : MosaicWBmpView<Nothing, MosaicAnimatedModel<Nothing>> {
-
-        protected bool _useBackgroundColor = true;
-
-        protected MosaicImg()
-            : base(new MosaicAnimatedModel<Nothing>())
-        { }
-
-        protected override void DrawModified(ICollection<BaseCell> modifiedCells) {
-            DrawWBmp(modifiedCells, _useBackgroundColor);
-        }
-
-        protected override void DrawBody() {
-            //base.DrawBody(); // !hide base implementation
-
-            MosaicAnimatedModel<Nothing> model = Model;
-
-            _useBackgroundColor = true;
-            switch (model.RotateMode) {
-            case EMosaicRotateMode.fullMatrix:
-                DrawModified(model.Matrix);
-                break;
-            case EMosaicRotateMode.someCells:
-                // draw static part
-                DrawModified(model.GetNotRotatedCells());
-
-                // draw rotated part
-                _useBackgroundColor = false;
-                model.GetRotatedCells(rotatedCells => DrawModified(rotatedCells));
-                break;
-            }
-        }
-
-        protected override void Disposing() {
-            Model.Dispose();
-            base.Disposing();
-        }
+    /// <summary> Representable <see cref="fmg.core.types.EMosaic"/> as image </summary>
+    public static class MosaicImg {
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         //    custom implementations
         /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        /// <summary> Smile image controller implementation for <see cref="MosaicImg"/> </summary>
-        public class Controller : MosaicImageController<WriteableBitmap, MosaicImg> {
+        /// <summary>
+        /// Representable <see cref="fmg.core.types.EMosaic"/> as image view.
+        /// UWP implementation over <see cref="WriteableBitmap"/>.
+        /// </summary>
+        public class WBmpView : MosaicWBmpView<Nothing, MosaicAnimatedModel<Nothing>> {
 
-            public Controller()
-                : base(new MosaicImg())
+            protected bool _useBackgroundColor = true;
+
+            public WBmpView()
+                : base(new MosaicAnimatedModel<Nothing>())
+            { }
+
+            protected override void DrawModified(ICollection<BaseCell> modifiedCells) {
+                DrawWBmp(modifiedCells, _useBackgroundColor);
+            }
+
+            protected override void DrawBody() {
+                //base.DrawBody(); // !hide base implementation
+
+                MosaicAnimatedModel<Nothing> model = Model;
+
+                _useBackgroundColor = true;
+                switch (model.RotateMode) {
+                case EMosaicRotateMode.fullMatrix:
+                    DrawModified(model.Matrix);
+                    break;
+                case EMosaicRotateMode.someCells:
+                    // draw static part
+                    DrawModified(model.GetNotRotatedCells());
+
+                    // draw rotated part
+                    _useBackgroundColor = false;
+                    model.GetRotatedCells(rotatedCells => DrawModified(rotatedCells));
+                    break;
+                }
+            }
+
+            protected override void Disposing() {
+                Model.Dispose();
+                base.Disposing();
+            }
+
+        }
+
+        /// <summary> Smile image controller implementation for <see cref="WBmpView"/> </summary>
+        public class WBmpController : MosaicImageController<WriteableBitmap, WBmpView> {
+
+            public WBmpController()
+                : base(new WBmpView())
             {
                 _notifier.DeferredNotifications = !Windows.ApplicationModel.DesignMode.DesignModeEnabled;
             }

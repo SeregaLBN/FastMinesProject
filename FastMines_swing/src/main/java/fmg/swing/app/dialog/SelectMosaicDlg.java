@@ -12,6 +12,7 @@ import javax.swing.event.DocumentEvent;
 
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
+import fmg.core.img.IImageController;
 import fmg.core.img.MosaicAnimatedModel;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
@@ -32,7 +33,7 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
     private JButton btnOk;
     private Main parent;
 
-    private MosaicImg.ControllerImage mosaicsImg, mosaicsImgRollover;
+    private MosaicImg.ImageAwtController mosaicsImg, mosaicsImgRollover;
     private static final int ImgSize = 40;
     private static final int ImgZoomQuality = 3;
     private static final Color bkTabBkColor = Cast.toColor(fmg.common.Color.Transparent()); // UIManager.getColor("Button.light"); // "Button.light" "Button.foreground"
@@ -257,7 +258,7 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
     }
     private void setBtnOkIcons(EMosaic mosaicType) {
         if (mosaicsImg == null) {
-            mosaicsImg = new MosaicImg.ControllerImage();
+            mosaicsImg = new MosaicImg.ImageAwtController();
             mosaicsImg.setMosaicType(mosaicType);
             mosaicsImg.setSizeField(mosaicType.sizeIcoField(true));
             MosaicAnimatedModel<?> imgModel = mosaicsImg.getModel();
@@ -277,7 +278,7 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
         btnOk.setIcon(ImgUtils.toIco(mosaicsImg.getImage(), ImgSize, ImgSize));
 
         if (mosaicsImgRollover == null) {
-            mosaicsImgRollover = new MosaicImg.ControllerImage();
+            mosaicsImgRollover = new MosaicImg.ImageAwtController();
             mosaicsImgRollover.setMosaicType(mosaicType);
             mosaicsImgRollover.setSizeField(mosaicType.sizeIcoField(true));
             MosaicAnimatedModel<?> imgModel = mosaicsImg.getModel();
@@ -293,7 +294,7 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
     private void onMosaicsImgPropertyChanged(PropertyChangeEvent ev) {
         if (!isVisible())
             return;
-        if (ev.getPropertyName().equalsIgnoreCase(MosaicImg.PROPERTY_IMAGE)) {
+        if (ev.getPropertyName().equalsIgnoreCase(IImageController.PROPERTY_IMAGE)) {
             btnOk.setIcon(ImgUtils.toIco(mosaicsImg.getImage(), ImgSize, ImgSize));
         }
     }
