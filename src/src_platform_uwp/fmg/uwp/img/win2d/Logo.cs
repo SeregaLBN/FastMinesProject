@@ -20,20 +20,16 @@ namespace fmg.uwp.img.win2d {
 
         /// <summary> Main logo image. Base view Win2D implementation </summary>
         /// <typeparam name="TImage">Win2D specific image: <see cref="CanvasBitmap"/> or <see cref="CanvasImageSource"/></typeparam>
-        public abstract class LogoImageView<TImage> : ImageView<TImage, LogoModel>
+        public abstract class Win2DView<TImage> : ImageView<TImage, LogoModel>
             where TImage : DependencyObject, ICanvasResourceCreator
         {
 
             protected readonly ICanvasResourceCreator _rc;
 
-            protected LogoImageView(ICanvasResourceCreator resourceCreator)
+            protected Win2DView(ICanvasResourceCreator resourceCreator)
                 : base(new LogoModel())
             {
                 _rc = resourceCreator;
-            }
-
-            static LogoImageView() {
-                StaticInitializer.Init();
             }
 
             protected void Draw(CanvasDrawingSession ds, bool fillBk) {
@@ -142,9 +138,9 @@ namespace fmg.uwp.img.win2d {
         /////////////////////////////////////////////////////////////////////////////////////////////////////
 
         /// <summary> Logo image view implementation over <see cref="CanvasBitmap"/> </summary>
-        public class CanvasBmp : LogoImageView<CanvasBitmap> {
+        public class CanvasBmpView : Win2DView<CanvasBitmap> {
 
-            public CanvasBmp(ICanvasResourceCreator resourceCreator)
+            public CanvasBmpView(ICanvasResourceCreator resourceCreator)
                 : base(resourceCreator)
             { }
 
@@ -163,9 +159,9 @@ namespace fmg.uwp.img.win2d {
         }
 
         /// <summary> Logo image view implementation over <see cref="CanvasImageSource"/> (XAML <see cref="Windows.UI.Xaml.Media.ImageSource"/> compatible) </summary>
-        public class CanvasImgSrc : LogoImageView<CanvasImageSource> {
+        public class CanvasImgSrcView : Win2DView<CanvasImageSource> {
 
-            public CanvasImgSrc(ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
+            public CanvasImgSrcView(ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
                 : base(resourceCreator)
             { }
 
@@ -183,11 +179,11 @@ namespace fmg.uwp.img.win2d {
 
         }
 
-        /// <summary> Logo image controller implementation for <see cref="Logo.CanvasBmp"/> </summary>
-        public class ControllerBitmap : LogoController<CanvasBitmap, Logo.CanvasBmp> {
+        /// <summary> Logo image controller implementation for <see cref="Logo.CanvasBmpView"/> </summary>
+        public class CanvasBmpController : LogoController<CanvasBitmap, Logo.CanvasBmpView> {
 
-            public ControllerBitmap(ICanvasResourceCreator resourceCreator)
-                : base(new Logo.CanvasBmp(resourceCreator))
+            public CanvasBmpController(ICanvasResourceCreator resourceCreator)
+                : base(new Logo.CanvasBmpView(resourceCreator))
             { }
 
             protected override void Disposing() {
@@ -197,11 +193,11 @@ namespace fmg.uwp.img.win2d {
 
         }
 
-        /// <summary> Logo image controller implementation for <see cref="Logo.CanvasImgSrc"/> </summary>
-        public class ControllerImgSrc : LogoController<CanvasImageSource, Logo.CanvasImgSrc> {
+        /// <summary> Logo image controller implementation for <see cref="Logo.CanvasImgSrcView"/> </summary>
+        public class CanvasImgSrcController : LogoController<CanvasImageSource, Logo.CanvasImgSrcView> {
 
-            public ControllerImgSrc(ICanvasResourceCreator resourceCreator)
-                : base(new Logo.CanvasImgSrc(resourceCreator))
+            public CanvasImgSrcController(ICanvasResourceCreator resourceCreator)
+                : base(new Logo.CanvasImgSrcView(resourceCreator))
             { }
 
             protected override void Disposing() {

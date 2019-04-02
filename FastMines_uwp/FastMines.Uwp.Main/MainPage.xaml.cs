@@ -16,8 +16,8 @@ using fmg.DataModel.Items;
 using fmg.DataModel.DataSources;
 using FastMines.Uwp.App.Model;
 using FastMines.Uwp.Main.Presentation;
-using MosaicsSkillImg = fmg.uwp.img.win2d.MosaicSkillImg.ControllerBitmap;
-using MosaicsGroupImg = fmg.uwp.img.win2d.MosaicGroupImg.ControllerBitmap;
+using MosaicsSkillImg = fmg.uwp.img.win2d.MosaicSkillImg.CanvasBmpController;
+using MosaicsGroupImg = fmg.uwp.img.win2d.MosaicGroupImg.CanvasBmpController;
 
 namespace fmg {
 

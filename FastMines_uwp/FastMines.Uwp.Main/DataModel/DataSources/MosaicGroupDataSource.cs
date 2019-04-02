@@ -7,8 +7,8 @@ using fmg.core.types;
 using fmg.core.img;
 using fmg.core.mosaic;
 using fmg.DataModel.Items;
-using MosaicGroupView       = fmg.uwp.img.win2d.MosaicGroupImg.CanvasBmp;
-using MosaicGroupController = fmg.uwp.img.win2d.MosaicGroupImg.ControllerBitmap;
+using MosaicGroupView       = fmg.uwp.img.win2d.MosaicGroupImg.CanvasBmpView;
+using MosaicGroupController = fmg.uwp.img.win2d.MosaicGroupImg.CanvasBmpController;
 
 namespace fmg.DataModel.DataSources {
 

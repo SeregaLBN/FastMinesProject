@@ -40,10 +40,6 @@ namespace fmg.DataModel.DataSources {
         protected readonly NotifyPropertyChanged notifier/*Sync*/;
         private   readonly NotifyPropertyChanged notifierAsync;
 
-        static BaseDataSource() {
-            StaticInitializer.Init();
-        }
-
         protected BaseDataSource() {
             notifier      = new NotifyPropertyChanged(this, ev => PropertyChangedSync?.Invoke(this, ev), false);
             notifierAsync = new NotifyPropertyChanged(this, ev => PropertyChanged    ?.Invoke(this, ev), true);

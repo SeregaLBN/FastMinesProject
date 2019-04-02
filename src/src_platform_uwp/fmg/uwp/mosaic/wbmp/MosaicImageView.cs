@@ -36,8 +36,8 @@ namespace fmg.uwp.mosaic.wbmp {
 
         private InnerView _innerView;
         private Image _control;
-        private Flag.Controller _imgFlag = new Flag.Controller();
-        private Mine.Controller _imgMine = new Mine.Controller();
+        private Flag.WBmpController _img = new Flag.WBmpController();
+        private Mine.WBmpController _imgMine = new Mine.WBmpController();
 
         public MosaicImageView()
             : base(new MosaicDrawModel<WriteableBitmap>())
@@ -109,13 +109,13 @@ namespace fmg.uwp.mosaic.wbmp {
 
             const int max = 30;
             if (sq > max) {
-                _imgFlag.Model.Size = new SizeDouble(sq, sq);
+                _img.Model.Size = new SizeDouble(sq, sq);
                 _imgMine.Model.Size = new SizeDouble(sq, sq);
-                model.ImgFlag = _imgFlag.Image;
+                model.ImgFlag = _img.Image;
                 model.ImgMine = _imgMine.Image;
             } else {
-                _imgFlag.Model.Size = new SizeDouble(max, max);
-                model.ImgFlag = ImgUtils.Zoom(_imgFlag.Image, sq, sq);
+                _img.Model.Size = new SizeDouble(max, max);
+                model.ImgFlag = ImgUtils.Zoom(_img.Image, sq, sq);
                 _imgMine.Model.Size = new SizeDouble(max, max);
                 model.ImgMine = ImgUtils.Zoom(_imgMine.Image, sq, sq);
             }
@@ -128,9 +128,9 @@ namespace fmg.uwp.mosaic.wbmp {
             Model.Dispose();
             base.Disposing();
             _control = null;
-            _imgFlag.Dispose();
+            _img.Dispose();
             _imgMine.Dispose();
-            _imgFlag = null;
+            _img = null;
             _imgMine = null;
         }
 

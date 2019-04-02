@@ -54,6 +54,8 @@ namespace fmg {
             //  * Windows Mobile Extensions for the UWP
             //  * Windows Desktop Extensions for the UWP
 
+            StaticInitializer.Init();
+
             //PC customization
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView")) {
                 ApplicationView.GetForCurrentView().SetPreferredMinSize(new Windows.Foundation.Size(350, 560));

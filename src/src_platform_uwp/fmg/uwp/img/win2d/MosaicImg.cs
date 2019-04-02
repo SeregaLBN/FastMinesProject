@@ -20,14 +20,14 @@ namespace fmg.uwp.img.win2d {
 
         /// <summary> Representable <see cref="fmg.core.types.EMosaic"/> as image. Base view Win2D implementation </summary>
         /// <typeparam name="TImage">Win2D specific image: <see cref="CanvasBitmap"/> or <see cref="CanvasImageSource"/></typeparam>
-        public abstract class MosaicImgView<TImage> : MosaicWin2DView<TImage, Nothing, MosaicAnimatedModel<Nothing>>
+        public abstract class Win2DView<TImage> : MosaicWin2DView<TImage, Nothing, MosaicAnimatedModel<Nothing>>
             where TImage : DependencyObject, ICanvasResourceCreator
         {
             protected readonly ICanvasResourceCreator _rc;
             protected CanvasDrawingSession _ds;
             protected bool _useBackgroundColor = true;
 
-            protected MosaicImgView(ICanvasResourceCreator resourceCreator)
+            protected Win2DView(ICanvasResourceCreator resourceCreator)
                 : base(new MosaicAnimatedModel<Nothing>())
             {
                 _rc = resourceCreator;
@@ -70,9 +70,9 @@ namespace fmg.uwp.img.win2d {
         /////////////////////////////////////////////////////////////////////////////////////////////////////
 
         /// <summary> Representable <see cref="fmg.core.types.EMosaic"/> as image over <see cref="CanvasBitmap"/> </summary>
-        public class CanvasBmp : MosaicImgView<CanvasBitmap> {
+        public class CanvasBmpView : Win2DView<CanvasBitmap> {
 
-            public CanvasBmp(ICanvasResourceCreator resourceCreator)
+            public CanvasBmpView(ICanvasResourceCreator resourceCreator)
                 : base(resourceCreator)
             { }
 
@@ -94,9 +94,9 @@ namespace fmg.uwp.img.win2d {
         }
 
         /// <summary> Representable <see cref="fmg.core.types.EMosaic"/> as image over <see cref="CanvasImageSource"/> (XAML <see cref="Windows.UI.Xaml.Media.ImageSource"/> compatible) </summary>
-        public class CanvasImgSrc : MosaicImgView<CanvasImageSource> {
+        public class CanvasImgSrcView : Win2DView<CanvasImageSource> {
 
-            public CanvasImgSrc(ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
+            public CanvasImgSrcView(ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
                 : base(resourceCreator)
             { }
 
@@ -117,11 +117,11 @@ namespace fmg.uwp.img.win2d {
 
         }
 
-        /// <summary> Representable <see cref="fmg.core.types.EMosaic"/> as image for <see cref="MosaicImg.CanvasBmp"/> </summary>
-        public class ControllerBitmap : MosaicImageController<CanvasBitmap, MosaicImg.CanvasBmp> {
+        /// <summary> Representable <see cref="fmg.core.types.EMosaic"/> as image for <see cref="MosaicImg.CanvasBmpView"/> </summary>
+        public class CanvasBmpController : MosaicImageController<CanvasBitmap, MosaicImg.CanvasBmpView> {
 
-            public ControllerBitmap(ICanvasResourceCreator resourceCreator)
-                : base(new MosaicImg.CanvasBmp(resourceCreator))
+            public CanvasBmpController(ICanvasResourceCreator resourceCreator)
+                : base(new MosaicImg.CanvasBmpView(resourceCreator))
             { }
 
             protected override void Disposing() {
@@ -131,11 +131,11 @@ namespace fmg.uwp.img.win2d {
 
         }
 
-        /// <summary> Representable <see cref="fmg.core.types.EMosaic"/> as image for <see cref="MosaicImg.CanvasImgSrc"/> </summary>
-        public class ControllerImgSrc : MosaicImageController<CanvasImageSource, MosaicImg.CanvasImgSrc> {
+        /// <summary> Representable <see cref="fmg.core.types.EMosaic"/> as image for <see cref="MosaicImg.CanvasImgSrcView"/> </summary>
+        public class CanvasImgSrcController : MosaicImageController<CanvasImageSource, MosaicImg.CanvasImgSrcView> {
 
-            public ControllerImgSrc(ICanvasResourceCreator resourceCreator)
-                : base(new MosaicImg.CanvasImgSrc(resourceCreator))
+            public CanvasImgSrcController(ICanvasResourceCreator resourceCreator)
+                : base(new MosaicImg.CanvasImgSrcView(resourceCreator))
             { }
 
             protected override void Disposing() {

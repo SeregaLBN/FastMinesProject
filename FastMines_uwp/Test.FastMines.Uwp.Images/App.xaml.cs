@@ -48,43 +48,45 @@ namespace Test.FastMines.Uwp.Images {
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs e) {
-        /**/
-        Action<Windows.UI.Color> applyColor = null;
 
-        //PC customization
-        if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView")) {
-            var titleBar = ApplicationView.GetForCurrentView().TitleBar;
-            if (titleBar != null) {
-                //titleBar.ButtonBackgroundColor = Colors.DarkBlue;
-                //titleBar.ButtonForegroundColor = Colors.White;
-                //titleBar.BackgroundColor = Colors.Blue;
-                //titleBar.ForegroundColor = Colors.White;
-                applyColor = clr => titleBar.BackgroundColor = titleBar.ButtonBackgroundColor = clr;
-            }
-        }
-        //Mobile customization
-        if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar")) {
-            var statusBar = StatusBar.GetForCurrentView();
-            if (statusBar != null) {
-                //statusBar.BackgroundOpacity = 1;
-                //statusBar.BackgroundColor = Colors.DarkBlue;
-                //statusBar.ForegroundColor = Colors.White;
-                applyColor = clr => statusBar.BackgroundColor = clr;
-            }
-        }
-        // you need to add a reference to the correspondent Extension:
-        //  * Windows Mobile Extensions for the UWP
-        //  * Windows Desktop Extensions for the UWP
+            StaticInitializer.Init();
+            /**/
+            Action<Windows.UI.Color> applyColor = null;
 
-        if (applyColor != null) {
-            HSV hsv = Colors.DarkBlue.ToHsvColor();
-            Action run = () => {
-                hsv.h += 10;
-                applyColor(hsv.ToWinColor());
-            };
-            run.Repeat(TimeSpan.FromMilliseconds(100), () => false);
-        }
-        /**/
+            //PC customization
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView")) {
+                var titleBar = ApplicationView.GetForCurrentView().TitleBar;
+                if (titleBar != null) {
+                    //titleBar.ButtonBackgroundColor = Colors.DarkBlue;
+                    //titleBar.ButtonForegroundColor = Colors.White;
+                    //titleBar.BackgroundColor = Colors.Blue;
+                    //titleBar.ForegroundColor = Colors.White;
+                    applyColor = clr => titleBar.BackgroundColor = titleBar.ButtonBackgroundColor = clr;
+                }
+            }
+            //Mobile customization
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar")) {
+                var statusBar = StatusBar.GetForCurrentView();
+                if (statusBar != null) {
+                    //statusBar.BackgroundOpacity = 1;
+                    //statusBar.BackgroundColor = Colors.DarkBlue;
+                    //statusBar.ForegroundColor = Colors.White;
+                    applyColor = clr => statusBar.BackgroundColor = clr;
+                }
+            }
+            // you need to add a reference to the correspondent Extension:
+            //  * Windows Mobile Extensions for the UWP
+            //  * Windows Desktop Extensions for the UWP
+
+            if (applyColor != null) {
+                HSV hsv = Colors.DarkBlue.ToHsvColor();
+                Action run = () => {
+                    hsv.h += 10;
+                    applyColor(hsv.ToWinColor());
+                };
+                run.Repeat(TimeSpan.FromMilliseconds(100), () => false);
+            }
+            /**/
 
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached) {

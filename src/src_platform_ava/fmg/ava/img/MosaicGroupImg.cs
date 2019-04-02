@@ -17,12 +17,12 @@ namespace fmg.ava.img {
     public static class MosaicGroupImg {
 
         /// <summary> Representable <see cref="EMosaicGroup"/> as image: common implementation part </summary>
-        public abstract class View<TImage> : MosaicSkillOrGroupView<TImage, MosaicGroupModel>
+        public abstract class AvaView<TImage> : MosaicSkillOrGroupView<TImage, MosaicGroupModel>
             where TImage : class
         {
 
             /// <param name="group">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
-            protected View(EMosaicGroup? group)
+            protected AvaView(EMosaicGroup? group)
                 : base(new MosaicGroupModel(group))
             { }
 
@@ -42,12 +42,12 @@ namespace fmg.ava.img {
         /////////////////////////////////////////////////////////////////////////////////////////////////////
 
         /// <summary> MosaicsGroup image view implementation over <see cref="RenderTargetBitmap"/> </summary>
-        public class RenderTargetBmp : View<RenderTargetBitmap> {
+        public class RenderTargetBmpView : AvaView<RenderTargetBitmap> {
 
             private IVisualBrushRenderer _vbr;
 
             /// <param name="group">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
-            public RenderTargetBmp(EMosaicGroup? group, IControl ctrl)
+            public RenderTargetBmpView(EMosaicGroup? group, IControl ctrl)
                 : base(group)
             {
                 _vbr = new ImmediateRenderer(ctrl);
@@ -76,10 +76,10 @@ namespace fmg.ava.img {
         ///// <br/>
         ///// Canvas impl
         ///// </summary>
-        //public class CanvasImgSrc : CommonImpl<Canvas> {
+        //public class CanvasView : AvaView<Canvas> {
         //
         //    /// <param name="group">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
-        //    public CanvasImgSrc(EMosaicGroup? group)
+        //    public CanvasView(EMosaicGroup? group)
         //        : base(group)
         //    { }
         //
@@ -96,10 +96,10 @@ namespace fmg.ava.img {
         //}
 
         // <summary> MosaicsGroup image controller implementation for <see cref="Canvas"/> </summary>
-        public class ControllerRenderTargetBmp : MosaicGroupController<RenderTargetBitmap, MosaicGroupImg.RenderTargetBmp> {
+        public class RenderTargetBmpController : MosaicGroupController<RenderTargetBitmap, MosaicGroupImg.RenderTargetBmpView> {
 
-            public ControllerRenderTargetBmp(EMosaicGroup? group, IControl ctrl)
-                : base(!group.HasValue, new MosaicGroupImg.RenderTargetBmp(group, ctrl))
+            public RenderTargetBmpController(EMosaicGroup? group, IControl ctrl)
+                : base(!group.HasValue, new MosaicGroupImg.RenderTargetBmpView(group, ctrl))
             { }
 
             protected override void Disposing() {

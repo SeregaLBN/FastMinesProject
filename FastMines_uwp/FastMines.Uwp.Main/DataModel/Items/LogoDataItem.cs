@@ -1,8 +1,8 @@
 using Microsoft.Graphics.Canvas;
 using fmg.common;
 using fmg.core.img;
-using LogoView       = fmg.uwp.img.win2d.Logo.CanvasBmp;
-using LogoController = fmg.uwp.img.win2d.Logo.ControllerBitmap;
+using LogoView       = fmg.uwp.img.win2d.Logo.CanvasBmpView;
+using LogoController = fmg.uwp.img.win2d.Logo.CanvasBmpController;
 
 namespace fmg.DataModel.Items {
 

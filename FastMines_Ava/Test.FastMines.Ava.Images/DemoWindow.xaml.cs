@@ -24,7 +24,7 @@ namespace Test.FastMines.Ava.Images {
 
             public Modelka(IControl imgCtrl) {
                 _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
-                var mosaicImg = new MosaicGroupImg.ControllerRenderTargetBmp(null /*EMosaicGroup.eOthers*/, imgCtrl);
+                var mosaicImg = new MosaicGroupImg.RenderTargetBmpController(null /*EMosaicGroup.eOthers*/, imgCtrl);
                 mosaicImg.UseRotateTransforming(true);
                 mosaicImg.UsePolarLightFgTransforming(true);
                 var mosaicModel = mosaicImg.Model;
@@ -39,7 +39,7 @@ namespace Test.FastMines.Ava.Images {
                 };
             }
 
-            public MosaicGroupImg.ControllerRenderTargetBmp MosaicImg { get; }
+            public MosaicGroupImg.RenderTargetBmpController MosaicImg { get; }
             public IBitmap Bitmap { get => MosaicImg.Image; }
         }
 

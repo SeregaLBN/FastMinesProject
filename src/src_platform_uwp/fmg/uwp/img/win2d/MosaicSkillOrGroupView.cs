@@ -18,9 +18,6 @@ namespace fmg.uwp.img.win2d {
         where TImage      : DependencyObject, ICanvasResourceCreator
         where TImageModel : AnimatedImageModel
     {
-        static MosaicSkillOrGroupView() {
-            StaticInitializer.Init();
-        }
 
         protected readonly ICanvasResourceCreator _rc;
 

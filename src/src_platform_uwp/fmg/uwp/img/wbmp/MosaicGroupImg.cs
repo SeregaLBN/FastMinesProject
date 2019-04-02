@@ -8,33 +8,38 @@ using fmg.core.img;
 
 namespace fmg.uwp.img.wbmp {
 
-    /// <summary> Representable <see cref="EMosaicGroup"/> as image (<see cref="WriteableBitmap"/> implementation)</summary>
-    public class MosaicGroupImg : MosaicSkillOrGroupView<MosaicGroupModel> {
-
-        /// <summary>ctor</summary>
-        /// <param name="group">may be null. if Null - representable image of EMosaicGroup.class</param>
-        protected MosaicGroupImg(EMosaicGroup? group)
-            : base(new MosaicGroupModel(group))
-        { }
-
-        protected override IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords {
-            get { return Model.Coords; }
-        }
-
-        protected override void Disposing() {
-            Model.Dispose();
-            base.Disposing();
-        }
+    /// <summary> Representable <see cref="EMosaicGroup"/> as image</summary>
+    public static class MosaicGroupImg {
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         //    custom implementations
         /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        /// <summary> MosaicsGroup image controller implementation for <see cref="MosaicGroupImg"/> </summary>
-        public class Controller : MosaicGroupController<WriteableBitmap, MosaicGroupImg> {
+        /// <summary> Representable <see cref="EMosaicGroup"/> as image view UWP implementation over (<see cref="WriteableBitmap"/> implementation)</summary>
+        public class WBmpView : MosaicSkillOrGroupView<MosaicGroupModel> {
 
-            public Controller(EMosaicGroup? group)
-                : base(!group.HasValue, new MosaicGroupImg(group))
+            /// <summary>ctor</summary>
+            /// <param name="group">may be null. if Null - representable image of EMosaicGroup.class</param>
+            public WBmpView(EMosaicGroup? group)
+                : base(new MosaicGroupModel(group))
+            { }
+
+            protected override IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords {
+                get { return Model.Coords; }
+            }
+
+            protected override void Disposing() {
+                Model.Dispose();
+                base.Disposing();
+            }
+
+        }
+
+        /// <summary> MosaicsGroup image controller UWP implementation for <see cref="WBmpView"/> </summary>
+        public class WBmpController : MosaicGroupController<WriteableBitmap, WBmpView> {
+
+            public WBmpController(EMosaicGroup? group)
+                : base(!group.HasValue, new WBmpView(group))
             { }
 
             protected override void Disposing() {

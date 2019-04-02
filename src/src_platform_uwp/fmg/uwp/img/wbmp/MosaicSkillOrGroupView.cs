@@ -19,10 +19,6 @@ namespace fmg.uwp.img.wbmp {
 
         private WriteableBitmap _bmp;
 
-        static MosaicSkillOrGroupView() {
-            StaticInitializer.Init();
-        }
-
         protected MosaicSkillOrGroupView(TImageModel imageModel)
             : base(imageModel)
         { }

@@ -17,11 +17,11 @@ namespace fmg.uwp.img.win2d {
 
         /// <summary> Representable <see cref="EMosaicGroup"/> as image: common implementation part </summary>
         /// <typeparam name="TImage">Win2D specific image: <see cref="CanvasBitmap"/> or <see cref="CanvasImageSource"/></typeparam>
-        public abstract class MosaicGroupImgView<TImage> : MosaicSkillOrGroupView<TImage, MosaicGroupModel>
+        public abstract class Win2DView<TImage> : MosaicSkillOrGroupView<TImage, MosaicGroupModel>
             where TImage : DependencyObject, ICanvasResourceCreator
         {
             /// <param name="group">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
-            protected MosaicGroupImgView(EMosaicGroup? group, ICanvasResourceCreator resourceCreator)
+            protected Win2DView(EMosaicGroup? group, ICanvasResourceCreator resourceCreator)
                 : base(new MosaicGroupModel(group), resourceCreator)
             { }
 
@@ -34,9 +34,9 @@ namespace fmg.uwp.img.win2d {
         /////////////////////////////////////////////////////////////////////////////////////////////////////
 
         /// <summary> Representable <see cref="EMosaicGroup"/> as image over <see cref="CanvasBitmap"/> </summary>
-        public class CanvasBmp : MosaicGroupImgView<CanvasBitmap> {
+        public class CanvasBmpView : Win2DView<CanvasBitmap> {
 
-            public CanvasBmp(EMosaicGroup? group, ICanvasResourceCreator resourceCreator)
+            public CanvasBmpView(EMosaicGroup? group, ICanvasResourceCreator resourceCreator)
                 : base(group, resourceCreator)
             { }
 
@@ -55,9 +55,9 @@ namespace fmg.uwp.img.win2d {
         }
 
         /// <summary> Representable <see cref="EMosaicGroup"/> as image over <see cref="CanvasImageSource"/> (XAML <see cref="Windows.UI.Xaml.Media.ImageSource"/> compatible) </summary>
-        public class CanvasImgSrc : MosaicGroupImgView<CanvasImageSource> {
+        public class CanvasImgSrcView : Win2DView<CanvasImageSource> {
 
-            public CanvasImgSrc(EMosaicGroup? group, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
+            public CanvasImgSrcView(EMosaicGroup? group, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
                 : base(group, resourceCreator)
             { }
 
@@ -75,11 +75,11 @@ namespace fmg.uwp.img.win2d {
 
         }
 
-        /// <summary> Representable <see cref="EMosaicGroup"/> as image for <see cref="MosaicGroupImg.CanvasBmp"/> </summary>
-        public class ControllerBitmap : MosaicGroupController<CanvasBitmap, MosaicGroupImg.CanvasBmp> {
+        /// <summary> Representable <see cref="EMosaicGroup"/> as image for <see cref="MosaicGroupImg.CanvasBmpView"/> </summary>
+        public class CanvasBmpController : MosaicGroupController<CanvasBitmap, MosaicGroupImg.CanvasBmpView> {
 
-            public ControllerBitmap(EMosaicGroup? group, ICanvasResourceCreator resourceCreator)
-                : base(group == null, new MosaicGroupImg.CanvasBmp(group, resourceCreator))
+            public CanvasBmpController(EMosaicGroup? group, ICanvasResourceCreator resourceCreator)
+                : base(group == null, new MosaicGroupImg.CanvasBmpView(group, resourceCreator))
             { }
 
             protected override void Disposing() {
@@ -89,11 +89,11 @@ namespace fmg.uwp.img.win2d {
 
         }
 
-        /// <summary> Representable <see cref="EMosaicGroup"/> as image for <see cref="MosaicGroupImg.CanvasImgSrc"/> </summary>
-        public class ControllerImgSrc : MosaicGroupController<CanvasImageSource, MosaicGroupImg.CanvasImgSrc> {
+        /// <summary> Representable <see cref="EMosaicGroup"/> as image for <see cref="MosaicGroupImg.CanvasImgSrcView"/> </summary>
+        public class CanvasImgSrcController : MosaicGroupController<CanvasImageSource, MosaicGroupImg.CanvasImgSrcView> {
 
-            public ControllerImgSrc(EMosaicGroup? group, ICanvasResourceCreator resourceCreator)
-                : base(group == null, new MosaicGroupImg.CanvasImgSrc(group, resourceCreator))
+            public CanvasImgSrcController(EMosaicGroup? group, ICanvasResourceCreator resourceCreator)
+                : base(group == null, new MosaicGroupImg.CanvasImgSrcView(group, resourceCreator))
             { }
 
             protected override void Disposing() {

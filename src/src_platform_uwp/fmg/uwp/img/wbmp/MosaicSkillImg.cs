@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
@@ -10,32 +9,37 @@ using fmg.core.img;
 namespace fmg.uwp.img.wbmp {
 
     /// <summary> Representable <see cref="EMosaicSkill"/> as image (<see cref="WriteableBitmap"/> implementation)</summary>
-    public class MosaicSkillImg : MosaicSkillOrGroupView<MosaicSkillModel> {
-
-        /// <summary>ctor</summary>
-        /// <param name="skill">may be null. if Null - representable image of ESkillLevel.class </param>
-        protected MosaicSkillImg(ESkillLevel? skill)
-            : base(new MosaicSkillModel(skill))
-        { }
-
-        protected override IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords {
-            get { return Model.Coords; }
-        }
-
-        protected override void Disposing() {
-            Model.Dispose();
-            base.Disposing();
-        }
+    public static class MosaicSkillImg {
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         //    custom implementations
         /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        /// <summary> MosaicsSkill image controller implementation for <see cref="MosaicSkillImg"/> </summary>
-        public class Controller : MosaicSkillController<WriteableBitmap, MosaicSkillImg> {
+        /// <summary> Representable <see cref="EMosaicSkill"/> as image (<see cref="WriteableBitmap"/> implementation)</summary>
+        public class WBmpView : MosaicSkillOrGroupView<MosaicSkillModel> {
 
-            public Controller(ESkillLevel? skill)
-                : base(!skill.HasValue, new MosaicSkillImg(skill))
+            /// <summary>ctor</summary>
+            /// <param name="skill">may be null. if Null - representable image of ESkillLevel.class </param>
+            public WBmpView(ESkillLevel? skill)
+                : base(new MosaicSkillModel(skill))
+            { }
+
+            protected override IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords {
+                get { return Model.Coords; }
+            }
+
+            protected override void Disposing() {
+                Model.Dispose();
+                base.Disposing();
+            }
+
+        }
+
+        /// <summary> MosaicsSkill image controller implementation for <see cref="WBmpView"/> </summary>
+        public class WBmpController : MosaicSkillController<WriteableBitmap, WBmpView> {
+
+            public WBmpController(ESkillLevel? skill)
+                : base(!skill.HasValue, new WBmpView(skill))
             { }
 
             protected override void Disposing() {

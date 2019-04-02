@@ -13,7 +13,7 @@ using fmg.core.types;
 using fmg.uwp.utils.win2d;
 using Rect = Windows.Foundation.Rect;
 using FastMines.Uwp.BackgroundTasks;
-using MosaicsCanvasBmp = fmg.uwp.img.win2d.MosaicImg.CanvasBmp;
+using MosaicsCanvasBmp = fmg.uwp.img.win2d.MosaicImg.CanvasBmpView;
 
 namespace fmg {
 

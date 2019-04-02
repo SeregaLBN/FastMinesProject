@@ -12,8 +12,8 @@ namespace fmg.uwp.mosaic.win2d {
         where TControl : FrameworkElement
     {
         protected readonly ICanvasResourceCreator _resourceCreator;
-        private Mine.ControllerBitmap _imgMine;
-        private Flag.ControllerBitmap _imgFlag;
+        private Mine.CanvasBmpController _imgMine;
+        private Flag.CanvasBmpController _imgFlag;
 
         protected MosaicFrameworkElementView(ICanvasResourceCreator resourceCreator, TControl control = null)
             : base(new MosaicDrawModel<CanvasBitmap>())
@@ -29,18 +29,18 @@ namespace fmg.uwp.mosaic.win2d {
 
         public virtual TControl Control { get;  protected set; }
 
-        private Mine.ControllerBitmap ImgMine {
+        private Mine.CanvasBmpController ImgMine {
             get {
                 if (_imgMine == null)
-                    _imgMine = new Mine.ControllerBitmap(_resourceCreator);
+                    _imgMine = new Mine.CanvasBmpController(_resourceCreator);
                 return _imgMine;
             }
         }
 
-        private Flag.ControllerBitmap ImgFlag {
+        private Flag.CanvasBmpController ImgFlag {
             get {
                 if (_imgFlag == null)
-                    _imgFlag = new Flag.ControllerBitmap(_resourceCreator);
+                    _imgFlag = new Flag.CanvasBmpController(_resourceCreator);
                 return _imgFlag;
             }
         }

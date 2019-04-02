@@ -4,8 +4,8 @@ using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.img;
 using MosaicModel      = fmg.core.img.MosaicAnimatedModel<fmg.common.Nothing>;
-using MosaicView       = fmg.uwp.img.win2d.MosaicImg.CanvasBmp;
-using MosaicController = fmg.uwp.img.win2d.MosaicImg.ControllerBitmap;
+using MosaicView       = fmg.uwp.img.win2d.MosaicImg.CanvasBmpView;
+using MosaicController = fmg.uwp.img.win2d.MosaicImg.CanvasBmpController;
 
 namespace fmg.DataModel.Items {
 
