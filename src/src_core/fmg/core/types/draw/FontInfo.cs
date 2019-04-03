@@ -30,6 +30,12 @@ namespace fmg.core.types.draw {
         public double Size {
             get { return _size; }
             set {
+                System.Diagnostics.Debug.Assert(value > 0.01);
+                if (value < 0.01) {
+                    //throw new ArgumentException("Font size value must be positive: value=" + value);
+                    System.Diagnostics.Debug.WriteLine("Font size value must be positive: value=" + value);
+                    value = 0.1;
+                }
                 // _notifier.SetProperty(ref _size, value);
                 double old = _size;
                 if (_size.HasMinDiff(value))

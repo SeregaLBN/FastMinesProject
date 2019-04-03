@@ -140,9 +140,9 @@ namespace fmg {
                     var img1 = await AsyncRunner.ExecuteFromUiLaterAsync(() => CreateRandomMosaicImage(w / 2, h / 2), Windows.UI.Core.CoreDispatcherPriority.Low);
                     var img2 = await AsyncRunner.ExecuteFromUiLaterAsync(() => CreateRandomMosaicImage(w / 2, h / 2), Windows.UI.Core.CoreDispatcherPriority.Low);
                     var img3 = await AsyncRunner.ExecuteFromUiLaterAsync(() => CreateRandomMosaicImage(w / 2, h / 2), Windows.UI.Core.CoreDispatcherPriority.Low);
-                    var bmp1 = img1.Item2;
-                    var bmp2 = img2.Item2;
-                    var bmp3 = img3.Item2;
+                    var bmp1 = await AsyncRunner.ExecuteFromUiLaterAsync(() => img1.Image, Windows.UI.Core.CoreDispatcherPriority.Low);
+                    var bmp2 = await AsyncRunner.ExecuteFromUiLaterAsync(() => img2.Image, Windows.UI.Core.CoreDispatcherPriority.Low);
+                    var bmp3 = await AsyncRunner.ExecuteFromUiLaterAsync(() => img3.Image, Windows.UI.Core.CoreDispatcherPriority.Low);
                     if (part == 1 || part == 2)
                         ds.DrawImage(bmp1, new Rect(0, 0, w / 2.0, h / 2.0), new Rect(0, 0, bmp1.Size.Width, bmp1.Size.Height));
                     if (part == 2 || part == 3)
@@ -150,16 +150,16 @@ namespace fmg {
                     if (part == 3 || part == 4)
                         ds.DrawImage(bmp3, new Rect(w / 2.0, h / 2.0, w / 2.0, h / 2.0), new Rect(0, 0, bmp3.Size.Width, bmp3.Size.Height));
 
-                    storageFile = await SaveToFileMosaic(part, /*w + "x" + h, */bmp, "Combi" + img1.Item1.GetIndex() + img2.Item1.GetIndex() + img3.Item1.GetIndex());
+                    storageFile = await SaveToFileMosaic(part, /*w + "x" + h, */bmp, "Combi" + img1.Model.MosaicType.GetIndex() + img2.Model.MosaicType.GetIndex() + img3.Model.MosaicType.GetIndex());
                 }
             } else {
                 var img = await AsyncRunner.ExecuteFromUiLaterAsync(() => CreateRandomMosaicImage(w, h), Windows.UI.Core.CoreDispatcherPriority.Low);
-                storageFile = await SaveToFileMosaic(part, /*w + "x" + h, */img.Item2, img.Item1);
+                storageFile = await SaveToFileMosaic(part, /*w + "x" + h, */img);
             }
             return "ms-appdata:///local/" + storageFile.DisplayName;
         }
 
-        public static Tuple<EMosaic, CanvasBitmap> CreateRandomMosaicImage(int w, int h) {
+        public static MosaicsCanvasBmp CreateRandomMosaicImage(int w, int h) {
             Random rnd = ThreadLocalRandom.Current;
             var mosaicType = EMosaicEx.FromOrdinal(rnd.Next() % EMosaicEx.GetValues().Length);
             var bkClr = Color.RandomColor(rnd).Brighter(0.45);
@@ -182,14 +182,17 @@ namespace fmg {
             System.Diagnostics.Debug.Assert(img.Size.Height == ph);
             System.Diagnostics.Debug.Assert(w * zoomKoef == pw);
             System.Diagnostics.Debug.Assert(h * zoomKoef == ph);
-            return new Tuple<EMosaic, CanvasBitmap>(mosaicType, bmp);
+            return img;
         }
 
         private static async Task<StorageFile> SaveToFileLogo(int part, CanvasBitmap canvasBitmap) {
             return await SaveToFile(part, "logo", canvasBitmap);
         }
-        private static async Task<StorageFile> SaveToFileMosaic(int part, /*string filePrefix, */CanvasBitmap canvasBitmap, EMosaic mosaicType) {
-            return await SaveToFileMosaic(part, canvasBitmap, mosaicType.GetMosaicClassName());
+        private static async Task<StorageFile> SaveToFileMosaic(int part, /*string filePrefix, */MosaicsCanvasBmp img) {
+            return await SaveToFileMosaic(
+                part,
+                await AsyncRunner.ExecuteFromUiLaterAsync(() => img.Image, Windows.UI.Core.CoreDispatcherPriority.Low),
+                img.Model.MosaicType.GetMosaicClassName());
         }
         private static async Task<StorageFile> SaveToFileMosaic(int part, /*string filePrefix, */CanvasBitmap canvasBitmap, string fileDescript) {
             return await SaveToFile(part, /*filePrefix + "_" + */fileDescript, canvasBitmap);
