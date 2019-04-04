@@ -126,7 +126,7 @@ namespace fmg {
         }
 
         private void ShowSelectMosaicPage() {
-            if (RightFrame.Content as SelectMosaicPage smp) {
+            if (RightFrame.Content is SelectMosaicPage smp) {
                 smp.UpdateViewModel();
             } else {
                 RightFrame.SourcePageType = typeof(SelectMosaicPage);

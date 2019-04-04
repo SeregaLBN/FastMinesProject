@@ -115,13 +115,8 @@ public class SelectMosaicFragment extends Fragment {
 
         viewModel.getMosaicDS().setCurrentItemPos(position); // change current item before call listener
 
-        // invoke after set/change ViewModel.MosaicDS.CurrentItem
-        // TODO ????
-        UiInvoker.DEFERRED.accept(() -> {
-            MosaicDataItem ci = viewModel.getMosaicDS().getCurrentItem();
-            if (ci != null)
-                getInitData().setMosaicType(ci.getMosaicType());
-        });
+        EMosaic selectedMosaic = getInitData().getMosaicGroup().getMosaics().get(position);
+        getInitData().setMosaicType(selectedMosaic);
     }
 
     // TODO bind to double click

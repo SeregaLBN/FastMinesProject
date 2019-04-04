@@ -64,7 +64,7 @@ namespace fmg.DataModel.DataSources {
         private void ReloadDataSource() {
             //LoggerSimple.Put("> " + nameof(MosaicDataSource) + "::" + nameof(ReloadDataSource));
             IList<EMosaic> newEntities = MosaicGroup.HasValue
-                    ? MosaicGroup.Value.GetMosaics().ToList()
+                    ? MosaicGroup.Value.GetMosaics()
                     : EMosaicEx.GetValues().ToList();
 
             if ((dataSource == null) || !dataSource.Any()) {

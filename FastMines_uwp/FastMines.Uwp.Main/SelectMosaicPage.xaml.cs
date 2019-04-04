@@ -97,12 +97,10 @@ namespace fmg {
         }
 
         private void OnMosaicItemClick(object sender, ItemClickEventArgs ev) {
-            // invoke after set/change ViewModel.MosaicDS.CurrentItem
-            AsyncRunner.InvokeFromUiLater(() => {
-                var ci = ViewModel.MosaicDS.CurrentItem;
-                if (ci != null)
-                    InitData.MosaicType = ci.MosaicType;
-            });
+            int position = gridMosaics.SelectedIndex;
+
+            EMosaic selectedMosaic = InitData.MosaicGroup.GetMosaics()[position];
+            InitData.MosaicType = selectedMosaic;
         }
 
         private void OnMosaicItemDoubleClick(object sender, Windows.UI.Xaml.Input.DoubleTappedRoutedEventArgs ev) {
@@ -119,7 +117,6 @@ namespace fmg {
             Frame frame = Window.Current.Content as Frame;
             System.Diagnostics.Debug.Assert(frame != null);
 
-            var eMosaic = CurrentItem.MosaicType;
             frame.Navigate(typeof(MosaicPage), InitData);
 
             //Window.Current.Content = new MosaicPage();
@@ -130,10 +127,10 @@ namespace fmg {
         public void UpdateViewModel() {
             ESkillLevel skill = InitData.SkillLevel;
             EMosaic mosaicType = InitData.MosaicType;
-            МiewModel.MosaicDS.SkillLevel = skill;
-            МiewModel.MosaicDS.MosaicGroup = mosaicType.GetGroup();
+            ViewModel.MosaicDS.SkillLevel = skill;
+            ViewModel.MosaicDS.MosaicGroup = mosaicType.GetGroup();
             var newItem = ViewModel.MosaicDS.DataSource.First(x => x.MosaicType == mosaicType);
-            viewModel.MosaicDS.CurrentItem = newItem;
+            ViewModel.MosaicDS.CurrentItem = newItem;
         }
 
         private void OnDataContextChangedCanvasControl(FrameworkElement sender, DataContextChangedEventArgs ev) {
