@@ -23,8 +23,8 @@ namespace fmg.DataModel.DataSources {
         MosaicDataItem, EMosaic, MosaicModel, MosaicView, MosaicController>
     {
 
-        private EMosaicGroup? currentGroup;
-        private ESkillLevel?  currentSkill;
+        private EMosaicGroup? mosaicGroup;
+        private ESkillLevel?  skillLevel;
 
         public override LogoDataItem Header {
             get {
@@ -51,20 +51,20 @@ namespace fmg.DataModel.DataSources {
             }
         }
 
-        public EMosaicGroup? CurrentGroup {
-            get { return currentGroup; }
-            set { notifier.SetProperty(ref currentGroup, value); }
+        public EMosaicGroup? MosaicGroup {
+            get { return mosaicGroup; }
+            set { notifier.SetProperty(ref mosaicGroup, value); }
         }
 
-        public ESkillLevel? CurrentSkill {
-            get { return currentSkill; }
-            set { notifier.SetProperty(ref currentSkill, value); }
+        public ESkillLevel? SkillLevel {
+            get { return skillLevel; }
+            set { notifier.SetProperty(ref skillLevel, value); }
         }
 
         private void ReloadDataSource() {
             //LoggerSimple.Put("> " + nameof(MosaicDataSource) + "::" + nameof(ReloadDataSource));
-            IList<EMosaic> newEntities = CurrentGroup.HasValue
-                    ? CurrentGroup.Value.GetMosaics().ToList()
+            IList<EMosaic> newEntities = MosaicGroup.HasValue
+                    ? MosaicGroup.Value.GetMosaics().ToList()
                     : EMosaicEx.GetValues().ToList();
 
             if ((dataSource == null) || !dataSource.Any()) {
@@ -97,7 +97,7 @@ namespace fmg.DataModel.DataSources {
                 if (i < min) {
                     var mi = dataSource[i];
                     mi.UniqueId = mosaicType;
-                    var skill = CurrentSkill;
+                    var skill = SkillLevel;
                     if (skill.HasValue)
                         mi.SkillLevel = skill.Value;
                 } else {
@@ -113,7 +113,7 @@ namespace fmg.DataModel.DataSources {
 
         private MosaicDataItem MakeItem(EMosaic mosaicType) {
             var mi = new MosaicDataItem(mosaicType);
-            ESkillLevel? skill = CurrentSkill;
+            ESkillLevel? skill = SkillLevel;
             if (skill.HasValue)
                 mi.SkillLevel = skill.Value;
             var model = mi.Entity.Model;
@@ -146,8 +146,8 @@ namespace fmg.DataModel.DataSources {
             base.OnPropertyChanged(sender, ev);
 
             switch (ev.PropertyName) {
-            case nameof(CurrentGroup):
-            case nameof(CurrentSkill):
+            case nameof(MosaicGroup):
+            case nameof(SkillLevel):
                 ReloadDataSource();
                 break;
             }

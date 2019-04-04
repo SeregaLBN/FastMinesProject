@@ -31,7 +31,7 @@ public class App extends Application implements LifecycleObserver {
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         load();
 
-        getInitData().addListener(this::onInitDataPropertyChange);
+        getInitData().addListener(this::onInitDataPropertyChanged);
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
@@ -57,8 +57,8 @@ public class App extends Application implements LifecycleObserver {
         return this.getSharedPreferences(MosaicPreferenceFileName, Context.MODE_PRIVATE);
     }
 
-    private void onInitDataPropertyChange(PropertyChangeEvent ev) {
-        LoggerSimple.put("  FastMinesApp::onInitDataPropertyChange: ev={0}", ev);
+    private void onInitDataPropertyChanged(PropertyChangeEvent ev) {
+        LoggerSimple.put("  FastMinesApp::onInitDataPropertyChanged: ev={0}", ev);
     }
 
 }

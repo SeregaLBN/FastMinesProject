@@ -24,6 +24,7 @@ import fmg.common.LoggerSimple;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
 import fmg.core.mosaic.MosaicInitData;
+import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
 import io.reactivex.disposables.Disposable;
@@ -34,7 +35,7 @@ public class SelectMosaicFragment extends Fragment {
 
     private SelectMosaicFragmentBinding binding;
     /** View-Model */
-    public MosaicsViewModel viewModel;
+    private MosaicsViewModel viewModel;
     private MosaicListViewAdapter mosaicListViewAdapter;
     private Subject<SizeDouble> subjSizeChanged;
     private Disposable sizeChangedObservable;
@@ -146,18 +147,12 @@ public class SelectMosaicFragment extends Fragment {
 //        //Window.Current.Activate();
     }
 
-    public EMosaicGroup getCurrentMosaicGroup() { return viewModel.getMosaicDS().getCurrentGroup(); }
-    public void setCurrentMosaicGroup(EMosaicGroup currentGroup) {
-        viewModel.getMosaicDS().setCurrentGroup(currentGroup);
-    }
-
-    private ESkillLevel getCurrentSkillLevel() { return viewModel.getMosaicDS().getCurrentSkill(); }
-    public void setCurrentSkillLevel(ESkillLevel newSkill) {
-        viewModel.getMosaicDS().setCurrentSkill(newSkill);
-    }
-
-    private MosaicDataItem getCurrentItem() { return viewModel.getMosaicDS().getCurrentItem(); }
-    public void setCurrentItem(MosaicDataItem newItem) {
+    public void updateViewModel() {
+        ESkillLevel skill = getInitData().getSkillLevel();
+        EMosaic mosaicType = getInitData().getMosaicType();
+        viewModel.getMosaicDS().setSkillLevel(skill);
+        viewModel.getMosaicDS().setMosaicGroup(mosaicType.getGroup());
+        MosaicDataItem newItem = viewModel.getMosaicDS().getDataSource().stream().filter(x -> x.getMosaicType() == mosaicType).findAny().get();
         viewModel.getMosaicDS().setCurrentItem(newItem);
     }
 

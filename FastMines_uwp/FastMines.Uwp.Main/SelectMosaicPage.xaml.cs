@@ -128,19 +128,13 @@ namespace fmg {
             //Window.Current.Activate();
         }
 
-        public EMosaicGroup CurrentMosaicGroup {
-            //get { return ViewModel.MosaicDS.CurrentGroup; }
-            set { ViewModel.MosaicDS.CurrentGroup = value; }
-        }
-
-        public ESkillLevel? CurrentSkillLevel {
-            private get { return ViewModel.MosaicDS.CurrentSkill; }
-            set { ViewModel.MosaicDS.CurrentSkill = value; }
-        }
-
-        public MosaicDataItem CurrentItem {
-            private get { return ViewModel.MosaicDS.CurrentItem; }
-            set { ViewModel.MosaicDS.CurrentItem = value; }
+        public void UpdateViewModel() {
+            ESkillLevel skill = InitData.SkillLevel;
+            EMosaic mosaicType = InitData.MosaicType;
+            МiewModel.MosaicDS.SkillLevel = skill;
+            МiewModel.MosaicDS.MosaicGroup = mosaicType.GetGroup();
+            var newItem = ViewModel.MosaicDS.DataSource.First(x => x.MosaicType == mosaicType);
+            viewModel.MosaicDS.CurrentItem = newItem;
         }
 
         private void OnDataContextChangedCanvasControl(FrameworkElement sender, DataContextChangedEventArgs ev) {

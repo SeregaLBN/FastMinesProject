@@ -118,29 +118,19 @@ namespace fmg {
         private void OnMenuMosaicGroupItemClick(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs ev) {
             //LoggerSimple.Put("> " + nameof(MainPage) + "::" + nameof(OnMenuMosaicGroupItemClick));
             System.Diagnostics.Debug.Assert(ReferenceEquals(lvMenuMosaicGroupItems, sender));
-
-            if (!(RightFrame.Content is SelectMosaicPage))
-                ShowSelectMosaicPage(EMosaicGroupEx.FromIndex(lvMenuMosaicGroupItems.SelectedIndex));
         }
 
         private void OnMenuMosaicSkillItemClick(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs ev) {
             //LoggerSimple.Put("> " + nameof(MainPage) + "::" + nameof(OnMenuMosaicSkillItemClick));
             System.Diagnostics.Debug.Assert(ReferenceEquals(lvMenuMosaicSkillItems, sender));
-
-            if ((lvMenuMosaicSkillItems.SelectedIndex == ESkillLevel.eCustom.Ordinal()) && !(RightFrame.Content is CustomSkillPage))
-                ShowCustomSkillPage();
         }
 
-        private void ShowSelectMosaicPage(EMosaicGroup mosaicGroup) {
-            var smp = RightFrame.Content as SelectMosaicPage;
-            if (smp == null) {
+        private void ShowSelectMosaicPage() {
+            if (RightFrame.Content as SelectMosaicPage smp) {
+                smp.UpdateViewModel();
+            } else {
                 RightFrame.SourcePageType = typeof(SelectMosaicPage);
-                smp = RightFrame.Content as SelectMosaicPage;
             }
-            smp.CurrentMosaicGroup = mosaicGroup;
-            smp.CurrentSkillLevel = this.InitData.SkillLevel;
-            if (this.InitData.MosaicType.GetGroup() == mosaicGroup)
-                smp.CurrentItem = smp.ViewModel.MosaicDS.DataSource.First(x => x.MosaicType == this.InitData.MosaicType);
         }
         private void ShowCustomSkillPage() {
             RightFrame.SourcePageType = typeof(CustomSkillPage);
@@ -155,6 +145,7 @@ namespace fmg {
                 return;
             }
 
+            InitData.MosaicGroup = currentGroupItem.MosaicGroup.Value;
             if (currentSkillItem.SkillLevel.Value != ESkillLevel.eCustom)
                 InitData.SkillLevel = currentSkillItem.SkillLevel.Value;
 
@@ -162,7 +153,7 @@ namespace fmg {
                 ShowCustomSkillPage();
             } else {
                 //LoggerSimple.Put("> " + nameof(MainPage) + "::" + nameof(OnMenuCurrentItemChanged) + ": " + currentGroupItem.MosaicGroup);
-                ShowSelectMosaicPage(currentGroupItem.MosaicGroup.Value);
+                ShowSelectMosaicPage();
             }
         }
 

@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
 
@@ -26,7 +25,6 @@ import fmg.android.utils.Cast;
 import fmg.common.LoggerSimple;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.common.ui.UiInvoker;
 import fmg.core.mosaic.MosaicInitData;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
@@ -77,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             // initial setup
+
+            /*
             // navigate to SelectMosaicFragment
             SelectMosaicFragment smf = new SelectMosaicFragment();
             Bundle intentBundle = getIntent().getExtras();
@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
                     .beginTransaction()
                     .add(R.id.rightFrame, smf)
                     .commit();
+            */
         }
 
 
@@ -160,46 +161,27 @@ public class MainActivity extends AppCompatActivity {
 
     void onMenuMosaicGroupItemClick(View v, int position) {
         viewModel.getMosaicGroupDS().setCurrentItemPos(position);
-
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.rightFrame);
-        if (!(fragment instanceof SelectMosaicFragment))
-            showSelectMosaicFragment(EMosaicGroup.fromOrdinal(position));
     }
 
     void onMenuMosaicSkillItemClick(View v, int position) {
         viewModel.getMosaicSkillDS().setCurrentItemPos(position);
-
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.rightFrame);
-        if ((position == ESkillLevel.eCustom.ordinal())        ) // && !(fragment instanceof CustomSkillFragment)) // TODO!!!!
-            showCustomSkillFragment();
-
-//        MosaicSkillDataItem msd = viewModel.getMosaicSkillDS().getCurrentItem();
-//        getInitData().setSkillLevel(msd.getSkillLevel());
     }
 
-    private void showSelectMosaicFragment(EMosaicGroup mosaicGroup) {
+    private void showSelectMosaicFragment() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.rightFrame);
-//        if (true)
-//            return;
-        SelectMosaicFragment smf;
         if (fragment instanceof SelectMosaicFragment) {
-            smf = (SelectMosaicFragment)fragment;
+            SelectMosaicFragment smf = (SelectMosaicFragment)fragment;
+            smf.updateViewModel();
         } else {
             // Execute a transaction, replacing any existing fragment with this one inside the frame.
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.rightFrame, smf = new SelectMosaicFragment());
+            ft.replace(R.id.rightFrame, new SelectMosaicFragment());
             if (fragment != null)
                 ft.detach(fragment);
             ft.addToBackStack(null);
             ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             ft.commit();
         }
-//        UiInvoker.DEFERRED.accept(() -> {
-            smf.setCurrentMosaicGroup(mosaicGroup);
-            smf.setCurrentSkillLevel(this.getInitData().getSkillLevel());
-//            if (this.getInitData().getMosaicType().getGroup() == mosaicGroup)
-//                smf.setCurrentItem(smf.viewModel.getMosaicDS().getDataSource().stream().filter(x -> x.getMosaicType() == this.getInitData().getMosaicType()).findAny().get());
-//        });
     }
 
     private void showCustomSkillFragment() {
@@ -218,6 +200,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        getInitData().setMosaicGroup(currentGroupItem.getMosaicGroup());
         if (currentSkillItem.getSkillLevel() != ESkillLevel.eCustom)
             getInitData().setSkillLevel(currentSkillItem.getSkillLevel());
 
@@ -225,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
             showCustomSkillFragment();
         } else {
             //LoggerSimple.put("> MainActivity::onMenuCurrentItemChanged: " + currentGroupItem.getMosaicGroup());
-            showSelectMosaicFragment(currentGroupItem.getMosaicGroup());
+            showSelectMosaicFragment();
         }
     }
 
