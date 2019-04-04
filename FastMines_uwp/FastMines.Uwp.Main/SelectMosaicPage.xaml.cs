@@ -44,8 +44,7 @@ namespace fmg {
         private void OnPageLoaded(object sender, RoutedEventArgs e) {
             this.Loaded -= OnPageLoaded;
 
-            var ds = ViewModel.MosaicDS;
-            ds.CurrentItem = ds.DataSource.First(x => x.MosaicType == InitData.MosaicType);
+            UpdateViewModel();
 
             {
                 HSV hsv = new HSV(AnimatedImageModelConst.DefaultForegroundColor) {

@@ -25,7 +25,6 @@ import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
 import fmg.core.mosaic.MosaicInitData;
 import fmg.core.types.EMosaic;
-import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.PublishSubject;
@@ -50,6 +49,8 @@ public class SelectMosaicFragment extends Fragment {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.select_mosaic_fragment, container, false);
         viewModel = ViewModelProviders.of(this).get(MosaicsViewModel.class);
+        updateViewModel();
+
         binding.setViewModel(viewModel);
         binding.executePendingBindings();
 

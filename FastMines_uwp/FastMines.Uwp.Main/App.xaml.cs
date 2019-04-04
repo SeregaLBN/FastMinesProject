@@ -49,12 +49,12 @@ namespace fmg {
             }
 #endif
 
-
             // you need to add a reference to the correspondent Extension:
             //  * Windows Mobile Extensions for the UWP
             //  * Windows Desktop Extensions for the UWP
 
             StaticInitializer.Init();
+            InitData.PropertyChanged += OnInitDataPropertyChanged;
 
             //PC customization
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView")) {
@@ -202,6 +202,10 @@ namespace fmg {
                 : AppViewBackButtonVisibility.Collapsed;
 
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = visibility;
+        }
+
+        private void OnInitDataPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            LoggerSimple.Put("  FastMinesApp::OnInitDataPropertyChanged: ev={0}", ev);
         }
 
     }
