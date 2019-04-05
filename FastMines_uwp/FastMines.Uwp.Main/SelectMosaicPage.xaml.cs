@@ -30,6 +30,8 @@ namespace fmg {
         private bool _closed;
         private IDisposable _sizeChangedObservable;
         IDictionary<CanvasControl, MosaicsCanvasCtrllr> mapBindingControlToController = new Dictionary<CanvasControl, MosaicsCanvasCtrllr>();
+        private static readonly double TileMinSize = Cast.DpToPx(30);
+        private static readonly double TileMaxSize = Cast.DpToPx(90);
 
         public SelectMosaicPage() {
             this.InitializeComponent();
@@ -88,7 +90,7 @@ namespace fmg {
 
             var size = Math.Min(ev.NewSize.Height, ev.NewSize.Width);
             var size2 = size / 3.9;
-            var wh = (int)Math.Min(Math.Max(100, size2), 200); // TODO: DPI dependency
+            var wh = Math.Min(Math.Max(TileMinSize, size2), TileMaxSize);
             ViewModel.ImageSize = new SizeDouble(wh, wh);
         }
 

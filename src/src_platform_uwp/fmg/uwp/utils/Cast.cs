@@ -33,18 +33,18 @@ namespace fmg.uwp.utils {
         public static HSV ToHsvColor(this Windows.UI.Color self) { return new HSV(self.ToFmColor()); }
         public static Windows.UI.Color ToWinColor(this HSV self) { return self.ToColor().ToWinColor(); }
 
-        /** /
-        public static double ToDpi(this double pixels) {
+        /// <summary> Pixels to DPI </summary>
+        public static double PxToDp(this double pixels) {
             var test = pixels * 72 / 96;
             var di = DisplayInformation.GetForCurrentView();
             var res = pixels * 72 / di.LogicalDpi;
             return res;
         }
-        public static double ToPixels(this double dpi) {
+        /// <summary> DPI to pixels </summary>
+        public static double DpToPx(this double dpi) {
             return dpi * DisplayInformation.GetForCurrentView().LogicalDpi;
             //return dpi * Resources.System.DisplayMetrics.Density;
         }
-        /**/
 
     }
 

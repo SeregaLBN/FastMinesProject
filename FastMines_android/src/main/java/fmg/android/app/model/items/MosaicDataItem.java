@@ -3,6 +3,7 @@ package fmg.android.app.model.items;
 import android.databinding.Bindable;
 
 import java.beans.PropertyChangeEvent;
+import java.util.Locale;
 
 import fmg.android.app.BR;
 import fmg.android.img.MosaicImg;
@@ -70,6 +71,9 @@ public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicAnimatedModel<Vo
         super.onPropertyChanged(ev);
 
         switch (ev.getPropertyName()) {
+        case PROPERTY_SIZE: // TODO delete this case!!
+            notifier.firePropertyChanged(PROPERTY_TITLE);
+            break;
         case PROPERTY_UNIQUE_ID:
             notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_MOSAIC_TYPE); // recall with another property name
             getEntity().setMosaicType(getMosaicType());
@@ -105,6 +109,10 @@ public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicAnimatedModel<Vo
     }
 
     @Override
-    public String getTitle() { return super.getTitle() + " " + getSize(); }
+    @Bindable
+    @Deprecated // TODO delete... must be super
+    public String getTitle() {
+        return String.format(Locale.US, "%.2f:%.2f", getSize().width, getSize().height);
+    }
 
 }
