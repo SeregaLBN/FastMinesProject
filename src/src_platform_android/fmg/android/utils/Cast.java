@@ -1,6 +1,7 @@
 package fmg.android.utils;
 
 import android.content.res.Resources;
+import android.util.DisplayMetrics;
 
 import java.util.List;
 
@@ -54,12 +55,17 @@ public final class Cast {
 
 
     public static float pxToDp(float px) {
+        // dp = px / (dpi / 160)
+        // dp = px / density
         return px / Resources.getSystem().getDisplayMetrics().density;
     }
 
     public static float dpToPx(float dp) {
-        //return android.util.TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, Resources.getSystem().getDisplayMetrics());
-        return dp * Resources.getSystem().getDisplayMetrics().density;
+        // px = dp * dpi / 160
+        // px = dp * density
+        DisplayMetrics dm = Resources.getSystem().getDisplayMetrics();
+        //return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, dm);
+        return dp * dm.density;
     }
 
 }

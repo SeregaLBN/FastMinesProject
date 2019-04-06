@@ -91,6 +91,7 @@ namespace fmg {
             var size = Math.Min(ev.NewSize.Height, ev.NewSize.Width);
             var size2 = size / 3.9;
             var wh = Math.Min(Math.Max(TileMinSize, size2), TileMaxSize);
+            //LoggerSimple.Put("Math.Min(Math.Max(TileMinSize={0}, size2={1}), TileMaxSize={2}) = {3}", TileMinSize, size2, TileMaxSize, wh);
             ViewModel.ImageSize = new SizeDouble(wh, wh);
         }
 
