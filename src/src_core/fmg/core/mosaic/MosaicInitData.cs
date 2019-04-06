@@ -54,8 +54,8 @@ namespace fmg.core.mosaic {
                 if (_mosaicType.GetGroup() == value)
                     return;
                 var ordinalInOldGroup = _mosaicType.GetOrdinalInGroup();
-                var ordinalInNewGroup = Math.Min(ordinalInOldGroup, value.GetMosaics().Count() - 1);
-                MosaicType = value.GetMosaics().ToList()[ordinalInNewGroup];
+                var ordinalInNewGroup = Math.Min(ordinalInOldGroup, value.GetMosaics().Count - 1);
+                MosaicType = value.GetMosaics()[ordinalInNewGroup];
             }
         }
 

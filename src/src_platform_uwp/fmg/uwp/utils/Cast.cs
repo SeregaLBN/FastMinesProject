@@ -33,18 +33,34 @@ namespace fmg.uwp.utils {
         public static HSV ToHsvColor(this Windows.UI.Color self) { return new HSV(self.ToFmColor()); }
         public static Windows.UI.Color ToWinColor(this HSV self) { return self.ToColor().ToWinColor(); }
 
-        /** /
-        public static double ToDpi(this double pixels) {
-            var test = pixels * 72 / 96;
+        // <summary> </summary>
+
+        /// <summary>
+        /// Pixels to DPI 
+        /// There are 72 points per inch; if it is sufficient to assume 96 pixels per inch, the formula is rather simple:
+        ///     points = pixels* 72 / 96
+        /// </summary>
+        public static double PxToDp(this double pixels) {
+            // UWP: (dpi:  96: 100%;  144: 150%)
+            // dp = px / (dpi / 72)
+            // dp = px / density
+
             var di = DisplayInformation.GetForCurrentView();
-            var res = pixels * 72 / di.LogicalDpi;
-            return res;
+            var density = di.LogicalDpi / 72;
+            var dp = pixels / density;
+            return dp;
         }
-        public static double ToPixels(this double dpi) {
-            return dpi * DisplayInformation.GetForCurrentView().LogicalDpi;
-            //return dpi * Resources.System.DisplayMetrics.Density;
+        /// <summary> DPI to pixels </summary>
+        public static double DpToPx(this double dp) {
+            // UWP: (dpi:  96: 100%; ... 144: 150%)
+            // px = dp * dpi / 72
+            // px = dp * density
+
+            var di = DisplayInformation.GetForCurrentView();
+            var density = di.LogicalDpi / 72;
+            var px = dp * density;
+            return px;
         }
-        /**/
 
     }
 

@@ -28,11 +28,11 @@ public class MosaicDataSource extends BaseDataSource<
         MosaicDataItem, EMosaic, MosaicAnimatedModel<Void>, MosaicImg.BitmapView, MosaicImg.BitmapController>
 {
 
-    public static final String PROPERTY_CURRENT_GROUP = "CurrentGroup";
-    public static final String PROPERTY_CURRENT_SKILL = "CurrentSkill";
+    public static final String PROPERTY_MOSAIC_GROUP = "MosaicGroup";
+    public static final String PROPERTY_SKILL_LEVEL  = "SkillLevel";
 
-    private EMosaicGroup currentGroup;
-    private ESkillLevel  currentSkill;
+    private EMosaicGroup mosaicGroup;
+    private ESkillLevel skillLevel;
 
     @Override
     public LogoDataItem getHeader() {
@@ -58,20 +58,20 @@ public class MosaicDataSource extends BaseDataSource<
     }
 
     @Bindable
-    public EMosaicGroup getCurrentGroup() { return currentGroup; }
-    public void setCurrentGroup(EMosaicGroup currentGroup) {
-        notifier.setProperty(this.currentGroup, currentGroup, PROPERTY_CURRENT_GROUP);
+    public EMosaicGroup getMosaicGroup() { return mosaicGroup; }
+    public void setMosaicGroup(EMosaicGroup mosaicGroup) {
+        notifier.setProperty(this.mosaicGroup, mosaicGroup, PROPERTY_MOSAIC_GROUP);
     }
 
     @Bindable
-    public ESkillLevel getCurrentSkill() { return currentSkill; }
-    public void setCurrentSkill(ESkillLevel currentSkill) {
-        notifier.setProperty(this.currentSkill, currentSkill, PROPERTY_CURRENT_SKILL);
+    public ESkillLevel getSkillLevel() { return skillLevel; }
+    public void setSkillLevel(ESkillLevel skillLevel) {
+        notifier.setProperty(this.skillLevel, skillLevel, PROPERTY_SKILL_LEVEL);
     }
 
     private void reloadDataSource() {
-        List<EMosaic> newEntities = (getCurrentGroup() != null)
-                ? getCurrentGroup().getMosaics()
+        List<EMosaic> newEntities = (getMosaicGroup() != null)
+                ? getMosaicGroup().getMosaics()
                 : Stream.of(EMosaic.values()).collect(Collectors.toList());
 
         if ((dataSource == null) || dataSource.isEmpty()) {
@@ -102,7 +102,7 @@ public class MosaicDataSource extends BaseDataSource<
             if (i < min) {
                 MosaicDataItem mi = dataSource.get(i);
                 mi.setUniqueId(mosaicType);
-                ESkillLevel skill = getCurrentSkill();
+                ESkillLevel skill = getSkillLevel();
                 if (skill != null)
                     mi.setSkillLevel(skill);
             } else {
@@ -117,7 +117,7 @@ public class MosaicDataSource extends BaseDataSource<
 
     private MosaicDataItem makeItem(EMosaic mosaicType) {
         MosaicDataItem mi = new MosaicDataItem(mosaicType);
-        ESkillLevel skill = getCurrentSkill();
+        ESkillLevel skill = getSkillLevel();
         if (skill != null)
             mi.setSkillLevel(skill);
         MosaicAnimatedModel<?> model = mi.getEntity().getModel();
@@ -151,8 +151,8 @@ public class MosaicDataSource extends BaseDataSource<
         super.onPropertyChanged(ev);
 
         switch (ev.getPropertyName()) {
-        case PROPERTY_CURRENT_GROUP:
-        case PROPERTY_CURRENT_SKILL:
+        case PROPERTY_MOSAIC_GROUP:
+        case PROPERTY_SKILL_LEVEL:
             reloadDataSource();
             break;
         }
@@ -163,8 +163,8 @@ public class MosaicDataSource extends BaseDataSource<
         super.onAsyncPropertyChanged(ev);
 
         switch (ev.getPropertyName()) {
-        case PROPERTY_CURRENT_GROUP: notifyPropertyChanged(BR.currentGroup); break;
-        case PROPERTY_CURRENT_SKILL: notifyPropertyChanged(BR.currentSkill); break;
+        case PROPERTY_MOSAIC_GROUP: notifyPropertyChanged(BR.mosaicGroup); break;
+        case PROPERTY_SKILL_LEVEL : notifyPropertyChanged(BR.skillLevel); break;
         }
     }
 

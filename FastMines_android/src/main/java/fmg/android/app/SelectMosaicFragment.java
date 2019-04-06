@@ -20,11 +20,13 @@ import fmg.android.app.model.MosaicInitDataExt;
 import fmg.android.app.model.dataSource.MosaicDataSource;
 import fmg.android.app.model.items.MosaicDataItem;
 import fmg.android.app.presentation.MosaicsViewModel;
+import fmg.android.utils.Cast;
 import fmg.common.LoggerSimple;
+import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
 import fmg.core.mosaic.MosaicInitData;
-import fmg.core.types.EMosaicGroup;
+import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.PublishSubject;
@@ -34,11 +36,13 @@ public class SelectMosaicFragment extends Fragment {
 
     private SelectMosaicFragmentBinding binding;
     /** View-Model */
-    public MosaicsViewModel viewModel;
+    private MosaicsViewModel viewModel;
     private MosaicListViewAdapter mosaicListViewAdapter;
-    private Subject<SizeDouble> subjSizeChanged;
+    private Subject<Size> subjSizeChanged;
     private Disposable sizeChangedObservable;
-
+    private Size cachedSize = new Size(-1, -1);
+    private static final double TileMinSize = Cast.dpToPx(30);
+    private static final double TileMaxSize = Cast.dpToPx(90);
 
     public MosaicInitData getInitData() { return MosaicInitDataExt.getSharedData(); }
     //public void setInitData(MosaicInitData initData) { MosaicInitDataExt.getSharedData().copyFrom(initData); }
@@ -49,10 +53,11 @@ public class SelectMosaicFragment extends Fragment {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.select_mosaic_fragment, container, false);
         viewModel = ViewModelProviders.of(this).get(MosaicsViewModel.class);
+        updateViewModel();
+
         binding.setViewModel(viewModel);
         binding.executePendingBindings();
 
-        // TODO try StaggeredGridLayoutManager
         binding.rvMosaicItems.setLayoutManager(new GridLayoutManager(this.getContext(), 2));
         mosaicListViewAdapter = new MosaicListViewAdapter(viewModel.getMosaicDS().getDataSource(), this::onMosaicItemClick);
         binding.rvMosaicItems.setAdapter(mosaicListViewAdapter);
@@ -83,7 +88,16 @@ public class SelectMosaicFragment extends Fragment {
 
 
     private void onGlobalLayoutListener() {
-        SizeDouble newSize = new SizeDouble(binding.rootLayout.getWidth(), binding.rootLayout.getHeight());
+        int w = binding.rootLayout.getWidth();
+        int h = binding.rootLayout.getHeight();
+        if ((w <= 0) || (h <= 0))
+            return;
+
+        Size newSize = new Size(w, h);
+
+        if (cachedSize.equals(newSize))
+            return;
+        cachedSize = newSize;
 
         //onFragmentSizeChanged(newSize);
         if (sizeChangedObservable == null) {
@@ -100,8 +114,17 @@ public class SelectMosaicFragment extends Fragment {
         subjSizeChanged.onNext(newSize);
     }
 
-    private void onFragmentSizeChanged(SizeDouble newSize) {
+    private void onFragmentSizeChanged(Size newSize) {
 //        LoggerSimple.put("> SelectMosaicFragment::onFragmentSizeChanged: newSize={0}", newSize);
+
+        int size = Math.min(newSize.height, newSize.width);
+        double size2 = size / 3.9;
+        double wh = Math.min(Math.max(TileMinSize, size2), TileMaxSize);
+//        LoggerSimple.put("Math.min(Math.max(TileMinSize={0}, size2={1}), TileMaxSize={2}) = {3}", TileMinSize, size2, TileMaxSize, wh);
+        viewModel.setImageSize(new SizeDouble(wh, wh));
+//        LoggerSimple.put("< SelectMosaicFragment::onFragmentSizeChanged: imageSize={0}", wh);
+
+//        mosaicListViewAdapter.notifyItemRangeChanged(0, viewModel.getMosaicDS().getDataSource().size());
     }
 
 
@@ -113,13 +136,8 @@ public class SelectMosaicFragment extends Fragment {
 
         viewModel.getMosaicDS().setCurrentItemPos(position); // change current item before call listener
 
-        // invoke after set/change ViewModel.MosaicDS.CurrentItem
-        // TODO ????
-        UiInvoker.DEFERRED.accept(() -> {
-            MosaicDataItem ci = viewModel.getMosaicDS().getCurrentItem();
-            if (ci != null)
-                getInitData().setMosaicType(ci.getMosaicType());
-        });
+        EMosaic selectedMosaic = getInitData().getMosaicGroup().getMosaics().get(position);
+        getInitData().setMosaicType(selectedMosaic);
     }
 
     // TODO bind to double click
@@ -146,18 +164,12 @@ public class SelectMosaicFragment extends Fragment {
 //        //Window.Current.Activate();
     }
 
-    public EMosaicGroup getCurrentMosaicGroup() { return viewModel.getMosaicDS().getCurrentGroup(); }
-    public void setCurrentMosaicGroup(EMosaicGroup currentGroup) {
-        viewModel.getMosaicDS().setCurrentGroup(currentGroup);
-    }
-
-    private ESkillLevel getCurrentSkillLevel() { return viewModel.getMosaicDS().getCurrentSkill(); }
-    public void setCurrentSkillLevel(ESkillLevel newSkill) {
-        viewModel.getMosaicDS().setCurrentSkill(newSkill);
-    }
-
-    private MosaicDataItem getCurrentItem() { return viewModel.getMosaicDS().getCurrentItem(); }
-    public void setCurrentItem(MosaicDataItem newItem) {
+    public void updateViewModel() {
+        ESkillLevel skill = getInitData().getSkillLevel();
+        EMosaic mosaicType = getInitData().getMosaicType();
+        viewModel.getMosaicDS().setSkillLevel(skill);
+        viewModel.getMosaicDS().setMosaicGroup(mosaicType.getGroup());
+        MosaicDataItem newItem = viewModel.getMosaicDS().getDataSource().stream().filter(x -> x.getMosaicType() == mosaicType).findAny().get();
         viewModel.getMosaicDS().setCurrentItem(newItem);
     }
 

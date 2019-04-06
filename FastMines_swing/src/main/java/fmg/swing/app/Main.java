@@ -260,7 +260,7 @@ public class Main extends JFrame {
 
                     for (EMosaicGroup val: EMosaicGroup.values()) {
                         JMenu menuItem = new JMenu(val.getDescription());// + (experimentalMenuMnemonic ?  "                      " : ""));
-                        for (EMosaic mosaic: val.getBind()) {
+                        for (EMosaic mosaic: val.getMosaics()) {
                             menuItem.add(getMenuItemMosaic(mosaic));
                             //menuItem.add(Box.createRigidArea(new Dimension(100,25)));
                         }

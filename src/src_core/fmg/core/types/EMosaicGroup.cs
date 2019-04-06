@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace fmg.core.types {
@@ -46,10 +47,8 @@ namespace fmg.core.types {
         }
 
         /// <summary> return mosaics in this group </summary>
-        public static IEnumerable<EMosaic> GetMosaics(this EMosaicGroup self) {
-            foreach (var mosaic in EMosaicEx.GetValues())
-                if (mosaic.GetGroup() == self)
-                    yield return mosaic;
+        public static IList<EMosaic> GetMosaics(this EMosaicGroup self) {
+            return EMosaicEx.GetValues().Where(e => e.GetGroup() == self).ToList();
         }
 
         /// <summary> Описание для пользователя </summary>

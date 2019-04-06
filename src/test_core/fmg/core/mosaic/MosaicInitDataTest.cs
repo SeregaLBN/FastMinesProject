@@ -129,7 +129,7 @@ namespace fmg.core.mosaic {
                 const int checkOrdinal = 3;
 
                 // 1. select another mosaic in current group
-                var mosaicsInOldGroup = initData.MosaicGroup.GetMosaics().ToList();
+                var mosaicsInOldGroup = initData.MosaicGroup.GetMosaics();
                 initData.MosaicType = mosaicsInOldGroup[checkOrdinal];
 
                 // 2. change group

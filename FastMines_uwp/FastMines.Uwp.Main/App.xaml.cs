@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using Windows.UI.ViewManagement;
 using Windows.System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -9,10 +11,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Controls;
 using fmg.common;
-using fmg.common.geom;
-using fmg.core.types;
 using fmg.core.mosaic;
-using Windows.UI.ViewManagement;
 using fmg.core.img;
 using fmg.uwp.utils;
 using FastMines.Uwp.App.Model;
@@ -48,7 +47,6 @@ namespace fmg {
                 //this.DebugSettings.EnableFrameRateCounter = true;
             }
 #endif
-
 
             // you need to add a reference to the correspondent Extension:
             //  * Windows Mobile Extensions for the UWP
@@ -104,7 +102,9 @@ namespace fmg {
 
             if (rootFrame.Content == null) {
                 // create a common model between all the pages in the application
-                this.InitData = LoadAppData();
+                InitData = LoadAppData();
+                InitData.PropertyChanged += OnInitDataPropertyChanged;
+
                 if (!rootFrame.Navigate(typeof(MainPage), this.InitData)) {
                     throw new Exception("Failed to create initial page ;(");
                 }
@@ -202,6 +202,10 @@ namespace fmg {
                 : AppViewBackButtonVisibility.Collapsed;
 
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = visibility;
+        }
+
+        private void OnInitDataPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            LoggerSimple.Put("  FastMinesApp::OnInitDataPropertyChanged: ev={0}", ev);
         }
 
     }

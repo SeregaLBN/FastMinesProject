@@ -1,6 +1,5 @@
 package fmg.core.types;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -12,15 +11,6 @@ public enum EMosaicGroup {
     ePentagons,
     eHexagons,
     eOthers;
-
-    /** return mosaics in this group */
-    public List<EMosaic> getBind() {
-        List<EMosaic> mosaics = new ArrayList<EMosaic>();
-        for (EMosaic mosaic : EMosaic.values())
-            if (mosaic.getGroup() == this)
-                mosaics.add(mosaic);
-        return mosaics;
-    }
 
     /** Описание для пользователя */
     public String getDescription() {

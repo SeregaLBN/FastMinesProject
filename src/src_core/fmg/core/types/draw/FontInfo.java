@@ -50,8 +50,8 @@ public class FontInfo implements INotifyPropertyChanged {
     public void setSize(double size) {
         assert(size > 0.01);
         if (size < 0.01) {
-            //throw new IllegalArgumentException("Font size value must be positive: value=" + value);
-            System.err.println("Font size value must be positive: value=" + value);
+            //throw new IllegalArgumentException("Font size value must be positive: size=" + size);
+            System.err.println("Font size value must be positive: size=" + size);
             size = 0.1;
         }
         double old = _size;

@@ -6,9 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import fmg.android.app.MainActivity;
-import fmg.android.utils.Cast;
-import fmg.common.LoggerSimple;
 import fmg.common.geom.SizeDouble;
 
 public final class Converters {

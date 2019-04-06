@@ -30,6 +30,8 @@ namespace fmg {
         private bool _closed;
         private IDisposable _sizeChangedObservable;
         IDictionary<CanvasControl, MosaicsCanvasCtrllr> mapBindingControlToController = new Dictionary<CanvasControl, MosaicsCanvasCtrllr>();
+        private static readonly double TileMinSize = Cast.DpToPx(30);
+        private static readonly double TileMaxSize = Cast.DpToPx(90);
 
         public SelectMosaicPage() {
             this.InitializeComponent();
@@ -44,8 +46,7 @@ namespace fmg {
         private void OnPageLoaded(object sender, RoutedEventArgs e) {
             this.Loaded -= OnPageLoaded;
 
-            var ds = ViewModel.MosaicDS;
-            ds.CurrentItem = ds.DataSource.First(x => x.MosaicType == InitData.MosaicType);
+            UpdateViewModel();
 
             {
                 HSV hsv = new HSV(AnimatedImageModelConst.DefaultForegroundColor) {
@@ -89,7 +90,8 @@ namespace fmg {
 
             var size = Math.Min(ev.NewSize.Height, ev.NewSize.Width);
             var size2 = size / 3.9;
-            var wh = (int)Math.Min(Math.Max(100, size2), 200); // TODO: DPI dependency
+            var wh = Math.Min(Math.Max(TileMinSize, size2), TileMaxSize);
+            //LoggerSimple.Put("Math.Min(Math.Max(TileMinSize={0}, size2={1}), TileMaxSize={2}) = {3}", TileMinSize, size2, TileMaxSize, wh);
             ViewModel.ImageSize = new SizeDouble(wh, wh);
         }
 
@@ -98,12 +100,10 @@ namespace fmg {
         }
 
         private void OnMosaicItemClick(object sender, ItemClickEventArgs ev) {
-            // invoke after set/change ViewModel.MosaicDS.CurrentItem
-            AsyncRunner.InvokeFromUiLater(() => {
-                var ci = ViewModel.MosaicDS.CurrentItem;
-                if (ci != null)
-                    InitData.MosaicType = ci.MosaicType;
-            });
+            int position = gridMosaics.SelectedIndex;
+
+            EMosaic selectedMosaic = InitData.MosaicGroup.GetMosaics()[position];
+            InitData.MosaicType = selectedMosaic;
         }
 
         private void OnMosaicItemDoubleClick(object sender, Windows.UI.Xaml.Input.DoubleTappedRoutedEventArgs ev) {
@@ -120,7 +120,6 @@ namespace fmg {
             Frame frame = Window.Current.Content as Frame;
             System.Diagnostics.Debug.Assert(frame != null);
 
-            var eMosaic = CurrentItem.MosaicType;
             frame.Navigate(typeof(MosaicPage), InitData);
 
             //Window.Current.Content = new MosaicPage();
@@ -128,19 +127,13 @@ namespace fmg {
             //Window.Current.Activate();
         }
 
-        public EMosaicGroup CurrentMosaicGroup {
-            //get { return ViewModel.MosaicDS.CurrentGroup; }
-            set { ViewModel.MosaicDS.CurrentGroup = value; }
-        }
-
-        public ESkillLevel? CurrentSkillLevel {
-            private get { return ViewModel.MosaicDS.CurrentSkill; }
-            set { ViewModel.MosaicDS.CurrentSkill = value; }
-        }
-
-        public MosaicDataItem CurrentItem {
-            private get { return ViewModel.MosaicDS.CurrentItem; }
-            set { ViewModel.MosaicDS.CurrentItem = value; }
+        public void UpdateViewModel() {
+            ESkillLevel skill = InitData.SkillLevel;
+            EMosaic mosaicType = InitData.MosaicType;
+            ViewModel.MosaicDS.SkillLevel = skill;
+            ViewModel.MosaicDS.MosaicGroup = mosaicType.GetGroup();
+            var newItem = ViewModel.MosaicDS.DataSource.First(x => x.MosaicType == mosaicType);
+            ViewModel.MosaicDS.CurrentItem = newItem;
         }
 
         private void OnDataContextChangedCanvasControl(FrameworkElement sender, DataContextChangedEventArgs ev) {
