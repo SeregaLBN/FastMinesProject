@@ -10,11 +10,13 @@ using Microsoft.Graphics.Canvas;
 using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
+using fmg.core.img;
 using fmg.uwp.utils;
 using fmg.uwp.utils.win2d;
+using fmg.uwp.img.win2d;
 using Rect = Windows.Foundation.Rect;
 using FastMines.Uwp.BackgroundTasks;
-using MosaicsCanvasBmp = fmg.uwp.img.win2d.MosaicImg.CanvasBmpView;
+using MosaicsCanvasBmp = fmg.uwp.img.win2d.MosaicImg.CanvasBmpController;
 
 namespace fmg {
 
@@ -61,6 +63,10 @@ namespace fmg {
         /// msdn.microsoft.com/en-us/library/windows/apps/dn632423.aspx
         /// </summary>
         private static async Task<string> GetXmlString(int part) {
+            return await await AsyncRunner.ExecuteFromUiLaterAsync(() => GetXmlStringUiThread(part));
+        }
+
+        private static async Task<string> GetXmlStringUiThread(int part) {
             try {
                 //return await GetImagePath(false, 75, 75); // test one save to file
                 return string.Format(@"<tile>
@@ -99,62 +105,67 @@ namespace fmg {
         private static async Task<string> GetImagePath(int part, int primary, int w, int h) {
             StorageFile storageFile;
             if (primary != 0) {
-                float dpi = await AsyncRunner.ExecuteFromUiLaterAsync(() => DisplayInformation.GetForCurrentView().LogicalDpi, Windows.UI.Core.CoreDispatcherPriority.Low);
-                var bmp = new CanvasRenderTarget(Rc, w, h, dpi);
-                using (var ds = bmp.CreateDrawingSession()) {
-                    {
-                        var bmpLogo = await (
-                            (primary == 2)
-                                ? Resources.GetImgLogoPng("TileSq150", 100, Rc)
-                                : Resources.GetImgLogoPng("TileSq150", 150, Rc));
-                        System.Diagnostics.Debug.Assert(bmpLogo != null);
-                        var rcLogoRegion = new Rect {
-                            X = 0,
-                            Y = 0,
-                            Width = w,
-                            Height = h
-                        };
-                        if (primary == 2) {
-                            if (part == 1) {
-                                rcLogoRegion.X = w / 2.0;
-                                rcLogoRegion.Width /= 2.0;
-                            }
-                            if (part == 2) {
-                                rcLogoRegion.Y = h / 2.0;
-                                rcLogoRegion.Height /= 2.0;
-                            }
-                            if (part == 3 || part == 4) {
-                                rcLogoRegion.Width /= 2.0;
-                            }
+                Rect rcDestLogo;
+                {
+                    var rcLogoRegion = new Rect {
+                        X = 0,
+                        Y = 0,
+                        Width = w,
+                        Height = h
+                    };
+                    if (primary == 2) {
+                        if (part == 1) {
+                            rcLogoRegion.X = w / 2.0;
+                            rcLogoRegion.Width /= 2.0;
                         }
-
-                        var rcDestLogo = new Rect {
-                            X = rcLogoRegion.X + Math.Max(0, (rcLogoRegion.Width - rcLogoRegion.Height) / 2),
-                            Y = rcLogoRegion.Y + Math.Max(0, (rcLogoRegion.Height - rcLogoRegion.Width) / 2),
-                            Width = Math.Min(rcLogoRegion.Width, rcLogoRegion.Height),
-                            Height = Math.Min(rcLogoRegion.Width, rcLogoRegion.Height)
-                        };
-                        ds.DrawImage(bmpLogo, rcDestLogo, new Rect(0, 0, bmpLogo.Size.Width, bmpLogo.Size.Height));
+                        if (part == 2) {
+                            rcLogoRegion.Y = h / 2.0;
+                            rcLogoRegion.Height /= 2.0;
+                        }
+                        if (part == 3 || part == 4) {
+                            rcLogoRegion.Width /= 2.0;
+                        }
                     }
 
-                    var img1 = await AsyncRunner.ExecuteFromUiLaterAsync(() => CreateRandomMosaicImage(w / 2, h / 2), Windows.UI.Core.CoreDispatcherPriority.Low);
-                    var img2 = await AsyncRunner.ExecuteFromUiLaterAsync(() => CreateRandomMosaicImage(w / 2, h / 2), Windows.UI.Core.CoreDispatcherPriority.Low);
-                    var img3 = await AsyncRunner.ExecuteFromUiLaterAsync(() => CreateRandomMosaicImage(w / 2, h / 2), Windows.UI.Core.CoreDispatcherPriority.Low);
-                    var bmp1 = await AsyncRunner.ExecuteFromUiLaterAsync(() => img1.Image, Windows.UI.Core.CoreDispatcherPriority.Low);
-                    var bmp2 = await AsyncRunner.ExecuteFromUiLaterAsync(() => img2.Image, Windows.UI.Core.CoreDispatcherPriority.Low);
-                    var bmp3 = await AsyncRunner.ExecuteFromUiLaterAsync(() => img3.Image, Windows.UI.Core.CoreDispatcherPriority.Low);
-                    if (part == 1 || part == 2)
-                        ds.DrawImage(bmp1, new Rect(0, 0, w / 2.0, h / 2.0), new Rect(0, 0, bmp1.Size.Width, bmp1.Size.Height));
-                    if (part == 2 || part == 3)
-                        ds.DrawImage(bmp2, new Rect(w / 2.0, 0, w / 2.0, h / 2.0), new Rect(0, 0, bmp2.Size.Width, bmp2.Size.Height));
-                    if (part == 3 || part == 4)
-                        ds.DrawImage(bmp3, new Rect(w / 2.0, h / 2.0, w / 2.0, h / 2.0), new Rect(0, 0, bmp3.Size.Width, bmp3.Size.Height));
-
-                    storageFile = await SaveToFileMosaic(part, /*w + "x" + h, */bmp, "Combi" + img1.Model.MosaicType.GetIndex() + img2.Model.MosaicType.GetIndex() + img3.Model.MosaicType.GetIndex());
+                    rcDestLogo = new Rect {
+                        X = rcLogoRegion.X + Math.Max(0, (rcLogoRegion.Width - rcLogoRegion.Height) / 2),
+                        Y = rcLogoRegion.Y + Math.Max(0, (rcLogoRegion.Height - rcLogoRegion.Width) / 2),
+                        Width = Math.Min(rcLogoRegion.Width, rcLogoRegion.Height),
+                        Height = Math.Min(rcLogoRegion.Width, rcLogoRegion.Height)
+                    };
                 }
+
+                float dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
+                using (var bmp = new CanvasRenderTarget(Rc, w, h, dpi)) {
+                using (var bmpLogo = new Logo.CanvasBmpController(Rc)) {
+                using (var bmp1 = CreateRandomMosaicImage(w / 2, h / 2)) {
+                using (var bmp2 = CreateRandomMosaicImage(w / 2, h / 2)) {
+                using (var bmp3 = CreateRandomMosaicImage(w / 2, h / 2)) {
+                    var td = new TestDrawing("FastMines tiles");
+                    td.ApplySettings(bmpLogo, true);
+                    int size = (primary == 2)
+                                        ? 150  // hint: see image size ./res/Logo/TileSq150/Logo.scale-100.png
+                                        : 225; // hint: see image size ./res/Logo/TileSq150/Logo.scale-150.png
+                    bmpLogo.Model.Size = new SizeDouble(size, size);
+                    bmpLogo.Model.BackgroundColor = Color.Transparent;
+
+                    using (var ds = bmp.CreateDrawingSession()) {
+                        //ds.FillRectangle(0, 0, w, h, Color.Red.ToWinColor());
+                        ds.DrawImage(bmpLogo.Image, rcDestLogo, new Rect(0, 0, bmpLogo.Size.Width, bmpLogo.Size.Height));
+
+                        if (part == 1 || part == 2)
+                            ds.DrawImage(bmp1.Image, new Rect(      0,       0, w / 2.0, h / 2.0), new Rect(0, 0, bmp1.Size.Width, bmp1.Size.Height));
+                        if (part == 2 || part == 3)
+                            ds.DrawImage(bmp2.Image, new Rect(w / 2.0,       0, w / 2.0, h / 2.0), new Rect(0, 0, bmp2.Size.Width, bmp2.Size.Height));
+                        if (part == 3 || part == 4)
+                            ds.DrawImage(bmp3.Image, new Rect(w / 2.0, h / 2.0, w / 2.0, h / 2.0), new Rect(0, 0, bmp3.Size.Width, bmp3.Size.Height));
+                    }
+                    storageFile = await SaveToFileMosaic(part, /*w + "x" + h, */bmp, "Combi" + bmp1.Model.MosaicType.GetIndex() + bmp2.Model.MosaicType.GetIndex() + bmp3.Model.MosaicType.GetIndex());
+                }}}}}
             } else {
-                var img = await AsyncRunner.ExecuteFromUiLaterAsync(() => CreateRandomMosaicImage(w, h), Windows.UI.Core.CoreDispatcherPriority.Low);
-                storageFile = await SaveToFileMosaic(part, /*w + "x" + h, */img);
+                using (var img = CreateRandomMosaicImage(w, h)) {
+                    storageFile = await SaveToFileMosaic(part, /*w + "x" + h, */img);
+                }
             }
             return "ms-appdata:///local/" + storageFile.DisplayName;
         }
@@ -162,19 +173,20 @@ namespace fmg {
         public static MosaicsCanvasBmp CreateRandomMosaicImage(int w, int h) {
             Random rnd = ThreadLocalRandom.Current;
             var mosaicType = EMosaicEx.FromOrdinal(rnd.Next() % EMosaicEx.GetValues().Length);
-            var bkClr = Color.RandomColor(rnd).Brighter(0.45);
             var sizeField = mosaicType.SizeIcoField(true);
             sizeField.m += rnd.Next() % 2;
             sizeField.n += rnd.Next() % 3;
             const int bound = 3;
-            const int zoomKoef = 1;
+            const int zoomKoef = 4;
             var img = new MosaicsCanvasBmp(Rc);
+            var td = new TestDrawing("FastMines tiles");
+            td.ApplySettings(img, true);
             var m = img.Model;
             m.MosaicType = mosaicType;
             m.SizeField = sizeField;
             m.Size = new SizeDouble(w * zoomKoef, h * zoomKoef);
             m.Padding = new BoundDouble(zoomKoef * bound);
-            m.BackgroundColor = bkClr;
+            m.BackgroundColor = Color.Transparent;
             var bmp = img.Image;
             var pw = bmp.Size.Width;
             var ph = bmp.Size.Height;
