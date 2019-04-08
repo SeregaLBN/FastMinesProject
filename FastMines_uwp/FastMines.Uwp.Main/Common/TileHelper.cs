@@ -68,34 +68,53 @@ namespace fmg {
 
         private static async Task<string> GetXmlStringUiThread(int part) {
             try {
+                string deviceFamilyVersion = Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamilyVersion;
+                ulong version = ulong.Parse(deviceFamilyVersion);
+                //ulong major = (version & 0xFFFF000000000000L) >> 48;
+                //ulong minor = (version & 0x0000FFFF00000000L) >> 32;
+                ulong build = (version & 0x00000000FFFF0000L) >> 16;
+                //ulong revision = (version & 0x000000000000FFFFL);
+                //var osVersion = $"{major}.{minor}.{build}.{revision}";
+                var z = build >= 10572; // https://docs.microsoft.com/ca-es/windows/uwp/design/shell/tiles-and-notifications/special-tile-templates-catalog#people-tile-template
+
                 //return await GetImagePath(false, 75, 75); // test one save to file
-                return string.Format(@"<tile>
+                return string.Format(
+@"<tile>
     <visual version='2'>
-        <binding template='TileSquare150x150Image' fallback='TileSquareImage'>
+        <binding template='TileSmall'>
             <image id='1' src='{0}' alt='FastMines'/>
         </binding>
-        <binding template='TileWide310x150ImageCollection' fallback='TileWideImageCollection'>
+        <binding template='TileMedium'>
             <image id='1' src='{1}' alt='FastMines'/>
-            <image id='2' src='{2}' alt='small image, row 1, column 1'/>
-            <image id='3' src='{3}' alt='small image, row 1, column 2'/>
-            <image id='4' src='{4}' alt='small image, row 2, column 1'/>
-            <image id='5' src='{5}' alt='small image, row 2, column 2'/>
         </binding>
-        <binding template='TileSquare310x310ImageCollection'>
-            <image id='1' src='{6}' alt='FastMines'/>
-            <image id='2' src='{7}' alt='small image 1 (left)'/>
-            <image id='3' src='{8}' alt='small image 2 (left center)'/>
-            <image id='4' src='{9}' alt='small image 3 (right center)'/>
-            <image id='5' src='{10}' alt='small image 4 (right)'/>
+        <binding template='TileWide'>
+            <image id='1' src='{2}' alt='FastMines'/>
+            <image id='2' src='{3}' alt='small image, row 1, column 1'/>
+            <image id='3' src='{4}' alt='small image, row 1, column 2'/>
+            <image id='4' src='{5}' alt='small image, row 2, column 1'/>
+            <image id='5' src='{6}' alt='small image, row 2, column 2'/>
         </binding>
-        <binding template='TileSquare71x71Image'>
-            <image id='1' src='{11}' alt='FastMines'/>
+        <binding template='TileLarge'>
+            <image id='1' src='{7}'  alt='FastMines'/>
+            <image id='2' src='{8}'  alt='small image 1 (left)'/>
+            <image id='3' src='{9}'  alt='small image 2 (left center)'/>
+            <image id='4' src='{10}' alt='small image 3 (right center)'/>
+            <image id='5' src='{11}' alt='small image 4 (right)'/>
         </binding>
     </visual>
-</tile>", await GetImagePath(part, 1, 150, 150),
-                await GetImagePath(part, 1, 160, 150), await GetImagePath(part, 0, 75, 75), await GetImagePath(part, 0, 75, 75), await GetImagePath(part, 0, 75, 75), await GetImagePath(part, 0, 75, 75),
-                await GetImagePath(part, 2, 310, 233), await GetImagePath(part, 0, 77, 77), await GetImagePath(part, 0, 77, 77), await GetImagePath(part, 0, 77, 77), await GetImagePath(part, 0, 77, 77),
-                await GetImagePath(part, 1, 71, 71));
+</tile>",
+                    z ? "TileSmall" : "TileSquare71x71Image",
+                    await GetImagePath(part, 1, 71, 71),
+
+                    z ? "TileMedium" : "TileSquare150x150Image", // TileSquareImage
+                    await GetImagePath(part, 1, 150, 150),
+
+                    z ? "TileWide" : "TileWide310x150ImageCollection", // TileWideImageCollection
+                    await GetImagePath(part, 1, 160, 150), await GetImagePath(part, 0, 75, 75), await GetImagePath(part, 0, 75, 75), await GetImagePath(part, 0, 75, 75), await GetImagePath(part, 0, 75, 75),
+
+                    z ? "TileLarge" : "TileSquare310x310ImageCollection",
+                    await GetImagePath(part, 2, 310, 233), await GetImagePath(part, 0, 77, 77), await GetImagePath(part, 0, 77, 77), await GetImagePath(part, 0, 77, 77), await GetImagePath(part, 0, 77, 77)
+                );
             } catch (Exception ex) {
                 System.Diagnostics.Debug.Assert(false, ex.Message);
             }
