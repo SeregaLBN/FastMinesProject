@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
@@ -22,6 +22,8 @@ namespace fmg {
 
    public static class TileHelper {
 
+        private const int MaxXmls = 5; // TileUpdater.MaxXmls;
+
         private static readonly string TaskName = typeof(TileUpdater).Name;
         private static readonly string TaskEntryPoint = typeof(TileUpdater).FullName;
 
@@ -41,6 +43,8 @@ namespace fmg {
                             task.Value.Unregister(true);
 
                     var taskBuilder = new BackgroundTaskBuilder {Name = TaskName, TaskEntryPoint = TaskEntryPoint};
+                    taskBuilder.Name = "😸 " + typeof(TileUpdater) + " 😸";
+                    taskBuilder.TaskEntryPoint = typeof(TileUpdater).FullName;
                     taskBuilder.SetTrigger(new TimeTrigger(15, false));
                     var registration = taskBuilder.Register();
                     System.Diagnostics.Debug.WriteLine(registration.TaskId);
@@ -52,7 +56,7 @@ namespace fmg {
         }
 
         private static async Task MakeXml(int part) {
-            var xml = await GetXmlString(part);
+            var xml = await await AsyncRunner.ExecuteFromUiLaterAsync(() => GetXmlString(part));
             if (string.IsNullOrEmpty(xml))
                 return;
             var file = await TileUpdater.Location.CreateFileAsync(TileUpdater.GetXmlFileName(part), CreationCollisionOption.ReplaceExisting);
@@ -63,10 +67,6 @@ namespace fmg {
         /// msdn.microsoft.com/en-us/library/windows/apps/dn632423.aspx
         /// </summary>
         private static async Task<string> GetXmlString(int part) {
-            return await await AsyncRunner.ExecuteFromUiLaterAsync(() => GetXmlStringUiThread(part));
-        }
-
-        private static async Task<string> GetXmlStringUiThread(int part) {
             try {
                 string deviceFamilyVersion = Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamilyVersion;
                 ulong version = ulong.Parse(deviceFamilyVersion);
@@ -75,45 +75,53 @@ namespace fmg {
                 ulong build = (version & 0x00000000FFFF0000L) >> 16;
                 //ulong revision = (version & 0x000000000000FFFFL);
                 //var osVersion = $"{major}.{minor}.{build}.{revision}";
-                var z = build >= 10572; // https://docs.microsoft.com/ca-es/windows/uwp/design/shell/tiles-and-notifications/special-tile-templates-catalog#people-tile-template
+                var neew = build >= 10572; // https://docs.microsoft.com/ca-es/windows/uwp/design/shell/tiles-and-notifications/special-tile-templates-catalog#people-tile-template
 
                 //return await GetImagePath(false, 75, 75); // test one save to file
                 return string.Format(
 @"<tile>
     <visual version='2'>
-        <binding template='TileSmall'>
-            <image id='1' src='{0}' alt='FastMines'/>
-        </binding>
-        <binding template='TileMedium'>
+        <binding template='{0}'>
             <image id='1' src='{1}' alt='FastMines'/>
         </binding>
-        <binding template='TileWide'>
-            <image id='1' src='{2}' alt='FastMines'/>
-            <image id='2' src='{3}' alt='small image, row 1, column 1'/>
-            <image id='3' src='{4}' alt='small image, row 1, column 2'/>
-            <image id='4' src='{5}' alt='small image, row 2, column 1'/>
-            <image id='5' src='{6}' alt='small image, row 2, column 2'/>
+        <binding template='{2}'>
+            <image id='1' src='{3}' alt='FastMines'/>
         </binding>
-        <binding template='TileLarge'>
-            <image id='1' src='{7}'  alt='FastMines'/>
-            <image id='2' src='{8}'  alt='small image 1 (left)'/>
-            <image id='3' src='{9}'  alt='small image 2 (left center)'/>
-            <image id='4' src='{10}' alt='small image 3 (right center)'/>
-            <image id='5' src='{11}' alt='small image 4 (right)'/>
+        <binding template='{4}'>
+            <image id='1' src='{5}' alt='FastMines'/>
+            <image id='2' src='{6}' alt='small image, row 1, column 1'/>
+            <image id='3' src='{7}' alt='small image, row 1, column 2'/>
+            <image id='4' src='{8}' alt='small image, row 2, column 1'/>
+            <image id='5' src='{9}' alt='small image, row 2, column 2'/>
+        </binding>
+        <binding template='{10}'>
+            <image id='1' src='{11}' alt='FastMines'/>
+            <image id='2' src='{12}' alt='small image 1 (left)'/>
+            <image id='3' src='{13}' alt='small image 2 (left center)'/>
+            <image id='4' src='{14}' alt='small image 3 (right center)'/>
+            <image id='5' src='{15}' alt='small image 4 (right)'/>
         </binding>
     </visual>
 </tile>",
-                    z ? "TileSmall" : "TileSquare71x71Image",
-                    await GetImagePath(part, 1, 71, 71),
+                    neew ? "TileSmall" : "TileSquare71x71Image",
+                    await GetImagePath(part, 0, -1, 1, 71, 71),
 
-                    z ? "TileMedium" : "TileSquare150x150Image", // TileSquareImage
-                    await GetImagePath(part, 1, 150, 150),
+                    neew ? "TileMedium" : "TileSquare150x150Image", // TileSquareImage
+                    await GetImagePath(part, 1, -1, 1, 150, 150),
 
-                    z ? "TileWide" : "TileWide310x150ImageCollection", // TileWideImageCollection
-                    await GetImagePath(part, 1, 160, 150), await GetImagePath(part, 0, 75, 75), await GetImagePath(part, 0, 75, 75), await GetImagePath(part, 0, 75, 75), await GetImagePath(part, 0, 75, 75),
+                    neew ? "TileWide" : "TileWide310x150ImageCollection", // TileWideImageCollection
+                    await GetImagePath(part, 2, 0, 1, 160, 150),
+                    await GetImagePath(part, 2, 1, 0, 75, 75),
+                    await GetImagePath(part, 2, 2, 0, 75, 75),
+                    await GetImagePath(part, 2, 3, 0, 75, 75),
+                    await GetImagePath(part, 2, 4, 0, 75, 75),
 
-                    z ? "TileLarge" : "TileSquare310x310ImageCollection",
-                    await GetImagePath(part, 2, 310, 233), await GetImagePath(part, 0, 77, 77), await GetImagePath(part, 0, 77, 77), await GetImagePath(part, 0, 77, 77), await GetImagePath(part, 0, 77, 77)
+                    neew ? "TileLarge" : "TileSquare310x310ImageCollection",
+                    await GetImagePath(part, 3, 0, 2, 310, 233),
+                    await GetImagePath(part, 3, 1, 0, 77, 77),
+                    await GetImagePath(part, 3, 2, 0, 77, 77),
+                    await GetImagePath(part, 3, 3, 0, 77, 77),
+                    await GetImagePath(part, 3, 4, 0, 77, 77)
                 );
             } catch (Exception ex) {
                 System.Diagnostics.Debug.Assert(false, ex.Message);
@@ -121,8 +129,11 @@ namespace fmg {
             return null;
         }
 
-        private static async Task<string> GetImagePath(int part, int primary, int w, int h) {
+        private static async Task<string> GetImagePath(int part, int templateIndex, int imageIndex, int primary, int w, int h) {
             StorageFile storageFile;
+            string makeFileDescription() {
+                return part + "_" + templateIndex + ((imageIndex < 0) ? "" : ("_" + imageIndex));
+            }
             if (primary != 0) {
                 Rect rcDestLogo;
                 {
@@ -167,8 +178,11 @@ namespace fmg {
                                         : 225; // hint: see image size ./res/Logo/TileSq150/Logo.scale-150.png
                     bmpLogo.Model.Size = new SizeDouble(size, size);
                     bmpLogo.Model.BackgroundColor = Color.Transparent;
+                    var p = bmpLogo.Model.Padding;
+                    bmpLogo.Model.Padding = new BoundDouble(Math.Abs(p.Left), Math.Abs(p.Top), Math.Abs(p.Right), Math.Abs(p.Bottom));
 
                     using (var ds = bmp.CreateDrawingSession()) {
+                        ds.Clear(Color.Transparent.ToWinColor());
                         //ds.FillRectangle(0, 0, w, h, Color.Red.ToWinColor());
                         ds.DrawImage(bmpLogo.Image, rcDestLogo, new Rect(0, 0, bmpLogo.Size.Width, bmpLogo.Size.Height));
 
@@ -178,12 +192,27 @@ namespace fmg {
                             ds.DrawImage(bmp2.Image, new Rect(w / 2.0,       0, w / 2.0, h / 2.0), new Rect(0, 0, bmp2.Size.Width, bmp2.Size.Height));
                         if (part == 3 || part == 4)
                             ds.DrawImage(bmp3.Image, new Rect(w / 2.0, h / 2.0, w / 2.0, h / 2.0), new Rect(0, 0, bmp3.Size.Width, bmp3.Size.Height));
+#if DEBUG
+
+                        ds.DrawText(makeFileDescription(), 0, 0, Color.Red.ToWinColor());
+#endif
                     }
-                    storageFile = await SaveToFileMosaic(part, /*w + "x" + h, */bmp, "Combi" + bmp1.Model.MosaicType.GetIndex() + bmp2.Model.MosaicType.GetIndex() + bmp3.Model.MosaicType.GetIndex());
+                    storageFile = await SaveToFileMosaic(bmp, makeFileDescription());
                 }}}}}
             } else {
                 using (var img = CreateRandomMosaicImage(w, h)) {
-                    storageFile = await SaveToFileMosaic(part, /*w + "x" + h, */img);
+#if DEBUG
+                    float dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
+                    using (var bmp = new CanvasRenderTarget(Rc, w, h, dpi)) {
+                    using (var ds = bmp.CreateDrawingSession()) {
+                        ds.Clear(Color.Transparent.ToWinColor());
+                        ds.DrawImage(img.Image, new Rect(0, 0, w, h), new Rect(0, 0, img.Size.Width, img.Size.Height));
+                        ds.DrawText(makeFileDescription(), 0, 0, Color.Red.ToWinColor());
+                        storageFile = await SaveToFileMosaic(bmp, makeFileDescription());
+                    }}
+#else
+                    storageFile = await SaveToFileMosaic(img, makeFileDescription());
+#endif
                 }
             }
             return "ms-appdata:///local/" + storageFile.DisplayName;
@@ -196,7 +225,7 @@ namespace fmg {
             sizeField.m += rnd.Next() % 2;
             sizeField.n += rnd.Next() % 3;
             const int bound = 3;
-            const int zoomKoef = 4;
+            const double zoomKoef = 2;
             var img = new MosaicsCanvasBmp(Rc);
             var td = new TestDrawing("FastMines tiles");
             td.ApplySettings(img, true);
@@ -216,25 +245,16 @@ namespace fmg {
             return img;
         }
 
-        private static async Task<StorageFile> SaveToFileLogo(int part, CanvasBitmap canvasBitmap) {
-            return await SaveToFile(part, "logo", canvasBitmap);
-        }
-        private static async Task<StorageFile> SaveToFileMosaic(int part, /*string filePrefix, */MosaicsCanvasBmp img) {
+        private static async Task<StorageFile> SaveToFileMosaic(MosaicsCanvasBmp img, string fileDescript) {
             return await SaveToFileMosaic(
-                part,
                 await AsyncRunner.ExecuteFromUiLaterAsync(() => img.Image, Windows.UI.Core.CoreDispatcherPriority.Low),
-                img.Model.MosaicType.GetMosaicClassName());
+                fileDescript);
         }
-        private static async Task<StorageFile> SaveToFileMosaic(int part, /*string filePrefix, */CanvasBitmap canvasBitmap, string fileDescript) {
-            return await SaveToFile(part, /*filePrefix + "_" + */fileDescript, canvasBitmap);
+        private static async Task<StorageFile> SaveToFileMosaic(CanvasBitmap canvasBitmap, string fileDescript) {
+            return await SaveToFile(fileDescript, canvasBitmap);
         }
-        private static async Task<StorageFile> SaveToFile(int part, string filePrefix, CanvasBitmap canvasBitmap) {
-            return await canvasBitmap.SaveToFile(
-                    string.Format("{0}_{1}_{2}x{3}.png",
-                        part,
-                        filePrefix,
-                        canvasBitmap.Size.Width, canvasBitmap.Size.Height),
-                        TileUpdater.Location);
+        private static async Task<StorageFile> SaveToFile(string filePrefix, CanvasBitmap canvasBitmap) {
+            return await canvasBitmap.SaveToFile(string.Format("{0}.png", filePrefix), TileUpdater.Location);
         }
 
         public static void OnBackgroundTaskCompleted(BackgroundTaskRegistration sender, BackgroundTaskCompletedEventArgs args) {
@@ -243,7 +263,7 @@ namespace fmg {
 
         private async static Task RemakeXmlAnew() {
             // claen obsolete png files
-            for (var i=0; i<5; i++) {
+            for (var i = 0; i < MaxXmls; i++) {
                 var xml = await TileUpdater.GetXmlString(i);
                 if (string.IsNullOrEmpty(xml))
                     continue;
@@ -263,7 +283,7 @@ namespace fmg {
                 }
             }
 
-            for (var i=0; i<5; i++)
+            for (var i = 0; i < MaxXmls; i++)
                 await MakeXml(i);
         }
 

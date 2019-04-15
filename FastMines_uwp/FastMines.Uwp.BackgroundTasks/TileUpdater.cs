@@ -11,6 +11,8 @@ namespace FastMines.Uwp.BackgroundTasks {
     /// <summary> http://msdn.microsoft.com/en-us/library/windows/apps/xaml/jj991805.aspx </summary>
     public sealed class TileUpdater : IBackgroundTask {
 
+        private const int MaxXmls = 5;
+
         public async void Run(IBackgroundTaskInstance taskInstance) {
             // Get a deferral, to prevent the task from closing prematurely while asynchronous code is still running.
             BackgroundTaskDeferral deferral = taskInstance.GetDeferral();
@@ -28,7 +30,7 @@ namespace FastMines.Uwp.BackgroundTasks {
             updater.Clear(); // disable tile - set as default
             updater.EnableNotificationQueue(true);
 
-            for (var i = 0; i < 5; i++) {
+            for (var i = 0; i < MaxXmls; i++) {
                 var xml = await GetXmlStringImpl(i);
                 if (string.IsNullOrEmpty(xml))
                     continue;
