@@ -117,9 +117,9 @@ namespace fmg.uwp.mosaic.win2d {
                                     txtColor = model.ColorText.GetColorOpen((int)cell.State.Open.Ordinal());
                                     szCaption = cell.State.Open.ToCaption();
                                 }
-                                if (!string.IsNullOrWhiteSpace(szCaption)) {
+                                if (!string.IsNullOrWhiteSpace(szCaption) && (font != null)) {
                                     if (cell.State.Down)
-                                        rcInner.MoveXY(1, 1);
+                                        rcInner.MoveXY(pen.Width, pen.Width);
                                     ds.DrawText(szCaption, rcInner.ToWinRect(), txtColor.ToWinColor(), font);
 #if DEBUG
                                     //ds.DrawRectangle(rcInner.ToWinRect(), Color.Red.ToWinColor()); // debug
@@ -174,6 +174,8 @@ namespace fmg.uwp.mosaic.win2d {
         private CanvasTextFormat Font {
             get {
                 var fi = Model.FontInfo;
+                if (fi.Size < 1)
+                    return null;
                 if (_font is null) {
                     var ctf = new CanvasTextFormat() {
                         FontSize   = (float)fi.Size,

@@ -173,7 +173,7 @@ namespace fmg.uwp.mosaic.xaml {
                             txtColor = m.ColorText.GetColorOpen((int)cell.State.Open.Ordinal());
                             szCaption = cell.State.Open.ToCaption();
                         }
-                        if (string.IsNullOrWhiteSpace(szCaption)) {
+                        if (string.IsNullOrWhiteSpace(szCaption) || (m.FontInfo.Size < 1)) {
                             txt.Visibility = Visibility.Collapsed;
                         } else {
                             txt.Visibility = Visibility.Visible;

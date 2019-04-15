@@ -174,9 +174,9 @@ public abstract class MosaicJfxView<TImage,
                         g.setFill(Cast.toColor(model.getColorText().getColorOpen(cell.getState().getOpen().ordinal())));
                         szCaption = cell.getState().getOpen().toCaption();
                     }
-                    if ((szCaption != null) && (szCaption.length() > 0)) {
+                    if ((szCaption != null) && (szCaption.length() > 0) && (model.getFontInfo().getSize() >= 1)) {
                         if (cell.getState().isDown())
-                            rcInner.moveXY(1, 1);
+                            rcInner.moveXY(pen.getWidth(), pen.getWidth());
                         drawText(g, szCaption, rcInner);
                         //{ // test
                         //    Paint clrOld = g.getStroke(); // test

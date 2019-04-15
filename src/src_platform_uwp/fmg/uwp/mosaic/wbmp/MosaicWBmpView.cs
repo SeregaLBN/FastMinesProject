@@ -113,10 +113,11 @@ namespace fmg.uwp.mosaic.wbmp {
                             txtColor = model.ColorText.GetColorOpen((int)cell.State.Open.Ordinal());
                             szCaption = cell.State.Open.ToCaption();
                         }
-                        if (!string.IsNullOrWhiteSpace(szCaption)) {
+                        var fi = model.FontInfo;
+                        if (!string.IsNullOrWhiteSpace(szCaption) && (fi.Size >= 1)) {
                             if (cell.State.Down)
-                                rcInner.MoveXY(1, 1);
-                            wbmp.DrawString(szCaption, rcInner.ToWinRect(), model.FontInfo.Name, (int)model.FontInfo.Size, txtColor.ToWinColor());
+                                rcInner.MoveXY(pen.Width, pen.Width);
+                            wbmp.DrawString(szCaption, rcInner.ToWinRect(), fi.Name, (int)fi.Size, txtColor.ToWinColor());
                             //wmp.DrawRectangle(rcInner.Left, rcInner.Top, rcInner.Right, rcInner.Bottom, Color.Red.ToWinColor()); // debug
                         }
                     }
