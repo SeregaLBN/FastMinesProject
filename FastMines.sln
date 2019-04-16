@@ -1,4 +1,5 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -36,7 +37,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest.FastMines.Uwp", "F
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UnitTest.FastMines.Core", "FastMines_core\UnitTest.FastMines.Core\UnitTest.FastMines.Core.shproj", "{E7F1F5C2-78F2-4777-AE7C-715655FBC06A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest.FastMines.Ava", "FastMines_Ava\UnitTest.FastMines.Ava\UnitTest.FastMines.Ava.csproj", "{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest.FastMines.Ava", "FastMines_Ava\UnitTest.FastMines.Ava\UnitTest.FastMines.Ava.csproj", "{E4AAB50E-92EE-40B5-9A36-657F7E7C0611}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
