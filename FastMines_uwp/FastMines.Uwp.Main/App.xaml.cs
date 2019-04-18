@@ -24,7 +24,7 @@ namespace fmg {
     sealed partial class App : Application {
 
         /// <summary> Model (a common model between all the pages in the application) </summary>
-        public MosaicInitData InitData { get; private set; }
+        public MosaicInitData InitData => MosaicInitDataExt.SharedData;
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -102,7 +102,8 @@ namespace fmg {
 
             if (rootFrame.Content == null) {
                 // create a common model between all the pages in the application
-                InitData = LoadAppData();
+                var initData = LoadAppData();
+                InitData.CopyFrom(initData);
                 InitData.PropertyChanged += OnInitDataPropertyChanged;
 
                 if (!rootFrame.Navigate(typeof(MainPage), this.InitData)) {

@@ -37,11 +37,19 @@ namespace fmg.core.mosaic {
 
 
         public MosaicInitData() {
-            _notifier = new NotifyPropertyChanged(this, ev => PropertyChangedSync?.Invoke(this, ev), false);
-            _notifierAsync = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev), true);
+            _notifier      = new NotifyPropertyChanged(this, ev => PropertyChangedSync?.Invoke(this, ev), false);
+            _notifierAsync = new NotifyPropertyChanged(this, ev => PropertyChanged    ?.Invoke(this, ev), true);
             this.PropertyChangedSync += OnPropertyChanged;
         }
 
+
+        public void CopyFrom(MosaicInitData from) {
+            if (ReferenceEquals(from, this))
+                return;
+            this.MosaicType = from.MosaicType;
+            this.SizeField  = from.SizeField;
+            this.MinesCount = from.MinesCount;
+        }
 
         public EMosaic MosaicType {
             get { return _mosaicType; }

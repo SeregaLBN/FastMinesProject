@@ -40,7 +40,7 @@ namespace Test.FastMines.Ava.Images {
             }
 
             public MosaicGroupImg.RenderTargetBmpController MosaicImg { get; }
-            public IBitmap Bitmap { get => MosaicImg.Image; }
+            public IBitmap Bitmap => MosaicImg.Image;
         }
 
         private Modelka _viewModel;
