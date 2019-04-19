@@ -26,7 +26,7 @@ namespace fmg {
         public MosaicInitData InitData => MosaicInitDataExt.SharedData;
         /// <summary> View-Model </summary>
         public MosaicsViewModel ViewModel { get; private set; }
-        public SolidColorBrush BorderColorStartBttn;
+        private SolidColorBrush BorderColorStartBttn;
         private bool _closed;
         private IDisposable _sizeChangedObservable;
         IDictionary<CanvasControl, MosaicsCanvasCtrllr> mapBindingControlToController = new Dictionary<CanvasControl, MosaicsCanvasCtrllr>();
@@ -37,16 +37,6 @@ namespace fmg {
             this.InitializeComponent();
             ViewModel = new MosaicsViewModel();
             ViewModel.MosaicDS.DataSource.CollectionChanged += OnMosaicDsCollectionChanged;
-
-            this.Loaded += OnPageLoaded;
-            this.Unloaded += OnPageUnloaded;
-            this.SizeChanged += OnPageSizeChanged;
-        }
-
-        private void OnPageLoaded(object sender, RoutedEventArgs e) {
-            this.Loaded -= OnPageLoaded;
-
-            UpdateViewModel();
 
             {
                 HSV hsv = new HSV(AnimatedImageModelConst.DefaultForegroundColor) {
@@ -64,6 +54,16 @@ namespace fmg {
                 };
                 run.Repeat(TimeSpan.FromMilliseconds(100), () => _closed);
             }
+
+            this.Loaded += OnPageLoaded;
+            this.Unloaded += OnPageUnloaded;
+            this.SizeChanged += OnPageSizeChanged;
+        }
+
+        private void OnPageLoaded(object sender, RoutedEventArgs e) {
+            this.Loaded -= OnPageLoaded;
+
+            UpdateViewModel();
         }
 
         private void OnPageUnloaded(object sender, RoutedEventArgs ev) {
