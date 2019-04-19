@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.ComponentModel;
 using fmg.common.geom;
 using fmg.common.notifier;
@@ -162,6 +161,15 @@ namespace fmg.core.mosaic {
             } finally {
                 lockChanging = false;
             }
+        }
+
+        public override string ToString() {
+            return nameof(MosaicInitData)
+                + "{MosaicType:" + _mosaicType
+                + ", SizeField:" + _sizeField
+                + ", MinesCount:" + _minesCount
+                + ", SkillLevel:" + SkillLevel
+                + "}";
         }
 
         /// <summary>  Dispose managed resources </summary>/

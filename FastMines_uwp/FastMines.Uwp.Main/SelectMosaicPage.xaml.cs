@@ -100,9 +100,11 @@ namespace fmg {
         }
 
         private void OnMosaicItemClick(object sender, ItemClickEventArgs ev) {
-            int position = gridMosaics.SelectedIndex;
+            //int oldPosition = gridMosaics.SelectedIndex; // TIP: SelectedIndex is _OLD_ index
 
-            EMosaic selectedMosaic = InitData.MosaicGroup.GetMosaics()[position];
+            System.Diagnostics.Debug.Assert(ev.ClickedItem is MosaicDataItem);
+            var clickItem = ev.ClickedItem as MosaicDataItem;
+            EMosaic selectedMosaic = clickItem.MosaicType;
             InitData.MosaicType = selectedMosaic;
         }
 
