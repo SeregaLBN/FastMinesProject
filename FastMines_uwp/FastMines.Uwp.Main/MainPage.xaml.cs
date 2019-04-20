@@ -52,6 +52,7 @@ namespace fmg {
             this.Loaded -= OnPageLoaded;
 
             //var dpi = Cast.ToDpi(100);
+            ViewModel.MosaicGroupDS.Header.Entity.BurgerMenuModel.Horizontal = _splitView.IsPaneOpen;
 
             ViewModel.MosaicGroupDS.PropertyChanged += OnMosaicGroupDsPropertyChanged;
             ViewModel.MosaicSkillDS.PropertyChanged += OnMosaicSkillDsPropertyChanged;
@@ -136,7 +137,7 @@ namespace fmg {
             RightFrame.SourcePageType = typeof(CustomSkillPage);
         }
         private void ShowHypnosisLogoPage() {
-            LoggerSimple.Put("TODO:  redirect to HypnosisLogoFragment...");
+            LoggerSimple.Put("TODO:  redirect to HypnosisLogoPage...");
         }
 
         private void OnMenuCurrentItemChanged(bool senderIsMosaicGroup, MosaicGroupDataItem currentGroupItem, MosaicSkillDataItem currentSkillItem) {

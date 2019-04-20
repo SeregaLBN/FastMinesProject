@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
         binding.rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(this::onGlobalLayoutListener);
 
+        viewModel.getMosaicGroupDS().getHeader().getEntity().getBurgerMenuModel().setHorizontal(viewModel.getSplitViewPane().isOpen());
 
         viewModel.getMosaicGroupDS().addListener(this::onMosaicGroupDsPropertyChanged);
         viewModel.getMosaicSkillDS().addListener(this::onMosaicSkillDsPropertyChanged);
