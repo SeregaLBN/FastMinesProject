@@ -1,18 +1,24 @@
 package fmg.android.img;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import fmg.common.Color;
 import fmg.common.Pair;
+import fmg.common.geom.BoundDouble;
 import fmg.common.geom.PointDouble;
+import fmg.common.geom.RectDouble;
+import fmg.common.geom.SizeDouble;
 import fmg.core.img.AnimatedImageModel;
+import fmg.core.img.BurgerMenuModel;
 import fmg.core.img.MosaicGroupModel;
 import fmg.core.img.MosaicSkillModel;
 import fmg.core.img.WithBurgerMenuView;
@@ -80,12 +86,47 @@ abstract class MosaicSkillOrGroupView<TImage, TImageModel extends AnimatedImageM
         });
 
         // draw burger menu
-        getBurgerMenuModel().getCoords()
-            .forEach(li -> {
-                paintFill.setStrokeWidth((float)li.penWidht);
-                paintFill.setColor(Cast.toColor(li.clr));
-                g.drawLine((float)li.from.x, (float)li.from.y, (float)li.to.x, (float)li.to.y, paintFill);
-            });
+        BurgerMenuModel burgerModel = getBurgerMenuModel();
+        List<BurgerMenuModel.LineInfo> coords = burgerModel.getCoords().collect(Collectors.toList());
+        if (!coords.isEmpty()) {
+            boolean simple = false;
+            if (simple) {
+                coords.forEach(li -> {
+                    paintFill.setStrokeWidth((float)li.penWidht);
+                    paintFill.setColor(Cast.toColor(li.clr));
+                    g.drawLine((float)li.from.x, (float)li.from.y, (float)li.to.x, (float)li.to.y, paintFill);
+                });
+            } else {
+                SizeDouble size = burgerModel.getSize();
+                BoundDouble pad = burgerModel.getPadding();
+                double width  = size.width  - pad.getLeftAndRight();
+                double height = size.height - pad.getTopAndBottom();
+                Bitmap bmpBurger = Bitmap.createBitmap((int)width, (int)height, Bitmap.Config.ARGB_8888);
+                Canvas canvasBurger = new Canvas(bmpBurger);
+                double penWidth = 0;
+                for (BurgerMenuModel.LineInfo li : coords) {
+                    penWidth = li.penWidht;
+                    li.from.move(-pad.left, -pad.top);
+                    li.to  .move(-pad.left, -pad.top);
+                    paintFill.setStrokeWidth((float)li.penWidht);
+                    paintFill.setColor(Cast.toColor(li.clr));
+                    canvasBurger.drawLine(
+                            (float)li.from.x, (float)li.from.y,
+                            (float)li.to  .x, (float)li.to  .y,
+                            paintFill);
+                }
+
+                RectDouble destinationRc = new RectDouble(pad.left, pad.top, width, height);
+                double offset = penWidth;
+                boolean horiz = burgerModel.isHorizontal();
+                RectDouble sourceRc = new RectDouble(
+                        horiz ? 0 : offset / 2,
+                        horiz ? offset / 2 : 0,
+                        width + (horiz ? 0 : -offset),
+                        height + (horiz ? -offset : 0));
+                g.drawBitmap(bmpBurger, Cast.toRectInt(sourceRc), Cast.toRect(destinationRc), null);
+            }
+        }
     }
 
 }

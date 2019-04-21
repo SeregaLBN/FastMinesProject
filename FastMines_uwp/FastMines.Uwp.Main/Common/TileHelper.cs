@@ -43,7 +43,7 @@ namespace fmg {
                             task.Value.Unregister(true);
 
                     var taskBuilder = new BackgroundTaskBuilder {Name = TaskName, TaskEntryPoint = TaskEntryPoint};
-                    taskBuilder.Name = "😸 " + typeof(TileUpdater) + " 😸";
+                    taskBuilder.Name = typeof(TileUpdater).Name;
                     taskBuilder.TaskEntryPoint = typeof(TileUpdater).FullName;
                     taskBuilder.SetTrigger(new TimeTrigger(15, false));
                     var registration = taskBuilder.Register();

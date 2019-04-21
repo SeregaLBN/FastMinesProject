@@ -57,12 +57,50 @@ namespace fmg.uwp.img.win2d {
                     }
                 }
             }
-            using (var css = new CanvasStrokeStyle {
-                StartCap = CanvasCapStyle.Flat,
-                EndCap = CanvasCapStyle.Flat
-            }) {
-                foreach (var li in BurgerMenuModel.Coords)
-                    ds.DrawLine(li.from.ToVector2(), li.to.ToVector2(), li.clr.ToWinColor(), (float)li.penWidht, css);
+
+            // draw burger menu
+            var burgerModel = BurgerMenuModel;
+            var coords = burgerModel.Coords.ToList();
+            if (coords.Any()) {
+                using (var css = new CanvasStrokeStyle {
+                    StartCap = CanvasCapStyle.Flat,
+                    EndCap = CanvasCapStyle.Flat
+                }) {
+                    bool simple = false;
+                    if (simple) {
+                        foreach (var li in coords)
+                            ds.DrawLine(li.from.ToVector2(), li.to.ToVector2(), li.clr.ToWinColor(), (float)li.penWidht, css);
+                    } else {
+                        var size = burgerModel.Size;
+                        var pad = burgerModel.Padding;
+                        var width = size.Width - pad.LeftAndRight;
+                        var height = size.Height - pad.TopAndBottom;
+                        using (var crtBurger = new CanvasRenderTarget(rc, (float)width, (float)height, ds.Dpi)) {
+                            using (var dsBurger = crtBurger.CreateDrawingSession()) {
+                                dsBurger.Clear(Windows.UI.Colors.Transparent);
+                                double penWidth = 0;
+                                foreach (var li in coords) {
+                                    penWidth = li.penWidht;
+                                    dsBurger.DrawLine(
+                                        li.from.Move(-pad.Left, -pad.Top).ToVector2(),
+                                        li.to.Move(-pad.Left, -pad.Top).ToVector2(),
+                                        li.clr.ToWinColor(),
+                                        (float)li.penWidht, css);
+                                }
+
+                                var destinationRc = new RectDouble(pad.Left, pad.Top, width, height);
+                                var offset = penWidth;
+                                var horiz = burgerModel.Horizontal;
+                                var sourceRc = new RectDouble(
+                                    horiz ? 0 : offset / 2,
+                                    horiz ? offset / 2 : 0,
+                                    width + (horiz ? 0 : -offset),
+                                    height + (horiz ? -offset : 0));
+                                ds.DrawImage(crtBurger, destinationRc.ToWinRect(), sourceRc.ToWinRect());
+                            }
+                        }
+                    }
+                }
             }
 
 #if DEBUG

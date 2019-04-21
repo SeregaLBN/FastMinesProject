@@ -31,4 +31,11 @@ public class PointDouble {
     @Override
     public String toString() { return String.format(Locale.US, "{x=%.2f, y=%.2f}", x, y); }
 
+    public PointDouble move(SizeDouble s) { return move(s.width, s.height); }
+    public PointDouble move(double w, double h) {
+        x += w;
+        y += h;
+        return this;
+    }
+
 }

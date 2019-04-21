@@ -66,7 +66,7 @@ namespace fmg.ava.img {
                 dc.DrawGeometry(brush, pen, geom);
             }
 
-            foreach (var lu in BurgerMenuModel.Coords) {
+            foreach (var li in BurgerMenuModel.Coords) {
                 //g.setLineWidth(li.penWidht);
                 //g.setStroke(Cast.toColor(li.clr));
                 //g.strokeLine(li.from.x, li.from.y, li.to.x, li.to.y);
