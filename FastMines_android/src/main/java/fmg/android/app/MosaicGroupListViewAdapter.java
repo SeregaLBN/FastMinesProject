@@ -45,7 +45,7 @@ public class MosaicGroupListViewAdapter extends RecyclerView.Adapter<MosaicGroup
                 onItemClick.accept(view, pos);
             });
 
-        Color clr = items.get(position).getEntity().getModel().getBackgroundColor();
+        Color clr = items.get(position).getEntity().getModel().getBackgroundColor().brighter();
         holder.itemView.setBackgroundColor(Cast.toColor(clr));
     }
 

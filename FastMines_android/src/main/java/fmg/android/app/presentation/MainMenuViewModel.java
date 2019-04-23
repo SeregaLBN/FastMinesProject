@@ -15,6 +15,8 @@ import fmg.android.utils.Cast;
 /** ViewModel for {@link fmg.android.app.MainActivity} */
 public class MainMenuViewModel extends ViewModel {
 
+    public static final int DDD = 5;
+
     private final MosaicGroupDataSource mosaicGroupDS = new MosaicGroupDataSource();
     private final MosaicSkillDataSource mosaicSkillDS = new MosaicSkillDataSource();
     private final SplitViewPane splitViewPane = new SplitViewPane();
@@ -56,6 +58,7 @@ public class MainMenuViewModel extends ViewModel {
             double coef = context.getSmoothCoefficient();
             return MainMenuViewModel.this.getMosaicGroupDS().getImageSize().width
                     + coef * Cast.dpToPx(MainActivity.MenuTextWidthDp)
+                    + Cast.dpToPx((float) (getMenuGroupPaddingInDip().dip * 2)) // left and right padding
                     + 0; // vertical scrollbar width
         }
 
@@ -69,6 +72,13 @@ public class MainMenuViewModel extends ViewModel {
     public MosaicGroupDataSource getMosaicGroupDS() { return mosaicGroupDS; }
     public MosaicSkillDataSource getMosaicSkillDS() { return mosaicSkillDS; }
     public SplitViewPane getSplitViewPane() { return splitViewPane; }
+
+
+    public Converters.DipWrapper getMenuGroupPaddingInDip() {
+        // see ./res/drawable/menu_group_border.xml
+        //  <shape><stroke android:width=???
+        return new Converters.DipWrapper(1);
+    }
 
     private void onMosaicGroupDsPropertyChanged(PropertyChangeEvent ev) {
         assert (ev.getSource() == mosaicGroupDS);

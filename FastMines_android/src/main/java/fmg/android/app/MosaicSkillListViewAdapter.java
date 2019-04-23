@@ -45,7 +45,7 @@ public class MosaicSkillListViewAdapter extends RecyclerView.Adapter<MosaicSkill
                 onItemClick.accept(view, pos);
             });
 
-        Color clr = items.get(position).getEntity().getModel().getBackgroundColor();
+        Color clr = items.get(position).getEntity().getModel().getBackgroundColor().brighter();
         holder.itemView.setBackgroundColor(Cast.toColor(clr));
     }
 
