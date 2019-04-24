@@ -47,10 +47,13 @@ FastMines_xxx - projects of a specific language implementation, for a specific U
 
 ----------------------------------
 GRADLE lifehacks
+TIP: all worked in Eclipse Version: 2019-03 (4.11.0)
+<!--
  If you want to import FastMines_android into Eclipse IDE (open without build)
    * temporarily change in ./build.gradle
      to   classpath 'com.android.tools.build:gradle:3.2.1'
      and restore after successful import
+-->
  If you do not want to import FastMines_android into Eclipse IDE
    * temporarily comment on the following line in ./settings.gradle
      include ':FastMines_android'

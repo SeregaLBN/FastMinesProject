@@ -17,14 +17,18 @@ import java.util.concurrent.TimeUnit;
 
 import fmg.android.app.databinding.SelectMosaicFragmentBinding;
 import fmg.android.app.model.MosaicInitDataExt;
+import fmg.android.app.model.dataSource.BaseDataSource;
 import fmg.android.app.model.dataSource.MosaicDataSource;
 import fmg.android.app.model.items.MosaicDataItem;
 import fmg.android.app.presentation.MosaicsViewModel;
+import fmg.android.utils.AsyncRunner;
 import fmg.android.utils.Cast;
+import fmg.common.HSV;
 import fmg.common.LoggerSimple;
 import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
+import fmg.core.img.AnimatedImageModel;
 import fmg.core.mosaic.MosaicInitData;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
@@ -41,6 +45,7 @@ public class SelectMosaicFragment extends Fragment {
     private Subject<Size> subjSizeChanged;
     private Disposable sizeChangedObservable;
     private Size cachedSize = new Size(-1, -1);
+    private boolean rotateBkCologOfGameBttn = true;
     private static final double TileMinSize = Cast.dpToPx(30);
     private static final double TileMaxSize = Cast.dpToPx(90);
 
@@ -75,6 +80,38 @@ public class SelectMosaicFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 //        viewModel = ViewModelProviders.of(this).get(MosaicsViewModel.class);
         // TODO: Use the ViewModel
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        rotateBkCologOfGameBttn = true;
+        {
+            HSV hsv = new HSV(AnimatedImageModel.DefaultForegroundColor);
+            hsv.s = 80;
+            hsv.v = 70;
+            hsv.a = 170;
+
+            Runnable run = () -> {
+                if (viewModel.getMosaicDS().getCurrentItemPos() < 0)
+                    return;
+                hsv.h += 10;
+                binding.layoutBttnStartGame.setBackgroundColor(Cast.toColor(hsv.toColor()));
+            };
+            try {
+                AsyncRunner.Repeat(run, 100, () -> !rotateBkCologOfGameBttn);
+            } catch (Exception ex) {
+                LoggerSimple.put("SelectMosaicFragment::onResume: AsyncRunner.Repeat: {0}", ex);
+            }
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        rotateBkCologOfGameBttn = false;
     }
 
     @Override
