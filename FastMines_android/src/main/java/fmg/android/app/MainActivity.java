@@ -22,6 +22,7 @@ import fmg.android.app.model.items.MosaicSkillDataItem;
 import fmg.android.app.presentation.MainMenuViewModel;
 import fmg.android.app.presentation.SmoothHelper;
 import fmg.android.utils.Cast;
+import fmg.common.Color;
 import fmg.common.LoggerSimple;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
@@ -32,6 +33,7 @@ import fmg.core.types.ESkillLevel;
 public class MainActivity extends AppCompatActivity {
 
     public static final int MenuTextWidthDp = 95; // dp
+    public static final String BUNDLE_KEY__HEADER_SIZE_HEIGHT = "headerSizeHeight";
 
     private MainActivityBinding binding;
     /** View-Model */
@@ -73,6 +75,12 @@ public class MainActivity extends AppCompatActivity {
 
         viewModel.getMosaicGroupDS().setCurrentItem(viewModel.getMosaicGroupDS().getDataSource().stream().filter(x -> x.getMosaicGroup() == getInitData().getMosaicType().getGroup()).findFirst().get());
         viewModel.getMosaicSkillDS().setCurrentItem(viewModel.getMosaicSkillDS().getDataSource().stream().filter(x -> x.getSkillLevel()  == getInitData().getSkillLevel()           ).findFirst().get());
+
+        Color bkHeaderColor = getBackgroundHeaderColor();
+        viewModel.getMosaicGroupDS().getHeader().getEntity().getModel().setBackgroundColor(bkHeaderColor);
+        viewModel.getMosaicSkillDS().getHeader().getEntity().getModel().setBackgroundColor(bkHeaderColor);
+        binding.panelMenuMosaicGroupHeader.setBackgroundColor(Cast.toColor(bkHeaderColor));
+        binding.panelMenuMosaicSkillHeader.setBackgroundColor(Cast.toColor(bkHeaderColor));
 
         if (savedInstanceState == null) {
             // initial setup
@@ -174,9 +182,14 @@ public class MainActivity extends AppCompatActivity {
             SelectMosaicFragment smf = (SelectMosaicFragment)fragment;
             smf.updateViewModel();
         } else {
+            Bundle bundle = new Bundle();
+            bundle.putDouble(BUNDLE_KEY__HEADER_SIZE_HEIGHT, viewModel.getMosaicGroupDS().getHeader().getSize().height + Cast.dpToPx((float)viewModel.getMenuGroupPaddingInDip().dip));
+            SelectMosaicFragment smf = new SelectMosaicFragment();
+            smf.setArguments(bundle);
+
             // Execute a transaction, replacing any existing fragment with this one inside the frame.
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.rightFrame, new SelectMosaicFragment());
+            ft.replace(R.id.rightFrame, smf);
             if (fragment != null)
                 ft.detach(fragment);
             ft.addToBackStack(null);
@@ -301,6 +314,12 @@ public class MainActivity extends AppCompatActivity {
         viewModel.getMosaicGroupDS().getHeader().setPaddingBurgerMenu(padBurger); // right-bottom margin
         viewModel.getMosaicSkillDS().getHeader().setPaddingBurgerMenu(padBurger); // right-bottom margin
 
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.rightFrame);
+        if (fragment instanceof SelectMosaicFragment) {
+            SelectMosaicFragment smf = (SelectMosaicFragment)fragment;
+            smf.updateHeader(sizeHeader.height + Cast.dpToPx((float)viewModel.getMenuGroupPaddingInDip().dip));
+        }
+
 //        LoggerSimple.put("< MainActivity::onActivitySizeChanged: " +
 //                "sizeItem={0}, " +
 //                "sizeHeader={1}/{4}, " +
@@ -309,6 +328,11 @@ public class MainActivity extends AppCompatActivity {
 //                sizeItem, sizeHeader, padHeader, padBurger,
 //                viewModel.getMosaicGroupDS().getHeader().getSize()
 //        );
+    }
+
+    public static Color getBackgroundHeaderColor() {
+        Color bkHeaderColor = Color.LightSeaGreen();
+        return bkHeaderColor.updateA(140);
     }
 
 }

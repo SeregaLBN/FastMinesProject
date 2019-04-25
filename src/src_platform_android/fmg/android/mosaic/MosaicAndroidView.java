@@ -72,6 +72,18 @@ public abstract class MosaicAndroidView<TImage,
             }
         }
 
+        /**/ // debug
+        if (StaticInitializer.DrawMode.isBorderOnly()) {
+            Rect rc = new Rect(0, 0, (int) getModel().getSize().width, (int) getModel().getSize().height);
+            g.drawRect(rc, new Paint(Paint.ANTI_ALIAS_FLAG) {{
+                this.setStyle(Paint.Style.STROKE);
+                setStrokeWidth(1.5f);
+                setColor(android.graphics.Color.RED);
+            }});
+            return;
+        }
+        /**/
+
         // 2. paint cells
         PenBorder pen = model.getPenBorder();
         paintStroke.setStrokeWidth((float)pen.getWidth());

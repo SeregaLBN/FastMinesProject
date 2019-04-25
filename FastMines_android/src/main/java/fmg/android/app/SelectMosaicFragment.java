@@ -17,18 +17,20 @@ import java.util.concurrent.TimeUnit;
 
 import fmg.android.app.databinding.SelectMosaicFragmentBinding;
 import fmg.android.app.model.MosaicInitDataExt;
-import fmg.android.app.model.dataSource.BaseDataSource;
 import fmg.android.app.model.dataSource.MosaicDataSource;
 import fmg.android.app.model.items.MosaicDataItem;
 import fmg.android.app.presentation.MosaicsViewModel;
+import fmg.android.img.Logo;
 import fmg.android.utils.AsyncRunner;
 import fmg.android.utils.Cast;
+import fmg.common.Color;
 import fmg.common.HSV;
 import fmg.common.LoggerSimple;
 import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
 import fmg.core.img.AnimatedImageModel;
+import fmg.core.img.LogoModel;
 import fmg.core.mosaic.MosaicInitData;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
@@ -45,7 +47,7 @@ public class SelectMosaicFragment extends Fragment {
     private Subject<Size> subjSizeChanged;
     private Disposable sizeChangedObservable;
     private Size cachedSize = new Size(-1, -1);
-    private boolean rotateBkCologOfGameBttn = true;
+    private boolean rotateBkColorOfGameBttn = true;
     private static final double TileMinSize = Cast.dpToPx(30);
     private static final double TileMaxSize = Cast.dpToPx(90);
 
@@ -72,6 +74,25 @@ public class SelectMosaicFragment extends Fragment {
         binding.rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(this::onGlobalLayoutListener);
         viewModel.getMosaicDS().addListener(this::onMosaicDsPropertyChanged);
 
+        { // setup header
+            Logo.BitmapController logoController = viewModel.getMosaicDS().getHeader().getEntity();
+            logoController.usePolarLightFgTransforming(true);
+            LogoModel logoModel = logoController.getModel();
+            logoModel.setRotateMode(LogoModel.ERotateMode.classic);
+            logoModel.setAnimatePeriod(30000);
+            logoModel.setTotalFrames(700);
+            logoModel.setUseGradient(true);
+            logoModel.setAnimated(true);
+            logoModel.setBorderWidth(1);
+            logoModel.setBorderColor(Color.BlueViolet());
+
+            binding.panelMosaicHeader.setBackgroundColor(Cast.toColor(MainActivity.getBackgroundHeaderColor()));
+
+            Double headerSizeHeight = getArguments().getDouble(MainActivity.BUNDLE_KEY__HEADER_SIZE_HEIGHT);
+            if (headerSizeHeight != null)
+                updateHeader(headerSizeHeight);
+        }
+
         return binding.getRoot();
     }
 
@@ -87,7 +108,7 @@ public class SelectMosaicFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        rotateBkCologOfGameBttn = true;
+        rotateBkColorOfGameBttn = true;
         {
             HSV hsv = new HSV(AnimatedImageModel.DefaultForegroundColor);
             hsv.s = 80;
@@ -101,7 +122,7 @@ public class SelectMosaicFragment extends Fragment {
                 binding.layoutBttnStartGame.setBackgroundColor(Cast.toColor(hsv.toColor()));
             };
             try {
-                AsyncRunner.Repeat(run, 100, () -> !rotateBkCologOfGameBttn);
+                AsyncRunner.Repeat(run, 100, () -> !rotateBkColorOfGameBttn);
             } catch (Exception ex) {
                 LoggerSimple.put("SelectMosaicFragment::onResume: AsyncRunner.Repeat: {0}", ex);
             }
@@ -111,7 +132,7 @@ public class SelectMosaicFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        rotateBkCologOfGameBttn = false;
+        rotateBkColorOfGameBttn = false;
     }
 
     @Override
@@ -165,8 +186,7 @@ public class SelectMosaicFragment extends Fragment {
     }
 
 
-    void onMosaicHeaderClick(View v) {
-    }
+    void onMosaicHeaderClick(View v) { }
 
     void onMosaicItemClick(View v, int position) {
         Toast.makeText(this.getContext(), "onMosaicItemClick " + position, Toast.LENGTH_LONG).show();
@@ -199,6 +219,11 @@ public class SelectMosaicFragment extends Fragment {
 //        //Window.Current.Content = new MosaicPage();
 //        //// Ensure the current window is active
 //        //Window.Current.Activate();
+    }
+
+    public void updateHeader(double headerSizeHeight) {
+//        headerSizeHeight *= 3;
+        viewModel.getMosaicDS().getHeader().setSize(new SizeDouble(headerSizeHeight, headerSizeHeight));
     }
 
     public void updateViewModel() {

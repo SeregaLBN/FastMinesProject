@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.graphics.Shader;
 
 import fmg.common.Color;
@@ -42,6 +43,18 @@ public final class Logo {
                 if (!bkClr.isTransparent())
                     g.drawColor(Cast.toColor(bkClr));
             }
+
+            /**/ // debug
+            if (StaticInitializer.DrawMode.isBorderOnly()) {
+                Rect rc = new Rect(0, 0, (int) getModel().getSize().width, (int) getModel().getSize().height);
+                g.drawRect(rc, new Paint(Paint.ANTI_ALIAS_FLAG) {{
+                    this.setStyle(Paint.Style.STROKE);
+                    setStrokeWidth(1.5f);
+                    setColor(android.graphics.Color.RED);
+                }});
+                return;
+            }
+            /**/
 
             List<PointDouble> rays0 = lm.getRays();
             List<PointDouble> inn0 = lm.getInn();

@@ -11,6 +11,18 @@ import fmg.common.ui.UiInvoker;
 import fmg.core.mosaic.MosaicDrawModel;
 
 public final class StaticInitializer {
+    private StaticInitializer() {}
+
+    /**/ // debug
+    public enum EProofDrawMode {
+        eFull,
+        eBorderOnly;
+
+        public boolean isBorderOnly() { return this == eBorderOnly; }
+    }
+
+    public static final EProofDrawMode DrawMode = EProofDrawMode.eFull;
+    /**/
 
     static {
         UiInvoker.DEFERRED = new Handler(Looper.getMainLooper())::post;

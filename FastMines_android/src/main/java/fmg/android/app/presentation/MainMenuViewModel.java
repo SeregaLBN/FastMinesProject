@@ -15,8 +15,6 @@ import fmg.android.utils.Cast;
 /** ViewModel for {@link fmg.android.app.MainActivity} */
 public class MainMenuViewModel extends ViewModel {
 
-    public static final int DDD = 5;
-
     private final MosaicGroupDataSource mosaicGroupDS = new MosaicGroupDataSource();
     private final MosaicSkillDataSource mosaicSkillDS = new MosaicSkillDataSource();
     private final SplitViewPane splitViewPane = new SplitViewPane();
