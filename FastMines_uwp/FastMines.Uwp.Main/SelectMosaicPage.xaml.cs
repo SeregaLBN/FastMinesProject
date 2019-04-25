@@ -88,11 +88,44 @@ namespace fmg {
                     });
             }
 
-            var size = Math.Min(ev.NewSize.Height, ev.NewSize.Width);
-            var size2 = size / 3.9;
-            var wh = Math.Min(Math.Max(TileMinSize, size2), TileMaxSize);
-            //LoggerSimple.Put("Math.Min(Math.Max(TileMinSize={0}, size2={1}), TileMaxSize={2}) = {3}", TileMinSize, size2, TileMaxSize, wh);
-            ViewModel.ImageSize = new SizeDouble(wh, wh);
+            if (true) {
+                var minTileWidth = Cast.DpToPx(48); // mobile
+                var maxTileWidth = Cast.DpToPx(140); // desktop
+                var gridViewItemBorderWidth = 3+
+                         4 + 4     // <DataTemplate <StackPanel Margin.LeftAndRight
+                        +8 + 8;    // <DataTemplate <StackPanel <canvas:CanvasControl Margin.LeftAndRight
+                var widthBetweenItems = 4 + 0.9;
+
+                var pageBorderWidth = 3+
+                        4 + 4;      // <ScrollViewer Margin.LeftAndRight
+                     //+ 10 + 10;   // <ScrollViewer <GridView Margin.LeftAndRight
+
+                var size = ev.NewSize.Width; // Math.Min(ev.NewSize.Width, ev.NewSize.Height);
+                var spaceToItems = size - pageBorderWidth;
+
+                var rows = 1;
+                for (; rows <= EMosaicEx.GetValues().Length; ++rows) {
+                  //var size1 = minTileWidth * rows + (rows - 1) * widthBetweenItems;
+                    var size2 = maxTileWidth * rows + (rows - 1) * widthBetweenItems;
+                    if (size2 > spaceToItems)
+                        break;
+                }
+
+                var spaceToItemsClear = spaceToItems - (rows - 1) * widthBetweenItems;
+                var tileWidth = spaceToItemsClear / rows;
+                var tileWidth2 = Math.Min(Math.Max(tileWidth, minTileWidth), maxTileWidth);
+                var imageSize = tileWidth2 - gridViewItemBorderWidth;
+                LoggerSimple.Put("tileWidth={0}, tileWidth2={1}, imageSize={2}", tileWidth, tileWidth2, imageSize);
+                ViewModel.ImageSize = new SizeDouble(imageSize, imageSize);
+
+            } else {
+                // old logic
+                var size = Math.Min(ev.NewSize.Height, ev.NewSize.Width);
+                var size2 = size / 3.9;
+                var wh = Math.Min(Math.Max(TileMinSize, size2), TileMaxSize);
+                //LoggerSimple.Put("Math.Min(Math.Max(TileMinSize={0}, size2={1}), TileMaxSize={2}) = {3}", TileMinSize, size2, TileMaxSize, wh);
+                ViewModel.ImageSize = new SizeDouble(wh, wh);
+            }
         }
 
         private void OnMosaicItemSelectionChanged(object sender, SelectionChangedEventArgs ev) {
