@@ -10,6 +10,9 @@ namespace fmg.uwp.utils {
 
     public static class StaticInitializer {
 
+        /// <summary> Mobile (true) or Desktop (false) </summary>
+        public static bool IsMobile { get; }
+
         static StaticInitializer() {
             UiInvoker.Deferred = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
             UiInvoker.Animator = () => Animator.Singleton;
@@ -23,7 +26,9 @@ namespace fmg.uwp.utils {
                     // desktop
                     clr = uiSettings.UIElementColor(UIElementType.ButtonFace);
                     //clr = uiSettings.UIElementColor(UIElementType.Window);
+                    IsMobile = false;
                 } catch (ArgumentException) {
+                    IsMobile = true;
                     try {
                         // mobile
                         const int magic = 1000;
