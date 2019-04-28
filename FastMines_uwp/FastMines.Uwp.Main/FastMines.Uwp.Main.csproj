@@ -118,6 +118,7 @@
     <Compile Include="MosaicPage.Prototype.xaml.cs">
       <DependentUpon>MosaicPage.Prototype.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Presentation\Converters\DipWrapper.cs" />
     <Compile Include="Presentation\Converters\ImageSizeWidthOpenPaneConverter.cs" />
     <Compile Include="Presentation\Converters\ObjectToMosaicDataItemConverter.cs" />
     <Compile Include="Presentation\Converters\ObjectToMosaicGroupDataItemConverter.cs" />

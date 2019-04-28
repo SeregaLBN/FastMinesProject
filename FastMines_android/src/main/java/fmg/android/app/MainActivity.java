@@ -331,8 +331,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static Color getBackgroundHeaderColor() {
-        Color bkHeaderColor = Color.LightSeaGreen();
-        return bkHeaderColor.updateA(140);
+        return Color.LightSeaGreen().updateA(140);
     }
 
 }

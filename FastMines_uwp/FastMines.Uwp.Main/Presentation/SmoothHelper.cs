@@ -98,7 +98,7 @@ namespace FastMines.Uwp.Main.Presentation {
             internal Color clrStart;
             internal Color clrStop;
         }
-        public static void ApplyButtonColorSmoothTransition(Button bttn, AnimatedImageModel model) {
+        public static void ApplyButtonColorSmoothTransition(UIElement uiElement, AnimatedImageModel model) {
             var context = new ColorContext() {
                 clrStart = model.BackgroundColor, //Color.Coral;
                 clrStop = Color.BlueViolet
@@ -129,8 +129,8 @@ namespace FastMines.Uwp.Main.Presentation {
                 context.Forward = forward;
                 colorSmoothTransition.Execute();
             }
-            bttn.PointerEntered += (s, ev3) => handler(true);
-            bttn.PointerExited  += (s, ev3) => handler(false);
+            uiElement.PointerEntered += (s, ev3) => handler(true);
+            uiElement.PointerExited  += (s, ev3) => handler(false);
         }
 
         /// <summary> set pseudo-async ListView.Visibility = targetIsVisible ? Visibility.Visible : Visibility.Collapsed </summary>

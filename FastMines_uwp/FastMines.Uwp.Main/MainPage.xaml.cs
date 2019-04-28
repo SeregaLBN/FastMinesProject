@@ -1,8 +1,10 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Linq;
+using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Microsoft.Graphics.Canvas.UI;
@@ -16,14 +18,15 @@ using fmg.DataModel.Items;
 using fmg.DataModel.DataSources;
 using FastMines.Uwp.App.Model;
 using FastMines.Uwp.Main.Presentation;
-using MosaicsSkillImg = fmg.uwp.img.win2d.MosaicSkillImg.CanvasBmpController;
-using MosaicsGroupImg = fmg.uwp.img.win2d.MosaicGroupImg.CanvasBmpController;
+using MosaicSkillImg = fmg.uwp.img.win2d.MosaicSkillImg.CanvasBmpController;
+using MosaicGroupImg = fmg.uwp.img.win2d.MosaicGroupImg.CanvasBmpController;
 
 namespace fmg {
 
     public sealed partial class MainPage : Page {
 
         internal const int MenuTextWidth = 110;
+        internal const string ARGUMENTS_KEY__HEADER_SIZE_HEIGHT = "headerSizeHeight";
 
         /// <summary> Model (a common model between all the pages in the application) </summary>
         public MosaicInitData InitData => MosaicInitDataExt.SharedData;
@@ -58,7 +61,13 @@ namespace fmg {
             ViewModel.MosaicSkillDS.PropertyChanged += OnMosaicSkillDsPropertyChanged;
 
             ViewModel.MosaicGroupDS.CurrentItem = ViewModel.MosaicGroupDS.DataSource.First(x => x.MosaicGroup == InitData.MosaicType.GetGroup());
-            ViewModel.MosaicSkillDS.CurrentItem = ViewModel.MosaicSkillDS.DataSource.First(x => x.SkillLevel  == InitData.SkillLevel);
+            ViewModel.MosaicSkillDS.CurrentItem = ViewModel.MosaicSkillDS.DataSource.First(x => x.SkillLevel == InitData.SkillLevel);
+
+            var bkHeaderColor = BackgroundHeaderColor;
+            ViewModel.MosaicGroupDS.Header.Entity.Model.BackgroundColor = bkHeaderColor;
+            ViewModel.MosaicSkillDS.Header.Entity.Model.BackgroundColor = bkHeaderColor;
+            panelMenuMosaicGroupHeader.Background = new SolidColorBrush(bkHeaderColor.ToWinColor());
+            panelMenuMosaicSkillHeader.Background = new SolidColorBrush(bkHeaderColor.ToWinColor());
 
             SmoothHelper.ApplyButtonColorSmoothTransition(panelMenuMosaicGroupHeader, ViewModel.MosaicGroupDS.Header.Entity.Model);
             SmoothHelper.ApplyButtonColorSmoothTransition(panelMenuMosaicSkillHeader, ViewModel.MosaicSkillDS.Header.Entity.Model);
@@ -88,14 +97,14 @@ namespace fmg {
         }
 
         double LvGroupHeight() => Enum.GetValues(typeof(EMosaicGroup)).Length * (ViewModel.MosaicGroupDS.ImageSize.Height + 2 /* padding */);
-        double LvSkillHeight() => Enum.GetValues(typeof(ESkillLevel )).Length * (ViewModel.MosaicSkillDS.ImageSize.Height + 2 /* padding */);
+        double LvSkillHeight() => Enum.GetValues(typeof(ESkillLevel)).Length * (ViewModel.MosaicSkillDS.ImageSize.Height + 2 /* padding */);
 
         private void OnMenuMosaicSkillHeaderClick(object sender, RoutedEventArgs ev) {
             bool isVisibleScrollerFunc() => !_scroller.ScrollableHeight.HasMinDiff(_scroller.VerticalOffset);
             bool isVisibleScroller = isVisibleScrollerFunc();
             if (lvMenuMosaicSkillItems.Visibility == Visibility.Collapsed) {
                 if (isVisibleScroller) {
-                    SmoothHelper.ApplySmoothVisibilityOverScale(lvMenuMosaicSkillItems, true , LvSkillHeight);
+                    SmoothHelper.ApplySmoothVisibilityOverScale(lvMenuMosaicSkillItems, true, LvSkillHeight);
                     SmoothHelper.ApplySmoothVisibilityOverScale(lvMenuMosaicGroupItems, false, LvGroupHeight);
                 } else {
                     SmoothHelper.ApplySmoothVisibilityOverScale(lvMenuMosaicSkillItems, true, LvSkillHeight,
@@ -130,7 +139,10 @@ namespace fmg {
             if (RightFrame.Content is SelectMosaicPage smp) {
                 smp.UpdateViewModel();
             } else {
-                RightFrame.SourcePageType = typeof(SelectMosaicPage);
+                //RightFrame.SourcePageType = typeof(SelectMosaicPage);
+                IDictionary<string, object> args = new Dictionary<string, object>();
+                args.Add(ARGUMENTS_KEY__HEADER_SIZE_HEIGHT, ViewModel.MosaicGroupDS.Header.Size.Height + Cast.DpToPx(ViewModel.MenuGroupPaddingInDip.dip));
+                RightFrame.Navigate(typeof(SelectMosaicPage), args);
             }
         }
         private void ShowCustomSkillPage() {
@@ -197,13 +209,14 @@ namespace fmg {
             System.Diagnostics.Debug.Assert(topElemHeight <= minSize);
 
             var size = Math.Min(ev.NewSize.Height, ev.NewSize.Width);
-            var size1 = size/7;
+            var size1 = size / 7;
             var wh = Math.Min(Math.Max(minSize, size1), 100); // TODO: DPI dependency
             ViewModel.MosaicGroupDS.ImageSize =
             ViewModel.MosaicSkillDS.ImageSize = new SizeDouble(wh, wh);
 
+            var sizeHeader = new SizeDouble(wh, topElemHeight);
             ViewModel.MosaicGroupDS.Header.Size =
-            ViewModel.MosaicSkillDS.Header.Size = new SizeDouble(wh, topElemHeight);
+            ViewModel.MosaicSkillDS.Header.Size = sizeHeader;
             ViewModel.MosaicGroupDS.Header.Padding =
             ViewModel.MosaicSkillDS.Header.Padding = new BoundDouble(pad, pad, wh - topElemHeight + pad, pad); // left margin
 
@@ -211,6 +224,10 @@ namespace fmg {
             var padBurger = new BoundDouble(wh - whBurger, topElemHeight - whBurger, pad, pad);
             ViewModel.MosaicGroupDS.Header.PaddingBurgerMenu =
             ViewModel.MosaicSkillDS.Header.PaddingBurgerMenu = padBurger; // right-bottom margin
+
+            if (RightFrame.Content is SelectMosaicPage smp) {
+                smp.UpdateHeader(sizeHeader.Height + Cast.DpToPx(ViewModel.MenuGroupPaddingInDip.dip));
+            }
         }
 
         //public static IEnumerable<T> FindChilds<T>(FrameworkElement parent, int depth = 1, Func<T, bool> filter = null)
@@ -229,11 +246,11 @@ namespace fmg {
         //    }
         //}
 
-        private void OnCreateResourcesCanvasControl_MosaicsSkillImg(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
-            System.Diagnostics.Debug.Assert(canvasControl.DataContext is MosaicsSkillImg);
+        private void OnCreateResourcesCanvasControl_MosaicSkillImg(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
+            System.Diagnostics.Debug.Assert(canvasControl.DataContext is MosaicSkillImg);
 
             if (ev.Reason == CanvasCreateResourcesReason.FirstTime) {
-                var img = canvasControl.DataContext as MosaicsSkillImg;
+                var img = canvasControl.DataContext as MosaicSkillImg;
 
                 canvasControl.Draw += (sender2, ev2) => {
                     ev2.DrawingSession.DrawImage(img.Image, new Windows.Foundation.Rect(0, 0, sender2.Width, sender2.Height)); // zoomed size
@@ -248,11 +265,11 @@ namespace fmg {
             }
         }
 
-        private void OnCreateResourcesCanvasControl_MosaicsGroupImg(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
-            System.Diagnostics.Debug.Assert(canvasControl.DataContext is MosaicsGroupImg);
+        private void OnCreateResourcesCanvasControl_MosaicGroupImg(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
+            System.Diagnostics.Debug.Assert(canvasControl.DataContext is MosaicGroupImg);
 
             if (ev.Reason == CanvasCreateResourcesReason.FirstTime) {
-                var img = canvasControl.DataContext as MosaicsGroupImg;
+                var img = canvasControl.DataContext as MosaicGroupImg;
 
                 canvasControl.Draw += (sender2, ev2) => {
                     ev2.DrawingSession.DrawImage(img.Image, new Windows.Foundation.Rect(0, 0, sender2.Width, sender2.Height)); // zoomed size
@@ -266,6 +283,8 @@ namespace fmg {
                 System.Diagnostics.Debug.Assert(false, "Support me"); // TODO
             }
         }
+
+        public static Color BackgroundHeaderColor => Color.LightSeaGreen.UpdateA(140);
 
     }
 

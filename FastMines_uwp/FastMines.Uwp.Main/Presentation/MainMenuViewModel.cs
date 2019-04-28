@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Windows.Input;
 using fmg.DataModel.DataSources;
 using fmg.common.notifier;
+using fmg.common.Converters;
 
 namespace fmg.common {
 
@@ -33,6 +34,8 @@ namespace fmg.common {
 
         public MosaicGroupDataSource MosaicGroupDS => mosaicGroupDS;
         public MosaicSkillDataSource MosaicSkillDS => mosaicSkillDS;
+
+        public DipWrapper MenuGroupPaddingInDip => new DipWrapper(0);
 
         private void OnMosaicSkillDsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             System.Diagnostics.Debug.Assert(sender is MosaicSkillDataSource);

@@ -6,6 +6,8 @@ using System.Reactive.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
+using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
 using fmg.common.geom;
@@ -16,6 +18,7 @@ using fmg.uwp.utils;
 using fmg.DataModel.Items;
 using FastMines.Uwp.App.Model;
 using MosaicsCanvasCtrllr = fmg.uwp.img.win2d.MosaicImg.CanvasBmpController;
+using LogoCanvasCtrllr = fmg.uwp.img.win2d.Logo.CanvasBmpController;
 
 namespace fmg {
 
@@ -27,7 +30,7 @@ namespace fmg {
         /// <summary> View-Model </summary>
         public MosaicsViewModel ViewModel { get; private set; }
         private SolidColorBrush BorderColorStartBttn;
-        private bool _closed;
+        private bool _rotateBkColorOfGameBttn;
         private IDisposable _sizeChangedObservable;
         IDictionary<CanvasControl, MosaicsCanvasCtrllr> mapBindingControlToController = new Dictionary<CanvasControl, MosaicsCanvasCtrllr>();
 
@@ -50,7 +53,7 @@ namespace fmg {
                     hsv.h += 10;
                     BorderColorStartBttn.Color = hsv.ToColor().ToWinColor();
                 };
-                run.Repeat(TimeSpan.FromMilliseconds(100), () => _closed);
+                run.Repeat(TimeSpan.FromMilliseconds(100), () => _rotateBkColorOfGameBttn);
             }
 
             this.Loaded += OnPageLoaded;
@@ -58,7 +61,34 @@ namespace fmg {
             this.SizeChanged += OnPageSizeChanged;
         }
 
-        private void OnPageLoaded(object sender, RoutedEventArgs e) {
+        protected override void OnNavigatedTo(NavigationEventArgs ev) {
+            base.OnNavigatedTo(ev);
+
+            { // setup header
+                var logoController = ViewModel.MosaicDS.Header.Entity;
+                logoController.UsePolarLightFgTransforming(true);
+                var logoModel = logoController.Model;
+                logoModel.RotateMode = LogoModel.ERotateMode.Classic;
+                logoModel.AnimatePeriod = 30000;
+                logoModel.TotalFrames = 700;
+                logoModel.UseGradient = true;
+                logoModel.Animated = true;
+                logoModel.BorderWidth = 2;
+                logoModel.BorderColor = Color.BlueViolet;
+
+                panelMosaicHeader.Visibility = StaticInitializer.IsMobile ? Visibility.Visible : Visibility.Collapsed;
+                panelMosaicHeader.Background = new SolidColorBrush(MainPage.BackgroundHeaderColor.ToWinColor());
+
+                System.Diagnostics.Debug.Assert(ev.Parameter is IDictionary<string, object>);
+                if ((ev.Parameter is IDictionary<string, object> args) &&
+                    args.TryGetValue(MainPage.ARGUMENTS_KEY__HEADER_SIZE_HEIGHT, out object headerSizeHeight) &&
+                    (headerSizeHeight is double d)) {
+                    UpdateHeader(d);
+                }
+            }
+        }
+
+        private void OnPageLoaded(object sender, RoutedEventArgs ev) {
             this.Loaded -= OnPageLoaded;
 
             UpdateViewModel();
@@ -66,7 +96,7 @@ namespace fmg {
 
         private void OnPageUnloaded(object sender, RoutedEventArgs ev) {
             this.Unloaded -= OnPageUnloaded;
-            _closed = true;
+            _rotateBkColorOfGameBttn = true;
             ViewModel.MosaicDS.DataSource.CollectionChanged -= OnMosaicDsCollectionChanged;
             ViewModel.Dispose();
             _sizeChangedObservable?.Dispose();
@@ -80,19 +110,22 @@ namespace fmg {
                 _sizeChangedObservable = Observable
                     .FromEventPattern<SizeChangedEventHandler, SizeChangedEventArgs>(h => SizeChanged += h, h => SizeChanged -= h) // equals .FromEventPattern<SizeChangedEventArgs>(this, "SizeChanged")
                     .Throttle(TimeSpan.FromSeconds(0.2)) // debounce events
-                    .Subscribe(x => AsyncRunner.InvokeFromUiLater(() => OnPageSizeChanged(x.Sender, x.EventArgs), Windows.UI.Core.CoreDispatcherPriority.Low));
+                    .Subscribe(x => {
+                        System.Threading.Tasks.Task.Run(() => AsyncRunner.InvokeFromUiLater(() => OnPageSizeChanged(x.Sender, x.EventArgs), Windows.UI.Core.CoreDispatcherPriority.Low));
+                        //AsyncRunner.InvokeFromUiLater(() => OnPageSizeChanged(x.Sender, x.EventArgs), Windows.UI.Core.CoreDispatcherPriority.Low);
+                    });
             }
 
             var minTileWidth = Cast.DpToPx(48);
             var maxTileWidth = Cast.DpToPx(StaticInitializer.IsMobile ? 90 : 140);
             var gridViewItemBorderWidth = 3.0 + // magic number ;(
-                        4 + 4     // <DataTemplate <StackPanel Margin.LeftAndRight
-                    +8 + 8;    // <DataTemplate <StackPanel <canvas:CanvasControl Margin.LeftAndRight
+                     4 + 4      // <DataTemplate <StackPanel Margin.LeftAndRight
+                    +8 + 8;     // <DataTemplate <StackPanel <canvas:CanvasControl Margin.LeftAndRight
             var widthBetweenItems = 4;
 
             var pageBorderWidth =
                     4 + 4;      // <ScrollViewer Margin.LeftAndRight
-                    //+ 10 + 10;   // <ScrollViewer <GridView Margin.LeftAndRight
+                  //+ 10 + 10;  // <ScrollViewer <GridView Margin.LeftAndRight
 
             var size = ev.NewSize.Width; // Math.Min(ev.NewSize.Width, ev.NewSize.Height);
             var spaceToItems = size - pageBorderWidth;
@@ -114,6 +147,10 @@ namespace fmg {
 
         private void OnMosaicItemSelectionChanged(object sender, SelectionChangedEventArgs ev) {
             //throw new NotImplementedException();
+        }
+
+
+        private void OnMosaicHeaderClick(object sender, RoutedEventArgs ev) {
         }
 
         private void OnMosaicItemClick(object sender, ItemClickEventArgs ev) {
@@ -144,6 +181,10 @@ namespace fmg {
             //Window.Current.Content = new MosaicPage();
             //// Ensure the current window is active
             //Window.Current.Activate();
+        }
+
+        public void UpdateHeader(double headerSizeHeight) {
+            ViewModel.MosaicDS.Header.Size = new SizeDouble(headerSizeHeight, headerSizeHeight);
         }
 
         public void UpdateViewModel() {
@@ -191,6 +232,25 @@ namespace fmg {
             var img = ctrllr.Image;
             System.Diagnostics.Debug.Assert(img != null); // null where is disposed
             ev.DrawingSession.DrawImage(img, new Windows.Foundation.Rect(0, 0, canvasControl.Width, canvasControl.Height));
+        }
+
+        private void OnCreateResourcesCanvasControl_MosaicImg(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
+            System.Diagnostics.Debug.Assert(canvasControl.DataContext is LogoCanvasCtrllr);
+
+            if (ev.Reason == CanvasCreateResourcesReason.FirstTime) {
+                var img = canvasControl.DataContext as LogoCanvasCtrllr;
+
+                canvasControl.Draw += (sender2, ev2) => {
+                    ev2.DrawingSession.DrawImage(img.Image, new Windows.Foundation.Rect(0, 0, sender2.Width, sender2.Height)); // zoomed size
+                    //ev2.DrawingSession.DrawImage(img.Image, new Windows.Foundation.Rect(0, 0, img.Width, img.Height)); // real size
+                };
+                img.PropertyChanged += (sender3, ev3) => {
+                    if (ev3.PropertyName == nameof(img.Image))
+                        canvasControl.Invalidate();
+                };
+            } else {
+                System.Diagnostics.Debug.Assert(false, "Support me"); // TODO
+            }
         }
 
     }

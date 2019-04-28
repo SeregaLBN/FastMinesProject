@@ -222,7 +222,6 @@ public class SelectMosaicFragment extends Fragment {
     }
 
     public void updateHeader(double headerSizeHeight) {
-//        headerSizeHeight *= 3;
         viewModel.getMosaicDS().getHeader().setSize(new SizeDouble(headerSizeHeight, headerSizeHeight));
     }
 
