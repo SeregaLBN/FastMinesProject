@@ -148,7 +148,7 @@ namespace FastMines {
         //}
 
         protected override void OnPointerPressed(PointerRoutedEventArgs ev) {
-            using (new Tracer("OnPointerPressed", () => "ev.Handled = " + ev.Handled)) {
+            using (new Tracer("OnPointerPressed", null, () => "ev.Handled = " + ev.Handled)) {
 
                 var pointerPoint = ev.GetCurrentPoint(this);
                 //_clickInfo.PointerDevice = pointerPoint.PointerDevice.PointerDeviceType;

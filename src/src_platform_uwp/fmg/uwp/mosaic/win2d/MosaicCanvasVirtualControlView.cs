@@ -43,12 +43,10 @@ namespace fmg.uwp.mosaic.win2d {
         }
 
         protected override void DrawModified(ICollection<BaseCell> modifiedCells) {
-            Invalidate(modifiedCells);
-        }
+            // TIP: explicit call canvasVirtualControl.Invalidate()  =>  Implicit call this.OnRegionsInvalidated
 
-        public override void Invalidate(ICollection<BaseCell> modifiedCells) {
             System.Diagnostics.Debug.Assert((modifiedCells == null) || modifiedCells.Any());
-            using (new Tracer()) {
+            using (CreateTracer(GetFullCallerName(), "modifiedCells=" + (modifiedCells==null ? "null" : "size_"+ modifiedCells.Count))) {
                 var canvasVirtualControl = Control;
                 if (canvasVirtualControl == null)
                     return;
@@ -60,7 +58,7 @@ namespace fmg.uwp.mosaic.win2d {
                 System.Diagnostics.Debug.Assert(!_alreadyPainted);
 
                 if (modifiedCells == null) {
-                    canvasVirtualControl.Invalidate(); // redraw all of mosaic. Implicit call this.OnRegionsInvalidated
+                    canvasVirtualControl.Invalidate(); // redraw all of mosaic
                     return;
                 }
 
@@ -88,7 +86,7 @@ namespace fmg.uwp.mosaic.win2d {
                         if (!(intersect && containsLT && containsRT && containsLB && containsRB))
                             return;
 #endif
-                        canvasVirtualControl.Invalidate(rc.ToWinRect()); // Implicit call this.OnRegionsInvalidated
+                        canvasVirtualControl.Invalidate(rc.ToWinRect());
                     }
                 } else {
                     double minX = 0, minY = 0, maxX = 0, maxY = 0;
@@ -109,14 +107,14 @@ namespace fmg.uwp.mosaic.win2d {
                         }
                     }
                     var rcClip = new Windows.Foundation.Rect(minX + offset.Width, minY + offset.Height, maxX - minX, maxY - minY);
-                    canvasVirtualControl.Invalidate(rcClip); // Implicit call this.OnRegionsInvalidated
+                    canvasVirtualControl.Invalidate(rcClip);
                 }
             }
         }
 
         bool _alreadyPainted2 = false;
         internal void OnRegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs ev) {
-            using (new Tracer()) {
+            using (CreateTracer()) {
                 System.Diagnostics.Debug.Assert(ReferenceEquals(sender, Control));
                 System.Diagnostics.Debug.Assert(!_alreadyPainted2);
 
@@ -131,13 +129,33 @@ namespace fmg.uwp.mosaic.win2d {
             }
         }
 
+        protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            LoggerSimple.Put(GetFullCallerName() + ": ev.PropertyName=" + ev.PropertyName);
+            base.OnPropertyChanged(sender, ev);
+            if (ev.PropertyName == nameof(Image)) {
+                var _ = this.Image; // implicit call this.DrawModified
+            }
+        }
+
         protected override void OnPropertyModelChanged(object sender, PropertyChangedEventArgs ev) {
             base.OnPropertyModelChanged(sender, ev);
             switch (ev.PropertyName) {
             case nameof(MosaicDrawModel<CanvasBitmap>.BackgroundColor):
-                Control.ClearColor = Model.BackgroundColor.ToWinColor();
+                if (_useClearColor)
+                    Control.ClearColor = Model.BackgroundColor.ToWinColor();
                 break;
             }
+        }
+
+        private string GetFullCallerName([System.Runtime.CompilerServices.CallerMemberName] string callerName = null) {
+            var typeName = GetType().Name;
+            var thisName = nameof(MosaicCanvasVirtualControlView);
+            if (typeName != thisName)
+                typeName += "(" + thisName + ")";
+            return typeName + "." + callerName;
+        }
+        private Tracer CreateTracer([System.Runtime.CompilerServices.CallerMemberName] string callerName = null, string ctorMessage = null) {
+            return new Tracer(GetFullCallerName(callerName), ctorMessage);
         }
 
     }

@@ -10,7 +10,6 @@ using fmg.common;
 using fmg.common.geom;
 using fmg.core.mosaic;
 using fmg.core.mosaic.cells;
-using fmg.uwp.utils;
 
 namespace fmg.uwp.mosaic.win2d {
 
@@ -28,23 +27,21 @@ namespace fmg.uwp.mosaic.win2d {
         public override CanvasSwapChainPanel Control {
             get {
                 var ctrl = base.Control;
-                if (ctrl == null) {
-                    ctrl = new CanvasSwapChainPanel();
-                    base.Control = ctrl;
-                    ctrl.SwapChain = SwapChain;
-                }
+                if (ctrl == null)
+                    ctrl = Control = new CanvasSwapChainPanel(); // call this setter
                 return ctrl;
             }
-        }
-
-        protected override void OnPropertyModelChanged(object sender, PropertyChangedEventArgs ev) {
-            base.OnPropertyModelChanged(sender, ev);
-            switch (ev.PropertyName) {
-            case nameof(MosaicGameModel.MosaicType):
-            case nameof(MosaicGameModel.Area):
-            case nameof(MosaicGameModel.SizeField):
-                ResetBuffers();
-                break;
+            protected set {
+                var old = base.Control;
+                if (old != null) {
+                    old.SwapChain = null;
+                    old.SizeChanged -= onControlSizeChanged;
+                }
+                base.Control = value;
+                if (value != null) {
+                    value.SwapChain = SwapChain;
+                    value.SizeChanged += onControlSizeChanged;
+                }
             }
         }
 
@@ -73,6 +70,7 @@ namespace fmg.uwp.mosaic.win2d {
                     if (!size.Width.HasMinDiff(cw) || !size.Height.HasMinDiff(ch)) {
                         var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
                         _swapChain.ResizeBuffers((float)cw, (float)ch, dpi);
+                        //LoggerSimple.Put("MosaicCanvasSwapChainPanelView.getSwapChain: resized");
                     }
                 }
                 return _swapChain;
@@ -100,7 +98,9 @@ namespace fmg.uwp.mosaic.win2d {
                     var size = Model.Size; // GetterMosaicWindowSize();
                     try {
                         _doubleBuffer[i] = new CanvasRenderTarget(_resourceCreator, (float)size.Width, (float)size.Height, dpi);
+                        //LoggerSimple.Put($"MosaicCanvasSwapChainPanelView.ActualBuffer: created _doubleBuffer[{i}]: size={size}");
                     } catch(ArgumentException) {
+                        System.Diagnostics.Debug.Assert(false);
                         // :(((
                         try {
                             _doubleBuffer[i] = new CanvasRenderTarget(_resourceCreator, (float)size.Width, (float)size.Height, dpi/2);
@@ -118,25 +118,12 @@ namespace fmg.uwp.mosaic.win2d {
             }
         }
 
-        public override void Invalidate(ICollection<BaseCell> modifiedCells) {
-            System.Diagnostics.Debug.Assert((modifiedCells == null) || modifiedCells.Any());
-            using (var tr = new Tracer()) {
+        protected override void DrawModified(ICollection<BaseCell> modifiedCells) {
+            using (var tr = CreateTracer()) {
                 var canvasSwapChainPanel = Control;
-                //if (canvasSwapChainPanel == null)
-                //   return;
                 if (double.IsNaN(canvasSwapChainPanel.Width) || double.IsNaN(canvasSwapChainPanel.Height))
                     return;
-                //if ((canvasVirtualControl.Size.Width == 0) || (canvasVirtualControl.Size.Height == 0))
-                //   return;
 
-                AsyncRunner.InvokeFromUiLater(() => {
-                    DrawModified(modifiedCells);
-                }, Windows.UI.Core.CoreDispatcherPriority.High);
-            }
-        }
-
-        protected override void DrawModified(ICollection<BaseCell> modifiedCells) {
-            using (var tr = new Tracer()) {
                 SwapDrawBuffer();
                 var ab = ActualBuffer;
                 var bb = BackBuffer;
@@ -153,8 +140,9 @@ namespace fmg.uwp.mosaic.win2d {
 
                     bool drawBk = needRedrawAll;
                     DrawWin2D(ds, modifiedCells, drawBk);
+                    //LoggerSimple.Put("MosaicCanvasSwapChainPanelView.DrawModified: drawed!");
                 }
-                RepaintOffsetInternal(ab);
+                PresentImage(ab);
             }
         }
 
@@ -166,7 +154,7 @@ namespace fmg.uwp.mosaic.win2d {
             if (double.IsNaN(canvasSwapChainPanel.Width) || double.IsNaN(canvasSwapChainPanel.Height))
                 return;
 
-            RepaintOffsetInternal(ActualBuffer);
+            PresentImage(ActualBuffer);
         }
 
         public void RepaintScaled(RectDouble rcDestination) {
@@ -178,7 +166,7 @@ namespace fmg.uwp.mosaic.win2d {
         }
         /**/
 
-        private void RepaintOffsetInternal(CanvasRenderTarget actualBuffer) {
+        private void PresentImage(CanvasRenderTarget actualBuffer) {
             var sc = SwapChain;
             //var o = Offset;
             using (var ds = sc.CreateDrawingSession(Colors.Transparent)) {
@@ -188,18 +176,55 @@ namespace fmg.uwp.mosaic.win2d {
             //AsyncRunner.InvokeFromUiLater(() => { // TODO: Removes blink artifacts when zooming.  Need remove....
             sc.Present();
             //}, Windows.UI.Core.CoreDispatcherPriority.High);
+            //LoggerSimple.Put("MosaicCanvasSwapChainPanelView.PresentImage: presented!");
         }
 
         private void ResetBuffers() {
             _doubleBuffer[0]?.Dispose();
             _doubleBuffer[1]?.Dispose();
             _doubleBuffer[0] = _doubleBuffer[1] = null;
+            //LoggerSimple.Put("MosaicCanvasSwapChainPanelView.ResetBuffers: reset!");
+        }
+
+        private void onControlSizeChanged(object sender, Windows.UI.Xaml.SizeChangedEventArgs e) {
+            Invalidate();
+        }
+
+        protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            //LoggerSimple.Put(GetFullCallerName() + ": ev.PropertyName=" + ev.PropertyName);
+            base.OnPropertyChanged(sender, ev);
+            if (ev.PropertyName == nameof(Image)) {
+                var _ = this.Image; // implicit call this.DrawModified
+            }
+        }
+
+        protected override void OnPropertyModelChanged(object sender, PropertyChangedEventArgs ev) {
+            base.OnPropertyModelChanged(sender, ev);
+            switch (ev.PropertyName) {
+            case nameof(Model.Size):
+            case nameof(MosaicGameModel.MosaicType):
+            case nameof(MosaicGameModel.Area):
+            case nameof(MosaicGameModel.SizeField):
+                ResetBuffers();
+                break;
+            }
         }
 
         protected override void Disposing() {
             SwapChain = null; // call setter
             ResetBuffers();
             base.Disposing();
+        }
+
+        private string GetFullCallerName([System.Runtime.CompilerServices.CallerMemberName] string callerName = null) {
+            var typeName = GetType().Name;
+            var thisName = nameof(MosaicCanvasSwapChainPanelView);
+            if (typeName != thisName)
+                typeName += "(" + thisName + ")";
+            return typeName + "." + callerName;
+        }
+        private Tracer CreateTracer([System.Runtime.CompilerServices.CallerMemberName] string callerName = null, string ctorMessage = null, Func<string> disposeMessage = null) {
+            return new Tracer(GetFullCallerName(callerName), ctorMessage, disposeMessage);
         }
 
     }

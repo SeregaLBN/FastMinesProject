@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -5,7 +6,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
@@ -39,10 +39,13 @@ namespace fmg {
         public IMosaicController MosaicController {
             get {
                 if (_mosaicController == null) {
-                    if (true)
-                        MosaicController = new MosaicVirtController(CanvasDevice.GetSharedDevice(), _canvasVirtualControl); // call setter
-                    else
-                        MosaicController = new MosaicSwapController(CanvasDevice.GetSharedDevice(), _canvasSwapChainPanel); // call setter
+                    var useVirtCtrl = false;
+                    var ctrl = useVirtCtrl
+                        ? (IMosaicController)new MosaicVirtController(CanvasDevice.GetSharedDevice(), _canvasVirtualControl)
+                        : (IMosaicController)new MosaicSwapController(CanvasDevice.GetSharedDevice(), _canvasSwapChainPanel);
+                    _canvasVirtualControl.Visibility = useVirtCtrl ? Visibility.Visible   : Visibility.Collapsed;
+                    _canvasSwapChainPanel.Visibility = useVirtCtrl ? Visibility.Collapsed : Visibility.Visible;
+                    MosaicController = ctrl; // call this setter
                 }
                 return _mosaicController;
             }
@@ -96,10 +99,6 @@ namespace fmg {
         private void OnMosaicControllerPropertyChanged(object sender, PropertyChangedEventArgs ev) {
         }
 
-        public void OnRegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs ev) {
-            (MosaicController as MosaicVirtController)?.OnRegionsInvalidated(sender, ev);
-        }
-
         private void GoBack() {
             if (this.Frame != null && this.Frame.CanGoBack)
                 this.Frame.GoBack();
@@ -126,12 +125,12 @@ namespace fmg {
             _canvasSwapChainPanel?.RemoveFromVisualTree();
             _canvasSwapChainPanel = null;
 
-            Bindings.StopTracking();
+            //Bindings.StopTracking();
         }
 
         protected override void OnPointerPressed(PointerRoutedEventArgs ev) {
             var currPoint = ev.GetCurrentPoint(this);
-            using (new Tracer(GetCallerName(), "pointerId=" + currPoint.PointerId, () => "ev.Handled = " + ev.Handled)) {
+            using (CreateTracer(GetFullCallerName(), "pointerId=" + currPoint.PointerId, () => "ev.Handled = " + ev.Handled)) {
 
                 //_clickInfo.PointerDevice = pointerPoint.PointerDevice.PointerDeviceType;
                 var props = currPoint.Properties;
@@ -151,13 +150,13 @@ namespace fmg {
         }
 
         protected override void OnKeyUp(KeyRoutedEventArgs ev) {
-            using (new Tracer(GetCallerName(), "virtKey=" + ev.Key)) {
+            using (CreateTracer(GetFullCallerName(), "virtKey=" + ev.Key)) {
                 base.OnKeyUp(ev);
             }
         }
 
         private void OnKeyUp_CoreWindow(CoreWindow win, KeyEventArgs ev) {
-            //using (new Tracer(GetCallerName(), "virtKey=" + ev.VirtualKey)) {
+            //using (CreateTracer(GetFullCallerName(), "virtKey=" + ev.VirtualKey)) {
             //ev.Handled = true;
             //switch (ev.VirtualKey) {
             //case VirtualKey.F2:
@@ -189,7 +188,16 @@ namespace fmg {
             //MosaicController.SetGame(ESkillLevel.eCrazy);
         }
 
-        static string GetCallerName([System.Runtime.CompilerServices.CallerMemberName] string callerName = null) { return callerName; }
+        private string GetFullCallerName([System.Runtime.CompilerServices.CallerMemberName] string callerName = null) {
+            var typeName = GetType().Name;
+            var thisName = nameof(MosaicPage);
+            if (typeName != thisName)
+                typeName += "(" + thisName + ")";
+            return typeName + "." + callerName;
+        }
+        private Tracer CreateTracer([System.Runtime.CompilerServices.CallerMemberName] string callerName = null, string ctorMessage = null, Func<string> disposeMessage = null) {
+            return new Tracer(GetFullCallerName(callerName), ctorMessage, disposeMessage);
+        }
 
     }
 }

@@ -22,10 +22,7 @@ namespace fmg.common {
         private readonly string _hint;
         private readonly Func<string> _disposeMessage;
 
-        public Tracer([CallerMemberName] string hint = null) : this(hint, null, null) { }
-        public Tracer(string hint, string ctorMessage) : this(hint, ctorMessage, null) { }
-        public Tracer(string hint, Func<string> disposeMessage) : this(hint, null, disposeMessage) { }
-        public Tracer(string hint, string ctorMessage, Func<string> disposeMessage) {
+        public Tracer([CallerMemberName] string hint = null, string ctorMessage = null, Func<string> disposeMessage = null) {
             _hint = hint;
             _disposeMessage = disposeMessage;
 #if DEBUG

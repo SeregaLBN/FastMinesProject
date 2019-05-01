@@ -11,12 +11,6 @@
 
     <Grid x:Name="_contentRoot" Background="{StaticResource ApplicationPageBackgroundThemeBrush}" >
         <canvas:CanvasSwapChainPanel x:Name="_canvasSwapChainPanel" />
-        <canvas:CanvasVirtualControl x:Name="_canvasVirtualControl"
-                                     HorizontalAlignment="Left"
-                                     VerticalAlignment="Top"
-                                     Height="{x:Bind MosaicImageController.Size, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
-                                     Width="{x:Bind  MosaicImageController.Size, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
-                                     RegionsInvalidated="OnRegionsInvalidated"
-                                     ClearColor="Bisque" />
+        <canvas:CanvasVirtualControl x:Name="_canvasVirtualControl" />
     </Grid>
 </Page>

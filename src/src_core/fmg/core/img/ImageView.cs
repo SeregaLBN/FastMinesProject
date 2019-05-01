@@ -69,6 +69,7 @@ namespace fmg.core.img {
         }
 
         public virtual void Invalidate() {
+            //common.LoggerSimple.Put(GetType().Name + ".Invalidate");
             if (_invalidate == EInvalidate.redrawing)
                 return;
             //if (_invalidate == EInvalidate.needRedraw)
@@ -103,7 +104,8 @@ namespace fmg.core.img {
         }
         protected virtual void OnPropertyModelChanged(object sender, PropertyChangedEventArgs ev) {
             System.Diagnostics.Debug.Assert(ReferenceEquals(sender, Model));
-            _notifier.FirePropertyChanged(default(TImageModel), Model, nameof(this.Model));
+            _notifier.FirePropertyChanged(default(TImageModel), sender, nameof(this.Model));
+            //_notifier.FirePropertyChanged(nameof(this.Model) + '.' + ev.PropertyName);
             if (nameof(IImageModel.Size) == ev.PropertyName) {
                 Image = null;
                 //Invalidate();
