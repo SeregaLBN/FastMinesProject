@@ -17,7 +17,7 @@ public class RecyclerItemDoubleClickListener implements RecyclerView.OnItemTouch
         this.onItemDoubleClick = onItemDoubleClick;
         gesturator = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
             @Override
-            public boolean onDoubleTap(MotionEvent e) {
+            public boolean onDoubleTap(MotionEvent ev) {
                 return true;
             }
         });
@@ -40,7 +40,7 @@ public class RecyclerItemDoubleClickListener implements RecyclerView.OnItemTouch
     }
 
     @Override
-    public void onTouchEvent(RecyclerView view, MotionEvent motionEvent) { }
+    public void onTouchEvent(RecyclerView view, MotionEvent ev) { }
 
     @Override
     public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) { }

@@ -98,10 +98,6 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
             */
         }
-
-
-//        Intent intent = new Intent(this, DemoActivity.class);
-//        startActivity(intent);
     }
 
     @Override

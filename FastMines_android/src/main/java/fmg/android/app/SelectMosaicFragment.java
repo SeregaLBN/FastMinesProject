@@ -1,6 +1,7 @@
 package fmg.android.app;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -220,16 +221,8 @@ public class SelectMosaicFragment extends Fragment {
     }
 
     private void StartNewGame() {
-//        //Frame frame = this.Frame;
-//        Frame frame = Window.Current.Content as Frame;
-//        System.Diagnostics.Debug.Assert(frame != null);
-//
-//        var eMosaic = CurrentItem.MosaicType;
-//        frame.Navigate(typeof(MosaicPage), InitData);
-//
-//        //Window.Current.Content = new MosaicPage();
-//        //// Ensure the current window is active
-//        //Window.Current.Activate();
+        Intent intent = new Intent(this.getContext(), MosaicActivity.class);
+        startActivity(intent);
     }
 
     public void updateHeader(double headerSizeHeight) {

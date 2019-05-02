@@ -98,7 +98,8 @@
                 android:layout_height="wrap_content"
                 android:text="Go!"
                 android:textAllCaps="false"
-                android:layout_margin="3dp"/>
+                android:layout_margin="3dp"
+                />
         </LinearLayout>
 
     </android.support.constraint.ConstraintLayout>

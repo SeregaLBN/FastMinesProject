@@ -21,7 +21,7 @@ public final class StaticInitializer {
         public boolean isBorderOnly() { return this == eBorderOnly; }
     }
 
-    public static final EProofDrawMode DrawMode = EProofDrawMode.eFull;
+    public static final EProofDrawMode DrawMode = EProofDrawMode.eBorderOnly;
     /**/
 
     static {
