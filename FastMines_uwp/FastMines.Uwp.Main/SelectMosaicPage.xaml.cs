@@ -166,8 +166,8 @@ namespace fmg {
             StartNewGame();
         }
 
-        private void OnClickBttnStartGame(object sender, RoutedEventArgs ev) {
-            //LoggerSimple.Put("> " + nameof(SelectMosaicPage) + "::" + nameof(OnClickBttnStartGame));
+        private void OnClickBttnBeginGame(object sender, RoutedEventArgs ev) {
+            //LoggerSimple.Put("> " + nameof(SelectMosaicPage) + "::" + nameof(OnClickBttnBeginGame));
             StartNewGame();
         }
 

@@ -20,6 +20,8 @@ import fmg.android.app.model.MosaicInitDataExt;
 import fmg.android.app.model.dataSource.MosaicDataSource;
 import fmg.android.app.model.items.MosaicDataItem;
 import fmg.android.app.presentation.MosaicsViewModel;
+import fmg.android.app.recyclerView.MosaicListViewAdapter;
+import fmg.android.app.recyclerView.RecyclerItemDoubleClickListener;
 import fmg.android.img.Logo;
 import fmg.android.utils.AsyncRunner;
 import fmg.android.utils.Cast;
@@ -44,6 +46,7 @@ public class SelectMosaicFragment extends Fragment {
     /** View-Model */
     private MosaicsViewModel viewModel;
     private MosaicListViewAdapter mosaicListViewAdapter;
+    private RecyclerItemDoubleClickListener recyclerItemDoubleClickListener;
     private Subject<Size> subjSizeChanged;
     private Disposable sizeChangedObservable;
     private Size cachedSize = new Size(-1, -1);
@@ -66,8 +69,10 @@ public class SelectMosaicFragment extends Fragment {
         binding.executePendingBindings();
 
         binding.rvMosaicItems.setLayoutManager(new GridLayoutManager(this.getContext(), 2));
-        mosaicListViewAdapter = new MosaicListViewAdapter(viewModel.getMosaicDS().getDataSource(), this::onMosaicItemClick);
+        mosaicListViewAdapter = new MosaicListViewAdapter(viewModel.getMosaicDS().getDataSource(), this::onMosaicItemClick, this::onMosaicItemLongClick);
         binding.rvMosaicItems.setAdapter(mosaicListViewAdapter);
+        recyclerItemDoubleClickListener = new RecyclerItemDoubleClickListener(this.getContext(), this::onMosaicItemDoubleClick);
+        binding.rvMosaicItems.addOnItemTouchListener(recyclerItemDoubleClickListener);
 
         binding.panelMosaicHeader.setOnClickListener(this::onMosaicHeaderClick);
 
@@ -92,6 +97,8 @@ public class SelectMosaicFragment extends Fragment {
             if (headerSizeHeight != null)
                 updateHeader(headerSizeHeight);
         }
+
+        binding.bttnBeginGame.setOnClickListener(this::onClickBttnBeginGame);
 
         return binding.getRoot();
     }
@@ -197,14 +204,18 @@ public class SelectMosaicFragment extends Fragment {
         getInitData().setMosaicType(selectedMosaic);
     }
 
-    // TODO bind to double click
-    private void onMosaicItemDoubleClick(/*DoubleTappedRoutedEventArgs e*/) {
+    private void onMosaicItemDoubleClick(View view, int position) {
+        //LoggerSimple.put("> SelectMosaicFragment::onMosaicItemDoubleClick");
         StartNewGame();
     }
 
-    // TODO bind to button
-    private void onClickBttnStartGame(/*object sender, RoutedEventArgs ev*/) {
-        //LoggerSimple.put("> SelectMosaicFragment::OnClickBttnStartGame");
+    private void onMosaicItemLongClick(View view, int position) {
+        //LoggerSimple.put("> SelectMosaicFragment::onMosaicItemLongClick");
+        StartNewGame();
+    }
+
+    private void onClickBttnBeginGame(View v) {
+        //LoggerSimple.put("> SelectMosaicFragment::onClickBttnBeginGame");
         StartNewGame();
     }
 

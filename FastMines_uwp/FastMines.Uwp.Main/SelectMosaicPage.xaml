@@ -83,7 +83,7 @@
                 <Button x:Name="bttnBeginGame"
                         VerticalAlignment="Bottom"
                         HorizontalAlignment="Right"
-                        Click="OnClickBttnStartGame"
+                        Click="OnClickBttnBeginGame"
                         IsEnabled="{x:Bind gridMosaics.SelectedItem, Mode=OneWay, Converter={StaticResource SelectedItemToBoolConverter}}"
                         Content="Go!" AutomationProperties.Name="Play" ToolTipService.ToolTip="just do it!"
                 />

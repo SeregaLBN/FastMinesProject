@@ -21,6 +21,8 @@ import fmg.android.app.model.items.MosaicGroupDataItem;
 import fmg.android.app.model.items.MosaicSkillDataItem;
 import fmg.android.app.presentation.MainMenuViewModel;
 import fmg.android.app.presentation.SmoothHelper;
+import fmg.android.app.recyclerView.MosaicGroupListViewAdapter;
+import fmg.android.app.recyclerView.MosaicSkillListViewAdapter;
 import fmg.android.utils.Cast;
 import fmg.common.Color;
 import fmg.common.LoggerSimple;

@@ -1,4 +1,4 @@
-package fmg.android.app;
+package fmg.android.app.recyclerView;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
