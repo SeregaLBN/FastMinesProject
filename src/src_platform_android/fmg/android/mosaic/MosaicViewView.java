@@ -3,8 +3,11 @@ package fmg.android.mosaic;
 import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -23,15 +26,22 @@ import fmg.android.utils.ImgUtils;
 /** MVC: view. Android implementation over control {@link View} */
 public class MosaicViewView extends MosaicAndroidView<View, Bitmap, MosaicDrawModel<Bitmap>> {
 
-    private final Activity _owner;
+    private final Context context;
     private View _control;
     private Flag.BitmapController _imgFlag = new Flag.BitmapController();
     private Mine.BitmapController _imgMine = new Mine.BitmapController();
     private final Collection<BaseCell> _modifiedCells = new HashSet<>();
 
-    public MosaicViewView(Activity owner) {
+    public MosaicViewView(Context context) {
         super(new MosaicDrawModel<Bitmap>());
-        _owner = owner;
+        this.context = context;
+        changeSizeImagesMineFlag();
+    }
+    public MosaicViewView(View view, Consumer<Consumer<Canvas>> viewDrawMethod) {
+        super(new MosaicDrawModel<Bitmap>());
+        this.context = view.getContext();
+        this._control = view;
+        viewDrawMethod.accept(this::onDraw);
         changeSizeImagesMineFlag();
     }
 
@@ -41,22 +51,24 @@ public class MosaicViewView extends MosaicAndroidView<View, Bitmap, MosaicDrawMo
         return getControl();
     }
 
+    private void onDraw(Canvas canvas) {
+        Rect clipBounds = canvas.getClipBounds();
+
+        MosaicViewView.this.drawAndroid(canvas,
+                (clipBounds==null)
+                        ? null
+                        : toDrawCells(Cast.toRectDouble(clipBounds)),
+                true/*_modifiedCells.isEmpty() || (_modifiedCells.size() == getModel().getMatrix().size())*/);
+        _modifiedCells.clear();
+    }
+
     public View getControl() {
         if (_control == null) {
-           _control = new View(_owner/*.getApplicationContext()*/) {
+           _control = new View(context) {
 
                 @Override
                 protected void onDraw(Canvas canvas) {
-                    super.onDraw(canvas);
-
-                    Rect clipBounds = canvas.getClipBounds();
-
-                    MosaicViewView.this.drawAndroid(canvas,
-                                                    (clipBounds==null)
-                                                        ? null
-                                                        : toDrawCells(Cast.toRectDouble(clipBounds)),
-                                                    true/*_modifiedCells.isEmpty() || (_modifiedCells.size() == getModel().getMatrix().size())*/);
-                    _modifiedCells.clear();
+                    MosaicViewView.this.onDraw(canvas);
                 }
 
            };

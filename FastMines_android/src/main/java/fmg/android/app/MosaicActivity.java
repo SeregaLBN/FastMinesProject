@@ -1,48 +1,18 @@
 package fmg.android.app;
 
-import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.FrameLayout;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.function.Consumer;
 
-import fmg.android.app.databinding.DemoActivityBinding;
 import fmg.android.app.databinding.MosaicActivityBinding;
-import fmg.android.img.Flag;
-import fmg.android.img.Logo;
-import fmg.android.img.Mine;
-import fmg.android.img.MosaicGroupImg;
-import fmg.android.img.MosaicImg;
-import fmg.android.img.MosaicSkillImg;
-import fmg.android.img.Smile;
+import fmg.android.app.model.MosaicInitDataExt;
 import fmg.android.mosaic.MosaicViewController;
-import fmg.common.Pair;
-import fmg.common.geom.PointDouble;
-import fmg.common.geom.RectDouble;
-import fmg.common.geom.SizeDouble;
-import fmg.core.img.IImageController;
-import fmg.core.img.SmileModel;
-import fmg.core.img.TestDrawing;
-import fmg.core.mosaic.MosaicView;
-import fmg.core.types.EMosaic;
-import fmg.core.types.EMosaicGroup;
-import fmg.core.types.ESkillLevel;
+import fmg.core.mosaic.MosaicGameModel;
+import fmg.core.mosaic.MosaicInitData;
 
 /** general activity of project */
 public class MosaicActivity extends AppCompatActivity {
@@ -50,10 +20,31 @@ public class MosaicActivity extends AppCompatActivity {
     private MosaicViewController mosaicController;
     private MosaicActivityBinding binding;
 
+    public MosaicInitData getInitData() { return MosaicInitDataExt.getSharedData(); }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        binding = DataBindingUtil.setContentView(this, R.layout.mosaic_activity);
+        binding.executePendingBindings();
+
+
+        MosaicInitData initData = getInitData();
+        MosaicViewController controller = getMosaicController();
+        controller.setMinesCount(initData.getMinesCount());
+        MosaicGameModel model = controller.getModel();
+        model.setMosaicType(initData.getMosaicType());
+        model.setSizeField(initData.getSizeField());
+    }
+
     /** Mosaic controller */
     public MosaicViewController getMosaicController() {
-        if (mosaicController == null)
-            setMosaicController(new MosaicViewController(this));
+        if (mosaicController == null) {
+            //setMosaicController(new MosaicViewController(this));
+            Consumer<Consumer<Canvas>> drawMethod = cdm -> ((MosaicView)binding.mosaicView).drawMethod = cdm;
+            setMosaicController(new MosaicViewController(binding.mosaicView, drawMethod));
+        }
         return mosaicController;
     }
     private void setMosaicController(MosaicViewController mosaicController) {

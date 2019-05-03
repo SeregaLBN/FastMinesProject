@@ -2,12 +2,16 @@ package fmg.android.mosaic;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.view.DragEvent;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+
+import java.util.function.Consumer;
 
 import fmg.common.LoggerSimple;
 import fmg.common.geom.PointDouble;
@@ -19,7 +23,7 @@ import fmg.core.types.ClickResult;
 /** MVC: controller. Android implementation */
 public class MosaicViewController extends MosaicController<View, Bitmap, MosaicViewView, MosaicDrawModel<Bitmap>> {
 
-    private final Activity _owner;
+    private final Context context;
     private final ClickInfo _clickInfo = new ClickInfo();
     private final GestureDetector _gd;
     private final GestureDetector.SimpleOnGestureListener _gestureListener = new GestureDetector.SimpleOnGestureListener(){
@@ -48,10 +52,17 @@ public class MosaicViewController extends MosaicController<View, Bitmap, MosaicV
     };
 
 
-    public MosaicViewController(Activity owner) {
-        super(new MosaicViewView(owner));
-        _owner = owner;
-        _gd = new GestureDetector(owner/*.getApplicationContext()*/, _gestureListener);
+    public MosaicViewController(Context context) {
+        super(new MosaicViewView(context));
+        this.context = context;
+        _gd = new GestureDetector(context, _gestureListener);
+        subscribeToViewControl();
+    }
+
+    public MosaicViewController(View view, Consumer<Consumer<Canvas>> viewDrawMethod) {
+        super(new MosaicViewView(view, viewDrawMethod));
+        this.context = view.getContext();
+        _gd = new GestureDetector(context, _gestureListener);
         subscribeToViewControl();
     }
 
@@ -232,7 +243,7 @@ public class MosaicViewController extends MosaicController<View, Bitmap, MosaicV
             }
         };
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(_owner/*.getApplicationContext()*/);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage("Restore last game?") // Question
                .setPositiveButton("Yes", dialogClickListener)
                .setNegativeButton("No", dialogClickListener)
