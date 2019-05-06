@@ -1,6 +1,7 @@
 package fmg.core.img;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,10 +39,12 @@ public class LogoModel extends AnimatedImageModel {
     public static final String PROPERTY_USE_GRADIENT = "UseGradient";
     public static final String PROPERTY_ROTATE_MODE  = "RotateMode";
 
+    private final PropertyChangeListener onPropertyChangedListener = this::onPropertyChanged;
+
 
     public LogoModel() {
         setBackgroundColor(Color.Transparent());
-        _notifier.addListener(this::onPropertyChanged);
+        _notifier.addListener(onPropertyChangedListener);
     }
 
     public BoundDouble getInnerPadding() {
@@ -161,7 +164,7 @@ public class LogoModel extends AnimatedImageModel {
 
     @Override
     public void close() {
-        _notifier.removeListener(this::onPropertyChanged);
+        _notifier.removeListener(onPropertyChangedListener);
         super.close();
     }
 

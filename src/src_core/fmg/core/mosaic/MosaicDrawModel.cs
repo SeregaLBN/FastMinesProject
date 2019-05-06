@@ -192,8 +192,10 @@ namespace fmg.core.mosaic {
             set {
                 var old = this._backgroundFill;
                 if (_notifier.SetProperty(ref _backgroundFill, value)) {
-                    if (old != null)
+                    if (old != null) {
                         old.PropertyChanged -= OnBackgroundFillPropertyChanged;
+                        old.Dispose();
+                    }
                     if (value != null)
                         value.PropertyChanged += OnBackgroundFillPropertyChanged;
                 }
@@ -335,7 +337,7 @@ namespace fmg.core.mosaic {
 
         protected override void Disposing() {
             base.Disposing();
-            _backgroundFill?.Dispose();
+
             // unsubscribe from local notifications
             FontInfo = null;
             BkFill = null;

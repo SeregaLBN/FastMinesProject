@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.concurrent.TimeUnit;
 
 import fmg.android.app.databinding.SelectMosaicFragmentBinding;
@@ -54,6 +55,7 @@ public class SelectMosaicFragment extends Fragment {
     private boolean rotateBkColorOfGameBttn = true;
     private static final double TileMinSize = Cast.dpToPx(30);
     private static final double TileMaxSize = Cast.dpToPx(90);
+    private final PropertyChangeListener onMosaicDsPropertyChangedListener = this::onMosaicDsPropertyChanged;
 
     public MosaicInitData getInitData() { return MosaicInitDataExt.getSharedData(); }
     //public void setInitData(MosaicInitData initData) { MosaicInitDataExt.getSharedData().copyFrom(initData); }
@@ -129,7 +131,7 @@ public class SelectMosaicFragment extends Fragment {
 
         binding.panelMosaicHeader.setOnClickListener(this::onMosaicHeaderClick);
         binding.bttnBeginGame.setOnClickListener(this::onClickBttnBeginGame);
-        viewModel.getMosaicDS().addListener(this::onMosaicDsPropertyChanged);
+        viewModel.getMosaicDS().addListener(onMosaicDsPropertyChangedListener);
 
         { // onFragmentSizeChanged(newSize);
             subjSizeChanged = PublishSubject.create();
@@ -162,7 +164,7 @@ public class SelectMosaicFragment extends Fragment {
 
         binding.panelMosaicHeader.setOnClickListener(null);
         binding.bttnBeginGame.setOnClickListener(null);
-        viewModel.getMosaicDS().removeListener(this::onMosaicDsPropertyChanged);
+        viewModel.getMosaicDS().removeListener(onMosaicDsPropertyChangedListener);
 
         binding.rootLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this::onGlobalLayoutListener);
         sizeChangedObservable.dispose();

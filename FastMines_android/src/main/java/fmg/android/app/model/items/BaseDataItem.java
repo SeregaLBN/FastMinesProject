@@ -40,11 +40,15 @@ public abstract class BaseDataItem<T,
     private String title = "";
     protected final NotifyPropertyChanged notifier/*Sync*/ = new NotifyPropertyChanged(this, false);
     private   final NotifyPropertyChanged notifierAsync    = new NotifyPropertyChanged(this, true);
+    private final PropertyChangeListener           onPropertyChangedListener = this::onPropertyChanged;
+    private final PropertyChangeListener      onAsyncPropertyChangedListener = this::onAsyncPropertyChanged;
+    private final PropertyChangeListener onControllerPropertyChangedListener = this::onControllerPropertyChanged;
+    private final PropertyChangeListener      onModelPropertyChangedListener = this::onModelPropertyChanged;
 
     protected BaseDataItem(T uniqueId) {
         this.uniqueId = uniqueId;
-        notifier     .addListener(this::onPropertyChanged);
-        notifierAsync.addListener(this::onAsyncPropertyChanged);
+        notifier     .addListener(onPropertyChangedListener);
+        notifierAsync.addListener(onAsyncPropertyChangedListener);
     }
 
     @Bindable
@@ -67,13 +71,13 @@ public abstract class BaseDataItem<T,
         TImageCtrlr old = this.entity;
         if (notifier.setProperty(this.entity, entity, PROPERTY_ENTITY)) {
             if (old != null) {
-                old           .removeListener(this::onControllerPropertyChanged);
-                old.getModel().removeListener(this::onModelPropertyChanged);
+                old           .removeListener(onControllerPropertyChangedListener);
+                old.getModel().removeListener(onModelPropertyChangedListener);
                 old.close();
             }
             if (entity != null) {
-                entity.           addListener(this::onControllerPropertyChanged);
-                entity.getModel().addListener(this::onModelPropertyChanged);
+                entity.           addListener(onControllerPropertyChangedListener);
+                entity.getModel().addListener(onModelPropertyChangedListener);
             }
         }
     }
@@ -178,8 +182,8 @@ public abstract class BaseDataItem<T,
 
     @Override
     public void close() {
-        notifier     .removeListener(this::onPropertyChanged);
-        notifierAsync.removeListener(this::onAsyncPropertyChanged);
+        notifier     .removeListener(onPropertyChangedListener);
+        notifierAsync.removeListener(onAsyncPropertyChangedListener);
         notifier.close();
         notifierAsync.close();
         setEntity(null); // call setter

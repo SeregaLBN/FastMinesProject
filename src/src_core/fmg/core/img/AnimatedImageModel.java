@@ -35,9 +35,10 @@ public abstract class AnimatedImageModel implements IAnimatedModel {
     private boolean _animeDirection = true;
     private final AnimatedInnerModel _innerModel = new AnimatedInnerModel();
     protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
+    private final PropertyChangeListener onInnerModelPropertyChangedListener = this::onInnerModelPropertyChanged;
 
     protected AnimatedImageModel() {
-        _innerModel.addListener(this::onInnerModelPropertyChanged);
+        _innerModel.addListener(onInnerModelPropertyChangedListener);
     }
 
     public static final String PROPERTY_BACKGROUND_COLOR = "BackgroundColor";
@@ -157,7 +158,7 @@ public abstract class AnimatedImageModel implements IAnimatedModel {
 
     @Override
     public void close() {
-        _innerModel.removeListener(this::onInnerModelPropertyChanged);
+        _innerModel.removeListener(onInnerModelPropertyChangedListener);
         _notifier.close();
     }
 

@@ -3,6 +3,7 @@ package fmg.android.app.model.items;
 import android.databinding.Bindable;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.concurrent.ThreadLocalRandom;
 
 import fmg.android.app.BR;
@@ -17,6 +18,7 @@ public class MosaicGroupDataItem extends BaseDataItem<EMosaicGroup, MosaicGroupM
 
     public static final String PROPERTY_MOSAIC_GROUP   = "MosaicGroup";
     public static final String PROPERTY_PADDING_BURGER = "PaddingBurgerMenu";
+    private final PropertyChangeListener onBurgerMenuModelPropertyChangedListener = this::onBurgerMenuModelPropertyChanged;
 
     public MosaicGroupDataItem(EMosaicGroup eMosaicGroup) {
         super(eMosaicGroup);
@@ -34,7 +36,7 @@ public class MosaicGroupDataItem extends BaseDataItem<EMosaicGroup, MosaicGroupM
             MosaicGroupModel m = tmp.getModel();
             m.setBorderWidth(3);
             m.setRotateAngle(ThreadLocalRandom.current().nextInt(90));
-            tmp.getBurgerMenuModel().addListener(this::onBurgerMenuModelPropertyChanged);
+            tmp.getBurgerMenuModel().addListener(onBurgerMenuModelPropertyChangedListener);
             setEntity(tmp);
         }
         return this.entity;
@@ -82,7 +84,7 @@ public class MosaicGroupDataItem extends BaseDataItem<EMosaicGroup, MosaicGroupM
 
     @Override
     public void close() {
-        getEntity().getBurgerMenuModel().removeListener(this::onBurgerMenuModelPropertyChanged);
+        getEntity().getBurgerMenuModel().removeListener(onBurgerMenuModelPropertyChangedListener);
         super.close();
     }
 

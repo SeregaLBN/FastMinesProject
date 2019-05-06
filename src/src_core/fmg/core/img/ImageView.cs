@@ -120,8 +120,8 @@ namespace fmg.core.img {
         protected virtual void Disposing() {
             _notifier.Dispose();
             _notifierAsync.Dispose();
-            this .PropertyChanged -= OnPropertyChanged;
-            Model.PropertyChanged -= OnPropertyModelChanged;
+            this .PropertyChangedSync -= OnPropertyChanged;
+            Model.PropertyChanged     -= OnPropertyModelChanged;
             Image = null;
         }
 

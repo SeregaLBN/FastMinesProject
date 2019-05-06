@@ -22,13 +22,14 @@ public final class BurgerMenuModel implements IAnimatedModel {
     private int     _layers = 3;
     private BoundDouble _padding;
     private NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
+    private final PropertyChangeListener onGeneralModelPropertyChangedListener = this::onGeneralModelPropertyChanged;
 
     /**
      * @param generalModel another basic model
      */
     protected BurgerMenuModel(AnimatedImageModel generalModel) {
         _generalModel = generalModel;
-        _generalModel.addListener(this::onGeneralModelPropertyChanged);
+        _generalModel.addListener(onGeneralModelPropertyChangedListener);
     }
 
     public static final String PROPERTY_SHOW       = "Show";
@@ -147,7 +148,7 @@ public final class BurgerMenuModel implements IAnimatedModel {
 
     @Override
     public void close() {
-        _generalModel.removeListener(this::onGeneralModelPropertyChanged);
+        _generalModel.removeListener(onGeneralModelPropertyChangedListener);
         _notifier.close();
         _generalModel = null;
     }

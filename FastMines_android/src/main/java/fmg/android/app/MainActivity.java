@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.function.Supplier;
 
 import fmg.android.app.databinding.MainActivityBinding;
@@ -45,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
     private MosaicSkillListViewAdapter mosaicSkillListViewAdapter;
     private SizeDouble cachedSizeActivity = new SizeDouble(-1, -1);
     private EActivityStatus activityStatus = EActivityStatus.eLaunched;
+    private final PropertyChangeListener onMosaicGroupDsPropertyChangedListener = this::onMosaicGroupDsPropertyChanged;
+    private final PropertyChangeListener onMosaicSkillDsPropertyChangedListener = this::onMosaicSkillDsPropertyChanged;
 
     public MosaicInitData getInitData() { return MosaicInitDataExt.getSharedData(); }
     //public void setInitData(MosaicInitData initData) { MosaicInitDataExt.getSharedData().copyFrom(initData); }
@@ -151,8 +154,8 @@ public class MainActivity extends AppCompatActivity {
 
         binding.rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(this::onGlobalLayoutListener);
 
-        viewModel.getMosaicGroupDS().addListener(this::onMosaicGroupDsPropertyChanged);
-        viewModel.getMosaicSkillDS().addListener(this::onMosaicSkillDsPropertyChanged);
+        viewModel.getMosaicGroupDS().addListener(onMosaicGroupDsPropertyChangedListener);
+        viewModel.getMosaicSkillDS().addListener(onMosaicSkillDsPropertyChangedListener);
     }
 
     @Override
@@ -162,8 +165,8 @@ public class MainActivity extends AppCompatActivity {
         activityStatus = EActivityStatus.ePaused;
 
         // unsubscribe all
-        viewModel.getMosaicGroupDS().removeListener(this::onMosaicGroupDsPropertyChanged);
-        viewModel.getMosaicSkillDS().removeListener(this::onMosaicSkillDsPropertyChanged);
+        viewModel.getMosaicGroupDS().removeListener(onMosaicGroupDsPropertyChangedListener);
+        viewModel.getMosaicSkillDS().removeListener(onMosaicSkillDsPropertyChangedListener);
 
         binding.rootLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this::onGlobalLayoutListener);
 

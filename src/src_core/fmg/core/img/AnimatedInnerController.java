@@ -23,10 +23,11 @@ public final class AnimatedInnerController<TImage,
     private final TImageModel _model;
     private Map<Class<? extends IModelTransformer>, IModelTransformer> _transformers = new HashMap<>();
     private boolean _animationWasUsed = false;
+    private final PropertyChangeListener onPropertyModelChangedListener = this::onPropertyModelChanged;
 
     public AnimatedInnerController(TImageModel model) {
         _model = model;
-        model.addListener(this::onPropertyModelChanged);
+        model.addListener(onPropertyModelChangedListener);
     }
 
 
@@ -85,7 +86,7 @@ public final class AnimatedInnerController<TImage,
 
     @Override
     public void close() {
-        _model.removeListener(this::onPropertyModelChanged);
+        _model.removeListener(onPropertyModelChangedListener);
         if (_animationWasUsed) // do not call UiInvoker.ANIMATOR if it is not already used
             UiInvoker.ANIMATOR.get().unsubscribe(this);
         _transformers.clear();

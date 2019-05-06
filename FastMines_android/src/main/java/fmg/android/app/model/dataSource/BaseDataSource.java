@@ -51,10 +51,12 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
 
     protected final NotifyPropertyChanged notifier/*Sync*/ = new NotifyPropertyChanged(this, false);
     private   final NotifyPropertyChanged notifierAsync    = new NotifyPropertyChanged(this, true);
+    private final PropertyChangeListener      onPropertyChangedListener = this::onPropertyChanged;
+    private final PropertyChangeListener onAsyncPropertyChangedListener = this::onAsyncPropertyChanged;
 
     protected BaseDataSource() {
-        notifier     .addListener(this::onPropertyChanged);
-        notifierAsync.addListener(this::onAsyncPropertyChanged);
+        notifier     .addListener(onPropertyChangedListener);
+        notifierAsync.addListener(onAsyncPropertyChangedListener);
     }
 
     /** the top item that this data source describes */
@@ -140,8 +142,8 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
             dataSource.forEach(TItem::close);
             dataSource.clear();
         }
-        notifier     .removeListener(this::onPropertyChanged);
-        notifierAsync.removeListener(this::onAsyncPropertyChanged);
+        notifier     .removeListener(onPropertyChangedListener);
+        notifierAsync.removeListener(onAsyncPropertyChangedListener);
         notifier.close();
         notifierAsync.close();
     }

@@ -5,6 +5,7 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import fmg.android.app.BR;
 import fmg.android.app.MainActivity;
@@ -18,6 +19,7 @@ public class MainMenuViewModel extends ViewModel {
     private final MosaicGroupDataSource mosaicGroupDS = new MosaicGroupDataSource();
     private final MosaicSkillDataSource mosaicSkillDS = new MosaicSkillDataSource();
     private final SplitViewPane splitViewPane = new SplitViewPane();
+    private final PropertyChangeListener onMosaicGroupDsPropertyChangedListener = this::onMosaicGroupDsPropertyChanged;
 
     public class SplitViewPane extends BaseObservable {
 
@@ -64,7 +66,7 @@ public class MainMenuViewModel extends ViewModel {
 
 
     public MainMenuViewModel() {
-        mosaicGroupDS.addListener(this::onMosaicGroupDsPropertyChanged);
+        mosaicGroupDS.addListener(onMosaicGroupDsPropertyChangedListener);
     }
 
     public MosaicGroupDataSource getMosaicGroupDS() { return mosaicGroupDS; }
@@ -95,7 +97,7 @@ public class MainMenuViewModel extends ViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-        mosaicGroupDS.removeListener(this::onMosaicGroupDsPropertyChanged);
+        mosaicGroupDS.removeListener(onMosaicGroupDsPropertyChangedListener);
         mosaicGroupDS.close();
         mosaicSkillDS.close();
     }

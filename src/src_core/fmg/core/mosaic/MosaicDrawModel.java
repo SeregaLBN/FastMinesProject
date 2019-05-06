@@ -1,6 +1,7 @@
 package fmg.core.mosaic;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import fmg.common.Color;
 import fmg.common.geom.BoundDouble;
@@ -51,6 +52,11 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IMo
     private BackgroundFill _backgroundFill;
     private Color          _backgroundColor;
     private boolean lockChanging = false;
+
+    private final PropertyChangeListener      onColorTextPropertyChangedListener = this::onColorTextPropertyChanged;
+    private final PropertyChangeListener      onPenBorderPropertyChangedListener = this::onPenBorderPropertyChanged;
+    private final PropertyChangeListener onBackgroundFillPropertyChangedListener = this::onBackgroundFillPropertyChanged;
+    private final PropertyChangeListener       onFontInfoPropertyChangedListener = this::onFontInfoPropertyChanged;
 
     public static final String PROPERTY_AUTO_FIT         = "AutoFit";
     public static final String PROPERTY_IMG_MINE         = "ImgMine";
@@ -170,9 +176,9 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IMo
         ColorText old = this._colorText;
         if (_notifier.setProperty(old, colorText, PROPERTY_COLOR_TEXT)) {
             if (old != null)
-                old.removeListener(this::onColorTextPropertyChanged);
+                old.removeListener(onColorTextPropertyChangedListener);
             if (colorText != null)
-                colorText.addListener(this::onColorTextPropertyChanged);
+                colorText.addListener(onColorTextPropertyChangedListener);
         }
     }
 
@@ -187,9 +193,9 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IMo
         PenBorder old = this._penBorder;
         if (_notifier.setProperty(old, penBorder, PROPERTY_PEN_BORDER)) {
             if (old != null)
-                old.removeListener(this::onPenBorderPropertyChanged);
+                old.removeListener(onPenBorderPropertyChangedListener);
             if (penBorder != null)
-                penBorder.addListener(this::onPenBorderPropertyChanged);
+                penBorder.addListener(onPenBorderPropertyChangedListener);
         }
     }
 
@@ -203,10 +209,12 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IMo
     public void setBackgroundFill(BackgroundFill backgroundFill) {
         BackgroundFill old = this._backgroundFill;
         if (_notifier.setProperty(old, backgroundFill, PROPERTY_BACKGROUND_FILL)) {
-            if (old != null)
-                old.removeListener(this::onBackgroundFillPropertyChanged);
+            if (old != null) {
+                old.removeListener(onBackgroundFillPropertyChangedListener);
+                old.close();
+            }
             if (backgroundFill != null)
-                backgroundFill.addListener(this::onBackgroundFillPropertyChanged);
+                backgroundFill.addListener(onBackgroundFillPropertyChangedListener);
         }
     }
 
@@ -221,9 +229,9 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IMo
         FontInfo old = this._fontInfo;
         if (_notifier.setProperty(old, fontInfo, PROPERTY_FONT_INFO)) {
             if (old != null)
-                old.removeListener(this::onFontInfoPropertyChanged);
+                old.removeListener(onFontInfoPropertyChangedListener);
             if (fontInfo != null)
-                fontInfo.addListener(this::onFontInfoPropertyChanged);
+                fontInfo.addListener(onFontInfoPropertyChangedListener);
         }
     }
 
@@ -354,8 +362,6 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IMo
     @Override
     public void close() {
         super.close();
-        if (_backgroundFill != null)
-            getBackgroundFill().close();
         // unsubscribe from local notifications
         setFontInfo(null);
         setBackgroundFill(null);

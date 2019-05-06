@@ -3,6 +3,7 @@ package fmg.android.app.presentation;
 import android.arch.lifecycle.ViewModel;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import fmg.android.app.model.dataSource.MosaicDataSource;
 import fmg.android.app.model.dataSource.MosaicGroupDataSource;
@@ -13,9 +14,10 @@ import fmg.common.geom.SizeDouble;
 public class MosaicsViewModel extends ViewModel {
 
     private final MosaicDataSource mosaicDS = new MosaicDataSource();
+    private final PropertyChangeListener onMosaicDsPropertyChangedListener = this::onMosaicDsPropertyChanged;
 
     public MosaicsViewModel() {
-        mosaicDS.addListener(this::onMosaicDsPropertyChanged);
+        mosaicDS.addListener(onMosaicDsPropertyChangedListener);
     }
 
     public MosaicDataSource getMosaicDS() { return mosaicDS; }
@@ -34,7 +36,7 @@ public class MosaicsViewModel extends ViewModel {
 
     @Override
     protected void onCleared() {
-        mosaicDS.removeListener(this::onMosaicDsPropertyChanged);
+        mosaicDS.removeListener(onMosaicDsPropertyChangedListener);
         mosaicDS.close();
     }
 

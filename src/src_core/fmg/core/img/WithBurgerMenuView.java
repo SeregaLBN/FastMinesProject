@@ -1,6 +1,7 @@
 package fmg.core.img;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  * MVC: view of images with burger menu (where burger menu its secondary model)
@@ -11,11 +12,12 @@ public abstract class WithBurgerMenuView<TImage, TImageModel extends AnimatedIma
 
     /** the second model of image */
     private final BurgerMenuModel _burgerMenuModel;
+    private final PropertyChangeListener onPropertyBurgerMenuModelChangedListener = this::onPropertyBurgerMenuModelChanged;
 
     protected WithBurgerMenuView(TImageModel imageModel) {
         super(imageModel);
         _burgerMenuModel = new BurgerMenuModel(imageModel);
-        _burgerMenuModel.addListener(this::onPropertyBurgerMenuModelChanged);
+        _burgerMenuModel.addListener(onPropertyBurgerMenuModelChangedListener);
     }
 
     public BurgerMenuModel getBurgerMenuModel() { return _burgerMenuModel; }
@@ -27,7 +29,7 @@ public abstract class WithBurgerMenuView<TImage, TImageModel extends AnimatedIma
 
     @Override
     public void close() {
-        _burgerMenuModel.removeListener(this::onPropertyBurgerMenuModelChanged);
+        _burgerMenuModel.removeListener(onPropertyBurgerMenuModelChangedListener);
         _burgerMenuModel.close();
         super.close();
     }

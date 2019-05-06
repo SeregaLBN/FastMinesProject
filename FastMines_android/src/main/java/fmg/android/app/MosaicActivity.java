@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.function.Consumer;
 
 import fmg.android.app.databinding.MosaicActivityBinding;
@@ -19,6 +20,7 @@ public class MosaicActivity extends AppCompatActivity {
 
     private MosaicViewController mosaicController;
     private MosaicActivityBinding binding;
+    private final PropertyChangeListener onMosaicControllerPropertyChangedListener = this::onMosaicControllerPropertyChanged;
 
     public MosaicInitData getInitData() { return MosaicInitDataExt.getSharedData(); }
 
@@ -49,13 +51,12 @@ public class MosaicActivity extends AppCompatActivity {
     }
     private void setMosaicController(MosaicViewController mosaicController) {
         if (this.mosaicController != null) {
-            this.mosaicController.addListener(this::onMosaicControllerPropertyChanged);
+            this.mosaicController.removeListener(onMosaicControllerPropertyChangedListener);
             this.mosaicController.close();
         }
         this.mosaicController = mosaicController;
-        if (this.mosaicController != null) {
-            this.mosaicController.removeListener(this::onMosaicControllerPropertyChanged);
-        }
+        if (this.mosaicController != null)
+            this.mosaicController.addListener(onMosaicControllerPropertyChangedListener);
     }
 
     private void onMosaicControllerPropertyChanged(PropertyChangeEvent ev) {

@@ -34,6 +34,7 @@ public class MosaicInitData implements INotifyPropertyChanged, AutoCloseable {
 
     protected final NotifyPropertyChanged _notifier/*Sync*/ = new NotifyPropertyChanged(this, false);
     private   final NotifyPropertyChanged _notifierAsync    = new NotifyPropertyChanged(this, true);
+    private final PropertyChangeListener onPropertyChangedListener = this::onPropertyChanged;
 
     public static final String PROPERTY_MOSAIC_TYPE  = "MosaicType";
     public static final String PROPERTY_MOSAIC_GROUP = "MosaicGroup";
@@ -45,7 +46,7 @@ public class MosaicInitData implements INotifyPropertyChanged, AutoCloseable {
         mosaicType = DEFAULT_MOSAIC_TYPE;
         sizeField  = new Matrisize(DEFAULT_SIZE_FIELD_M, DEFAULT_SIZE_FIELD_N);
         minesCount = DEFAULT_MINES_COUNT;
-        _notifier.addListener(this::onPropertyChanged);
+        _notifier.addListener(onPropertyChangedListener);
     }
 
     public void copyFrom(MosaicInitData from) {
@@ -176,7 +177,7 @@ public class MosaicInitData implements INotifyPropertyChanged, AutoCloseable {
 
     @Override
     public void close() {
-        _notifier.removeListener(this::onPropertyChanged);
+        _notifier.removeListener(onPropertyChangedListener);
         _notifier.close();
         _notifierAsync.close();
     }

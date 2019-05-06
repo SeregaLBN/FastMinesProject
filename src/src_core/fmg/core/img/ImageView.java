@@ -30,10 +30,13 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
     private   final NotifyPropertyChanged _notifierAsync    = new NotifyPropertyChanged(this, true);
     protected boolean _isDisposed;
 
+    private final PropertyChangeListener      onPropertyChangedListener = this::onPropertyChanged;
+    private final PropertyChangeListener onPropertyModelChangedListener = this::onPropertyModelChanged;
+
     protected ImageView(TImageModel imageModel) {
         _model = imageModel;
-        _notifier.addListener(this::onPropertyChanged);
-        _model.addListener(this::onPropertyModelChanged);
+        _notifier.addListener(onPropertyChangedListener);
+        _model.addListener(onPropertyModelChangedListener);
     }
 
     @Override
@@ -122,8 +125,8 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
     public void close() {
         _isDisposed = true;
 
-        this  .removeListener(this::onPropertyChanged);
-        _model.removeListener(this::onPropertyModelChanged);
+        _notifier.removeListener(onPropertyChangedListener);
+        _model.removeListener(onPropertyModelChangedListener);
 
         _notifier.close();
         _notifierAsync.close();

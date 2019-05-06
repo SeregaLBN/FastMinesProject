@@ -1,6 +1,7 @@
 package fmg.core.mosaic;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
@@ -41,12 +42,7 @@ public abstract class MosaicController<TImage, TImageInner,
     /** использовать ли флажок на поле */
     private boolean _useUnknown = true;
 
-
-    protected MosaicController(TMosaicView mosaicView) {
-        super(mosaicView);
-        getModel().addListener(this::onPropertyModelChanged);
-    }
-
+    private final PropertyChangeListener onPropertyModelChangedListener = this::onPropertyModelChanged;
 
     public static final String PROPERTY_MINES_COUNT       = "MinesCount";
     public static final String PROPERTY_COUNT_MINES_LEFT  = "CountMinesLeft";
@@ -57,6 +53,12 @@ public abstract class MosaicController<TImage, TImageInner,
     public static final String PROPERTY_PLAY_INFO         = "PlayInfo";
     public static final String PROPERTY_REPOSITORY_MINES  = "RepositoryMines";
     public static final String PROPERTY_GAME_STATUS       = "GameStatus";
+
+    protected MosaicController(TMosaicView mosaicView) {
+        super(mosaicView);
+        getModel().addListener(onPropertyModelChangedListener);
+    }
+
 
     public List<BaseCell> getMatrix() {
         return getModel().getMatrix();
@@ -443,6 +445,7 @@ public abstract class MosaicController<TImage, TImageInner,
     }
 
     /** Подготовиться к началу игры - сбросить все ячейки */
+    @Override
     public boolean gameNew() {
 //        System.out.println("Mosaic::GameNew()");
         TMosaicModel m = getModel();
@@ -605,7 +608,7 @@ public abstract class MosaicController<TImage, TImageInner,
 
     @Override
     public void close() {
-        getModel().removeListener(this::onPropertyModelChanged);
+        getModel().removeListener(onPropertyModelChangedListener);
         super.close();
     }
 

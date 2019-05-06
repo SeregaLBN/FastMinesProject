@@ -48,6 +48,9 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
     protected final NotifyPropertyChanged _notifier/*Sync*/ = new NotifyPropertyChanged(this, false);
     private   final NotifyPropertyChanged _notifierAsync    = new NotifyPropertyChanged(this, true);
 
+    private final PropertyChangeListener              onPropertyChangedListener = this::onPropertyChanged;
+    private final PropertyChangeListener onCellAttributePropertyChangedListener = this::onCellAttributePropertyChanged;
+
     public static final String PROPERTY_AREA        = BaseCell.BaseAttribute.PROPERTY_AREA;
     public static final String PROPERTY_CELL_ATTR   = "CellAttr";
     public static final String PROPERTY_SIZE_FIELD  = "SizeField";
@@ -55,14 +58,14 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
     public static final String PROPERTY_MOSAIC_TYPE = "MosaicType";
 
     public MosaicGameModel() {
-        _notifier.addListener(this::onPropertyChanged);
+        _notifier.addListener(onPropertyChangedListener);
     }
 
     @Override
     public BaseCell.BaseAttribute getCellAttr() {
         if (_cellAttr == null) {
             _cellAttr = MosaicHelper.createAttributeInstance(getMosaicType());
-            _cellAttr.addListener(this::onCellAttributePropertyChanged);
+            _cellAttr.addListener(onCellAttributePropertyChangedListener);
         }
         return _cellAttr;
     }
@@ -71,7 +74,7 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
             return;
         if (newValue != null)
             throw new IllegalArgumentException("Bad argument - support only null value!");
-        _cellAttr.removeListener(this::onCellAttributePropertyChanged);
+        _cellAttr.removeListener(onCellAttributePropertyChangedListener);
         _cellAttr = null;
         _matrix.clear();
         _notifier.firePropertyChanged(PROPERTY_CELL_ATTR);
@@ -163,7 +166,7 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
 
     @Override
     public void close() {
-        _notifier.removeListener(this::onPropertyChanged);
+        _notifier.removeListener(onPropertyChangedListener);
         _notifier.close();
         _notifierAsync.close();
         setCellAttr(null);

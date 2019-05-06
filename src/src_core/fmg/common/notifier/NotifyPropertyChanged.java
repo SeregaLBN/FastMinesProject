@@ -1,7 +1,7 @@
 package fmg.common.notifier;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -14,7 +14,7 @@ import fmg.common.ui.UiInvoker;
 public final class NotifyPropertyChanged implements AutoCloseable//, INotifyPropertyChanged
 {
     private final INotifyPropertyChanged _owner;
-    private final PropertyChangeSupport _propertyChanges;
+    private final HashMap<Object /*hash?*/, PropertyChangeListener > _propertyChanges;
     private final boolean _deferredNotifications;
     private final Map<String /* propertyName */, Pair<Object /* old value */, Object /* new value */>> _deferrNotifications = new HashMap<>();
     private boolean _disposed = false;
@@ -22,12 +22,22 @@ public final class NotifyPropertyChanged implements AutoCloseable//, INotifyProp
     public NotifyPropertyChanged(INotifyPropertyChanged owner) { this(owner, false); }
     public NotifyPropertyChanged(INotifyPropertyChanged owner, boolean deferredNotifications) {
         _owner = owner;
-        _propertyChanges = new PropertyChangeSupport(_owner);
+        _propertyChanges = new HashMap<>();
         _deferredNotifications = deferredNotifications;
     }
 
-    public void addListener   (PropertyChangeListener listener) { _propertyChanges.   addPropertyChangeListener(listener); }
-    public void removeListener(PropertyChangeListener listener) { _propertyChanges.removePropertyChangeListener(listener); }
+    public void addListener(PropertyChangeListener listener) {
+        _propertyChanges.put(listener, listener);
+
+        int count = _propertyChanges.entrySet().size();
+        if (count > 3)
+            System.err.println("Suspiciously many subscribers! count=" + count);
+    }
+    public void removeListener(PropertyChangeListener listener) {
+        if (!_propertyChanges.containsKey(listener))
+            throw new IllegalArgumentException("NotifyPropertyChanged.removeListener: Illegal listener=" + listener);
+        _propertyChanges.remove(listener);
+    }
 
 
     /** Set the value to the specified property  and throw event to listeners */
@@ -83,7 +93,7 @@ public final class NotifyPropertyChanged implements AutoCloseable//, INotifyProp
 
         if (!_deferredNotifications) {
             //System.out.println("firePropertyChanged: " + propertyName + ": " + newValue);
-            _propertyChanges.firePropertyChange(propertyName, oldValue, newValue);
+            _propertyChanges.forEach((k,v) -> v.propertyChange(new PropertyChangeEvent(_owner, propertyName, oldValue, newValue)));
         } else {
             boolean shedule;
             {
@@ -125,7 +135,7 @@ public final class NotifyPropertyChanged implements AutoCloseable//, INotifyProp
                     if (event == null)
                         System.err.println("hmmm... invalid usage ;(");
                     else
-                        _propertyChanges.firePropertyChange(propertyName, event.first, event.second);
+                        _propertyChanges.forEach((k,v) -> v.propertyChange(new PropertyChangeEvent(_owner, propertyName, event.first, event.second)));
                 });
             }
         }
@@ -173,6 +183,9 @@ public final class NotifyPropertyChanged implements AutoCloseable//, INotifyProp
         _disposed = true;
         _cachedFields.clear();
         _deferrNotifications.clear();
+        if (!_propertyChanges.isEmpty())
+            throw new UnsupportedOperationException("Illegal usage: Not all listeners were unsubscribed: count=" + _propertyChanges.entrySet().size());
+        _propertyChanges.clear();
     }
 
 }

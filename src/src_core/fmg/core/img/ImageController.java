@@ -23,10 +23,11 @@ public abstract class ImageController<TImage,
     /** MVC: view */
     private final TImageView _imageView;
     protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this, true);
+    private final PropertyChangeListener onPropertyViewChangedListener = this::onPropertyViewChanged;
 
     protected ImageController(TImageView imageView) {
         _imageView = imageView;
-        _imageView.addListener(this::onPropertyViewChanged);
+        _imageView.addListener(onPropertyViewChangedListener);
     }
 
     protected TImageView  getView()  { return _imageView; }
@@ -64,7 +65,7 @@ public abstract class ImageController<TImage,
 
     @Override
     public void close() {
-        _imageView.removeListener(this::onPropertyViewChanged);
+        _imageView.removeListener(onPropertyViewChangedListener);
         _notifier.close();
     }
 

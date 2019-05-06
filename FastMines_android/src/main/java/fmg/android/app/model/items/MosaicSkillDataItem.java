@@ -3,6 +3,7 @@ package fmg.android.app.model.items;
 import android.databinding.Bindable;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.concurrent.ThreadLocalRandom;
 
 import fmg.android.app.BR;
@@ -17,6 +18,7 @@ public class MosaicSkillDataItem extends BaseDataItem<ESkillLevel, MosaicSkillMo
 
     public static final String PROPERTY_SKILL_LEVEL    = "SkillLevel";
     public static final String PROPERTY_PADDING_BURGER = "PaddingBurgerMenu";
+    private final PropertyChangeListener onBurgerMenuModelPropertyChangedListener = this::onBurgerMenuModelPropertyChanged;
 
     public MosaicSkillDataItem(ESkillLevel eSkill) {
         super(eSkill);
@@ -37,7 +39,7 @@ public class MosaicSkillDataItem extends BaseDataItem<ESkillLevel, MosaicSkillMo
             MosaicSkillModel m = tmp.getModel();
             m.setBorderWidth(2);
             m.setRotateAngle(ThreadLocalRandom.current().nextInt(90));
-            tmp.getBurgerMenuModel().addListener(this::onBurgerMenuModelPropertyChanged);
+            tmp.getBurgerMenuModel().addListener(onBurgerMenuModelPropertyChangedListener);
             setEntity(tmp);
         }
         return this.entity;
@@ -85,7 +87,7 @@ public class MosaicSkillDataItem extends BaseDataItem<ESkillLevel, MosaicSkillMo
 
     @Override
     public void close() {
-        getEntity().getBurgerMenuModel().removeListener(this::onBurgerMenuModelPropertyChanged);
+        getEntity().getBurgerMenuModel().removeListener(onBurgerMenuModelPropertyChangedListener);
         super.close();
     }
 

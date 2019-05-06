@@ -1,6 +1,7 @@
 package fmg.core.img;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,9 +35,10 @@ public class MosaicAnimatedModel<TImageInner>
     private final List<RotatedCellContext> _rotatedElements = new ArrayList<>();
     private final AnimatedInnerModel _innerModel = new AnimatedInnerModel();
     private boolean hackLock = false;
+    private final PropertyChangeListener onInnerModelPropertyChangedListener = this::onInnerModelPropertyChanged;
 
     public MosaicAnimatedModel() {
-        _innerModel.addListener(this::onInnerModelPropertyChanged);
+        _innerModel.addListener(onInnerModelPropertyChangedListener);
     }
 
     public static final String PROPERTY_ROTATE_ANGLE     = "RotateAngle";
@@ -343,7 +345,7 @@ public class MosaicAnimatedModel<TImageInner>
 
     @Override
     public void close() {
-        _innerModel.removeListener(this::onInnerModelPropertyChanged);
+        _innerModel.removeListener(onInnerModelPropertyChangedListener);
         super.close();
     }
 
