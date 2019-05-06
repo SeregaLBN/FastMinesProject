@@ -70,15 +70,6 @@ public class SelectMosaicFragment extends Fragment {
         binding.executePendingBindings();
 
         binding.rvMosaicItems.setLayoutManager(new GridLayoutManager(this.getContext(), 2));
-        mosaicListViewAdapter = new MosaicListViewAdapter(viewModel.getMosaicDS().getDataSource(), this::onMosaicItemClick, this::onMosaicItemLongClick);
-        binding.rvMosaicItems.setAdapter(mosaicListViewAdapter);
-        recyclerItemDoubleClickListener = new RecyclerItemDoubleClickListener(this.getContext(), this::onMosaicItemDoubleClick);
-        binding.rvMosaicItems.addOnItemTouchListener(recyclerItemDoubleClickListener);
-
-        binding.panelMosaicHeader.setOnClickListener(this::onMosaicHeaderClick);
-
-        binding.rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(this::onGlobalLayoutListener);
-        viewModel.getMosaicDS().addListener(this::onMosaicDsPropertyChanged);
 
         { // setup header
             Logo.BitmapController logoController = viewModel.getMosaicDS().getHeader().getEntity();
@@ -99,23 +90,14 @@ public class SelectMosaicFragment extends Fragment {
                 updateHeader(headerSizeHeight);
         }
 
-        binding.bttnBeginGame.setOnClickListener(this::onClickBttnBeginGame);
-
         return binding.getRoot();
     }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-//        viewModel = ViewModelProviders.of(this).get(MosaicsViewModel.class);
-        // TODO: Use the ViewModel
-    }
-
 
     @Override
     public void onResume() {
         super.onResume();
 
+        // subscribe all
         rotateBkColorOfGameBttn = true;
         {
             HSV hsv = new HSV(AnimatedImageModel.DefaultForegroundColor);
@@ -135,23 +117,57 @@ public class SelectMosaicFragment extends Fragment {
                 LoggerSimple.put("SelectMosaicFragment::onResume: AsyncRunner.Repeat: {0}", ex);
             }
         }
+
+        mosaicListViewAdapter = new MosaicListViewAdapter(viewModel.getMosaicDS().getDataSource());
+        mosaicListViewAdapter.setOnItemClick(this::onMosaicItemClick);
+        mosaicListViewAdapter.setOnItemLongClick(this::onMosaicItemLongClick);
+        binding.rvMosaicItems.setAdapter(mosaicListViewAdapter);
+
+        recyclerItemDoubleClickListener = new RecyclerItemDoubleClickListener(this.getContext());
+        recyclerItemDoubleClickListener.setOnItemDoubleClick(this::onMosaicItemDoubleClick);
+        binding.rvMosaicItems.addOnItemTouchListener(recyclerItemDoubleClickListener);
+
+        binding.panelMosaicHeader.setOnClickListener(this::onMosaicHeaderClick);
+        binding.bttnBeginGame.setOnClickListener(this::onClickBttnBeginGame);
+        viewModel.getMosaicDS().addListener(this::onMosaicDsPropertyChanged);
+
+        { // onFragmentSizeChanged(newSize);
+            subjSizeChanged = PublishSubject.create();
+            sizeChangedObservable = subjSizeChanged.debounce(200, TimeUnit.MILLISECONDS)
+                    .subscribe(ev -> {
+//                        LoggerSimple.put("  SelectMosaicFragment::onGlobalLayoutListener: Debounce: onNext: ev=" + ev);
+                        UiInvoker.DEFERRED.accept(() -> onFragmentSizeChanged(ev));
+                    }, ex -> {
+                        LoggerSimple.put("  SelectMosaicFragment: sizeChangedObservable: Debounce: onError: " + ex);
+                    });
+            binding.rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(this::onGlobalLayoutListener);
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
+
+        // unsubscribe all
         rotateBkColorOfGameBttn = false;
-    }
 
-    @Override
-    public void onDestroy() {
+        mosaicListViewAdapter.setOnItemClick(null);
+        mosaicListViewAdapter.setOnItemLongClick(null);
+        mosaicListViewAdapter = null;
+        binding.rvMosaicItems.setAdapter(null);
+
+        binding.rvMosaicItems.removeOnItemTouchListener(recyclerItemDoubleClickListener);
+        recyclerItemDoubleClickListener.setOnItemDoubleClick(null);
+        recyclerItemDoubleClickListener = null;
+
+        binding.panelMosaicHeader.setOnClickListener(null);
+        binding.bttnBeginGame.setOnClickListener(null);
         viewModel.getMosaicDS().removeListener(this::onMosaicDsPropertyChanged);
-        binding.rootLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this::onGlobalLayoutListener);
-        if (sizeChangedObservable != null)
-            sizeChangedObservable.dispose();
-        super.onDestroy();
-    }
 
+        binding.rootLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this::onGlobalLayoutListener);
+        sizeChangedObservable.dispose();
+        subjSizeChanged = null;
+    }
 
     private void onGlobalLayoutListener() {
         int w = binding.rootLayout.getWidth();
@@ -164,19 +180,6 @@ public class SelectMosaicFragment extends Fragment {
         if (cachedSize.equals(newSize))
             return;
         cachedSize = newSize;
-
-        //onFragmentSizeChanged(newSize);
-        if (sizeChangedObservable == null) {
-            subjSizeChanged = PublishSubject.create();
-            sizeChangedObservable = subjSizeChanged.debounce(200, TimeUnit.MILLISECONDS)
-                    .subscribe(ev -> {
-//                        LoggerSimple.put("  SelectMosaicFragment::onGlobalLayoutListener: Debounce: onNext: ev=" + ev);
-                        UiInvoker.DEFERRED.accept(() -> onFragmentSizeChanged(ev));
-                    }, ex -> {
-                        LoggerSimple.put("  SelectMosaicFragment::onGlobalLayoutListener: Debounce: onError: " + ex);
-                    });
-        }
-
         subjSizeChanged.onNext(newSize);
     }
 
@@ -251,13 +254,17 @@ public class SelectMosaicFragment extends Fragment {
     //                return;
 
                 // Updating old as well as new positions
-                mosaicListViewAdapter.notifyItemChanged(oldPos);
-                mosaicListViewAdapter.notifyItemChanged(newPos);
+                if (mosaicListViewAdapter != null) {
+                    mosaicListViewAdapter.notifyItemChanged(oldPos);
+                    mosaicListViewAdapter.notifyItemChanged(newPos);
+                }
             }
             break;
         case MosaicDataSource.PROPERTY_DATA_SOURCE:
-            mosaicListViewAdapter.updateItems(viewModel.getMosaicDS().getDataSource());
-//            mosaicListViewAdapter.notifyDataSetChanged();
+            if (mosaicListViewAdapter != null) {
+                mosaicListViewAdapter.updateItems(viewModel.getMosaicDS().getDataSource());
+//                mosaicListViewAdapter.notifyDataSetChanged();
+            }
             break;
         }
     }

@@ -11,16 +11,19 @@ import java.util.function.BiConsumer;
 public class RecyclerItemDoubleClickListener implements RecyclerView.OnItemTouchListener {
 
     private final GestureDetector gesturator;
-    private final BiConsumer<View, Integer> onItemDoubleClick;
+    private BiConsumer<View, Integer> onItemDoubleClick;
 
-    public RecyclerItemDoubleClickListener(Context context, BiConsumer<View, Integer> onItemDoubleClick) {
-        this.onItemDoubleClick = onItemDoubleClick;
+    public RecyclerItemDoubleClickListener(Context context) {
         gesturator = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onDoubleTap(MotionEvent ev) {
                 return true;
             }
         });
+    }
+
+    public void setOnItemDoubleClick(BiConsumer<View, Integer> onItemDoubleClick) {
+        this.onItemDoubleClick = onItemDoubleClick;
     }
 
     @Override

@@ -15,12 +15,18 @@ import fmg.android.app.model.items.MosaicDataItem;
 public class MosaicListViewAdapter extends RecyclerView.Adapter<MosaicListViewAdapter.ViewHolder> {
 
     private final List<MosaicDataItem> items;
-    private final BiConsumer<View, Integer> onItemClick;
-    private final BiConsumer<View, Integer> onItemLongClick;
+    private BiConsumer<View, Integer> onItemClick;
+    private BiConsumer<View, Integer> onItemLongClick;
 
-    public MosaicListViewAdapter(List<MosaicDataItem> items, BiConsumer<View, Integer> onItemClick, BiConsumer<View, Integer> onItemLongClick) {
+    public MosaicListViewAdapter(List<MosaicDataItem> items) {
         this.items = new ArrayList<>(items); // copy!
+    }
+
+    public void setOnItemClick(BiConsumer<View, Integer> onItemClick) {
         this.onItemClick = onItemClick;
+    }
+
+    public void setOnItemLongClick(BiConsumer<View, Integer> onItemLongClick) {
         this.onItemLongClick = onItemLongClick;
     }
 
@@ -50,14 +56,15 @@ public class MosaicListViewAdapter extends RecyclerView.Adapter<MosaicListViewAd
             root.setOnClickListener(view -> {
                 //LoggerSimple.put("  MosaicListViewAdapter::OnClickListener: layoutPos={0}, adapterPos={1}", holder.getLayoutPosition(), holder.getAdapterPosition());
                 int pos = holder.getLayoutPosition(); // holder.getAdapterPosition();
-                onItemClick.accept(view, pos);
+                if (onItemClick != null)
+                    onItemClick.accept(view, pos);
             });
-            if (onItemLongClick != null)
-                root.setOnLongClickListener(view -> {
-                    int pos = holder.getLayoutPosition();
+            root.setOnLongClickListener(view -> {
+                int pos = holder.getLayoutPosition();
+                if (onItemLongClick != null)
                     onItemLongClick.accept(view, pos);
-                    return false;
-                });
+                return false;
+            });
         }
 
 //        Color clr = items.get(position).getEntity().getModel().getBackgroundColor();

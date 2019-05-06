@@ -16,10 +16,13 @@ import fmg.common.Color;
 public class MosaicSkillListViewAdapter extends RecyclerView.Adapter<MosaicSkillListViewAdapter.ViewHolder> {
 
     private final List<MosaicSkillDataItem> items;
-    private final BiConsumer<View, Integer> onItemClick;
+    private BiConsumer<View, Integer> onItemClick;
 
-    public MosaicSkillListViewAdapter(List<MosaicSkillDataItem> items, BiConsumer<View, Integer> onItemClick) {
+    public MosaicSkillListViewAdapter(List<MosaicSkillDataItem> items) {
         this.items = items;
+    }
+
+    public void setOnItemClick(BiConsumer<View, Integer> onItemClick) {
         this.onItemClick = onItemClick;
     }
 
@@ -42,7 +45,8 @@ public class MosaicSkillListViewAdapter extends RecyclerView.Adapter<MosaicSkill
             holder.binding.getRoot().setOnClickListener(view -> {
                 //LoggerSimple.put("  MosaicSkillListViewAdapter::onBindViewHolder:OnClickListener: layoutPos={0}, adapterPos={1}", holder.getLayoutPosition(), holder.getAdapterPosition());
                 int pos = holder.getLayoutPosition(); // holder.getAdapterPosition();
-                onItemClick.accept(view, pos);
+                if (onItemClick != null)
+                    onItemClick.accept(view, pos);
             });
 
         Color clr = items.get(position).getEntity().getModel().getBackgroundColor().brighter();
