@@ -28,6 +28,7 @@ import fmg.common.Color;
 import fmg.common.LoggerSimple;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
+import fmg.common.ui.UiInvoker;
 import fmg.core.mosaic.MosaicInitData;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
@@ -43,13 +44,31 @@ public class MainActivity extends AppCompatActivity {
     private MosaicGroupListViewAdapter mosaicGroupListViewAdapter;
     private MosaicSkillListViewAdapter mosaicSkillListViewAdapter;
     private SizeDouble cachedSizeActivity = new SizeDouble(-1, -1);
+    private EActivityStatus activityStatus = EActivityStatus.eLaunched;
 
     public MosaicInitData getInitData() { return MosaicInitDataExt.getSharedData(); }
     //public void setInitData(MosaicInitData initData) { MosaicInitDataExt.getSharedData().copyFrom(initData); }
 
+    enum EActivityStatus {
+        eLaunched,
+        eCreated,
+        eStarted,
+        eResumed,
+        eRunning,
+        ePaused,
+        eStopped,
+        eDestroyed,
+        eRestarted;
+
+        boolean isRunning() { return this == eResumed || this == eRunning; }
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LoggerSimple.put("MainActivity.onCreate: this.hash={0}", this.hashCode());
         super.onCreate(savedInstanceState);
+        activityStatus = EActivityStatus.eCreated;
 
         binding = DataBindingUtil.setContentView(this, R.layout.main_activity);
         viewModel = ViewModelProviders.of(this).get(MainMenuViewModel.class);
@@ -87,14 +106,37 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        LoggerSimple.put("MainActivity.onStart: this.hash={0}", this.hashCode());
+        super.onStart();
+        activityStatus = EActivityStatus.eStarted;
+    }
+
+    @Override
+    protected void onRestart() {
+        LoggerSimple.put("MainActivity.onRestart: this.hash={0}", this.hashCode());
+        super.onRestart();
+        activityStatus = EActivityStatus.eRestarted;
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
+        LoggerSimple.put("MainActivity.onSaveInstanceState: this.hash={0}", this.hashCode());
         MosaicInitDataExt.save(savedInstanceState, getInitData());
         super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
     public void onResume() {
+        LoggerSimple.put("MainActivity.onResume: this.hash={0}", this.hashCode());
         super.onResume();
+        activityStatus = EActivityStatus.eResumed;
+        UiInvoker.DEFERRED.accept(() -> {
+            if (activityStatus != EActivityStatus.eResumed)
+                return;
+            activityStatus = EActivityStatus.eRunning;
+            LoggerSimple.put("MainActivity.onResume: this.hash={0}: activityStatus={1}", this.hashCode(), activityStatus);
+        });
 
         // subscribe all
         mosaicGroupListViewAdapter = new MosaicGroupListViewAdapter(viewModel.getMosaicGroupDS().getDataSource());
@@ -115,7 +157,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onPause() {
+        LoggerSimple.put("MainActivity.onPause: this.hash={0}", this.hashCode());
         super.onPause();
+        activityStatus = EActivityStatus.ePaused;
 
         // unsubscribe all
         viewModel.getMosaicGroupDS().removeListener(this::onMosaicGroupDsPropertyChanged);
@@ -134,7 +178,24 @@ public class MainActivity extends AppCompatActivity {
         mosaicSkillListViewAdapter = null;
     }
 
+    @Override
+    protected void onStop() {
+        LoggerSimple.put("MainActivity.onStop: this.hash={0}", this.hashCode());
+        super.onStop();
+        activityStatus = EActivityStatus.eStopped;
+    }
+
+    @Override
+    protected void onDestroy() {
+        LoggerSimple.put("MainActivity.onDestroy: this.hash={0}", this.hashCode());
+        super.onDestroy();
+        activityStatus = EActivityStatus.eDestroyed;
+    }
+
     void onMenuMosaicGroupHeaderClick(View v) {
+        if (isFailedStatus("onMenuMosaicGroupHeaderClick"))
+            return;
+
         SmoothHelper.runColorSmoothTransition(viewModel.getMosaicGroupDS().getHeader().getEntity().getModel());
 
         if (binding.rvMenuMosaicGroupItems.getVisibility() == View.GONE) {
@@ -151,6 +212,9 @@ public class MainActivity extends AppCompatActivity {
     double getLvSkillHeight() { return ESkillLevel .values().length * (viewModel.getMosaicSkillDS().getImageSize().height + Cast.dpToPx(2) /* padding */); }
 
     void onMenuMosaicSkillHeaderClick(View v) {
+        if (isFailedStatus("onMenuMosaicSkillHeaderClick"))
+            return;
+
         SmoothHelper.runColorSmoothTransition(viewModel.getMosaicSkillDS().getHeader().getEntity().getModel());
 
         Supplier<Boolean> isVisibleScrollerFunc = () -> {
@@ -186,14 +250,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void onMenuMosaicGroupItemClick(View v, int position) {
+        if (isFailedStatus("onMenuMosaicGroupItemClick"))
+            return;
+
         viewModel.getMosaicGroupDS().setCurrentItemPos(position);
     }
 
     void onMenuMosaicSkillItemClick(View v, int position) {
+        if (isFailedStatus("onMenuMosaicSkillItemClick"))
+            return;
+
         viewModel.getMosaicSkillDS().setCurrentItemPos(position);
     }
 
     private void showSelectMosaicFragment() {
+        LoggerSimple.put("MainActivity.showSelectMosaicFragment: this.hash={0}", this.hashCode());
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.rightFrame);
         if (fragment instanceof SelectMosaicFragment) {
             SelectMosaicFragment smf = (SelectMosaicFragment)fragment;
@@ -238,16 +309,19 @@ public class MainActivity extends AppCompatActivity {
         if (!senderIsMosaicGroup && (currentSkillItem.getSkillLevel() == ESkillLevel.eCustom)) {
             showCustomSkillFragment();
         } else {
-            //LoggerSimple.put("> MainActivity::onMenuCurrentItemChanged: " + currentGroupItem.getMosaicGroup());
+            //LoggerSimple.put("> MainActivity.onMenuCurrentItemChanged: " + currentGroupItem.getMosaicGroup());
             showSelectMosaicFragment();
         }
     }
 
     private void onMosaicGroupDsPropertyChanged(PropertyChangeEvent ev) {
-        //LoggerSimple.put("> MainActivity::onMosaicGroupDsPropertyChanged: ev.Name=" + ev.getPropertyName());
+        if (isFailedStatus("onMosaicGroupDsPropertyChanged"))
+            return;
+
+        //LoggerSimple.put("> MainActivity.onMosaicGroupDsPropertyChanged: ev.Name=" + ev.getPropertyName());
         switch (ev.getPropertyName()) {
         case MosaicGroupDataSource.PROPERTY_CURRENT_ITEM_POS:
-//            LoggerSimple.put("  MainActivity::onMosaicGroupDsPropertyChanged: ev=" + ev);
+//            LoggerSimple.put("  MainActivity.onMosaicGroupDsPropertyChanged: ev=" + ev);
             int oldPos = (Integer)ev.getOldValue();
             int newPos = (Integer)ev.getNewValue();
 
@@ -270,10 +344,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onMosaicSkillDsPropertyChanged(PropertyChangeEvent ev) {
-        //LoggerSimple.put("> MainActivity::onMosaicSkillDsPropertyChanged: ev.Name=" + ev.getPropertyName());
+        if (isFailedStatus("onMosaicSkillDsPropertyChanged"))
+            return;
+
+        //LoggerSimple.put("> MainActivity.onMosaicSkillDsPropertyChanged: ev.Name=" + ev.getPropertyName());
         switch (ev.getPropertyName()) {
         case MosaicSkillDataSource.PROPERTY_CURRENT_ITEM_POS:
-            //LoggerSimple.put("  MainActivity::onMosaicSkillDsPropertyChanged: ev=" + ev);
+            //LoggerSimple.put("  MainActivity.onMosaicSkillDsPropertyChanged: ev=" + ev);
             int oldPos = (Integer)ev.getOldValue();
             int newPos = (Integer)ev.getNewValue();
 
@@ -305,7 +382,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onActivitySizeChanged(SizeDouble newSize) {
-//        LoggerSimple.put("> MainActivity::onActivitySizeChanged: newSize={0}", newSize);
+//        LoggerSimple.put("> MainActivity.onActivitySizeChanged: newSize={0}", newSize);
         final float minSize       = Cast.dpToPx(45);
         final float maxSize       = Cast.dpToPx(80);
         final float topElemHeight = Cast.dpToPx(40);
@@ -339,7 +416,7 @@ public class MainActivity extends AppCompatActivity {
             smf.updateHeader(sizeHeader.height + Cast.dpToPx((float)viewModel.getMenuGroupPaddingInDip().dip));
         }
 
-//        LoggerSimple.put("< MainActivity::onActivitySizeChanged: " +
+//        LoggerSimple.put("< MainActivity.onActivitySizeChanged: " +
 //                "sizeItem={0}, " +
 //                "sizeHeader={1}/{4}, " +
 //                "padHeader={2}, " +
@@ -353,4 +430,11 @@ public class MainActivity extends AppCompatActivity {
         return Color.LightSeaGreen().updateA(140);
     }
 
+    private boolean isFailedStatus(String methodName) {
+        if (activityStatus.isRunning())
+            return false;
+
+        LoggerSimple.put("MainActivity.{0}: this.hash={1}; failed activityStatus={2}", methodName, this.hashCode(), activityStatus);
+        return true;
+    }
 }
