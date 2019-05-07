@@ -132,13 +132,22 @@ public class MosaicHelperTest {
             Matrisize mSize = new Matrisize(5 + r.nextInt(30), 5 + r.nextInt(30));
             double area = MosaicHelper.findAreaBySize(mosaicType, mSize, sizeClientIn, sizeClientOut);
 
-            // Assert.assertEquals(100, area);
+            //Assert.assertEquals(100, area);
             //Assert.assertTrue(MosaicHelper.AreaPrecision >= (??? - area));
             Assert.assertTrue(area > 0);
 
             int magicNumber = 8;
-            Assert.assertTrue((MosaicHelper.AREA_PRECISION >= (sizeClientIn.width  - sizeClientOut.width )/magicNumber) ||
-                              (MosaicHelper.AREA_PRECISION >= (sizeClientIn.height - sizeClientOut.height)/magicNumber));
+            try {
+                Assert.assertTrue((MosaicHelper.AREA_PRECISION >= (sizeClientIn.width  - sizeClientOut.width )/magicNumber) ||
+                                  (MosaicHelper.AREA_PRECISION >= (sizeClientIn.height - sizeClientOut.height)/magicNumber));
+            } catch (Throwable ex) {
+                System.err.println("Failed for sizeClientIn=" + sizeClientIn
+                                   + "; sizeClientOut=" + sizeClientOut
+                                   + "; mosaicType=" + mosaicType
+                                   + "; mSize=" + mSize
+                                   + "; area=" + area);
+                throw ex;
+            }
         }
     }
 

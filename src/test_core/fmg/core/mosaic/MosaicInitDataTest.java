@@ -2,9 +2,9 @@ package fmg.core.mosaic;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.*;
-
 import java.util.List;
+
+import org.junit.*;
 
 import fmg.common.LoggerSimple;
 import fmg.common.notifier.PropertyChangeExecutor;
@@ -64,34 +64,31 @@ public class MosaicInitDataTest {
     @Test
     public void checkIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest() {
         LoggerSimple.put("> MosaicInitDataTest::checkIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest");
-        try (MosaicInitData initData = createMosaicInitData()) {
-            new PropertyChangeExecutor<>(initData).run(100, 1000,
-                () -> {
-                    initData.setMosaicType(EMosaic.eMosaicRhombus1);
-                }, modifiedProperties -> {
-                    Assert.assertTrue  (   modifiedProperties.containsKey(MosaicInitData.PROPERTY_MOSAIC_TYPE));
-                    Assert.assertEquals(1, modifiedProperties.get(        MosaicInitData.PROPERTY_MOSAIC_TYPE).first.intValue());
-                    Assert.assertTrue  (   modifiedProperties.containsKey(MosaicInitData.PROPERTY_MINES_COUNT));
-                    Assert.assertEquals(1, modifiedProperties.get(        MosaicInitData.PROPERTY_MINES_COUNT).first.intValue());
-                    Assert.assertEquals(2, modifiedProperties.size());
-                    Assert.assertEquals(EMosaic.eMosaicRhombus1, initData.getMosaicType());
-                    Assert.assertEquals(initData.getSkillLevel().getNumberMines(EMosaic.eMosaicRhombus1), initData.getMinesCount());
-                });
-        }
+        new PropertyChangeExecutor<>(() -> createMosaicInitData()).run(100, 1000,
+            initData -> {
+                initData.setMosaicType(EMosaic.eMosaicRhombus1);
+            }, (initData, modifiedProperties) -> {
+                Assert.assertTrue  (   modifiedProperties.containsKey(MosaicInitData.PROPERTY_MOSAIC_TYPE));
+                Assert.assertEquals(1, modifiedProperties.get(        MosaicInitData.PROPERTY_MOSAIC_TYPE).first.intValue());
+                Assert.assertTrue  (   modifiedProperties.containsKey(MosaicInitData.PROPERTY_MINES_COUNT));
+                Assert.assertEquals(1, modifiedProperties.get(        MosaicInitData.PROPERTY_MINES_COUNT).first.intValue());
+                Assert.assertEquals(2, modifiedProperties.size());
+                Assert.assertEquals(EMosaic.eMosaicRhombus1, initData.getMosaicType());
+                Assert.assertEquals(initData.getSkillLevel().getNumberMines(EMosaic.eMosaicRhombus1), initData.getMinesCount());
+            });
     }
 
     @Test
     public void checkNoRepeatNotificationsTest() {
         LoggerSimple.put("> MosaicInitDataTest::checkNoRepeatNotificationsTest");
-        try (MosaicInitData initData = createMosaicInitData()) {
-            new PropertyChangeExecutor<>(initData).run(100, 1000,
-                () -> {
+            new PropertyChangeExecutor<>(() -> createMosaicInitData()).run(100, 1000,
+                initData -> {
                     LoggerSimple.put("    initData.minesCount={0}", initData.getMinesCount());
                     initData.setMosaicType(EMosaic.eMosaicRhombus1);
                     LoggerSimple.put("    initData.minesCount={0}", initData.getMinesCount());
                     initData.setMosaicType(EMosaic.eMosaicHexagon1);
                     LoggerSimple.put("    initData.minesCount={0}", initData.getMinesCount());
-                }, modifiedProperties -> {
+                }, (initData, modifiedProperties) -> {
                     Assert.assertTrue  (   modifiedProperties.containsKey(MosaicInitData.PROPERTY_MOSAIC_TYPE));
                     Assert.assertEquals(1, modifiedProperties.get(        MosaicInitData.PROPERTY_MOSAIC_TYPE).first.intValue());
                     Assert.assertTrue  (   modifiedProperties.containsKey(MosaicInitData.PROPERTY_MOSAIC_GROUP));
@@ -101,33 +98,28 @@ public class MosaicInitDataTest {
                     Assert.assertEquals(EMosaic.eMosaicHexagon1, initData.getMosaicType());
                     Assert.assertEquals(initData.getSkillLevel().getNumberMines(EMosaic.eMosaicHexagon1), initData.getMinesCount());
                 });
-        }
     }
 
     @Test
     public void checkChangedMosaicGroupTest() {
         LoggerSimple.put("> MosaicInitDataTest::checkChangedMosaicGroupTest");
-        try (MosaicInitData initData = createMosaicInitData()) {
-            new PropertyChangeExecutor<>(initData).run(100, 1000,
-                () -> {
-                    initData.setMosaicType(EMosaic.eMosaicHexagon1);
-                }, modifiedProperties -> {
-                    Assert.assertTrue(modifiedProperties.containsKey(MosaicInitData.PROPERTY_MOSAIC_GROUP));
-                });
-        }
+        new PropertyChangeExecutor<>(() -> createMosaicInitData()).run(100, 1000,
+            initData -> {
+                initData.setMosaicType(EMosaic.eMosaicHexagon1);
+            }, (initData, modifiedProperties) -> {
+                Assert.assertTrue(modifiedProperties.containsKey(MosaicInitData.PROPERTY_MOSAIC_GROUP));
+            });
     }
 
     @Test
     public void checkNoChangedMosaicGroupTest() {
         LoggerSimple.put("> MosaicInitDataTest::checkNoChangedMosaicGroupTest");
-        try (MosaicInitData initData = createMosaicInitData()) {
-            new PropertyChangeExecutor<>(initData).run(100, 1000,
-                () -> {
-                    initData.setMosaicType(EMosaic.eMosaicRhombus1);
-                }, modifiedProperties -> {
-                    Assert.assertFalse(modifiedProperties.containsKey(MosaicInitData.PROPERTY_MOSAIC_GROUP));
-                });
-        }
+        new PropertyChangeExecutor<>(() -> createMosaicInitData()).run(100, 1000,
+            initData -> {
+                initData.setMosaicType(EMosaic.eMosaicRhombus1);
+            }, (initData, modifiedProperties) -> {
+                Assert.assertFalse(modifiedProperties.containsKey(MosaicInitData.PROPERTY_MOSAIC_GROUP));
+            });
     }
 
     @Test

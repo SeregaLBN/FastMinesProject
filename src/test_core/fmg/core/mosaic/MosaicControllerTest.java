@@ -49,15 +49,13 @@ public class MosaicControllerTest {
     public void propertyChangedTest() {
         LoggerSimple.put("> MosaicControllerTest::propertyChangedTest");
 
-        try (MosaicTestController ctrlr = new MosaicTestController()) {
-            new PropertyChangeExecutor<>(ctrlr).run(100, 1000,
-               () -> {
-                   MosaicModelTest.changeModel(ctrlr.getModel());
-               }, modifiedProperties -> {
-                   Assert.assertTrue  (                    modifiedProperties.containsKey(IImageController.PROPERTY_IMAGE));
-                   Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        IImageController.PROPERTY_IMAGE).first);
-               });
-        }
+        new PropertyChangeExecutor<>(() -> new MosaicTestController()).run(100, 1000,
+           ctrlr -> {
+               MosaicModelTest.changeModel(ctrlr.getModel());
+           }, (ctrlr, modifiedProperties) -> {
+               Assert.assertTrue  (                    modifiedProperties.containsKey(IImageController.PROPERTY_IMAGE));
+               Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        IImageController.PROPERTY_IMAGE).first);
+           });
     }
 
     @Test

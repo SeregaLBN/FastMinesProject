@@ -75,22 +75,20 @@ public class NotifyPropertyChangedTest {
         LoggerSimple.put("> NotifyPropertyChangedTest::notifyPropertyChangedAsyncTest");
 
         final int initialValue = 1;
-        try (SimpleProperty data = new SimpleProperty(initialValue, true)) {
-            final int countFiredEvents = 3 + ThreadLocalRandom.current().nextInt(10);
-            final String prefix = " Value ";
-            new PropertyChangeExecutor<>(data).run(200, 1000,
-                () -> {
-                    for (int i = 0; i < countFiredEvents; ++i)
-                        data.setProperty(prefix + i);
-                }, modifiedProperties -> {
-                    int countOfProperties = modifiedProperties.size();
-                    Assert.assertEquals(1, countOfProperties);
-                    int countReceivedEvents= modifiedProperties.values().iterator().next().first;
-                    Assert.assertEquals(1, countReceivedEvents);
-                    Object lastFiredValue = modifiedProperties.values().iterator().next().second;
-                    Assert.assertEquals(prefix + (countFiredEvents-1), lastFiredValue);
-                });
-        }
+        final int countFiredEvents = 3 + ThreadLocalRandom.current().nextInt(10);
+        final String prefix = " Value ";
+        new PropertyChangeExecutor<>(() -> new SimpleProperty(initialValue, true)).run(200, 1000,
+            data -> {
+                for (int i = 0; i < countFiredEvents; ++i)
+                    data.setProperty(prefix + i);
+            }, (data, modifiedProperties) -> {
+                int countOfProperties = modifiedProperties.size();
+                Assert.assertEquals(1, countOfProperties);
+                int countReceivedEvents= modifiedProperties.values().iterator().next().first;
+                Assert.assertEquals(1, countReceivedEvents);
+                Object lastFiredValue = modifiedProperties.values().iterator().next().second;
+                Assert.assertEquals(prefix + (countFiredEvents-1), lastFiredValue);
+            });
     }
 
     @Test
@@ -98,18 +96,16 @@ public class NotifyPropertyChangedTest {
         LoggerSimple.put("> NotifyPropertyChangedTest::checkForNoEventTest");
 
         final int initialValue = 1;
-        try (SimpleProperty data = new SimpleProperty(initialValue, true)) {
-            new PropertyChangeExecutor<>(data).run(100, 1000,
-                () -> {
-                    LoggerSimple.put("    data.Property={0}", data.getProperty());
-                    data.setProperty(initialValue + 123);
-                    LoggerSimple.put("    data.Property={0}", data.getProperty());
-                    data.setProperty(initialValue); // restore original value
-                    LoggerSimple.put("    data.Property={0}", data.getProperty());
-                }, modifiedProperties -> {
-                    Assert.assertEquals(0, modifiedProperties.size());
-                });
-        }
+        new PropertyChangeExecutor<>(() -> new SimpleProperty(initialValue, true)).run(100, 1000,
+            data -> {
+                LoggerSimple.put("    data.Property={0}", data.getProperty());
+                data.setProperty(initialValue + 123);
+                LoggerSimple.put("    data.Property={0}", data.getProperty());
+                data.setProperty(initialValue); // restore original value
+                LoggerSimple.put("    data.Property={0}", data.getProperty());
+            }, (data, modifiedProperties) -> {
+                Assert.assertEquals(0, modifiedProperties.size());
+            });
     }
 
 }
