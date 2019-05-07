@@ -43,59 +43,56 @@ namespace fmg.core.mosaic {
         public virtual async Task MosaicGameModelPropertyChangedTest() {
             LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(MosaicGameModelPropertyChangedTest));
 
-            using (var model = new MosaicGameModel()) {
-                await new PropertyChangeExecutor<MosaicGameModel>(model).Run(100, 1000,
-                    () => {
-                        model.SizeField = new Matrisize(15, 10);
-                    }, modifiedProperties => {
-                        AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.SizeField)));
-                        AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.SizeField)]);
-                        AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Matrix)));
-                        AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.Matrix)]);
-                        AssertEqual(2, modifiedProperties.Count);
-                    });
+            MosaicGameModel m = null;
+            await new PropertyChangeExecutor<MosaicGameModel>(() => m = new MosaicGameModel(), false).Run(100, 1000,
+                model => {
+                    model.SizeField = new Matrisize(15, 10);
+                }, (model, modifiedProperties) => {
+                    AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.SizeField)));
+                    AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.SizeField)]);
+                    AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Matrix)));
+                    AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.Matrix)]);
+                    AssertEqual(2, modifiedProperties.Count);
+                });
 
-                await new PropertyChangeExecutor<MosaicGameModel>(model).Run(100, 1000,
-                    () => {
-                        model.Area = 12345;
-                    }, modifiedProperties => {
-                        AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Area)));
-                        AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.Area)]);
-                        AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.CellAttr)));
-                        AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.CellAttr)]);
-                        AssertEqual(2, modifiedProperties.Count);
-                    });
-            }
+            await new PropertyChangeExecutor<MosaicGameModel>(() => m).Run(100, 1000,
+                model => {
+                    model.Area = 12345;
+                }, (model, modifiedProperties) => {
+                    AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Area)));
+                    AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.Area)]);
+                    AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.CellAttr)));
+                    AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.CellAttr)]);
+                    AssertEqual(2, modifiedProperties.Count);
+                });
         }
 
         public virtual async Task MosaicDrawModelPropertyChangedTest() {
             LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(MosaicDrawModelPropertyChangedTest));
 
-            using (var model = new MosaicTestModel()) {
-                await new PropertyChangeExecutor<MosaicGameModel>(model).Run(100, 1000,
-                    () => {
-                        ChangeModel(model);
-                    }, modifiedProperties => {
-                        AssertTrue (   modifiedProperties.ContainsKey(nameof(IImageModel.Size)));
-                        AssertEqual(1, modifiedProperties[            nameof(IImageModel.Size)]);
-                        AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Area)));
-                        AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.Area)]);
-                        AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.CellAttr)));
-                        AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.CellAttr)]);
-                        AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.MosaicType)));
-                        AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.MosaicType)]);
-                        AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Matrix)));
-                        AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.Matrix)]);
-                        AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicTestModel.BackgroundColor)));
-                        AssertEqual(1, modifiedProperties[            nameof(MosaicTestModel.BackgroundColor)]);
-                        AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicTestModel.BkFill)));
-                        AssertEqual(1, modifiedProperties[            nameof(MosaicTestModel.BkFill)]);
-                        AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicTestModel.ColorText)));
-                        AssertEqual(1, modifiedProperties[            nameof(MosaicTestModel.ColorText)]);
-                        AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicTestModel.PenBorder)));
-                        AssertEqual(1, modifiedProperties[            nameof(MosaicTestModel.PenBorder)]);
-                    });
-            }
+            await new PropertyChangeExecutor<MosaicTestModel>(() => new MosaicTestModel()).Run(100, 1000,
+                model => {
+                    ChangeModel(model);
+                }, (model, modifiedProperties) => {
+                    AssertTrue (   modifiedProperties.ContainsKey(nameof(IImageModel.Size)));
+                    AssertEqual(1, modifiedProperties[            nameof(IImageModel.Size)]);
+                    AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Area)));
+                    AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.Area)]);
+                    AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.CellAttr)));
+                    AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.CellAttr)]);
+                    AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.MosaicType)));
+                    AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.MosaicType)]);
+                    AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Matrix)));
+                    AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.Matrix)]);
+                    AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicTestModel.BackgroundColor)));
+                    AssertEqual(1, modifiedProperties[            nameof(MosaicTestModel.BackgroundColor)]);
+                    AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicTestModel.BkFill)));
+                    AssertEqual(1, modifiedProperties[            nameof(MosaicTestModel.BkFill)]);
+                    AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicTestModel.ColorText)));
+                    AssertEqual(1, modifiedProperties[            nameof(MosaicTestModel.ColorText)]);
+                    AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicTestModel.PenBorder)));
+                    AssertEqual(1, modifiedProperties[            nameof(MosaicTestModel.PenBorder)]);
+                });
         }
 
         public virtual void MosaicDrawModelAsIsTest() {
@@ -630,29 +627,28 @@ namespace fmg.core.mosaic {
         public virtual async Task MosaicNoChangedTest() {
             LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(MosaicNoChangedTest));
 
-            using (var model = new MosaicTestModel()) {
-                // step 1: init
-                await new PropertyChangeExecutor<MosaicGameModel>(model).Run(100, 1000,
-                    () => {
-                        var size = model.Size; // implicit call setter Size
-                        AssertNotNull(size);
-                    }, modifiedProperties => {
-                        AssertTrue (   modifiedProperties.ContainsKey(nameof(model.Size)));
-                        AssertEqual(1, modifiedProperties[            nameof(model.Size)]);
-                        AssertLessOrEqual(1, modifiedProperties.Count);
-                    });
+            MosaicTestModel m = null;
+            // step 1: init
+            await new PropertyChangeExecutor<MosaicTestModel>(() => m = new MosaicTestModel(), false).Run(100, 1000,
+                model => {
+                    var size = model.Size; // implicit call setter Size
+                    AssertNotNull(size);
+                }, (model, modifiedProperties) => {
+                    AssertTrue (   modifiedProperties.ContainsKey(nameof(model.Size)));
+                    AssertEqual(1, modifiedProperties[            nameof(model.Size)]);
+                    AssertLessOrEqual(1, modifiedProperties.Count);
+                });
 
-                // step 2: check no changes
-                await new PropertyChangeExecutor<MosaicGameModel>(model).Run(100, 1000,
-                    () => {
-                        model.Size = model.Size;
-                        model.Area = model.Area;
-                        model.SizeField = model.SizeField;
-                        model.Padding = model.Padding;
-                    }, modifiedProperties => {
-                        AssertFalse(modifiedProperties.Any());
-                    });
-            }
+            // step 2: check no changes
+            await new PropertyChangeExecutor<MosaicTestModel>(() => m).Run(100, 1000,
+                model => {
+                    model.Size = model.Size;
+                    model.Area = model.Area;
+                    model.SizeField = model.SizeField;
+                    model.Padding = model.Padding;
+                }, (model, modifiedProperties) => {
+                    AssertFalse(modifiedProperties.Any());
+                });
         }
 
     }

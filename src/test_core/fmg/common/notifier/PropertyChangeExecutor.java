@@ -27,7 +27,7 @@ public class PropertyChangeExecutor<T extends INotifyPropertyChanged & AutoClose
     private final Supplier<T> dataCreator;
     private final Map<String /* property name */, Pair<Integer /* count of modifies */, Object /* last modified value */>> modifiedProperties = new HashMap<>();
 
-    /** @param dataCreator called from UI thread
+    /** @param dataCreator data factory (called from UI thread)
      *  @param needClose need call AutoCloseable.close() for dataCreator result */
     public PropertyChangeExecutor(Supplier<T> dataCreator, boolean needClose) {
         if (dataCreator == null)

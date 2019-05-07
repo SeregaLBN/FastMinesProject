@@ -62,44 +62,40 @@ namespace fmg.common.notifier {
             LoggerSimple.Put(">" + nameof(NotifyPropertyChangedTest) + "::" + nameof(NotifyPropertyChangedAsyncTest));
 
             const int initialValue = 1;
-            using (var data = new SimpleProperty(initialValue, true)) {
-                int countFiredEvents = 3 + ThreadLocalRandom.Current.Next(10);
-                string prefix = " Value ";
-                await new PropertyChangeExecutor<SimpleProperty>(data).Run(
-                    200,
-                    1000,
-                    () => {
-                        for (int i = 0; i < countFiredEvents; ++i)
-                            data.Property = prefix + i;
-                    }, modifiedProperties => {
-                        int countOfProperties = modifiedProperties.Count;
-                        AssertEqual(1, countOfProperties);
-                        int countReceivedEvents = modifiedProperties.Values.ToList()[0];
-                        AssertEqual(1, countReceivedEvents);
-                        object lastFiredValue = data.Property;
-                        AssertEqual(prefix + (countFiredEvents - 1), lastFiredValue);
-                    });
-            }
+            int countFiredEvents = 3 + ThreadLocalRandom.Current.Next(10);
+            string prefix = " Value ";
+            await new PropertyChangeExecutor<SimpleProperty>(() => new SimpleProperty(initialValue, true)).Run(
+                200,
+                1000,
+                data => {
+                    for (int i = 0; i < countFiredEvents; ++i)
+                        data.Property = prefix + i;
+                }, (data, modifiedProperties) => {
+                    int countOfProperties = modifiedProperties.Count;
+                    AssertEqual(1, countOfProperties);
+                    int countReceivedEvents = modifiedProperties.Values.ToList()[0];
+                    AssertEqual(1, countReceivedEvents);
+                    object lastFiredValue = data.Property;
+                    AssertEqual(prefix + (countFiredEvents - 1), lastFiredValue);
+                });
         }
 
         public virtual async Task CheckForNoEventTest() {
             LoggerSimple.Put(">" + nameof(NotifyPropertyChangedTest) + "::" + nameof(CheckForNoEventTest));
 
             const int initialValue = 1;
-            using (var data = new SimpleProperty(initialValue, true)) {
-                await new PropertyChangeExecutor<SimpleProperty>(data).Run(
-                    100,
-                    1000,
-                    () => {
-                        LoggerSimple.Put("    data.Property={0}", data.Property);
-                        data.Property = initialValue + 123;
-                        LoggerSimple.Put("    data.Property={0}", data.Property);
-                        data.Property = initialValue; // restore original value
-                        LoggerSimple.Put("    data.Property={0}", data.Property);
-                    }, modifiedProperties => {
-                        AssertEqual(0, modifiedProperties.Count);
-                    });
-            }
+            await new PropertyChangeExecutor<SimpleProperty>(() => new SimpleProperty(initialValue, true)).Run(
+                100,
+                1000,
+                data => {
+                    LoggerSimple.Put("    data.Property={0}", data.Property);
+                    data.Property = initialValue + 123;
+                    LoggerSimple.Put("    data.Property={0}", data.Property);
+                    data.Property = initialValue; // restore original value
+                    LoggerSimple.Put("    data.Property={0}", data.Property);
+                }, (data, modifiedProperties) => {
+                    AssertEqual(0, modifiedProperties.Count);
+                });
         }
 
     }

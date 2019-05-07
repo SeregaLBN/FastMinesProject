@@ -56,70 +56,62 @@ namespace fmg.core.mosaic {
         public virtual async Task CheckIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest() {
             LoggerSimple.Put("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest));
 
-            using (var initData = CreateMosaicInitData()) {
-                await new PropertyChangeExecutor<MosaicInitData>(initData).Run(100, 1000,
-                    () => {
-                        initData.MosaicType = EMosaic.eMosaicRhombus1;
-                    }, modifiedProperties => {
-                        AssertTrue  (  modifiedProperties.ContainsKey(nameof(MosaicInitData.MosaicType)));
-                        AssertEqual(1, modifiedProperties[            nameof(MosaicInitData.MosaicType)]);
-                        AssertTrue  (  modifiedProperties.ContainsKey(nameof(MosaicInitData.MinesCount)));
-                        AssertEqual(1, modifiedProperties[            nameof(MosaicInitData.MinesCount)]);
-                        AssertEqual(2, modifiedProperties.Count);
-                        AssertEqual(EMosaic.eMosaicRhombus1, initData.MosaicType);
-                        AssertEqual(initData.SkillLevel.GetNumberMines(EMosaic.eMosaicRhombus1), initData.MinesCount);
-                    });
-            }
+            await new PropertyChangeExecutor<MosaicInitData>(() => CreateMosaicInitData()).Run(100, 1000,
+                initData => {
+                    initData.MosaicType = EMosaic.eMosaicRhombus1;
+                }, (initData, modifiedProperties) => {
+                    AssertTrue  (  modifiedProperties.ContainsKey(nameof(MosaicInitData.MosaicType)));
+                    AssertEqual(1, modifiedProperties[            nameof(MosaicInitData.MosaicType)]);
+                    AssertTrue  (  modifiedProperties.ContainsKey(nameof(MosaicInitData.MinesCount)));
+                    AssertEqual(1, modifiedProperties[            nameof(MosaicInitData.MinesCount)]);
+                    AssertEqual(2, modifiedProperties.Count);
+                    AssertEqual(EMosaic.eMosaicRhombus1, initData.MosaicType);
+                    AssertEqual(initData.SkillLevel.GetNumberMines(EMosaic.eMosaicRhombus1), initData.MinesCount);
+                });
         }
 
         public virtual async Task CheckNoRepeatNotificationsTest() {
             LoggerSimple.Put("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckNoRepeatNotificationsTest));
 
-            using (var initData = CreateMosaicInitData()) {
-                await new PropertyChangeExecutor<MosaicInitData>(initData).Run(100, 1000,
-                    () => {
-                        LoggerSimple.Put("    initData.minesCount={0}", initData.MinesCount);
-                        initData.MosaicType = EMosaic.eMosaicRhombus1;
-                        LoggerSimple.Put("    initData.minesCount={0}", initData.MinesCount);
-                        initData.MosaicType = EMosaic.eMosaicHexagon1;
-                        LoggerSimple.Put("    initData.minesCount={0}", initData.MinesCount);
-                    }, modifiedProperties => {
-                        AssertTrue  (  modifiedProperties.ContainsKey(nameof(MosaicInitData.MosaicType)));
-                        AssertEqual(1, modifiedProperties[            nameof(MosaicInitData.MosaicType)]);
-                        AssertTrue  (  modifiedProperties.ContainsKey(nameof(MosaicInitData.MosaicGroup)));
-                        AssertEqual(1, modifiedProperties[            nameof(MosaicInitData.MosaicGroup)]);
-                        AssertTrue  ( !modifiedProperties.ContainsKey(nameof(MosaicInitData.MinesCount)));
-                        AssertEqual(2, modifiedProperties.Count);
-                        AssertEqual(EMosaic.eMosaicHexagon1, initData.MosaicType);
-                        AssertEqual(initData.SkillLevel.GetNumberMines(EMosaic.eMosaicHexagon1), initData.MinesCount);
-                    });
-            }
+            await new PropertyChangeExecutor<MosaicInitData>(() => CreateMosaicInitData()).Run(100, 1000,
+                initData => {
+                    LoggerSimple.Put("    initData.minesCount={0}", initData.MinesCount);
+                    initData.MosaicType = EMosaic.eMosaicRhombus1;
+                    LoggerSimple.Put("    initData.minesCount={0}", initData.MinesCount);
+                    initData.MosaicType = EMosaic.eMosaicHexagon1;
+                    LoggerSimple.Put("    initData.minesCount={0}", initData.MinesCount);
+                }, (initData, modifiedProperties) => {
+                    AssertTrue  (  modifiedProperties.ContainsKey(nameof(MosaicInitData.MosaicType)));
+                    AssertEqual(1, modifiedProperties[            nameof(MosaicInitData.MosaicType)]);
+                    AssertTrue  (  modifiedProperties.ContainsKey(nameof(MosaicInitData.MosaicGroup)));
+                    AssertEqual(1, modifiedProperties[            nameof(MosaicInitData.MosaicGroup)]);
+                    AssertTrue  ( !modifiedProperties.ContainsKey(nameof(MosaicInitData.MinesCount)));
+                    AssertEqual(2, modifiedProperties.Count);
+                    AssertEqual(EMosaic.eMosaicHexagon1, initData.MosaicType);
+                    AssertEqual(initData.SkillLevel.GetNumberMines(EMosaic.eMosaicHexagon1), initData.MinesCount);
+                });
         }
 
         public virtual async Task CheckChangedMosaicGroupTest() {
             LoggerSimple.Put("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckChangedMosaicGroupTest));
 
-            using (var initData = CreateMosaicInitData()) {
-                await new PropertyChangeExecutor<MosaicInitData>(initData).Run(100, 1000,
-                    () => {
-                        initData.MosaicType = EMosaic.eMosaicHexagon1;
-                    }, modifiedProperties => {
-                        AssertTrue(modifiedProperties.ContainsKey(nameof(MosaicInitData.MosaicGroup)));
-                    });
-            }
+            await new PropertyChangeExecutor<MosaicInitData>(() => CreateMosaicInitData()).Run(100, 1000,
+                initData => {
+                    initData.MosaicType = EMosaic.eMosaicHexagon1;
+                }, (initData, modifiedProperties) => {
+                    AssertTrue(modifiedProperties.ContainsKey(nameof(MosaicInitData.MosaicGroup)));
+                });
         }
 
         public virtual async Task CheckNoChangedMosaicGroupTest() {
             LoggerSimple.Put("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckNoChangedMosaicGroupTest));
 
-            using (var initData = CreateMosaicInitData()) {
-                await new PropertyChangeExecutor<MosaicInitData>(initData).Run(100, 1000,
-                    () => {
-                        initData.MosaicType = EMosaic.eMosaicRhombus1;
-                    }, modifiedProperties => {
-                        AssertFalse(modifiedProperties.ContainsKey(nameof(MosaicInitData.MosaicGroup)));
-                    });
-            }
+            await new PropertyChangeExecutor<MosaicInitData>(() => CreateMosaicInitData()).Run(100, 1000,
+                initData => {
+                    initData.MosaicType = EMosaic.eMosaicRhombus1;
+                }, (initData, modifiedProperties) => {
+                    AssertFalse(modifiedProperties.ContainsKey(nameof(MosaicInitData.MosaicGroup)));
+                });
         }
 
         public virtual void CheckRestoreIndexInGroupTest() {

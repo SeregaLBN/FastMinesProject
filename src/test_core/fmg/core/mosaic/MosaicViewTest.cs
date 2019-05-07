@@ -53,19 +53,17 @@ namespace fmg.core.mosaic {
         public virtual async Task PropertyChangedTest() {
             LoggerSimple.Put("> " + nameof(MosaicViewTest) + "::" + nameof(PropertyChangedTest));
 
-            using (var view = new MosaicTestView()) {
-                await new PropertyChangeExecutor<MosaicTestView>(view).Run(100, 1000,
-                    () => {
-                        view.Model.Size = new SizeDouble(TEST_SIZE_W, TEST_SIZE_H);
-                    }, modifiedProperties => {
-                        AssertTrue (   modifiedProperties.ContainsKey(nameof(view.Model)));
-                        AssertEqual(1, modifiedProperties[            nameof(view.Model)]);
-                        AssertTrue (   modifiedProperties.ContainsKey(nameof(view.Size)));
-                        AssertEqual(1, modifiedProperties[            nameof(view.Size)]);
-                        AssertTrue (   modifiedProperties.ContainsKey(nameof(view.Image)));
-                        AssertEqual(3, modifiedProperties.Count);
-                    });
-            }
+            await new PropertyChangeExecutor<MosaicTestView>(() => new MosaicTestView()).Run(100, 1000,
+                view => {
+                    view.Model.Size = new SizeDouble(TEST_SIZE_W, TEST_SIZE_H);
+                }, (view, modifiedProperties) => {
+                    AssertTrue (   modifiedProperties.ContainsKey(nameof(view.Model)));
+                    AssertEqual(1, modifiedProperties[            nameof(view.Model)]);
+                    AssertTrue (   modifiedProperties.ContainsKey(nameof(view.Size)));
+                    AssertEqual(1, modifiedProperties[            nameof(view.Size)]);
+                    AssertTrue (   modifiedProperties.ContainsKey(nameof(view.Image)));
+                    AssertEqual(3, modifiedProperties.Count);
+                });
         }
 
         public virtual void ReadinessAtTheStartTest() {
@@ -81,57 +79,52 @@ namespace fmg.core.mosaic {
         public virtual async Task MultipleChangeModelOneDrawViewTest() {
             LoggerSimple.Put("> " + nameof(MosaicViewTest) + "::" + nameof(MultipleChangeModelOneDrawViewTest));
 
-            using (var view = new MosaicTestView()) {
-                AssertEqual(0, view.DrawCount);
 
-                DummyImage img = null;
+            DummyImage img = null;
+            MosaicTestView v = null;
+            await new PropertyChangeExecutor<MosaicTestView>(() => v = new MosaicTestView(), false).Run(100, 1000,
+                view => {
+                    AssertEqual(0, view.DrawCount);
+                    MosaicModelTest.ChangeModel(view.Model);
+                }, (view, modifiedProperties) => {
+                    img = view.Image;
+                    AssertNotNull(img);
+                    AssertEqual(1, view.DrawCount);
+                });
 
-                var m = view.Model;
-                await new PropertyChangeExecutor<MosaicTestView>(view).Run(100, 1000,
-                    () => {
-                        MosaicModelTest.ChangeModel(m);
-                    }, modifiedProperties => {
-                        img = view.Image;
-                        AssertNotNull(img);
-                        AssertEqual(1, view.DrawCount);
-                    });
+            // test no change
+            await new PropertyChangeExecutor<MosaicTestView>(() => v, false).Run(100, 1000,
+                view => {
+                    view.Size = new SizeDouble(TEST_SIZE_W, TEST_SIZE_H);
+                }, (view, modifiedProperties) => {
+                    AssertEqual(true, ReferenceEquals(img, view.Image));
+                    AssertEqual(1, view.DrawCount);
+                });
 
-                // test no change
-                await new PropertyChangeExecutor<MosaicTestView>(view).Run(100, 1000,
-                    () => {
-                        m.Size = new SizeDouble(TEST_SIZE_W, TEST_SIZE_H);
-                    }, modifiedProperties => {
-                        AssertEqual(true, ReferenceEquals(img, view.Image));
-                        AssertEqual(1, view.DrawCount);
-                    });
-
-                // test change
-                await new PropertyChangeExecutor<MosaicTestView>(view).Run(100, 1000,
-                    () => {
-                        m.Size = new SizeDouble(TEST_SIZE_W + 1, TEST_SIZE_H);
-                    }, modifiedProperties => {
-                        AssertNotEqual(img, view.Image);
-                        AssertNotNull(view.Image);
-                        AssertEqual(2, view.DrawCount);
-                    });
-            }
+            // test change
+            await new PropertyChangeExecutor<MosaicTestView>(() => v).Run(100, 1000,
+                view => {
+                    v.Size = new SizeDouble(TEST_SIZE_W + 1, TEST_SIZE_H);
+                }, (view, modifiedProperties) => {
+                    AssertNotEqual(img, view.Image);
+                    AssertNotNull(view.Image);
+                    AssertEqual(2, view.DrawCount);
+                });
         }
 
         public virtual async Task OneNotificationOfImageChangedTest() {
             LoggerSimple.Put("> " + nameof(MosaicViewTest) + "::" + nameof(OneNotificationOfImageChangedTest));
 
-            using (var view = new MosaicTestView()) {
-                await new PropertyChangeExecutor<MosaicTestView>(view).Run(100, 1000,
-                    () => {
-                        MosaicModelTest.ChangeModel(view.Model);
-                    }, modifiedProperties => {
-                        AssertTrue(     modifiedProperties.ContainsKey(nameof(view.Image)));
-                        AssertEqual(1, modifiedProperties[            nameof(view.Image)]);
-                        AssertEqual(0, view.DrawCount);
-                        var img = view.Image; // call the implicit draw method
-                        AssertEqual(1, view.DrawCount);
-                    });
-            }
+            await new PropertyChangeExecutor<MosaicTestView>(() => new MosaicTestView()).Run(100, 1000,
+                view => {
+                    MosaicModelTest.ChangeModel(view.Model);
+                }, (view, modifiedProperties) => {
+                    AssertTrue(     modifiedProperties.ContainsKey(nameof(view.Image)));
+                    AssertEqual(1, modifiedProperties[            nameof(view.Image)]);
+                    AssertEqual(0, view.DrawCount);
+                    var img = view.Image; // call the implicit draw method
+                    AssertEqual(1, view.DrawCount);
+                });
         }
 
     }

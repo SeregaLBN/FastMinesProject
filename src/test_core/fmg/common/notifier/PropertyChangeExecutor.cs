@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reactive.Subjects;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using fmg.common.ui;
@@ -11,13 +12,17 @@ namespace fmg.common.notifier {
     /// <summary> Simple UnitTest wrapper for testing {@link INotifyPropertyChanged} objects </summary>
     /// <typeparam name="T">the tested object</typeparam>
     public class PropertyChangeExecutor<T>
-        where T : INotifyPropertyChanged
+        where T : class, INotifyPropertyChanged, IDisposable
     {
-        private readonly T data;
-        private readonly IDictionary<string /* property name */, int /* count of modifies */> modifiedProperties = new Dictionary<string, int>();
+        private readonly bool _needClose;
+        private readonly Func<T> _dataCreator;
+        private readonly IDictionary<string /* property name */, int /* count of modifies */> _modifiedProperties = new Dictionary<string, int>();
 
-        public PropertyChangeExecutor(T data) {
-            this.data = data;
+        /// <param name="dataCreator">data factory (called from UI thread)</param>
+        /// <param name="needClose">need call IDisposable.Dispose() for dataCreator result</param>
+        public PropertyChangeExecutor(Func<T> dataCreator, bool needClose = true) {
+            this._needClose = needClose;
+            this._dataCreator = dataCreator;
         }
 
         /// <summary> unit test executor </summary>
@@ -29,40 +34,91 @@ namespace fmg.common.notifier {
         public async Task Run(
             uint notificationsTimeoutMs/* = 100ms*/,
             uint maxWaitTimeoutMs/* = 1000ms*/,
-            Action modificator,
-            Action<IDictionary<string /* property name */, int /* count of modifies */>> validator)
+            Action<T> modificator,
+            Action<T, IDictionary<string /* property name */, int /* count of modifies */>> validator)
         {
-            using (var signal = new Signal()) {
-                var ob = Observable
-                    .FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(h => data.PropertyChanged += h, h => data.PropertyChanged -= h);
-                using (ob.Subscribe(
-                    ev => {
-                        string name = ev.EventArgs.PropertyName;
-                        LoggerSimple.Put("PropertyChangeExecutor::OnDataPropertyChanged: ev.name={0}; ev={1}", ev.EventArgs.PropertyName, ev.EventArgs);
-                        int oldValue;
-                        if (modifiedProperties.TryGetValue(name, out oldValue))
-                            modifiedProperties[name] = 1 + oldValue;
-                        else
-                            modifiedProperties.Add(name, 1);
-                    }))
-                {
-                    using (ob.Timeout(TimeSpan.FromMilliseconds(notificationsTimeoutMs))
+            var subject = new Subject<PropertyChangedEventArgs>();
+            void onDataPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+                var name = ev.PropertyName;
+                LoggerSimple.Put("PropertyChangeExecutor.onDataPropertyChanged: ev.name=" + name);
+                int oldValue;
+                if (_modifiedProperties.TryGetValue(name, out oldValue))
+                    _modifiedProperties[name] = 1 + oldValue;
+                else
+                    _modifiedProperties.Add(name, 1);
+                subject.OnNext(ev);
+            }
+
+            T data = null;
+            Exception ex1 = null;
+            try {
+                using (var signal = new Signal()) {
+                    using (var dis = subject
+                        .Timeout(TimeSpan.FromMilliseconds(notificationsTimeoutMs))
                         .Subscribe(ev => {
-                            LoggerSimple.Put("OnNext: ev.name={0}; ev={1}", ev.EventArgs.PropertyName, ev.EventArgs);
+                            LoggerSimple.Put("OnNext: ev={0}", ev);
                         }, ex => {
                             //LoggerSimple.Put("OnError: " + ex);
-                            LoggerSimple.Put("timeout after " + notificationsTimeoutMs + "ms.");
+                            LoggerSimple.Put("Timeout after " + notificationsTimeoutMs + "ms.");
                             signal.Set();
                         }))
                     {
-                        UiInvoker.Deferred(modificator);
-                        if (!await signal.Wait(TimeSpan.FromMilliseconds(maxWaitTimeoutMs)))
-                            throw new Exception("Wait timeout " + maxWaitTimeoutMs + "ms.");
-
-                        LoggerSimple.Put("  checking... {0}=[{1}]", nameof(modifiedProperties), String.Join(",", modifiedProperties.Select(kv => kv.Key+":"+kv.Value)));
-                        validator(modifiedProperties);
+                        UiInvoker.Deferred(() => {
+                            if (ex1 != null)
+                                return;
+                            try {
+                                data = _dataCreator(); // 1. Construct in UI thread!
+                                data.PropertyChanged += onDataPropertyChanged;
+                                modificator(data);
+                            } catch(Exception ex) {
+                                ex1 = ex;
+                            }
+                        });
+                        if (!await signal.Wait(TimeSpan.FromMilliseconds(maxWaitTimeoutMs))) {
+                            ex1 = new Exception("Wait timeout " + maxWaitTimeoutMs + "ms.");
+                        } else {
+                            if (ex1 == null) {
+                                LoggerSimple.Put("  checking... {0}=[{1}]", nameof(_modifiedProperties), String.Join(",", _modifiedProperties.Select(kv => kv.Key+":"+kv.Value)));
+                                try {
+                                    validator(data, _modifiedProperties);
+                                } catch(Exception ex) {
+                                    ex1 = ex;
+                                }
+                            }
+                        }
                     }
                 }
+            } finally {
+                if (data != null) {
+                    using (var signal = new Signal()) {
+                        UiInvoker.Deferred(() => {
+                            try {
+                                data.PropertyChanged -= onDataPropertyChanged;
+                                if (_needClose)
+                                    data.Dispose(); // 2. Destruct in UI thread!
+                                signal.Set();
+                            } catch(Exception ex) {
+                                if (ex1 == null)
+                                    ex1 = ex;
+                                else
+                                    System.Diagnostics.Debug.Fail(ex.ToString());
+                            }
+                        });
+                        if (!await signal.Wait(TimeSpan.FromMilliseconds(maxWaitTimeoutMs))) {
+                            var errMsg = "Wait free timeout " + maxWaitTimeoutMs + "ms.";
+                            if (ex1 == null) {
+                                ex1 = new Exception(errMsg);
+                            } else {
+                                System.Diagnostics.Debug.Fail(errMsg);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (ex1 != null) {
+                System.Diagnostics.Debug.Fail(ex1.ToString());
+                throw ex1;
             }
         }
 

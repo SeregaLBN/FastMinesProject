@@ -89,6 +89,7 @@ public class MosaicViewTest {
         MosaicTestView[] v = { null };
         new PropertyChangeExecutor<>(() -> v[0] = new MosaicTestView(), false).run(100, 1000,
            view -> {
+               Assert.assertEquals(0, view.getDrawCount());
                MosaicModelTest.changeModel(view.getModel());
            }, (view, modifiedProperties) -> {
                img[0] = view.getImage();

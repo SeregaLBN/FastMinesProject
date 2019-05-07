@@ -48,15 +48,13 @@ namespace fmg.core.mosaic {
         public virtual async Task PropertyChangedTest() {
             LoggerSimple.Put("> " + nameof(MosaicControllerTest) + "::" + nameof(PropertyChangedTest));
 
-            using (var ctrlr = new MosaicTestController()) {
-                await new PropertyChangeExecutor<MosaicTestController>(ctrlr).Run(100, 1000,
-                    () => {
-                        MosaicModelTest.ChangeModel(ctrlr.Model);
-                    }, modifiedProperties => {
-                        AssertTrue (   modifiedProperties.ContainsKey(nameof(ctrlr.Image)));
-                        AssertEqual(1, modifiedProperties[            nameof(ctrlr.Image)]);
-                    });
-            }
+            await new PropertyChangeExecutor<MosaicTestController>(() => new MosaicTestController()).Run(100, 1000,
+                ctrlr => {
+                    MosaicModelTest.ChangeModel(ctrlr.Model);
+                }, (ctrlr, modifiedProperties) => {
+                    AssertTrue (   modifiedProperties.ContainsKey(nameof(ctrlr.Image)));
+                    AssertEqual(1, modifiedProperties[            nameof(ctrlr.Image)]);
+                });
         }
 
         public virtual void ReadinessAtTheStartTest() {
