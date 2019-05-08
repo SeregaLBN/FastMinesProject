@@ -54,7 +54,7 @@ public class PropertyChangeExecutorTest {
         LoggerSimple.put("> PropertyChangeExecutorTest::simpleUsageTest");
 
         SimpleDataObj[] d = { null };
-        new PropertyChangeExecutor<>(() -> d[0] = new SimpleDataObj()).run(1, 10,
+        new PropertyChangeExecutor<>(() -> d[0] = new SimpleDataObj()).run(1, 100,
             data -> {
                 LoggerSimple.put("    data modificator");
             }, (data, modifiedProperties) -> {
@@ -71,7 +71,7 @@ public class PropertyChangeExecutorTest {
         LoggerSimple.put("> PropertyChangeExecutorTest::extendedUsageTest");
 
         SimpleDataObj[] d = { null };
-        new PropertyChangeExecutor<>(() -> d[0] = new SimpleDataObj(), false).run(1, 10,
+        new PropertyChangeExecutor<>(() -> d[0] = new SimpleDataObj(), false).run(1, 100,
             data -> {
                 LoggerSimple.put("    data modificator");
             }, (data, modifiedProperties) -> {
@@ -82,7 +82,7 @@ public class PropertyChangeExecutorTest {
         Assert.assertNotNull(d[0]);
         Assert.assertFalse(d[0].isDisposed());
 
-        new PropertyChangeExecutor<>(() -> d[0]).run(1, 10,
+        new PropertyChangeExecutor<>(() -> d[0]).run(1, 100,
             data -> {
                 LoggerSimple.put("    data modificator");
             }, (data, modifiedProperties) -> {
@@ -94,12 +94,32 @@ public class PropertyChangeExecutorTest {
     }
 
     @Test
+    public void creatorFailTest() {
+        LoggerSimple.put("> PropertyChangeExecutorTest::creatorFailTest");
+
+        IllegalArgumentException failEx = new IllegalArgumentException("Tested exception");
+        try {
+            new PropertyChangeExecutor<>(() -> { throw failEx; }).run(1, 100,
+               data -> {
+                   LoggerSimple.put("    data modificator");
+                   Assert.fail();
+               }, (data, modifiedProperties) -> {
+                   LoggerSimple.put("    data validator");
+                   Assert.fail();
+               });
+            Assert.fail();
+        } catch(Throwable ex) {
+            Assert.assertEquals(failEx, ex);
+        }
+    }
+
+    @Test
     public void modificatorFailTest() {
         LoggerSimple.put("> PropertyChangeExecutorTest::modificatorFailTest");
 
         IllegalArgumentException failEx = new IllegalArgumentException("Tested exception");
         try {
-            new PropertyChangeExecutor<>(() -> new SimpleDataObj()).run(1, 10,
+            new PropertyChangeExecutor<>(SimpleDataObj::new).run(1, 100,
                data -> {
                    LoggerSimple.put("    data modificator");
                    throw failEx;
@@ -120,7 +140,7 @@ public class PropertyChangeExecutorTest {
 
         IllegalArgumentException failEx = new IllegalArgumentException("Tested exception");
         try {
-            new PropertyChangeExecutor<>(() -> new SimpleDataObj()).run(1, 10,
+            new PropertyChangeExecutor<>(SimpleDataObj::new).run(1, 100,
                data -> {
                    LoggerSimple.put("    data modificator");
                }, (data, modifiedProperties) -> {
