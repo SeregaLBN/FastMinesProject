@@ -128,6 +128,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\Notifier\NotifyPropertyChangedUwpTest.cs" />
+    <Compile Include="Common\Notifier\PropertyChangeExecutorUwpTest.cs" />
     <Compile Include="Core\Mosaic\MosaicControllerUwpTest.cs" />
     <Compile Include="Core\Mosaic\MosaicHelperUwpTest.cs" />
     <Compile Include="Core\Mosaic\MosaicInitDataUwpTest.cs" />

@@ -1,21 +1,16 @@
 ﻿using System.Threading.Tasks;
-using NUnit.Framework;
-using fmg.common.ui;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using fmg.uwp.utils;
 
 namespace fmg.common.notifier {
 
-    public class PropertyChangeExecutorNUnitTest : PropertyChangeExecutorTest {
-
-        internal static void StaticInitializer() {
-            UiInvoker.Deferred = SimpleUiThreadLoop.AddTask;
-            LoggerSimple.Put("Simple UI factory inited...");
-        }
+    public class PropertyChangeExecutorUwpTest : PropertyChangeExecutorTest {
 
         protected override void AssertEqual(int expected, int actual) {
             Assert.AreEqual(expected, actual);
         }
         protected override void AssertNotNull(object anObject) {
-            Assert.NotNull(anObject);
+            Assert.IsNotNull(anObject);
         }
         protected override void AssertTrue(bool condition) {
             Assert.IsTrue(condition);
@@ -27,38 +22,28 @@ namespace fmg.common.notifier {
             Assert.Fail();
         }
 
-        [OneTimeSetUp]
+        [TestInitialize]
         public override void Setup() {
             base.Setup();
-            StaticInitializer();
+            StaticInitializer.Init();
         }
 
-        [SetUp]
-        public override void Before() {
-            base.Before();
-        }
-
-        [OneTimeTearDown]
-        public override void After() {
-            base.After();
-        }
-
-        [Test]
+        [TestMethod]
         public override async Task SimpleUsageTest() {
             await base.SimpleUsageTest();
         }
 
-        [Test]
+        [TestMethod]
         public override async Task ExtendedUsageTest() {
             await base.ExtendedUsageTest();
         }
 
-        [Test]
+        [TestMethod]
         public override async Task ModificatorFailTest() {
             await base.ModificatorFailTest();
         }
 
-        [Test]
+        [TestMethod]
         public override async Task ValidatorFailTest() {
             await base.ValidatorFailTest();
         }

@@ -1,65 +1,60 @@
-﻿using System.Threading.Tasks;
-using NUnit.Framework;
-using fmg.common.ui;
+﻿using System;
+using System.Threading.Tasks;
+using Xunit;
+using fmg.ava.utils;
 
 namespace fmg.common.notifier {
 
     public class PropertyChangeExecutorNUnitTest : PropertyChangeExecutorTest {
 
-        internal static void StaticInitializer() {
-            UiInvoker.Deferred = SimpleUiThreadLoop.AddTask;
-            LoggerSimple.Put("Simple UI factory inited...");
-        }
-
         protected override void AssertEqual(int expected, int actual) {
-            Assert.AreEqual(expected, actual);
+            Assert.Equal(expected, actual);
         }
         protected override void AssertNotNull(object anObject) {
             Assert.NotNull(anObject);
         }
         protected override void AssertTrue(bool condition) {
-            Assert.IsTrue(condition);
+            Assert.True(condition);
         }
         protected override void AssertFalse(bool condition) {
-            Assert.IsFalse(condition);
+            Assert.False(condition);
         }
         protected override void AssertFail() {
-            Assert.Fail();
+            //Assert.Fail();
+            throw new Exception("Assert.Fail");
         }
 
-        [OneTimeSetUp]
+        private bool _tuned;
+
         public override void Setup() {
+            if (_tuned)
+                return;
             base.Setup();
-            StaticInitializer();
+            _tuned = true;
+            StaticInitializer.Init();
         }
 
-        [SetUp]
-        public override void Before() {
-            base.Before();
-        }
-
-        [OneTimeTearDown]
-        public override void After() {
-            base.After();
-        }
-
-        [Test]
+        [Fact]
         public override async Task SimpleUsageTest() {
+            Setup();
             await base.SimpleUsageTest();
         }
 
-        [Test]
+        [Fact]
         public override async Task ExtendedUsageTest() {
+            Setup();
             await base.ExtendedUsageTest();
         }
 
-        [Test]
+        [Fact]
         public override async Task ModificatorFailTest() {
+            Setup();
             await base.ModificatorFailTest();
         }
 
-        [Test]
+        [Fact]
         public override async Task ValidatorFailTest() {
+            Setup();
             await base.ValidatorFailTest();
         }
 

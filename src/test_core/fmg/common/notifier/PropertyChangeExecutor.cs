@@ -101,7 +101,7 @@ namespace fmg.common.notifier {
                                 if (ex1 == null)
                                     ex1 = ex;
                                 else
-                                    System.Diagnostics.Debug.Fail(ex.ToString());
+                                    System.Diagnostics.Debug.Write(ex.ToString());
                             }
                         });
                         if (!await signal.Wait(TimeSpan.FromMilliseconds(maxWaitTimeoutMs))) {
@@ -109,7 +109,7 @@ namespace fmg.common.notifier {
                             if (ex1 == null) {
                                 ex1 = new Exception(errMsg);
                             } else {
-                                System.Diagnostics.Debug.Fail(errMsg);
+                                System.Diagnostics.Debug.Write(errMsg);
                             }
                         }
                     }
@@ -117,7 +117,7 @@ namespace fmg.common.notifier {
             }
 
             if (ex1 != null) {
-                System.Diagnostics.Debug.Fail(ex1.ToString());
+                System.Diagnostics.Debug.Write(ex1.ToString());
                 throw ex1;
             }
         }
