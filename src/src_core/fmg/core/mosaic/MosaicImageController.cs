@@ -44,6 +44,11 @@ namespace fmg.core.mosaic {
             throw new NotSupportedException();
         }
 
+        protected override void Disposing() {
+            _innerController.Dispose();
+            base.Disposing();
+        }
+
     }
 
 }

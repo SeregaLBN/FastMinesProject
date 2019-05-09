@@ -71,8 +71,8 @@ public final class Flag {
 
         @Override
         public void close() {
-            getModel().close();
             super.close();
+            getModel().close();
         }
 
     }
@@ -123,8 +123,8 @@ public final class Flag {
 
         @Override
         public void close() {
-            getView().close();
             super.close();
+            getView().close();
         }
 
     }
@@ -138,8 +138,8 @@ public final class Flag {
 
         @Override
         public void close() {
-            getView().close();
             super.close();
+            getView().close();
         }
 
     }

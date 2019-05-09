@@ -85,8 +85,8 @@ public class MosaicCanvasController extends MosaicController<Canvas, Image, Mosa
     @Override
     public void close() {
         unsubscribeToViewControl();
-        getView().close();
         super.close();
+        getView().close();
     }
 
 }

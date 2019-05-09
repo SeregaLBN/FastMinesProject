@@ -284,8 +284,8 @@ public class MosaicViewController extends MosaicController<View, Bitmap, MosaicV
     @Override
     public void close() {
         unsubscribeToViewControl();
-        getView().close();
         super.close();
+        getView().close();
     }
 
 

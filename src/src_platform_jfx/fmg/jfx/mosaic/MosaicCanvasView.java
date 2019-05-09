@@ -112,8 +112,8 @@ public class MosaicCanvasView extends MosaicJfxView<Canvas, Image, MosaicDrawMod
 
     @Override
     public void close() {
-        getModel().close();
         super.close();
+        getModel().close();
         _canvas = null;
         _imgFlag.close();
         _imgMine.close();

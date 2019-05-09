@@ -297,8 +297,8 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
     public void close() {
         if (sizeDebounce != null)
             sizeDebounce.dispose();
-        getModel().close();
         super.close();
+        getModel().close();
         _control = null;
         _imgFlag.close();
         _imgMine.close();

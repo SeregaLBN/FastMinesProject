@@ -172,8 +172,8 @@ public class MosaicViewView extends MosaicAndroidView<View, Bitmap, MosaicDrawMo
 
     @Override
     public void close() {
-        getModel().close();
         super.close();
+        getModel().close();
         _control = null;
         _imgFlag.close();
         _imgMine.close();

@@ -5,17 +5,21 @@ import java.util.concurrent.ThreadLocalRandom;
 import fmg.core.img.*;
 import fmg.core.types.draw.PenBorder;
 
-/** MVC: mosaic animated image controller. Base implementation */
+/** MVC: mosaic animated image controller. Base implementation
+ *
+ * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
+ * @param <TMosaicView> mosaic view
+ */
 public abstract class MosaicImageController<TImage,        TMosaicView extends MosaicView<TImage, Void, MosaicAnimatedModel<Void>>>
                    extends MosaicController<TImage, Void,  TMosaicView,                                 MosaicAnimatedModel<Void>>
              implements IAnimatedController<TImage,        TMosaicView,                                 MosaicAnimatedModel<Void>>
 {
-    private final AnimatedInnerController<TImage, TMosaicView, MosaicAnimatedModel<Void>> _innerController;
+    private final AnimatedInnerController<TImage, TMosaicView, MosaicAnimatedModel<Void>> innerController;
 
     protected MosaicImageController(TMosaicView view) {
         super(view);
         MosaicAnimatedModel<Void> model = getModel();
-        _innerController = new AnimatedInnerController<>(model);
+        innerController = new AnimatedInnerController<>(model);
         useRotateTransforming(true);
 
         PenBorder pen = model.getPenBorder();
@@ -25,11 +29,11 @@ public abstract class MosaicImageController<TImage,        TMosaicView extends M
 
     @Override
     public void addModelTransformer(IModelTransformer transformer) {
-        _innerController.addModelTransformer(transformer);
+        innerController.addModelTransformer(transformer);
     }
     @Override
     public void removeModelTransformer(Class<? extends IModelTransformer> transformerClass) {
-        _innerController.removeModelTransformer(transformerClass);
+        innerController.removeModelTransformer(transformerClass);
     }
 
     @Override
@@ -43,6 +47,12 @@ public abstract class MosaicImageController<TImage,        TMosaicView extends M
     @Override
     public void usePolarLightFgTransforming(boolean enable) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void close() {
+        innerController.close();
+        super.close();
     }
 
 }

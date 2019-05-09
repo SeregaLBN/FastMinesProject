@@ -32,8 +32,8 @@ public final class MosaicSkillImg {
 
         @Override
         public void close() {
-            getModel().close();
             super.close();
+            getModel().close();
         }
 
     }
@@ -88,8 +88,8 @@ public final class MosaicSkillImg {
 
         @Override
         public void close() {
-            getView().close();
             super.close();
+            getView().close();
         }
 
     }
@@ -103,8 +103,8 @@ public final class MosaicSkillImg {
 
         @Override
         public void close() {
-            getView().close();
             super.close();
+            getView().close();
         }
 
     }

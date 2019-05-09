@@ -16,7 +16,7 @@ namespace fmg.common.notifier {
         private readonly Action<PropertyChangedEventArgs> _fireOwnerEvent;
         public bool DeferredNotifications { get; set; }
         private readonly IDictionary<string /* propertyName */, PropertyChangedEventArgs> _deferrNotifications = new Dictionary<string, PropertyChangedEventArgs>();
-        private bool _disposed;
+        public bool Disposed { get; private set; } = false;
 
         public NotifyPropertyChanged(INotifyPropertyChanged owner, Action<PropertyChangedEventArgs> fireOwnerEvent, bool deferredNotifications = false) {
             _owner = owner;
@@ -33,7 +33,7 @@ namespace fmg.common.notifier {
         /// when invoked from compilers that support CallerMemberName.</param>
         /// <returns>True if the value was changed, false if the existing value matched the desired value.</returns>
         public bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string propertyName = null) {
-            if (_disposed) {
+            if (Disposed) {
                 if (value != null) {
                     System.Diagnostics.Debug.WriteLine("Illegal call property " + _owner.GetType().FullName + "." + propertyName + ": object already disposed!");
                     return false;
@@ -65,7 +65,7 @@ namespace fmg.common.notifier {
         }
 
         public void FirePropertyChanged(PropertyChangedEventArgs ev) {
-            if (_disposed)
+            if (Disposed)
                 return;
 
             void fireOwnerEvent(PropertyChangedEventArgs ev3) {
@@ -105,7 +105,7 @@ namespace fmg.common.notifier {
                 }
                 if (shedule)
                     UiInvoker.Deferred(() => {
-                        if (_disposed)
+                        if (Disposed)
                             return;
                         PropertyChangedEventArgs ev2;
                         if (!_deferrNotifications.TryGetValue(ev.PropertyName, out ev2))
@@ -127,13 +127,12 @@ namespace fmg.common.notifier {
                 FirePropertyChanged(new PropertyChangedEventArgs(propertyName));
         }
 
-        public bool Disposed => _disposed;
-
         public void Dispose() {
-            if (_disposed)
+            if (Disposed)
                 return;
-            _disposed = true;
+            Disposed = true;
             _deferrNotifications.Clear();
+            this.GetType().GetField
             GC.SuppressFinalize(this);
         }
 
