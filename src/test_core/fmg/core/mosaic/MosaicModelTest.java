@@ -117,39 +117,41 @@ public class MosaicModelTest {
     public void mosaicDrawModelAsIsTest() {
         LoggerSimple.put("> MosaicModelTest::mosaicDrawModelAsIsTest");
 
-        try (MosaicTestModel model = new MosaicTestModel()) {
-            Assert.assertEquals(EMosaic.eMosaicSquare1, model.getMosaicType());
-            Assert.assertEquals(new Matrisize(10, 10), model.getSizeField());
-            Assert.assertEquals(model.getCellAttr().getSize(model.getSizeField()), model.getSize());
-        }
+        new PropertyChangeExecutor<>(MosaicTestModel::new).run(1, 100,
+            model -> {
+                Assert.assertEquals(EMosaic.eMosaicSquare1, model.getMosaicType());
+                Assert.assertEquals(new Matrisize(10, 10), model.getSizeField());
+                Assert.assertEquals(model.getCellAttr().getSize(model.getSizeField()), model.getSize());
+            }, (model, modifiedProperties) -> { });
     }
 
     @Test
     public void autoFitTrueCheckAffectsToPaddingTest() {
         LoggerSimple.put("> MosaicModelTest::autoFitTrueCheckAffectsToPaddingTest");
 
-        try (MosaicTestModel model = new MosaicTestModel()) {
-            // set property
-            model.setAutoFit(true);
-            model.setSize(new SizeDouble(1000, 1000));
-            model.setPadding(new BoundDouble(100));
+        new PropertyChangeExecutor<>(MosaicTestModel::new).run(1, 100,
+            model -> {
+                // set property
+                model.setAutoFit(true);
+                model.setSize(new SizeDouble(1000, 1000));
+                model.setPadding(new BoundDouble(100));
 
-            // change property
-            model.setSize(new SizeDouble(500, 700));
+                // change property
+                model.setSize(new SizeDouble(500, 700));
 
-            // check dependency
-            Assert.assertEquals(50.0, model.getPadding().left  , 0);
-            Assert.assertEquals(50.0, model.getPadding().right , 0);
-            Assert.assertEquals(70.0, model.getPadding().top   , 0);
-            Assert.assertEquals(70.0, model.getPadding().bottom, 0);
-        }
+                // check dependency
+                Assert.assertEquals(50.0, model.getPadding().left  , 0);
+                Assert.assertEquals(50.0, model.getPadding().right , 0);
+                Assert.assertEquals(70.0, model.getPadding().top   , 0);
+                Assert.assertEquals(70.0, model.getPadding().bottom, 0);
+            }, (model, modifiedProperties) -> { });
     }
 
     @Test
     public void autoFitTrueCheckAffectsTest() {
         LoggerSimple.put("> MosaicModelTest::autoFitTrueCheckAffectsTest");
 
-         Supplier<MosaicTestModel> createTestModel = () -> {
+        Supplier<MosaicTestModel> createTestModel = () -> {
             MosaicTestModel model = new MosaicTestModel();
             // set property
             model.setAutoFit(true);

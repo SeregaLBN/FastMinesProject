@@ -46,6 +46,9 @@ namespace fmg.core.mosaic {
             MosaicGameModel m = null;
             await new PropertyChangeExecutor<MosaicGameModel>(() => m = new MosaicGameModel(), false).Run(100, 1000,
                 model => {
+                    AssertTrue(model.Matrix.Any());
+                    AssertTrue(ReferenceEquals(model.CellAttr, model.Matrix[0].Attr));
+
                     model.SizeField = new Matrisize(15, 10);
                 }, (model, modifiedProperties) => {
                     AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.SizeField)));

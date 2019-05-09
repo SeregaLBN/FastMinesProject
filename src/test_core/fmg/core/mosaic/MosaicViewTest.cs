@@ -62,6 +62,7 @@ namespace fmg.core.mosaic {
                     AssertTrue (   modifiedProperties.ContainsKey(nameof(view.Size)));
                     AssertEqual(1, modifiedProperties[            nameof(view.Size)]);
                     AssertTrue (   modifiedProperties.ContainsKey(nameof(view.Image)));
+                    AssertEqual(1, modifiedProperties[            nameof(view.Image)]);
                     AssertEqual(3, modifiedProperties.Count);
                 });
         }
@@ -79,7 +80,6 @@ namespace fmg.core.mosaic {
 
         public virtual async Task MultipleChangeModelOneDrawViewTest() {
             LoggerSimple.Put("> " + nameof(MosaicViewTest) + "::" + nameof(MultipleChangeModelOneDrawViewTest));
-
 
             DummyImage img = null;
             MosaicTestView v = null;
