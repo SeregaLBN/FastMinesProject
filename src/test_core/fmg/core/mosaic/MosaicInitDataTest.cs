@@ -43,11 +43,14 @@ namespace fmg.core.mosaic {
         }
 
 
-        public virtual void CheckTheImpossibilitySetCustomSkillLevelTest() {
+        public virtual async Task CheckTheImpossibilitySetCustomSkillLevelTest() {
             LoggerSimple.Put("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckTheImpossibilitySetCustomSkillLevelTest));
-            using (var initData = CreateMosaicInitData()) try {
-                initData.SkillLevel = ESkillLevel.eCustom;
-                AssertFail();
+            try {
+                await new PropertyChangeExecutor<MosaicInitData>(CreateMosaicInitData).Run(1, 100,
+                    initData => {
+                        initData.SkillLevel = ESkillLevel.eCustom;
+                        AssertFail();
+                    }, (initData, modifiedProperties) => { });
             } catch (Exception ex) {
                 AssertEqual(typeof(ArgumentException), ex.GetType());
             }
@@ -114,22 +117,23 @@ namespace fmg.core.mosaic {
                 });
         }
 
-        public virtual void CheckRestoreIndexInGroupTest() {
+        public virtual async Task CheckRestoreIndexInGroupTest() {
             LoggerSimple.Put("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckRestoreIndexInGroupTest));
 
-            using (var initData = CreateMosaicInitData()) {
-                const int checkOrdinal = 3;
+            await new PropertyChangeExecutor<MosaicInitData>(CreateMosaicInitData).Run(1, 100,
+                initData => {
+                    const int checkOrdinal = 3;
 
-                // 1. select another mosaic in current group
-                var mosaicsInOldGroup = initData.MosaicGroup.GetMosaics();
-                initData.MosaicType = mosaicsInOldGroup[checkOrdinal];
+                    // 1. select another mosaic in current group
+                    var mosaicsInOldGroup = initData.MosaicGroup.GetMosaics();
+                    initData.MosaicType = mosaicsInOldGroup[checkOrdinal];
 
-                // 2. change group
-                initData.MosaicGroup = EMosaicGroup.eTriangles;
+                    // 2. change group
+                    initData.MosaicGroup = EMosaicGroup.eTriangles;
 
-                // 3. check ordinal in new group
-                AssertEqual(checkOrdinal, initData.MosaicType.GetOrdinalInGroup());
-            }
+                    // 3. check ordinal in new group
+                    AssertEqual(checkOrdinal, initData.MosaicType.GetOrdinalInGroup());
+                }, (initData, modifiedProperties) => { });
         }
 
     }

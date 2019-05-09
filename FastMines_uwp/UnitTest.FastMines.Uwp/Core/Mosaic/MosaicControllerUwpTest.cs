@@ -38,8 +38,8 @@ namespace fmg.core.mosaic {
         }
 
         [TestMethod]
-        public override void ReadinessAtTheStartTest() {
-            base.ReadinessAtTheStartTest();
+        public override async Task ReadinessAtTheStartTest() {
+            await base.ReadinessAtTheStartTest();
         }
 
     }

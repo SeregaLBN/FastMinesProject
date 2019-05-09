@@ -5,7 +5,7 @@ using fmg.ava.utils;
 
 namespace fmg.common.notifier {
 
-    public class PropertyChangeExecutorNUnitTest : PropertyChangeExecutorTest {
+    public class PropertyChangeExecutorAvaTest : PropertyChangeExecutorTest {
 
         protected override void AssertEqual(int expected, int actual) {
             Assert.Equal(expected, actual);
@@ -44,6 +44,12 @@ namespace fmg.common.notifier {
         public override async Task ExtendedUsageTest() {
             Setup();
             await base.ExtendedUsageTest();
+        }
+
+        [Fact]
+        public override async Task CreatorFailTest() {
+            Setup();
+            await base.CreatorFailTest();
         }
 
         [Fact]

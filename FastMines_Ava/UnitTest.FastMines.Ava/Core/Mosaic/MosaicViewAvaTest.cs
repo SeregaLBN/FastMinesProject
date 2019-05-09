@@ -42,9 +42,9 @@ namespace fmg.core.mosaic {
         }
 
         [Fact]
-        public override void ReadinessAtTheStartTest() {
+        public override async Task ReadinessAtTheStartTest() {
             Setup();
-            base.ReadinessAtTheStartTest();
+            await base.ReadinessAtTheStartTest();
         }
 
         [Fact]

@@ -66,14 +66,15 @@ namespace fmg.core.mosaic {
                 });
         }
 
-        public virtual void ReadinessAtTheStartTest() {
+        public virtual async Task ReadinessAtTheStartTest() {
             LoggerSimple.Put("> " + nameof(MosaicViewTest) + "::" + nameof(ReadinessAtTheStartTest));
 
-            using (var view = new MosaicTestView()) {
-                AssertEqual(0, view.DrawCount);
-                AssertNotNull(view.Image);
-                AssertEqual(1, view.DrawCount);
-            }
+            await new PropertyChangeExecutor<MosaicTestView>(() => new MosaicTestView()).Run(1, 100,
+                view => {
+                    AssertEqual(0, view.DrawCount);
+                    AssertNotNull(view.Image);
+                    AssertEqual(1, view.DrawCount);
+                }, (view, modifiedProperties) => { });
         }
 
         public virtual async Task MultipleChangeModelOneDrawViewTest() {

@@ -84,6 +84,26 @@ namespace fmg.common.notifier {
             AssertTrue(d.Disposed);
         }
 
+        public virtual async Task CreatorFailTest() {
+            LoggerSimple.Put("> PropertyChangeExecutorTest::CreatorFailTest");
+
+            var failEx = new ArgumentException("Tested exception");
+            try {
+                await new PropertyChangeExecutor<SimpleDataObj>(() => { throw failEx; }).Run(1, 100,
+                   data => {
+                       LoggerSimple.Put("    data modificator");
+                       AssertFail();
+                   }, (data, modifiedProperties) => {
+                       LoggerSimple.Put("    data validator");
+                       AssertFail();
+                   });
+                AssertFail();
+            } catch(Exception ex) {
+                //AssertEqual(failEx, ex);
+                AssertTrue(ReferenceEquals(failEx, ex));
+            }
+        }
+
         public virtual async Task ModificatorFailTest() {
             LoggerSimple.Put("> PropertyChangeExecutorTest::ModificatorFailTest");
 

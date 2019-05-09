@@ -53,27 +53,27 @@ namespace fmg.core.mosaic {
         }
 
         [Fact]
-        public override void MosaicDrawModelAsIsTest() {
+        public override async Task MosaicDrawModelAsIsTest() {
             Setup();
-            base.MosaicDrawModelAsIsTest();
+            await base.MosaicDrawModelAsIsTest();
         }
 
         [Fact]
-        public override void AutoFitTrueCheckAffectsToPaddingTest() {
+        public override async Task AutoFitTrueCheckAffectsToPaddingTest() {
             Setup();
-            base.AutoFitTrueCheckAffectsToPaddingTest();
+            await base.AutoFitTrueCheckAffectsToPaddingTest();
         }
 
         [Fact]
-        public override void AutoFitTrueCheckAffectsTest() {
+        public override async Task AutoFitTrueCheckAffectsTest() {
             Setup();
-            base.AutoFitTrueCheckAffectsTest();
+            await base.AutoFitTrueCheckAffectsTest();
         }
 
         [Fact]
-        public override void AutoFitFalseCheckAffectsTest() {
+        public override async Task AutoFitFalseCheckAffectsTest() {
             Setup();
-            base.AutoFitFalseCheckAffectsTest();
+            await base.AutoFitFalseCheckAffectsTest();
         }
 
         [Fact]

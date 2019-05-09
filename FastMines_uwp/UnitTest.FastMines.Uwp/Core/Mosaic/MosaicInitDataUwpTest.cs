@@ -30,8 +30,8 @@ namespace fmg.core.mosaic {
         }
 
         [TestMethod]
-        public override void CheckTheImpossibilitySetCustomSkillLevelTest() {
-            base.CheckTheImpossibilitySetCustomSkillLevelTest();
+        public override async Task CheckTheImpossibilitySetCustomSkillLevelTest() {
+            await base.CheckTheImpossibilitySetCustomSkillLevelTest();
         }
 
         [TestMethod]
@@ -55,9 +55,8 @@ namespace fmg.core.mosaic {
         }
 
         [TestMethod]
-        public override void CheckRestoreIndexInGroupTest() {
-            Setup();
-            base.CheckRestoreIndexInGroupTest();
+        public override async Task CheckRestoreIndexInGroupTest() {
+            await base.CheckRestoreIndexInGroupTest();
         }
 
     }

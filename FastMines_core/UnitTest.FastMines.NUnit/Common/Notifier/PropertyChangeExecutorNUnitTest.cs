@@ -54,6 +54,11 @@ namespace fmg.common.notifier {
         }
 
         [Test]
+        public override async Task CreatorFailTest() {
+            await base.CreatorFailTest();
+        }
+
+        [Test]
         public override async Task ModificatorFailTest() {
             await base.ModificatorFailTest();
         }

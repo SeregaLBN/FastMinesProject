@@ -57,30 +57,31 @@ namespace fmg.core.mosaic {
                 });
         }
 
-        public virtual void ReadinessAtTheStartTest() {
+        public virtual async Task ReadinessAtTheStartTest() {
             LoggerSimple.Put("> " + nameof(MosaicControllerTest) + "::" + nameof(ReadinessAtTheStartTest));
 
             const int defArea = 500;
-            using (var ctrlr = new MosaicTestController()) {
-                AssertEqual(defArea, ctrlr.Model.Area, P);
-                AssertEqual(null, ctrlr.CellDown);
-                AssertEqual(0, ctrlr.CountClick);
-                AssertEqual(0, ctrlr.CountFlag);
-                AssertEqual(10, ctrlr.CountMinesLeft);
-                AssertEqual(0, ctrlr.CountOpen);
-                AssertEqual(0, ctrlr.CountUnknown);
-                AssertEqual(EGameStatus.eGSReady, ctrlr.GameStatus);
-                AssertNotNull(ctrlr.Image);
-                AssertNotNull(ctrlr.Matrix);
-                AssertTrue(ctrlr.Matrix.Any());
-                AssertEqual(EMosaic.eMosaicSquare1, ctrlr.MosaicType);
-                AssertEqual(EPlayInfo.ePlayerUnknown, ctrlr.PlayInfo);
-                AssertNotNull(ctrlr.RepositoryMines);
-                AssertFalse(ctrlr.RepositoryMines.Any());
-                AssertEqual(Math.Sqrt(defArea) * 10, ctrlr.Size.Width, P);
-                AssertEqual(Math.Sqrt(defArea) * 10, ctrlr.Size.Height, P);
-                AssertEqual(new Matrisize(10, 10), ctrlr.SizeField);
-            }
+            await new PropertyChangeExecutor<MosaicTestController>(() => new MosaicTestController()).Run(1, 100,
+                ctrlr => {
+                    AssertEqual(defArea, ctrlr.Model.Area, P);
+                    AssertEqual(null, ctrlr.CellDown);
+                    AssertEqual(0, ctrlr.CountClick);
+                    AssertEqual(0, ctrlr.CountFlag);
+                    AssertEqual(10, ctrlr.CountMinesLeft);
+                    AssertEqual(0, ctrlr.CountOpen);
+                    AssertEqual(0, ctrlr.CountUnknown);
+                    AssertEqual(EGameStatus.eGSReady, ctrlr.GameStatus);
+                    AssertNotNull(ctrlr.Image);
+                    AssertNotNull(ctrlr.Matrix);
+                    AssertTrue(ctrlr.Matrix.Any());
+                    AssertEqual(EMosaic.eMosaicSquare1, ctrlr.MosaicType);
+                    AssertEqual(EPlayInfo.ePlayerUnknown, ctrlr.PlayInfo);
+                    AssertNotNull(ctrlr.RepositoryMines);
+                    AssertFalse(ctrlr.RepositoryMines.Any());
+                    AssertEqual(Math.Sqrt(defArea) * 10, ctrlr.Size.Width, P);
+                    AssertEqual(Math.Sqrt(defArea) * 10, ctrlr.Size.Height, P);
+                    AssertEqual(new Matrisize(10, 10), ctrlr.SizeField);
+                }, (ctrlr, modifiedProperties) => { });
         }
 
     }
