@@ -53,9 +53,12 @@ public class MosaicInitDataTest {
     @Test
     public void checkTheImpossibilitySetCustomSkillLevelTest() {
         LoggerSimple.put("> MosaicInitDataTest::checkTheImpossibilitySetCustomSkillLevelTest");
-        try (MosaicInitData initData = createMosaicInitData()) {
-            initData.setSkillLevel(ESkillLevel.eCustom);
-            Assert.fail();
+        try {
+            new PropertyChangeExecutor<>(MosaicInitDataTest::createMosaicInitData).run(1, 100,
+               initData -> {
+                   initData.setSkillLevel(ESkillLevel.eCustom);
+                   Assert.fail();
+               }, (initData, modifiedProperties) -> {});
         } catch (Exception ex) {
             assertEquals(IllegalArgumentException.class, ex.getClass());
         }
@@ -64,7 +67,7 @@ public class MosaicInitDataTest {
     @Test
     public void checkIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest() {
         LoggerSimple.put("> MosaicInitDataTest::checkIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest");
-        new PropertyChangeExecutor<>(() -> createMosaicInitData()).run(100, 1000,
+        new PropertyChangeExecutor<>(MosaicInitDataTest::createMosaicInitData).run(100, 1000,
             initData -> {
                 initData.setMosaicType(EMosaic.eMosaicRhombus1);
             }, (initData, modifiedProperties) -> {
@@ -81,7 +84,7 @@ public class MosaicInitDataTest {
     @Test
     public void checkNoRepeatNotificationsTest() {
         LoggerSimple.put("> MosaicInitDataTest::checkNoRepeatNotificationsTest");
-            new PropertyChangeExecutor<>(() -> createMosaicInitData()).run(100, 1000,
+            new PropertyChangeExecutor<>(MosaicInitDataTest::createMosaicInitData).run(100, 1000,
                 initData -> {
                     LoggerSimple.put("    initData.minesCount={0}", initData.getMinesCount());
                     initData.setMosaicType(EMosaic.eMosaicRhombus1);
@@ -103,7 +106,7 @@ public class MosaicInitDataTest {
     @Test
     public void checkChangedMosaicGroupTest() {
         LoggerSimple.put("> MosaicInitDataTest::checkChangedMosaicGroupTest");
-        new PropertyChangeExecutor<>(() -> createMosaicInitData()).run(100, 1000,
+        new PropertyChangeExecutor<>(MosaicInitDataTest::createMosaicInitData).run(100, 1000,
             initData -> {
                 initData.setMosaicType(EMosaic.eMosaicHexagon1);
             }, (initData, modifiedProperties) -> {
@@ -114,7 +117,7 @@ public class MosaicInitDataTest {
     @Test
     public void checkNoChangedMosaicGroupTest() {
         LoggerSimple.put("> MosaicInitDataTest::checkNoChangedMosaicGroupTest");
-        new PropertyChangeExecutor<>(() -> createMosaicInitData()).run(100, 1000,
+        new PropertyChangeExecutor<>(MosaicInitDataTest::createMosaicInitData).run(100, 1000,
             initData -> {
                 initData.setMosaicType(EMosaic.eMosaicRhombus1);
             }, (initData, modifiedProperties) -> {
@@ -126,18 +129,19 @@ public class MosaicInitDataTest {
     public void checkRestoreIndexInGroupTest() {
         LoggerSimple.put("> MosaicInitDataTest::checkRestoreIndexInGroupTest");
 
-        try (MosaicInitData initData = createMosaicInitData()) {
-            final int checkOrdinal = 3;
+        new PropertyChangeExecutor<>(MosaicInitDataTest::createMosaicInitData).run(1, 100,
+            initData -> {
+                final int checkOrdinal = 3;
 
-            // 1. select another mosaic in current group
-            List<EMosaic> mosaicsInOldGroup = initData.getMosaicGroup().getMosaics();
-            initData.setMosaicType(mosaicsInOldGroup.get(checkOrdinal));
+                // 1. select another mosaic in current group
+                List<EMosaic> mosaicsInOldGroup = initData.getMosaicGroup().getMosaics();
+                initData.setMosaicType(mosaicsInOldGroup.get(checkOrdinal));
 
-            // 2. change group
-            initData.setMosaicGroup(EMosaicGroup.eTriangles);
+                // 2. change group
+                initData.setMosaicGroup(EMosaicGroup.eTriangles);
 
-            // 3. check ordinal in new group
-            Assert.assertEquals(checkOrdinal, initData.getMosaicType().getOrdinalInGroup());
-        }
+                // 3. check ordinal in new group
+                Assert.assertEquals(checkOrdinal, initData.getMosaicType().getOrdinalInGroup());
+            }, (initData, modifiedProperties) -> {});
     }
 }

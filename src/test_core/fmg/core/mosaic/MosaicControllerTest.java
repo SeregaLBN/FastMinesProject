@@ -63,26 +63,27 @@ public class MosaicControllerTest {
         LoggerSimple.put("> MosaicControllerTest::readinessAtTheStartTest");
 
         final int defArea = 500;
-        try (MosaicTestController ctrlr = new MosaicTestController()) {
-            Assert.assertEquals(defArea, ctrlr.getModel().getArea(), P);
-            Assert.assertEquals(null, ctrlr.getCellDown());
-            Assert.assertEquals(0, ctrlr.getCountClick());
-            Assert.assertEquals(0, ctrlr.getCountFlag());
-            Assert.assertEquals(10, ctrlr.getCountMinesLeft());
-            Assert.assertEquals(0, ctrlr.getCountOpen());
-            Assert.assertEquals(0, ctrlr.getCountUnknown());
-            Assert.assertEquals(EGameStatus.eGSReady, ctrlr.getGameStatus());
-            Assert.assertNotNull(ctrlr.getImage());
-            Assert.assertNotNull(ctrlr.getMatrix());
-            Assert.assertFalse(ctrlr.getMatrix().isEmpty());
-            Assert.assertEquals(EMosaic.eMosaicSquare1, ctrlr.getMosaicType());
-            Assert.assertEquals(EPlayInfo.ePlayerUnknown, ctrlr.getPlayInfo());
-            Assert.assertNotNull(ctrlr.getRepositoryMines());
-            Assert.assertTrue(ctrlr.getRepositoryMines().isEmpty());
-            Assert.assertEquals(Math.sqrt(defArea) * 10, ctrlr.getSize().width, P);
-            Assert.assertEquals(Math.sqrt(defArea) * 10, ctrlr.getSize().height, P);
-            Assert.assertEquals(new Matrisize(10, 10), ctrlr.getSizeField());
-        }
+        new PropertyChangeExecutor<>(MosaicTestController::new).run(1, 100,
+            ctrlr -> {
+                Assert.assertEquals(defArea, ctrlr.getModel().getArea(), P);
+                Assert.assertEquals(null, ctrlr.getCellDown());
+                Assert.assertEquals(0, ctrlr.getCountClick());
+                Assert.assertEquals(0, ctrlr.getCountFlag());
+                Assert.assertEquals(10, ctrlr.getCountMinesLeft());
+                Assert.assertEquals(0, ctrlr.getCountOpen());
+                Assert.assertEquals(0, ctrlr.getCountUnknown());
+                Assert.assertEquals(EGameStatus.eGSReady, ctrlr.getGameStatus());
+                Assert.assertNotNull(ctrlr.getImage());
+                Assert.assertNotNull(ctrlr.getMatrix());
+                Assert.assertFalse(ctrlr.getMatrix().isEmpty());
+                Assert.assertEquals(EMosaic.eMosaicSquare1, ctrlr.getMosaicType());
+                Assert.assertEquals(EPlayInfo.ePlayerUnknown, ctrlr.getPlayInfo());
+                Assert.assertNotNull(ctrlr.getRepositoryMines());
+                Assert.assertTrue(ctrlr.getRepositoryMines().isEmpty());
+                Assert.assertEquals(Math.sqrt(defArea) * 10, ctrlr.getSize().width, P);
+                Assert.assertEquals(Math.sqrt(defArea) * 10, ctrlr.getSize().height, P);
+                Assert.assertEquals(new Matrisize(10, 10), ctrlr.getSizeField());
+            }, (ctrlr, modifiedProperties) -> {});
     }
 
 }

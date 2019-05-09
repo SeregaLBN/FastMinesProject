@@ -56,7 +56,7 @@ public class MosaicViewTest {
     public void propertyChangedTest() {
         LoggerSimple.put("> MosaicTestView::propertyChangedTest");
 
-        new PropertyChangeExecutor<>(() -> new MosaicTestView()).run(100, 1000,
+        new PropertyChangeExecutor<>(MosaicTestView::new).run(100, 1000,
             view -> {
                 view.getModel().setSize(new SizeDouble(TEST_SIZE_W, TEST_SIZE_H));
             }, (view, modifiedProperties) -> {
@@ -74,11 +74,12 @@ public class MosaicViewTest {
     public void readinessAtTheStartTest() {
         LoggerSimple.put("> MosaicTestView::readinessAtTheStartTest");
 
-        try (MosaicTestView view = new MosaicTestView()) {
-            Assert.assertEquals(0, view.getDrawCount());
-            Assert.assertNotNull(view.getImage());
-            Assert.assertEquals(1, view.getDrawCount());
-        }
+        new PropertyChangeExecutor<>(MosaicTestView::new).run(100, 1000,
+            view -> {
+                Assert.assertEquals(0, view.getDrawCount());
+                Assert.assertNotNull(view.getImage());
+                Assert.assertEquals(1, view.getDrawCount());
+            }, (view, modifiedProperties) -> { });
     }
 
     @Test
@@ -121,7 +122,7 @@ public class MosaicViewTest {
     public void oneNotificationOfImageChangedTest() {
         LoggerSimple.put("> MosaicTestView::oneNotificationOfImageChangedTest");
 
-        new PropertyChangeExecutor<>(() -> new MosaicTestView()).run(100, 1000,
+        new PropertyChangeExecutor<>(MosaicTestView::new).run(100, 1000,
            view -> {
                MosaicModelTest.changeModel(view.getModel());
            }, (view, modifiedProperties) -> {
