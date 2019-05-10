@@ -3,6 +3,7 @@ package fmg.swing.app;
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.PrintStream;
 import java.util.*;
 import java.util.List;
@@ -62,6 +63,13 @@ public class Main extends JFrame {
     private SelectMosaicDlg _selectMosaicDialog;
     private CustomSkillDlg  _customSkillDialog;
 
+    private final PropertyChangeListener      onMosaicModelPropertyChangedListener = this::onMosaicModelPropertyChanged;
+    private final PropertyChangeListener onMosaicControllerPropertyChangedListener = this::onMosaicControllerPropertyChanged;
+    private final PropertyChangeListener onLogoMainIconPropertyChangedListener = ev -> {
+        if (IImageController.PROPERTY_IMAGE.equals(ev.getPropertyName()))
+            this.setIconImage(_logo.getImage());
+    };
+
     private ManageDlg getPlayerManageDlg() {
         if (_playerManageDialog == null)
             _playerManageDialog = new ManageDlg(this, false, getPlayers());
@@ -112,9 +120,19 @@ public class Main extends JFrame {
 
             private JMenuItem anew;
             private Map<ESkillLevel, JRadioButtonMenuItem> skillLevel;
-            private Map<ESkillLevel, MosaicSkillImg.IconController> skillLevelImages;
+            private List<MosaicSkillImg.IconController> skillLevelImages;
             private JMenuItem playerManage;
             private JMenuItem exit;
+            private final PropertyChangeListener onMosaicSkillImgPropertyChagedListener = (ev -> {
+                MosaicSkillImg.IconController img = (MosaicSkillImg.IconController)ev.getSource();
+                JRadioButtonMenuItem menuItem = skillLevel.get(img.getModel().getMosaicSkill());
+                Container parent = menuItem.getParent();
+                if ((parent == null) || !parent.isVisible())
+                    return;
+                if (ev.getPropertyName().equalsIgnoreCase(IImageController.PROPERTY_IMAGE)) {
+                    setMenuItemIcon(menuItem, img.getImage());
+                }
+            });
 
             public Game() {
                 super("Game");
@@ -152,7 +170,7 @@ public class Main extends JFrame {
             private JRadioButtonMenuItem getMenuItemSkillLevel(ESkillLevel key) {
                 if (skillLevel == null) {
                     skillLevel = new HashMap<>(ESkillLevel.values().length);
-                    skillLevelImages = new HashMap<>(ESkillLevel.values().length);
+                    skillLevelImages = new ArrayList<>(ESkillLevel.values().length);
 
                     for (ESkillLevel val: ESkillLevel.values()) {
                         JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem();
@@ -170,7 +188,7 @@ public class Main extends JFrame {
                         MosaicSkillModel imgModel = img.getModel();
                         double sq = MenuHeightWithIcon*ZoomQualityFactor;
                         imgModel.setSize(new SizeDouble(sq, sq));
-                        skillLevelImages.put(val, img);
+                        skillLevelImages.add(img);
                         imgModel.setBorderWidth(1); // *ZoomQualityFactor);
                         imgModel.setBorderColor(Color.RandomColor().darker(0.4));
                         imgModel.setForegroundColor(Color.RandomColor().brighter(0.4));
@@ -179,14 +197,7 @@ public class Main extends JFrame {
                         imgModel.setAnimatePeriod(6400);
                         imgModel.setTotalFrames(130);
                         setMenuItemIcon(menuItem, img.getImage());
-                        img.addListener(ev -> {
-                            Container parent = menuItem.getParent();
-                            if ((parent == null) || !parent.isVisible())
-                                return;
-                            if (ev.getPropertyName().equalsIgnoreCase(IImageController.PROPERTY_IMAGE)) {
-                                setMenuItemIcon(menuItem, img.getImage());
-                            }
-                        });
+                        img.addListener(onMosaicSkillImgPropertyChagedListener);
 
                         skillLevel.put(val, menuItem);
                     }
@@ -220,12 +231,15 @@ public class Main extends JFrame {
             void recheckSelectedSkillLevel() {
                 ESkillLevel skill = getSkillLevel();
                 getMenuItemSkillLevel(skill).setSelected(true);
-                skillLevelImages.forEach((key, img) -> img.useRotateTransforming(key == skill));
+                skillLevelImages.forEach(img -> img.useRotateTransforming(img.getModel().getMosaicSkill() == skill));
             }
 
             @Override
             public void close() {
-                skillLevelImages.forEach((key, img) -> img.close());
+                skillLevelImages.forEach(img -> {
+                    img.removeListener(onMosaicSkillImgPropertyChagedListener);
+                    img.close();
+                });
             }
 
         }
@@ -234,9 +248,29 @@ public class Main extends JFrame {
             private static final long serialVersionUID = 1L;
 
             private Map<EMosaicGroup, JMenuItem> mosaicsGroup;
-            private Map<EMosaicGroup, MosaicGroupImg.IconController> mosaicsGroupImages;
+            private List<MosaicGroupImg.IconController> mosaicsGroupImages;
             private Map<EMosaic, JRadioButtonMenuItem> mosaics;
-            private Map<EMosaic, MosaicImg.IconController> mosaicsImages;
+            private List<MosaicImg.IconController> mosaicsImages;
+            private final PropertyChangeListener onMosaicImgPropertyChangedListener = ev -> {
+                MosaicImg.IconController img = (MosaicImg.IconController)ev.getSource();
+                JRadioButtonMenuItem menuItem = mosaics.get(img.getModel().getMosaicType());
+                Container parent = menuItem.getParent();
+                if ((parent == null) || !parent.isVisible())
+                    return;
+                if (ev.getPropertyName().equalsIgnoreCase(IImageController.PROPERTY_IMAGE)) {
+                    setMenuItemIcon(menuItem, img.getImage());
+                }
+            };
+            private final PropertyChangeListener onMosaicGroupImgPropertyChangedListener = ev -> {
+                MosaicGroupImg.IconController img = (MosaicGroupImg.IconController)ev.getSource();
+                JMenuItem menuItem = mosaicsGroup.get(img.getModel().getMosaicGroup());
+                Container parent = menuItem.getParent();
+                if ((parent == null) || !parent.isVisible())
+                    return;
+                if (ev.getPropertyName().equalsIgnoreCase(IImageController.PROPERTY_IMAGE)) {
+                    setMenuItemIcon(menuItem, img.getImage());
+                }
+            };
 
             Mosaics() {
                 super("Mosaics");
@@ -256,7 +290,7 @@ public class Main extends JFrame {
             private JMenuItem getMenuItemMosaicGroup(EMosaicGroup key) {
                 if (mosaicsGroup == null) {
                     mosaicsGroup = new HashMap<>(EMosaicGroup.values().length);
-                    mosaicsGroupImages = new HashMap<>(EMosaicGroup.values().length);
+                    mosaicsGroupImages = new ArrayList<>(EMosaicGroup.values().length);
 
                     for (EMosaicGroup val: EMosaicGroup.values()) {
                         JMenu menuItem = new JMenu(val.getDescription());// + (experimentalMenuMnemonic ?  "                      " : ""));
@@ -269,7 +303,7 @@ public class Main extends JFrame {
                         MosaicGroupModel imgModel = img.getModel();
                         double sq = MenuHeightWithIcon*ZoomQualityFactor;
                         imgModel.setSize(new SizeDouble(sq, sq));
-                        mosaicsGroupImages.put(val, img);
+                        mosaicsGroupImages.add(img);
                         imgModel.setPolarLights(true);
                         imgModel.setBorderWidth(1*ZoomQualityFactor);
                         imgModel.setBorderColor(Color.RandomColor().darker(0.4));
@@ -280,14 +314,7 @@ public class Main extends JFrame {
                         imgModel.setAnimatePeriod(13000);
                         imgModel.setTotalFrames(250);
                         setMenuItemIcon(menuItem,  img.getImage());
-                        img.addListener(ev -> {
-                            Container parent = menuItem.getParent();
-                            if ((parent == null) || !parent.isVisible())
-                                return;
-                            if (ev.getPropertyName().equalsIgnoreCase(IImageController.PROPERTY_IMAGE)) {
-                                setMenuItemIcon(menuItem, img.getImage());
-                            }
-                        });
+                        img.addListener(onMosaicGroupImgPropertyChangedListener);
 
 //                        if (experimentalMenuMnemonic) {
 //                            menuItem.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -305,7 +332,7 @@ public class Main extends JFrame {
             private JRadioButtonMenuItem getMenuItemMosaic(EMosaic mosaicType) {
                 if (mosaics == null) {
                     mosaics = new HashMap<>(EMosaic.values().length);
-                    mosaicsImages = new HashMap<>(EMosaic.values().length);
+                    mosaicsImages = new ArrayList<>(EMosaic.values().length);
 
                     for (EMosaic val: EMosaic.values()) {
                         String menuItemTxt = val.getDescription(false);
@@ -321,7 +348,7 @@ public class Main extends JFrame {
                         imgModel.setMosaicType(val);
                         imgModel.setSizeField(val.sizeIcoField(true));
                         imgModel.setSize(new SizeDouble(MenuHeightWithIcon*ZoomQualityFactor, MenuHeightWithIcon*ZoomQualityFactor));
-                        mosaicsImages.put(val, img);
+                        mosaicsImages.add(img);
                         imgModel.setRotateMode(EMosaicRotateMode.someCells);
                         imgModel.getPenBorder().setWidth(1);// * ZoomQualityFactor);
                         Color borderColor = Color.RandomColor().darker(0.4);
@@ -331,13 +358,7 @@ public class Main extends JFrame {
                         imgModel.setAnimatePeriod(5400);
                         imgModel.setTotalFrames(110);
                         setMenuItemIcon(menuItem, img.getImage());
-                        img.addListener(ev -> {
-                            if (!menuItem.getParent().isVisible())
-                                return;
-                            if (ev.getPropertyName().equalsIgnoreCase(IImageController.PROPERTY_IMAGE)) {
-                                setMenuItemIcon(menuItem, img.getImage());
-                            }
-                        });
+                        img.addListener(onMosaicImgPropertyChangedListener);
 
                         if (experimentalMenuMnemonic) {
                             menuItem.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, MenuHeightWithIcon/2 - 4));
@@ -355,17 +376,23 @@ public class Main extends JFrame {
                 EMosaic currentMosaicType = getMosaicController().getMosaicType();
                 getMenuItemMosaic(currentMosaicType).setSelected(true);
 
-                mosaicsImages.forEach((eMosaic, img) -> img.getModel().setAnimated(eMosaic == currentMosaicType));
-                mosaicsGroupImages.forEach((mosaicGroup, img) -> {
-                    boolean isCurrentGroup = (mosaicGroup == currentMosaicType.getGroup());
+                mosaicsImages.forEach(img -> img.getModel().setAnimated(img.getModel().getMosaicType() == currentMosaicType));
+                mosaicsGroupImages.forEach(img -> {
+                    boolean isCurrentGroup = (img.getModel().getMosaicGroup() == currentMosaicType.getGroup());
                     img.useRotateTransforming(isCurrentGroup);
                 });
             }
 
             @Override
             public void close() {
-                mosaicsGroupImages.forEach((key, img) -> img.close() );
-                mosaicsImages.forEach((key, img) -> img.close() );
+                mosaicsGroupImages.forEach(img -> {
+                    img.removeListener(onMosaicGroupImgPropertyChangedListener);
+                    img.close();
+                });
+                mosaicsImages.forEach(img -> {
+                    img.removeListener(onMosaicImgPropertyChangedListener);
+                    img.close();
+                });
             }
 
         }
@@ -859,7 +886,14 @@ public class Main extends JFrame {
             this.addMouseListener(Main.this.getHandlers().getPausePanelMouseListener());
         }
 
-        Logo.IconController _logo;
+        private Logo.IconController _logo;
+        private final PropertyChangeListener onLogoPausePropertyChangedListener = ev -> {
+            if (!PausePanel.this.isVisible())
+                return;
+            if (IImageController.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
+                PausePanel.this.repaint();
+            }
+        };
         private Logo.IconController getLogo() {
             if (_logo == null) {
                 _logo = new Logo.IconController();
@@ -870,13 +904,7 @@ public class Main extends JFrame {
                 model.setAnimatePeriod(12500);
                 model.setTotalFrames(250);
                 _logo.usePolarLightFgTransforming(true);
-                _logo.addListener(ev -> {
-                    if (!PausePanel.this.isVisible())
-                        return;
-                    if (IImageController.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
-                        PausePanel.this.repaint();
-                    }
-                });
+                _logo.addListener(onLogoPausePropertyChangedListener);
             }
             return _logo;
         }
@@ -903,6 +931,7 @@ public class Main extends JFrame {
 
         void close() {
             removeMouseListener(Main.this.getHandlers().getPausePanelMouseListener());
+            getLogo().removeListener(onLogoPausePropertyChangedListener);
             getLogo().close();
         }
 
@@ -977,16 +1006,17 @@ public class Main extends JFrame {
     /** mosaic controller */
     private void setMosaicController(MosaicJPanelController mosaicController) {
         if (_mosaicController != null) {
-            _mosaicController.getModel().removeListener(this::onMosaicModelPropertyChanged);
-            _mosaicController.removeListener(this::onMosaicControllerPropertyChanged);
+            _mosaicController.getModel().removeListener(onMosaicModelPropertyChangedListener);
+            _mosaicController.removeListener(onMosaicControllerPropertyChangedListener);
+            _mosaicController.close();
         }
         _mosaicController = mosaicController;
         if (_mosaicController != null) {
             MosaicDrawModel<?> model = mosaicController.getModel();
             model.setPadding(new BoundDouble(0));
             model.setBackgroundColor(model.getBackgroundColor().darker(0.2));
-            model.addListener(this::onMosaicModelPropertyChanged);
-            _mosaicController.addListener(this::onMosaicControllerPropertyChanged);
+            model.addListener(onMosaicModelPropertyChangedListener);
+            _mosaicController.addListener(onMosaicControllerPropertyChangedListener);
         }
     }
     /** mosaic controller */
@@ -1148,10 +1178,7 @@ public class Main extends JFrame {
         /**/
         logoModel.setAnimated(true);
         this.setIconImage(_logo.getImage());
-        this._logo.addListener(ev -> {
-            if (IImageController.PROPERTY_IMAGE.equals(ev.getPropertyName()))
-                this.setIconImage(_logo.getImage());
-        });
+        this._logo.addListener(onLogoMainIconPropertyChangedListener);
 
 //        this.getHandlers().getMosaicListener().OnChangedArea(new MosaicEvent(getMosaic())); // TODO: это нужно только тогда, когда нет десериализации
         getToolbar().getEdtMinesLeft().setText(Integer.toString(mosaicCtrllr.getCountMinesLeft()));
@@ -1504,8 +1531,9 @@ public class Main extends JFrame {
             getAboutDialog().close();
 
 //        setVisible(false);
-        getMosaicController().close();
         setMosaicController(null);
+
+        _logo.removeListener(onLogoMainIconPropertyChangedListener);
         _logo.close();
 
 

@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 
 import fmg.core.mosaic.MosaicView;
 import fmg.jfx.mosaic.MosaicCanvasController;
+import fmg.jfx.utils.StaticInitializer;
 
 public class Main extends Application {
 
@@ -22,6 +23,7 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
+        StaticInitializer.init();
         launch(args);
     }
 

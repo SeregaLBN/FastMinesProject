@@ -2,6 +2,8 @@ package fmg.swing.app.dialog;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.net.URI;
 
 import javax.swing.*;
@@ -23,9 +25,12 @@ public class AboutDlg extends JDialog implements AutoCloseable {
 
     private static final long serialVersionUID = 1L;
     private static final int ImgZoomQuality = 3;
+    private static final int constSize = 48;
 
     private Logo.IconController _logo;
     private Smile.IconController _smile;
+    private JButton btnLogo;
+    private final PropertyChangeListener onLogoPropertyChangedListener = this::onLogoPropertyChanged;
 
     public AboutDlg(JFrame parent, boolean modal) {
         super(parent, "About", modal);
@@ -107,12 +112,18 @@ public class AboutDlg extends JDialog implements AutoCloseable {
         getContentPane().add(createPanelOk(), BorderLayout.SOUTH);
     }
 
+    private void onLogoPropertyChanged(PropertyChangeEvent ev) {
+        if (IImageController.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
+            btnLogo.setIcon(ImgUtils.zoom(_logo.getImage(), constSize, constSize));
+            btnLogo.repaint();
+        }
+    }
+
     /** логотип */
     private JComponent createPanelLogo() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
 //        panel.setBorder(BorderFactory.createTitledBorder("Logos"));// getDefaultBorder());
 
-        final int constSize = 48;
         int icoSize = constSize * ImgZoomQuality;
         if (_logo == null)
             _logo = new Logo.IconController();
@@ -125,13 +136,8 @@ public class AboutDlg extends JDialog implements AutoCloseable {
         lm.setAnimated(true);
         lm.setAnimatePeriod(12000);
         lm.setTotalFrames(250);
-        JButton btnLogo = new JButton(ImgUtils.zoom(_logo.getImage(), constSize, constSize));
-        _logo.addListener(ev -> {
-            if (IImageController.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
-                btnLogo.setIcon(ImgUtils.zoom(_logo.getImage(), constSize, constSize));
-                btnLogo.repaint();
-            }
-        });
+        btnLogo = new JButton(ImgUtils.zoom(_logo.getImage(), constSize, constSize));
+        _logo.addListener(onLogoPropertyChangedListener);
 
         _smile = new Smile.IconController(SmileModel.EFaceType.Face_Disappointed);
         _smile.getModel().setSize(new SizeDouble(icoSize, icoSize));
@@ -312,6 +318,7 @@ public class AboutDlg extends JDialog implements AutoCloseable {
 
     @Override
     public void close() {
+        _logo.removeListener(onLogoPropertyChangedListener);
         _logo.close();
         _smile.close();
     }

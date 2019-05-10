@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.awt.Insets;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -34,6 +35,8 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
     private Main parent;
 
     private MosaicImg.ImageAwtController mosaicsImg, mosaicsImgRollover;
+    private final PropertyChangeListener onMosaicsImgPropertyChangedListener = this::onMosaicsImgPropertyChanged;
+
     private static final int ImgSize = 40;
     private static final int ImgZoomQuality = 3;
     private static final Color bkTabBkColor = Cast.toColor(fmg.common.Color.Transparent()); // UIManager.getColor("Button.light"); // "Button.light" "Button.foreground"
@@ -271,7 +274,7 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
             imgModel.setAnimatePeriod((int)(totalFrames * redrawInterval));
             imgModel.setTotalFrames((int)totalFrames);
             imgModel.setAnimated(true);
-            mosaicsImg.addListener(this::onMosaicsImgPropertyChanged);
+            mosaicsImg.addListener(onMosaicsImgPropertyChangedListener);
         } else {
             mosaicsImg.setMosaicType(mosaicType);
         }
@@ -339,6 +342,7 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
 
     @Override
     public void close() {
+        mosaicsImg.removeListener(onMosaicsImgPropertyChangedListener);
         mosaicsImg.close();
         mosaicsImgRollover.close();
     }

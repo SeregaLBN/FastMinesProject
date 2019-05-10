@@ -8,6 +8,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import javax.imageio.ImageIO;
 
+/** See core file ./build.gradle */
 public final class ConsoleImage {
 
     public static BufferedImage scaleToConsole(BufferedImage in) {
