@@ -52,7 +52,8 @@ namespace fmg.core.img {
 
         public SmileModel(EFaceType faceType) {
             _faceType = faceType;
-            _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
+            _notifier = new NotifyPropertyChanged(this);
+            _notifier.PropertyChanged += OnNotifierPropertyChanged;
         }
 
         /// <summary> width and height in pixel </summary>
@@ -78,8 +79,15 @@ namespace fmg.core.img {
             set { _notifier.SetProperty(ref _faceType, value); }
         }
 
+        private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _notifier));
+            PropertyChanged?.Invoke(this, ev);
+        }
+
         public void Dispose() {
+            _notifier.PropertyChanged -= OnNotifierPropertyChanged;
             _notifier.Dispose();
+            NotifyPropertyChanged.AssertCheckSubscribers(this);
             GC.SuppressFinalize(this);
         }
 

@@ -14,7 +14,8 @@ namespace fmg.core.types.draw {
         protected readonly NotifyPropertyChanged _notifier;
 
         public FontInfo() {
-            _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
+            _notifier = new NotifyPropertyChanged(this);
+            _notifier.PropertyChanged += OnNotifierPropertyChanged;
         }
 
         public string Name {
@@ -67,8 +68,15 @@ namespace fmg.core.types.draw {
             return string.Format("FontInfo={{name={0}, bold={1}, size={2}}}", _name, _bold, _size);
         }
 
+        private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _notifier));
+            PropertyChanged?.Invoke(this, ev);
+        }
+
         public void Dispose() {
+            _notifier.PropertyChanged -= OnNotifierPropertyChanged;
             _notifier.Dispose();
+            NotifyPropertyChanged.AssertCheckSubscribers(this);
             GC.SuppressFinalize(this);
         }
 

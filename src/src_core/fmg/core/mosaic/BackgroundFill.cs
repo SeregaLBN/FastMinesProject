@@ -20,7 +20,8 @@ namespace fmg.core.mosaic {
         protected readonly NotifyPropertyChanged _notifier;
 
         public BackgroundFill() {
-            _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
+            _notifier = new NotifyPropertyChanged(this);
+            _notifier.PropertyChanged += OnNotifierPropertyChanged;
         }
 
         /// <summary> режим заливки фона ячеек
@@ -48,8 +49,15 @@ namespace fmg.core.mosaic {
             return res;
         }
 
+        private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _notifier));
+            PropertyChanged?.Invoke(this, ev);
+        }
+
         public void Dispose() {
+            _notifier.PropertyChanged -= OnNotifierPropertyChanged;
             _notifier.Dispose();
+            NotifyPropertyChanged.AssertCheckSubscribers(this);
             _colors.Clear();
         }
 

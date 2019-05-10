@@ -11,7 +11,7 @@ import fmg.common.Pair;
 import fmg.common.ui.UiInvoker;
 
 /** Notifies owner clients that a owner property value has changed */
-public final class NotifyPropertyChanged implements AutoCloseable//, INotifyPropertyChanged
+public final class NotifyPropertyChanged implements AutoCloseable, INotifyPropertyChanged
 {
     private final INotifyPropertyChanged _owner;
     private final List<PropertyChangeListener> _propertyChanges;
@@ -26,6 +26,7 @@ public final class NotifyPropertyChanged implements AutoCloseable//, INotifyProp
         _deferredNotifications = deferredNotifications;
     }
 
+    @Override
     public void addListener(PropertyChangeListener listener) {
         _propertyChanges.add(listener);
 
@@ -33,6 +34,7 @@ public final class NotifyPropertyChanged implements AutoCloseable//, INotifyProp
         if (count > 3)
             System.err.println("Suspiciously many subscribers! count=" + count);
     }
+    @Override
     public void removeListener(PropertyChangeListener listener) {
         if (!_propertyChanges.contains(listener))
             throw new IllegalArgumentException("NotifyPropertyChanged.removeListener: Illegal listener=" + listener);
@@ -184,7 +186,7 @@ public final class NotifyPropertyChanged implements AutoCloseable//, INotifyProp
         _cachedFields.clear();
         _deferrNotifications.clear();
         if (!_propertyChanges.isEmpty())
-            throw new UnsupportedOperationException("Illegal usage: Not all listeners were unsubscribed: count=" + _propertyChanges.size());
+            throw new IllegalStateException("Illegal usage: Not all listeners were unsubscribed (type " + _owner.getClass().getName() + "): count=" + _propertyChanges.size());
         _propertyChanges.clear();
     }
 

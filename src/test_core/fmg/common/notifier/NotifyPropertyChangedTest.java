@@ -108,4 +108,21 @@ public class NotifyPropertyChangedTest {
             });
     }
 
+    @Test
+    public void forgotToUnsubscribeTest() {
+        LoggerSimple.put("> NotifyPropertyChangedTest::forgotToUnsubscribeTest");
+
+        try {
+            try (SimpleProperty obj = new SimpleProperty(null, false)) {
+                PropertyChangeListener listener = ev -> {};
+                obj.addListener(listener);
+              //obj.removeListener(listener); // test forgot this
+            }
+            Assert.fail();
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof IllegalStateException);
+            Assert.assertEquals(ex.getMessage(), "Illegal usage: Not all listeners were unsubscribed (type " + SimpleProperty.class.getName() + "): count=1");
+        }
+    }
+
 }

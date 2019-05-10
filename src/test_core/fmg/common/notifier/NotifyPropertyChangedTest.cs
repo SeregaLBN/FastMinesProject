@@ -9,26 +9,38 @@ namespace fmg.common.notifier {
 
         class SimpleProperty : INotifyPropertyChanged, IDisposable {
             public event PropertyChangedEventHandler PropertyChanged;
-            private readonly NotifyPropertyChanged notifier;
+            private readonly NotifyPropertyChanged _notifier;
             internal SimpleProperty(object initValueOfProperty, bool deferredNotifications) {
-                notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev), deferredNotifications);
-                this.property = initValueOfProperty;
+                _notifier = new NotifyPropertyChanged(this, deferredNotifications);
+                _notifier.PropertyChanged += OnNotifierPropertyChanged;
+                this._property = initValueOfProperty;
             }
-            private object property;
+            private object _property;
             public object Property {
-                get => property;
-                set => notifier.SetProperty(ref property, value);
+                get => _property;
+                set => _notifier.SetProperty(ref _property, value);
             }
-            public void Dispose() { notifier.Dispose();  }
+            private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+                System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _notifier));
+                PropertyChanged?.Invoke(this, ev);
+            }
+
+            public void Dispose() {
+                _notifier.PropertyChanged -= OnNotifierPropertyChanged;
+                _notifier.Dispose();
+                NotifyPropertyChanged.AssertCheckSubscribers(this);
+            }
         }
 
 
         protected abstract void AssertEqual(int    expected, int    actual);
         protected abstract void AssertEqual(object expected, object actual);
+        protected abstract void AssertTrue(bool condition);
+        protected abstract void AssertFail();
 
         public virtual void Setup() {
             LoggerSimple.Put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-            LoggerSimple.Put(">" + nameof(NotifyPropertyChangedTest) + "::" + nameof(Setup));
+            LoggerSimple.Put("> " + nameof(NotifyPropertyChangedTest) + "::" + nameof(Setup));
         }
 
         public virtual void Before() {
@@ -42,7 +54,7 @@ namespace fmg.common.notifier {
         }
 
         public virtual void NotifyPropertyChangedSyncTest() {
-            LoggerSimple.Put(">" + nameof(NotifyPropertyChangedTest) + "::" + nameof(NotifyPropertyChangedSyncTest));
+            LoggerSimple.Put("> " + nameof(NotifyPropertyChangedTest) + "::" + nameof(NotifyPropertyChangedSyncTest));
 
             using (var data = new SimpleProperty(-1, false)) {
                 int countFiredEvents = 3 + ThreadLocalRandom.Current.Next(10);
@@ -59,7 +71,7 @@ namespace fmg.common.notifier {
         }
 
         public virtual async Task NotifyPropertyChangedAsyncTest() {
-            LoggerSimple.Put(">" + nameof(NotifyPropertyChangedTest) + "::" + nameof(NotifyPropertyChangedAsyncTest));
+            LoggerSimple.Put("> " + nameof(NotifyPropertyChangedTest) + "::" + nameof(NotifyPropertyChangedAsyncTest));
 
             const int initialValue = 1;
             int countFiredEvents = 3 + ThreadLocalRandom.Current.Next(10);
@@ -81,7 +93,7 @@ namespace fmg.common.notifier {
         }
 
         public virtual async Task CheckForNoEventTest() {
-            LoggerSimple.Put(">" + nameof(NotifyPropertyChangedTest) + "::" + nameof(CheckForNoEventTest));
+            LoggerSimple.Put("> " + nameof(NotifyPropertyChangedTest) + "::" + nameof(CheckForNoEventTest));
 
             const int initialValue = 1;
             await new PropertyChangeExecutor<SimpleProperty>(() => new SimpleProperty(initialValue, true)).Run(
@@ -96,6 +108,23 @@ namespace fmg.common.notifier {
                 }, (data, modifiedProperties) => {
                     AssertEqual(0, modifiedProperties.Count);
                 });
+        }
+
+
+        public virtual void ForgotToUnsubscribeTest() {
+            LoggerSimple.Put("> " + nameof(NotifyPropertyChangedTest) + "::" + nameof(ForgotToUnsubscribeTest));
+
+            try {
+                using (var obj = new SimpleProperty(null, false)) {
+                    void listener(object sender, PropertyChangedEventArgs ev) { }
+                    obj.PropertyChanged += listener;
+                  //obj.removeListener(listener); // test forgot this
+                }
+                AssertFail();
+            } catch (Exception ex) {
+                AssertTrue(ex is InvalidOperationException);
+                AssertEqual(ex.Message, "Illegal usage: Not all listeners were unsubscribed: count=1");
+            }
         }
 
     }

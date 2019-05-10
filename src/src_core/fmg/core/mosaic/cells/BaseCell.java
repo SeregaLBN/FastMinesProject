@@ -60,7 +60,7 @@ public abstract class BaseCell {
      * <br> (Полные данные о конкретной мозаике) <br>
      * Доопределаяется наследниками BaseCell
      */
-    public abstract static class BaseAttribute implements INotifyPropertyChanged {
+    public abstract static class BaseAttribute implements INotifyPropertyChanged, AutoCloseable {
 
         public static final String PROPERTY_AREA = "Area";
 
@@ -119,6 +119,11 @@ public abstract class BaseCell {
         @Override
         public void removeListener(PropertyChangeListener listener) {
             _notifier.removeListener(listener);
+        }
+
+        @Override
+        public void close() {
+            _notifier.close();
         }
 
     }

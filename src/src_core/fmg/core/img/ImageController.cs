@@ -25,7 +25,8 @@ namespace fmg.core.img {
         protected readonly NotifyPropertyChanged _notifier;
 
         protected ImageController(TImageView imageView) {
-            _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev), true);
+            _notifier = new NotifyPropertyChanged(this, true);
+            _notifier.PropertyChanged += OnNotifierPropertyChanged;
             _imageView = imageView;
             _imageView.PropertyChanged += OnPropertyViewChanged;
         }
@@ -49,10 +50,17 @@ namespace fmg.core.img {
             }
         }
 
+        private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _notifier));
+            PropertyChanged?.Invoke(this, ev);
+        }
+
         // <summary>  Dispose managed resources </summary>/
         protected virtual void Disposing() {
             _imageView.PropertyChanged -= OnPropertyViewChanged;
+            _notifier .PropertyChanged -= OnNotifierPropertyChanged;
             _notifier.Dispose();
+            NotifyPropertyChanged.AssertCheckSubscribers(this);
         }
 
         public void Dispose() {

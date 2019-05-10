@@ -31,7 +31,8 @@ namespace fmg.core.img {
         #endregion: end unusable code
 
         public AnimatedInnerModel() {
-            _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
+            _notifier = new NotifyPropertyChanged(this);
+            _notifier.PropertyChanged += OnNotifierPropertyChanged;
         }
 
         public bool Animated {
@@ -59,8 +60,15 @@ namespace fmg.core.img {
             set { _notifier.SetProperty(ref _currentFrame, value); }
         }
 
+        private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _notifier));
+            PropertyChanged?.Invoke(this, ev);
+        }
+
         public void Dispose() {
+            _notifier.PropertyChanged -= OnNotifierPropertyChanged;
             _notifier.Dispose();
+            NotifyPropertyChanged.AssertCheckSubscribers(this);
             GC.SuppressFinalize(this);
         }
 

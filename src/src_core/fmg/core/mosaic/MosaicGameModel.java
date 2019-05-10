@@ -75,6 +75,7 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
         if (newValue != null)
             throw new IllegalArgumentException("Bad argument - support only null value!");
         _cellAttr.removeListener(onCellAttributePropertyChangedListener);
+        _cellAttr.close();
         _cellAttr = null;
         _matrix.clear();
         _notifier.firePropertyChanged(PROPERTY_CELL_ATTR);

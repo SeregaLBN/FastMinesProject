@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Xunit;
 using fmg.ava.utils;
 
@@ -11,6 +12,13 @@ namespace fmg.common.notifier {
         }
         protected override void AssertEqual(object expected, object actual) {
             Assert.Equal(expected, actual);
+        }
+        protected override void AssertTrue(bool condition) {
+            Assert.True(condition);
+        }
+        protected override void AssertFail() {
+            //Assert.Fail();
+            throw new Exception("Assert.Fail");
         }
 
         private bool _tuned;
@@ -39,6 +47,12 @@ namespace fmg.common.notifier {
         public override async Task CheckForNoEventTest() {
             Setup();
             await base.CheckForNoEventTest();
+        }
+
+        [Fact]
+        public override void ForgotToUnsubscribeTest() {
+            Setup();
+            base.ForgotToUnsubscribeTest();
         }
 
     }

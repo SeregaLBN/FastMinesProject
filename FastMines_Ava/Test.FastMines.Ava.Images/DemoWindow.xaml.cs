@@ -17,13 +17,14 @@ namespace Test.FastMines.Ava.Images {
 
     public class DemoWindow : Window {
 
-        private class Modelka : INotifyPropertyChanged {
+        private class Modelka : INotifyPropertyChanged, IDisposable {
 
             public event PropertyChangedEventHandler PropertyChanged;
             protected readonly NotifyPropertyChanged _notifier;
 
             public Modelka(IControl imgCtrl) {
-                _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
+                _notifier = new NotifyPropertyChanged(this);
+                _notifier.PropertyChanged += OnNotifierPropertyChanged;
                 var mosaicImg = new MosaicGroupImg.RenderTargetBmpController(null /*EMosaicGroup.eOthers*/, imgCtrl);
                 mosaicImg.UseRotateTransforming(true);
                 mosaicImg.UsePolarLightFgTransforming(true);
@@ -41,6 +42,18 @@ namespace Test.FastMines.Ava.Images {
 
             public MosaicGroupImg.RenderTargetBmpController MosaicImg { get; }
             public IBitmap Bitmap => MosaicImg.Image;
+
+            private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+                System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _notifier));
+                PropertyChanged?.Invoke(this, ev);
+            }
+
+            public void Dispose() {
+                _notifier.PropertyChanged -= OnNotifierPropertyChanged;
+                _notifier.Dispose();
+                NotifyPropertyChanged.AssertCheckSubscribers(this);
+            }
+
         }
 
         private Modelka _viewModel;
@@ -51,6 +64,8 @@ namespace Test.FastMines.Ava.Images {
             this.AttachDevTools();
 
             DataContext = _viewModel;
+
+            Closing += OnClosing;
         }
 
         private void InitializeComponent() {
@@ -59,6 +74,11 @@ namespace Test.FastMines.Ava.Images {
             IControl imgCtrl = ((StackPanel)Content).Children.First();
 
             _viewModel = new Modelka(imgCtrl);
+        }
+
+        private void OnClosing(object sender, CancelEventArgs e) {
+            Closing -= OnClosing;
+            _viewModel.Dispose();
         }
 
     }

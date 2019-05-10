@@ -8,8 +8,8 @@ namespace fmg.core.img {
 
     public static class AnimatedImageModelConst {
 
-        public static readonly Color DefaultBkColor = Color.DarkOrange; // Color.Coral; // 
-        public static readonly Color DefaultForegroundColor = Color.LightSeaGreen; // Color.Orchid; // 
+        public static readonly Color DefaultBkColor = Color.DarkOrange; // Color.Coral; //
+        public static readonly Color DefaultForegroundColor = Color.LightSeaGreen; // Color.Orchid; //
         public const int DefaultImageSize = 100;
         public const int DefaultPadding = (int)(DefaultImageSize * 0.05); // 5%
 
@@ -41,7 +41,8 @@ namespace fmg.core.img {
         protected readonly NotifyPropertyChanged _notifier;
 
         protected AnimatedImageModel() {
-            _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
+            _notifier = new NotifyPropertyChanged(this);
+            _notifier  .PropertyChanged += OnNotifierPropertyChanged;
             _innerModel.PropertyChanged += OnInnerModelPropertyChanged;
         }
 
@@ -148,6 +149,11 @@ namespace fmg.core.img {
             set { _notifier.SetProperty(ref _animeDirection, value); }
         }
 
+        private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _notifier));
+            PropertyChanged?.Invoke(this, ev);
+        }
+
         protected void OnInnerModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             // refire
             _notifier.FirePropertyChanged(ev);
@@ -156,7 +162,9 @@ namespace fmg.core.img {
         // <summary>  Dispose managed resources </summary>/
         protected virtual void Disposing() {
             _innerModel.PropertyChanged -= OnInnerModelPropertyChanged;
+            _notifier  .PropertyChanged -= OnNotifierPropertyChanged;
             _notifier.Dispose();
+            NotifyPropertyChanged.AssertCheckSubscribers(this);
         }
 
         public void Dispose() {

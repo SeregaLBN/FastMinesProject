@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using fmg.common.ui;
 
@@ -10,17 +11,16 @@ namespace fmg.common.notifier {
 #if WINDOWS_UWP
     [Windows.Foundation.Metadata.WebHostHidden]
 #endif
-    public sealed class NotifyPropertyChanged : IDisposable //, INotifyPropertyChanged
+    public sealed class NotifyPropertyChanged : IDisposable, INotifyPropertyChanged
     {
         private readonly INotifyPropertyChanged _owner;
-        private readonly Action<PropertyChangedEventArgs> _fireOwnerEvent;
+        public event PropertyChangedEventHandler PropertyChanged;
         public bool DeferredNotifications { get; set; }
         private readonly IDictionary<string /* propertyName */, PropertyChangedEventArgs> _deferrNotifications = new Dictionary<string, PropertyChangedEventArgs>();
         public bool Disposed { get; private set; } = false;
 
-        public NotifyPropertyChanged(INotifyPropertyChanged owner, Action<PropertyChangedEventArgs> fireOwnerEvent, bool deferredNotifications = false) {
+        public NotifyPropertyChanged(INotifyPropertyChanged owner, bool deferredNotifications = false) {
             _owner = owner;
-            _fireOwnerEvent = fireOwnerEvent;
             DeferredNotifications = deferredNotifications;
         }
 
@@ -71,7 +71,7 @@ namespace fmg.common.notifier {
             void fireOwnerEvent(PropertyChangedEventArgs ev3) {
                 //if (ev3.PropertyName == "Image")
                 //   LoggerSimple.Put("  Fire event '" + ev3.PropertyName + "'! class " + _owner.GetType().FullName);
-                _fireOwnerEvent(ev3);
+                PropertyChanged?.Invoke(this, ev3);
             }
             if (!DeferredNotifications) {
                 fireOwnerEvent(ev);
@@ -132,8 +132,23 @@ namespace fmg.common.notifier {
                 return;
             Disposed = true;
             _deferrNotifications.Clear();
-            //this.GetType().GetField
+            AssertCheckSubscribers(this);
             GC.SuppressFinalize(this);
+        }
+
+        public static void AssertCheckSubscribers(INotifyPropertyChanged self, string propertyChangedName = nameof(INotifyPropertyChanged.PropertyChanged)) {
+            Type type = self.GetType();
+            var eventField = type.GetField(propertyChangedName,
+                BindingFlags.GetField |
+                BindingFlags.NonPublic |
+                BindingFlags.Instance);
+            var value = eventField.GetValue(self);
+            if (value == null)
+                return; // Ok. No subscribers
+            var invocationList = ((PropertyChangedEventHandler)value).GetInvocationList();
+            var subscriberCount = invocationList.Length;
+            if (subscriberCount != 0)
+                throw new InvalidOperationException("Illegal usage: Not all listeners were unsubscribed (type " + type.FullName + "): count=" + subscriberCount);
         }
 
     }

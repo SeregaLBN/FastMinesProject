@@ -54,7 +54,7 @@ namespace fmg.core.mosaic.cells {
         /// Контекст/метаданные, описывающий общие хар-ки для каждого из экземпляров BaseCell.
         /// (Полные данные о конкретной мозаике)
         /// Доопределаяется наследниками BaseCell</summary>
-        public abstract class BaseAttribute : INotifyPropertyChanged {
+        public abstract class BaseAttribute : INotifyPropertyChanged, IDisposable {
 
             /// <summary>площадь ячейки/фигуры</summary>
             private double _area = 500;
@@ -63,7 +63,8 @@ namespace fmg.core.mosaic.cells {
             protected readonly NotifyPropertyChanged _notifier;
 
             protected BaseAttribute() {
-                _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
+                _notifier = new NotifyPropertyChanged(this);
+                _notifier.PropertyChanged += OnNotifierPropertyChanged;
             }
 
             /// <summary>площадь ячейки/фигуры</summary>
@@ -103,6 +104,17 @@ namespace fmg.core.mosaic.cells {
             /// (Не считая режима заливки цветом фона по-умолчанию...)</summary>
             public virtual int GetMaxBackgroundFillModeValue() {
                 return 19;
+            }
+
+            private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+                System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _notifier));
+                PropertyChanged?.Invoke(this, ev);
+            }
+
+            public void Dispose() {
+                _notifier.PropertyChanged -= OnNotifierPropertyChanged;
+                _notifier.Dispose();
+                NotifyPropertyChanged.AssertCheckSubscribers(this);
             }
 
         }

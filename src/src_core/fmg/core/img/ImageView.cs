@@ -34,10 +34,12 @@ namespace fmg.core.img {
 
         protected ImageView(TImageModel imageModel) {
             Model = imageModel;
-            _notifier      = new NotifyPropertyChanged(this, ev => PropertyChangedSync?.Invoke(this, ev), false);
-            _notifierAsync = new NotifyPropertyChanged(this, ev => PropertyChanged    ?.Invoke(this, ev), true);
-            this .PropertyChangedSync += OnPropertyChanged;
-            Model.PropertyChanged     += OnPropertyModelChanged;
+            _notifier      = new NotifyPropertyChanged(this, false);
+            _notifierAsync = new NotifyPropertyChanged(this, true);
+            _notifier     .PropertyChanged += OnNotifierPropertyChanged;
+            _notifierAsync.PropertyChanged += OnNotifierAsyncPropertyChanged;
+            this          .PropertyChangedSync += OnPropertyChanged;
+            Model         .PropertyChanged     += OnPropertyModelChanged;
         }
 
         /// <summary> width and height in pixel </summary>
@@ -116,13 +118,27 @@ namespace fmg.core.img {
             }
         }
 
+        private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _notifier));
+            PropertyChangedSync?.Invoke(this, ev);
+        }
+
+        private void OnNotifierAsyncPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _notifierAsync));
+            PropertyChanged/*Async*/?.Invoke(this, ev);
+        }
+
         // <summary>  Dispose managed resources </summary>/
         protected virtual void Disposing() {
+            _notifier     .PropertyChanged -= OnNotifierPropertyChanged;
+            _notifierAsync.PropertyChanged -= OnNotifierAsyncPropertyChanged;
             _notifier.Dispose();
             _notifierAsync.Dispose();
             this .PropertyChangedSync -= OnPropertyChanged;
             Model.PropertyChanged     -= OnPropertyModelChanged;
             Image = null;
+            NotifyPropertyChanged.AssertCheckSubscribers(this, nameof(PropertyChangedSync));
+            NotifyPropertyChanged.AssertCheckSubscribers(this);
         }
 
         public void Dispose() {

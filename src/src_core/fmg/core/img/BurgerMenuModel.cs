@@ -24,7 +24,8 @@ namespace fmg.core.img {
         /// <summary> ctor </summary>
         /// <param name="generalModel">another basic model</param>
         internal BurgerMenuModel(AnimatedImageModel generalModel) {
-            _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
+            _notifier = new NotifyPropertyChanged(this);
+            _notifier.PropertyChanged += OnNotifierPropertyChanged;
             _generalModel = generalModel;
             _generalModel.PropertyChanged += OnGeneralModelPropertyChanged;
         }
@@ -132,14 +133,21 @@ namespace fmg.core.img {
             }
         }
 
+        private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _notifier));
+            PropertyChanged?.Invoke(this, ev);
+        }
+
         public void Dispose() {
             if (_disposed)
                 return;
             _disposed = true;
 
             _generalModel.PropertyChanged -= OnGeneralModelPropertyChanged;
+            _notifier    .PropertyChanged -= OnNotifierPropertyChanged;
             _notifier.Dispose();
             _generalModel = null;
+            NotifyPropertyChanged.AssertCheckSubscribers(this);
 
             GC.SuppressFinalize(this);
         }

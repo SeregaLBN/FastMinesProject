@@ -18,7 +18,8 @@ namespace fmg.core.types.draw {
            this(Color.Black, Color.White, 3)
         //this(Color.GREEN, Color.RED, 1)
         {
-            _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
+            _notifier = new NotifyPropertyChanged(this);
+            _notifier.PropertyChanged += OnNotifierPropertyChanged;
         }
 
         public PenBorder(
@@ -72,8 +73,15 @@ namespace fmg.core.types.draw {
             return (other is PenBorder penObj) && Equals(penObj);
         }
 
+        private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _notifier));
+            PropertyChanged?.Invoke(this, ev);
+        }
+
         public void Dispose() {
+            _notifier.PropertyChanged -= OnNotifierPropertyChanged;
             _notifier.Dispose();
+            NotifyPropertyChanged.AssertCheckSubscribers(this);
             GC.SuppressFinalize(this);
         }
 
