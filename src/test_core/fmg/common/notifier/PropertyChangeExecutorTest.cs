@@ -46,7 +46,7 @@ namespace fmg.common.notifier {
             LoggerSimple.Put("> PropertyChangeExecutorTest::SimpleUsageTest");
 
             SimpleDataObj d = null;
-            await new PropertyChangeExecutor<SimpleDataObj>(() => d = new SimpleDataObj()).Run(1, 100,
+            await new PropertyChangeExecutor<SimpleDataObj>(() => d = new SimpleDataObj()).Run(10, 1000,
                 data => {
                     LoggerSimple.Put("    data modificator");
                 }, (data, modifiedProperties) => {
@@ -62,7 +62,7 @@ namespace fmg.common.notifier {
             LoggerSimple.Put("> PropertyChangeExecutorTest::ExtendedUsageTest");
 
             SimpleDataObj d = null;
-            await new PropertyChangeExecutor<SimpleDataObj>(() => d = new SimpleDataObj(), false).Run(1, 100,
+            await new PropertyChangeExecutor<SimpleDataObj>(() => d = new SimpleDataObj(), false).Run(10, 1000,
                 data => {
                     LoggerSimple.Put("    data modificator");
                 }, (data, modifiedProperties) => {
@@ -73,7 +73,7 @@ namespace fmg.common.notifier {
             AssertNotNull(d);
             AssertFalse(d.Disposed);
 
-            await new PropertyChangeExecutor<SimpleDataObj>(() => d).Run(1, 100,
+            await new PropertyChangeExecutor<SimpleDataObj>(() => d).Run(10, 1000,
                 data => {
                     LoggerSimple.Put("    data modificator");
                 }, (data, modifiedProperties) => {
@@ -89,7 +89,7 @@ namespace fmg.common.notifier {
 
             var failEx = new ArgumentException("Tested exception");
             try {
-                await new PropertyChangeExecutor<SimpleDataObj>(() => { throw failEx; }).Run(1, 100,
+                await new PropertyChangeExecutor<SimpleDataObj>(() => { throw failEx; }).Run(10, 1000,
                    data => {
                        LoggerSimple.Put("    data modificator");
                        AssertFail();
@@ -109,7 +109,7 @@ namespace fmg.common.notifier {
 
             var failEx = new ArgumentException("Tested exception");
             try {
-                await new PropertyChangeExecutor<SimpleDataObj>(() => new SimpleDataObj()).Run(1, 100,
+                await new PropertyChangeExecutor<SimpleDataObj>(() => new SimpleDataObj()).Run(10, 1000,
                    data => {
                        LoggerSimple.Put("    data modificator");
                        throw failEx;
@@ -129,7 +129,7 @@ namespace fmg.common.notifier {
 
             var failEx = new ArgumentException("Tested exception");
             try {
-                await new PropertyChangeExecutor<SimpleDataObj>(() => new SimpleDataObj()).Run(1, 100,
+                await new PropertyChangeExecutor<SimpleDataObj>(() => new SimpleDataObj()).Run(10, 1000,
                    data => {
                        LoggerSimple.Put("    data modificator");
                    }, (data, modifiedProperties) => {

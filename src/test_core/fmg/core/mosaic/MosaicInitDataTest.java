@@ -54,7 +54,7 @@ public class MosaicInitDataTest {
     public void checkTheImpossibilitySetCustomSkillLevelTest() {
         LoggerSimple.put("> MosaicInitDataTest::checkTheImpossibilitySetCustomSkillLevelTest");
         try {
-            new PropertyChangeExecutor<>(MosaicInitDataTest::createMosaicInitData).run(1, 100,
+            new PropertyChangeExecutor<>(MosaicInitDataTest::createMosaicInitData).run(10, 1000,
                initData -> {
                    initData.setSkillLevel(ESkillLevel.eCustom);
                    Assert.fail();
@@ -129,7 +129,7 @@ public class MosaicInitDataTest {
     public void checkRestoreIndexInGroupTest() {
         LoggerSimple.put("> MosaicInitDataTest::checkRestoreIndexInGroupTest");
 
-        new PropertyChangeExecutor<>(MosaicInitDataTest::createMosaicInitData).run(1, 100,
+        new PropertyChangeExecutor<>(MosaicInitDataTest::createMosaicInitData).run(10, 1000,
             initData -> {
                 final int checkOrdinal = 3;
 

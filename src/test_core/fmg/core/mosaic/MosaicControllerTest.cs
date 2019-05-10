@@ -61,7 +61,7 @@ namespace fmg.core.mosaic {
             LoggerSimple.Put("> " + nameof(MosaicControllerTest) + "::" + nameof(ReadinessAtTheStartTest));
 
             const int defArea = 500;
-            await new PropertyChangeExecutor<MosaicTestController>(() => new MosaicTestController()).Run(1, 100,
+            await new PropertyChangeExecutor<MosaicTestController>(() => new MosaicTestController()).Run(10, 1000,
                 ctrlr => {
                     AssertEqual(defArea, ctrlr.Model.Area, P);
                     AssertEqual(null, ctrlr.CellDown);

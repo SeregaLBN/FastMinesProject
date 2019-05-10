@@ -117,7 +117,7 @@ public class MosaicModelTest {
     public void mosaicDrawModelAsIsTest() {
         LoggerSimple.put("> MosaicModelTest::mosaicDrawModelAsIsTest");
 
-        new PropertyChangeExecutor<>(MosaicTestModel::new).run(1, 100,
+        new PropertyChangeExecutor<>(MosaicTestModel::new).run(10, 1000,
             model -> {
                 Assert.assertEquals(EMosaic.eMosaicSquare1, model.getMosaicType());
                 Assert.assertEquals(new Matrisize(10, 10), model.getSizeField());
@@ -129,7 +129,7 @@ public class MosaicModelTest {
     public void autoFitTrueCheckAffectsToPaddingTest() {
         LoggerSimple.put("> MosaicModelTest::autoFitTrueCheckAffectsToPaddingTest");
 
-        new PropertyChangeExecutor<>(MosaicTestModel::new).run(1, 100,
+        new PropertyChangeExecutor<>(MosaicTestModel::new).run(10, 1000,
             model -> {
                 // set property
                 model.setAutoFit(true);
@@ -179,7 +179,7 @@ public class MosaicModelTest {
             return model;
         };
 
-        new PropertyChangeExecutor<>(createTestModel).run(1, 100,
+        new PropertyChangeExecutor<>(createTestModel).run(10, 1000,
             model -> {
                 // change property
                 model.setSize(new SizeDouble(700, 500));
@@ -204,7 +204,7 @@ public class MosaicModelTest {
                 Assert.assertEquals(0, padding.bottom, P);
             }, (model, modifiedProperties) -> {});
 
-        new PropertyChangeExecutor<>(createTestModel).run(1, 100,
+        new PropertyChangeExecutor<>(createTestModel).run(10, 1000,
             model -> {
                 // change property
                 model.setPadding(new BoundDouble(150, 75, 50, 25));
@@ -230,7 +230,7 @@ public class MosaicModelTest {
                 Assert.assertEquals(12.5, padding.bottom, P);
             }, (model, modifiedProperties) -> {});
 
-        new PropertyChangeExecutor<>(createTestModel).run(1, 100,
+        new PropertyChangeExecutor<>(createTestModel).run(10, 1000,
             model -> {
                 // change property
                 model.setSize(new SizeDouble(700, 500));
@@ -256,7 +256,7 @@ public class MosaicModelTest {
                 Assert.assertEquals(0, padding.bottom, P);
             }, (model, modifiedProperties) -> {});
 
-        new PropertyChangeExecutor<>(createTestModel).run(1, 100,
+        new PropertyChangeExecutor<>(createTestModel).run(10, 1000,
             model -> {
                 // change property
                 model.setSize(new SizeDouble(700, 500));
@@ -283,7 +283,7 @@ public class MosaicModelTest {
                 Assert.assertEquals(0, padding.bottom, P);
             }, (model, modifiedProperties) -> {});
 
-        new PropertyChangeExecutor<>(createTestModel).run(1, 100,
+        new PropertyChangeExecutor<>(createTestModel).run(10, 1000,
             model -> {
                 // change property
                 model.setSize(new SizeDouble(700, 500));
@@ -311,7 +311,7 @@ public class MosaicModelTest {
                 Assert.assertEquals( 25, padding.bottom, P);
             }, (model, modifiedProperties) -> {});
 
-        new PropertyChangeExecutor<>(createTestModel).run(1, 100,
+        new PropertyChangeExecutor<>(createTestModel).run(10, 1000,
             model -> {
                 // change property
                 model.setSize(new SizeDouble(700, 500));
@@ -339,7 +339,7 @@ public class MosaicModelTest {
                 Assert.assertEquals(- 25, padding.bottom, P);
             }, (model, modifiedProperties) -> {});
 
-        new PropertyChangeExecutor<>(createTestModel).run(1, 100,
+        new PropertyChangeExecutor<>(createTestModel).run(10, 1000,
             model -> {
                 // change property
                 model.setSize(new SizeDouble(700, 500));
@@ -368,7 +368,7 @@ public class MosaicModelTest {
                 Assert.assertEquals(0, padding.bottom, P);
             }, (model, modifiedProperties) -> {});
 
-        new PropertyChangeExecutor<>(createTestModel).run(1, 100,
+        new PropertyChangeExecutor<>(createTestModel).run(10, 1000,
             model -> {
                 // change property
                 model.setSize(new SizeDouble(700, 500));
@@ -397,7 +397,7 @@ public class MosaicModelTest {
                 Assert.assertEquals( 25, padding.bottom, P);
             }, (model, modifiedProperties) -> {});
 
-        new PropertyChangeExecutor<>(createTestModel).run(1, 100,
+        new PropertyChangeExecutor<>(createTestModel).run(10, 1000,
             model -> {
                 // change property
                 model.setMosaicOffset(new SizeDouble(200, 300));
@@ -455,7 +455,7 @@ public class MosaicModelTest {
             return model;
         };
 
-        new PropertyChangeExecutor<>(createTestModel).run(1, 100,
+        new PropertyChangeExecutor<>(createTestModel).run(10, 1000,
             model -> {
                 // change property
                 model.setMosaicOffset(new SizeDouble(200, 300));
@@ -480,7 +480,7 @@ public class MosaicModelTest {
                 Assert.assertEquals(-300, padding.bottom, P);
             }, (model, modifiedProperties) -> {});
 
-        new PropertyChangeExecutor<>(createTestModel).run(1, 100,
+        new PropertyChangeExecutor<>(createTestModel).run(10, 1000,
             model -> {
                 // change property
                 model.setMosaicOffset(new SizeDouble(10, 15));
@@ -506,7 +506,7 @@ public class MosaicModelTest {
                 Assert.assertEquals(  0, padding.bottom, P);
             }, (model, modifiedProperties) -> {});
 
-        new PropertyChangeExecutor<>(createTestModel).run(1, 100,
+        new PropertyChangeExecutor<>(createTestModel).run(10, 1000,
             model -> {
                 // change property
                 model.setSize(new SizeDouble(700, 500));
@@ -532,7 +532,7 @@ public class MosaicModelTest {
                 Assert.assertEquals(   0, padding.bottom, P);
             }, (model, modifiedProperties) -> {});
 
-        new PropertyChangeExecutor<>(createTestModel).run(1, 100,
+        new PropertyChangeExecutor<>(createTestModel).run(10, 1000,
             model -> {
                 // change property
                 model.setSize(new SizeDouble(700, 500));
@@ -559,7 +559,7 @@ public class MosaicModelTest {
                 Assert.assertEquals(  0, padding.bottom, P);
             }, (model, modifiedProperties) -> {});
 
-        new PropertyChangeExecutor<>(createTestModel).run(1, 100,
+        new PropertyChangeExecutor<>(createTestModel).run(10, 1000,
             model -> {
                 // change property
                 model.setSize(new SizeDouble(700, 500));
@@ -587,7 +587,7 @@ public class MosaicModelTest {
                 Assert.assertEquals( 40, padding.bottom, P);
             }, (model, modifiedProperties) -> {});
 
-        new PropertyChangeExecutor<>(createTestModel).run(1, 100,
+        new PropertyChangeExecutor<>(createTestModel).run(10, 1000,
             model -> {
                 // change property
                 model.setSize(new SizeDouble(700, 500));
@@ -616,7 +616,7 @@ public class MosaicModelTest {
                 Assert.assertEquals(315  , padding.bottom, P);
             }, (model, modifiedProperties) -> {});
 
-        new PropertyChangeExecutor<>(createTestModel).run(1, 100,
+        new PropertyChangeExecutor<>(createTestModel).run(10, 1000,
             model -> {
                 // change property
                 model.setSize(new SizeDouble(700, 500));

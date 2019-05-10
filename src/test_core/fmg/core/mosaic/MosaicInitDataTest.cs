@@ -46,7 +46,7 @@ namespace fmg.core.mosaic {
         public virtual async Task CheckTheImpossibilitySetCustomSkillLevelTest() {
             LoggerSimple.Put("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckTheImpossibilitySetCustomSkillLevelTest));
             try {
-                await new PropertyChangeExecutor<MosaicInitData>(CreateMosaicInitData).Run(1, 100,
+                await new PropertyChangeExecutor<MosaicInitData>(CreateMosaicInitData).Run(10, 1000,
                     initData => {
                         initData.SkillLevel = ESkillLevel.eCustom;
                         AssertFail();
@@ -120,7 +120,7 @@ namespace fmg.core.mosaic {
         public virtual async Task CheckRestoreIndexInGroupTest() {
             LoggerSimple.Put("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckRestoreIndexInGroupTest));
 
-            await new PropertyChangeExecutor<MosaicInitData>(CreateMosaicInitData).Run(1, 100,
+            await new PropertyChangeExecutor<MosaicInitData>(CreateMosaicInitData).Run(10, 1000,
                 initData => {
                     const int checkOrdinal = 3;
 

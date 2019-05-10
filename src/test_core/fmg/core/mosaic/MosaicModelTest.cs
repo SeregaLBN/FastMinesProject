@@ -101,7 +101,7 @@ namespace fmg.core.mosaic {
         public virtual async Task MosaicDrawModelAsIsTest() {
             LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(MosaicDrawModelAsIsTest));
 
-            await new PropertyChangeExecutor<MosaicTestModel>(() => new MosaicTestModel()).Run(1, 100,
+            await new PropertyChangeExecutor<MosaicTestModel>(() => new MosaicTestModel()).Run(10, 1000,
                 model => {
                     AssertEqual(EMosaic.eMosaicSquare1, model.MosaicType);
                     AssertEqual(new Matrisize(10, 10), model.SizeField);
@@ -112,7 +112,7 @@ namespace fmg.core.mosaic {
         public virtual async Task AutoFitTrueCheckAffectsToPaddingTest() {
             LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(AutoFitTrueCheckAffectsToPaddingTest));
 
-            await new PropertyChangeExecutor<MosaicTestModel>(() => new MosaicTestModel()).Run(1, 100,
+            await new PropertyChangeExecutor<MosaicTestModel>(() => new MosaicTestModel()).Run(10, 1000,
                 model => {
                     // set property
                     model.AutoFit = true;
@@ -162,7 +162,7 @@ namespace fmg.core.mosaic {
                 return model;
             }
 
-            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(1, 100,
+            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(10, 1000,
                 model => {
                     // change property
                     model.Size = new SizeDouble(700, 500);
@@ -187,7 +187,7 @@ namespace fmg.core.mosaic {
                     AssertEqual(0, padding.Bottom, P);
                 }, (model, modifiedProperties) => { });
 
-            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(1, 100,
+            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(10, 1000,
                 model => {
                     // change property
                     model.Padding = new BoundDouble(150, 75, 50, 25);
@@ -213,7 +213,7 @@ namespace fmg.core.mosaic {
                     AssertEqual(12.5, padding.Bottom, P);
                 }, (model, modifiedProperties) => { });
 
-            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(1, 100,
+            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(10, 1000,
                 model => {
                     // change property
                     model.Size = new SizeDouble(700, 500);
@@ -239,7 +239,7 @@ namespace fmg.core.mosaic {
                     AssertEqual(0, padding.Bottom, P);
                 }, (model, modifiedProperties) => { });
 
-            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(1, 100,
+            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(10, 1000,
                 model => {
                     // change property
                     model.Size = new SizeDouble(700, 500);
@@ -266,7 +266,7 @@ namespace fmg.core.mosaic {
                     AssertEqual(0, padding.Bottom, P);
                 }, (model, modifiedProperties) => { });
 
-            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(1, 100,
+            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(10, 1000,
                 model => {
                     // change property
                     model.Size = new SizeDouble(700, 500);
@@ -294,7 +294,7 @@ namespace fmg.core.mosaic {
                     AssertEqual( 25, padding.Bottom, P);
                 }, (model, modifiedProperties) => { });
 
-            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(1, 100,
+            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(10, 1000,
                 model => {
                     // change property
                     model.Size = new SizeDouble(700, 500);
@@ -322,7 +322,7 @@ namespace fmg.core.mosaic {
                     AssertEqual(- 25, padding.Bottom, P);
                 }, (model, modifiedProperties) => { });
 
-            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(1, 100,
+            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(10, 1000,
                 model => {
                     // change property
                     model.Size = new SizeDouble(700, 500);
@@ -351,7 +351,7 @@ namespace fmg.core.mosaic {
                     AssertEqual(0, padding.Bottom, P);
                 }, (model, modifiedProperties) => { });
 
-            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(1, 100,
+            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(10, 1000,
                 model => {
                     // change property
                     model.Size = new SizeDouble(700, 500);
@@ -380,7 +380,7 @@ namespace fmg.core.mosaic {
                     AssertEqual( 25, padding.Bottom, P);
                 }, (model, modifiedProperties) => { });
 
-            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(1, 100,
+            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(10, 1000,
                 model => {
                     // change property
                     model.MosaicOffset = new SizeDouble(200, 300);
@@ -438,7 +438,7 @@ namespace fmg.core.mosaic {
                 return model;
             }
 
-            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(1, 100,
+            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(10, 1000,
                 model => {
                     // change property
                     model.MosaicOffset = new SizeDouble(200, 300);
@@ -463,7 +463,7 @@ namespace fmg.core.mosaic {
                     AssertEqual(-300, padding.Bottom, P);
                 }, (model, modifiedProperties) => { });
 
-            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(1, 100,
+            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(10, 1000,
                 model => {
                     // change property
                     model.MosaicOffset = new SizeDouble(10, 15);
@@ -489,7 +489,7 @@ namespace fmg.core.mosaic {
                     AssertEqual(  0, padding.Bottom, P);
                 }, (model, modifiedProperties) => { });
 
-            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(1, 100,
+            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(10, 1000,
                 model => {
                     // change property
                     model.Size = new SizeDouble(700, 500);
@@ -515,7 +515,7 @@ namespace fmg.core.mosaic {
                     AssertEqual(   0, padding.Bottom, P);
                 }, (model, modifiedProperties) => { });
 
-            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(1, 100,
+            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(10, 1000,
                 model => {
                     // change property
                     model.Size = new SizeDouble(700, 500);
@@ -542,7 +542,7 @@ namespace fmg.core.mosaic {
                     AssertEqual(  0, padding.Bottom, P);
                 }, (model, modifiedProperties) => { });
 
-            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(1, 100,
+            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(10, 1000,
                 model => {
                     // change property
                     model.Size = new SizeDouble(700, 500);
@@ -570,7 +570,7 @@ namespace fmg.core.mosaic {
                     AssertEqual( 40, padding.Bottom, P);
                 }, (model, modifiedProperties) => { });
 
-            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(1, 100,
+            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(10, 1000,
                 model => {
                     // change property
                     model.Size = new SizeDouble(700, 500);
@@ -599,7 +599,7 @@ namespace fmg.core.mosaic {
                     AssertEqual(315  , padding.Bottom, P);
                 }, (model, modifiedProperties) => { });
 
-            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(1, 100,
+            await new PropertyChangeExecutor<MosaicTestModel>(createTestModel).Run(10, 1000,
                 model => {
                     // change property
                     model.Size = new SizeDouble(700, 500);

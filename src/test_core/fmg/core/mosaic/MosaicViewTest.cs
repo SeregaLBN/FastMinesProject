@@ -70,7 +70,7 @@ namespace fmg.core.mosaic {
         public virtual async Task ReadinessAtTheStartTest() {
             LoggerSimple.Put("> " + nameof(MosaicViewTest) + "::" + nameof(ReadinessAtTheStartTest));
 
-            await new PropertyChangeExecutor<MosaicTestView>(() => new MosaicTestView()).Run(1, 100,
+            await new PropertyChangeExecutor<MosaicTestView>(() => new MosaicTestView()).Run(10, 1000,
                 view => {
                     AssertEqual(0, view.DrawCount);
                     AssertNotNull(view.Image);

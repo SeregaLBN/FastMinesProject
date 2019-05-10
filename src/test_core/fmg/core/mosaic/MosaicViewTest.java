@@ -74,7 +74,7 @@ public class MosaicViewTest {
     public void readinessAtTheStartTest() {
         LoggerSimple.put("> MosaicTestView::readinessAtTheStartTest");
 
-        new PropertyChangeExecutor<>(MosaicTestView::new).run(1, 100,
+        new PropertyChangeExecutor<>(MosaicTestView::new).run(10, 1000,
             view -> {
                 Assert.assertEquals(0, view.getDrawCount());
                 Assert.assertNotNull(view.getImage());

@@ -63,7 +63,7 @@ public class MosaicControllerTest {
         LoggerSimple.put("> MosaicControllerTest::readinessAtTheStartTest");
 
         final int defArea = 500;
-        new PropertyChangeExecutor<>(MosaicTestController::new).run(1, 100,
+        new PropertyChangeExecutor<>(MosaicTestController::new).run(10, 1000,
             ctrlr -> {
                 Assert.assertEquals(defArea, ctrlr.getModel().getArea(), P);
                 Assert.assertEquals(null, ctrlr.getCellDown());

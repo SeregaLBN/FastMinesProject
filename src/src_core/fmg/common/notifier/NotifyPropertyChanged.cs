@@ -132,7 +132,7 @@ namespace fmg.common.notifier {
                 return;
             Disposed = true;
             _deferrNotifications.Clear();
-            this.GetType().GetField
+            //this.GetType().GetField
             GC.SuppressFinalize(this);
         }
 
