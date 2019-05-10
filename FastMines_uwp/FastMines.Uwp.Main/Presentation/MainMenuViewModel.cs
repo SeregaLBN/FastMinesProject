@@ -22,7 +22,8 @@ namespace fmg.common {
 
             mosaicGroupDS.PropertyChanged += OnMosaicGroupDsPropertyChanged;
             mosaicSkillDS.PropertyChanged += OnMosaicSkillDsPropertyChanged;
-            notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev), false);
+            notifier = new NotifyPropertyChanged(this, false);
+            notifier.PropertyChanged += OnNotifierPropertyChanged;
         }
 
         public ICommand ToggleSplitViewPaneCommand { get; private set; }
@@ -54,6 +55,11 @@ namespace fmg.common {
             }
         }
 
+        private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, notifier));
+            PropertyChanged?.Invoke(this, ev);
+        }
+
         public void Dispose() {
             if (Disposed)
                 return;
@@ -64,7 +70,10 @@ namespace fmg.common {
             mosaicGroupDS.Dispose();
             mosaicSkillDS.Dispose();
 
+            notifier.PropertyChanged -= OnNotifierPropertyChanged;
             notifier.Dispose();
+
+            NotifyPropertyChanged.AssertCheckSubscribers(this);
 
             GC.SuppressFinalize(this);
         }

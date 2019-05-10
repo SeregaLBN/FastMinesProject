@@ -41,9 +41,11 @@ namespace fmg.DataModel.DataSources {
         private   readonly NotifyPropertyChanged notifierAsync;
 
         protected BaseDataSource() {
-            notifier      = new NotifyPropertyChanged(this, ev => PropertyChangedSync?.Invoke(this, ev), false);
-            notifierAsync = new NotifyPropertyChanged(this, ev => PropertyChanged    ?.Invoke(this, ev), true);
-            this.PropertyChangedSync += OnPropertyChanged;
+            notifier      = new NotifyPropertyChanged(this, false);
+            notifierAsync = new NotifyPropertyChanged(this, true);
+            notifier     .PropertyChanged     += OnNotifierPropertyChanged;
+            notifierAsync.PropertyChanged     += OnNotifierAsyncPropertyChanged;
+            this         .PropertyChangedSync += OnPropertyChanged;
         }
 
         /// <summary> the top item that this data source describes </summary>
@@ -109,6 +111,16 @@ namespace fmg.DataModel.DataSources {
             }
         }
 
+        private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, notifier));
+            PropertyChangedSync?.Invoke(this, ev);
+        }
+
+        private void OnNotifierAsyncPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, notifierAsync));
+            PropertyChanged/*Async*/?.Invoke(this, ev);
+        }
+
         protected virtual void Disposing() {
             header?.Dispose();
             foreach (var item in dataSource)
@@ -117,9 +129,13 @@ namespace fmg.DataModel.DataSources {
 
             //CurrentItem = null;
 
-            this.PropertyChangedSync -= OnPropertyChanged;
-            notifier.Dispose();
+            this         .PropertyChangedSync -= OnPropertyChanged;
+            notifier     .PropertyChanged -= OnNotifierPropertyChanged;
+            notifierAsync.PropertyChanged -= OnNotifierAsyncPropertyChanged;
+            notifier     .Dispose();
             notifierAsync.Dispose();
+            NotifyPropertyChanged.AssertCheckSubscribers(this, nameof(PropertyChangedSync));
+            NotifyPropertyChanged.AssertCheckSubscribers(this);
         }
 
         public void Dispose() {

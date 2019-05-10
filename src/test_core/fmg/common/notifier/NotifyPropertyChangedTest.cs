@@ -110,7 +110,6 @@ namespace fmg.common.notifier {
                 });
         }
 
-
         public virtual void ForgotToUnsubscribeTest() {
             LoggerSimple.Put("> " + nameof(NotifyPropertyChangedTest) + "::" + nameof(ForgotToUnsubscribeTest));
 
@@ -123,7 +122,8 @@ namespace fmg.common.notifier {
                 AssertFail();
             } catch (Exception ex) {
                 AssertTrue(ex is InvalidOperationException);
-                AssertEqual(ex.Message, "Illegal usage: Not all listeners were unsubscribed: count=1");
+                AssertTrue(ex.Message.StartsWith("Illegal usage: Not all listeners were unsubscribed "));
+                AssertTrue(ex.Message.EndsWith(" count=1"));
             }
         }
 

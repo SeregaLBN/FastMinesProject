@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using fmg.common.ui;
@@ -137,18 +138,26 @@ namespace fmg.common.notifier {
         }
 
         public static void AssertCheckSubscribers(INotifyPropertyChanged self, string propertyChangedName = nameof(INotifyPropertyChanged.PropertyChanged)) {
-            Type type = self.GetType();
-            var eventField = type.GetField(propertyChangedName,
-                BindingFlags.GetField |
-                BindingFlags.NonPublic |
-                BindingFlags.Instance);
+#if DEBUG
+            var type = self.GetType();
+            FieldInfo eventField;
+            do {
+                eventField = type.GetField(propertyChangedName, BindingFlags.NonPublic | BindingFlags.Instance);
+                if (eventField == null)
+                    type = type.GetTypeInfo().BaseType;
+                else
+                    break;
+            } while(true);
+
             var value = eventField.GetValue(self);
             if (value == null)
                 return; // Ok. No subscribers
             var invocationList = ((PropertyChangedEventHandler)value).GetInvocationList();
             var subscriberCount = invocationList.Length;
             if (subscriberCount != 0)
-                throw new InvalidOperationException("Illegal usage: Not all listeners were unsubscribed (type " + type.FullName + "): count=" + subscriberCount);
+                throw new InvalidOperationException("Illegal usage: Not all listeners were unsubscribed (type " + self.GetType().FullName
+                    + "; target " + invocationList.First().Target + "): count=" + subscriberCount);
+#endif
         }
 
     }

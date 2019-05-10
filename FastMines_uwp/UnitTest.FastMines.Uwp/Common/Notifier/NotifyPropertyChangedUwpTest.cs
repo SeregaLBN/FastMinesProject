@@ -13,6 +13,12 @@ namespace fmg.common.notifier {
         protected override void AssertEqual(object expected, object actual) {
             Assert.AreEqual(expected, actual);
         }
+        protected override void AssertTrue(bool condition) {
+            Assert.IsTrue(condition);
+        }
+        protected override void AssertFail() {
+            Assert.Fail();
+        }
 
         [TestInitialize]
         public override void Setup() {
@@ -33,6 +39,11 @@ namespace fmg.common.notifier {
         [TestMethod]
         public override async Task CheckForNoEventTest() {
             await base.CheckForNoEventTest();
+        }
+
+        [TestMethod]
+        public override void ForgotToUnsubscribeTest() {
+            base.ForgotToUnsubscribeTest();
         }
 
     }

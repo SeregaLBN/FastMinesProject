@@ -16,7 +16,8 @@ namespace fmg.common {
 
         public MosaicsViewModel() {
             mosaicDS.PropertyChanged += OnMosaicDsPropertyChanged;
-            notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev), false);
+            notifier = new NotifyPropertyChanged(this, false);
+            notifier.PropertyChanged += OnNotifierPropertyChanged;
         }
 
         public MosaicDataSource MosaicDS => mosaicDS;
@@ -34,6 +35,11 @@ namespace fmg.common {
             }
         }
 
+        private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, notifier));
+            PropertyChanged?.Invoke(this, ev);
+        }
+
         public void Dispose() {
             if (Disposed)
                 return;
@@ -42,7 +48,10 @@ namespace fmg.common {
             mosaicDS.PropertyChanged -= OnMosaicDsPropertyChanged;
             mosaicDS.Dispose();
 
+            notifier.PropertyChanged -= OnNotifierPropertyChanged;
             notifier.Dispose();
+
+            NotifyPropertyChanged.AssertCheckSubscribers(this);
 
             GC.SuppressFinalize(this);
         }

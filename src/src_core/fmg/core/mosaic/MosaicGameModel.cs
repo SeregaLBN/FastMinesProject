@@ -72,6 +72,7 @@ namespace fmg.core.mosaic {
                 if (value != null)
                     throw new ArgumentException("Bad argument - support only null value!");
                 _cellAttr.PropertyChanged -= OnCellAttributePropertyChanged;
+                _cellAttr.Dispose();
                 _cellAttr = null;
                 _matrix.Clear();
                 _notifier.FirePropertyChanged();

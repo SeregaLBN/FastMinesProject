@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Rendering;
+using Avalonia.VisualTree;
 using fmg.common.geom;
 using fmg.core.img;
 using fmg.core.types;
@@ -47,10 +47,10 @@ namespace fmg.ava.img {
             private IVisualBrushRenderer _vbr;
 
             /// <param name="group">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
-            public RenderTargetBmpView(EMosaicGroup? group, IControl ctrl)
+            public RenderTargetBmpView(EMosaicGroup? group, IVisual visual)
                 : base(group)
             {
-                _vbr = new ImmediateRenderer(ctrl);
+                _vbr = new ImmediateRenderer(visual);
             }
 
             protected override RenderTargetBitmap CreateImage() {
@@ -98,8 +98,8 @@ namespace fmg.ava.img {
         // <summary> MosaicsGroup image controller implementation for <see cref="Canvas"/> </summary>
         public class RenderTargetBmpController : MosaicGroupController<RenderTargetBitmap, MosaicGroupImg.RenderTargetBmpView> {
 
-            public RenderTargetBmpController(EMosaicGroup? group, IControl ctrl)
-                : base(!group.HasValue, new MosaicGroupImg.RenderTargetBmpView(group, ctrl))
+            public RenderTargetBmpController(EMosaicGroup? group, IVisual visual)
+                : base(!group.HasValue, new MosaicGroupImg.RenderTargetBmpView(group, visual))
             { }
 
             protected override void Disposing() {

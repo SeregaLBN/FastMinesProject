@@ -26,9 +26,11 @@ namespace fmg.DataModel.Items {
 
         protected BaseDataItem(T uniqueId) {
             this.uniqueId = uniqueId;
-            notifier      = new NotifyPropertyChanged(this, ev => PropertyChangedSync?.Invoke(this, ev), false);
-            notifierAsync = new NotifyPropertyChanged(this, ev => PropertyChanged    ?.Invoke(this, ev), true);
-            this.PropertyChangedSync += OnPropertyChanged;
+            notifier      = new NotifyPropertyChanged(this, false);
+            notifierAsync = new NotifyPropertyChanged(this, true);
+            notifier     .PropertyChanged     += OnNotifierPropertyChanged;
+            notifierAsync.PropertyChanged     += OnNotifierAsyncPropertyChanged;
+            this         .PropertyChangedSync += OnPropertyChanged;
         }
 
         public T UniqueId {
@@ -139,15 +141,29 @@ namespace fmg.DataModel.Items {
             }
         }
 
+        private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, notifier));
+            PropertyChangedSync?.Invoke(this, ev);
+        }
+
+        private void OnNotifierAsyncPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, notifierAsync));
+            PropertyChanged/*Async*/?.Invoke(this, ev);
+        }
+
         public override string ToString() {
             return Title;
         }
 
         protected virtual void Disposing() {
-            notifier.Dispose();
+            notifier     .PropertyChanged -= OnNotifierPropertyChanged;
+            notifierAsync.PropertyChanged -= OnNotifierAsyncPropertyChanged;
+            notifier     .Dispose();
             notifierAsync.Dispose();
             this.PropertyChangedSync -= OnPropertyChanged;
             Entity = null; // call setter
+            NotifyPropertyChanged.AssertCheckSubscribers(this, nameof(PropertyChangedSync));
+            NotifyPropertyChanged.AssertCheckSubscribers(this);
         }
 
         public void Dispose() {
