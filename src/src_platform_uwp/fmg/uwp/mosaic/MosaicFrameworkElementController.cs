@@ -6,13 +6,11 @@ using Windows.Devices.Input;
 using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using fmg.common;
 using fmg.common.geom;
 using fmg.common.notifier;
-using fmg.common.Converters;
 using fmg.core.mosaic;
 using fmg.core.types;
 using fmg.core.types.click;
@@ -33,6 +31,11 @@ namespace fmg.uwp.mosaic {
     {
 
         private readonly ClickInfo _clickInfo = new ClickInfo();
+        /// <summary>
+        /// true : bind Control.SizeProperty to Model.Size
+        /// false: bind Model.Size to Control.SizeProperty
+        /// </summary>
+        public bool BindSizeDirection { get; set; } = true;
         private bool _extendedManipulation = !true;
         #region if _extendedManipulation
         /// <summary> мин отступ от краев экрана для мозаики </summary>
@@ -48,6 +51,7 @@ namespace fmg.uwp.mosaic {
         private Transform _originalTransform;
         private CompositeTransform _scaleTransform;
         private double _deferredArea;
+        private SizeDouble _cachedControlSize = new SizeDouble(-1, -1);
 
         private sealed class NeedAreaChangingEventArgs { }
         private delegate void NeedAreaChangingEventHandler(object sender, NeedAreaChangingEventArgs ev);
@@ -59,31 +63,9 @@ namespace fmg.uwp.mosaic {
             : base(view)
         {
             SubscribeToControl();
-            SetBinding();
         }
 
         public abstract TImageAsFrameworkElement Control { get; }
-
-        protected virtual void SetBinding() {
-            var control = Control;
-            //if (_extendedManipulation)
-            //    return;
-            Func<SizeDouble> getSize = () => Size;
-            control.SetBinding(FrameworkElement.WidthProperty, new Binding {
-                Source = this,//.View,
-                Path = new PropertyPath(nameof(Size)),
-                Mode = BindingMode.TwoWay,
-                Converter = new SizeToWidthConverter(),
-                ConverterParameter = getSize
-            });
-            control.SetBinding(FrameworkElement.HeightProperty, new Binding {
-                Source = this,//.View,
-                Path = new PropertyPath(nameof(Size)),
-                Mode = BindingMode.TwoWay,
-                Converter = new SizeToHeightConverter(),
-                ConverterParameter = getSize
-            });
-        }
 
         protected void SubscribeToControl() {
             var ctrl = Control;
@@ -94,11 +76,11 @@ namespace fmg.uwp.mosaic {
             ctrl.PointerReleased += OnPointerReleased;
             ctrl.PointerCaptureLost += OnPointerCaptureLost;
             ctrl.LostFocus += OnFocusLost;
+            ctrl.SizeChanged += OnControlSizeChanged;
 
             if (!_extendedManipulation)
                 return;
 
-            ctrl.SizeChanged += OnControlSizeChanged;
             ctrl.PointerWheelChanged += OnPointerWheelChanged;
 #if DEBUG
             ctrl.PointerMoved += OnPointerMoved;
@@ -132,11 +114,11 @@ namespace fmg.uwp.mosaic {
             ctrl.PointerReleased -= OnPointerReleased;
             ctrl.PointerCaptureLost -= OnPointerCaptureLost;
             ctrl.LostFocus -= OnFocusLost;
+            ctrl.SizeChanged -= OnControlSizeChanged;
 
             if (!_extendedManipulation)
                 return;
 
-            ctrl.SizeChanged -= OnControlSizeChanged;
             ctrl.PointerWheelChanged -= OnPointerWheelChanged;
 #if DEBUG
             ctrl.PointerMoved -= OnPointerMoved;
@@ -173,7 +155,15 @@ namespace fmg.uwp.mosaic {
 
         /// <summary> get this Control size </summary>
         SizeDouble GetControlSize() {
-            return Control.DesiredSize.ToFmSizeDouble();
+            var size = Control.DesiredSize.ToFmSizeDouble();
+            if (size.Width <= 0 || size.Height <= 0) {
+                LoggerSimple.Put($"MosaicFrameworkElementController.GetControlSize: Control.DesiredSize is 0: return cachedSize={_cachedControlSize}");
+                size = _cachedControlSize;
+            } else {
+                if (size != _cachedControlSize)
+                    LoggerSimple.Put($"MosaicFrameworkElementController.GetControlSize: diffSizes: Control.DesiredSize={size}; cachedSize={_cachedControlSize}");
+            }
+            return size;
         }
 
         /// <summary> узнаю мах размер площади ячеек мозаики (для размера поля 3x3) так, чтобы поле влазило в текущий размер Control'а </summary>
@@ -278,24 +268,41 @@ namespace fmg.uwp.mosaic {
             Model.Area = MosaicHelper.FindAreaBySize(model.MosaicType, model.SizeField, ref sizeControl);
         }
 
-        private void OnControlSizeChanged(object sender, SizeChangedEventArgs e) {
-            RecheckLocation();
-        }
-
-
         protected override void OnModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             base.OnModelPropertyChanged(sender, ev);
-            if (!_extendedManipulation)
-                return;
-
             switch (ev.PropertyName) {
+            case nameof(Model.Size):
+                OnSizeChanged(ev as PropertyChangedExEventArgs<SizeDouble>);
+                break;
             case nameof(Model.Area):
-                OnChangedArea(ev as PropertyChangedExEventArgs<double>);
+                OnAreaChanged(ev as PropertyChangedExEventArgs<double>);
                 break;
             }
         }
 
-        private void OnChangedArea(PropertyChangedExEventArgs<double> ev) {
+        private void OnControlSizeChanged(object sender, SizeChangedEventArgs ev) {
+            var newSize = ev.NewSize.ToFmSizeDouble();
+            _cachedControlSize = newSize;
+
+            if (!BindSizeDirection)
+                Model.Size = newSize;
+
+            if (_extendedManipulation)
+                RecheckLocation();
+        }
+
+        private void OnSizeChanged(PropertyChangedExEventArgs<SizeDouble> ev) {
+            if (!BindSizeDirection)
+                return;
+            var control = Control;
+            var newSize = ev.NewValue;
+            control.Width  = newSize.Width;
+            control.Height = newSize.Height;
+        }
+
+        private void OnAreaChanged(PropertyChangedExEventArgs<double> ev) {
+            if (!_extendedManipulation)
+                return;
             using (var tracer = CreateTracer(GetFullCallerName(), string.Format("newArea={0:0.00}, oldValue={1:0.00}", ev.NewValue, ev.OldValue))) {
                 var o = GetOffset();
 
