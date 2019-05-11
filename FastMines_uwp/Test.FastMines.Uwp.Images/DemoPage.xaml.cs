@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.ComponentModel;
 using System.Collections.Generic;
 using Windows.UI;
 using Windows.UI.Core;
@@ -279,6 +280,13 @@ namespace Test.FastMines.Uwp.Images {
 
         void TestApp(Func<IEnumerable<IImageController>> funcGetImages) {
             var images = funcGetImages().ToList();
+            var binding = new Dictionary<IImageController, CanvasControl>();
+            void onCanvasBitmapImageControllerPropertyChaged(object sender, PropertyChangedEventArgs ev) {
+                var imgObj = (IImageController)sender;
+                if (ev.PropertyName == nameof(imgObj.Image))
+                    binding[imgObj].Invalidate();
+            }
+
             ApplicationView.GetForCurrentView().Title = _td.GetTitle(images);
             _panel.Children.Clear();
 
@@ -349,10 +357,8 @@ namespace Test.FastMines.Uwp.Images {
                                 };
                                 imgControl = cnvsCtrl;
 
-                                imgObj.PropertyChanged += (s, ev) => {
-                                    if (ev.PropertyName == nameof(imgObj.Image))
-                                        cnvsCtrl.Invalidate();
-                                };
+                                binding.Add(imgObj, cnvsCtrl);
+                                imgObj.PropertyChanged += onCanvasBitmapImageControllerPropertyChaged;
                                 cnvsCtrl.SetBinding(FrameworkElement.WidthProperty, new Binding {
                                     Source = imgObj,
                                     Path = new PropertyPath(nameof(imgObj.Size)),
@@ -420,6 +426,10 @@ namespace Test.FastMines.Uwp.Images {
                     _panel.PointerPressed -= onPointerPressed;
                 else
                     _panel.Tapped         -= onTapped;
+
+                foreach (var kv in binding)
+                    kv.Key.PropertyChanged -= onCanvasBitmapImageControllerPropertyChaged;
+                binding.Clear();
                 images.ForEach(img => img.Dispose());
                 images.Clear();
                 images = null;

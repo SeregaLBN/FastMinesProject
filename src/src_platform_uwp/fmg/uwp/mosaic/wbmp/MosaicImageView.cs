@@ -125,8 +125,8 @@ namespace fmg.uwp.mosaic.wbmp {
             _innerView.PropertyChanged -= OnInnerViewPropertyChanged;
             _innerView.Dispose();
             _innerView = null;
-            Model.Dispose();
             base.Disposing();
+            Model.Dispose();
             _control = null;
             _img.Dispose();
             _imgMine.Dispose();

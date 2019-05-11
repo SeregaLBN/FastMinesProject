@@ -36,7 +36,7 @@ namespace fmg.core.img {
         public TImage      Image => View.Image;
         public SizeDouble  Size  => View.Size;
 
-        private void OnPropertyViewChanged(object sender, PropertyChangedEventArgs ev) {
+        protected virtual void OnPropertyViewChanged(object sender, PropertyChangedEventArgs ev) {
             switch (ev.PropertyName) {
             case nameof(View.Model):
                 _notifier.FirePropertyChanged<TImageModel>(ev, nameof(this.Model));

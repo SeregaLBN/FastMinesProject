@@ -127,8 +127,8 @@ namespace fmg.uwp.img.win2d {
             }
 
             protected override void Disposing() {
-                Model.Dispose();
                 base.Disposing();
+                Model.Dispose();
             }
 
         }
@@ -187,8 +187,8 @@ namespace fmg.uwp.img.win2d {
             { }
 
             protected override void Disposing() {
-                View.Dispose();
                 base.Disposing();
+                View.Dispose();
             }
 
         }
