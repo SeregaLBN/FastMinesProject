@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.ComponentModel;
 using fmg.common.geom;
 using fmg.common.notifier;
@@ -21,7 +23,23 @@ namespace fmg.core.img {
         /// <summary> MVC: view </summary>
         private readonly TImageView _imageView;
         public bool Disposed { get; private set; }
+#if DEBUG
+        private IDictionary<PropertyChangedEventHandler, string> PropertyChangedMap = new Dictionary<PropertyChangedEventHandler, string>();
+        public event PropertyChangedEventHandler PropertyChanged {
+            add {
+                if (PropertyChangedMap.ContainsKey(value))
+                    throw new ArgumentException("NotifyPropertyChanged.PropertyChanged.add: Already listened! Called from " + PropertyChangedMap[value]);
+                PropertyChangedMap.Add(value, Environment.StackTrace);
+            }
+            remove {
+                if (!PropertyChangedMap.ContainsKey(value))
+                    throw new ArgumentException("NotifyPropertyChanged.PropertyChanged.remove: Illegal listener=" + value);
+                PropertyChangedMap.Remove(value);
+            }
+        }
+#else
         public event PropertyChangedEventHandler PropertyChanged;
+#endif
         protected readonly NotifyPropertyChanged _notifier;
 
         protected ImageController(TImageView imageView) {
@@ -52,7 +70,12 @@ namespace fmg.core.img {
 
         private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _notifier));
+#if DEBUG
+            foreach (var kv in PropertyChangedMap)
+                kv.Key.Invoke(this, ev);
+#else
             PropertyChanged?.Invoke(this, ev);
+#endif
         }
 
         // <summary>  Dispose managed resources </summary>/
@@ -60,7 +83,12 @@ namespace fmg.core.img {
             _imageView.PropertyChanged -= OnPropertyViewChanged;
             _notifier .PropertyChanged -= OnNotifierPropertyChanged;
             _notifier.Dispose();
-            NotifyPropertyChanged.AssertCheckSubscribers(this);
+#if DEBUG
+            //NotifyPropertyChanged.AssertCheckSubscribers(this);
+            if (PropertyChangedMap.Count != 0)
+                throw new InvalidOperationException("Illegal usage: Not all listeners were unsubscribed (type " + GetType().FullName
+                    + "; target " + PropertyChangedMap.First().Key.Target + "); stackTrace:\n" + PropertyChangedMap.First().Value + "\n count=" + PropertyChangedMap.Count);
+#endif
         }
 
         public void Dispose() {

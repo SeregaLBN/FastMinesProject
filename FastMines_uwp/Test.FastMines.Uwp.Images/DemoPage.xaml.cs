@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Controls;
@@ -17,7 +16,7 @@ using Windows.Foundation.Metadata;
 using Windows.Phone.UI.Input;
 using fmg.common;
 using fmg.common.geom;
-using fmg.common.Converters;
+using fmg.common.notifier;
 using fmg.core.img;
 using fmg.core.types;
 using fmg.core.mosaic;
@@ -280,11 +279,30 @@ namespace Test.FastMines.Uwp.Images {
 
         void TestApp(Func<IEnumerable<IImageController>> funcGetImages) {
             var images = funcGetImages().ToList();
-            var binding = new Dictionary<IImageController, CanvasControl>();
+            var binding1 = new Dictionary<IImageController, CanvasControl>();
+            var binding2 = new Dictionary<IImageController, Image>();
             void onCanvasBitmapImageControllerPropertyChaged(object sender, PropertyChangedEventArgs ev) {
                 var imgObj = (IImageController)sender;
-                if (ev.PropertyName == nameof(imgObj.Image))
-                    binding[imgObj].Invalidate();
+                switch (ev.PropertyName) {
+                case nameof(IImageController.Image):
+                    binding1[imgObj].Invalidate();
+                    break;
+                case nameof(IImageController.Size): {
+                        var control = binding1[imgObj];
+                        var evEx = (PropertyChangedExEventArgs<SizeDouble>)ev;
+                        control.Width  = evEx.NewValue.Width;
+                        control.Height = evEx.NewValue.Height;
+                    }
+                    break;
+                }
+            }
+            void onCanvasImgSrcOrWBmpImageControllerPropertyChaged(object sender, PropertyChangedEventArgs ev) {
+                var imgObj = (IImageController)sender;
+                switch (ev.PropertyName) {
+                case nameof(IImageController.Image):
+                    binding2[imgObj].Source = (ImageSource)imgObj.Image;
+                    break;
+                }
             }
 
             ApplicationView.GetForCurrentView().Title = _td.GetTitle(images);
@@ -340,14 +358,12 @@ namespace Test.FastMines.Uwp.Images {
                             if ((img is CanvasImageSource) ||
                                 (img is WriteableBitmap))
                             {
-                                imgControl = new Image {
+                                var image = new Image {
                                     Stretch = Stretch.None
                                 };
-                                imgControl.SetBinding(Image.SourceProperty, new Binding {
-                                    Source = imgObj,
-                                    Path = new PropertyPath(nameof(imgObj.Image)),
-                                    Mode = BindingMode.OneWay
-                                });
+                                imgControl = image;
+                                binding2.Add(imgObj, image);
+                                imgObj.PropertyChanged += onCanvasImgSrcOrWBmpImageControllerPropertyChaged;
                             } else
                     #endregion
                     #region CanvasBitmap
@@ -357,20 +373,8 @@ namespace Test.FastMines.Uwp.Images {
                                 };
                                 imgControl = cnvsCtrl;
 
-                                binding.Add(imgObj, cnvsCtrl);
+                                binding1.Add(imgObj, cnvsCtrl);
                                 imgObj.PropertyChanged += onCanvasBitmapImageControllerPropertyChaged;
-                                cnvsCtrl.SetBinding(FrameworkElement.WidthProperty, new Binding {
-                                    Source = imgObj,
-                                    Path = new PropertyPath(nameof(imgObj.Size)),
-                                    Converter = new SizeToWidthConverter(),
-                                    Mode = BindingMode.OneWay
-                                });
-                                cnvsCtrl.SetBinding(FrameworkElement.HeightProperty, new Binding {
-                                    Source = imgObj,
-                                    Path = new PropertyPath(nameof(imgObj.Size)),
-                                    Converter = new SizeToHeightConverter(),
-                                    Mode = BindingMode.OneWay
-                                });
 
                                 void onDraw(CanvasControl s, CanvasDrawEventArgs ev) {
                                     if (closed)
@@ -427,9 +431,12 @@ namespace Test.FastMines.Uwp.Images {
                 else
                     _panel.Tapped         -= onTapped;
 
-                foreach (var kv in binding)
+                foreach (var kv in binding1)
                     kv.Key.PropertyChanged -= onCanvasBitmapImageControllerPropertyChaged;
-                binding.Clear();
+                binding1.Clear();
+                foreach (var kv in binding2)
+                    kv.Key.PropertyChanged -= onCanvasImgSrcOrWBmpImageControllerPropertyChaged;
+                binding2.Clear();
                 images.ForEach(img => img.Dispose());
                 images.Clear();
                 images = null;

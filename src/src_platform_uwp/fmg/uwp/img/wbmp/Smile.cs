@@ -48,8 +48,8 @@ namespace fmg.uwp.img.wbmp {
             }
 
             protected override void Disposing() {
-                Model.Dispose();
                 base.Disposing();
+                Model.Dispose();
             }
 
         }
@@ -61,8 +61,8 @@ namespace fmg.uwp.img.wbmp {
                 : base(new WBmpView(faceType)) { }
 
             protected override void Disposing() {
-                View.Dispose();
                 base.Disposing();
+                View.Dispose();
             }
 
         }
