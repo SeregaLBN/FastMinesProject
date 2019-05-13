@@ -31,7 +31,7 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
         _propertyChanges.add(listener);
 
         int count = _propertyChanges.size();
-        if (count > 3)
+        if (count > 4)
             System.err.println("Suspiciously many subscribers! count=" + count);
     }
     @Override
