@@ -52,7 +52,7 @@ namespace fmg {
             //  * Windows Mobile Extensions for the UWP
             //  * Windows Desktop Extensions for the UWP
 
-            StaticInitializer.Init();
+            ProjSettings.Init();
 
             //PC customization
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView")) {

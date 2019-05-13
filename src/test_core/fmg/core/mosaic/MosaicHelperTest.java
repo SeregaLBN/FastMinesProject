@@ -18,7 +18,7 @@ public class MosaicHelperTest {
         LoggerSimple.put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         LoggerSimple.put("> MosaicHelperTest::setup");
 
-        MosaicModelTest.StaticInitializer();
+        MosaicModelTest.ProjSettings();
     }
 
     @Before

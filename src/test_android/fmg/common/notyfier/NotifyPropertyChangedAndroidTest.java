@@ -13,9 +13,10 @@ import org.junit.runner.RunWith;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
-import fmg.common.LoggerSimple;
-import fmg.android.utils.StaticInitializer;
 import io.reactivex.Flowable;
+
+import fmg.common.LoggerSimple;
+import fmg.android.utils.ProjSettings;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -25,7 +26,7 @@ public class NotifyPropertyChangedAndroidTest extends NotifyPropertyChangedTest 
     public static void setup() {
         LoggerSimple.put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         LoggerSimple.put("> NotifyPropertyChangedAndroidTest::setup");
-        StaticInitializer.init();
+        ProjSettings.init();
         Flowable.just("UI factory Android inited...").subscribe(LoggerSimple::put);
     }
 

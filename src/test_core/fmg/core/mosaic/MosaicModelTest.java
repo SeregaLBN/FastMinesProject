@@ -27,8 +27,9 @@ public class MosaicModelTest {
     static final int TEST_SIZE_W = 456;
     static final int TEST_SIZE_H = 789;
 
-    public static void StaticInitializer() {
+    public static void ProjSettings() {
         UiInvoker.DEFERRED = SimpleUiThreadLoop::addTask;
+        LoggerSimple.DEFAULT_WRITER = System.out::println;
     }
 
     @BeforeClass
@@ -36,7 +37,7 @@ public class MosaicModelTest {
         LoggerSimple.put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         LoggerSimple.put("> MosaicModelTest::setup");
 
-        StaticInitializer();
+        ProjSettings();
 
         Flowable.just("UI factory inited...").subscribe(LoggerSimple::put);
     }

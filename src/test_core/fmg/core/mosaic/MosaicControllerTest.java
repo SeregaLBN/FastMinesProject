@@ -29,7 +29,7 @@ public class MosaicControllerTest {
         LoggerSimple.put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         LoggerSimple.put("> MosaicControllerTest::setup");
 
-        MosaicModelTest.StaticInitializer();
+        MosaicModelTest.ProjSettings();
 
         Flowable.just("UI factory inited...").subscribe(LoggerSimple::put);
     }

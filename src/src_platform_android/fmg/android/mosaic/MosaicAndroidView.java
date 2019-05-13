@@ -26,7 +26,7 @@ import fmg.core.types.EState;
 import fmg.core.types.draw.FontInfo;
 import fmg.core.types.draw.PenBorder;
 import fmg.android.utils.Cast;
-import fmg.android.utils.StaticInitializer;
+import fmg.android.utils.ProjSettings;
 
 /** MVC: view. Abstract android implementation
  * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
@@ -73,7 +73,8 @@ public abstract class MosaicAndroidView<TImage,
         }
 
         /**/ // debug
-        if (StaticInitializer.DrawMode.isBorderOnly()) {
+        if (!ProjSettings.isDrawModeFull()) {
+            // draw border only
             Rect rc = new Rect(0, 0, (int) getModel().getSize().width, (int) getModel().getSize().height);
             g.drawRect(rc, new Paint(Paint.ANTI_ALIAS_FLAG) {{
                 this.setStyle(Paint.Style.STROKE);

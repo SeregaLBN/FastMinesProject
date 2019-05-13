@@ -1,6 +1,7 @@
 * C#  fix all   CA2214: Do not call overridable methods in constructors
 
-* Rename all  ClassName._member  to  ClassName.member
+* Java Rename all  ClassName._member  to  ClassName.member
+* C#   Rename all  ClassName.member   to  ClassName._member
 
 * ? Rename 
     xxxImageYyy
@@ -13,12 +14,12 @@
    to
     xxxDrawableYyy
 
-* Restore SVG
+* ? Restore SVG
       ./FastMines_SVG/FastMinesImages.html
    -> 
       ./FastMines_SVG/FastMinesImages.svg
 
-* C#. Change namespase names
+* C#. Change namespace names
    fmg.bla.bla -> FMG.Bla.Bla
 
 * ? Change base name of namespace/package

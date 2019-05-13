@@ -33,7 +33,7 @@ namespace fmg.core.mosaic {
         [TestInitialize]
         public override void Setup() {
             base.Setup();
-            StaticInitializer.Init();
+            ProjSettings.Init();
         }
 
         [TestMethod]

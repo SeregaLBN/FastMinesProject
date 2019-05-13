@@ -19,7 +19,7 @@ import fmg.core.img.ImageView;
 import fmg.core.img.LogoController;
 import fmg.core.img.LogoModel;
 import fmg.android.utils.Cast;
-import fmg.android.utils.StaticInitializer;
+import fmg.android.utils.ProjSettings;
 
 /** Main logos image */
 public final class Logo {
@@ -45,7 +45,8 @@ public final class Logo {
             }
 
             /**/ // debug
-            if (StaticInitializer.DrawMode.isBorderOnly()) {
+            if (!ProjSettings.isDrawModeFull()) {
+                // draw border only
                 Rect rc = new Rect(0, 0, (int) getModel().getSize().width, (int) getModel().getSize().height);
                 g.drawRect(rc, new Paint(Paint.ANTI_ALIAS_FLAG) {{
                     this.setStyle(Paint.Style.STROKE);

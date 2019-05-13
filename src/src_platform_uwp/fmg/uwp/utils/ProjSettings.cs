@@ -8,12 +8,12 @@ using fmg.uwp.img;
 
 namespace fmg.uwp.utils {
 
-    public static class StaticInitializer {
+    public static class ProjSettings {
 
         /// <summary> Mobile (true) or Desktop (false) </summary>
         public static bool IsMobile { get; }
 
-        static StaticInitializer() {
+        static ProjSettings() {
             UiInvoker.Deferred = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
             UiInvoker.Animator = () => Animator.Singleton;
             UiInvoker.TimerCreator = () => new Timer();

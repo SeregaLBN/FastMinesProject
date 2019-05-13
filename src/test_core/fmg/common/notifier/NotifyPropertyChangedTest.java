@@ -35,7 +35,7 @@ public class NotifyPropertyChangedTest {
         LoggerSimple.put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         LoggerSimple.put("> NotifyPropertyChangedTest::setup");
 
-        MosaicModelTest.StaticInitializer();
+        MosaicModelTest.ProjSettings();
 
         Flowable.just("UI factory inited...").subscribe(LoggerSimple::put);
     }

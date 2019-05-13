@@ -45,7 +45,7 @@ import fmg.core.types.ESkillLevel;
 import fmg.jfx.img.*;
 import fmg.jfx.mosaic.MosaicCanvasController;
 import fmg.jfx.utils.Cast;
-import fmg.jfx.utils.StaticInitializer;
+import fmg.jfx.utils.ProjSettings;
 
 /** live UI test application */
 public final class DemoApp extends Application {
@@ -395,7 +395,7 @@ public final class DemoApp extends Application {
     }
 
     public static void main(String[] args) {
-        StaticInitializer.init();
+        ProjSettings.init();
         launch(args);
     }
 

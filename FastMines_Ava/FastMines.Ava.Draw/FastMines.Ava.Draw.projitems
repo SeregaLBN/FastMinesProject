@@ -18,8 +18,8 @@
     <Compile Include="..\..\src\src_platform_ava\fmg\ava\img\MosaicGroupImg.cs">
       <Link>src_fmg.ava\img\MosaicGroupImg.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_ava\fmg\ava\utils\StaticInitializer.cs">
-      <Link>src_fmg.ava\utils\StaticInitializer.cs</Link>
+    <Compile Include="..\..\src\src_platform_ava\fmg\ava\utils\ProjSettings.cs">
+      <Link>src_fmg.ava\utils\ProjSettings.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_platform_ava\fmg\ava\utils\Cast.cs">
       <Link>src_fmg.ava\utils\Cast.cs</Link>

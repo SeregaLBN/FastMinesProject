@@ -21,7 +21,7 @@ public class MosaicInitDataTest {
         LoggerSimple.put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         LoggerSimple.put("> MosaicInitDataTest::setup");
 
-        MosaicModelTest.StaticInitializer();
+        MosaicModelTest.ProjSettings();
 
         Flowable.just("UI factory inited...").subscribe(LoggerSimple::put);
     }

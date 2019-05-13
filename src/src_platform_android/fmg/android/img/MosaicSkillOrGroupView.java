@@ -23,7 +23,7 @@ import fmg.core.img.MosaicGroupModel;
 import fmg.core.img.MosaicSkillModel;
 import fmg.core.img.WithBurgerMenuView;
 import fmg.android.utils.Cast;
-import fmg.android.utils.StaticInitializer;
+import fmg.android.utils.ProjSettings;
 
 /**
  * MVC: view. Abstract Android representable {@link fmg.core.types.ESkillLevel} or {@link fmg.core.types.EMosaicGroup} as image
@@ -52,7 +52,8 @@ abstract class MosaicSkillOrGroupView<TImage, TImageModel extends AnimatedImageM
         }
 
         /**/ // debug
-        if (StaticInitializer.DrawMode.isBorderOnly()) {
+        if (!ProjSettings.isDrawModeFull()) {
+            // draw border only
             Rect rc = new Rect(0, 0, (int) getModel().getSize().width, (int) getModel().getSize().height);
             g.drawRect(rc, new Paint(Paint.ANTI_ALIAS_FLAG) {{
                 this.setStyle(Paint.Style.STROKE);

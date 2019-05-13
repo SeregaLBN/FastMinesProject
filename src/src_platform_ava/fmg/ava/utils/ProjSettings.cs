@@ -4,9 +4,9 @@ using fmg.ava.img;
 
 namespace fmg.ava.utils {
 
-    static class StaticInitializer {
+    static class ProjSettings {
 
-        static StaticInitializer() {
+        static ProjSettings() {
             UiInvoker.Deferred = doRun => Dispatcher.UIThread.InvokeAsync(() => doRun(), DispatcherPriority.Normal);
             UiInvoker.Animator = () => Animator.Singleton;
             UiInvoker.TimerCreator = () => new Timer();

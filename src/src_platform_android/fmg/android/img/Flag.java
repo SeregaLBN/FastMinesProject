@@ -10,7 +10,6 @@ import fmg.common.geom.SizeDouble;
 import fmg.core.img.FlagModel;
 import fmg.core.img.ImageController;
 import fmg.core.img.ImageView;
-import fmg.android.utils.StaticInitializer;
 
 /** Flag image */
 public final class Flag {

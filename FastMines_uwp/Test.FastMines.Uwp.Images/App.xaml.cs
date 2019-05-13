@@ -49,7 +49,7 @@ namespace Test.FastMines.Uwp.Images {
         /// <param name="e">Details about the launch request and process.</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs e) {
 
-            StaticInitializer.Init();
+            ProjSettings.Init();
             /**/
             Action<Windows.UI.Color> applyColor = null;
 

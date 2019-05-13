@@ -4,7 +4,7 @@ import org.junit.BeforeClass;
 
 import fmg.common.LoggerSimple;
 import fmg.core.mosaic.MosaicControllerTest;
-import fmg.swing.utils.StaticInitializer;
+import fmg.swing.utils.ProjSettings;
 import io.reactivex.Flowable;
 
 public class MosaicControllerSwingTest extends MosaicControllerTest {
@@ -13,7 +13,7 @@ public class MosaicControllerSwingTest extends MosaicControllerTest {
     public static void setup() {
         LoggerSimple.put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         LoggerSimple.put("> MosaicControllerSwingTest::setup");
-        StaticInitializer.init();
+        ProjSettings.init();
         Flowable.just("UI factory SWING inited...").subscribe(LoggerSimple::put);
     }
 

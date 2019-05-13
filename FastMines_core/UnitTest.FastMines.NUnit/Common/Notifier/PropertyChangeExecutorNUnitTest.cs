@@ -6,7 +6,7 @@ namespace fmg.common.notifier {
 
     public class PropertyChangeExecutorNUnitTest : PropertyChangeExecutorTest {
 
-        internal static void StaticInitializer() {
+        internal static void ProjSettings() {
             UiInvoker.Deferred = SimpleUiThreadLoop.AddTask;
             LoggerSimple.Put("Simple UI factory inited...");
         }
@@ -30,7 +30,7 @@ namespace fmg.common.notifier {
         [OneTimeSetUp]
         public override void Setup() {
             base.Setup();
-            StaticInitializer();
+            ProjSettings();
         }
 
         [SetUp]

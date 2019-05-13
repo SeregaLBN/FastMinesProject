@@ -29,7 +29,7 @@ import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
 import fmg.swing.img.*;
 import fmg.swing.mosaic.MosaicJPanelController;
-import fmg.swing.utils.StaticInitializer;
+import fmg.swing.utils.ProjSettings;
 
 /** live UI test application */
 public class DemoApp  {
@@ -339,7 +339,7 @@ public class DemoApp  {
     }
 
     public static void main(String[] args) {
-        StaticInitializer.init();
+        ProjSettings.init();
         SwingUtilities.invokeLater(() ->
             new DemoApp().runApp()
         );

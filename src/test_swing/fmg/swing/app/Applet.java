@@ -1,7 +1,7 @@
 package fmg.swing.app;
 
 import fmg.swing.mosaic.MosaicJPanelController;
-import fmg.swing.utils.StaticInitializer;
+import fmg.swing.utils.ProjSettings;
 
 @SuppressWarnings("deprecation")
 public class Applet extends javax.swing.JApplet {
@@ -12,7 +12,7 @@ public class Applet extends javax.swing.JApplet {
 
     @Override
     public void init() {
-        StaticInitializer.init();
+        ProjSettings.init();
 
         m = new MosaicJPanelController();
         setContentPane(m.getViewPanel());

@@ -1,11 +1,12 @@
 package fmg.jfx.utils;
 
+import fmg.common.AProjSettings;
 import fmg.common.ui.UiInvoker;
 import fmg.jfx.img.Animator;
 
-public final class StaticInitializer {
+public final class ProjSettings extends AProjSettings {
 
-    private StaticInitializer() {}
+    private ProjSettings() {}
 
     static {
         UiInvoker.DEFERRED = javafx.application.Platform::runLater;

@@ -31,7 +31,7 @@ namespace fmg.common.notifier {
                 return;
             base.Setup();
             _tuned = true;
-            StaticInitializer.Init();
+            ProjSettings.Init();
         }
 
         [Fact]

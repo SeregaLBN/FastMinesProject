@@ -48,7 +48,7 @@ namespace UnitTest.FastMines.Uwp
             }
 #endif
 
-            StaticInitializer.Init();
+            ProjSettings.Init();
 
             Frame rootFrame = Window.Current.Content as Frame;
 

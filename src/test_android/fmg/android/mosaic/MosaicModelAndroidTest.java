@@ -1,11 +1,11 @@
 package fmg.android.mosaic;
 
 import org.junit.BeforeClass;
+import io.reactivex.Flowable;
 
 import fmg.common.LoggerSimple;
 import fmg.core.mosaic.MosaicModelTest;
-import fmg.android.utils.StaticInitializer;
-import io.reactivex.Flowable;
+import fmg.android.utils.ProjSettings;
 
 public class MosaicModelAndroidTest extends MosaicModelTest {
 
@@ -13,7 +13,7 @@ public class MosaicModelAndroidTest extends MosaicModelTest {
     public static void setup() {
         LoggerSimple.put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         LoggerSimple.put("> MosaicModelAndroidTest::setup");
-        StaticInitializer.init();
+        ProjSettings.init();
         Flowable.just("UI factory Android inited...").subscribe(LoggerSimple::put);
     }
 

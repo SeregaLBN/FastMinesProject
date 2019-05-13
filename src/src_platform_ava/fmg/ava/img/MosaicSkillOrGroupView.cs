@@ -21,10 +21,6 @@ namespace fmg.ava.img {
         where TImageModel : AnimatedImageModel
     {
 
-        static MosaicSkillOrGroupView() {
-            StaticInitializer.Init();
-        }
-
         protected MosaicSkillOrGroupView(TImageModel imageModel)
             : base(imageModel)
         { }

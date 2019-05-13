@@ -76,7 +76,7 @@ namespace fmg {
                 logoModel.BorderWidth = 2;
                 logoModel.BorderColor = Color.BlueViolet;
 
-                panelMosaicHeader.Visibility = StaticInitializer.IsMobile ? Visibility.Visible : Visibility.Collapsed;
+                panelMosaicHeader.Visibility = ProjSettings.IsMobile ? Visibility.Visible : Visibility.Collapsed;
                 panelMosaicHeader.Background = new SolidColorBrush(MainPage.BackgroundHeaderColor.ToWinColor());
 
                 System.Diagnostics.Debug.Assert(ev.Parameter is IDictionary<string, object>);
@@ -117,7 +117,7 @@ namespace fmg {
             }
 
             var minTileWidth = Cast.DpToPx(48);
-            var maxTileWidth = Cast.DpToPx(StaticInitializer.IsMobile ? 90 : 140);
+            var maxTileWidth = Cast.DpToPx(ProjSettings.IsMobile ? 90 : 140);
             var gridViewItemBorderWidth = 3.0 + // magic number ;(
                      4 + 4      // <DataTemplate <StackPanel Margin.LeftAndRight
                     +8 + 8;     // <DataTemplate <StackPanel <canvas:CanvasControl Margin.LeftAndRight

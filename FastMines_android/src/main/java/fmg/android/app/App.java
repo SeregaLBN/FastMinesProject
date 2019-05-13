@@ -10,10 +10,10 @@ import android.content.SharedPreferences;
 
 import java.beans.PropertyChangeEvent;
 
-import fmg.android.app.model.MosaicInitDataExt;
-import fmg.android.utils.StaticInitializer;
 import fmg.common.LoggerSimple;
 import fmg.core.mosaic.MosaicInitData;
+import fmg.android.app.model.MosaicInitDataExt;
+import fmg.android.utils.ProjSettings;
 
 /** FastMines application */
 public class App extends Application implements LifecycleObserver {
@@ -27,7 +27,7 @@ public class App extends Application implements LifecycleObserver {
     @Override
     public void onCreate() {
         super.onCreate();
-        StaticInitializer.init();
+        ProjSettings.init();
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         load();
 

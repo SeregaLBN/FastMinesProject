@@ -32,7 +32,7 @@ namespace fmg.core.mosaic {
                 return;
             base.Setup();
             _tuned = true;
-            StaticInitializer.Init();
+            ProjSettings.Init();
         }
 
         [Fact]

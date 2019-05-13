@@ -4,7 +4,7 @@ import org.junit.BeforeClass;
 
 import fmg.common.LoggerSimple;
 import fmg.core.mosaic.MosaicModelTest;
-import fmg.jfx.utils.StaticInitializer;
+import fmg.jfx.utils.ProjSettings;
 import io.reactivex.Flowable;
 
 public class MosaicModelJfxTest extends MosaicModelTest {
@@ -14,7 +14,7 @@ public class MosaicModelJfxTest extends MosaicModelTest {
         LoggerSimple.put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         LoggerSimple.put("> MosaicModelJfxTest::setup");
         new javafx.embed.swing.JFXPanel();
-        StaticInitializer.init();
+        ProjSettings.init();
         Flowable.just("UI factory JFX inited...").subscribe(LoggerSimple::put);
     }
 

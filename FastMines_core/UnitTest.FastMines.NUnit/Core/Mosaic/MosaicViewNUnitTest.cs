@@ -28,7 +28,7 @@ namespace fmg.core.mosaic {
         [SetUp]
         public override void Setup() {
             base.Setup();
-            NotifyPropertyChangedNUnitTest.StaticInitializer();
+            NotifyPropertyChangedNUnitTest.ProjSettings();
         }
 
         [SetUp]

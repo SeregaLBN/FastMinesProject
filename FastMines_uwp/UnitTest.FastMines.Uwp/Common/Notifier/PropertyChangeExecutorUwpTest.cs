@@ -25,7 +25,7 @@ namespace fmg.common.notifier {
         [TestInitialize]
         public override void Setup() {
             base.Setup();
-            StaticInitializer.Init();
+            ProjSettings.Init();
         }
 
         [TestMethod]

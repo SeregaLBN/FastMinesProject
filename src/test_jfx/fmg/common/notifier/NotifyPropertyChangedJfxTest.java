@@ -4,7 +4,7 @@ import org.junit.BeforeClass;
 
 import fmg.common.LoggerSimple;
 import fmg.common.notifier.NotifyPropertyChangedTest;
-import fmg.jfx.utils.StaticInitializer;
+import fmg.jfx.utils.ProjSettings;
 import io.reactivex.Flowable;
 
 public class NotifyPropertyChangedJfxTest extends NotifyPropertyChangedTest {
@@ -14,7 +14,7 @@ public class NotifyPropertyChangedJfxTest extends NotifyPropertyChangedTest {
         LoggerSimple.put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         LoggerSimple.put("> NotifyPropertyChangedJfxTest::setup");
         new javafx.embed.swing.JFXPanel();
-        StaticInitializer.init();
+        ProjSettings.init();
         Flowable.just("UI factory JFX inited...").subscribe(LoggerSimple::put);
     }
 

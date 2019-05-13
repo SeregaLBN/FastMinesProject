@@ -17,7 +17,6 @@ import fmg.core.img.ImageController;
 import fmg.core.img.ImageView;
 import fmg.core.img.SmileModel.EFaceType;
 import fmg.android.utils.Cast;
-import fmg.android.utils.StaticInitializer;
 
 /** Smile image */
 public final class Smile {

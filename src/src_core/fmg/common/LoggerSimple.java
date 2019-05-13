@@ -9,9 +9,12 @@ import java.util.function.Supplier;
 public final class LoggerSimple {
 
     /** may be override */
-    public static Consumer<String> DEFAULT_WRITER = message -> System.out.println(message);
+    public static Consumer<String> DEFAULT_WRITER = null; // System.out::println;
 
     public static void put(String format, Object... args) {
+        if (DEFAULT_WRITER == null)
+            return;
+
         try {
             String prefix = '[' + new SimpleDateFormat("HH:mm:ss.SSS").format(new Date()) + "]  Th=" + Thread.currentThread().getId() + "  ";
             if (args.length > 0) {
@@ -21,8 +24,7 @@ public final class LoggerSimple {
             }
         } catch(Throwable ex) {
             System.err.println(ex);
-            if (DEFAULT_WRITER != null)
-                DEFAULT_WRITER.accept(format);
+            DEFAULT_WRITER.accept(format);
         }
     }
 
