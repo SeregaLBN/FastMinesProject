@@ -116,7 +116,7 @@ namespace fmg.core.mosaic {
         public virtual async Task OneNotificationOfImageChangedTest() {
             LoggerSimple.Put("> " + nameof(MosaicViewTest) + "::" + nameof(OneNotificationOfImageChangedTest));
 
-            await new PropertyChangeExecutor<MosaicTestView>(() => new MosaicTestView()).Run(100, 1000,
+            await new PropertyChangeExecutor<MosaicTestView>(() => new MosaicTestView()).Run(300, 1000,
                 view => {
                     MosaicModelTest.ChangeModel(view.Model);
                 }, (view, modifiedProperties) => {

@@ -48,7 +48,7 @@ namespace fmg.core.mosaic {
         public virtual async Task PropertyChangedTest() {
             LoggerSimple.Put("> " + nameof(MosaicControllerTest) + "::" + nameof(PropertyChangedTest));
 
-            await new PropertyChangeExecutor<MosaicTestController>(() => new MosaicTestController()).Run(100, 1000,
+            await new PropertyChangeExecutor<MosaicTestController>(() => new MosaicTestController()).Run(300, 1000,
                 ctrlr => {
                     MosaicModelTest.ChangeModel(ctrlr.Model);
                 }, (ctrlr, modifiedProperties) => {

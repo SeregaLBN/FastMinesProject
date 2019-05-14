@@ -73,7 +73,7 @@ namespace fmg.core.mosaic {
         public virtual async Task MosaicDrawModelPropertyChangedTest() {
             LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(MosaicDrawModelPropertyChangedTest));
 
-            await new PropertyChangeExecutor<MosaicTestModel>(() => new MosaicTestModel()).Run(100, 1000,
+            await new PropertyChangeExecutor<MosaicTestModel>(() => new MosaicTestModel()).Run(200, 1000,
                 model => {
                     ChangeModel(model);
                 }, (model, modifiedProperties) => {
@@ -649,7 +649,7 @@ namespace fmg.core.mosaic {
 
             MosaicTestModel m = null;
             // step 1: init
-            await new PropertyChangeExecutor<MosaicTestModel>(() => m = new MosaicTestModel(), false).Run(100, 1000,
+            await new PropertyChangeExecutor<MosaicTestModel>(() => m = new MosaicTestModel(), false).Run(300, 1000,
                 model => {
                     var size = model.Size; // implicit call setter Size
                     AssertNotNull(size);
@@ -660,7 +660,7 @@ namespace fmg.core.mosaic {
                 });
 
             // step 2: check no changes
-            await new PropertyChangeExecutor<MosaicTestModel>(() => m).Run(100, 1000,
+            await new PropertyChangeExecutor<MosaicTestModel>(() => m).Run(200, 1000,
                 model => {
                     model.Size = model.Size;
                     model.Area = model.Area;
