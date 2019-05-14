@@ -31,7 +31,6 @@ namespace fmg.uwp.mosaic.xaml {
         public MosaicXamlView(Panel control = null)
             : base(new MosaicDrawModel<ImageSource>())
         {
-            _notifier.DeferredNotifications = true;
             if (control != null)
                 Control = control;
             ChangeSizeImagesMineFlag();

@@ -42,7 +42,6 @@ namespace fmg.uwp.mosaic.wbmp {
         public MosaicImageView()
             : base(new MosaicDrawModel<WriteableBitmap>())
         {
-            _notifier.DeferredNotifications = true;
             _innerView = new InnerView(this);
             _innerView.PropertyChanged += OnInnerViewPropertyChanged;
             ChangeSizeImagesMineFlag();

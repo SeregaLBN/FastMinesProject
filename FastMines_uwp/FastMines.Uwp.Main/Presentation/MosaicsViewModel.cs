@@ -47,8 +47,6 @@ namespace fmg.common {
 
             _notifier.Dispose();
 
-            NotifyPropertyChanged.AssertCheckSubscribers(this);
-
             GC.SuppressFinalize(this);
         }
 

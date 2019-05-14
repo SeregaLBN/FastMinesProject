@@ -64,9 +64,7 @@ namespace fmg.uwp.img.wbmp {
 
             public WBmpController()
                 : base(new WBmpView())
-            {
-                _notifier.DeferredNotifications = !Windows.ApplicationModel.DesignMode.DesignModeEnabled;
-            }
+            { }
 
             protected override void Disposing() {
                 base.Disposing();
