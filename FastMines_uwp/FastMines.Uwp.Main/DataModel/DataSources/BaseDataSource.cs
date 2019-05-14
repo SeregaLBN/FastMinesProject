@@ -39,7 +39,7 @@ namespace fmg.DataModel.DataSources {
             add    { _notifier/*Sync*/.PropertyChanged += value;  }
             remove { _notifier/*Sync*/.PropertyChanged -= value;  }
         }
-        public event PropertyChangedEventHandler PropertyChangedAsync {
+        public event PropertyChangedEventHandler PropertyChanged/*Async*/ {
             add    { _notifierAsync.PropertyChanged += value;  }
             remove { _notifierAsync.PropertyChanged -= value;  }
         }

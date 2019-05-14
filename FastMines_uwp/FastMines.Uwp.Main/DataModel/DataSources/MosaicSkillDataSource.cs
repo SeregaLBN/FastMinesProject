@@ -45,7 +45,7 @@ namespace fmg.DataModel.DataSources {
                         ApplySelection(item);
                         dataSource.Add(item);
                     }
-                    notifier.FirePropertyChanged();
+                    _notifier.FirePropertyChanged();
                 }
                 return dataSource;
             }

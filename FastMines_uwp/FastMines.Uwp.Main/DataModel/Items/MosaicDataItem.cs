@@ -28,7 +28,7 @@ namespace fmg.DataModel.Items {
         public ESkillLevel SkillLevel {
             get { return _skillLevel; }
             set {
-                notifier.SetProperty(ref _skillLevel, value);
+                _notifier.SetProperty(ref _skillLevel, value);
             }
         }
 
@@ -59,7 +59,7 @@ namespace fmg.DataModel.Items {
             base.OnPropertyChanged(sender, ev);
             switch(ev.PropertyName) {
             case nameof(this.UniqueId):
-                notifier.FirePropertyChanged(nameof(this.MosaicType)); // recall with another property name
+                _notifier.FirePropertyChanged(nameof(this.MosaicType)); // recall with another property name
                 Entity.MosaicType = MosaicType;
                 Entity.SizeField = CalcSizeField(SkillLevel);
                 Title = FixTitle(MosaicType);

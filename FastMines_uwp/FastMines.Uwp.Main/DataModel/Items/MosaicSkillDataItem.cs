@@ -55,7 +55,7 @@ namespace fmg.DataModel.Items {
 
             switch(ev.PropertyName) {
             case nameof(this.UniqueId):
-                notifier.FirePropertyChanged(nameof(this.SkillLevel)); // recall with another property name
+                _notifier.FirePropertyChanged(nameof(this.SkillLevel)); // recall with another property name
                 break;
             }
         }
@@ -64,9 +64,9 @@ namespace fmg.DataModel.Items {
             switch (ev.PropertyName) {
             case nameof(BurgerMenuModel.Padding):
                 if (ev is PropertyChangedExEventArgs<BoundDouble> evx)
-                    notifier.FirePropertyChanged(ZoomPadding(evx.OldValue), ZoomPadding(evx.NewValue), nameof(this.PaddingBurgerMenu));
+                    _notifier.FirePropertyChanged(ZoomPadding(evx.OldValue), ZoomPadding(evx.NewValue), nameof(this.PaddingBurgerMenu));
                 else
-                    notifier.FirePropertyChanged(nameof(this.PaddingBurgerMenu));
+                    _notifier.FirePropertyChanged(nameof(this.PaddingBurgerMenu));
                 break;
             }
         }

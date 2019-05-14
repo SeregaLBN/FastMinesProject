@@ -46,7 +46,7 @@ namespace fmg.DataModel.DataSources {
                         ApplySelection(item);
                         dataSource.Add(item);
                     }
-                    notifier.FirePropertyChanged();
+                    _notifier.FirePropertyChanged();
                 }
                 return dataSource;
             }
@@ -92,7 +92,7 @@ namespace fmg.DataModel.DataSources {
 
             switch (ev.PropertyName) {
             case nameof(this.CurrentItem):
-                notifier.FirePropertyChanged(nameof(this.UnicodeChars));
+                _notifier.FirePropertyChanged(nameof(this.UnicodeChars));
                 break;
             }
         }

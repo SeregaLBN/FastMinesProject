@@ -138,9 +138,9 @@ namespace fmg.DataModel.Items {
                 break;
             case nameof(IImageModel.Padding):
                 if (ev is PropertyChangedExEventArgs<BoundDouble> evx2)
-                    notifier.FirePropertyChanged(ZoomPadding(evx2.OldValue), ZoomPadding(evx2.NewValue), nameof(this.Padding));
+                    _notifier.FirePropertyChanged(ZoomPadding(evx2.OldValue), ZoomPadding(evx2.NewValue), nameof(this.Padding));
                 else
-                    notifier.FirePropertyChanged(nameof(this.Padding));
+                    _notifier.FirePropertyChanged(nameof(this.Padding));
                 break;
             }
         }

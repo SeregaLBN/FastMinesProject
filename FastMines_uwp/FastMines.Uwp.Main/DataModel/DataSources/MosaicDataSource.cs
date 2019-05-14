@@ -37,7 +37,7 @@ namespace fmg.DataModel.DataSources {
                     model.PolarLights = true;
                     model.Animated = true;
 
-                    notifier.FirePropertyChanged(null, header);
+                    _notifier.FirePropertyChanged(null, header);
                 }
                 return header;
             }
@@ -53,12 +53,12 @@ namespace fmg.DataModel.DataSources {
 
         public EMosaicGroup? MosaicGroup {
             get { return mosaicGroup; }
-            set { notifier.SetProperty(ref mosaicGroup, value); }
+            set { _notifier.SetProperty(ref mosaicGroup, value); }
         }
 
         public ESkillLevel? SkillLevel {
             get { return skillLevel; }
-            set { notifier.SetProperty(ref skillLevel, value); }
+            set { _notifier.SetProperty(ref skillLevel, value); }
         }
 
         private void ReloadDataSource() {
@@ -74,7 +74,7 @@ namespace fmg.DataModel.DataSources {
                     .ToList()
                     .ForEach(mi => dataSource.Add(mi));
 
-                notifier.FirePropertyChanged(null, dataSource, nameof(DataSource));
+                _notifier.FirePropertyChanged(null, dataSource, nameof(DataSource));
                 return;
             }
 
@@ -106,7 +106,7 @@ namespace fmg.DataModel.DataSources {
                     dataSource.Add(mi);
                 }
             }
-            notifier.FirePropertyChanged(null, dataSource, nameof(DataSource));
+            _notifier.FirePropertyChanged(null, dataSource, nameof(DataSource));
             CurrentItemPos = Math.Min(pos, dataSource.Count() - 1); // restore pos
             //LoggerSimple.Put("  " + nameof(MosaicDataSource) + "::" + nameof(ReloadDataSource) + ": restored item pos=" + CurrentItemPos);
         }
