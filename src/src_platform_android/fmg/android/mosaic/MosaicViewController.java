@@ -1,30 +1,45 @@
 package fmg.android.mosaic;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.util.Size;
 import android.view.DragEvent;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 
+import java.beans.PropertyChangeEvent;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+import fmg.android.utils.Cast;
 import fmg.common.LoggerSimple;
 import fmg.common.geom.PointDouble;
+import fmg.common.geom.SizeDouble;
+import fmg.common.ui.UiInvoker;
 import fmg.core.mosaic.MosaicController;
 import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.ClickResult;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 
 /** MVC: controller. Android implementation */
 public class MosaicViewController extends MosaicController<View, Bitmap, MosaicViewView, MosaicDrawModel<Bitmap>> {
 
     private final Context context;
     private final ClickInfo _clickInfo = new ClickInfo();
+    /** true : bind Control.SizeProperty to Model.Size
+     *  false: bind Model.Size to Control.SizeProperty */
+    private boolean bindSizeDirection = true;
+    private Subject<Size> subjSizeChanged;
+    private Disposable sizeChangedObservable;
+    private Size cachedControlSize = new Size(-1, -1);
     private final GestureDetector _gd;
     private final GestureDetector.SimpleOnGestureListener _gestureListener = new GestureDetector.SimpleOnGestureListener(){
 
@@ -68,6 +83,66 @@ public class MosaicViewController extends MosaicController<View, Bitmap, MosaicV
 
     public View getViewPanel() {
         return getView().getControl();
+    }
+
+
+    public boolean getBindSizeDirection() {
+        return bindSizeDirection;
+    }
+    public void setBindSizeDirection(boolean bindSizeDirection) {
+        this.bindSizeDirection = bindSizeDirection;
+    }
+
+
+    @Override
+    protected void onPropertyModelChanged(PropertyChangeEvent ev) {
+        super.onPropertyModelChanged(ev);
+        switch (ev.getPropertyName()) {
+        case MosaicDrawModel.PROPERTY_SIZE:
+            onSizeChanged(ev);
+            break;
+        case MosaicDrawModel.PROPERTY_AREA:
+//            onAreaChanged(ev as PropertyChangedExEventArgs<double>);
+            break;
+        }
+    }
+
+    private void onGlobalLayoutListener() {
+        View control = getViewPanel();
+        int w = control.getWidth();
+        int h = control.getHeight();
+        if ((w <= 0) || (h <= 0))
+            return;
+
+        Size newSize = new Size(w, h);
+
+        if (cachedControlSize.equals(newSize))
+            return;
+        cachedControlSize = newSize;
+        subjSizeChanged.onNext(newSize);
+    }
+
+    private void onControlSizeChanged(Size newSize) {
+        if (!bindSizeDirection)
+            getModel().setSize(Cast.toSizeDouble(newSize));
+
+//        if (_extendedManipulation)
+//            RecheckLocation();
+    }
+
+    private void onSizeChanged(PropertyChangeEvent ev) {
+        if (!bindSizeDirection)
+            return;
+        View control = getViewPanel();
+        ViewGroup.LayoutParams lp = control.getLayoutParams();
+        if (lp == null)
+            return;
+
+        SizeDouble newSize = (SizeDouble)ev.getNewValue();
+        if (newSize == null)
+            newSize = getModel().getSize();
+        lp.width  = (int)newSize.width;
+        lp.height = (int)newSize.height;
     }
 
 
@@ -252,7 +327,20 @@ public class MosaicViewController extends MosaicController<View, Bitmap, MosaicV
     }
 
     private void subscribeToViewControl() {
-        View control = this.getView().getControl();
+        View control = getViewPanel();
+
+        { // onControlSizeChanged(newSize);
+            subjSizeChanged = PublishSubject.create();
+            sizeChangedObservable = subjSizeChanged.debounce(200, TimeUnit.MILLISECONDS)
+                    .subscribe(ev -> {
+//                        LoggerSimple.put("  MosaicViewController::onGlobalLayoutListener: Debounce: onNext: ev=" + ev);
+                        UiInvoker.DEFERRED.accept(() -> onControlSizeChanged(ev));
+                    }, ex -> {
+                        LoggerSimple.put("  MosaicViewController: sizeChangedObservable: Debounce: onError: " + ex);
+                    });
+            getViewPanel().getViewTreeObserver().addOnGlobalLayoutListener(this::onGlobalLayoutListener);
+        }
+
         control.setFocusable(true); // ? иначе не будет срабатывать FocusListener
         control.setOnFocusChangeListener((v, hasFocus) -> onFocusChange(hasFocus));
         control.setOnTouchListener((v, ev) -> onTouch(ev));
@@ -267,7 +355,12 @@ public class MosaicViewController extends MosaicController<View, Bitmap, MosaicV
     }
 
     private void unsubscribeToViewControl() {
-        View control = this.getView().getControl();
+        View control = getViewPanel();
+
+        control.getViewTreeObserver().removeOnGlobalLayoutListener(this::onGlobalLayoutListener);
+        sizeChangedObservable.dispose();
+        subjSizeChanged = null;
+
         control.setOnDragListener(null);
         control.setOnHoverListener(null);
       //control.setOnCapturedPointerListener(null);

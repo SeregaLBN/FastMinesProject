@@ -25,6 +25,7 @@ public final class Cast {
     public static    android.util.Size         toSize      (fmg.common.geom.Size       size) { return new    android.util.Size      (       size.width     ,        size.height); }
     public static    android.util.SizeF        toSize      (fmg.common.geom.SizeDouble size) { return new    android.util.SizeF     ((float)size.width     , (float)size.height); }
     public static fmg.common.geom.Size         toSize      (   android.util.Size       size) { return new fmg.common.geom.Size      (       size.getWidth(),        size.getHeight()); }
+    public static fmg.common.geom.SizeDouble   toSizeDouble(   android.util.Size       size) { return new fmg.common.geom.SizeDouble(       size.getWidth(),        size.getHeight()); }
     public static fmg.common.geom.SizeDouble   toSizeDouble(   android.util.SizeF      size) { return new fmg.common.geom.SizeDouble(       size.getWidth(),        size.getHeight()); }
 
     public static android.graphics.Path toPolygon(fmg.common.geom.RegionDouble region) {

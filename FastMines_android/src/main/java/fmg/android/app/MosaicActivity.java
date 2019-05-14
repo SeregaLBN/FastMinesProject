@@ -56,6 +56,7 @@ public class MosaicActivity extends AppCompatActivity {
         }
         this.mosaicController = mosaicController;
         if (this.mosaicController != null)
+            this.mosaicController.setBindSizeDirection(false);
             this.mosaicController.addListener(onMosaicControllerPropertyChangedListener);
     }
 

@@ -37,7 +37,7 @@ android {
             applicationIdSuffix '.debug'
             debuggable true
             minifyEnabled false
-            buildConfigField 'boolean', 'DRAW_MODE_FULL', 'false'
+            buildConfigField 'boolean', 'DRAW_MODE_FULL', 'true'
             buildConfigField 'boolean', 'DEBUG_OUTPUT'  , 'true'
         }
     }
@@ -47,10 +47,10 @@ android {
 
     flavorDimensions 'runMode'
     productFlavors {
-        full {
+        app { // full mode
             dimension 'runMode'
         }
-        proof {
+        demo { // demonstration of drawing performance
             dimension 'runMode'
             applicationIdSuffix '.demo'
         }

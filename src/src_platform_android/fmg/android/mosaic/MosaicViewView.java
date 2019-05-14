@@ -33,12 +33,12 @@ public class MosaicViewView extends MosaicAndroidView<View, Bitmap, MosaicDrawMo
     private final Collection<BaseCell> _modifiedCells = new HashSet<>();
 
     public MosaicViewView(Context context) {
-        super(new MosaicDrawModel<Bitmap>());
+        super(new MosaicDrawModel<>());
         this.context = context;
         changeSizeImagesMineFlag();
     }
     public MosaicViewView(View view, Consumer<Consumer<Canvas>> viewDrawMethod) {
-        super(new MosaicDrawModel<Bitmap>());
+        super(new MosaicDrawModel<>());
         this.context = view.getContext();
         this._control = view;
         viewDrawMethod.accept(this::onDraw);
