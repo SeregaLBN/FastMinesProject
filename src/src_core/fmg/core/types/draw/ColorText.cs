@@ -9,12 +9,14 @@ namespace fmg.core.types.draw {
 
         private readonly Color[] _colorOpen;
         private readonly Color[] _colorClose;
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged {
+            add    { _notifier.PropertyChanged += value;  }
+            remove { _notifier.PropertyChanged -= value;  }
+        }
         protected readonly NotifyPropertyChanged _notifier;
 
         public ColorText() {
             _notifier = new NotifyPropertyChanged(this);
-            _notifier.PropertyChanged += OnNotifierPropertyChanged;
             _colorOpen = new Color[EOpenEx.GetValues().Length];
             _colorClose = new Color[ECloseEx.GetValues().Length];
 
@@ -71,15 +73,8 @@ namespace fmg.core.types.draw {
             _notifier.SetProperty(ref _colorClose[i], colorClose, "ColorClose.#" + i);
         }
 
-        private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _notifier));
-            PropertyChanged?.Invoke(this, ev);
-        }
-
         public void Dispose() {
-            _notifier.PropertyChanged -= OnNotifierPropertyChanged;
             _notifier.Dispose();
-            NotifyPropertyChanged.AssertCheckSubscribers(this);
             GC.SuppressFinalize(this);
         }
 

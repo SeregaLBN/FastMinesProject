@@ -27,8 +27,14 @@ namespace fmg.core.img {
         private TImage _image;
         private EInvalidate _invalidate = EInvalidate.needRedraw;
         protected bool Disposed { get; private set; }
-        private event PropertyChangedEventHandler PropertyChangedSync;
-        public  event PropertyChangedEventHandler PropertyChanged/*Async*/;
+        private event PropertyChangedEventHandler PropertyChangedSync {
+            add    { _notifier/*Sync*/.PropertyChanged += value;  }
+            remove { _notifier/*Sync*/.PropertyChanged -= value;  }
+        }
+        public event PropertyChangedEventHandler PropertyChanged/*Async*/ {
+            add    { _notifierAsync.PropertyChanged += value;  }
+            remove { _notifierAsync.PropertyChanged -= value;  }
+        }
         protected readonly NotifyPropertyChanged _notifier/*Sync*/;
         private   readonly NotifyPropertyChanged _notifierAsync;
 
@@ -36,10 +42,8 @@ namespace fmg.core.img {
             Model = imageModel;
             _notifier      = new NotifyPropertyChanged(this, false);
             _notifierAsync = new NotifyPropertyChanged(this, true);
-            _notifier     .PropertyChanged += OnNotifierPropertyChanged;
-            _notifierAsync.PropertyChanged += OnNotifierAsyncPropertyChanged;
-            this          .PropertyChangedSync += OnPropertyChanged;
-            Model         .PropertyChanged     += OnPropertyModelChanged;
+            this .PropertyChangedSync += OnPropertyChanged;
+            Model.PropertyChanged     += OnPropertyModelChanged;
         }
 
         /// <summary> width and height in pixel </summary>
@@ -118,27 +122,13 @@ namespace fmg.core.img {
             }
         }
 
-        private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _notifier));
-            PropertyChangedSync?.Invoke(this, ev);
-        }
-
-        private void OnNotifierAsyncPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _notifierAsync));
-            PropertyChanged/*Async*/?.Invoke(this, ev);
-        }
-
         // <summary>  Dispose managed resources </summary>/
         protected virtual void Disposing() {
-            _notifier     .PropertyChanged -= OnNotifierPropertyChanged;
-            _notifierAsync.PropertyChanged -= OnNotifierAsyncPropertyChanged;
-            _notifier.Dispose();
-            _notifierAsync.Dispose();
             this .PropertyChangedSync -= OnPropertyChanged;
             Model.PropertyChanged     -= OnPropertyModelChanged;
+            _notifier.Dispose();
+            _notifierAsync.Dispose();
             Image = null;
-            NotifyPropertyChanged.AssertCheckSubscribers(this, nameof(PropertyChangedSync));
-            NotifyPropertyChanged.AssertCheckSubscribers(this);
         }
 
         public void Dispose() {

@@ -11,13 +11,15 @@ namespace fmg.common {
 
         private readonly MosaicDataSource mosaicDS = new MosaicDataSource();
         protected bool Disposed { get; private set; }
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected readonly NotifyPropertyChanged notifier;
+        public event PropertyChangedEventHandler PropertyChanged {
+            add    { _notifier.PropertyChanged += value;  }
+            remove { _notifier.PropertyChanged -= value;  }
+        }
+        protected readonly NotifyPropertyChanged _notifier;
 
         public MosaicsViewModel() {
             mosaicDS.PropertyChanged += OnMosaicDsPropertyChanged;
-            notifier = new NotifyPropertyChanged(this, false);
-            notifier.PropertyChanged += OnNotifierPropertyChanged;
+            _notifier = new NotifyPropertyChanged(this, false);
         }
 
         public MosaicDataSource MosaicDS => mosaicDS;
@@ -28,16 +30,11 @@ namespace fmg.common {
         }
 
         private void OnMosaicDsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            notifier.FirePropertyChanged(nameof(this.MosaicDS));
+            _notifier.FirePropertyChanged(nameof(this.MosaicDS));
             if (ev.PropertyName == nameof(MosaicDataSource.ImageSize)) {
                 // ! notify parent container
-                notifier.FirePropertyChanged<SizeDouble>(ev, nameof(this.ImageSize));
+                _notifier.FirePropertyChanged<SizeDouble>(ev, nameof(this.ImageSize));
             }
-        }
-
-        private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, notifier));
-            PropertyChanged?.Invoke(this, ev);
         }
 
         public void Dispose() {
@@ -48,8 +45,7 @@ namespace fmg.common {
             mosaicDS.PropertyChanged -= OnMosaicDsPropertyChanged;
             mosaicDS.Dispose();
 
-            notifier.PropertyChanged -= OnNotifierPropertyChanged;
-            notifier.Dispose();
+            _notifier.Dispose();
 
             NotifyPropertyChanged.AssertCheckSubscribers(this);
 

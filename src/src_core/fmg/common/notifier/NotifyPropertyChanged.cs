@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using fmg.common.ui;
 
@@ -15,14 +14,34 @@ namespace fmg.common.notifier {
     public sealed class NotifyPropertyChanged : IDisposable, INotifyPropertyChanged
     {
         private readonly INotifyPropertyChanged _owner;
+#if DEBUG
+        private readonly IDictionary<PropertyChangedEventHandler, string> _propertyChanges = new Dictionary<PropertyChangedEventHandler, string>();
+        public event PropertyChangedEventHandler PropertyChanged {
+            add {
+                if (_propertyChanges.ContainsKey(value))
+                    throw new ArgumentException("NotifyPropertyChanged.PropertyChanged.add: Already listened! Called from " + _propertyChanges[value]);
+                _propertyChanges.Add(value, Environment.StackTrace);
+
+                var count = _propertyChanges.Count;
+                if (count > 4)
+                    LoggerSimple.Put("Suspiciously many subscribers! count={0}", count);
+            }
+            remove {
+                if (!_propertyChanges.ContainsKey(value))
+                    throw new ArgumentException("NotifyPropertyChanged.PropertyChanged.remove: Illegal listener=" + value);
+                _propertyChanges.Remove(value);
+            }
+        }
+#else
         public event PropertyChangedEventHandler PropertyChanged;
-        public bool DeferredNotifications { get; set; }
+#endif
+        private readonly bool _deferredNotifications;
         private readonly IDictionary<string /* propertyName */, PropertyChangedEventArgs> _deferrNotifications = new Dictionary<string, PropertyChangedEventArgs>();
         public bool Disposed { get; private set; } = false;
 
         public NotifyPropertyChanged(INotifyPropertyChanged owner, bool deferredNotifications = false) {
             _owner = owner;
-            DeferredNotifications = deferredNotifications;
+            _deferredNotifications = deferredNotifications;
         }
 
 
@@ -72,9 +91,14 @@ namespace fmg.common.notifier {
             void fireOwnerEvent(PropertyChangedEventArgs ev3) {
                 //if (ev3.PropertyName == "Image")
                 //   LoggerSimple.Put("  Fire event '" + ev3.PropertyName + "'! class " + _owner.GetType().FullName);
-                PropertyChanged?.Invoke(this, ev3);
+#if DEBUG
+                foreach (var kv in _propertyChanges)
+                    kv.Key.Invoke(_owner, ev3);
+#else
+                PropertyChanged?.Invoke(_owner, ev3);
+#endif
             }
-            if (!DeferredNotifications) {
+            if (!_deferredNotifications) {
                 fireOwnerEvent(ev);
                 //LoggerSimple.Put($"< FirePropertyChanged: {_owner.GetType().Name}: PropertyName={ev.PropertyName}");
             } else {
@@ -132,32 +156,19 @@ namespace fmg.common.notifier {
             if (Disposed)
                 return;
             Disposed = true;
-            _deferrNotifications.Clear();
-            AssertCheckSubscribers(this);
-            GC.SuppressFinalize(this);
-        }
-
-        public static void AssertCheckSubscribers(INotifyPropertyChanged self, string propertyChangedName = nameof(INotifyPropertyChanged.PropertyChanged)) {
 #if DEBUG
-            var type = self.GetType();
-            FieldInfo eventField;
-            do {
-                eventField = type.GetField(propertyChangedName, BindingFlags.NonPublic | BindingFlags.Instance);
-                if (eventField == null)
-                    type = type.GetTypeInfo().BaseType;
-                else
-                    break;
-            } while(true);
-
-            var value = eventField.GetValue(self);
-            if (value == null)
-                return; // Ok. No subscribers
-            var invocationList = ((PropertyChangedEventHandler)value).GetInvocationList();
-            var subscriberCount = invocationList.Length;
-            if (subscriberCount != 0)
-                throw new InvalidOperationException("Illegal usage: Not all listeners were unsubscribed (type " + self.GetType().FullName
-                    + "; target " + invocationList.First().Target + "): count=" + subscriberCount);
+            if (_deferrNotifications.Any())
+                LoggerSimple.Put("Not all deferr notifications handled! Count={0}", _deferrNotifications.Count);
 #endif
+            _deferrNotifications.Clear();
+
+#if DEBUG
+            if (_propertyChanges.Count != 0)
+                throw new InvalidOperationException("Illegal usage: Not all listeners were unsubscribed (type " + GetType().FullName
+                    + "; target " + _propertyChanges.First().Key.Target + "); subscribed from: " + _propertyChanges.First().Value + "\n count=" + _propertyChanges.Count);
+#endif
+
+            GC.SuppressFinalize(this);
         }
 
     }

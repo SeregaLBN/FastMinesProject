@@ -35,17 +35,21 @@ namespace fmg.DataModel.DataSources {
         private const int NOT_SELECTED_POS = -1;
 
         protected bool Disposed { get; private set; }
-        private event PropertyChangedEventHandler PropertyChangedSync;
-        public  event PropertyChangedEventHandler PropertyChanged/*Async*/;
-        protected readonly NotifyPropertyChanged notifier/*Sync*/;
-        private   readonly NotifyPropertyChanged notifierAsync;
+        private event PropertyChangedEventHandler PropertyChangedSync {
+            add    { _notifier/*Sync*/.PropertyChanged += value;  }
+            remove { _notifier/*Sync*/.PropertyChanged -= value;  }
+        }
+        public event PropertyChangedEventHandler PropertyChangedAsync {
+            add    { _notifierAsync.PropertyChanged += value;  }
+            remove { _notifierAsync.PropertyChanged -= value;  }
+        }
+        protected readonly NotifyPropertyChanged _notifier/*Sync*/;
+        private   readonly NotifyPropertyChanged _notifierAsync;
 
         protected BaseDataSource() {
-            notifier      = new NotifyPropertyChanged(this, false);
-            notifierAsync = new NotifyPropertyChanged(this, true);
-            notifier     .PropertyChanged     += OnNotifierPropertyChanged;
-            notifierAsync.PropertyChanged     += OnNotifierAsyncPropertyChanged;
-            this         .PropertyChangedSync += OnPropertyChanged;
+            _notifier      = new NotifyPropertyChanged(this, false);
+            _notifierAsync = new NotifyPropertyChanged(this, true);
+            this.PropertyChangedSync += OnPropertyChanged;
         }
 
         /// <summary> the top item that this data source describes </summary>
@@ -79,7 +83,7 @@ namespace fmg.DataModel.DataSources {
                 }
                 if (value == currentItemPos)
                     return;
-                notifier.SetProperty(ref this.currentItemPos, value);
+                _notifier.SetProperty(ref this.currentItemPos, value);
             }
         }
 
@@ -91,7 +95,7 @@ namespace fmg.DataModel.DataSources {
                     mi.Size = value;
                 }
                 if (old != value) {
-                    notifier.FirePropertyChanged(old, value);
+                    _notifier.FirePropertyChanged(old, value);
                 }
             }
         }
@@ -101,24 +105,14 @@ namespace fmg.DataModel.DataSources {
 
         protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             // refire as async event
-            notifierAsync.FirePropertyChanged(ev);
+            _notifierAsync.FirePropertyChanged(ev);
 
             switch (ev.PropertyName) {
             case nameof(this.CurrentItemPos):
                 OnCurrentItemChanged();
-                notifier.FirePropertyChanged(null, CurrentItem, nameof(CurrentItem));
+                _notifier.FirePropertyChanged(null, CurrentItem, nameof(CurrentItem));
                 break;
             }
-        }
-
-        private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, notifier));
-            PropertyChangedSync?.Invoke(this, ev);
-        }
-
-        private void OnNotifierAsyncPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, notifierAsync));
-            PropertyChanged/*Async*/?.Invoke(this, ev);
         }
 
         protected virtual void Disposing() {
@@ -129,13 +123,9 @@ namespace fmg.DataModel.DataSources {
 
             //CurrentItem = null;
 
-            this         .PropertyChangedSync -= OnPropertyChanged;
-            notifier     .PropertyChanged -= OnNotifierPropertyChanged;
-            notifierAsync.PropertyChanged -= OnNotifierAsyncPropertyChanged;
-            notifier     .Dispose();
-            notifierAsync.Dispose();
-            NotifyPropertyChanged.AssertCheckSubscribers(this, nameof(PropertyChangedSync));
-            NotifyPropertyChanged.AssertCheckSubscribers(this);
+            this.PropertyChangedSync -= OnPropertyChanged;
+            _notifier     .Dispose();
+            _notifierAsync.Dispose();
         }
 
         public void Dispose() {

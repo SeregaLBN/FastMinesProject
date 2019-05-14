@@ -8,23 +8,18 @@ namespace fmg.common.notifier {
 
         private class SimpleDataObj : INotifyPropertyChanged, IDisposable {
 
-            public event PropertyChangedEventHandler PropertyChanged;
+            public event PropertyChangedEventHandler PropertyChanged {
+                add    { _notifier.PropertyChanged += value;  }
+                remove { _notifier.PropertyChanged -= value;  }
+            }
             private readonly NotifyPropertyChanged _notifier;
 
             internal SimpleDataObj() {
                 _notifier = new NotifyPropertyChanged(this);
-                _notifier.PropertyChanged += OnNotifierPropertyChanged;
-            }
-
-            private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-                System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _notifier));
-                PropertyChanged?.Invoke(this, ev);
             }
 
             public void Dispose() {
-                _notifier.PropertyChanged -= OnNotifierPropertyChanged;
                 _notifier.Dispose();
-                NotifyPropertyChanged.AssertCheckSubscribers(this);
             }
 
             public bool Disposed => _notifier.Disposed;

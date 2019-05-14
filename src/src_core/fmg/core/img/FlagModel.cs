@@ -10,12 +10,14 @@ namespace fmg.core.img {
 
         private SizeDouble _size = new SizeDouble(AnimatedImageModelConst.DefaultImageSize, AnimatedImageModelConst.DefaultImageSize);
         private BoundDouble _padding = new BoundDouble(AnimatedImageModelConst.DefaultPadding);
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged {
+            add    { _notifier.PropertyChanged += value;  }
+            remove { _notifier.PropertyChanged -= value;  }
+        }
         protected readonly NotifyPropertyChanged _notifier;
 
         public FlagModel() {
             _notifier = new NotifyPropertyChanged(this, false);
-            _notifier.PropertyChanged += OnNotifierPropertyChanged;
         }
 
         /// <summary> width and height in pixel </summary>
@@ -37,15 +39,8 @@ namespace fmg.core.img {
             }
         }
 
-        private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _notifier));
-            PropertyChanged?.Invoke(this, ev);
-        }
-
         public void Dispose() {
-            _notifier.PropertyChanged -= OnNotifierPropertyChanged;
             _notifier.Dispose();
-            NotifyPropertyChanged.AssertCheckSubscribers(this);
             GC.SuppressFinalize(this);
         }
 

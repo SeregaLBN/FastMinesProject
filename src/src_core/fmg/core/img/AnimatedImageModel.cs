@@ -37,12 +37,14 @@ namespace fmg.core.img {
         private readonly AnimatedInnerModel _innerModel = new AnimatedInnerModel();
 
         protected bool Disposed { get; private set; }
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged {
+            add    { _notifier.PropertyChanged += value;  }
+            remove { _notifier.PropertyChanged -= value;  }
+        }
         protected readonly NotifyPropertyChanged _notifier;
 
         protected AnimatedImageModel() {
             _notifier = new NotifyPropertyChanged(this);
-            _notifier  .PropertyChanged += OnNotifierPropertyChanged;
             _innerModel.PropertyChanged += OnInnerModelPropertyChanged;
         }
 
@@ -149,11 +151,6 @@ namespace fmg.core.img {
             set { _notifier.SetProperty(ref _animeDirection, value); }
         }
 
-        private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _notifier));
-            PropertyChanged?.Invoke(this, ev);
-        }
-
         protected void OnInnerModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             // refire
             _notifier.FirePropertyChanged(ev);
@@ -162,9 +159,7 @@ namespace fmg.core.img {
         // <summary>  Dispose managed resources </summary>/
         protected virtual void Disposing() {
             _innerModel.PropertyChanged -= OnInnerModelPropertyChanged;
-            _notifier  .PropertyChanged -= OnNotifierPropertyChanged;
             _notifier.Dispose();
-            NotifyPropertyChanged.AssertCheckSubscribers(this);
         }
 
         public void Dispose() {

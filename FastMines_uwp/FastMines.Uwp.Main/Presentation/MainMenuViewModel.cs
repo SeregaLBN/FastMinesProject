@@ -14,23 +14,25 @@ namespace fmg.common {
         private readonly MosaicSkillDataSource mosaicSkillDS = new MosaicSkillDataSource();
         private bool isSplitViewPaneOpen;
         protected bool Disposed { get; private set; }
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected readonly NotifyPropertyChanged notifier;
+        public event PropertyChangedEventHandler PropertyChanged {
+            add    { _notifier.PropertyChanged += value;  }
+            remove { _notifier.PropertyChanged -= value;  }
+        }
+        protected readonly NotifyPropertyChanged _notifier;
 
         public MainMenuViewModel() {
             ToggleSplitViewPaneCommand = new Command(() => IsSplitViewPaneOpen = !IsSplitViewPaneOpen);
 
             mosaicGroupDS.PropertyChanged += OnMosaicGroupDsPropertyChanged;
             mosaicSkillDS.PropertyChanged += OnMosaicSkillDsPropertyChanged;
-            notifier = new NotifyPropertyChanged(this, false);
-            notifier.PropertyChanged += OnNotifierPropertyChanged;
+            _notifier = new NotifyPropertyChanged(this, false);
         }
 
         public ICommand ToggleSplitViewPaneCommand { get; private set; }
 
         public bool IsSplitViewPaneOpen {
             get { return isSplitViewPaneOpen; }
-            set { notifier.SetProperty(ref isSplitViewPaneOpen, value); }
+            set { _notifier.SetProperty(ref isSplitViewPaneOpen, value); }
         }
 
         public MosaicGroupDataSource MosaicGroupDS => mosaicGroupDS;
@@ -40,12 +42,12 @@ namespace fmg.common {
 
         private void OnMosaicSkillDsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             System.Diagnostics.Debug.Assert(sender is MosaicSkillDataSource);
-            notifier.FirePropertyChanged(nameof(this.MosaicSkillDS));
+            _notifier.FirePropertyChanged(nameof(this.MosaicSkillDS));
         }
 
         private void OnMosaicGroupDsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             System.Diagnostics.Debug.Assert(sender is MosaicGroupDataSource);
-            notifier.FirePropertyChanged(nameof(this.MosaicGroupDS));
+            _notifier.FirePropertyChanged(nameof(this.MosaicGroupDS));
             switch (ev.PropertyName) {
             case nameof(MosaicDataSource.CurrentItem): {
                     //// auto-close split view pane
@@ -53,11 +55,6 @@ namespace fmg.common {
                 }
                 break;
             }
-        }
-
-        private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, notifier));
-            PropertyChanged?.Invoke(this, ev);
         }
 
         public void Dispose() {
@@ -70,10 +67,7 @@ namespace fmg.common {
             mosaicGroupDS.Dispose();
             mosaicSkillDS.Dispose();
 
-            notifier.PropertyChanged -= OnNotifierPropertyChanged;
-            notifier.Dispose();
-
-            NotifyPropertyChanged.AssertCheckSubscribers(this);
+            _notifier.Dispose();
 
             GC.SuppressFinalize(this);
         }

@@ -10,12 +10,14 @@ namespace fmg.core.types.draw {
         private string _name = "Arial"; // Times New Roman // Verdana // Courier New // SansSerif;
         private bool _bold = false;
         private double _size = 10;
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged {
+            add    { _notifier.PropertyChanged += value;  }
+            remove { _notifier.PropertyChanged -= value;  }
+        }
         protected readonly NotifyPropertyChanged _notifier;
 
         public FontInfo() {
             _notifier = new NotifyPropertyChanged(this);
-            _notifier.PropertyChanged += OnNotifierPropertyChanged;
         }
 
         public string Name {
@@ -68,15 +70,8 @@ namespace fmg.core.types.draw {
             return string.Format("FontInfo={{name={0}, bold={1}, size={2}}}", _name, _bold, _size);
         }
 
-        private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _notifier));
-            PropertyChanged?.Invoke(this, ev);
-        }
-
         public void Dispose() {
-            _notifier.PropertyChanged -= OnNotifierPropertyChanged;
             _notifier.Dispose();
-            NotifyPropertyChanged.AssertCheckSubscribers(this);
             GC.SuppressFinalize(this);
         }
 

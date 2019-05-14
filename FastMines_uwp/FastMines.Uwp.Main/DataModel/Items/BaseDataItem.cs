@@ -19,28 +19,32 @@ namespace fmg.DataModel.Items {
         protected TImageCtrlr entity;
         private string title = "";
         public bool Disposed { get; private set; }
-        private event PropertyChangedEventHandler PropertyChangedSync;
-        public  event PropertyChangedEventHandler PropertyChanged/*Async*/;
-        protected readonly NotifyPropertyChanged notifier/*Sync*/;
-        private   readonly NotifyPropertyChanged notifierAsync;
+        private event PropertyChangedEventHandler PropertyChangedSync {
+            add    { _notifier/*Sync*/.PropertyChanged += value;  }
+            remove { _notifier/*Sync*/.PropertyChanged -= value;  }
+        }
+        public event PropertyChangedEventHandler PropertyChanged/*Async*/ {
+            add    { _notifierAsync.PropertyChanged += value;  }
+            remove { _notifierAsync.PropertyChanged -= value;  }
+        }
+        protected readonly NotifyPropertyChanged _notifier/*Sync*/;
+        private   readonly NotifyPropertyChanged _notifierAsync;
 
         protected BaseDataItem(T uniqueId) {
             this.uniqueId = uniqueId;
-            notifier      = new NotifyPropertyChanged(this, false);
-            notifierAsync = new NotifyPropertyChanged(this, true);
-            notifier     .PropertyChanged     += OnNotifierPropertyChanged;
-            notifierAsync.PropertyChanged     += OnNotifierAsyncPropertyChanged;
-            this         .PropertyChangedSync += OnPropertyChanged;
+            _notifier      = new NotifyPropertyChanged(this, false);
+            _notifierAsync = new NotifyPropertyChanged(this, true);
+            this.PropertyChangedSync += OnPropertyChanged;
         }
 
         public T UniqueId {
             get { return uniqueId; }
-            set { notifier.SetProperty(ref uniqueId, value); }
+            set { _notifier.SetProperty(ref uniqueId, value); }
         }
 
         public string Title {
             get { return title; }
-            set { notifier.SetProperty(ref title, value); }
+            set { _notifier.SetProperty(ref title, value); }
         }
 
         protected double Zoom() => 2;
@@ -49,7 +53,7 @@ namespace fmg.DataModel.Items {
             get { throw new NotImplementedException("Must be overridden"); }
             protected set {
                 var old = this.entity;
-                if (notifier.SetProperty(ref entity, value)) {
+                if (_notifier.SetProperty(ref entity, value)) {
                     if (old != null) {
                         old      .PropertyChanged -= OnControllerPropertyChanged;
                         old.Model.PropertyChanged -= OnModelPropertyChanged;
@@ -108,16 +112,16 @@ namespace fmg.DataModel.Items {
 
         protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             // refire as async event
-            notifierAsync.FirePropertyChanged(ev);
+            _notifierAsync.FirePropertyChanged(ev);
         }
 
         protected void OnControllerPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             System.Diagnostics.Debug.Assert(ReferenceEquals(sender, Entity));
-            notifier.FirePropertyChanged(nameof(this.Entity));
+            _notifier.FirePropertyChanged(nameof(this.Entity));
 
             switch (ev.PropertyName) {
             case nameof(Entity.Image):
-                notifier.FirePropertyChanged(nameof(this.Image));
+                _notifier.FirePropertyChanged(nameof(this.Image));
                 break;
             }
         }
@@ -128,9 +132,9 @@ namespace fmg.DataModel.Items {
             switch (ev.PropertyName) {
             case nameof(IImageModel.Size):
                 if (ev is PropertyChangedExEventArgs<SizeDouble> evx1)
-                    notifier.FirePropertyChanged(ZoomSize(evx1.OldValue), ZoomSize(evx1.NewValue), nameof(this.Size));
+                    _notifier.FirePropertyChanged(ZoomSize(evx1.OldValue), ZoomSize(evx1.NewValue), nameof(this.Size));
                 else
-                    notifier.FirePropertyChanged(nameof(this.Size));
+                    _notifier.FirePropertyChanged(nameof(this.Size));
                 break;
             case nameof(IImageModel.Padding):
                 if (ev is PropertyChangedExEventArgs<BoundDouble> evx2)
@@ -141,29 +145,15 @@ namespace fmg.DataModel.Items {
             }
         }
 
-        private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, notifier));
-            PropertyChangedSync?.Invoke(this, ev);
-        }
-
-        private void OnNotifierAsyncPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, notifierAsync));
-            PropertyChanged/*Async*/?.Invoke(this, ev);
-        }
-
         public override string ToString() {
             return Title;
         }
 
         protected virtual void Disposing() {
-            notifier     .PropertyChanged -= OnNotifierPropertyChanged;
-            notifierAsync.PropertyChanged -= OnNotifierAsyncPropertyChanged;
-            notifier     .Dispose();
-            notifierAsync.Dispose();
+            _notifier     .Dispose();
+            _notifierAsync.Dispose();
             this.PropertyChangedSync -= OnPropertyChanged;
             Entity = null; // call setter
-            NotifyPropertyChanged.AssertCheckSubscribers(this, nameof(PropertyChangedSync));
-            NotifyPropertyChanged.AssertCheckSubscribers(this);
         }
 
         public void Dispose() {

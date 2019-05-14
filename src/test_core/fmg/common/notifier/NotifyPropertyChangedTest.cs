@@ -8,11 +8,13 @@ namespace fmg.common.notifier {
     public abstract class NotifyPropertyChangedTest {
 
         class SimpleProperty : INotifyPropertyChanged, IDisposable {
-            public event PropertyChangedEventHandler PropertyChanged;
+            public event PropertyChangedEventHandler PropertyChanged {
+                add    { _notifier.PropertyChanged += value;  }
+                remove { _notifier.PropertyChanged -= value;  }
+            }
             private readonly NotifyPropertyChanged _notifier;
             internal SimpleProperty(object initValueOfProperty, bool deferredNotifications) {
                 _notifier = new NotifyPropertyChanged(this, deferredNotifications);
-                _notifier.PropertyChanged += OnNotifierPropertyChanged;
                 this._property = initValueOfProperty;
             }
             private object _property;
@@ -20,15 +22,9 @@ namespace fmg.common.notifier {
                 get => _property;
                 set => _notifier.SetProperty(ref _property, value);
             }
-            private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-                System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _notifier));
-                PropertyChanged?.Invoke(this, ev);
-            }
 
             public void Dispose() {
-                _notifier.PropertyChanged -= OnNotifierPropertyChanged;
                 _notifier.Dispose();
-                NotifyPropertyChanged.AssertCheckSubscribers(this);
             }
         }
 

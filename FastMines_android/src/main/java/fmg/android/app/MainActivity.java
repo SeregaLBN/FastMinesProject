@@ -440,4 +440,5 @@ public class MainActivity extends AppCompatActivity {
         LoggerSimple.put("MainActivity.{0}: this.hash={1}; failed activityStatus={2}", methodName, this.hashCode(), activityStatus);
         return true;
     }
+
 }

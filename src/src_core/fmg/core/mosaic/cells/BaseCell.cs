@@ -59,12 +59,14 @@ namespace fmg.core.mosaic.cells {
             /// <summary>площадь ячейки/фигуры</summary>
             private double _area = 500;
             protected bool Disposed { get; private set; }
-            public event PropertyChangedEventHandler PropertyChanged;
+            public event PropertyChangedEventHandler PropertyChanged {
+                add    { _notifier.PropertyChanged += value;  }
+                remove { _notifier.PropertyChanged -= value;  }
+            }
             protected readonly NotifyPropertyChanged _notifier;
 
             protected BaseAttribute() {
                 _notifier = new NotifyPropertyChanged(this);
-                _notifier.PropertyChanged += OnNotifierPropertyChanged;
             }
 
             /// <summary>площадь ячейки/фигуры</summary>
@@ -106,15 +108,8 @@ namespace fmg.core.mosaic.cells {
                 return 19;
             }
 
-            private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-                System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _notifier));
-                PropertyChanged?.Invoke(this, ev);
-            }
-
             public void Dispose() {
-                _notifier.PropertyChanged -= OnNotifierPropertyChanged;
                 _notifier.Dispose();
-                NotifyPropertyChanged.AssertCheckSubscribers(this);
             }
 
         }

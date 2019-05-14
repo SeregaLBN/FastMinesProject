@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Diagnostics;
 using Avalonia.Markup.Xaml;
+using fmg.ava.utils;
 
 namespace Test.FastMines.Ava.Images {
 
@@ -10,6 +11,7 @@ namespace Test.FastMines.Ava.Images {
         public override void Initialize() {
             AvaloniaXamlLoader.Load(this);
             base.Initialize();
+            ProjSettings.Init();
         }
 
         static void Main(string[] args) {

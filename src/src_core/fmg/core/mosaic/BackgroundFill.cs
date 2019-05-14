@@ -16,12 +16,14 @@ namespace fmg.core.mosaic {
         /// <summary> кэшированные цвета фона ячеек </summary>
         private readonly IDictionary<int, Color> _colors = new Dictionary<int, Color>();
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged {
+            add    { _notifier.PropertyChanged += value;  }
+            remove { _notifier.PropertyChanged -= value;  }
+        }
         protected readonly NotifyPropertyChanged _notifier;
 
         public BackgroundFill() {
             _notifier = new NotifyPropertyChanged(this);
-            _notifier.PropertyChanged += OnNotifierPropertyChanged;
         }
 
         /// <summary> режим заливки фона ячеек
@@ -49,15 +51,8 @@ namespace fmg.core.mosaic {
             return res;
         }
 
-        private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _notifier));
-            PropertyChanged?.Invoke(this, ev);
-        }
-
         public void Dispose() {
-            _notifier.PropertyChanged -= OnNotifierPropertyChanged;
             _notifier.Dispose();
-            NotifyPropertyChanged.AssertCheckSubscribers(this);
             _colors.Clear();
         }
 

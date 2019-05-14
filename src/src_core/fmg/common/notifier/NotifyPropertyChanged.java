@@ -7,6 +7,7 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.stream.Stream;
 
+import fmg.common.LoggerSimple;
 import fmg.common.Pair;
 import fmg.common.ui.UiInvoker;
 
@@ -184,7 +185,11 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
     public void close() {
         _disposed = true;
         _cachedFields.clear();
+
+        if (!_deferrNotifications.isEmpty())
+            LoggerSimple.put("Not all deferr notifications handled! Count={0}", _deferrNotifications.size());
         _deferrNotifications.clear();
+
         if (!_propertyChanges.isEmpty())
             throw new IllegalStateException("Illegal usage: Not all listeners were unsubscribed (type " + _owner.getClass().getName() + "): count=" + _propertyChanges.size());
         _propertyChanges.clear();

@@ -47,13 +47,15 @@ namespace fmg.core.img {
         private EFaceType _faceType;
         private SizeDouble _size = new SizeDouble(AnimatedImageModelConst.DefaultImageSize, AnimatedImageModelConst.DefaultImageSize);
         private BoundDouble padding = new BoundDouble(AnimatedImageModelConst.DefaultPadding);
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged {
+            add    { _notifier.PropertyChanged += value;  }
+            remove { _notifier.PropertyChanged -= value;  }
+        }
         protected readonly NotifyPropertyChanged _notifier;
 
         public SmileModel(EFaceType faceType) {
             _faceType = faceType;
             _notifier = new NotifyPropertyChanged(this);
-            _notifier.PropertyChanged += OnNotifierPropertyChanged;
         }
 
         /// <summary> width and height in pixel </summary>
@@ -79,15 +81,8 @@ namespace fmg.core.img {
             set { _notifier.SetProperty(ref _faceType, value); }
         }
 
-        private void OnNotifierPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _notifier));
-            PropertyChanged?.Invoke(this, ev);
-        }
-
         public void Dispose() {
-            _notifier.PropertyChanged -= OnNotifierPropertyChanged;
             _notifier.Dispose();
-            NotifyPropertyChanged.AssertCheckSubscribers(this);
             GC.SuppressFinalize(this);
         }
 
