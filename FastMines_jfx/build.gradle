@@ -1,5 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'application'
+apply plugin: 'eclipse'
 
 //#if use Java 11
 //    // TODO see https://stackoverflow.com/questions/52569724/javafx-11-create-a-jar-file-with-gradle
@@ -98,4 +99,20 @@ jar {
                  'Title': 'FastMines game - demo Java FX desktop application',
                  'Version': '0.0.1'
    }
+}
+
+eclipse.classpath {
+    file.whenMerged {
+        entries.each { source ->
+            if (source.kind == 'con' && source.path.startsWith('org.eclipse.jdt.launching.JRE_CONTAINER')) {
+                def resolution = '0'; // Accessible
+                source.accessRules.add(new org.gradle.plugins.ide.eclipse.model.AccessRule(resolution, 'javafx/**'))
+
+                resolution = '1'; // Forbidden
+                source.accessRules.add(new org.gradle.plugins.ide.eclipse.model.AccessRule(resolution, 'fmg/swing/**'))
+                source.accessRules.add(new org.gradle.plugins.ide.eclipse.model.AccessRule(resolution, 'java/awt/**'))
+                source.accessRules.add(new org.gradle.plugins.ide.eclipse.model.AccessRule(resolution, 'javax/swing/**'))
+            }
+        }
+    }
 }
