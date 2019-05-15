@@ -7,11 +7,11 @@ import android.view.View;
 
 import java.util.function.Consumer;
 
-public class MosaicView extends View {
+public class DrawableView extends View {
 
     public Consumer<Canvas> drawMethod;
 
-    public MosaicView(Context context, AttributeSet attrs) {
+    public DrawableView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 

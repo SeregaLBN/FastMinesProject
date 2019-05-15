@@ -44,7 +44,7 @@ public class MosaicActivity extends AppCompatActivity {
     public MosaicViewController getMosaicController() {
         if (mosaicController == null) {
             //setMosaicController(new MosaicViewController(this));
-            Consumer<Consumer<Canvas>> drawMethod = cdm -> ((MosaicView)binding.mosaicView).drawMethod = cdm;
+            Consumer<Consumer<Canvas>> drawMethod = cdm -> ((DrawableView)binding.mosaicView).drawMethod = cdm;
             setMosaicController(new MosaicViewController(binding.mosaicView, drawMethod));
         }
         return mosaicController;
