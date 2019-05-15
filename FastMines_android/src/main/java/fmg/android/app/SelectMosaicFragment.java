@@ -18,10 +18,10 @@ import java.beans.PropertyChangeListener;
 import java.util.concurrent.TimeUnit;
 
 import fmg.android.app.databinding.SelectMosaicFragmentBinding;
-import fmg.android.app.model.MosaicInitDataExt;
+import fmg.android.app.model.SharedData;
 import fmg.android.app.model.dataSource.MosaicDataSource;
 import fmg.android.app.model.items.MosaicDataItem;
-import fmg.android.app.presentation.MosaicsViewModel;
+import fmg.android.app.presentation.MosaicDsViewModel;
 import fmg.android.app.recyclerView.MosaicListViewAdapter;
 import fmg.android.app.recyclerView.RecyclerItemDoubleClickListener;
 import fmg.android.img.Logo;
@@ -46,7 +46,7 @@ public class SelectMosaicFragment extends Fragment {
 
     private SelectMosaicFragmentBinding binding;
     /** View-Model */
-    private MosaicsViewModel viewModel;
+    private MosaicDsViewModel viewModel;
     private MosaicListViewAdapter mosaicListViewAdapter;
     private RecyclerItemDoubleClickListener recyclerItemDoubleClickListener;
     private Subject<Size> subjSizeChanged;
@@ -57,7 +57,7 @@ public class SelectMosaicFragment extends Fragment {
     private static final double TileMaxSize = Cast.dpToPx(90);
     private final PropertyChangeListener onMosaicDsPropertyChangedListener = this::onMosaicDsPropertyChanged;
 
-    public MosaicInitData getInitData() { return MosaicInitDataExt.getSharedData(); }
+    public MosaicInitData getInitData() { return SharedData.getMosaicInitData(); }
     //public void setInitData(MosaicInitData initData) { MosaicInitDataExt.getSharedData().copyFrom(initData); }
 
     @Override
@@ -65,7 +65,7 @@ public class SelectMosaicFragment extends Fragment {
 //        return inflater.inflate(R.layout.select_mosaic_fragment, container, false);
 
         binding = DataBindingUtil.inflate(inflater, R.layout.select_mosaic_fragment, container, false);
-        viewModel = ViewModelProviders.of(this).get(MosaicsViewModel.class);
+        viewModel = ViewModelProviders.of(this).get(MosaicDsViewModel.class);
         updateViewModel();
 
         binding.setViewModel(viewModel);

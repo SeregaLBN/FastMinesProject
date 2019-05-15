@@ -15,12 +15,13 @@ import java.beans.PropertyChangeListener;
 import java.util.function.Supplier;
 
 import fmg.android.app.databinding.MainActivityBinding;
-import fmg.android.app.model.MosaicInitDataExt;
+import fmg.android.app.model.SharedData;
 import fmg.android.app.model.dataSource.MosaicGroupDataSource;
 import fmg.android.app.model.dataSource.MosaicSkillDataSource;
 import fmg.android.app.model.items.MosaicGroupDataItem;
 import fmg.android.app.model.items.MosaicSkillDataItem;
 import fmg.android.app.presentation.MainMenuViewModel;
+import fmg.android.app.presentation.MenuSettings;
 import fmg.android.app.presentation.SmoothHelper;
 import fmg.android.app.recyclerView.MosaicGroupListViewAdapter;
 import fmg.android.app.recyclerView.MosaicSkillListViewAdapter;
@@ -49,8 +50,8 @@ public class MainActivity extends AppCompatActivity {
     private final PropertyChangeListener onMosaicGroupDsPropertyChangedListener = this::onMosaicGroupDsPropertyChanged;
     private final PropertyChangeListener onMosaicSkillDsPropertyChangedListener = this::onMosaicSkillDsPropertyChanged;
 
-    public MosaicInitData getInitData() { return MosaicInitDataExt.getSharedData(); }
-    //public void setInitData(MosaicInitData initData) { MosaicInitDataExt.getSharedData().copyFrom(initData); }
+    public MosaicInitData getInitData() { return SharedData.getMosaicInitData(); }
+    public MenuSettings getMenuSettings() { return SharedData.getMenuSettings(); }
 
     enum EActivityStatus {
         eLaunched,
@@ -75,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
         binding = DataBindingUtil.setContentView(this, R.layout.main_activity);
         viewModel = ViewModelProviders.of(this).get(MainMenuViewModel.class);
+        viewModel.getSplitViewPane().setOpen(getMenuSettings().isSplitPaneOpen());
         binding.setViewModel(viewModel);
         binding.executePendingBindings();
 
@@ -125,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         LoggerSimple.put("MainActivity.onSaveInstanceState: this.hash={0}", this.hashCode());
-        MosaicInitDataExt.save(savedInstanceState, getInitData());
+        SharedData.save(savedInstanceState, getInitData());
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -205,7 +207,9 @@ public class MainActivity extends AppCompatActivity {
             SmoothHelper.applySmoothVisibilityOverScale(binding.rvMenuMosaicGroupItems, true, this::getLvGroupHeight, null);
             viewModel.getMosaicGroupDS().getHeader().getEntity().getBurgerMenuModel().setHorizontal(false);
         } else {
-            viewModel.getSplitViewPane().setOpen(!viewModel.getSplitViewPane().isOpen());
+            boolean isSplitPaneOpen = !viewModel.getSplitViewPane().isOpen();
+            getMenuSettings().setSplitPaneOpen(isSplitPaneOpen);
+            viewModel.getSplitViewPane().setOpen(isSplitPaneOpen);
             viewModel.getMosaicGroupDS().getHeader().getEntity().getModel().setAnimeDirection(
                     !viewModel.getMosaicGroupDS().getHeader().getEntity().getModel().getAnimeDirection());
         }

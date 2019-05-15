@@ -8,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="fmg.android.app.presentation.MosaicsViewModel" />
+            type="fmg.android.app.presentation.MosaicDsViewModel" />
     </data>
 
     <android.support.constraint.ConstraintLayout

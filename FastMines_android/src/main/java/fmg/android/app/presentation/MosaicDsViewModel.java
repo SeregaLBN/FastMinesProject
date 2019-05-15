@@ -11,12 +11,12 @@ import fmg.android.app.model.dataSource.MosaicSkillDataSource;
 import fmg.common.geom.SizeDouble;
 
 /** ViewModel for {@link fmg.android.app.SelectMosaicFragment} */
-public class MosaicsViewModel extends ViewModel {
+public class MosaicDsViewModel extends ViewModel {
 
     private final MosaicDataSource mosaicDS = new MosaicDataSource();
     private final PropertyChangeListener onMosaicDsPropertyChangedListener = this::onMosaicDsPropertyChanged;
 
-    public MosaicsViewModel() {
+    public MosaicDsViewModel() {
         mosaicDS.addListener(onMosaicDsPropertyChangedListener);
     }
 

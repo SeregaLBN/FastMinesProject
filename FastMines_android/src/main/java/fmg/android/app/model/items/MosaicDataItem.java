@@ -108,11 +108,4 @@ public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicAnimatedModel<Vo
                 .sizeTileField(getMosaicType());
     }
 
-    @Override
-    @Bindable
-    @Deprecated // TODO delete... must be super
-    public String getTitle() {
-        return String.format(Locale.US, "%.2f:%.2f", getSize().width, getSize().height);
-    }
-
 }

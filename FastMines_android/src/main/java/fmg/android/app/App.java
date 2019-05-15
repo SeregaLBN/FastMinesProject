@@ -10,19 +10,23 @@ import android.content.SharedPreferences;
 
 import java.beans.PropertyChangeEvent;
 
+import fmg.android.app.presentation.MenuSettings;
 import fmg.common.LoggerSimple;
 import fmg.core.mosaic.MosaicInitData;
-import fmg.android.app.model.MosaicInitDataExt;
+import fmg.android.app.model.SharedData;
 import fmg.android.utils.ProjSettings;
 
 /** FastMines application */
 public class App extends Application implements LifecycleObserver {
 
-    public static final String MosaicPreferenceFileName = "MosaicInitData";
+    public static final String  MosaicPreferenceFileName = "MosaicInitData";
+    public static final String AppMenuPreferenceFileName = "AppMenuData";
 
-    public MosaicInitData getInitData() { return MosaicInitDataExt.getSharedData(); }
-    public void setInitData(MosaicInitData initData) { MosaicInitDataExt.getSharedData().copyFrom(initData); }
+    public MosaicInitData getMosaicInitData() { return SharedData.getMosaicInitData(); }
+    public void setMosaicInitData(MosaicInitData initData) { SharedData.getMosaicInitData().copyFrom(initData); }
 
+    public MenuSettings getMenuSettings() { return SharedData.getMenuSettings(); }
+    public void setMenuSettings(MenuSettings menuSettings) { SharedData.getMenuSettings().copyFrom(menuSettings); }
 
     @Override
     public void onCreate() {
@@ -31,7 +35,8 @@ public class App extends Application implements LifecycleObserver {
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         load();
 
-        getInitData().addListener(this::onInitDataPropertyChanged);
+        getMenuSettings().addListener(  this::onMenuSettingsPropertyChanged);
+        getMosaicInitData().addListener(this::onMosaicInitDataPropertyChanged);
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
@@ -46,19 +51,29 @@ public class App extends Application implements LifecycleObserver {
     }
 
     private void save() {
-        MosaicInitDataExt.save(getSharedPreferences(), getInitData());
+        SharedData.save(getSharedMenuSettingsPreferences()  , getMenuSettings());
+        SharedData.save(getSharedMosaicInitDataPreferences(), getMosaicInitData());
     }
 
     private void load() {
-        setInitData(MosaicInitDataExt.load(getSharedPreferences()));
+        setMenuSettings(  SharedData.loadMenuSettings(  getSharedMenuSettingsPreferences()));
+        setMosaicInitData(SharedData.loadMosaicInitData(getSharedMosaicInitDataPreferences()));
     }
 
-    private SharedPreferences getSharedPreferences() {
+    private SharedPreferences getSharedMenuSettingsPreferences() {
+        return this.getSharedPreferences(AppMenuPreferenceFileName, Context.MODE_PRIVATE);
+    }
+
+    private SharedPreferences getSharedMosaicInitDataPreferences() {
         return this.getSharedPreferences(MosaicPreferenceFileName, Context.MODE_PRIVATE);
     }
 
-    private void onInitDataPropertyChanged(PropertyChangeEvent ev) {
-        LoggerSimple.put("  FastMinesApp::onInitDataPropertyChanged: ev={0}", ev);
+    private void onMenuSettingsPropertyChanged(PropertyChangeEvent ev) {
+        LoggerSimple.put("  FastMinesApp::onMenuSettingsPropertyChanged: ev={0}", ev);
+    }
+
+    private void onMosaicInitDataPropertyChanged(PropertyChangeEvent ev) {
+        LoggerSimple.put("  FastMinesApp::onMosaicInitDataPropertyChanged: ev={0}", ev);
     }
 
 }

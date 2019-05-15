@@ -4,11 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout">
 
-    <data></data>
+    <data>
+        <variable
+            name="viewModel"
+            type="fmg.android.app.presentation.MosaicViewModel" />
+    </data>
 
     <android.support.constraint.ConstraintLayout
-        android:background="#FF445566"
-        android:padding="15dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -16,9 +18,6 @@
             android:id="@+id/mosaicView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#E2A5116A"
-            android:layout_margin="10dp"
-
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
