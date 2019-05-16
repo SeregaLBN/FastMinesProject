@@ -11,16 +11,17 @@ namespace fmg.common.notifier {
 #if WINDOWS_UWP
     [Windows.Foundation.Metadata.WebHostHidden]
 #endif
-    public sealed class NotifyPropertyChanged : IDisposable, INotifyPropertyChanged
-    {
+    public sealed class NotifyPropertyChanged : IDisposable, INotifyPropertyChanged {
+
         private readonly INotifyPropertyChanged _owner;
+
 #if DEBUG
         private readonly IDictionary<PropertyChangedEventHandler, string> _propertyChanges = new Dictionary<PropertyChangedEventHandler, string>();
         public event PropertyChangedEventHandler PropertyChanged {
             add {
                 if (_propertyChanges.ContainsKey(value))
                     throw new ArgumentException("NotifyPropertyChanged.PropertyChanged.add: Already listened! Called from " + _propertyChanges[value]);
-                _propertyChanges.Add(value, Environment.StackTrace);
+                _propertyChanges.Add(value, null);// Environment.StackTrace);
 
                 var count = _propertyChanges.Count;
                 if (count > 4)
