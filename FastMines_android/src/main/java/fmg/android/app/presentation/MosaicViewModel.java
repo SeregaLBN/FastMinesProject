@@ -1,25 +1,20 @@
 package fmg.android.app.presentation;
 
 import android.arch.lifecycle.ViewModel;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.view.View;
 
-import java.util.function.Consumer;
-
-import fmg.core.mosaic.MosaicDrawModel;
+import fmg.android.mosaic.MosaicViewController;
 
 /** ViewModel for {@link fmg.android.app.MosaicActivity} */
 public class MosaicViewModel extends ViewModel {
 
-    private final MosaicDrawModel<Bitmap> mosaicModel;
+    private final MosaicViewController mosaicController;
 
-    public MosaicViewModel(View view, Consumer<Consumer<Canvas>> viewDrawMethod) {
-        mosaicModel = new MosaicDrawModel<>();
+    public MosaicViewModel() {
+        mosaicController = new MosaicViewController(null);
     }
 
-    public MosaicDrawModel<Bitmap> getMosaicModel() {
-        return mosaicModel;
+    public MosaicViewController getMosaicController() {
+        return mosaicController;
     }
 
     @Override

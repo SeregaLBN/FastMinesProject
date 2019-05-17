@@ -11,6 +11,10 @@ public class DrawableView extends View {
 
     public Consumer<Canvas> drawMethod;
 
+    public DrawableView(Context context) {
+        super(context);
+    }
+
     public DrawableView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }

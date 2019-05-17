@@ -3,16 +3,15 @@ package fmg.android.mosaic;
 import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.view.View;
 import android.view.ViewGroup;
+
+import fmg.android.app.DrawableView;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicDrawModel;
@@ -23,11 +22,11 @@ import fmg.android.img.Mine;
 import fmg.android.utils.Cast;
 import fmg.android.utils.ImgUtils;
 
-/** MVC: view. Android implementation over control {@link View} */
-public class MosaicViewView extends MosaicAndroidView<View, Bitmap, MosaicDrawModel<Bitmap>> {
+/** MVC: view. Android implementation over control {@link DrawableView} */
+public class MosaicViewView extends MosaicAndroidView<DrawableView, Bitmap, MosaicDrawModel<Bitmap>> {
 
-    private final Context context;
-    private View _control;
+    private Context context;
+    private DrawableView control;
     private Flag.BitmapController _imgFlag = new Flag.BitmapController();
     private Mine.BitmapController _imgMine = new Mine.BitmapController();
     private final Collection<BaseCell> _modifiedCells = new HashSet<>();
@@ -37,16 +36,9 @@ public class MosaicViewView extends MosaicAndroidView<View, Bitmap, MosaicDrawMo
         this.context = context;
         changeSizeImagesMineFlag();
     }
-    public MosaicViewView(View view, Consumer<Consumer<Canvas>> viewDrawMethod) {
-        super(new MosaicDrawModel<>());
-        this.context = view.getContext();
-        this._control = view;
-        viewDrawMethod.accept(this::onDraw);
-        changeSizeImagesMineFlag();
-    }
 
     @Override
-    protected View createImage() {
+    protected DrawableView createImage() {
         // will return once created window
         return getControl();
     }
@@ -62,18 +54,25 @@ public class MosaicViewView extends MosaicAndroidView<View, Bitmap, MosaicDrawMo
         _modifiedCells.clear();
     }
 
-    public View getControl() {
-        if (_control == null) {
-           _control = new View(context) {
-
-                @Override
-                protected void onDraw(Canvas canvas) {
-                    MosaicViewView.this.onDraw(canvas);
-                }
-
-           };
+    public DrawableView getControl() {
+        if (control == null) {
+            if (context == null)
+                return null;
+            control = new DrawableView(context);
+            control.drawMethod = canvas -> onDraw(canvas);
         }
-        return _control;
+        return control;
+    }
+
+    public void setControl(DrawableView view) {
+        if (this.control != null)
+            this.control.drawMethod = null;
+
+        this.context = (view==null) ? null : view.getContext();
+        this.control = view;
+
+        if (this.control != null)
+            this.control.drawMethod = canvas -> onDraw(canvas);
     }
 
     @Override
@@ -124,7 +123,7 @@ public class MosaicViewView extends MosaicAndroidView<View, Bitmap, MosaicDrawMo
             getImage(); // implicit call draw() -> drawBegin() -> drawModified() -> control.repaint() -> View.paintComponent -> drawAndroid()
             break;
         case PROPERTY_SIZE:
-            ViewGroup.LayoutParams lp = _control.getLayoutParams();
+            ViewGroup.LayoutParams lp = control.getLayoutParams();
             if (lp == null)
                 break;
             SizeDouble s = (SizeDouble)ev.getNewValue();
@@ -174,7 +173,7 @@ public class MosaicViewView extends MosaicAndroidView<View, Bitmap, MosaicDrawMo
     public void close() {
         super.close();
         getModel().close();
-        _control = null;
+        setControl(null);
         _imgFlag.close();
         _imgMine.close();
     }

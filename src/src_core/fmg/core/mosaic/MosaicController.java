@@ -107,14 +107,12 @@ public abstract class MosaicController<TImage, TImageInner,
     /** arrange Mines */
     public void setMines_LoadRepository(List<Coord> repository) {
         MosaicGameModel mosaic = getModel();
-        for (Coord c: repository) {
-            boolean suc = mosaic.getCell(c).getState().SetMine();
-            if (!suc)
-                System.err.println("Проблемы с установкой мин... :(");
-        }
+        for (Coord c: repository)
+            mosaic.getCell(c).setMine();
+
         // set other CellOpen and set all Caption
         for (BaseCell cell : getMatrix())
-            cell.getState().calcOpenState(mosaic);
+            cell.calcOpenState(mosaic);
     }
 
     /** arrange Mines - set random mines */
@@ -140,16 +138,14 @@ public abstract class MosaicController<TImage, TImageInner,
             }
             int i = rand.nextInt(len);
             BaseCell cellToSetMines = matrixClone.get(i);
-            if (cellToSetMines.getState().SetMine()) {
-                count++;
-                matrixClone.remove(cellToSetMines);
-            } else
-                System.err.println("Мины должны всегда устанавливаться...");
+            cellToSetMines.setMine();
+            count++;
+            matrixClone.remove(cellToSetMines);
         } while (count < _minesCount);
 
         // set other CellOpen and set all Caption
         for (BaseCell cell : getMatrix())
-            cell.getState().calcOpenState(mosaic);
+            cell.calcOpenState(mosaic);
     }
 
     public int getCountOpen() {
@@ -315,7 +311,7 @@ public abstract class MosaicController<TImage, TImageInner,
         if (getGameStatus() == EGameStatus.eGSCreateGame) {
             if (cellLeftDown.getState().getOpen() != EOpen._Mine) {
                 cellLeftDown.getState().setStatus(EState._Open);
-                cellLeftDown.getState().SetMine();
+                cellLeftDown.setMine();
                 setMinesCount(getMinesCount()+1);
                 getRepositoryMines().add(cellLeftDown.getCoord());
             } else {

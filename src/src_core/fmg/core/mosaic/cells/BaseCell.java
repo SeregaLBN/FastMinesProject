@@ -141,16 +141,14 @@ public abstract class BaseCell {
     public abstract RectDouble getRcInner(double borderWidth);
     /** вернёт прямоугольник в который вписана фигура ячейки */
     public RectDouble getRcOuter() {
-        RectDouble rcOuter = region.getBounds();
-        //rcOuter.height++; rcOuter.width++; // чтобы при repaint'е захватило и крайние границы
-        return rcOuter;
+        return region.getBounds();
     }
 
 
     /** массив координат точек из которых состоит фигура */
     protected RegionDouble region;
 
-    public class StateCell {
+    public static class StateCell {
         // { union
         private EState status; // _Open, _Close
         private EOpen   open;   // _Nil, _1, ... _21, _Mine
@@ -165,29 +163,14 @@ public abstract class BaseCell {
         public void setStatus(EState status) { this.status = status; }
         public EState getStatus() { return status; }
 
-        public void calcOpenState(IMatrixCells matrix) {
-            if (this.open == EOpen._Mine) return;
-            // подсчитать у соседей число мин и установить значение
-            int count = 0;
-            List<BaseCell> neighbors = getNeighbors(matrix);
-            for (BaseCell nCell : neighbors) {
-                if (nCell == null) continue; // существует ли сосед?
-                if (nCell.getState().getOpen() == EOpen._Mine) count++;
-            }
-            this.open = EOpen.class.getEnumConstants()[count];
-        }
-        public boolean SetMine() {
-            if (lockMine || (this.open == EOpen._Mine)) return false;
-            this.open = EOpen._Mine;
-            return true;
-        }
+        public void setOpen(EOpen open) { this.open = open; }
         public EOpen getOpen() { return this.open; }
 
         public void setClose(EClose close) { this.close = close; }
         public EClose getClose() { return this.close; }
 
-        private StateCell() { Reset(); }
-        public void Reset() {
+        private StateCell() { reset(); }
+        public void reset() {
             status = EState._Close;
             open = EOpen._Nil;
             close = EClose._Clear;
@@ -198,6 +181,24 @@ public abstract class BaseCell {
     /** запретить установку мины на данную ячейку */
     private boolean lockMine;
 
+    public void calcOpenState(IMatrixCells matrix) {
+        if (state.open == EOpen._Mine) return;
+        // подсчитать у соседей число мин и установить значение
+        int count = 0;
+        List<BaseCell> neighbors = this.getNeighbors(matrix);
+        for (BaseCell nCell : neighbors) {
+            if (nCell == null) continue; // существует ли сосед?
+            if (nCell.getState().getOpen() == EOpen._Mine) count++;
+        }
+        state.open = EOpen.class.getEnumConstants()[count];
+    }
+    public void setMine() {
+        if (this.lockMine || (state.open == EOpen._Mine))
+            throw new IllegalStateException("Illegal usage");
+        state.open = EOpen._Mine;
+    }
+
+    /*
     public void lockNeighborMines(IMatrixCells matrix) {
         lockMine = true;
         // запретить установку мин у соседей
@@ -207,6 +208,7 @@ public abstract class BaseCell {
             nCell.lockMine = true;
         }
     }
+    */
 
     public StateCell getState() { return state; }
 
@@ -232,7 +234,7 @@ public abstract class BaseCell {
     protected abstract List<Coord> getCoordsNeighbor();
 
     /** матрица ячеек поля мозаики */
-    public static interface IMatrixCells {
+    public interface IMatrixCells {
         /** размер поля */
         Matrisize getSizeField();
         void setSizeField(Matrisize size);
@@ -271,7 +273,7 @@ public abstract class BaseCell {
     protected abstract void calcRegion();
 
     public void reset() {
-        state.Reset();
+        state.reset();
         lockMine = false;
     }
 

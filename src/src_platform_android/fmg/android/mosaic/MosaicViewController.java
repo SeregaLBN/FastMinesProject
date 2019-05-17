@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.util.Size;
 import android.view.DragEvent;
 import android.view.GestureDetector;
@@ -14,8 +13,8 @@ import android.view.ViewGroup;
 
 import java.beans.PropertyChangeEvent;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
+import fmg.android.app.DrawableView;
 import fmg.android.utils.Cast;
 import fmg.common.LoggerSimple;
 import fmg.common.geom.PointDouble;
@@ -30,9 +29,9 @@ import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
 /** MVC: controller. Android implementation */
-public class MosaicViewController extends MosaicController<View, Bitmap, MosaicViewView, MosaicDrawModel<Bitmap>> {
+public class MosaicViewController extends MosaicController<DrawableView, Bitmap, MosaicViewView, MosaicDrawModel<Bitmap>> {
 
-    private final Context context;
+    private Context context;
     private final ClickInfo _clickInfo = new ClickInfo();
     /** true : bind Control.SizeProperty to Model.Size
      *  false: bind Model.Size to Control.SizeProperty */
@@ -40,7 +39,7 @@ public class MosaicViewController extends MosaicController<View, Bitmap, MosaicV
     private Subject<Size> subjSizeChanged;
     private Disposable sizeChangedObservable;
     private Size cachedControlSize = new Size(-1, -1);
-    private final GestureDetector _gd;
+    private GestureDetector _gd;
     private final GestureDetector.SimpleOnGestureListener _gestureListener = new GestureDetector.SimpleOnGestureListener(){
 
         @Override
@@ -74,14 +73,17 @@ public class MosaicViewController extends MosaicController<View, Bitmap, MosaicV
         subscribeToViewControl();
     }
 
-    public MosaicViewController(View view, Consumer<Consumer<Canvas>> viewDrawMethod) {
-        super(new MosaicViewView(view, viewDrawMethod));
-        this.context = view.getContext();
-        _gd = new GestureDetector(context, _gestureListener);
+    public void setViewControl(DrawableView view) {
+        unsubscribeToViewControl();
+
+        getView().setControl(view);
+        context = (view==null) ? null : view.getContext();
+        _gd = (context==null) ? null : new GestureDetector(context, _gestureListener);
+
         subscribeToViewControl();
     }
 
-    public View getViewPanel() {
+    public View getViewControl() {
         return getView().getControl();
     }
 
@@ -108,7 +110,7 @@ public class MosaicViewController extends MosaicController<View, Bitmap, MosaicV
     }
 
     private void onGlobalLayoutListener() {
-        View control = getViewPanel();
+        View control = getViewControl();
         int w = control.getWidth();
         int h = control.getHeight();
         if ((w <= 0) || (h <= 0))
@@ -133,7 +135,7 @@ public class MosaicViewController extends MosaicController<View, Bitmap, MosaicV
     private void onSizeChanged(PropertyChangeEvent ev) {
         if (!bindSizeDirection)
             return;
-        View control = getViewPanel();
+        View control = getViewControl();
         ViewGroup.LayoutParams lp = control.getLayoutParams();
         if (lp == null)
             return;
@@ -327,7 +329,9 @@ public class MosaicViewController extends MosaicController<View, Bitmap, MosaicV
     }
 
     private void subscribeToViewControl() {
-        View control = getViewPanel();
+        View control = getViewControl();
+        if (control == null)
+            return;
 
         { // onControlSizeChanged(newSize);
             subjSizeChanged = PublishSubject.create();
@@ -338,7 +342,7 @@ public class MosaicViewController extends MosaicController<View, Bitmap, MosaicV
                     }, ex -> {
                         LoggerSimple.put("  MosaicViewController: sizeChangedObservable: Debounce: onError: " + ex);
                     });
-            getViewPanel().getViewTreeObserver().addOnGlobalLayoutListener(this::onGlobalLayoutListener);
+            control.getViewTreeObserver().addOnGlobalLayoutListener(this::onGlobalLayoutListener);
         }
 
         control.setFocusable(true); // ? иначе не будет срабатывать FocusListener
@@ -355,7 +359,9 @@ public class MosaicViewController extends MosaicController<View, Bitmap, MosaicV
     }
 
     private void unsubscribeToViewControl() {
-        View control = getViewPanel();
+        View control = getViewControl();
+        if (control == null)
+            return;
 
         control.getViewTreeObserver().removeOnGlobalLayoutListener(this::onGlobalLayoutListener);
         sizeChangedObservable.dispose();
