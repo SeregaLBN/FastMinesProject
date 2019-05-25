@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import fmg.android.app.presentation.MenuSettings;
 import fmg.common.LoggerSimple;
@@ -22,11 +23,11 @@ public class App extends Application implements LifecycleObserver {
     public static final String  MosaicPreferenceFileName = "MosaicInitData";
     public static final String AppMenuPreferenceFileName = "AppMenuData";
 
-    public MosaicInitData getMosaicInitData() { return SharedData.getMosaicInitData(); }
-    public void setMosaicInitData(MosaicInitData initData) { SharedData.getMosaicInitData().copyFrom(initData); }
+    private final PropertyChangeListener   onMenuSettingsPropertyChangedListener = this::onMenuSettingsPropertyChanged;
+    private final PropertyChangeListener onMosaicInitDataPropertyChangedListener = this::onMosaicInitDataPropertyChanged;
 
-    public MenuSettings getMenuSettings() { return SharedData.getMenuSettings(); }
-    public void setMenuSettings(MenuSettings menuSettings) { SharedData.getMenuSettings().copyFrom(menuSettings); }
+    private MosaicInitData getMosaicInitData() { return SharedData.getMosaicInitData(); }
+    private MenuSettings   getMenuSettings()   { return SharedData.getMenuSettings(); }
 
     @Override
     public void onCreate() {
@@ -34,30 +35,33 @@ public class App extends Application implements LifecycleObserver {
         ProjSettings.init();
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         load();
-
-        getMenuSettings().addListener(  this::onMenuSettingsPropertyChanged);
-        getMosaicInitData().addListener(this::onMosaicInitDataPropertyChanged);
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     private void onAppForegrounded() {
         LoggerSimple.put("App in foreground");
+
+        getMenuSettings  ().addListener(onMenuSettingsPropertyChangedListener);
+        getMosaicInitData().addListener(onMosaicInitDataPropertyChangedListener);
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     private void onAppBackgrounded() {
         LoggerSimple.put("App in background");
         save();
+
+        getMenuSettings  ().removeListener(onMenuSettingsPropertyChangedListener);
+        getMosaicInitData().removeListener(onMosaicInitDataPropertyChangedListener);
     }
 
     private void save() {
-        SharedData.save(getSharedMenuSettingsPreferences()  , getMenuSettings());
-        SharedData.save(getSharedMosaicInitDataPreferences(), getMosaicInitData());
+        SharedData.saveMenuSettings(  getSharedMenuSettingsPreferences()  );
+        SharedData.saveMosaicInitData(getSharedMosaicInitDataPreferences());
     }
 
     private void load() {
-        setMenuSettings(  SharedData.loadMenuSettings(  getSharedMenuSettingsPreferences()));
-        setMosaicInitData(SharedData.loadMosaicInitData(getSharedMosaicInitDataPreferences()));
+        SharedData.loadMenuSettings(  getSharedMenuSettingsPreferences());
+        SharedData.loadMosaicInitData(getSharedMosaicInitDataPreferences());
     }
 
     private SharedPreferences getSharedMenuSettingsPreferences() {

@@ -50,7 +50,8 @@ public class MainActivity extends AppCompatActivity {
     private final PropertyChangeListener onMosaicGroupDsPropertyChangedListener = this::onMosaicGroupDsPropertyChanged;
     private final PropertyChangeListener onMosaicSkillDsPropertyChangedListener = this::onMosaicSkillDsPropertyChanged;
 
-    public MosaicInitData getInitData() { return SharedData.getMosaicInitData(); }
+    /** Model (a common model between all the pages in the application) */
+    public MosaicInitData   getInitData() { return SharedData.getMosaicInitData(); }
     public MenuSettings getMenuSettings() { return SharedData.getMenuSettings(); }
 
     enum EActivityStatus {

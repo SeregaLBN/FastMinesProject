@@ -48,7 +48,7 @@ public final class SharedData {
     }
 
 
-    public static MosaicInitData loadMosaicInitData(SharedPreferences from) {
+    public static void loadMosaicInitData(SharedPreferences from) {
         MosaicInitData newData = new MosaicInitData();
         if (from != null) try {
             newData.setSizeField(new Matrisize(       from.getInt(KEY__MOSAIC_INIT_DATA__SIZE_FIELD_M, MosaicInitData.DEFAULT_SIZE_FIELD_M),
@@ -59,15 +59,15 @@ public final class SharedData {
             newData = new MosaicInitData(); // reset
             Log.e("fmg", "Can not read mosaic init data from SharedPreferences", ex);
         }
-        return newData;
+        mosaicInitData.copyFrom(newData);
     }
 
-    public static void save(SharedPreferences to, MosaicInitData initData) {
+    public static void saveMosaicInitData(SharedPreferences to) {
         SharedPreferences.Editor editor = to.edit();
-        editor.putInt(KEY__MOSAIC_INIT_DATA__SIZE_FIELD_M, initData.getSizeField().m);
-        editor.putInt(KEY__MOSAIC_INIT_DATA__SIZE_FIELD_N, initData.getSizeField().n);
-        editor.putInt(KEY__MOSAIC_INIT_DATA__MOSAIC_TYPE, initData.getMosaicType().ordinal());
-        editor.putInt(KEY__MOSAIC_INIT_DATA__MINES_COUNT, initData.getMinesCount());
+        editor.putInt(KEY__MOSAIC_INIT_DATA__SIZE_FIELD_M, mosaicInitData.getSizeField().m);
+        editor.putInt(KEY__MOSAIC_INIT_DATA__SIZE_FIELD_N, mosaicInitData.getSizeField().n);
+        editor.putInt(KEY__MOSAIC_INIT_DATA__MOSAIC_TYPE , mosaicInitData.getMosaicType().ordinal());
+        editor.putInt(KEY__MOSAIC_INIT_DATA__MINES_COUNT , mosaicInitData.getMinesCount());
         editor.commit();
     }
 
@@ -90,7 +90,7 @@ public final class SharedData {
     }
 
 
-    public static MenuSettings loadMenuSettings(SharedPreferences from) {
+    public static void loadMenuSettings(SharedPreferences from) {
         MenuSettings newData = new MenuSettings();
         if (from != null) try {
             newData.setSplitPaneOpen(from.getBoolean(KEY__MENU_SETTINGS__SPLIT_PANE_OPEN, MenuSettings.DEFAULT_SPLIT_PANE_OPEN));
@@ -98,10 +98,10 @@ public final class SharedData {
             newData = new MenuSettings(); // reset
             Log.e("fmg", "Can not read menu settings from SharedPreferences", ex);
         }
-        return newData;
+        menuSettings.copyFrom(newData);
     }
 
-    public static void save(SharedPreferences to, MenuSettings menuSettings) {
+    public static void saveMenuSettings(SharedPreferences to) {
         SharedPreferences.Editor editor = to.edit();
         editor.putBoolean(KEY__MENU_SETTINGS__SPLIT_PANE_OPEN, menuSettings.isSplitPaneOpen());
         editor.commit();
