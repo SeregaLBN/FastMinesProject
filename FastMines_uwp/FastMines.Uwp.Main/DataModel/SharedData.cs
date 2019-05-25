@@ -4,48 +4,88 @@ using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.mosaic;
+using Fmg.Uwp.App.Presentation;
 
-namespace FastMines.Uwp.App.Model {
+namespace Fmg.Uwp.App.Model {
 
-    public static class MosaicInitDataExt {
+    public static class SharedData {
 
         /// <summary> Singleton </summary>
-        public static MosaicInitData SharedData { get; } = new MosaicInitData();
+        public static MosaicInitData MosaicInitData { get; } = new MosaicInitData();
+        /// <summary> Singleton </summary>
+        public static MenuSettings MenuSettings { get; } = new MenuSettings();
 
-        private const           string KEY__SECTION      = nameof(MosaicInitData);
-        private static readonly string KEY__SIZE_FIELD_M = nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.m);
-        private static readonly string KEY__SIZE_FIELD_N = nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.n);
-        private const           string KEY__MOSAIC_TYPE  = nameof(MosaicInitData.MosaicType);
-        private const           string KEY__MINES_COUNT  = nameof(MosaicInitData.MinesCount);
+        private const           string KEY__MOSAIC_INIT_DATA__SECTION      = nameof(MosaicInitData);
+        private static readonly string KEY__MOSAIC_INIT_DATA__SIZE_FIELD_M = nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.m);
+        private static readonly string KEY__MOSAIC_INIT_DATA__SIZE_FIELD_N = nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.n);
+        private const           string KEY__MOSAIC_INIT_DATA__MOSAIC_TYPE  = nameof(MosaicInitData.MosaicType);
+        private const           string KEY__MOSAIC_INIT_DATA__MINES_COUNT  = nameof(MosaicInitData.MinesCount);
+        private static readonly string KEY__MENU_SETTINGS__SECTION         = nameof(MenuSettings);
+        private static readonly string KEY__MENU_SETTINGS__SPLIT_PANE_OPEN = nameof(MenuSettings) + '.' + nameof(MenuSettings.SplitPaneOpen);
 
-        public static MosaicInitData Load(IPropertySet from) {
-            if (from.ContainsKey(KEY__SECTION))
-            try {
-                var compositeMosaic = (Windows.Storage.ApplicationDataCompositeValue)from[KEY__SECTION];
-                int mosaicTypeOrdinal = (int)compositeMosaic[KEY__MOSAIC_TYPE];
-                int sizeFieldM        = (int)compositeMosaic[KEY__SIZE_FIELD_M];
-                int sizeFieldN        = (int)compositeMosaic[KEY__SIZE_FIELD_N];
-                int minesCount        = (int)compositeMosaic[KEY__MINES_COUNT];
+        private static MosaicInitData LoadMosaicInitData(IPropertySet from) {
+            if (from.ContainsKey(KEY__MOSAIC_INIT_DATA__SECTION))
+                try {
+                    var compositeMosaic = (Windows.Storage.ApplicationDataCompositeValue)from[KEY__MOSAIC_INIT_DATA__SECTION];
+                    int mosaicTypeOrdinal = (int)compositeMosaic[KEY__MOSAIC_INIT_DATA__MOSAIC_TYPE];
+                    int sizeFieldM        = (int)compositeMosaic[KEY__MOSAIC_INIT_DATA__SIZE_FIELD_M];
+                    int sizeFieldN        = (int)compositeMosaic[KEY__MOSAIC_INIT_DATA__SIZE_FIELD_N];
+                    int minesCount        = (int)compositeMosaic[KEY__MOSAIC_INIT_DATA__MINES_COUNT];
 
-                var loadData = new MosaicInitData();
-                loadData.MosaicType = EMosaicEx.FromOrdinal(mosaicTypeOrdinal);
-                loadData.SizeField = new Matrisize(sizeFieldM, sizeFieldN);
-                loadData.MinesCount = minesCount;
-                return loadData;
-            } catch (Exception ex) {
-                LoggerSimple.Put($"Fail load data: {ex.Message}");
-                System.Diagnostics.Debug.Assert(false, ex.Message);
-            }
+                    var loadData = new MosaicInitData {
+                        MosaicType = EMosaicEx.FromOrdinal(mosaicTypeOrdinal),
+                        SizeField  = new Matrisize(sizeFieldM, sizeFieldN),
+                        MinesCount = minesCount
+                    };
+                    return loadData;
+                } catch(Exception ex) {
+                    LoggerSimple.Put($"Fail load data: {ex.Message}");
+                    System.Diagnostics.Debug.Assert(false, ex.Message);
+                }
             return new MosaicInitData();
         }
 
-        public static void Save(IPropertySet to, MosaicInitData initData) {
-            to[KEY__SECTION] = new Windows.Storage.ApplicationDataCompositeValue() {
-                [KEY__MOSAIC_TYPE ] = initData.MosaicType.Ordinal(),
-                [KEY__SIZE_FIELD_M] = initData.SizeField.m,
-                [KEY__SIZE_FIELD_N] = initData.SizeField.n,
-                [KEY__MINES_COUNT ] = initData.MinesCount,
+        private static void Save(IPropertySet to, MosaicInitData initData) {
+            to[KEY__MOSAIC_INIT_DATA__SECTION] = new Windows.Storage.ApplicationDataCompositeValue() {
+                [KEY__MOSAIC_INIT_DATA__MOSAIC_TYPE ] = initData.MosaicType.Ordinal(),
+                [KEY__MOSAIC_INIT_DATA__SIZE_FIELD_M] = initData.SizeField.m,
+                [KEY__MOSAIC_INIT_DATA__SIZE_FIELD_N] = initData.SizeField.n,
+                [KEY__MOSAIC_INIT_DATA__MINES_COUNT ] = initData.MinesCount,
             };
+        }
+
+        private static MenuSettings LoadMenuSettings(IPropertySet from) {
+            if (from.ContainsKey(KEY__MENU_SETTINGS__SECTION))
+                try {
+                    var compositeMosaic = (Windows.Storage.ApplicationDataCompositeValue)from[KEY__MENU_SETTINGS__SECTION];
+                    var isSplitPaneOpen = (bool)compositeMosaic[KEY__MENU_SETTINGS__SPLIT_PANE_OPEN];
+
+                    var menuSettings = new MenuSettings {
+                        SplitPaneOpen = isSplitPaneOpen
+                    };
+                    return menuSettings;
+                } catch(Exception ex) {
+                    LoggerSimple.Put($"Fail load data: {ex.Message}");
+                    System.Diagnostics.Debug.Assert(false, ex.Message);
+                }
+            return new MenuSettings();
+        }
+
+        private static void Save(IPropertySet to, MenuSettings menuSettings) {
+            to[KEY__MENU_SETTINGS__SECTION] = new Windows.Storage.ApplicationDataCompositeValue() {
+                [KEY__MENU_SETTINGS__SPLIT_PANE_OPEN] = menuSettings.SplitPaneOpen,
+            };
+        }
+
+
+        public static void Load(IPropertySet from) {
+            MosaicInitData.CopyFrom(LoadMosaicInitData(from));
+            MenuSettings  .CopyFrom(LoadMenuSettings(from));
+        }
+
+        public static void Save(IPropertySet to) {
+            Save(to, MosaicInitData);
+            Save(to, MenuSettings);
         }
 
     }

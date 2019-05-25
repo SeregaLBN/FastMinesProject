@@ -16,7 +16,7 @@ using fmg.core.mosaic;
 using fmg.core.img;
 using fmg.uwp.utils;
 using fmg.DataModel.Items;
-using FastMines.Uwp.App.Model;
+using Fmg.Uwp.App.Model;
 using MosaicsCanvasCtrllr = fmg.uwp.img.win2d.MosaicImg.CanvasBmpController;
 using LogoCanvasCtrllr = fmg.uwp.img.win2d.Logo.CanvasBmpController;
 
@@ -26,7 +26,7 @@ namespace fmg {
     public sealed partial class SelectMosaicPage : Page {
 
         /// <summary> Model (a common model between all the pages in the application) </summary>
-        public MosaicInitData InitData => MosaicInitDataExt.SharedData;
+        public MosaicInitData InitData => SharedData.MosaicInitData;
         /// <summary> View-Model </summary>
         public MosaicsViewModel ViewModel { get; private set; }
         private SolidColorBrush BorderColorStartBttn;

@@ -14,7 +14,7 @@ using fmg.common;
 using fmg.core.mosaic;
 using fmg.core.img;
 using fmg.uwp.utils;
-using FastMines.Uwp.App.Model;
+using Fmg.Uwp.App.Model;
 
 namespace fmg {
 
@@ -24,7 +24,7 @@ namespace fmg {
     sealed partial class App : Application {
 
         /// <summary> Model (a common model between all the pages in the application) </summary>
-        public MosaicInitData InitData => MosaicInitDataExt.SharedData;
+        public MosaicInitData InitData => SharedData.MosaicInitData;
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -102,8 +102,7 @@ namespace fmg {
 
             if (rootFrame.Content == null) {
                 // create a common model between all the pages in the application
-                var initData = LoadAppData();
-                InitData.CopyFrom(initData);
+                LoadAppData();
                 InitData.PropertyChanged += OnInitDataPropertyChanged;
 
                 if (!rootFrame.Navigate(typeof(MainPage), this.InitData)) {
@@ -187,11 +186,11 @@ namespace fmg {
         }
 
         private void SaveAppData() {
-            MosaicInitDataExt.Save(Windows.Storage.ApplicationData.Current.LocalSettings.Values, this.InitData);
+            SharedData.Save(Windows.Storage.ApplicationData.Current.LocalSettings.Values);
         }
 
-        private MosaicInitData LoadAppData() {
-            return MosaicInitDataExt.Load(Windows.Storage.ApplicationData.Current.LocalSettings.Values);
+        private void LoadAppData() {
+            SharedData.Load(Windows.Storage.ApplicationData.Current.LocalSettings.Values);
         }
 
 

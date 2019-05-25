@@ -16,7 +16,8 @@ using fmg.core.mosaic;
 using fmg.uwp.utils;
 using fmg.DataModel.Items;
 using fmg.DataModel.DataSources;
-using FastMines.Uwp.App.Model;
+using Fmg.Uwp.App.Model;
+using Fmg.Uwp.App.Presentation;
 using FastMines.Uwp.Main.Presentation;
 using MosaicSkillImg = fmg.uwp.img.win2d.MosaicSkillImg.CanvasBmpController;
 using MosaicGroupImg = fmg.uwp.img.win2d.MosaicGroupImg.CanvasBmpController;
@@ -29,7 +30,9 @@ namespace fmg {
         internal const string ARGUMENTS_KEY__HEADER_SIZE_HEIGHT = "headerSizeHeight";
 
         /// <summary> Model (a common model between all the pages in the application) </summary>
-        public MosaicInitData InitData => MosaicInitDataExt.SharedData;
+        public MosaicInitData InitData   => SharedData.MosaicInitData;
+        public MenuSettings MenuSettings => SharedData.MenuSettings;
+
         /// <summary> View-Model </summary>
         public MainMenuViewModel ViewModel { get; } = new MainMenuViewModel();
         public Frame RightFrame => this.rightFrame;
@@ -55,6 +58,7 @@ namespace fmg {
             this.Loaded -= OnPageLoaded;
 
             //var dpi = Cast.ToDpi(100);
+            _splitView.IsPaneOpen = MenuSettings.SplitPaneOpen;
             ViewModel.MosaicGroupDS.Header.Entity.BurgerMenuModel.Horizontal = _splitView.IsPaneOpen;
 
             ViewModel.MosaicGroupDS.PropertyChanged += OnMosaicGroupDsPropertyChanged;
@@ -91,7 +95,9 @@ namespace fmg {
                 SmoothHelper.ApplySmoothVisibilityOverScale(lvMenuMosaicGroupItems, true, LvGroupHeight);
                 ViewModel.MosaicGroupDS.Header.Entity.BurgerMenuModel.Horizontal = false;
             } else {
-                _splitView.IsPaneOpen = !_splitView.IsPaneOpen;
+                bool isSplitPaneOpen = !_splitView.IsPaneOpen;
+                MenuSettings.SplitPaneOpen = isSplitPaneOpen;
+                _splitView.IsPaneOpen = isSplitPaneOpen;
                 ViewModel.MosaicGroupDS.Header.Entity.Model.AnimeDirection = !ViewModel.MosaicGroupDS.Header.Entity.Model.AnimeDirection;
             }
         }

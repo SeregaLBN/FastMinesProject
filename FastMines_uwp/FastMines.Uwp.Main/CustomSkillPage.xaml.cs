@@ -9,14 +9,14 @@ using fmg.core.types;
 using fmg.core.mosaic;
 using fmg.core.img;
 using fmg.uwp.utils;
-using FastMines.Uwp.App.Model;
+using Fmg.Uwp.App.Model;
 
 namespace fmg {
 
     public sealed partial class CustomSkillPage : Page {
 
         /// <summary> Model (a common model between all the pages in the application) </summary>
-        public MosaicInitData InitData => MosaicInitDataExt.SharedData;
+        public MosaicInitData InitData => SharedData.MosaicInitData;
 
         public SolidColorBrush BorderColorStartBttn;
         private bool _closed;
