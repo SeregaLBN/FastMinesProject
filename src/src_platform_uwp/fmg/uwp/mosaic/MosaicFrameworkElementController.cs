@@ -159,6 +159,10 @@ namespace fmg.uwp.mosaic {
             if (size.Width <= 0 || size.Height <= 0) {
                 LoggerSimple.Put($"MosaicFrameworkElementController.GetControlSize: Control.DesiredSize is 0: return cachedSize={_cachedControlSize}");
                 size = _cachedControlSize;
+                if (size.Width <= 0 || size.Height <= 0) {
+                    size = Control.RenderSize.ToFmSizeDouble();
+                    LoggerSimple.Put($"MosaicFrameworkElementController.GetControlSize: cached size id bad: return RenderSize={size}");
+                }
             } else {
                 if (size != _cachedControlSize)
                     LoggerSimple.Put($"MosaicFrameworkElementController.GetControlSize: diffSizes: Control.DesiredSize={size}; cachedSize={_cachedControlSize}");
