@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using fmg.common.ui;
 
 namespace fmg.common.notifier {
@@ -21,7 +22,7 @@ namespace fmg.common.notifier {
             add {
                 if (_propertyChanges.ContainsKey(value))
                     throw new ArgumentException("NotifyPropertyChanged.PropertyChanged.add: Already listened! Called from " + _propertyChanges[value]);
-                _propertyChanges.Add(value, null);// Environment.StackTrace);
+                _propertyChanges.Add(value, null); // Environment.StackTrace); //
 
                 var count = _propertyChanges.Count;
                 if (count > 4)
@@ -29,7 +30,7 @@ namespace fmg.common.notifier {
             }
             remove {
                 if (!_propertyChanges.ContainsKey(value))
-                    throw new ArgumentException("NotifyPropertyChanged.PropertyChanged.remove: Illegal listener=" + value);
+                    makeError("NotifyPropertyChanged.PropertyChanged.remove: Illegal listener=" + value, value);
                 _propertyChanges.Remove(value);
             }
         }
@@ -164,14 +165,26 @@ namespace fmg.common.notifier {
             _deferrNotifications.Clear();
 
 #if DEBUG
-            if (_propertyChanges.Count != 0)
-                throw new InvalidOperationException("Illegal usage: Not all listeners were unsubscribed (type " + GetType().FullName
-                    + "; target " + _propertyChanges.First().Key.Target + "); subscribed from: " + _propertyChanges.First().Value + "\n count=" + _propertyChanges.Count);
+            if (_propertyChanges.Any()) {
+                var first = _propertyChanges.First();
+                var error = "Illegal usage: Not all listeners were unsubscribed (type " + GetType().FullName
+                        + "; target " + first.Key.Target + "); subscribed from: " + first.Value + "\n count=" + _propertyChanges.Count;
+                makeError(error, first.Key);
+            }
 #endif
 
             GC.SuppressFinalize(this);
         }
 
-    }
+#if DEBUG
+        private static void makeError(string errorMesage, PropertyChangedEventHandler propertyChangedEventHandler) {
+            //if (!propertyChangedEventHandler.Target.ToString().Contains("Page_obj")) // etc.. fmg.SelectMosaicPage+SelectMosaicPage_obj1_Bindings+SelectMosaicPage_obj1_BindingsTracking
+            if (!Regex.IsMatch(propertyChangedEventHandler.Target.ToString(), "^.+Page_obj\\d+_BindingsTracking$"))
+                throw new InvalidOperationException(errorMesage);
+            LoggerSimple.Put(errorMesage);
+        }
+#endif
+
+}
 
 }
