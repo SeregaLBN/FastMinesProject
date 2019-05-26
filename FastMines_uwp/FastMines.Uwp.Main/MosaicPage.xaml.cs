@@ -39,10 +39,10 @@ namespace fmg {
         public IMosaicController MosaicController {
             get {
                 if (_mosaicController == null) {
-                    var useVirtCtrl = false;
+                    var useVirtCtrl = true;
                     var ctrl = useVirtCtrl
-                        ? (IMosaicController)new MosaicVirtController(CanvasDevice.GetSharedDevice(), _canvasVirtualControl)
-                        : (IMosaicController)new MosaicSwapController(CanvasDevice.GetSharedDevice(), _canvasSwapChainPanel);
+                        ? (IMosaicController)new MosaicVirtController(CanvasDevice.GetSharedDevice(), _canvasVirtualControl) { BindSizeDirection = false }
+                        : (IMosaicController)new MosaicSwapController(CanvasDevice.GetSharedDevice(), _canvasSwapChainPanel) { BindSizeDirection = false };
                     _canvasVirtualControl.Visibility = useVirtCtrl ? Visibility.Visible   : Visibility.Collapsed;
                     _canvasSwapChainPanel.Visibility = useVirtCtrl ? Visibility.Collapsed : Visibility.Visible;
                     MosaicController = ctrl; // call this setter
@@ -69,7 +69,7 @@ namespace fmg {
 
             this.Loaded += OnPageLoaded;
             this.Unloaded += OnPageUnloaded;
-            this.SizeChanged += OnPageSizeChanged;
+            //this.SizeChanged += OnPageSizeChanged;
             this.ManipulationMode =
                 ManipulationModes.TranslateX |
                 ManipulationModes.TranslateY |
@@ -195,6 +195,7 @@ namespace fmg {
                 typeName += "(" + thisName + ")";
             return typeName + "." + callerName;
         }
+
         private Tracer CreateTracer([System.Runtime.CompilerServices.CallerMemberName] string callerName = null, string ctorMessage = null, Func<string> disposeMessage = null) {
             return new Tracer(GetFullCallerName(callerName), ctorMessage, disposeMessage);
         }

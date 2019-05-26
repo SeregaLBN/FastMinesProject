@@ -58,8 +58,7 @@ public class MosaicViewView extends MosaicAndroidView<DrawableView, Bitmap, Mosa
         if (control == null) {
             if (context == null)
                 return null;
-            control = new DrawableView(context);
-            control.drawMethod = canvas -> onDraw(canvas);
+            setControl(new DrawableView(context));
         }
         return control;
     }

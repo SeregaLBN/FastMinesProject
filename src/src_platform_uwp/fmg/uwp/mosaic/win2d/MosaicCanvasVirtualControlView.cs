@@ -15,7 +15,7 @@ namespace fmg.uwp.mosaic.win2d {
     /// summary> MVC: view. UWP Win2D implementation. View located into control <see cref="CanvasVirtualControl"/> */
     public class MosaicCanvasVirtualControlView : MosaicFrameworkElementView<CanvasVirtualControl> {
 
-        private readonly bool _useClearColor = true; // TODO при true проявляются артефакты в рисовании ;-\
+        private readonly bool _useClearColor = !true; // TODO при true проявляются артефакты в рисовании ;-\
         private readonly bool _accumulateInvalidate = true;
 
         public MosaicCanvasVirtualControlView(ICanvasResourceCreator resourceCreator, CanvasVirtualControl control = null)
@@ -46,30 +46,38 @@ namespace fmg.uwp.mosaic.win2d {
             // TIP: explicit call canvasVirtualControl.Invalidate()  =>  Implicit call this.OnRegionsInvalidated
 
             System.Diagnostics.Debug.Assert((modifiedCells == null) || modifiedCells.Any());
-            using (CreateTracer(GetFullCallerName(), "modifiedCells=" + (modifiedCells==null ? "null" : "size_"+ modifiedCells.Count))) {
+            using (var tracer = CreateTracer(nameof(DrawModified), "modifiedCells=" + (modifiedCells==null ? "null" : "size_"+ modifiedCells.Count))) {
                 var canvasVirtualControl = Control;
-                if (canvasVirtualControl == null)
+                if (canvasVirtualControl == null) {
+                    tracer.Put("Can`t draw: canvasVirtualControl is null");
                     return;
-                if (double.IsNaN(canvasVirtualControl.Width) || double.IsNaN(canvasVirtualControl.Height))
-                    return;
+                }
+
+                SizeDouble size;
+                if (double.IsNaN(canvasVirtualControl.Width) || double.IsNaN(canvasVirtualControl.Height)) {
+                    tracer.Put($"canvasVirtualControl.Width/Height is NaN; size={canvasVirtualControl.Size}, DesiredSize={canvasVirtualControl.DesiredSize}, RenderSize={canvasVirtualControl.RenderSize}");
+                    size = canvasVirtualControl.Size.ToFmSizeDouble();
+                } else {
+                    size = new SizeDouble(canvasVirtualControl.Width, canvasVirtualControl.Height); // double values
+                }
                 //if ((canvasVirtualControl.Size.Width == 0) || (canvasVirtualControl.Size.Height == 0))
                 //   return;
 
                 System.Diagnostics.Debug.Assert(!_alreadyPainted);
 
                 if (modifiedCells == null) {
+                    tracer.Put("Invalidate all");
                     canvasVirtualControl.Invalidate(); // redraw all of mosaic
                     return;
                 }
 
 #if DEBUG
-                var size = new SizeDouble(canvasVirtualControl.Width, canvasVirtualControl.Height); // double values
-              //var size = canvasVirtualControl.Size;                                               // int values
                 var tmp = new Windows.Foundation.Rect(0, 0, size.Width, size.Height);
 #endif
 
                 var model = Model;
                 var offset = model.MosaicOffset;
+                tracer.Put($"offset={offset}");
                 if (!_accumulateInvalidate) {
                     foreach (var cell in modifiedCells) {
                         var rc = cell.GetRcOuter();
@@ -86,6 +94,7 @@ namespace fmg.uwp.mosaic.win2d {
                         if (!(intersect && containsLT && containsRT && containsLB && containsRB))
                             return;
 #endif
+                        tracer.Put($"canvasVirtualControl.Invalidate(rc={rc})");
                         canvasVirtualControl.Invalidate(rc.ToWinRect());
                     }
                 } else {
@@ -107,6 +116,7 @@ namespace fmg.uwp.mosaic.win2d {
                         }
                     }
                     var rcClip = new Windows.Foundation.Rect(minX + offset.Width, minY + offset.Height, maxX - minX, maxY - minY);
+                    tracer.Put($"canvasVirtualControl.Invalidate(rcClip={rcClip})");
                     canvasVirtualControl.Invalidate(rcClip);
                 }
             }

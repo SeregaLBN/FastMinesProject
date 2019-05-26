@@ -120,9 +120,9 @@ namespace fmg.uwp.mosaic.win2d {
 
         protected override void DrawModified(ICollection<BaseCell> modifiedCells) {
             using (var tr = CreateTracer()) {
-                var canvasSwapChainPanel = Control;
-                if (double.IsNaN(canvasSwapChainPanel.Width) || double.IsNaN(canvasSwapChainPanel.Height))
-                    return;
+                //var canvasSwapChainPanel = Control;
+                //if (double.IsNaN(canvasSwapChainPanel.Width) || double.IsNaN(canvasSwapChainPanel.Height))
+                //    return;
 
                 SwapDrawBuffer();
                 var ab = ActualBuffer;

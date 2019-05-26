@@ -9,8 +9,11 @@
     mc:Ignorable="d"
     Background="Coral">
 
+    <!--
     <Grid x:Name="_contentRoot" Background="{StaticResource ApplicationPageBackgroundThemeBrush}" >
-        <canvas:CanvasSwapChainPanel x:Name="_canvasSwapChainPanel" />
+    -->
+    <Grid x:Name="_contentRoot" BorderBrush="Black" BorderThickness="3" Margin="12" Padding="7" >
         <canvas:CanvasVirtualControl x:Name="_canvasVirtualControl" />
+        <canvas:CanvasSwapChainPanel x:Name="_canvasSwapChainPanel" />
     </Grid>
 </Page>

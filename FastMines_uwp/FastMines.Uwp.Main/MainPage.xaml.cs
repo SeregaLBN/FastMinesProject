@@ -39,6 +39,7 @@ namespace fmg {
         private IDisposable _sizeChangedObservable;
         private IDictionary<MosaicGroupImg, CanvasControl> _bind1 = new Dictionary<MosaicGroupImg, CanvasControl>(EMosaicGroupEx.GetValues().Length);
         private IDictionary<MosaicSkillImg, CanvasControl> _bind2 = new Dictionary<MosaicSkillImg, CanvasControl>(ESkillLevelEx.GetValues().Length);
+        private bool _unloaded = false;
 
         public MainPage() {
             this.InitializeComponent();
@@ -79,6 +80,7 @@ namespace fmg {
         }
 
         private void OnPageUnloaded(object sender, RoutedEventArgs ev) {
+            _unloaded = true;
             this.Unloaded -= OnPageUnloaded;
 
             //LoggerSimple.Put("> " + nameof(MainPage) + "::" + nameof(OnClosing));
@@ -108,7 +110,7 @@ namespace fmg {
         }
 
         double LvGroupHeight() => Enum.GetValues(typeof(EMosaicGroup)).Length * (ViewModel.MosaicGroupDS.ImageSize.Height + 2 /* padding */);
-        double LvSkillHeight() => Enum.GetValues(typeof(ESkillLevel)).Length * (ViewModel.MosaicSkillDS.ImageSize.Height + 2 /* padding */);
+        double LvSkillHeight() => Enum.GetValues(typeof(ESkillLevel )).Length * (ViewModel.MosaicSkillDS.ImageSize.Height + 2 /* padding */);
 
         private void OnMenuMosaicSkillHeaderClick(object sender, RoutedEventArgs ev) {
             bool isVisibleScrollerFunc() => !_scroller.ScrollableHeight.HasMinDiff(_scroller.VerticalOffset);
@@ -265,6 +267,8 @@ namespace fmg {
                 _bind1.Add(img, canvasControl);
 
                 canvasControl.Draw += (sender2, ev2) => {
+                    if (_unloaded)
+                        return;
                     ev2.DrawingSession.DrawImage(img.Image, new Windows.Foundation.Rect(0, 0, sender2.Width, sender2.Height)); // zoomed size
                     //ev2.DrawingSession.DrawImage(img.Image, new Windows.Foundation.Rect(0, 0, img.Width, img.Height)); // real size
                 };
@@ -282,6 +286,8 @@ namespace fmg {
                 _bind2.Add(img, canvasControl);
 
                 canvasControl.Draw += (sender2, ev2) => {
+                    if (_unloaded)
+                        return;
                     ev2.DrawingSession.DrawImage(img.Image, new Windows.Foundation.Rect(0, 0, sender2.Width, sender2.Height)); // zoomed size
                     //ev2.DrawingSession.DrawImage(img.Image, new Windows.Foundation.Rect(0, 0, img.Width, img.Height)); // real size
                 };
