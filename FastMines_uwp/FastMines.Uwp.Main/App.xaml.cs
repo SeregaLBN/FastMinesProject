@@ -15,6 +15,7 @@ using fmg.core.mosaic;
 using fmg.core.img;
 using fmg.uwp.utils;
 using Fmg.Uwp.App.Model;
+using Fmg.Uwp.App.Presentation;
 
 namespace fmg {
 
@@ -24,15 +25,24 @@ namespace fmg {
     sealed partial class App : Application {
 
         /// <summary> Model (a common model between all the pages in the application) </summary>
-        public MosaicInitData InitData => SharedData.MosaicInitData;
+        public MosaicInitData   InitData => SharedData.MosaicInitData;
+        public MenuSettings MenuSettings => SharedData.MenuSettings;
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         public App() {
+            ProjSettings.Init();
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+            this.LeavingBackground += OnForegrounded;
+            this.EnteredBackground += OnBackgrounded;
+        }
+
+        protected override void OnActivated(IActivatedEventArgs args) {
+            LoggerSimple.Put("FastMinesApp::OnActivated");
+            base.OnActivated(args);
         }
 
         /// <summary>
@@ -41,6 +51,7 @@ namespace fmg {
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs ev) {
+            LoggerSimple.Put("FastMinesApp::OnLaunched");
 #if  DEBUG
             if (System.Diagnostics.Debugger.IsAttached) {
                 // disabled, obscures the hamburger button, enable if you need it
@@ -51,8 +62,6 @@ namespace fmg {
             // you need to add a reference to the correspondent Extension:
             //  * Windows Mobile Extensions for the UWP
             //  * Windows Desktop Extensions for the UWP
-
-            ProjSettings.Init();
 
             //PC customization
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView")) {
@@ -103,7 +112,6 @@ namespace fmg {
             if (rootFrame.Content == null) {
                 // create a common model between all the pages in the application
                 LoadAppData();
-                InitData.PropertyChanged += OnInitDataPropertyChanged;
 
                 if (!rootFrame.Navigate(typeof(MainPage), this.InitData)) {
                     throw new Exception("Failed to create initial page ;(");
@@ -116,9 +124,63 @@ namespace fmg {
            AsyncRunner.InvokeLater(x => TileHelper.RegisterBackgroundTask(), Windows.System.Threading.WorkItemPriority.Low);
         }
 
+        private void OnForegrounded(object sender, LeavingBackgroundEventArgs ev) {
+            LoggerSimple.Put("FastMinesApp::OnForegrounded");
+
+            MenuSettings.PropertyChanged += OnMenuSettingsPropertyChanged;
+            InitData    .PropertyChanged += OnInitDataPropertyChanged;
+        }
+
+        private void OnBackgrounded(object sender, EnteredBackgroundEventArgs ev) {
+            LoggerSimple.Put("FastMinesApp::OnBackgrounded");
+
+            var deferral = ev.GetDeferral();
+            SaveAppData();
+            deferral.Complete();
+
+            MenuSettings.PropertyChanged -= OnMenuSettingsPropertyChanged;
+            InitData    .PropertyChanged -= OnInitDataPropertyChanged;
+        }
+
+        /// <summary>
+        /// Invoked when application execution is being suspended.  Application state is saved
+        /// without knowing whether the application will be terminated or resumed with the contents
+        /// of memory still intact.
+        /// </summary>
+        /// <param name="sender">The source of the suspend request.</param>
+        /// <param name="e">Details about the suspend request.</param>
+        private void OnSuspending(object sender, SuspendingEventArgs e) {
+            LoggerSimple.Put("FastMinesApp::OnSuspending");
+            var deferral = e.SuspendingOperation.GetDeferral();
+
+            // Save application state and stop any background activity
+            //SaveAppData();
+
+            //Frame rootFrame = Window.Current.Content as Frame;
+            //var mp = rootFrame.Content as MainPage;
+            //if (mp?.RightFrame?.SourcePageType == typeof(SelectMosaicPage)) {
+            //   var smp = mp.RightFrame.Content as SelectMosaicPage;
+            //}
+
+            deferral.Complete();
+
+            InitData.Dispose();
+            MenuSettings.Dispose();
+        }
+
+        protected override void OnBackgroundActivated(BackgroundActivatedEventArgs ev) {
+            LoggerSimple.Put("FastMinesApp::OnBackgroundActivated");
+            base.OnBackgroundActivated(ev);
+        }
+
+        protected override void OnWindowCreated(WindowCreatedEventArgs ev) {
+            LoggerSimple.Put($"FastMinesApp::OnWindowCreated: ev={ev}");
+            base.OnWindowCreated(ev);
+        }
+
         // handle hardware back button press
         void OnBackPressed(object sender, BackPressedEventArgs ev) {
-            LoggerSimple.Put("App.OnBackPressed:");
+            LoggerSimple.Put("FastMinesApp::OnBackPressed");
             var frame = (Frame)Window.Current.Content;
             if (frame.CanGoBack) {
                 ev.Handled = true;
@@ -128,7 +190,7 @@ namespace fmg {
 
         // handle software back button press
         void OnBackRequested(object sender, BackRequestedEventArgs ev) {
-            LoggerSimple.Put("App.OnBackRequested:");
+            LoggerSimple.Put("FastMinesApp::OnBackRequested");
             var frame = (Frame)Window.Current.Content;
             if (frame.CanGoBack) {
                 ev.Handled = true;
@@ -137,7 +199,7 @@ namespace fmg {
         }
 
         void OnKeyDown(CoreWindow sender, KeyEventArgs ev) {
-            //LoggerSimple.Put("App.OnKeyDown: VirtualKey=" + ev.VirtualKey);
+            //LoggerSimple.Put("FastMinesApp::OnKeyDown: VirtualKey=" + ev.VirtualKey);
             var frame = (Frame)Window.Current.Content;
             switch (ev.VirtualKey) {
             //case VirtualKey.GoBack: // System.Diagnostics.Debug.Assert(false, "must be handled in " + nameof(App) + "." + nameof(OnBackRequested));
@@ -150,7 +212,8 @@ namespace fmg {
             }
         }
 
-        void OnNavigated(object sender, NavigationEventArgs e) {
+        void OnNavigated(object sender, NavigationEventArgs ev) {
+            LoggerSimple.Put($"FastMinesApp::OnNavigated: ev={ev}");
             UpdateBackButtonVisibility();
         }
 
@@ -158,31 +221,10 @@ namespace fmg {
         /// Invoked when Navigation to a certain page fails
         /// </summary>
         /// <param name="sender">The Frame which failed navigation</param>
-        /// <param name="e">Details about the navigation failure</param>
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e) {
-            throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
-        }
-
-        /// <summary>
-        /// Invoked when application execution is being suspended.  Application state is saved
-        /// without knowing whether the application will be terminated or resumed with the contents
-        /// of memory still intact.
-        /// </summary>
-        /// <param name="sender">The source of the suspend request.</param>
-        /// <param name="e">Details about the suspend request.</param>
-        private void OnSuspending(object sender, SuspendingEventArgs e) {
-           var deferral = e.SuspendingOperation.GetDeferral();
-
-            // Save application state and stop any background activity
-            SaveAppData();
-
-            //Frame rootFrame = Window.Current.Content as Frame;
-            //var mp = rootFrame.Content as MainPage;
-            //if (mp?.RightFrame?.SourcePageType == typeof(SelectMosaicPage)) {
-            //   var smp = mp.RightFrame.Content as SelectMosaicPage;
-            //}
-
-            deferral.Complete();
+        /// <param name="ev">Details about the navigation failure</param>
+        void OnNavigationFailed(object sender, NavigationFailedEventArgs ev) {
+            LoggerSimple.Put("FastMinesApp::OnNavigationFailed");
+            throw new Exception("Failed to load Page " + ev.SourcePageType.FullName);
         }
 
         private void SaveAppData() {
@@ -192,7 +234,6 @@ namespace fmg {
         private void LoadAppData() {
             SharedData.Load(Windows.Storage.ApplicationData.Current.LocalSettings.Values);
         }
-
 
         private void UpdateBackButtonVisibility() {
             var frame = (Frame)Window.Current.Content;
@@ -204,8 +245,12 @@ namespace fmg {
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = visibility;
         }
 
+        private void OnMenuSettingsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            LoggerSimple.Put("FastMinesApp::OnMenuSettingsPropertyChanged: ev={0}", ev);
+        }
+
         private void OnInitDataPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            LoggerSimple.Put("  FastMinesApp::OnInitDataPropertyChanged: ev={0}", ev);
+            LoggerSimple.Put("FastMinesApp::OnInitDataPropertyChanged: ev={0}", ev);
         }
 
     }

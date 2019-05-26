@@ -38,16 +38,16 @@ public class App extends Application implements LifecycleObserver {
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    private void onAppForegrounded() {
-        LoggerSimple.put("App in foreground");
+    private void onForegrounded() {
+        LoggerSimple.put("FastMinesApp::onForegrounded");
 
         getMenuSettings  ().addListener(onMenuSettingsPropertyChangedListener);
         getMosaicInitData().addListener(onMosaicInitDataPropertyChangedListener);
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    private void onAppBackgrounded() {
-        LoggerSimple.put("App in background");
+    private void onBackgrounded() {
+        LoggerSimple.put("FastMinesApp::onBackgrounded");
         save();
 
         getMenuSettings  ().removeListener(onMenuSettingsPropertyChangedListener);
@@ -73,11 +73,11 @@ public class App extends Application implements LifecycleObserver {
     }
 
     private void onMenuSettingsPropertyChanged(PropertyChangeEvent ev) {
-        LoggerSimple.put("  FastMinesApp::onMenuSettingsPropertyChanged: ev={0}", ev);
+        LoggerSimple.put("FastMinesApp::onMenuSettingsPropertyChanged: ev={0}", ev);
     }
 
     private void onMosaicInitDataPropertyChanged(PropertyChangeEvent ev) {
-        LoggerSimple.put("  FastMinesApp::onMosaicInitDataPropertyChanged: ev={0}", ev);
+        LoggerSimple.put("FastMinesApp::onMosaicInitDataPropertyChanged: ev={0}", ev);
     }
 
 }
