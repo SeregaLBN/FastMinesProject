@@ -19,8 +19,8 @@ using fmg.DataModel.DataSources;
 using Fmg.Uwp.App.Model;
 using Fmg.Uwp.App.Presentation;
 using FastMines.Uwp.Main.Presentation;
-using MosaicSkillImg = fmg.uwp.img.win2d.MosaicSkillImg.CanvasBmpController;
 using MosaicGroupImg = fmg.uwp.img.win2d.MosaicGroupImg.CanvasBmpController;
+using MosaicSkillImg = fmg.uwp.img.win2d.MosaicSkillImg.CanvasBmpController;
 
 namespace fmg {
 
@@ -37,7 +37,8 @@ namespace fmg {
         public MainMenuViewModel ViewModel { get; } = new MainMenuViewModel();
         public Frame RightFrame => this.rightFrame;
         private IDisposable _sizeChangedObservable;
-
+        private IDictionary<MosaicGroupImg, CanvasControl> _bind1 = new Dictionary<MosaicGroupImg, CanvasControl>(EMosaicGroupEx.GetValues().Length);
+        private IDictionary<MosaicSkillImg, CanvasControl> _bind2 = new Dictionary<MosaicSkillImg, CanvasControl>(ESkillLevelEx.GetValues().Length);
 
         public MainPage() {
             this.InitializeComponent();
@@ -84,10 +85,14 @@ namespace fmg {
             ViewModel.MosaicGroupDS.PropertyChanged -= OnMosaicGroupDsPropertyChanged;
             ViewModel.MosaicSkillDS.PropertyChanged -= OnMosaicSkillDsPropertyChanged;
 
+            foreach (MosaicGroupImg img in _bind1.Keys)
+                img.PropertyChanged -= OnMosaicGroupImgPropertyChanged;
+            foreach (MosaicSkillImg img in _bind2.Keys)
+                img.PropertyChanged -= OnMosaicSkillImgPropertyChanged;
+
+            Bindings.StopTracking(); // stop tracking before! ViewModel.Dispose
             ViewModel.Dispose();
             _sizeChangedObservable?.Dispose();
-
-            Bindings.StopTracking();
         }
 
         private void OnMenuMosaicGroupHeaderClick(object sender, RoutedEventArgs ev) {
@@ -252,41 +257,53 @@ namespace fmg {
         //    }
         //}
 
-        private void OnCreateResourcesCanvasControl_MosaicSkillImg(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
-            System.Diagnostics.Debug.Assert(canvasControl.DataContext is MosaicSkillImg);
-
-            if (ev.Reason == CanvasCreateResourcesReason.FirstTime) {
-                var img = canvasControl.DataContext as MosaicSkillImg;
-
-                canvasControl.Draw += (sender2, ev2) => {
-                    ev2.DrawingSession.DrawImage(img.Image, new Windows.Foundation.Rect(0, 0, sender2.Width, sender2.Height)); // zoomed size
-                    //ev2.DrawingSession.DrawImage(img.Image, new Windows.Foundation.Rect(0, 0, img.Width, img.Height)); // real size
-                };
-                img.PropertyChanged += (sender3, ev3) => {
-                    if (ev3.PropertyName == nameof(img.Image))
-                        canvasControl.Invalidate();
-                };
-            } else {
-                System.Diagnostics.Debug.Assert(false, "Support me"); // TODO
-            }
-        }
-
         private void OnCreateResourcesCanvasControl_MosaicGroupImg(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
             System.Diagnostics.Debug.Assert(canvasControl.DataContext is MosaicGroupImg);
 
             if (ev.Reason == CanvasCreateResourcesReason.FirstTime) {
                 var img = canvasControl.DataContext as MosaicGroupImg;
+                _bind1.Add(img, canvasControl);
 
                 canvasControl.Draw += (sender2, ev2) => {
                     ev2.DrawingSession.DrawImage(img.Image, new Windows.Foundation.Rect(0, 0, sender2.Width, sender2.Height)); // zoomed size
                     //ev2.DrawingSession.DrawImage(img.Image, new Windows.Foundation.Rect(0, 0, img.Width, img.Height)); // real size
                 };
-                img.PropertyChanged += (sender3, ev3) => {
-                    if (ev3.PropertyName == nameof(img.Image))
-                        canvasControl.Invalidate();
-                };
+                img.PropertyChanged += OnMosaicGroupImgPropertyChanged;
             } else {
                 System.Diagnostics.Debug.Assert(false, "Support me"); // TODO
+            }
+        }
+
+        private void OnCreateResourcesCanvasControl_MosaicSkillImg(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
+            System.Diagnostics.Debug.Assert(canvasControl.DataContext is MosaicSkillImg);
+
+            if (ev.Reason == CanvasCreateResourcesReason.FirstTime) {
+                var img = canvasControl.DataContext as MosaicSkillImg;
+                _bind2.Add(img, canvasControl);
+
+                canvasControl.Draw += (sender2, ev2) => {
+                    ev2.DrawingSession.DrawImage(img.Image, new Windows.Foundation.Rect(0, 0, sender2.Width, sender2.Height)); // zoomed size
+                    //ev2.DrawingSession.DrawImage(img.Image, new Windows.Foundation.Rect(0, 0, img.Width, img.Height)); // real size
+                };
+                img.PropertyChanged += OnMosaicSkillImgPropertyChanged;
+            } else {
+                System.Diagnostics.Debug.Assert(false, "Support me"); // TODO
+            }
+        }
+
+        private void OnMosaicGroupImgPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            if (ev.PropertyName == nameof(MosaicGroupImg.Image)) {
+                var img = (MosaicGroupImg)sender;
+                var canvasControl = _bind1[img];
+                canvasControl.Invalidate();
+            }
+        }
+
+        private void OnMosaicSkillImgPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            if (ev.PropertyName == nameof(MosaicSkillImg.Image)) {
+                var img = (MosaicSkillImg)sender;
+                var canvasControl = _bind2[img];
+                canvasControl.Invalidate();
             }
         }
 

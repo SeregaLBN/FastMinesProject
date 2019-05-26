@@ -150,9 +150,9 @@ namespace fmg.DataModel.Items {
         }
 
         protected virtual void Disposing() {
+            this.PropertyChangedSync -= OnPropertyChanged;
             _notifier     .Dispose();
             _notifierAsync.Dispose();
-            this.PropertyChangedSync -= OnPropertyChanged;
             Entity = null; // call setter
         }
 
