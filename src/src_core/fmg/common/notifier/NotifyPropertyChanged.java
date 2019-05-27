@@ -119,7 +119,7 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
             }
             if (shedule) {
                 /** /
-                LoggerSimple.put("Deferr shedule:\n   " +
+                LoggerSimple.put("Defer shedule:\n   " +
                         Stream.of(Thread.currentThread().getStackTrace())
                             .filter(x -> x.getClassName().startsWith("fmg."))
                             .map(x -> x.toString())
@@ -187,7 +187,7 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
         _cachedFields.clear();
 
         if (!_deferrNotifications.isEmpty())
-            LoggerSimple.put("Not all deferr notifications handled! Count={0}", _deferrNotifications.size());
+            LoggerSimple.put("Not all deferred notifications handled! Count={0}", _deferrNotifications.size());
         _deferrNotifications.clear();
 
         if (!_propertyChanges.isEmpty())

@@ -160,7 +160,7 @@ namespace Fmg.Common.Notifier {
             Disposed = true;
 #if DEBUG
             if (_deferrNotifications.Any())
-                LoggerSimple.Put("Not all deferr notifications handled! Count={0}", _deferrNotifications.Count);
+                LoggerSimple.Put("Not all deferred notifications handled! Count={0}", _deferrNotifications.Count);
 #endif
             _deferrNotifications.Clear();
 
