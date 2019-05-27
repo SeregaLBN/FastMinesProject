@@ -27,6 +27,7 @@ import fmg.android.app.recyclerView.RecyclerItemDoubleClickListener;
 import fmg.android.img.Logo;
 import fmg.android.utils.AsyncRunner;
 import fmg.android.utils.Cast;
+import fmg.android.utils.ProjSettings;
 import fmg.common.Color;
 import fmg.common.HSV;
 import fmg.common.LoggerSimple;
@@ -49,6 +50,7 @@ public class SelectMosaicFragment extends Fragment {
     private MosaicDsViewModel viewModel;
     private MosaicListViewAdapter mosaicListViewAdapter;
     private RecyclerItemDoubleClickListener recyclerItemDoubleClickListener;
+    private GridLayoutManager gridLayoutManager;
     private Subject<Size> subjSizeChanged;
     private Disposable sizeChangedObservable;
     private Size cachedSize = new Size(-1, -1);
@@ -71,7 +73,8 @@ public class SelectMosaicFragment extends Fragment {
         binding.setViewModel(viewModel);
         binding.executePendingBindings();
 
-        binding.rvMosaicItems.setLayoutManager(new GridLayoutManager(this.getContext(), 2));
+        gridLayoutManager = new GridLayoutManager(this.getContext(), 2);
+        binding.rvMosaicItems.setLayoutManager(gridLayoutManager);
 
         { // setup header
             Logo.BitmapController logoController = viewModel.getMosaicDS().getHeader().getEntity();
@@ -188,11 +191,43 @@ public class SelectMosaicFragment extends Fragment {
     private void onFragmentSizeChanged(Size newSize) {
 //        LoggerSimple.put("> SelectMosaicFragment::onFragmentSizeChanged: newSize={0}", newSize);
 
-        int size = Math.min(newSize.height, newSize.width);
-        double size2 = size / 3.9;
-        double wh = Math.min(Math.max(TileMinSize, size2), TileMaxSize);
-//        LoggerSimple.put("Math.min(Math.max(TileMinSize={0}, size2={1}), TileMaxSize={2}) = {3}", TileMinSize, size2, TileMaxSize, wh);
-        viewModel.setImageSize(new SizeDouble(wh, wh));
+//        int size = Math.min(newSize.height, newSize.width);
+//        double size2 = size / 3.9;
+//        double wh = Math.min(Math.max(TileMinSize, size2), TileMaxSize);
+////        LoggerSimple.put("Math.min(Math.max(TileMinSize={0}, size2={1}), TileMaxSize={2}) = {3}", TileMinSize, size2, TileMaxSize, wh);
+//        viewModel.setImageSize(new SizeDouble(wh, wh));
+
+
+        float minTileWidth = Cast.dpToPx(48);
+        float maxTileWidth = Cast.dpToPx(ProjSettings.isMobile ? 90 : 140);
+        double gridViewItemBorderWidth = 3.0 + // magic number ;(
+                4 + 4      // <DataTemplate <StackPanel Margin.LeftAndRight
+                +8 + 8;     // <DataTemplate <StackPanel <canvas:CanvasControl Margin.LeftAndRight
+        double widthBetweenItems = 4;
+
+        double pageBorderWidth =
+                4 + 4;      // <ScrollViewer Margin.LeftAndRight
+              //+ 10 + 10;  // <ScrollViewer <GridView Margin.LeftAndRight
+
+        double size = newSize.width; // Math.Min(newSize.width, newSize.height);
+        double spaceToItems = size - pageBorderWidth;
+
+        int rows = 1;
+        for (; rows <= EMosaic.values().length; ++rows) {
+            double size2 = maxTileWidth * rows + (rows - 1) * widthBetweenItems;
+            if (size2 > spaceToItems)
+                break;
+        }
+
+        double spaceToItemsClear = spaceToItems - (rows - 1) * widthBetweenItems;
+        double tileWidth = spaceToItemsClear / rows;
+        double tileWidth2 = Math.min(Math.max(tileWidth, minTileWidth), maxTileWidth);
+        double imageSize = tileWidth2 - gridViewItemBorderWidth;
+        //LoggerSimple.put("tileWidth={0}, tileWidth2={1}, imageSize={2}", tileWidth, tileWidth2, imageSize);
+        viewModel.setImageSize(new SizeDouble(imageSize, imageSize));
+        gridLayoutManager.setSpanCount(rows);
+
+
 //        LoggerSimple.put("< SelectMosaicFragment::onFragmentSizeChanged: imageSize={0}", wh);
 
 //        mosaicListViewAdapter.notifyItemRangeChanged(0, viewModel.getMosaicDS().getDataSource().size());

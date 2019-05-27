@@ -15,6 +15,9 @@ import fmg.core.mosaic.MosaicDrawModel;
 public final class ProjSettings extends AProjSettings {
     private ProjSettings() {}
 
+    /** Mobile (true) or Desktop/Tablet (false) */
+    public static final boolean isMobile;
+
     private static final boolean DrawModeFull;
     public static boolean isDrawModeFull() { return DrawModeFull; }
 
@@ -24,6 +27,8 @@ public final class ProjSettings extends AProjSettings {
         UiInvoker.TIMER_CREATOR = Timer::new;
 
         MosaicDrawModel.DefaultBkColor = new Color(0xFFEEEEEE); // #EEEEEE or #FAFAFA
+
+        isMobile = true;
 
         AProjSettings.setDebug(BuildConfig.DEBUG);
         LoggerSimple.DEFAULT_WRITER = BuildConfig.DEBUG_OUTPUT ? message -> Log.d("fmg", message) : null;
