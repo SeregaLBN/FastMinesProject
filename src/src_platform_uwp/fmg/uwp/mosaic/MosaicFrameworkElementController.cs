@@ -13,7 +13,6 @@ using Fmg.Common.Geom;
 using Fmg.Common.Notifier;
 using Fmg.Core.Mosaic;
 using Fmg.Core.Types;
-using Fmg.Core.Types.click;
 using Fmg.Core.Mosaic.Cells;
 using Fmg.Uwp.Utils;
 

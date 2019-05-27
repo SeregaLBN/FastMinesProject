@@ -6,7 +6,7 @@ using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.Brushes;
 using Fmg.Common;
 using Fmg.Common.Geom;
-using Fmg.Common.Geom.util;
+using Fmg.Common.Geom.Util;
 using Fmg.Uwp.Utils;
 
 namespace Fmg.Uwp.Mosaic.Win2d {

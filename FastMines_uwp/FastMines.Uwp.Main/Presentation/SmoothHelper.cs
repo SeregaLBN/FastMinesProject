@@ -3,7 +3,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
 using Fmg.Common;
-using Fmg.Common.Geom.util;
+using Fmg.Common.Geom.Util;
 using Fmg.Core.Img;
 using Fmg.Uwp.Utils;
 
