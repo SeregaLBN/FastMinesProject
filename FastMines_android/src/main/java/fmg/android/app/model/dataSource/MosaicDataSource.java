@@ -70,9 +70,10 @@ public class MosaicDataSource extends BaseDataSource<
     }
 
     private void reloadDataSource() {
-        List<EMosaic> newEntities = (getMosaicGroup() != null)
-                ? getMosaicGroup().getMosaics()
-                : Stream.of(EMosaic.values()).collect(Collectors.toList());
+        if (getMosaicGroup() == null)
+            return;
+
+        List<EMosaic> newEntities = getMosaicGroup().getMosaics();
 
         if ((dataSource == null) || dataSource.isEmpty()) {
             // first load all
