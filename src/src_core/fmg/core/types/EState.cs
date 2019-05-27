@@ -1,4 +1,4 @@
-namespace fmg.core.types {
+namespace Fmg.Core.Types {
 
     public enum EState {
         _Open,

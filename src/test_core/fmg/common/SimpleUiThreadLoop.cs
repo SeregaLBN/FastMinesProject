@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace fmg.common {
+namespace Fmg.Common {
 
     /// <summary> very simple UI thread loop emulation </summary>
     public class SimpleUiThreadLoop {

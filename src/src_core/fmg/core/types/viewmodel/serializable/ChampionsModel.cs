@@ -3,11 +3,11 @@ using System.Linq;
 using System.Text;
 using System.Collections.Generic;
 using System.IO;
-using fmg.common;
-using fmg.common.crypt;
-using fmg.core.types.viewmodel.Event;
+using Fmg.Common;
+using Fmg.Common.Crypt;
+using Fmg.Core.Types.Viewmodel.Event;
 
-namespace fmg.core.types.viewmodel.serializable {
+namespace Fmg.Core.Types.Viewmodel.Serializable {
 
     /// <summary>хранилище чемпионов</summary>
     public abstract class ChampionsModel : IExternalizable {

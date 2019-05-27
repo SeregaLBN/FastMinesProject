@@ -1,8 +1,8 @@
 using System;
-using fmg.common.geom;
-using fmg.common.geom.util;
+using Fmg.Common.Geom;
+using Fmg.Common.Geom.Util;
 
-namespace fmg.core.img {
+namespace Fmg.Core.Img {
 
     /// <summary> Transforming of logo rays </summary>
     public class RotateLogoTransformer : IModelTransformer {

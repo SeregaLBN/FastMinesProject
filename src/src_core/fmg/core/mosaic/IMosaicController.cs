@@ -1,9 +1,9 @@
-﻿using fmg.common.geom;
-using fmg.core.types;
-using fmg.core.img;
-using fmg.core.mosaic.cells;
+﻿using Fmg.Common.Geom;
+using Fmg.Core.Types;
+using Fmg.Core.Img;
+using Fmg.Core.Mosaic.Cells;
 
-namespace fmg.core.mosaic {
+namespace Fmg.Core.Mosaic {
 
     /// <summary> MVC: mosaic controller interface </summary>
     /// <typeparam name="TImage">platform specific view/image/picture or other display context/canvas/window/panel</typeparam>

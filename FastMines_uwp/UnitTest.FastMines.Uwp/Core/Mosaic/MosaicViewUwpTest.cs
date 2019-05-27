@@ -4,9 +4,9 @@ using System.Reactive.Linq;
 using Windows.UI.Core;
 using Windows.ApplicationModel.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using fmg.uwp.utils;
+using Fmg.Uwp.Utils;
 
-namespace fmg.core.mosaic {
+namespace Fmg.Core.Mosaic {
 
     [TestClass]
     public class MosaicViewUwpTest : MosaicViewTest {
@@ -63,7 +63,7 @@ namespace fmg.core.mosaic {
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                 CoreDispatcherPriority.High,
                 async () => {
-                    var signal = new fmg.common.notifier.Signal();
+                    var signal = new Fmg.Common.Notifier.Signal();
             //Assert.AreEqual(2, 3);
                     signal.Set();
                     noTimeout = await signal.Wait(TimeSpan.FromSeconds(5));

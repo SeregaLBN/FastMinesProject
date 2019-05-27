@@ -6,12 +6,12 @@ using Windows.UI;
 using Windows.Graphics.Display;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
-using fmg.common;
-using fmg.common.geom;
-using fmg.core.mosaic;
-using fmg.core.mosaic.cells;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Core.Mosaic;
+using Fmg.Core.Mosaic.Cells;
 
-namespace fmg.uwp.mosaic.win2d {
+namespace Fmg.Uwp.Mosaic.Win2d {
 
     /// summary> MVC: view. UWP Win2D implementation. View located into control <see cref="CanvasSwapChainPanel"/> */
     public class MosaicCanvasSwapChainPanelView : MosaicFrameworkElementView<CanvasSwapChainPanel> {

@@ -1,8 +1,8 @@
 ﻿using System;
 using Windows.UI.Xaml.Data;
-using fmg.common.geom;
+using Fmg.Common.Geom;
 
-namespace fmg.common.Converters {
+namespace Fmg.Common.Converters {
 
     public sealed class SizeToHeightConverter : IValueConverter {
 

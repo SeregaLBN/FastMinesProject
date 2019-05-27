@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using NUnit.Framework;
-using fmg.common.ui;
+using Fmg.Common.UI;
 
-namespace fmg.common.notifier {
+namespace Fmg.Common.Notifier {
 
     public class PropertyChangeExecutorNUnitTest : PropertyChangeExecutorTest {
 

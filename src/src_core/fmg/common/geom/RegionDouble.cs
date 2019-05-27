@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace fmg.common.geom {
+namespace Fmg.Common.Geom {
 
     public class RegionDouble {
 

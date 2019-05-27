@@ -21,9 +21,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 using System;
 using System.Collections.Generic;
-using fmg.common.geom;
+using Fmg.Common.Geom;
 
-namespace fmg.core.mosaic.cells {
+namespace Fmg.Core.Mosaic.Cells {
 
     /// <summary> Паркет в елку </summary>
     public class Parquet1 : BaseCell {

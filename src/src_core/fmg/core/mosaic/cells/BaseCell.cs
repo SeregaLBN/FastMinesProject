@@ -22,13 +22,12 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using fmg.common;
-using fmg.common.geom;
-using fmg.common.notifier;
-using fmg.core.types;
-using fmg.core.types.click;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Common.Notifier;
+using Fmg.Core.Types;
 
-namespace fmg.core.mosaic.cells {
+namespace Fmg.Core.Mosaic.Cells {
 
     /// <summary>Базовый класс фигуры-ячейки</summary>
     public abstract class BaseCell {

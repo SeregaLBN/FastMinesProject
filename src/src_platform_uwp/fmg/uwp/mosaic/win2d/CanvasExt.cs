@@ -4,12 +4,12 @@ using System.Numerics;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.Brushes;
-using fmg.common;
-using fmg.common.geom;
-using fmg.common.geom.util;
-using fmg.uwp.utils;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Common.Geom.util;
+using Fmg.Uwp.Utils;
 
-namespace fmg.uwp.mosaic.win2d {
+namespace Fmg.Uwp.Mosaic.Win2d {
 
     public static class CanvasExt {
 

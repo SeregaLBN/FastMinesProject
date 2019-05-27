@@ -1,8 +1,8 @@
 using System.Linq;
 using System.Collections.Generic;
-using fmg.core.mosaic.cells;
+using Fmg.Core.Mosaic.Cells;
 
-namespace fmg.core.types.click {
+namespace Fmg.Core.Types {
 
     public class ClickCellResult {
 

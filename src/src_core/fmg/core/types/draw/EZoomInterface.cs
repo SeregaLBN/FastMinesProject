@@ -1,6 +1,6 @@
 using System;
 
-namespace fmg.core.types.draw {
+namespace Fmg.Core.Types.Draw {
 
     public enum EZoomInterface {
         eAlwaysMax,

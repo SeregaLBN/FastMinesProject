@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using fmg.common;
-using fmg.common.geom;
-using fmg.common.geom.util;
-using fmg.core.types;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Common.Geom.Util;
+using Fmg.Core.Types;
 
-namespace fmg.core.img {
+namespace Fmg.Core.Img {
 
     /// <summary> MVC model of <see cref="EMosaicGroup"/> representable as image </summary>
     public class MosaicGroupModel : AnimatedImageModel {

@@ -9,18 +9,18 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
-using fmg.common;
-using fmg.common.geom;
-using fmg.core.types;
-using fmg.core.mosaic;
-using fmg.core.img;
-using fmg.uwp.utils;
-using fmg.DataModel.Items;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Core.Types;
+using Fmg.Core.Mosaic;
+using Fmg.Core.Img;
+using Fmg.Uwp.Utils;
+using Fmg.DataModel.Items;
 using Fmg.Uwp.App.Model;
-using MosaicsCanvasCtrllr = fmg.uwp.img.win2d.MosaicImg.CanvasBmpController;
-using LogoCanvasCtrllr    = fmg.uwp.img.win2d.Logo     .CanvasBmpController;
+using MosaicsCanvasCtrllr = Fmg.Uwp.Img.Win2d.MosaicImg.CanvasBmpController;
+using LogoCanvasCtrllr    = Fmg.Uwp.Img.Win2d.Logo     .CanvasBmpController;
 
-namespace fmg {
+namespace Fmg {
 
     /// <summary> Page for selecting the type of mosaic in the current group </summary>
     public sealed partial class SelectMosaicPage : Page {

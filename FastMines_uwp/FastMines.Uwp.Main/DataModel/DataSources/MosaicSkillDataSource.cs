@@ -1,15 +1,15 @@
 ﻿using System.Linq;
 using System.Collections.ObjectModel;
-using fmg.common;
-using fmg.common.geom;
-using fmg.core.img;
-using fmg.core.types;
-using fmg.core.mosaic;
-using fmg.DataModel.Items;
-using MosaicSkillView       = fmg.uwp.img.win2d.MosaicSkillImg.CanvasBmpView;
-using MosaicSkillController = fmg.uwp.img.win2d.MosaicSkillImg.CanvasBmpController;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Core.Img;
+using Fmg.Core.Types;
+using Fmg.Core.Mosaic;
+using Fmg.DataModel.Items;
+using MosaicSkillView       = Fmg.Uwp.Img.Win2d.MosaicSkillImg.CanvasBmpView;
+using MosaicSkillController = Fmg.Uwp.Img.Win2d.MosaicSkillImg.CanvasBmpController;
 
-namespace fmg.DataModel.DataSources {
+namespace Fmg.DataModel.DataSources {
 
     /// <summary> DataSource menu items (mosaic skills) </summary>
     public class MosaicSkillDataSource : BaseDataSource<

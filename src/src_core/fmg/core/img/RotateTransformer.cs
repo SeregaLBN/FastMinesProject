@@ -1,6 +1,6 @@
 using System;
 
-namespace fmg.core.img {
+namespace Fmg.Core.Img {
 
     /// <summary> Transforming of rotate angle </summary>
     public class RotateTransformer : IModelTransformer {

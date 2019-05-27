@@ -1,7 +1,7 @@
 using System;
-using fmg.common;
+using Fmg.Common;
 
-namespace fmg.core.img {
+namespace Fmg.Core.Img {
 
     /// <summary> Transforming of background color (rotation of background color) </summary>
     public class PolarLightBkTransformer : IModelTransformer {

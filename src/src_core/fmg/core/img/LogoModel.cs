@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using fmg.common;
-using fmg.common.geom;
+using Fmg.Common;
+using Fmg.Common.Geom;
 
-namespace fmg.core.img {
+namespace Fmg.Core.Img {
 
     /// <summary> MVC: model for FastMines logo image </summary>
     public class LogoModel : AnimatedImageModel {

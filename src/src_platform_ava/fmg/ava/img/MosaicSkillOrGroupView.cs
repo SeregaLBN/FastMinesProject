@@ -5,14 +5,14 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Rendering;
-using fmg.common.geom;
-using fmg.core.img;
-using fmg.core.types;
-using fmg.ava.utils;
+using Fmg.Common.Geom;
+using Fmg.Core.Img;
+using Fmg.Core.Types;
+using Fmg.Ava.Utils;
 
-namespace fmg.ava.img {
+namespace Fmg.Ava.Img {
 
-    /// <summary> MVC: view. Abstract Avalonia representable <see cref="fmg.core.types.ESkillLevel"/> or <see cref="fmg.core.types.EMosaicGroup"/> as image </summary>
+    /// <summary> MVC: view. Abstract Avalonia representable <see cref="Fmg.Core.Types.ESkillLevel"/> or <see cref="Fmg.Core.Types.EMosaicGroup"/> as image </summary>
     /// <typeparam name="TImage">platform specific view/image/picture or other display context/canvas/window/panel</typeparam>
     /// <typeparam name="AnimatedImageModel"><see cref="MosaicsSkillModel"/> or <see cref="MosaicsGroupModel"/></typeparam>
     public abstract class MosaicSkillOrGroupView<TImage, TImageModel>
@@ -26,7 +26,7 @@ namespace fmg.ava.img {
         { }
 
         /// <summary> get paint information of drawing basic image model </summary>
-        protected abstract IEnumerable<Tuple<fmg.common.Color, IEnumerable<PointDouble>>> Coords { get; }
+        protected abstract IEnumerable<Tuple<Fmg.Common.Color, IEnumerable<PointDouble>>> Coords { get; }
 
         protected void DrawBody(DrawingContext dc) {
             var model = Model;

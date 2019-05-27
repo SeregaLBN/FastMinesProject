@@ -2,14 +2,14 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using Windows.UI.Xaml.Media.Imaging;
-using fmg.common;
-using fmg.common.geom;
-using fmg.core.types;
-using fmg.core.mosaic;
-using fmg.core.mosaic.cells;
-using fmg.uwp.utils;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Core.Types;
+using Fmg.Core.Mosaic;
+using Fmg.Core.Mosaic.Cells;
+using Fmg.Uwp.Utils;
 
-namespace fmg.uwp.mosaic.wbmp {
+namespace Fmg.Uwp.Mosaic.Wbmp {
 
     /// <summary> MVC: view. Abstract UWP over WriteableBitmap implementation </summary>
     /// <typeparam name="TMosaicModel">mosaic data model</typeparam>

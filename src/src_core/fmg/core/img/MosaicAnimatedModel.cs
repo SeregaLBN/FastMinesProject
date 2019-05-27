@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using fmg.common;
-using fmg.common.geom;
-using fmg.common.geom.util;
-using fmg.core.mosaic;
-using fmg.core.mosaic.cells;
-using fmg.core.types;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Common.Geom.Util;
+using Fmg.Core.Mosaic;
+using Fmg.Core.Mosaic.Cells;
+using Fmg.Core.Types;
 
-namespace fmg.core.img {
+namespace Fmg.Core.Img {
 
     /// <summary> Representable <see cref="EMosaic"/> as animated image </summary>
     public class MosaicAnimatedModel<TImageInner>

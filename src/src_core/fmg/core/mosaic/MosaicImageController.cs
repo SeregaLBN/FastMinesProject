@@ -1,8 +1,8 @@
 using System;
-using fmg.common;
-using fmg.core.img;
+using Fmg.Common;
+using Fmg.Core.Img;
 
-namespace fmg.core.mosaic {
+namespace Fmg.Core.Mosaic {
 
     /// <summary> MVC: mosaic image controller. Base implementation </summary>
     public abstract class MosaicImageController<TImage, TMosaicView>

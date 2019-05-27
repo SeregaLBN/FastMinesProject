@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 
-namespace fmg.common.notifier {
+namespace Fmg.Common.Notifier {
 
     public abstract class PropertyChangeExecutorTest {
 

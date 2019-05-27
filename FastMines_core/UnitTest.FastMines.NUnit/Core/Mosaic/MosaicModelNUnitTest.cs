@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using NUnit.Framework;
-using fmg.common.notifier;
+using Fmg.Common.Notifier;
 
-namespace fmg.core.mosaic {
+namespace Fmg.Core.Mosaic {
 
     public class MosaicModelNUnitTest : MosaicModelTest {
 

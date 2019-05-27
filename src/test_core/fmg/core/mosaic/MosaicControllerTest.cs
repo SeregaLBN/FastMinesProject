@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Linq;
-using fmg.common;
-using fmg.common.geom;
-using fmg.common.notifier;
-using fmg.core.types;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Common.Notifier;
+using Fmg.Core.Types;
 using DummyImage = System.Object;
-using MosaicTestModel = fmg.core.mosaic.MosaicDrawModel<object>;
+using MosaicTestModel = Fmg.Core.Mosaic.MosaicDrawModel<object>;
 
-namespace fmg.core.mosaic {
+namespace Fmg.Core.Mosaic {
 
     class MosaicTestController : MosaicController<DummyImage, DummyImage, MosaicTestView, MosaicTestModel> {
         internal MosaicTestController() : base(new MosaicTestView()) { }

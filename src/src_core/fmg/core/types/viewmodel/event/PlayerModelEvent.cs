@@ -1,4 +1,4 @@
-namespace fmg.core.types.viewmodel.Event {
+namespace Fmg.Core.Types.Viewmodel.Event {
 
     public delegate void PlayerModelChangedHandler(object sender, PlayerModelEventArgs e);
 

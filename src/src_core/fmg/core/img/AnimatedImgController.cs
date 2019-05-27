@@ -1,6 +1,6 @@
 using System;
 
-namespace fmg.core.img {
+namespace Fmg.Core.Img {
 
     /// <summary> MVC controller. Base animation controller </summary>
     /// <typeparam name="TImage">platform specific view/image/picture or other display context/canvas/window/panel</typeparam>

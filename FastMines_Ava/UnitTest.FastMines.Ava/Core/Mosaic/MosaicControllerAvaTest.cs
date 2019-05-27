@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
-using fmg.ava.utils;
+using Fmg.Ava.Utils;
 
-namespace fmg.core.mosaic {
+namespace Fmg.Core.Mosaic {
 
     internal class DoubleComparer : IEqualityComparer<double> {
         private readonly double _delta;

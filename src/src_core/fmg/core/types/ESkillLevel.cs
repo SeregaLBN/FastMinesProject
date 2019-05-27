@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using fmg.common.geom;
-using fmg.core.mosaic;
-using fmg.core.mosaic.cells;
+using Fmg.Common.Geom;
+using Fmg.Core.Mosaic;
+using Fmg.Core.Mosaic.Cells;
 
-namespace fmg.core.types {
+namespace Fmg.Core.Types {
 
     public enum ESkillLevel {
         eBeginner,

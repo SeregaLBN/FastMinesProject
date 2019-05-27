@@ -2,7 +2,7 @@
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 
-namespace fmg.common.Converters {
+namespace Fmg.Common.Converters {
 
     /// <summary>  Value converter that translates true to <see cref="Visibility.Visible"/> and false to <see cref="Visibility.Collapsed"/> </summary>
     public sealed class BooleanToVisibilityConverter : IValueConverter {

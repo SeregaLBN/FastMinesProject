@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI.Core;
 
-namespace fmg.uwp.utils {
+namespace Fmg.Uwp.Utils {
 
     public static class AsyncRunner {
 

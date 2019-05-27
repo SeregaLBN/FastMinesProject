@@ -5,9 +5,9 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.Graphics.Imaging;
-using fmg.core.types;
+using Fmg.Core.Types;
 
-namespace fmg.uwp.utils.wbmp {
+namespace Fmg.Uwp.Utils.Wbmp {
 
     /// <summary> Мультимедиа ресурсы программы </summary>
     public static class Resources {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace fmg.common {
+namespace Fmg.Common {
 
     public class Command : ICommand {
         public event EventHandler CanExecuteChanged;

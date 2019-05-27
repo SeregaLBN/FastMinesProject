@@ -2,11 +2,11 @@ using System;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
-using fmg.common.ui;
-using fmg.core.mosaic;
-using fmg.uwp.img;
+using Fmg.Common.UI;
+using Fmg.Core.Mosaic;
+using Fmg.Uwp.Img;
 
-namespace fmg.uwp.utils {
+namespace Fmg.Uwp.Utils {
 
     public static class ProjSettings {
 
@@ -35,7 +35,7 @@ namespace fmg.uwp.utils {
                         clr = uiSettings.UIElementColor(magic + UIElementType.ButtonFace);
                         //clr = uiSettings.UIElementColor(magic + UIElementType.Window);
                     } catch (Exception) {
-                        clr = fmg.common.Color.Gray.ToWinColor(); // wtf??
+                        clr = Fmg.Common.Color.Gray.ToWinColor(); // wtf??
                     }
                 }
                 MosaicDrawModelConst.DefaultBkColor = clr.ToFmColor();

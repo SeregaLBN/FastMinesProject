@@ -1,7 +1,7 @@
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
-namespace fmg.uwp.mosaic.xaml {
+namespace Fmg.Uwp.Mosaic.Xaml {
 
     /// <summary> MVC: controller. Xaml shapes implementation </summary>
     public class MosaicXamlController : MosaicFrameworkElementController<Panel, ImageSource, MosaicXamlView> {

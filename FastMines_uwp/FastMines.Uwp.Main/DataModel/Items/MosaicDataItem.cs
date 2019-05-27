@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel;
 using Microsoft.Graphics.Canvas;
-using fmg.common.geom;
-using fmg.core.types;
-using fmg.core.img;
-using MosaicModel      = fmg.core.img.MosaicAnimatedModel<fmg.common.Nothing>;
-using MosaicView       = fmg.uwp.img.win2d.MosaicImg.CanvasBmpView;
-using MosaicController = fmg.uwp.img.win2d.MosaicImg.CanvasBmpController;
+using Fmg.Common.Geom;
+using Fmg.Core.Types;
+using Fmg.Core.Img;
+using MosaicModel      = Fmg.Core.Img.MosaicAnimatedModel<Fmg.Common.Nothing>;
+using MosaicView       = Fmg.Uwp.Img.Win2d.MosaicImg.CanvasBmpView;
+using MosaicController = Fmg.Uwp.Img.Win2d.MosaicImg.CanvasBmpController;
 
-namespace fmg.DataModel.Items {
+namespace Fmg.DataModel.Items {
 
     /// <summary> Mosaic item for data model </summary>
     public class MosaicDataItem : BaseDataItem<EMosaic, MosaicModel, MosaicView, MosaicController> {

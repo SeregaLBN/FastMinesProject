@@ -1,7 +1,7 @@
-using fmg.core.mosaic;
-using fmg.core.types;
+using Fmg.Core.Mosaic;
+using Fmg.Core.Types;
 
-namespace fmg.core.img {
+namespace Fmg.Core.Img {
 
     public enum EMosaicRotateMode {
         /// <summary> rotate full matrix (all cells) </summary>

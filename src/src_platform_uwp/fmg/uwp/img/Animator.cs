@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using fmg.common.ui;
-using fmg.core.img;
-using fmg.uwp.utils;
+using Fmg.Common.UI;
+using Fmg.Core.Img;
+using Fmg.Uwp.Utils;
 
-namespace fmg.uwp.img {
+namespace Fmg.Uwp.Img {
 
     public class Animator : IAnimator, IDisposable {
 

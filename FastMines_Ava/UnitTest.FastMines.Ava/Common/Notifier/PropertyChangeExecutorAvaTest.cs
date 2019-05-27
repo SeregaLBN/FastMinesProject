@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Xunit;
-using fmg.ava.utils;
+using Fmg.Ava.Utils;
 
-namespace fmg.common.notifier {
+namespace Fmg.Common.Notifier {
 
     public class PropertyChangeExecutorAvaTest : PropertyChangeExecutorTest {
 

@@ -21,10 +21,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 using System;
 using System.Collections.Generic;
-using fmg.common;
-using fmg.common.geom;
+using Fmg.Common;
+using Fmg.Common.Geom;
 
-namespace fmg.core.mosaic.cells {
+namespace Fmg.Core.Mosaic.Cells {
 
     /// <summary> Квадрат. Вариант 1 </summary>
     public class Square1 : BaseCell {

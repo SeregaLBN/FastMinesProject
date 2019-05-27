@@ -14,46 +14,46 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using Windows.Foundation.Metadata;
 using Windows.Phone.UI.Input;
-using fmg.common;
-using fmg.common.geom;
-using fmg.common.notifier;
-using fmg.core.img;
-using fmg.core.types;
-using fmg.core.mosaic;
-using fmg.uwp.img;
-using fmg.uwp.utils;
-using fmg.uwp.mosaic.xaml;
-using Win2dMosaicCanvasSwapController = fmg.uwp.mosaic.win2d.MosaicCanvasSwapChainPanelController;
-using Win2dMosaicCanvasVirtController = fmg.uwp.mosaic.win2d.MosaicCanvasVirtualControlController;
-using Win2dMosaicImg                  = fmg.uwp.img.win2d.MosaicImg;
-using Win2dMosaicSkillImg             = fmg.uwp.img.win2d.MosaicSkillImg;
-using Win2dMosaicGroupImg             = fmg.uwp.img.win2d.MosaicGroupImg;
-using Win2dLogo                       = fmg.uwp.img.win2d.Logo;
-using Win2dMine                       = fmg.uwp.img.win2d.Mine;
-using Win2dSmile                      = fmg.uwp.img.win2d.Smile;
-using Win2dFlag                       = fmg.uwp.img.win2d.Flag;
-using WBmpMosaicImageController = fmg.uwp.mosaic.wbmp.MosaicImageController;
-using WBmpMosaicImg             = fmg.uwp.img.wbmp.MosaicImg     .WBmpController;
-using WBmpMosaicSkillImg        = fmg.uwp.img.wbmp.MosaicSkillImg.WBmpController;
-using WBmpMosaicGroupImg        = fmg.uwp.img.wbmp.MosaicGroupImg.WBmpController;
-using WBmpLogo                  = fmg.uwp.img.wbmp.Logo          .WBmpController;
-using WBmpMine                  = fmg.uwp.img.wbmp.Mine          .WBmpController;
-using WBmpFlag                  = fmg.uwp.img.wbmp.Flag          .WBmpController;
-using WBmpSmile                 = fmg.uwp.img.wbmp.Smile         .WBmpController;
-using IMosaicController = fmg.core.mosaic.IMosaicController<
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Common.Notifier;
+using Fmg.Core.Img;
+using Fmg.Core.Types;
+using Fmg.Core.Mosaic;
+using Fmg.Uwp.Img;
+using Fmg.Uwp.Utils;
+using Fmg.Uwp.Mosaic.Xaml;
+using Win2dMosaicCanvasSwapController = Fmg.Uwp.Mosaic.Win2d.MosaicCanvasSwapChainPanelController;
+using Win2dMosaicCanvasVirtController = Fmg.Uwp.Mosaic.Win2d.MosaicCanvasVirtualControlController;
+using Win2dMosaicImg                  = Fmg.Uwp.Img.Win2d.MosaicImg;
+using Win2dMosaicSkillImg             = Fmg.Uwp.Img.Win2d.MosaicSkillImg;
+using Win2dMosaicGroupImg             = Fmg.Uwp.Img.Win2d.MosaicGroupImg;
+using Win2dLogo                       = Fmg.Uwp.Img.Win2d.Logo;
+using Win2dMine                       = Fmg.Uwp.Img.Win2d.Mine;
+using Win2dSmile                      = Fmg.Uwp.Img.Win2d.Smile;
+using Win2dFlag                       = Fmg.Uwp.Img.Win2d.Flag;
+using WBmpMosaicImageController = Fmg.Uwp.Mosaic.Wbmp.MosaicImageController;
+using WBmpMosaicImg             = Fmg.Uwp.Img.Wbmp.MosaicImg     .WBmpController;
+using WBmpMosaicSkillImg        = Fmg.Uwp.Img.Wbmp.MosaicSkillImg.WBmpController;
+using WBmpMosaicGroupImg        = Fmg.Uwp.Img.Wbmp.MosaicGroupImg.WBmpController;
+using WBmpLogo                  = Fmg.Uwp.Img.Wbmp.Logo          .WBmpController;
+using WBmpMine                  = Fmg.Uwp.Img.Wbmp.Mine          .WBmpController;
+using WBmpFlag                  = Fmg.Uwp.Img.Wbmp.Flag          .WBmpController;
+using WBmpSmile                 = Fmg.Uwp.Img.Wbmp.Smile         .WBmpController;
+using IMosaicController = Fmg.Core.Mosaic.IMosaicController<
         Windows.UI.Xaml.FrameworkElement,
         object,
-        fmg.core.mosaic.IMosaicView<
+        Fmg.Core.Mosaic.IMosaicView<
                 Windows.UI.Xaml.FrameworkElement,
                 object,
-                fmg.core.mosaic.IMosaicDrawModel<object>>,
-        fmg.core.mosaic.IMosaicDrawModel<object>>;
-using IImageController = fmg.core.img.IImageController<
+                Fmg.Core.Mosaic.IMosaicDrawModel<object>>,
+        Fmg.Core.Mosaic.IMosaicDrawModel<object>>;
+using IImageController = Fmg.Core.Img.IImageController<
         object,
-        fmg.core.img.IImageView<
+        Fmg.Core.Img.IImageView<
                 object,
-                fmg.core.img.IImageModel>,
-        fmg.core.img.IImageModel>;
+                Fmg.Core.Img.IImageModel>,
+        Fmg.Core.Img.IImageModel>;
 
 namespace Test.FastMines.Uwp.Images {
 
@@ -109,7 +109,7 @@ namespace Test.FastMines.Uwp.Images {
         private void TestWin2dMosaicsImg(ICanvasResourceCreator resourceCreator) {
             TestApp(() =>
                     //new List<Win2dMosaicImg.ControllerBitmap>() { new Win2dMosaicImg.ControllerBitmap(resourceCreator) { MosaicType = EMosaic.eMosaicSquare1 } }
-                    EMosaicEx.GetValues().Select(e => 
+                    EMosaicEx.GetValues().Select(e =>
                         ((e.Ordinal() % 2) == 0)
                             ? (IImageController)new Win2dMosaicImg.CanvasBmpController(resourceCreator) { MosaicType = e }
                             :                   new Win2dMosaicImg.CanvasImgSrcController(resourceCreator) { MosaicType = e })
@@ -121,7 +121,7 @@ namespace Test.FastMines.Uwp.Images {
             var vals = (SmileModel.EFaceType[])Enum.GetValues(typeof(SmileModel.EFaceType));
             int i = 0;
             TestApp(() =>
-                vals.Select(e => 
+                vals.Select(e =>
                     ((++i % 2) == 0)
                         ? (IImageController)new Win2dSmile.CanvasBmpController(e, resourceCreator)
                         :                   new Win2dSmile.CanvasImgSrcController(e, resourceCreator))

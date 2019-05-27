@@ -1,9 +1,9 @@
 using System;
 using System.ComponentModel;
-using fmg.common.geom;
-using fmg.common.notifier;
+using Fmg.Common.Geom;
+using Fmg.Common.Notifier;
 
-namespace fmg.core.img {
+namespace Fmg.Core.Img {
 
     /// <summary> Model of the flag image </summary>
     public class FlagModel : IImageModel {

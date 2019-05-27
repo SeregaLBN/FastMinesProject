@@ -18,9 +18,9 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using fmg.common;
-using fmg.uwp.utils;
-using fmg.uwp.mosaic.wbmp;
+using Fmg.Common;
+using Fmg.Uwp.Utils;
+using Fmg.Uwp.Mosaic.Wbmp;
 
 namespace Test.FastMines.Uwp.Images {
 

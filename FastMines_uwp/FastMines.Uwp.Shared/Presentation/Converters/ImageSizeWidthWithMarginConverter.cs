@@ -1,8 +1,8 @@
 ﻿using System;
 using Windows.UI.Xaml.Data;
-using fmg.common.geom;
+using Fmg.Common.Geom;
 
-namespace fmg.common.Converters {
+namespace Fmg.Common.Converters {
 
     /// <summary> Add to image size.Width margined 1 pixel left/top  and 1 pixel right/bottom </summary>
     public class ImageSizeWidthWithMarginConverter : IValueConverter {

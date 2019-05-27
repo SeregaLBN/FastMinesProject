@@ -6,30 +6,30 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 using Microsoft.Graphics.Canvas;
-using fmg.common;
-using fmg.common.geom;
-using fmg.core.types;
-using fmg.core.mosaic;
-using fmg.uwp.utils;
-using MosaicVirtController = fmg.uwp.mosaic.win2d.MosaicCanvasVirtualControlController;
-using MosaicSwapController = fmg.uwp.mosaic.win2d.MosaicCanvasSwapChainPanelController;
-using IImageController = fmg.core.img.IImageController<
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Core.Types;
+using Fmg.Core.Mosaic;
+using Fmg.Uwp.Utils;
+using MosaicVirtController = Fmg.Uwp.Mosaic.Win2d.MosaicCanvasVirtualControlController;
+using MosaicSwapController = Fmg.Uwp.Mosaic.Win2d.MosaicCanvasSwapChainPanelController;
+using IImageController = Fmg.Core.Img.IImageController<
         Windows.UI.Xaml.FrameworkElement,
-        fmg.core.mosaic.IMosaicView<
+        Fmg.Core.Mosaic.IMosaicView<
                 Windows.UI.Xaml.FrameworkElement,
                 Microsoft.Graphics.Canvas.CanvasBitmap,
-                fmg.core.mosaic.MosaicDrawModel<Microsoft.Graphics.Canvas.CanvasBitmap>>,
-        fmg.core.mosaic.MosaicDrawModel<Microsoft.Graphics.Canvas.CanvasBitmap>>;
-using IMosaicController = fmg.core.mosaic.IMosaicController<
+                Fmg.Core.Mosaic.MosaicDrawModel<Microsoft.Graphics.Canvas.CanvasBitmap>>,
+        Fmg.Core.Mosaic.MosaicDrawModel<Microsoft.Graphics.Canvas.CanvasBitmap>>;
+using IMosaicController = Fmg.Core.Mosaic.IMosaicController<
         Windows.UI.Xaml.FrameworkElement,
         Microsoft.Graphics.Canvas.CanvasBitmap,
-        fmg.core.mosaic.IMosaicView<
+        Fmg.Core.Mosaic.IMosaicView<
                 Windows.UI.Xaml.FrameworkElement,
                 Microsoft.Graphics.Canvas.CanvasBitmap,
-                fmg.core.mosaic.MosaicDrawModel<Microsoft.Graphics.Canvas.CanvasBitmap>>,
-        fmg.core.mosaic.MosaicDrawModel<Microsoft.Graphics.Canvas.CanvasBitmap>>;
+                Fmg.Core.Mosaic.MosaicDrawModel<Microsoft.Graphics.Canvas.CanvasBitmap>>,
+        Fmg.Core.Mosaic.MosaicDrawModel<Microsoft.Graphics.Canvas.CanvasBitmap>>;
 
-namespace fmg {
+namespace Fmg {
 
     public sealed partial class MosaicPage : Page {
 

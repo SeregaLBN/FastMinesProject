@@ -1,4 +1,4 @@
-﻿namespace fmg.common {
+﻿namespace Fmg.Common {
 
     //[Obsolete]
     public interface ISerializable {

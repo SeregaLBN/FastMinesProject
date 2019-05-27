@@ -1,8 +1,8 @@
 using System;
 using System.ComponentModel;
-using fmg.common.geom;
+using Fmg.Common.Geom;
 
-namespace fmg.core.img {
+namespace Fmg.Core.Img {
 
     /// <summary> Image MVC: model.
     /// Model of image data/properties/characteristics </summary>

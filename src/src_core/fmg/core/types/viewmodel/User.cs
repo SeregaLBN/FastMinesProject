@@ -1,8 +1,8 @@
 using System;
 using System.IO;
-using fmg.common;
+using Fmg.Common;
 
-namespace fmg.core.types.viewmodel {
+namespace Fmg.Core.Types.Viewmodel {
 
     public class User : IExternalizable {
 

@@ -1,25 +1,25 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using fmg.common;
-using fmg.common.geom;
-using fmg.core.mosaic;
-using IImageController = fmg.core.img.IImageController<
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Core.Mosaic;
+using IImageController = Fmg.Core.Img.IImageController<
         object,
-        fmg.core.img.IImageView<
+        Fmg.Core.Img.IImageView<
                 object,
-                fmg.core.img.IImageModel>,
-        fmg.core.img.IImageModel>;
-using IAnimatedController = fmg.core.img.IAnimatedController<
+                Fmg.Core.Img.IImageModel>,
+        Fmg.Core.Img.IImageModel>;
+using IAnimatedController = Fmg.Core.Img.IAnimatedController<
         object,
-        fmg.core.img.IImageView<
+        Fmg.Core.Img.IImageView<
                 object,
-                fmg.core.img.IAnimatedModel>,
-        fmg.core.img.IAnimatedModel>;
-using IMosaicDrawModel     = fmg.core.mosaic.IMosaicDrawModel<object>;
-using IMosaicAnimatedModel = fmg.core.img.IMosaicAnimatedModel<object>;
+                Fmg.Core.Img.IAnimatedModel>,
+        Fmg.Core.Img.IAnimatedModel>;
+using IMosaicDrawModel     = Fmg.Core.Mosaic.IMosaicDrawModel<object>;
+using IMosaicAnimatedModel = Fmg.Core.Img.IMosaicAnimatedModel<object>;
 
-namespace fmg.core.img {
+namespace Fmg.Core.Img {
 
     public class TestDrawing {
 

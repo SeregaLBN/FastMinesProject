@@ -1,4 +1,4 @@
-namespace fmg.core.img {
+namespace Fmg.Core.Img {
 
     /// <summary> MVC controlle of logo image </summary>
     /// <typeparam name="TImage">platform specific view/image/picture or other display context/canvas/window/panel</typeparam>

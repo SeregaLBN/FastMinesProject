@@ -1,8 +1,8 @@
 using System;
 using System.ComponentModel;
-using fmg.common.geom;
+using Fmg.Common.Geom;
 
-namespace fmg.core.img {
+namespace Fmg.Core.Img {
 
     /// <summary> Image MVC: view (displayed view) </summary>
     /// <typeparam name="TImage">platform specific view/image/picture or other display context/canvas/window/panel</typeparam>

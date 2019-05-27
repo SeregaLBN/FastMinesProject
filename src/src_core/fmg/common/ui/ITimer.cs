@@ -1,6 +1,6 @@
 using System;
 
-namespace fmg.common.ui {
+namespace Fmg.Common.UI {
 
     /// <summary> Timer interface. Pulsates in the UI thread </summary>
     public interface ITimer : IDisposable {

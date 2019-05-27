@@ -1,9 +1,9 @@
-using fmg.common;
-using fmg.common.geom;
-using fmg.core.img;
-using fmg.core.types.draw;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Core.Img;
+using Fmg.Core.Types.Draw;
 
-namespace fmg.core.mosaic {
+namespace Fmg.Core.Mosaic {
 
     /// <summary> MVC: draw model of mosaic field. </summary>
     /// <typeparam name="TImageInner">platform specific view/image/picture or other display context/canvas/window/panel</typeparam>

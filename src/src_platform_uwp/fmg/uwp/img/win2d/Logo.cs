@@ -6,14 +6,14 @@ using Windows.Graphics.Display;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using Microsoft.Graphics.Canvas.Geometry;
-using fmg.common;
-using fmg.common.geom;
-using fmg.core.img;
-using fmg.uwp.utils;
-using fmg.uwp.utils.win2d;
-using fmg.uwp.mosaic.win2d;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Core.Img;
+using Fmg.Uwp.Utils;
+using Fmg.Uwp.Utils.Win2d;
+using Fmg.Uwp.Mosaic.Win2d;
 
-namespace fmg.uwp.img.win2d {
+namespace Fmg.Uwp.Img.Win2d {
 
     /// <summary> Main logo image. Win2D implementation </summary>
     public static class Logo {
@@ -67,7 +67,7 @@ namespace fmg.uwp.img.win2d {
                             var p2 = oct[(i + 5) % 8];
                             var p = new PointDouble((p1.X + p2.X) / 2, (p1.Y + p2.Y) / 2); // середина линии oct[i]-oct[(i+5)%8]. По факту - пересечение линий rays[i]-inn[i] и oct[i]-oct[(i+5)%8]
 
-                            Windows.UI.Color clr;// = new Color(255,255,255,0); //  fmg.common.Color.Transparent.ToWinColor();
+                            Windows.UI.Color clr;// = new Color(255,255,255,0); //  Fmg.Common.Color.Transparent.ToWinColor();
                             if (true) {
                                 HSV c1 = hsvPalette[(i + 1) % 8];
                                 HSV c2 = hsvPalette[(i + 6) % 8];

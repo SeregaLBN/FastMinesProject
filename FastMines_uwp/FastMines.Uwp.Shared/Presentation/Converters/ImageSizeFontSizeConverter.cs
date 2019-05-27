@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.UI.Xaml.Data;
 
-namespace fmg.common.Converters {
+namespace Fmg.Common.Converters {
 
     /// <summary> text size inscribed to image </summary>
     public class ImageSizeFontSizeConverter : IValueConverter {

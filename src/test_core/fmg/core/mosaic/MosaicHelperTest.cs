@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
-using fmg.common;
-using fmg.common.geom;
-using fmg.common.ui;
-using fmg.common.notifier;
-using fmg.core.types;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Common.UI;
+using Fmg.Common.Notifier;
+using Fmg.Core.Types;
 
-namespace fmg.core.mosaic {
+namespace Fmg.Core.Mosaic {
 
     public abstract class MosaicHelperTest {
 

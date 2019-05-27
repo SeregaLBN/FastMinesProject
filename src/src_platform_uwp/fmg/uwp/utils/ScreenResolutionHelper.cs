@@ -2,9 +2,9 @@ using System;
 using System.Linq;
 using System.Reflection;
 using Windows.Graphics.Display;
-using fmg.common.geom;
+using Fmg.Common.Geom;
 
-namespace fmg.uwp.utils {
+namespace Fmg.Uwp.Utils {
 
     public static class ScreenResolutionHelper {
 

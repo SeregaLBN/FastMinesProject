@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace fmg.common.notifier {
+namespace Fmg.Common.Notifier {
 
     public abstract class NotifyPropertyChangedTest {
 

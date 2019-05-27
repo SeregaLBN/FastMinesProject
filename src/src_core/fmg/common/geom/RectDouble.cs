@@ -1,6 +1,6 @@
 using System;
 
-namespace fmg.common.geom {
+namespace Fmg.Common.Geom {
 
     public struct RectDouble {
         public double X, Y, Width, Height;

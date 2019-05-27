@@ -10,7 +10,7 @@ using System.Text;
 using System.Security.Cryptography;
 #endif
 
-namespace fmg.common.crypt {
+namespace Fmg.Common.Crypt {
 
     public interface I3DES {
         // TODO

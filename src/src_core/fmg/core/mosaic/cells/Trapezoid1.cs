@@ -21,9 +21,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 using System;
 using System.Collections.Generic;
-using fmg.common.geom;
+using Fmg.Common.Geom;
 
-namespace fmg.core.mosaic.cells {
+namespace Fmg.Core.Mosaic.Cells {
 
     /// <summary> Trapezoid1 - 3 трапеции, составляющие равносторонний треугольник </summary>
     public class Trapezoid1 : BaseCell {

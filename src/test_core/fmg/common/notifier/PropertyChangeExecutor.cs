@@ -5,9 +5,9 @@ using System.ComponentModel;
 using System.Reactive.Subjects;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using fmg.common.ui;
+using Fmg.Common.UI;
 
-namespace fmg.common.notifier {
+namespace Fmg.Common.Notifier {
 
     /// <summary> Simple UnitTest wrapper for testing {@link INotifyPropertyChanged} objects </summary>
     /// <typeparam name="T">the tested object</typeparam>

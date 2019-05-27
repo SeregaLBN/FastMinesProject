@@ -21,9 +21,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 using System;
 using System.Collections.Generic;
-using fmg.common.geom;
+using Fmg.Common.Geom;
 
-namespace fmg.core.mosaic.cells {
+namespace Fmg.Core.Mosaic.Cells {
 
     /// <summary> Пятиугольник. Тип №2 и №4 - равносторонний </summary>
     public class PentagonT24 : BaseCell {

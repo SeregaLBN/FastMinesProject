@@ -8,9 +8,9 @@ using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
-using fmg.common;
+using Fmg.Common;
 
-namespace fmg.uwp.utils.wbmp {
+namespace Fmg.Uwp.Utils.Wbmp {
 
     /// <summary>
     /// вспомогательный класс для преобразований картинок

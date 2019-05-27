@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Windows.UI.Xaml.Media.Imaging;
-using fmg.common;
-using fmg.common.geom;
-using fmg.core.img;
-using fmg.uwp.utils;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Core.Img;
+using Fmg.Uwp.Utils;
 
-namespace fmg.uwp.img.wbmp {
+namespace Fmg.Uwp.Img.Wbmp {
 
-    /// <summary> MVC: view. Abstract UWP representable <see cref="fmg.core.types.ESkillLevel"/> or <see cref="fmg.core.types.EMosaicGroup"/> as image.
+    /// <summary> MVC: view. Abstract UWP representable <see cref="Fmg.Core.Types.ESkillLevel"/> or <see cref="Fmg.Core.Types.EMosaicGroup"/> as image.
     /// WriteableBitmap impl
     /// </summary>
     /// <typeparam name="TImageModel"><see cref="MosaicsSkillModel"/> or <see cref="MosaicsGroupModel"/></typeparam>

@@ -1,15 +1,15 @@
 ﻿using System;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
-using fmg.uwp.utils;
+using Fmg.Uwp.Utils;
 
-namespace fmg.common.Converters {
+namespace Fmg.Common.Converters {
 
-    /// <summary> Convert 'fmg.common.Color' to 'Windows.UI.Xaml.Media.Brush' </summary>
+    /// <summary> Convert 'Fmg.Common.Color' to 'Windows.UI.Xaml.Media.Brush' </summary>
     public sealed class FmColorToBrushConverter : IValueConverter {
 
         public object Convert(object value, Type targetType, object parameter, string language) {
-            return new SolidColorBrush(((fmg.common.Color) value).ToWinColor());
+            return new SolidColorBrush(((Fmg.Common.Color) value).ToWinColor());
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language) {

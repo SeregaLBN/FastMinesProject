@@ -1,11 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
 using Microsoft.Graphics.Canvas;
-using fmg.common.notifier;
-using fmg.common.geom;
-using fmg.core.img;
+using Fmg.Common.Notifier;
+using Fmg.Common.Geom;
+using Fmg.Core.Img;
 
-namespace fmg.DataModel.Items {
+namespace Fmg.DataModel.Items {
 
     /// <summary> Base item class for <see cref="MosaicDataItem"/> and <see cref="MosaicGroupDataItem"/> and <see cref="MosaicSkillDataItem"/> </summary>
     [Windows.Foundation.Metadata.WebHostHidden]

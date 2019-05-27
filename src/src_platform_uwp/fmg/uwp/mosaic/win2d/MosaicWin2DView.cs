@@ -6,14 +6,14 @@ using Windows.UI.Xaml;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Graphics.Canvas.Geometry;
-using fmg.common;
-using fmg.common.geom;
-using fmg.core.types;
-using fmg.core.mosaic;
-using fmg.core.mosaic.cells;
-using fmg.uwp.utils;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Core.Types;
+using Fmg.Core.Mosaic;
+using Fmg.Core.Mosaic.Cells;
+using Fmg.Uwp.Utils;
 
-namespace fmg.uwp.mosaic.win2d {
+namespace Fmg.Uwp.Mosaic.Win2d {
 
     /// <summary> Class for drawing cell into (ower <see cref="CanvasBitmap"/>).
     /// MVC: view. Abstract UWP Win2D implementation </summary>

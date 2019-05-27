@@ -2,7 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Diagnostics;
 using Avalonia.Markup.Xaml;
-using fmg.ava.utils;
+using Fmg.Ava.Utils;
 
 namespace Test.FastMines.Ava.Images {
 

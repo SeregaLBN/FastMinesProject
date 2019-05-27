@@ -1,8 +1,8 @@
 ﻿using System;
 using Avalonia.Threading;
-using fmg.common.ui;
+using Fmg.Common.UI;
 
-namespace fmg.ava.utils {
+namespace Fmg.Ava.Utils {
 
     public class Timer : ITimer {
 

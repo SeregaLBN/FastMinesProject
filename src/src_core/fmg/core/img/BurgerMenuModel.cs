@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using fmg.common;
-using fmg.common.geom;
-using fmg.common.notifier;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Common.Notifier;
 
-namespace fmg.core.img {
+namespace Fmg.Core.Img {
 
     /// <summary> MVC: model of representable menu as horizontal or vertical lines </summary>
     public sealed class BurgerMenuModel : IAnimatedModel {

@@ -1,7 +1,7 @@
 using System;
-using fmg.core.img;
+using Fmg.Core.Img;
 
-namespace fmg.common.ui {
+namespace Fmg.Common.UI {
 
     /// <summary> Factory of UI timers/animators/deferred invokers </summary>
     public static class UiInvoker {

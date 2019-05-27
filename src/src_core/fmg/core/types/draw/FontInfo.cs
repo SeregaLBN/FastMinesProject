@@ -1,9 +1,9 @@
 using System;
 using System.ComponentModel;
-using fmg.common.geom;
-using fmg.common.notifier;
+using Fmg.Common.Geom;
+using Fmg.Common.Notifier;
 
-namespace fmg.core.types.draw {
+namespace Fmg.Core.Types.Draw {
 
     public class FontInfo : INotifyPropertyChanged, IDisposable {
 

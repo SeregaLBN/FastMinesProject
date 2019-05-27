@@ -1,9 +1,9 @@
 ﻿using System;
 using Windows.Foundation.Collections;
-using fmg.common;
-using fmg.common.geom;
-using fmg.core.types;
-using fmg.core.mosaic;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Core.Types;
+using Fmg.Core.Mosaic;
 using Fmg.Uwp.App.Presentation;
 
 namespace Fmg.Uwp.App.Model {

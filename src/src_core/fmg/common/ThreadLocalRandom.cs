@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace fmg.common {
+namespace Fmg.Common {
 
     public static class ThreadLocalRandom {
 

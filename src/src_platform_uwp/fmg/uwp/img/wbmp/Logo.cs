@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using Windows.UI.Xaml.Media.Imaging;
-using fmg.common;
-using fmg.common.geom;
-using fmg.core.img;
-using fmg.uwp.utils;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Core.Img;
+using Fmg.Uwp.Utils;
 
-namespace fmg.uwp.img.wbmp {
+namespace Fmg.Uwp.Img.Wbmp {
 
     /// <summary> Main logo image UWP implementation over <see cref="WriteableBitmap"/> </summary>
     public class Logo {

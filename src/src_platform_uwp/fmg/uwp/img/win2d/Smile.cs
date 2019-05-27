@@ -7,15 +7,15 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.Geometry;
-using fmg.common;
-using fmg.common.geom;
-using fmg.core.img;
-using fmg.uwp.utils;
-using fmg.uwp.mosaic.win2d;
-using static fmg.core.img.SmileModel;
-using Color = fmg.common.Color;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Core.Img;
+using Fmg.Uwp.Utils;
+using Fmg.Uwp.Mosaic.Win2d;
+using static Fmg.Core.Img.SmileModel;
+using Color = Fmg.Common.Color;
 
-namespace fmg.uwp.img.win2d {
+namespace Fmg.Uwp.Img.Win2d {
 
     /// <summary> Smile images. Win2D implementation </summary>
     public static class Smile {

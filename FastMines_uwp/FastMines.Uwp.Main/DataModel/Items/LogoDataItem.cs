@@ -1,10 +1,10 @@
 using Microsoft.Graphics.Canvas;
-using fmg.common;
-using fmg.core.img;
-using LogoView       = fmg.uwp.img.win2d.Logo.CanvasBmpView;
-using LogoController = fmg.uwp.img.win2d.Logo.CanvasBmpController;
+using Fmg.Common;
+using Fmg.Core.Img;
+using LogoView       = Fmg.Uwp.Img.Win2d.Logo.CanvasBmpView;
+using LogoController = Fmg.Uwp.Img.Win2d.Logo.CanvasBmpController;
 
-namespace fmg.DataModel.Items {
+namespace Fmg.DataModel.Items {
 
     /// <summary> Logo as data model </summary>
     public class LogoDataItem : BaseDataItem<Nothing, LogoModel, LogoView, LogoController> {

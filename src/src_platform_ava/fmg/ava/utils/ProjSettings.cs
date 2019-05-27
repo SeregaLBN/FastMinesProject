@@ -1,8 +1,8 @@
 ﻿using Avalonia.Threading;
-using fmg.common.ui;
-using fmg.ava.img;
+using Fmg.Common.UI;
+using Fmg.Ava.Img;
 
-namespace fmg.ava.utils {
+namespace Fmg.Ava.Utils {
 
     static class ProjSettings {
 

@@ -6,9 +6,9 @@ using Windows.Graphics.Display;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using Microsoft.Graphics.Canvas.Geometry;
-using fmg.core.img;
+using Fmg.Core.Img;
 
-namespace fmg.uwp.img.win2d {
+namespace Fmg.Uwp.Img.Win2d {
 
     /// <summary> Flag image. Win2D implementation </summary>
     public static class Flag {

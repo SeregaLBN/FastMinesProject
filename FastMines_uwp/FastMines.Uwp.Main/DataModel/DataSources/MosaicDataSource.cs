@@ -3,19 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
-using fmg.common;
-using fmg.common.geom;
-using fmg.core.types;
-using fmg.core.img;
-using fmg.core.mosaic;
-using fmg.DataModel.Items;
-using MosaicModel      = fmg.core.img.MosaicAnimatedModel<fmg.common.Nothing>;
-using MosaicView       = fmg.uwp.img.win2d.MosaicImg.CanvasBmpView;
-using MosaicController = fmg.uwp.img.win2d.MosaicImg.CanvasBmpController;
-using LogoView         = fmg.uwp.img.win2d.Logo.CanvasBmpView;
-using LogoController   = fmg.uwp.img.win2d.Logo.CanvasBmpController;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Core.Types;
+using Fmg.Core.Img;
+using Fmg.Core.Mosaic;
+using Fmg.DataModel.Items;
+using MosaicModel      = Fmg.Core.Img.MosaicAnimatedModel<Fmg.Common.Nothing>;
+using MosaicView       = Fmg.Uwp.Img.Win2d.MosaicImg.CanvasBmpView;
+using MosaicController = Fmg.Uwp.Img.Win2d.MosaicImg.CanvasBmpController;
+using LogoView         = Fmg.Uwp.Img.Win2d.Logo.CanvasBmpView;
+using LogoController   = Fmg.Uwp.Img.Win2d.Logo.CanvasBmpController;
 
-namespace fmg.DataModel.DataSources {
+namespace Fmg.DataModel.DataSources {
 
     /// <summary> DataSource mosaics items </summary>
     public class MosaicDataSource : BaseDataSource<

@@ -1,9 +1,9 @@
 using System;
 using System.ComponentModel;
-using fmg.common.geom;
-using fmg.common.notifier;
+using Fmg.Common.Geom;
+using Fmg.Common.Notifier;
 
-namespace fmg.core.img {
+namespace Fmg.Core.Img {
 
     /// <summary> MVC: model. Animated image characteristics </summary>
     public sealed class AnimatedInnerModel : IAnimatedModel {

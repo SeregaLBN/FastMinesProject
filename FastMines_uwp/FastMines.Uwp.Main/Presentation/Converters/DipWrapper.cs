@@ -1,4 +1,4 @@
-﻿namespace fmg.common.Converters {
+﻿namespace Fmg.Common.Converters {
 
     public class DipWrapper {
 

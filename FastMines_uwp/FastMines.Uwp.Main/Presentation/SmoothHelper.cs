@@ -2,10 +2,10 @@
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
-using fmg.common;
-using fmg.common.geom.util;
-using fmg.core.img;
-using fmg.uwp.utils;
+using Fmg.Common;
+using Fmg.Common.Geom.util;
+using Fmg.Core.Img;
+using Fmg.Uwp.Utils;
 
 namespace FastMines.Uwp.Main.Presentation {
 

@@ -1,8 +1,8 @@
 ﻿using System;
 using Windows.UI.Xaml.Data;
-using fmg.DataModel.Items;
+using Fmg.DataModel.Items;
 
-namespace fmg.common.Converters {
+namespace Fmg.Common.Converters {
 
     public class ObjectToMosaicGroupDataItemConverter : IValueConverter {
 

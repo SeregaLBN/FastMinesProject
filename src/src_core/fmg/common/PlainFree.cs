@@ -1,6 +1,6 @@
 using System;
 
-namespace fmg.common {
+namespace Fmg.Common {
 
     /// <summary> Simple disposable </summary>
     public sealed class PlainFree : IDisposable {

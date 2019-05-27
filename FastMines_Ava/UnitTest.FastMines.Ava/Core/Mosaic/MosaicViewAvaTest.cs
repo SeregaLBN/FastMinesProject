@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Xunit;
-using fmg.ava.utils;
+using Fmg.Ava.Utils;
 
-namespace fmg.core.mosaic {
+namespace Fmg.Core.Mosaic {
 
     public class MosaicViewAvaTest : MosaicViewTest {
 

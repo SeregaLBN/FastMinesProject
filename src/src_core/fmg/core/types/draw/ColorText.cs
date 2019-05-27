@@ -1,9 +1,9 @@
-using fmg.common;
-using fmg.common.notifier;
+using Fmg.Common;
+using Fmg.Common.Notifier;
 using System;
 using System.ComponentModel;
 
-namespace fmg.core.types.draw {
+namespace Fmg.Core.Types.Draw {
 
     public class ColorText : INotifyPropertyChanged, IDisposable {
 

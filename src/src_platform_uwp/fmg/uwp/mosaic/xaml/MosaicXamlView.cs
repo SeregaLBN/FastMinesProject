@@ -6,14 +6,14 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
-using fmg.common;
-using fmg.common.geom;
-using fmg.core.types;
-using fmg.core.mosaic;
-using fmg.core.mosaic.cells;
-using fmg.uwp.utils;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Core.Types;
+using Fmg.Core.Mosaic;
+using Fmg.Core.Mosaic.Cells;
+using Fmg.Uwp.Utils;
 
-namespace fmg.uwp.mosaic.xaml {
+namespace Fmg.Uwp.Mosaic.Xaml {
 
     /// <summary> MVC: view. UWP Xaml shapes implementation </summary>
     public class MosaicXamlView : MosaicView<Panel, ImageSource, MosaicDrawModel<ImageSource>> {
@@ -122,7 +122,7 @@ namespace fmg.uwp.mosaic.xaml {
                 var image = binder.Img;
                 var poly = binder.Poly;
                 var rcInner = cell.GetRcInner(pen.Width).MoveXY(offset.Width, offset.Height);
-                
+
                 { // 2.1. paint component
                     { // 2.1.1. paint cell background
                         Color clr;

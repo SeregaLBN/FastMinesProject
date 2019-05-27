@@ -1,9 +1,9 @@
-using fmg.common.geom;
-using fmg.common.notifier;
+using Fmg.Common.Geom;
+using Fmg.Common.Notifier;
 using System;
 using System.ComponentModel;
 
-namespace fmg.core.img {
+namespace Fmg.Core.Img {
 
     /// <summary> Model of the smile/face image </summary>
     public class SmileModel : IImageModel {

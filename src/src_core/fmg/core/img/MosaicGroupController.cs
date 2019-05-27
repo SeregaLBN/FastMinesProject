@@ -1,4 +1,4 @@
-namespace fmg.core.img {
+namespace Fmg.Core.Img {
 
     /// <summary> MVC controller of <see cref="EMosaicGroup"/> image </summary>
     /// <typeparam name="TImage">platform specific view/image/picture or other display context/canvas/window/panel</typeparam>

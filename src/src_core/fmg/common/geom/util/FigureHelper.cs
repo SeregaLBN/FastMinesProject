@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace fmg.common.geom.util {
+namespace Fmg.Common.Geom.Util {
 
     public static class FigureHelper {
 

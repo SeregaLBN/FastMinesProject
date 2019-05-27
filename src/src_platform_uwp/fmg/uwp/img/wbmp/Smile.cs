@@ -1,9 +1,9 @@
 using Windows.UI.Xaml.Media.Imaging;
-using fmg.common;
-using fmg.core.img;
-using fmg.uwp.utils;
+using Fmg.Common;
+using Fmg.Core.Img;
+using Fmg.Uwp.Utils;
 
-namespace fmg.uwp.img.wbmp {
+namespace Fmg.Uwp.Img.Wbmp {
 
     /// <summary> Smile image over UWP <see cref="WriteableBitmap"/> </summary>
     public static class Smile {

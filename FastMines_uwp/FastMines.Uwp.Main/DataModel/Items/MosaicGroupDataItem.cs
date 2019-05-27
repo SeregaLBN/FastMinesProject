@@ -1,14 +1,14 @@
 using System.ComponentModel;
 using Microsoft.Graphics.Canvas;
-using fmg.common;
-using fmg.common.notifier;
-using fmg.common.geom;
-using fmg.core.types;
-using fmg.core.img;
-using MosaicGroupView       = fmg.uwp.img.win2d.MosaicGroupImg.CanvasBmpView;
-using MosaicGroupController = fmg.uwp.img.win2d.MosaicGroupImg.CanvasBmpController;
+using Fmg.Common;
+using Fmg.Common.Notifier;
+using Fmg.Common.Geom;
+using Fmg.Core.Types;
+using Fmg.Core.Img;
+using MosaicGroupView       = Fmg.Uwp.Img.Win2d.MosaicGroupImg.CanvasBmpView;
+using MosaicGroupController = Fmg.Uwp.Img.Win2d.MosaicGroupImg.CanvasBmpController;
 
-namespace fmg.DataModel.Items {
+namespace Fmg.DataModel.Items {
 
     /// <summary> Mosaic group item for data model </summary>
     public class MosaicGroupDataItem : BaseDataItem<EMosaicGroup?, MosaicGroupModel, MosaicGroupView, MosaicGroupController> {

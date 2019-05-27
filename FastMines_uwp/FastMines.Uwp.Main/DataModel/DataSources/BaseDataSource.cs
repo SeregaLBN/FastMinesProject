@@ -3,13 +3,13 @@ using System.Linq;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 using Microsoft.Graphics.Canvas;
-using fmg.DataModel.Items;
-using fmg.common.notifier;
-using fmg.common.geom;
-using fmg.core.img;
-using fmg.uwp.utils;
+using Fmg.DataModel.Items;
+using Fmg.Common.Notifier;
+using Fmg.Common.Geom;
+using Fmg.Core.Img;
+using Fmg.Uwp.Utils;
 
-namespace fmg.DataModel.DataSources {
+namespace Fmg.DataModel.DataSources {
 
     /// <summary> Base container for image items </summary>
     public abstract class BaseDataSource<THeader, THeaderId, THeaderModel, THeaderView, THeaderCtrlr,

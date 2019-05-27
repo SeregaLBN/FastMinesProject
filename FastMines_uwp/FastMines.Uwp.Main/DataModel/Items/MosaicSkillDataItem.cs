@@ -1,15 +1,15 @@
 using System;
 using System.ComponentModel;
 using Microsoft.Graphics.Canvas;
-using fmg.common;
-using fmg.common.notifier;
-using fmg.common.geom;
-using fmg.core.types;
-using fmg.core.img;
-using MosaicSkillView       = fmg.uwp.img.win2d.MosaicSkillImg.CanvasBmpView;
-using MosaicSkillController = fmg.uwp.img.win2d.MosaicSkillImg.CanvasBmpController;
+using Fmg.Common;
+using Fmg.Common.Notifier;
+using Fmg.Common.Geom;
+using Fmg.Core.Types;
+using Fmg.Core.Img;
+using MosaicSkillView       = Fmg.Uwp.Img.Win2d.MosaicSkillImg.CanvasBmpView;
+using MosaicSkillController = Fmg.Uwp.Img.Win2d.MosaicSkillImg.CanvasBmpController;
 
-namespace fmg.DataModel.Items {
+namespace Fmg.DataModel.Items {
 
     /// <summary> Mosaic skill level item for data model </summary>
     public class MosaicSkillDataItem : BaseDataItem<ESkillLevel?, MosaicSkillModel, MosaicSkillView, MosaicSkillController> {

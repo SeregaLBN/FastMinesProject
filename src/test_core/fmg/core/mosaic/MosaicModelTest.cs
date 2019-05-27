@@ -1,13 +1,13 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using fmg.common;
-using fmg.common.geom;
-using fmg.core.types;
-using fmg.core.img;
-using fmg.common.notifier;
-using MosaicTestModel = fmg.core.mosaic.MosaicDrawModel<object>;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Core.Types;
+using Fmg.Core.Img;
+using Fmg.Common.Notifier;
+using MosaicTestModel = Fmg.Core.Mosaic.MosaicDrawModel<object>;
 
-namespace fmg.core.mosaic {
+namespace Fmg.Core.Mosaic {
 
     public abstract class MosaicModelTest {
 

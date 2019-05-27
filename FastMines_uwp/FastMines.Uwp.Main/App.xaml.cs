@@ -10,14 +10,14 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Controls;
-using fmg.common;
-using fmg.core.mosaic;
-using fmg.core.img;
-using fmg.uwp.utils;
+using Fmg.Common;
+using Fmg.Core.Mosaic;
+using Fmg.Core.Img;
+using Fmg.Uwp.Utils;
 using Fmg.Uwp.App.Model;
 using Fmg.Uwp.App.Presentation;
 
-namespace fmg {
+namespace Fmg {
 
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.

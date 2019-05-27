@@ -1,8 +1,8 @@
 using System;
 using Windows.UI.Xaml;
-using fmg.common.ui;
+using Fmg.Common.UI;
 
-namespace fmg.uwp.utils {
+namespace Fmg.Uwp.Utils {
 
     public class Timer : ITimer {
 

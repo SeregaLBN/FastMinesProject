@@ -1,7 +1,7 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 
-namespace fmg.uwp.mosaic.win2d {
+namespace Fmg.Uwp.Mosaic.Win2d {
 
     /// <summary> MVC: controller. UWP Win2D implementation over control <see cref="CanvasSwapChainPanel"/> </summary>
     public class MosaicCanvasSwapChainPanelController : MosaicFrameworkElementController<CanvasSwapChainPanel, CanvasBitmap, MosaicCanvasSwapChainPanelView> {

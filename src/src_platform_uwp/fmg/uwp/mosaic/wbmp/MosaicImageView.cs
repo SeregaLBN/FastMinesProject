@@ -4,14 +4,14 @@ using System.Collections.Generic;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
-using fmg.common.notifier;
-using fmg.common.geom;
-using fmg.core.mosaic;
-using fmg.core.mosaic.cells;
-using fmg.uwp.img.wbmp;
-using fmg.uwp.utils.wbmp;
+using Fmg.Common.Notifier;
+using Fmg.Common.Geom;
+using Fmg.Core.Mosaic;
+using Fmg.Core.Mosaic.Cells;
+using Fmg.Uwp.Img.Wbmp;
+using Fmg.Uwp.Utils.Wbmp;
 
-namespace fmg.uwp.mosaic.wbmp {
+namespace Fmg.Uwp.Mosaic.Wbmp {
 
     /// <summary> MVC: view. UWP <see cref="WriteableBitmap"/> implementation over control <see cref="Image"/> </summary>
     public class MosaicImageView : MosaicView<Image, WriteableBitmap, MosaicDrawModel<WriteableBitmap>> {

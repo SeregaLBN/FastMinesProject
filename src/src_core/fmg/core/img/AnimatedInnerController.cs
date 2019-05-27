@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using fmg.common.geom;
-using fmg.common.notifier;
-using fmg.common.ui;
+using Fmg.Common.Geom;
+using Fmg.Common.Notifier;
+using Fmg.Common.UI;
 
-namespace fmg.core.img {
+namespace Fmg.Core.Img {
 
     /// <summary> MVC controller. Base animation controller. </summary>
     /// <typeparam name="TImage">platform specific view/image/picture or other display context/canvas/window/panel</typeparam>

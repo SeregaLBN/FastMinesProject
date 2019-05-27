@@ -1,4 +1,4 @@
-using fmg.common.notifier;
+using Fmg.Common.Notifier;
 using System;
 using System.ComponentModel;
 

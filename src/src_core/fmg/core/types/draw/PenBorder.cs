@@ -1,10 +1,10 @@
 using System;
 using System.ComponentModel;
-using fmg.common;
-using fmg.common.geom;
-using fmg.common.notifier;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Common.Notifier;
 
-namespace fmg.core.types.draw {
+namespace Fmg.Core.Types.Draw {
 
     /// <summary> Характеристики кисти у рамки ячейки</summary>
     public class PenBorder : INotifyPropertyChanged, IDisposable {

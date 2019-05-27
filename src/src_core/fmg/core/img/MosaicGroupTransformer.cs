@@ -1,7 +1,7 @@
 using System;
-using fmg.core.types;
+using Fmg.Core.Types;
 
-namespace fmg.core.img {
+namespace Fmg.Core.Img {
 
     /// <summary> Transforming of <see cref="MosaicGroupModel"/> </summary>
     public class MosaicGroupTransformer : IModelTransformer {

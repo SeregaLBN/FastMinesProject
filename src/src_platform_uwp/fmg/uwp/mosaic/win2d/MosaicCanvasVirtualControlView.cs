@@ -4,13 +4,13 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
-using fmg.common;
-using fmg.common.geom;
-using fmg.core.mosaic;
-using fmg.core.mosaic.cells;
-using fmg.uwp.utils;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Core.Mosaic;
+using Fmg.Core.Mosaic.Cells;
+using Fmg.Uwp.Utils;
 
-namespace fmg.uwp.mosaic.win2d {
+namespace Fmg.Uwp.Mosaic.Win2d {
 
     /// summary> MVC: view. UWP Win2D implementation. View located into control <see cref="CanvasVirtualControl"/> */
     public class MosaicCanvasVirtualControlView : MosaicFrameworkElementView<CanvasVirtualControl> {

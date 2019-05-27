@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using fmg.uwp.utils;
+using Fmg.Uwp.Utils;
 
-namespace fmg.common.notifier {
+namespace Fmg.Common.Notifier {
 
     public class PropertyChangeExecutorUwpTest : PropertyChangeExecutorTest {
 

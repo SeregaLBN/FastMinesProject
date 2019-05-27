@@ -4,9 +4,9 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
-using fmg.common.ui;
+using Fmg.Common.UI;
 
-namespace fmg.common.notifier {
+namespace Fmg.Common.Notifier {
 
     /// <summary> Notifies owner clients that a owner property value has changed </summary>
 #if WINDOWS_UWP
@@ -178,7 +178,7 @@ namespace fmg.common.notifier {
 
 #if DEBUG
         private static void makeError(string errorMesage, PropertyChangedEventHandler propertyChangedEventHandler) {
-            //if (!propertyChangedEventHandler.Target.ToString().Contains("Page_obj")) // etc.. fmg.SelectMosaicPage+SelectMosaicPage_obj1_Bindings+SelectMosaicPage_obj1_BindingsTracking
+            //if (!propertyChangedEventHandler.Target.ToString().Contains("Page_obj")) // etc.. Fmg.SelectMosaicPage+SelectMosaicPage_obj1_Bindings+SelectMosaicPage_obj1_BindingsTracking
             if (!Regex.IsMatch(propertyChangedEventHandler.Target.ToString(), "^.+Page_obj\\d+_BindingsTracking$"))
                 throw new InvalidOperationException(errorMesage);
             LoggerSimple.Put(errorMesage);

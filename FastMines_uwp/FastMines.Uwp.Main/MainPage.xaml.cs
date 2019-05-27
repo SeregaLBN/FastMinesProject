@@ -9,20 +9,20 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
-using fmg.common;
-using fmg.common.geom;
-using fmg.core.types;
-using fmg.core.mosaic;
-using fmg.uwp.utils;
-using fmg.DataModel.Items;
-using fmg.DataModel.DataSources;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Core.Types;
+using Fmg.Core.Mosaic;
+using Fmg.Uwp.Utils;
+using Fmg.DataModel.Items;
+using Fmg.DataModel.DataSources;
 using Fmg.Uwp.App.Model;
 using Fmg.Uwp.App.Presentation;
 using FastMines.Uwp.Main.Presentation;
-using MosaicGroupImg = fmg.uwp.img.win2d.MosaicGroupImg.CanvasBmpController;
-using MosaicSkillImg = fmg.uwp.img.win2d.MosaicSkillImg.CanvasBmpController;
+using MosaicGroupImg = Fmg.Uwp.Img.Win2d.MosaicGroupImg.CanvasBmpController;
+using MosaicSkillImg = Fmg.Uwp.Img.Win2d.MosaicSkillImg.CanvasBmpController;
 
-namespace fmg {
+namespace Fmg {
 
     public sealed partial class MainPage : Page {
 

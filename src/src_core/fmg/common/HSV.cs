@@ -1,7 +1,7 @@
-using fmg.common.geom;
+using Fmg.Common.Geom;
 using System;
 
-namespace fmg.common {
+namespace Fmg.Common {
 
     /// <summary>
     /// Сylindrical-coordinate representations of points in an RGB color model

@@ -1,7 +1,7 @@
-using fmg.core.img;
-using fmg.core.types;
+using Fmg.Core.Img;
+using Fmg.Core.Types;
 
-namespace fmg.uwp.img {
+namespace Fmg.Uwp.Img {
 
     /// <summary> DEMO. Representable <see cref="ESkillLevel"/> as CHAR </summary>
     public static class MosaicSkillCharImg {

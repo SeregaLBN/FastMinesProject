@@ -7,18 +7,18 @@ using Windows.Storage.Streams;
 using Windows.Graphics.Display;
 using Windows.ApplicationModel.Background;
 using Microsoft.Graphics.Canvas;
-using fmg.common;
-using fmg.common.geom;
-using fmg.core.types;
-using fmg.core.img;
-using fmg.uwp.utils;
-using fmg.uwp.utils.win2d;
-using fmg.uwp.img.win2d;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Core.Types;
+using Fmg.Core.Img;
+using Fmg.Uwp.Utils;
+using Fmg.Uwp.Utils.Win2d;
+using Fmg.Uwp.Img.Win2d;
 using Rect = Windows.Foundation.Rect;
 using FastMines.Uwp.BackgroundTasks;
-using MosaicsCanvasBmp = fmg.uwp.img.win2d.MosaicImg.CanvasBmpController;
+using MosaicsCanvasBmp = Fmg.Uwp.Img.Win2d.MosaicImg.CanvasBmpController;
 
-namespace fmg {
+namespace Fmg {
 
    public static class TileHelper {
 

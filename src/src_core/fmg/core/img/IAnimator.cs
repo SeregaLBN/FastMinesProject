@@ -1,6 +1,6 @@
 using System;
 
-namespace fmg.core.img {
+namespace Fmg.Core.Img {
 
     /// <summary> Perform tasks for calculating / changing the subscribers animation. Executed in the current UI thread </summary>
     public interface IAnimator {

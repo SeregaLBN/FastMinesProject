@@ -1,6 +1,6 @@
-using fmg.core.img;
+using Fmg.Core.Img;
 
-namespace fmg.uwp.img.wbmp {
+namespace Fmg.Uwp.Img.Wbmp {
 
     /// <summary> Mine image on the playing field </summary>
     public static class Mine {

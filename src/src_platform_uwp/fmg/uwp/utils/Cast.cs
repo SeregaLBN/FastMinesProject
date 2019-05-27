@@ -1,11 +1,11 @@
-using fmg.common;
-using fmg.common.geom;
+using Fmg.Common;
+using Fmg.Common.Geom;
 using Windows.Graphics.Display;
 
-namespace fmg.uwp.utils {
+namespace Fmg.Uwp.Utils {
 
     /// <summary>
-    /// Приведение типов от платформо-независимых чистых C# классов fmg.common.* к библиотечным Windows.Foundation классам
+    /// Приведение типов от платформо-независимых чистых C# классов Fmg.Common.* к библиотечным Windows.Foundation классам
     /// </summary>
     public static class Cast {
 
@@ -36,7 +36,7 @@ namespace fmg.uwp.utils {
         // <summary> </summary>
 
         /// <summary>
-        /// Pixels to DPI 
+        /// Pixels to DPI
         /// There are 72 points per inch; if it is sufficient to assume 96 pixels per inch, the formula is rather simple:
         ///     points = pixels* 72 / 96
         /// </summary>

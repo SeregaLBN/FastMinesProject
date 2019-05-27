@@ -1,9 +1,9 @@
 using System;
-using fmg.common.geom;
-using fmg.core.types;
-using fmg.core.mosaic.cells;
+using Fmg.Common.Geom;
+using Fmg.Core.Types;
+using Fmg.Core.Mosaic.Cells;
 
-namespace fmg.core.mosaic {
+namespace Fmg.Core.Mosaic {
 
     public static class MosaicHelper {
 
@@ -22,7 +22,7 @@ namespace fmg.core.mosaic {
             //throw new Exception("Unknown type " + mosaicType);
 
             try {
-                var className = GetPackageName() + ".cells." + mosaicType.GetMosaicClassName() + "+Attr" + mosaicType.GetMosaicClassName();
+                var className = GetPackageName() + ".Cells." + mosaicType.GetMosaicClassName() + "+Attr" + mosaicType.GetMosaicClassName();
                 var cellAttrClass = Type.GetType(className);
                 var attr = (BaseCell.BaseAttribute)Activator.CreateInstance(cellAttrClass, null);
                 return attr;
@@ -43,7 +43,7 @@ namespace fmg.core.mosaic {
             //throw new RuntimeException("Unknown type "+mosaicType);
 
             try {
-                var className = GetPackageName() + ".cells." + mosaicType.GetMosaicClassName();
+                var className = GetPackageName() + ".Cells." + mosaicType.GetMosaicClassName();
                 var cellClass = Type.GetType(className);
                 object[] args = { attr, coord };
                 var cell = (BaseCell)Activator.CreateInstance(cellClass, args);

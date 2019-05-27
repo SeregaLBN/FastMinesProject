@@ -3,15 +3,15 @@ using System.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-using fmg.common;
-using fmg.common.geom;
-using fmg.core.types;
-using fmg.core.mosaic;
-using fmg.core.img;
-using fmg.uwp.utils;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Core.Types;
+using Fmg.Core.Mosaic;
+using Fmg.Core.Img;
+using Fmg.Uwp.Utils;
 using Fmg.Uwp.App.Model;
 
-namespace fmg {
+namespace Fmg {
 
     public sealed partial class CustomSkillPage : Page {
 

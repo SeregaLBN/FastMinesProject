@@ -20,10 +20,10 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ////////////////////////////////////////////////////////////////////////////////
 using System.Collections.Generic;
-using fmg.core.mosaic.cells;
-using fmg.core.types;
+using Fmg.Core.Mosaic.Cells;
+using Fmg.Core.Types;
 
-namespace fmg.core.mosaic {
+namespace Fmg.Core.Mosaic {
 
     /// <summary> interface of mosaic field </summary>
     public interface IMosaic : BaseCell.IMatrixCells {

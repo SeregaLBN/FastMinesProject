@@ -4,13 +4,13 @@ using Windows.Graphics.Display;
 using Windows.UI.Xaml;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
-using fmg.common;
-using fmg.common.geom;
-using fmg.core.types;
-using fmg.core.img;
-using fmg.uwp.utils;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Core.Types;
+using Fmg.Core.Img;
+using Fmg.Uwp.Utils;
 
-namespace fmg.uwp.img.win2d {
+namespace Fmg.Uwp.Img.Win2d {
 
     /// <summary> Representable <see cref="EMosaicGroup"/> as image. Win2D implementation </summary>
     public static class MosaicGroupImg {

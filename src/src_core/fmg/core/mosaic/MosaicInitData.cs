@@ -1,10 +1,10 @@
 using System;
 using System.ComponentModel;
-using fmg.common.geom;
-using fmg.common.notifier;
-using fmg.core.types;
+using Fmg.Common.Geom;
+using Fmg.Common.Notifier;
+using Fmg.Core.Types;
 
-namespace fmg.core.mosaic {
+namespace Fmg.Core.Mosaic {
 
     /// <summary> Mosaic data </summary>
     public class MosaicInitData : INotifyPropertyChanged, IDisposable {

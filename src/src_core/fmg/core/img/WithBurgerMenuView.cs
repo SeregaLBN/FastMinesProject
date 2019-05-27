@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace fmg.core.img {
+namespace Fmg.Core.Img {
 
     /// <summary> MVC: view of images with burger menu (where burger menu its secondary model) </summary>
     /// <typeparam name="TImage">platform specific image</typeparam>

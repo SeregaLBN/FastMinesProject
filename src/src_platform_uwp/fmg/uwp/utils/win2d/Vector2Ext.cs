@@ -1,6 +1,6 @@
-using fmg.common.geom;
+using Fmg.Common.Geom;
 
-namespace fmg.uwp.utils.win2d {
+namespace Fmg.Uwp.Utils.Win2d {
 
     public static class Vector2Ext {
 

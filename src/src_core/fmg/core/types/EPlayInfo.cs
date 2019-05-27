@@ -1,6 +1,6 @@
 using System;
 
-namespace fmg.core.types {
+namespace Fmg.Core.Types {
 
     /// <summary>
     /// 1. Kто играл: юзер и/или робот?

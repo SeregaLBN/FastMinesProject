@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Reactive.Linq;
 using Avalonia.Animation;
 
-namespace fmg.ava.img {
+namespace Fmg.Ava.Img {
 
-    public class Animator : fmg.core.img.IAnimator, IDisposable {
+    public class Animator : Fmg.Core.Img.IAnimator, IDisposable {
 
         private class SubscribeInfo {
             public bool active = true;    // enabled?

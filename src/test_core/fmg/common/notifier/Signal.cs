@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace fmg.common.notifier {
+namespace Fmg.Common.Notifier {
 
     public class Signal : IDisposable {
         private readonly SemaphoreSlim _signal = new SemaphoreSlim(0, 1);

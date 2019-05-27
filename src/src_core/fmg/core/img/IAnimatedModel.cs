@@ -1,4 +1,4 @@
-namespace fmg.core.img {
+namespace Fmg.Core.Img {
 
     /// <summary>
     /// Image MVC: model.

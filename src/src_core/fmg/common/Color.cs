@@ -1,6 +1,6 @@
 using System;
 
-namespace fmg.common {
+namespace Fmg.Common {
 
     public struct Color {
         #region Colors sorted by HEX Value: http://www.w3schools.com/colors/colors_hex.asp

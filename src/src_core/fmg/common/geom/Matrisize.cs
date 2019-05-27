@@ -1,4 +1,4 @@
-﻿namespace fmg.common.geom {
+﻿namespace Fmg.Common.Geom {
 
     /// <summary>
     /// Matrix Size - a new dimension for the particular type of matrix, so as not to be confused with the similar types Size / Dimension (size in pixels).

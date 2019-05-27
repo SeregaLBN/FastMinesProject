@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace fmg.common {
+namespace Fmg.Common {
 
     [Obsolete]
     public static class TaskExec {

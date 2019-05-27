@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using Windows.UI.Xaml.Media.Imaging;
-using fmg.common;
-using fmg.core.img;
-using fmg.core.mosaic;
-using fmg.core.mosaic.cells;
-using fmg.uwp.mosaic.wbmp;
+using Fmg.Common;
+using Fmg.Core.Img;
+using Fmg.Core.Mosaic;
+using Fmg.Core.Mosaic.Cells;
+using Fmg.Uwp.Mosaic.Wbmp;
 
-namespace fmg.uwp.img.wbmp {
+namespace Fmg.Uwp.Img.Wbmp {
 
-    /// <summary> Representable <see cref="fmg.core.types.EMosaic"/> as image </summary>
+    /// <summary> Representable <see cref="Fmg.Core.Types.EMosaic"/> as image </summary>
     public static class MosaicImg {
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@ namespace fmg.uwp.img.wbmp {
         /////////////////////////////////////////////////////////////////////////////////////////////////////
 
         /// <summary>
-        /// Representable <see cref="fmg.core.types.EMosaic"/> as image view.
+        /// Representable <see cref="Fmg.Core.Types.EMosaic"/> as image view.
         /// UWP implementation over <see cref="WriteableBitmap"/>.
         /// </summary>
         public class WBmpView : MosaicWBmpView<Nothing, MosaicAnimatedModel<Nothing>> {

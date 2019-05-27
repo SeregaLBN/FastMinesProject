@@ -5,13 +5,13 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
-using fmg.common;
-using fmg.common.geom;
-using fmg.common.notifier;
-using fmg.core.mosaic;
-using fmg.core.types;
-using fmg.uwp.utils;
-using fmg.uwp.mosaic.xaml;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Common.Notifier;
+using Fmg.Core.Mosaic;
+using Fmg.Core.Types;
+using Fmg.Uwp.Utils;
+using Fmg.Uwp.Mosaic.Xaml;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 namespace FastMines {

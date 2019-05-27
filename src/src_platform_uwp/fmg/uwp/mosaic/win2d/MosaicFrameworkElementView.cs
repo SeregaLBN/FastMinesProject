@@ -1,11 +1,11 @@
 using System.ComponentModel;
 using Windows.UI.Xaml;
 using Microsoft.Graphics.Canvas;
-using fmg.common.geom;
-using fmg.core.mosaic;
-using fmg.uwp.img.win2d;
+using Fmg.Common.Geom;
+using Fmg.Core.Mosaic;
+using Fmg.Uwp.Img.Win2d;
 
-namespace fmg.uwp.mosaic.win2d {
+namespace Fmg.Uwp.Mosaic.Win2d {
 
     /// summary> MVC: view. UWP Win2D implementation. Base implementation View located into control <see cref="Windows.UI.Xaml.FrameworkElement"/> */
     public abstract class MosaicFrameworkElementView<TControl> : MosaicWin2DView<TControl, CanvasBitmap, MosaicDrawModel<CanvasBitmap>>

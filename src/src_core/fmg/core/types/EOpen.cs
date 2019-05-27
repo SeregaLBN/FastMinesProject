@@ -1,6 +1,6 @@
 using System;
 
-namespace fmg.core.types {
+namespace Fmg.Core.Types {
 
     public enum EOpen {
         _Nil,

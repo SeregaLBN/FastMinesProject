@@ -3,22 +3,22 @@ using Windows.Graphics.Display;
 using Windows.UI.Xaml;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
-using fmg.common;
-using fmg.core.img;
-using fmg.core.mosaic;
-using fmg.core.mosaic.cells;
-using fmg.uwp.utils;
-using fmg.uwp.mosaic.win2d;
+using Fmg.Common;
+using Fmg.Core.Img;
+using Fmg.Core.Mosaic;
+using Fmg.Core.Mosaic.Cells;
+using Fmg.Uwp.Utils;
+using Fmg.Uwp.Mosaic.Win2d;
 
-namespace fmg.uwp.img.win2d {
+namespace Fmg.Uwp.Img.Win2d {
 
-    /// <summary> Representable <see cref="fmg.core.types.EMosaic"/> as image.
+    /// <summary> Representable <see cref="Fmg.Core.Types.EMosaic"/> as image.
     /// <br/>
     /// Win2D implementation
     /// </summary>
     public static class MosaicImg {
 
-        /// <summary> Representable <see cref="fmg.core.types.EMosaic"/> as image. Base view Win2D implementation </summary>
+        /// <summary> Representable <see cref="Fmg.Core.Types.EMosaic"/> as image. Base view Win2D implementation </summary>
         /// <typeparam name="TImage">Win2D specific image: <see cref="CanvasBitmap"/> or <see cref="CanvasImageSource"/></typeparam>
         public abstract class Win2DView<TImage> : MosaicWin2DView<TImage, Nothing, MosaicAnimatedModel<Nothing>>
             where TImage : DependencyObject, ICanvasResourceCreator
@@ -69,7 +69,7 @@ namespace fmg.uwp.img.win2d {
         //    custom implementations
         /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        /// <summary> Representable <see cref="fmg.core.types.EMosaic"/> as image over <see cref="CanvasBitmap"/> </summary>
+        /// <summary> Representable <see cref="Fmg.Core.Types.EMosaic"/> as image over <see cref="CanvasBitmap"/> </summary>
         public class CanvasBmpView : Win2DView<CanvasBitmap> {
 
             public CanvasBmpView(ICanvasResourceCreator resourceCreator)
@@ -93,7 +93,7 @@ namespace fmg.uwp.img.win2d {
 
         }
 
-        /// <summary> Representable <see cref="fmg.core.types.EMosaic"/> as image over <see cref="CanvasImageSource"/> (XAML <see cref="Windows.UI.Xaml.Media.ImageSource"/> compatible) </summary>
+        /// <summary> Representable <see cref="Fmg.Core.Types.EMosaic"/> as image over <see cref="CanvasImageSource"/> (XAML <see cref="Windows.UI.Xaml.Media.ImageSource"/> compatible) </summary>
         public class CanvasImgSrcView : Win2DView<CanvasImageSource> {
 
             public CanvasImgSrcView(ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
@@ -117,7 +117,7 @@ namespace fmg.uwp.img.win2d {
 
         }
 
-        /// <summary> Representable <see cref="fmg.core.types.EMosaic"/> as image for <see cref="MosaicImg.CanvasBmpView"/> </summary>
+        /// <summary> Representable <see cref="Fmg.Core.Types.EMosaic"/> as image for <see cref="MosaicImg.CanvasBmpView"/> </summary>
         public class CanvasBmpController : MosaicImageController<CanvasBitmap, MosaicImg.CanvasBmpView> {
 
             public CanvasBmpController(ICanvasResourceCreator resourceCreator)
@@ -131,7 +131,7 @@ namespace fmg.uwp.img.win2d {
 
         }
 
-        /// <summary> Representable <see cref="fmg.core.types.EMosaic"/> as image for <see cref="MosaicImg.CanvasImgSrcView"/> </summary>
+        /// <summary> Representable <see cref="Fmg.Core.Types.EMosaic"/> as image for <see cref="MosaicImg.CanvasImgSrcView"/> </summary>
         public class CanvasImgSrcController : MosaicImageController<CanvasImageSource, MosaicImg.CanvasImgSrcView> {
 
             public CanvasImgSrcController(ICanvasResourceCreator resourceCreator)

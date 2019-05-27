@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using fmg.core.img;
-using fmg.core.mosaic.cells;
+using Fmg.Core.Img;
+using Fmg.Core.Mosaic.Cells;
 
-namespace fmg.core.mosaic {
+namespace Fmg.Core.Mosaic {
 
     /// <summary> MVC view interface of mosaic </summary>
     /// <typeparam name="TImage">platform specific view/image/picture or other display context/canvas/window/panel</typeparam>

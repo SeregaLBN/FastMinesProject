@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using fmg.common;
-using fmg.common.geom;
-using fmg.common.notifier;
-using fmg.core.img;
-using fmg.core.types.draw;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Common.Notifier;
+using Fmg.Core.Img;
+using Fmg.Core.Types.Draw;
 
-namespace fmg.core.mosaic {
+namespace Fmg.Core.Mosaic {
 
     public static class MosaicDrawModelConst {
 

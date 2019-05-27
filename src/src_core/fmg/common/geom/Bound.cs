@@ -1,4 +1,4 @@
-﻿namespace fmg.common.geom {
+﻿namespace Fmg.Common.Geom {
 
     /// <summary> Padding / Margin </summary>
     public struct Bound {

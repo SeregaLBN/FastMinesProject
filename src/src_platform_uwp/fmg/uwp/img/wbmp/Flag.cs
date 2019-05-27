@@ -1,11 +1,11 @@
 using System.Linq;
 using Windows.UI.Xaml.Media.Imaging;
-using fmg.common;
-using fmg.common.geom;
-using fmg.uwp.utils;
-using fmg.core.img;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Uwp.Utils;
+using Fmg.Core.Img;
 
-namespace fmg.uwp.img.wbmp {
+namespace Fmg.Uwp.Img.Wbmp {
 
     /// <summary> Flag image UWP implementation over <see cref="WriteableBitmap"/> </summary>
     public static class Flag {

@@ -5,7 +5,7 @@ using Windows.Graphics.Display;
 using Windows.Storage;
 using Microsoft.Graphics.Canvas;
 
-namespace fmg.uwp.utils.win2d {
+namespace Fmg.Uwp.Utils.Win2d {
 
     /// <summary> Мультимедиа ресурсы программы </summary>
     public static class Resources {

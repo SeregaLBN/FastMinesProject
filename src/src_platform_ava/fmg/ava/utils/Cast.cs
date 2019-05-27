@@ -1,10 +1,10 @@
-using fmg.common;
-using fmg.common.geom;
+using Fmg.Common;
+using Fmg.Common.Geom;
 
-namespace fmg.ava.utils {
+namespace Fmg.Ava.Utils {
 
     /// <summary>
-    /// Приведение типов от платформо-независимых чистых C# классов fmg.common.* к библиотечным Avalonia классам
+    /// Приведение типов от платформо-независимых чистых C# классов Fmg.Common.* к библиотечным Avalonia классам
     /// </summary>
     public static class Cast {
 

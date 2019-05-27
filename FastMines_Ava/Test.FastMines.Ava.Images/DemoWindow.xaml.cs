@@ -6,8 +6,8 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
 using Avalonia.VisualTree;
-using fmg.common.notifier;
-using fmg.ava.img;
+using Fmg.Common.Notifier;
+using Fmg.Ava.Img;
 
 namespace Test.FastMines.Ava.Images {
 

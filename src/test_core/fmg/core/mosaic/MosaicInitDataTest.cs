@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using fmg.common;
-using fmg.common.notifier;
-using fmg.core.types;
+using Fmg.Common;
+using Fmg.Common.Notifier;
+using Fmg.Core.Types;
 
-namespace fmg.core.mosaic {
+namespace Fmg.Core.Mosaic {
 
     public abstract class MosaicInitDataTest {
 

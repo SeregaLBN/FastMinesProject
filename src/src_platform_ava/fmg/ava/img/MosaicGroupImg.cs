@@ -4,11 +4,11 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Rendering;
 using Avalonia.VisualTree;
-using fmg.common.geom;
-using fmg.core.img;
-using fmg.core.types;
+using Fmg.Common.Geom;
+using Fmg.Core.Img;
+using Fmg.Core.Types;
 
-namespace fmg.ava.img {
+namespace Fmg.Ava.Img {
 
     /// <summary> Representable <see cref="EMosaicGroup"/> as image.
     /// <br/>
@@ -27,7 +27,7 @@ namespace fmg.ava.img {
             { }
 
             /// <summary> get paint information of drawing basic image model </summary>
-            protected override IEnumerable<Tuple<fmg.common.Color, IEnumerable<PointDouble>>> Coords { get => Model.Coords; }
+            protected override IEnumerable<Tuple<Fmg.Common.Color, IEnumerable<PointDouble>>> Coords { get => Model.Coords; }
 
             protected override void Disposing() {
                 Model.Dispose();

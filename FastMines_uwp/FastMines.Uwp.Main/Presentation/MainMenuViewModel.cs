@@ -1,11 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows.Input;
-using fmg.DataModel.DataSources;
-using fmg.common.notifier;
-using fmg.common.Converters;
+using Fmg.DataModel.DataSources;
+using Fmg.Common.Notifier;
+using Fmg.Common.Converters;
 
-namespace fmg.common {
+namespace Fmg.Common {
 
     /// <summary> ViewModel for <see cref="MainPage"/> </summary>
     public class MainMenuViewModel : INotifyPropertyChanged, IDisposable {

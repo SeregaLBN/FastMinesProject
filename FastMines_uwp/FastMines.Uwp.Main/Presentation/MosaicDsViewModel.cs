@@ -1,10 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
-using fmg.common.notifier;
-using fmg.DataModel.DataSources;
-using fmg.common.geom;
+using Fmg.Common.Notifier;
+using Fmg.DataModel.DataSources;
+using Fmg.Common.Geom;
 
-namespace fmg.common {
+namespace Fmg.Common {
 
     /// <summary> ViewModel for <see cref="SelectMosaicPage"/> </summary>
     public class MosaicsViewModel : INotifyPropertyChanged, IDisposable {

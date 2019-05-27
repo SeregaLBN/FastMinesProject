@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.UI.Xaml.Data;
 
-namespace fmg.common.Converters {
+namespace Fmg.Common.Converters {
 
     /// <summary> Check to null </summary>
     public sealed class SelectedItemToBoolConverter : IValueConverter {

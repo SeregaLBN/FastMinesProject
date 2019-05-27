@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using fmg.common.geom;
+using Fmg.Common.Geom;
 
-namespace fmg.core.types {
+namespace Fmg.Core.Types {
 
     /* Перечень мозаик */
 

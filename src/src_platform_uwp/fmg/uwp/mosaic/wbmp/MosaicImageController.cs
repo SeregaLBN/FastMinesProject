@@ -2,7 +2,7 @@ using System.ComponentModel;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace fmg.uwp.mosaic.wbmp {
+namespace Fmg.Uwp.Mosaic.Wbmp {
 
     /// <summary> MVC: controller. UWP <see cref="WriteableBitmap"/> implementation over control <see cref="Image"/> </summary>
     public class MosaicImageController : MosaicFrameworkElementController<Image, WriteableBitmap, MosaicImageView> {

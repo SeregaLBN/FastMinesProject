@@ -8,16 +8,16 @@ using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using fmg.common;
-using fmg.common.geom;
-using fmg.common.notifier;
-using fmg.core.mosaic;
-using fmg.core.types;
-using fmg.core.types.click;
-using fmg.core.mosaic.cells;
-using fmg.uwp.utils;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Common.Notifier;
+using Fmg.Core.Mosaic;
+using Fmg.Core.Types;
+using Fmg.Core.Types.click;
+using Fmg.Core.Mosaic.Cells;
+using Fmg.Uwp.Utils;
 
-namespace fmg.uwp.mosaic {
+namespace Fmg.Uwp.Mosaic {
 
     /// <summary> MVC: controller. UWP implementation over control <see cref="FrameworkElement"/> </summary>
     /// <typeparam name="TImageAsFrameworkElement">image-control based of <see cref="FrameworkElement"/></typeparam>
@@ -390,7 +390,7 @@ namespace fmg.uwp.mosaic {
         }
 
         void OnTapped(object sender, TappedRoutedEventArgs ev) {
-            //using (new fmg.common.Tracer(GetCallerName(), () => "handled=" + ev.Handled))
+            //using (new Fmg.Common.Tracer(GetCallerName(), () => "handled=" + ev.Handled))
             {
                 if (ev.PointerDeviceType != PointerDeviceType.Mouse) {
                     ev.Handled = OnClick(ev.GetPosition(Control), true, false);
@@ -399,7 +399,7 @@ namespace fmg.uwp.mosaic {
         }
 
         protected void OnDoubleTapped(object sender, DoubleTappedRoutedEventArgs ev) {
-            //using (new fmg.common.Tracer(GetCallerName(), () => "handled=" + ev.Handled))
+            //using (new Fmg.Common.Tracer(GetCallerName(), () => "handled=" + ev.Handled))
             {
                 var imgControl = Control;
                 var rcImage = new Windows.Foundation.Rect(0, 0, imgControl.Width, imgControl.Height);
@@ -416,7 +416,7 @@ namespace fmg.uwp.mosaic {
         }
 
         protected void OnRightTapped(object sender, RightTappedRoutedEventArgs ev) {
-            //using (new fmg.common.Tracer(GetCallerName(), () => "handled=" + ev.Handled))
+            //using (new Fmg.Common.Tracer(GetCallerName(), () => "handled=" + ev.Handled))
             {
                 if (ev.PointerDeviceType == PointerDeviceType.Mouse) {
                     ev.Handled = _clickInfo.DownHandled || _clickInfo.UpHandled; // TODO: для избежания появления appBar'ов при установке '?'

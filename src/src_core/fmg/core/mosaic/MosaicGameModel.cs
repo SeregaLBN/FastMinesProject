@@ -22,12 +22,12 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
-using fmg.common.geom;
-using fmg.common.notifier;
-using fmg.core.types;
-using fmg.core.mosaic.cells;
+using Fmg.Common.Geom;
+using Fmg.Common.Notifier;
+using Fmg.Core.Types;
+using Fmg.Core.Mosaic.Cells;
 
-namespace fmg.core.mosaic {
+namespace Fmg.Core.Mosaic {
 
     /// <summary> MVC: game model of mosaic field. Default implementation </summary>
     public class MosaicGameModel : IMosaic, INotifyPropertyChanged, IDisposable {

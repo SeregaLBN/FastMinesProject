@@ -1,6 +1,6 @@
 using System;
 
-namespace fmg.core.types.viewmodel.Event {
+namespace Fmg.Core.Types.Viewmodel.Event {
 
     public interface ActionToUser {
 

@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace fmg.common {
+namespace Fmg.Common {
 
     //[Obsolete]
     public interface IExternalizable : ISerializable {

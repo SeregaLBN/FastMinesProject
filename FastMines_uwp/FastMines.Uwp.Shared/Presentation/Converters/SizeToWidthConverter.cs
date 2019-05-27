@@ -1,8 +1,8 @@
-﻿using fmg.common.geom;
+﻿using Fmg.Common.Geom;
 using System;
 using Windows.UI.Xaml.Data;
 
-namespace fmg.common.Converters {
+namespace Fmg.Common.Converters {
 
     public sealed class SizeToWidthConverter : IValueConverter {
 

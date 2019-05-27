@@ -4,16 +4,16 @@ using System.Collections.Generic;
 using Windows.UI.Xaml;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
-using fmg.common;
-using fmg.common.geom;
-using fmg.core.img;
-using fmg.uwp.utils;
-using fmg.uwp.utils.win2d;
-using fmg.uwp.mosaic.win2d;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Core.Img;
+using Fmg.Uwp.Utils;
+using Fmg.Uwp.Utils.Win2d;
+using Fmg.Uwp.Mosaic.Win2d;
 
-namespace fmg.uwp.img.win2d {
+namespace Fmg.Uwp.Img.Win2d {
 
-    /// <summary> MVC: view. Abstract Win2D representable <see cref="fmg.core.types.ESkillLevel"/> or <see cref="fmg.core.types.EMosaicGroup"/> as image. </summary>
+    /// <summary> MVC: view. Abstract Win2D representable <see cref="Fmg.Core.Types.ESkillLevel"/> or <see cref="Fmg.Core.Types.EMosaicGroup"/> as image. </summary>
     public abstract class MosaicSkillOrGroupView<TImage, TImageModel> : WithBurgerMenuView<TImage, TImageModel>
         where TImage      : DependencyObject, ICanvasResourceCreator
         where TImageModel : AnimatedImageModel

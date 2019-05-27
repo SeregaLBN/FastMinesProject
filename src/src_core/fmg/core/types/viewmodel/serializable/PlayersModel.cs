@@ -3,10 +3,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Collections.Generic;
-using fmg.common;
-using fmg.core.types.viewmodel.Event;
+using Fmg.Common;
+using Fmg.Core.Types.Viewmodel.Event;
 
-namespace fmg.core.types.viewmodel.serializable {
+namespace Fmg.Core.Types.Viewmodel.Serializable {
 
     /// <summary>хранилище пользователей и их игровой статистики</summary>
     public abstract class PlayersModel : IExternalizable {

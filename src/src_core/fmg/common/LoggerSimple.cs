@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-namespace fmg.common {
+namespace Fmg.Common {
 
     public class LoggerSimple {
 

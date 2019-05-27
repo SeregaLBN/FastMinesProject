@@ -1,11 +1,11 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
-using fmg.common;
-using fmg.common.geom;
-using fmg.core.img;
-using fmg.core.mosaic.cells;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Core.Img;
+using Fmg.Core.Mosaic.Cells;
 
-namespace fmg.core.mosaic {
+namespace Fmg.Core.Mosaic {
 
 #if DEBUG
     public sealed class MosaicViewCfg {

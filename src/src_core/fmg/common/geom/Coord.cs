@@ -1,4 +1,4 @@
-namespace fmg.common.geom {
+namespace Fmg.Common.Geom {
 
     public struct Coord {
 

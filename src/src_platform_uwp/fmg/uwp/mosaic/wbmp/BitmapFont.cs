@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.Foundation;
 using Windows.UI.Xaml.Media.Imaging;
-using fmg.uwp.utils.wbmp;
+using Fmg.Uwp.Utils.Wbmp;
 
-namespace fmg.uwp.mosaic.wbmp {
+namespace Fmg.Uwp.Mosaic.Wbmp {
 
     /// <summary>
     ///  http://stackoverflow.com/questions/5666772/how-can-i-render-text-on-a-writeablebitmap-on-a-background-thread-in-windows-ph

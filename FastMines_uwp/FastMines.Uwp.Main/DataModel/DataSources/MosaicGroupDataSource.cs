@@ -1,16 +1,16 @@
 ﻿using System.Linq;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
-using fmg.common;
-using fmg.common.geom;
-using fmg.core.types;
-using fmg.core.img;
-using fmg.core.mosaic;
-using fmg.DataModel.Items;
-using MosaicGroupView       = fmg.uwp.img.win2d.MosaicGroupImg.CanvasBmpView;
-using MosaicGroupController = fmg.uwp.img.win2d.MosaicGroupImg.CanvasBmpController;
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Fmg.Core.Types;
+using Fmg.Core.Img;
+using Fmg.Core.Mosaic;
+using Fmg.DataModel.Items;
+using MosaicGroupView       = Fmg.Uwp.Img.Win2d.MosaicGroupImg.CanvasBmpView;
+using MosaicGroupController = Fmg.Uwp.Img.Win2d.MosaicGroupImg.CanvasBmpController;
 
-namespace fmg.DataModel.DataSources {
+namespace Fmg.DataModel.DataSources {
 
     /// <summary> DataSource menu items (mosaic groups) </summary>
     public class MosaicGroupDataSource : BaseDataSource<
