@@ -18,7 +18,7 @@ using Fmg.Uwp.Utils;
 using Fmg.DataModel.Items;
 using Fmg.Uwp.App.Model;
 using MosaicsCanvasCtrllr = Fmg.Uwp.Img.Win2d.MosaicImg.CanvasBmpController;
-using LogoCanvasCtrllr    = Fmg.Uwp.Img.Win2d.Logo     .CanvasBmpController;
+using    LogoCanvasCtrllr = Fmg.Uwp.Img.Win2d.Logo     .CanvasBmpController;
 
 namespace Fmg {
 
@@ -83,7 +83,8 @@ namespace Fmg {
                 System.Diagnostics.Debug.Assert(ev.Parameter is IDictionary<string, object>);
                 if ((ev.Parameter is IDictionary<string, object> args) &&
                     args.TryGetValue(MainPage.ARGUMENTS_KEY__HEADER_SIZE_HEIGHT, out object headerSizeHeight) &&
-                    (headerSizeHeight is double d)) {
+                    (headerSizeHeight is double d))
+                {
                     UpdateHeader(d);
                 }
             }
@@ -93,7 +94,7 @@ namespace Fmg {
             this.Loaded -= OnPageLoaded;
 
             UpdateViewModel();
-            StartNewGame(); // <<<<<<<<<  delete this line
+            //StartNewGame(); // <<<<<<<<<  delete this line
         }
 
         private void OnPageUnloaded(object sender, RoutedEventArgs ev) {
@@ -121,7 +122,7 @@ namespace Fmg {
 
             var minTileWidth = Cast.DpToPx(48);
             var maxTileWidth = Cast.DpToPx(ProjSettings.IsMobile ? 90 : 140);
-            var gridViewItemBorderWidth = 3.0 + // magic number ;(
+            var gridViewItemBorderWidth = 3.0 + // magic number ;(    not in visual
                      4 + 4      // <DataTemplate <StackPanel Margin.LeftAndRight
                     +8 + 8;     // <DataTemplate <StackPanel <canvas:CanvasControl Margin.LeftAndRight
             var widthBetweenItems = 4;

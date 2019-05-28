@@ -200,21 +200,21 @@ public class SelectMosaicFragment extends Fragment {
 
         float minTileWidth = Cast.dpToPx(48);
         float maxTileWidth = Cast.dpToPx(ProjSettings.isMobile ? 90 : 140);
-        double gridViewItemBorderWidth = 3.0 + // magic number ;(
-                4 + 4      // <DataTemplate <StackPanel Margin.LeftAndRight
-                +8 + 8;     // <DataTemplate <StackPanel <canvas:CanvasControl Margin.LeftAndRight
-        double widthBetweenItems = 4;
+        double cardViewItemBorderWidth =
+              //2 * Cast.dpToPx(0)  // mosaic_item.xml: <<android.support.v7.widget.CardView <LinearLayout android:layout_margin="0dp"
+                2 * Cast.dpToPx(1); // mosaic_item.xml: <<android.support.v7.widget.CardView <LinearLayout <ImageView android:layout_margin="1dp"
+        double widthBetweenItems = 2 * Cast.dpToPx(8); // mosaic_item.xml: <android.support.v7.widget.CardView android:layout_margin="8dp"
 
-        double pageBorderWidth =
-                4 + 4;      // <ScrollViewer Margin.LeftAndRight
-              //+ 10 + 10;  // <ScrollViewer <GridView Margin.LeftAndRight
+        double fragmentBorderWidth = 0;
+              //2 * Cast.dpToPx(0)  // select_mosaic_fragment.xml: <LinearLayout android:layout_margin="0dp"
+              //2 * Cast.dpToPx(0); // select_mosaic_fragment.xml: <LinearLayout <RelativeLayout <android.support.v7.widget.RecyclerView android:layout_margin="0dp"
 
         double size = newSize.width; // Math.Min(newSize.width, newSize.height);
-        double spaceToItems = size - pageBorderWidth;
+        double spaceToItems = size - fragmentBorderWidth;
 
         int rows = 1;
         for (; rows <= EMosaic.values().length; ++rows) {
-            double size2 = maxTileWidth * rows + (rows - 1) * widthBetweenItems;
+            double size2 = maxTileWidth * rows + (rows - 0/* ! */) * widthBetweenItems;
             if (size2 > spaceToItems)
                 break;
         }
@@ -222,10 +222,10 @@ public class SelectMosaicFragment extends Fragment {
         double spaceToItemsClear = spaceToItems - (rows - 1) * widthBetweenItems;
         double tileWidth = spaceToItemsClear / rows;
         double tileWidth2 = Math.min(Math.max(tileWidth, minTileWidth), maxTileWidth);
-        double imageSize = tileWidth2 - gridViewItemBorderWidth;
+        double imageSize = tileWidth2 - cardViewItemBorderWidth;
         //LoggerSimple.put("tileWidth={0}, tileWidth2={1}, imageSize={2}", tileWidth, tileWidth2, imageSize);
         viewModel.setImageSize(new SizeDouble(imageSize, imageSize));
-        gridLayoutManager.setSpanCount(rows);
+//        gridLayoutManager.setSpanCount(rows);
 
 
 //        LoggerSimple.put("< SelectMosaicFragment::onFragmentSizeChanged: imageSize={0}", wh);
