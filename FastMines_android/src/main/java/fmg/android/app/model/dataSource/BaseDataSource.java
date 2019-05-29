@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import fmg.android.app.BR;
 import fmg.android.app.model.items.BaseDataItem;
@@ -94,7 +95,7 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
 
     @Bindable
     public SizeDouble getImageSize() {
-        return getDataSource().get(0).getSize();
+        return getDataSource().stream().map(x -> x.getSize()).findAny().orElseGet(() -> new SizeDouble(-123, -456));
     }
     public void setImageSize(SizeDouble size) {
         SizeDouble old = getImageSize();

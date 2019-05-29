@@ -63,7 +63,7 @@ public abstract class BaseDataItem<T,
         notifier.setProperty(this.title, title, PROPERTY_TITLE);
     }
 
-    protected double getZoom() { return 2; }
+    protected double getZoom() { return 1; }
 
     @Bindable
     public abstract TImageCtrlr getEntity();

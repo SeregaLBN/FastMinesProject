@@ -88,15 +88,13 @@ namespace Fmg.DataModel.DataSources {
         }
 
         public SizeDouble ImageSize {
-            get { return DataSource.First().Size; }
+            get { return DataSource.Select(x => x.Size).FirstOrDefault(); }
             set {
                 var old = ImageSize;
-                foreach (var mi in DataSource) {
+                foreach (var mi in DataSource)
                     mi.Size = value;
-                }
-                if (old != value) {
+                if (old != value)
                     _notifier.FirePropertyChanged(old, value);
-                }
             }
         }
 
