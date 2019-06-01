@@ -115,7 +115,11 @@ namespace Fmg.Uwp.Mosaic.Win2d {
                             maxY = Math.Max(maxY, rc.Bottom());
                         }
                     }
-                    var rcClip = new Windows.Foundation.Rect(minX + offset.Width, minY + offset.Height, maxX - minX, maxY - minY);
+                    var rcClip = new Windows.Foundation.Rect(
+                        Math.Max(0, minX + offset.Width),
+                        Math.Max(0, minY + offset.Height),
+                        maxX - minX,
+                        maxY - minY);
                     tracer.Put($"canvasVirtualControl.Invalidate(rcClip={rcClip})");
                     canvasVirtualControl.Invalidate(rcClip);
                 }

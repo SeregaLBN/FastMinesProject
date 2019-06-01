@@ -136,7 +136,7 @@ namespace Fmg.Core.Mosaic {
                         lockChanging = false;
                 }
             }
-    }
+        }
 
 
         public TImageInner ImgMine {

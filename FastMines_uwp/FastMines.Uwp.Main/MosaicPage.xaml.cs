@@ -40,11 +40,14 @@ namespace Fmg {
             get {
                 if (_mosaicController == null) {
                     var useVirtCtrl = true;
-                    var ctrl = useVirtCtrl
-                        ? (IMosaicController)new MosaicVirtController(CanvasDevice.GetSharedDevice(), _canvasVirtualControl) { BindSizeDirection = false }
-                        : (IMosaicController)new MosaicSwapController(CanvasDevice.GetSharedDevice(), _canvasSwapChainPanel) { BindSizeDirection = false };
+
                     _canvasVirtualControl.Visibility = useVirtCtrl ? Visibility.Visible   : Visibility.Collapsed;
                     _canvasSwapChainPanel.Visibility = useVirtCtrl ? Visibility.Collapsed : Visibility.Visible;
+
+                    var ctrl = useVirtCtrl
+                        ? (IMosaicController)new MosaicVirtController(CanvasDevice.GetSharedDevice(), _canvasVirtualControl) { BindSizeDirection = false, ExtendedManipulation = true }
+                        : (IMosaicController)new MosaicSwapController(CanvasDevice.GetSharedDevice(), _canvasSwapChainPanel) { BindSizeDirection = false, ExtendedManipulation = true };
+                    ctrl.Model.AutoFit = false;
                     MosaicController = ctrl; // call this setter
                 }
                 return _mosaicController;
@@ -69,7 +72,7 @@ namespace Fmg {
 
             this.Loaded += OnPageLoaded;
             this.Unloaded += OnPageUnloaded;
-            //this.SizeChanged += OnPageSizeChanged;
+            this.SizeChanged += OnPageSizeChanged;
             this.ManipulationMode =
                 ManipulationModes.TranslateX |
                 ManipulationModes.TranslateY |
@@ -104,17 +107,15 @@ namespace Fmg {
                 this.Frame.GoBack();
         }
 
-        private void OnPageSizeChanged(object sender, RoutedEventArgs e) {
-            (MosaicController as MosaicVirtController)?.SizeOptimal();
-            (MosaicController as MosaicSwapController)?.SizeOptimal();
+        private void OnPageSizeChanged(object sender, RoutedEventArgs ev) {
         }
 
-        private void OnPageLoaded(object sender, RoutedEventArgs e) {
+        private void OnPageLoaded(object sender, RoutedEventArgs ev) {
             Window.Current.CoreWindow.KeyUp += OnKeyUp_CoreWindow;
             //this.DataContext = MosaicController;
         }
 
-        private void OnPageUnloaded(object sender, RoutedEventArgs e) {
+        private void OnPageUnloaded(object sender, RoutedEventArgs ev) {
             Window.Current.CoreWindow.KeyUp -= OnKeyUp_CoreWindow;
 
             MosaicController = null; // call explicit setter

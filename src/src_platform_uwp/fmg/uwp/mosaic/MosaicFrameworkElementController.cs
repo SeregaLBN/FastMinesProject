@@ -35,8 +35,8 @@ namespace Fmg.Uwp.Mosaic {
         /// false: bind Model.Size to Control.SizeProperty
         /// </summary>
         public bool BindSizeDirection { get; set; } = true;
-        private bool _extendedManipulation = !true;
-        #region if _extendedManipulation
+        private bool _extendedManipulation = false;
+        #region if ExtendedManipulation
         /// <summary> мин отступ от краев экрана для мозаики </summary>
         private const double MinIndent = 30;
         private const bool DeferredZoom = !true;
@@ -66,6 +66,16 @@ namespace Fmg.Uwp.Mosaic {
 
         public abstract TImageAsFrameworkElement Control { get; }
 
+        public bool ExtendedManipulation {
+            get => _extendedManipulation;
+            set {
+                if (_notifier.SetProperty(ref _extendedManipulation, value)) {
+                    UnsubscribeToControl();
+                    SubscribeToControl();
+                }
+            }
+        }
+
         protected void SubscribeToControl() {
             var ctrl = Control;
             ctrl.Tapped += OnTapped;
@@ -77,7 +87,7 @@ namespace Fmg.Uwp.Mosaic {
             ctrl.LostFocus += OnFocusLost;
             ctrl.SizeChanged += OnControlSizeChanged;
 
-            if (!_extendedManipulation)
+            if (!ExtendedManipulation)
                 return;
 
             ctrl.PointerWheelChanged += OnPointerWheelChanged;
@@ -115,7 +125,7 @@ namespace Fmg.Uwp.Mosaic {
             ctrl.LostFocus -= OnFocusLost;
             ctrl.SizeChanged -= OnControlSizeChanged;
 
-            if (!_extendedManipulation)
+            if (!ExtendedManipulation)
                 return;
 
             ctrl.PointerWheelChanged -= OnPointerWheelChanged;
@@ -148,8 +158,6 @@ namespace Fmg.Uwp.Mosaic {
 
             Model.SizeField = sizeFld;
             MinesCount = numberMines;
-
-            RecheckLocation();
         }
 
         /// <summary> get this Control size </summary>
@@ -183,16 +191,20 @@ namespace Fmg.Uwp.Mosaic {
         }
         double? _maxArea; // cached value
 
-        /// <summary> check that mosaic field is placed in the window/page </summary>
-        private void RecheckLocation() {
-            SizeOptimal();
-
-            var o = GetOffset();
-            var sizeWinMosaic = Size;
+        private void CenteredMosaic() {
             var sizeControl = GetControlSize();
-            o.Left = (sizeControl.Width - sizeWinMosaic.Width) / 2;
-            o.Top = (sizeControl.Height - sizeWinMosaic.Height) / 2;
-            ApplyOffset(o);
+
+            // 1. modify area
+            var model = Model;
+            var tmp = sizeControl;
+            Model.Area = MosaicHelper.FindAreaBySize(model.MosaicType, model.SizeField, ref tmp);
+
+            // 2. modify offset
+            var offset = Model.MosaicOffset;
+            var size   = Model.MosaicSize;
+            offset.Width = (sizeControl.Width - size.Width) / 2;
+            offset.Height = (sizeControl.Height - size.Height) / 2;
+            Model.MosaicOffset = offset;
         }
 
         /// <summary> Zoom + </summary>
@@ -255,20 +267,14 @@ namespace Fmg.Uwp.Mosaic {
         }
 
         /// <summary> Zoom minimum </summary>
-        void ZoomMin() {
+        private void ZoomMin() {
             Model.Area = MosaicInitData.AREA_MINIMUM;
         }
 
         /// <summary> Zoom maximum </summary>
-        void ZoomMax() {
+        private void ZoomMax() {
             var maxArea = CalcMaxArea();
             Model.Area = maxArea;
-        }
-
-        public void SizeOptimal() {
-            var sizeControl = GetControlSize();
-            var model = Model;
-            Model.Area = MosaicHelper.FindAreaBySize(model.MosaicType, model.SizeField, ref sizeControl);
         }
 
         protected override void OnModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
@@ -289,9 +295,6 @@ namespace Fmg.Uwp.Mosaic {
 
             if (!BindSizeDirection)
                 Model.Size = newSize;
-
-            if (_extendedManipulation)
-                RecheckLocation();
         }
 
         private void OnSizeChanged(PropertyChangedExEventArgs<SizeDouble> ev) {
@@ -304,10 +307,10 @@ namespace Fmg.Uwp.Mosaic {
         }
 
         private void OnAreaChanged(PropertyChangedExEventArgs<double> ev) {
-            if (!_extendedManipulation)
+            if (!ExtendedManipulation)
                 return;
             using (var tracer = CreateTracer(GetFullCallerName(), string.Format("newArea={0:0.00}, oldValue={1:0.00}", ev.NewValue, ev.OldValue))) {
-                var o = GetOffset();
+                var offset = Model.MosaicOffset;
 
                 var newViewSize = Size;
                 if (_mouseDevicePosition_AreaChanging.HasValue) {
@@ -323,12 +326,11 @@ namespace Fmg.Uwp.Mosaic {
                     var pointNew = new PointDouble(newViewSize.Width * percentX, newViewSize.Height * percentY);
 
                     // смещаю игровое поле так, чтобы точка была на том же месте экрана
-                    o.Left += pointOld.X - pointNew.X;
-                    o.Top += pointOld.Y - pointNew.Y;
+                    offset.Width  += pointOld.X - pointNew.X;
+                    offset.Height += pointOld.Y - pointNew.Y;
                 }
 
-                RecheckOffset(ref o, newViewSize);
-                ApplyOffset(o);
+                Model.MosaicOffset = RecheckOffset(offset, newViewSize);
             }
         }
 
@@ -408,7 +410,7 @@ namespace Fmg.Uwp.Mosaic {
                         ev.Handled = true;
                     }
                 } else {
-                    RecheckLocation();
+                    CenteredMosaic();
                     ev.Handled = true;
                 }
             }
@@ -602,7 +604,7 @@ namespace Fmg.Uwp.Mosaic {
                 } else {
                     #region drag
                     var needDrag = true;
-                    var o = GetOffset();
+                    var offset = Model.MosaicOffset;
                     var sizeControl = GetControlSize();
                     #region check possibility dragging
                     if (_clickInfo.CellDown != null) {
@@ -636,45 +638,44 @@ namespace Fmg.Uwp.Mosaic {
                         }
 
                         var sizeViewMosaic = Size;
-                        if ((o.Left + sizeViewMosaic.Width + deltaTrans.X) < MinIndent) {
+                        if ((offset.Width + sizeViewMosaic.Width + deltaTrans.X) < MinIndent) {
                             // правый край мозаики пересёк левую сторону страницы/экрана
                             if (ev.IsInertial)
                                 _turnX = !_turnX; // разворачиавю по оси X
                             else
-                                o.Left = MinIndent - sizeViewMosaic.Width; // привязываю к левой стороне страницы/экрана
+                                offset.Width = MinIndent - sizeViewMosaic.Width; // привязываю к левой стороне страницы/экрана
                             applyDelta = ev.IsInertial;
                         } else
-                        if ((o.Left + deltaTrans.X) > (sizeControl.Width - MinIndent)) {
+                        if ((offset.Width + deltaTrans.X) > (sizeControl.Width - MinIndent)) {
                             // левый край мозаики пересёк правую сторону страницы/экрана
                             if (ev.IsInertial)
                                 _turnX = !_turnX; // разворачиавю по оси X
                             else
-                                o.Left = sizeControl.Width - MinIndent; // привязываю к правой стороне страницы/экрана
+                                offset.Width = sizeControl.Width - MinIndent; // привязываю к правой стороне страницы/экрана
                             applyDelta = ev.IsInertial;
                         }
-                        if ((o.Top + sizeViewMosaic.Height + deltaTrans.Y) < MinIndent) {
+                        if ((offset.Height + sizeViewMosaic.Height + deltaTrans.Y) < MinIndent) {
                             // нижний край мозаики пересёк верхнюю сторону страницы/экрана
                             if (ev.IsInertial)
                                 _turnY = !_turnY; // разворачиавю по оси Y
                             else
-                                o.Top = MinIndent - sizeViewMosaic.Height; // привязываю к верхней стороне страницы/экрана
+                                offset.Height = MinIndent - sizeViewMosaic.Height; // привязываю к верхней стороне страницы/экрана
                             applyDelta = ev.IsInertial;
                         } else
-                        if ((o.Top + deltaTrans.Y) > (sizeControl.Height - MinIndent)) {
+                        if ((offset.Height + deltaTrans.Y) > (sizeControl.Height - MinIndent)) {
                             // вержний край мозаики пересёк нижнюю сторону страницы/экрана
                             if (ev.IsInertial)
                                 _turnY = !_turnY; // разворачиавю по оси Y
                             else
-                                o.Top = sizeControl.Height - MinIndent; // привязываю к нижней стороне страницы/экрана
+                                offset.Height = sizeControl.Height - MinIndent; // привязываю к нижней стороне страницы/экрана
                             applyDelta = ev.IsInertial;
                         }
                         #endregion
                         if (applyDelta) {
-                            o.Left += deltaTrans.X;
-                            o.Top += deltaTrans.Y;
+                            offset.Width += deltaTrans.X;
+                            offset.Height += deltaTrans.Y;
                         }
-                        RecheckOffset(ref o, sizeViewMosaic);
-                        ApplyOffset(o);
+                        Model.MosaicOffset = RecheckOffset(offset, sizeViewMosaic);
                     }
                     #endregion
                 }
@@ -733,43 +734,25 @@ namespace Fmg.Uwp.Mosaic {
             //}
         }
 
-        Thickness GetOffset() {
-            //return Control.Padding;   // variant 1
-            return Control.Margin;      // variant 2
-            //return _contentRoot.Margin;             // variant 3
-            //return _contentRoot.Padding;           // variant 4
-        }
-
-        private void ApplyOffset(Thickness offset) {
-            //var pad = Control.Padding; // variant 1
-            var pad = Control.Margin;    // variant 2
-            //var pad = _contentRoot.Margin;           // variant 3
-            //var pad = _contentRoot.Padding;          // variant 4
-            pad.Left = offset.Left;
-            pad.Top = offset.Top;
-            //Control.Padding = pad; // variant 1
-            Control.Margin = pad;    // variant 2
-            //_contentRoot.Margin = pad;           // variant 3
-            //_contentRoot.Padding = pad;          // variant 4
-        }
-
         /// <summary> Перепроверить смещение к полю мозаики так, что поле мозаики было в пределах страницы </summary>
-        private void RecheckOffset(ref Thickness offset, SizeDouble sizeWinMosaic) {
+        private SizeDouble RecheckOffset(SizeDouble offset, SizeDouble sizeWinMosaic) {
             var sizeControl = GetControlSize();
 
-            if (offset.Left < (MinIndent - sizeWinMosaic.Width)) { // правый край мозаики пересёк левую сторону страницы/экрана?
-                offset.Left = MinIndent - sizeWinMosaic.Width; // привязываю к левой стороне страницы/экрана
+            if (offset.Width < (MinIndent - sizeWinMosaic.Width)) { // правый край мозаики пересёк левую сторону страницы/экрана?
+                offset.Width = MinIndent - sizeWinMosaic.Width; // привязываю к левой стороне страницы/экрана
             } else {
-                if (offset.Left > (sizeControl.Width - MinIndent)) // левый край мозаики пересёк правую сторону страницы/экрана?
-                    offset.Left = sizeControl.Width - MinIndent; // привязываю к правой стороне страницы/экрана
+                if (offset.Width > (sizeControl.Width - MinIndent)) // левый край мозаики пересёк правую сторону страницы/экрана?
+                    offset.Width = sizeControl.Width - MinIndent; // привязываю к правой стороне страницы/экрана
             }
 
-            if (offset.Top < (MinIndent - sizeWinMosaic.Height)) { // нижний край мозаики пересёк верхнюю сторону страницы/экрана?
-                offset.Top = MinIndent - sizeWinMosaic.Height; // привязываю к верхней стороне страницы/экрана
+            if (offset.Height < (MinIndent - sizeWinMosaic.Height)) { // нижний край мозаики пересёк верхнюю сторону страницы/экрана?
+                offset.Height = MinIndent - sizeWinMosaic.Height; // привязываю к верхней стороне страницы/экрана
             } else {
-                if (offset.Top > (sizeControl.Height - MinIndent)) // вержний край мозаики пересёк нижнюю сторону страницы/экрана?
-                    offset.Top = sizeControl.Height - MinIndent; // привязываю к нижней стороне страницы/экрана
+                if (offset.Height > (sizeControl.Height - MinIndent)) // вержний край мозаики пересёк нижнюю сторону страницы/экрана?
+                    offset.Height = sizeControl.Height - MinIndent; // привязываю к нижней стороне страницы/экрана
             }
+
+            return offset;
         }
 
         // TODO rename or remove

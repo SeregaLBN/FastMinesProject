@@ -124,7 +124,7 @@ namespace FastMines {
         }
 
         private void OnPageSizeChanged(object sender, RoutedEventArgs e) {
-            MosaicController.SizeOptimal();
+            //MosaicController.SizeOptimal();
         }
 
         private void OnPageLoaded(object sender, RoutedEventArgs e) {
