@@ -38,7 +38,7 @@ namespace Fmg.Uwp.Mosaic {
         private bool _extendedManipulation = false;
         #region if ExtendedManipulation
         /// <summary> мин отступ от краев экрана для мозаики </summary>
-        private const double MinIndent = 30;
+        private readonly double MinIndent = (30.0).DpToPx();
         private const bool DeferredZoom = !true;
         private bool _manipulationStarted;
         private bool _turnX;
@@ -228,7 +228,7 @@ namespace Fmg.Uwp.Mosaic {
             var currentViewSize = Size;
 
             if (_mouseDevicePosition_AreaChanging.HasValue) {
-                var p = ToImagePoint(_mouseDevicePosition_AreaChanging.Value);
+                var p = _mouseDevicePosition_AreaChanging.Value;
                 _scaleTransform.CenterX = p.X;
                 _scaleTransform.CenterY = p.Y;
             }
@@ -288,7 +288,7 @@ namespace Fmg.Uwp.Mosaic {
         private void OnAreaChanged(PropertyChangedExEventArgs<double> ev) {
             if (!ExtendedManipulation)
                 return;
-            using (var tracer = CreateTracer(GetFullCallerName(), string.Format("newArea={0:0.00}, oldValue={1:0.00}", ev.NewValue, ev.OldValue))) {
+            using (var tracer = CreateTracer(GetCallerName(), string.Format("newArea={0:0.00}, oldValue={1:0.00}", ev.NewValue, ev.OldValue))) {
                 var offset = Model.MosaicOffset;
 
                 var newViewSize = Size;
@@ -297,7 +297,7 @@ namespace Fmg.Uwp.Mosaic {
                     var oldViewSize = GetMosaicSize(Model.SizeField, ev.OldValue);
 
                     // точка над игровым полем со старой площадью ячеек
-                    var pointOld = ToImagePoint(devicePos);
+                    var pointOld = devicePos;
                     var percentX = pointOld.X / oldViewSize.Width;  // 0.0 .. 1.0
                     var percentY = pointOld.Y / oldViewSize.Height; // 0.0 .. 1.0
 
@@ -353,7 +353,7 @@ namespace Fmg.Uwp.Mosaic {
         }
 
         bool OnClick(Windows.Foundation.Point pos, bool leftClick, bool down) {
-            var point = ToImagePoint(pos);
+            var point = pos.ToFmPointDouble();
 #if  false // otherwise not work the long tapping (to setting flag label)
             if (point.X < 0 || point.Y < 0) {
                 return clickHandler(new ClickResult(null, leftClick, down));
@@ -421,7 +421,7 @@ namespace Fmg.Uwp.Mosaic {
         protected void OnPointerPressed(object sender, PointerRoutedEventArgs ev) {
             var imgControl = Control;
             var currPoint = ev.GetCurrentPoint(imgControl);
-            //using (CreateTracer(GetFullCallerName(), "pointerId=" + currPoint.PointerId, () => "ev.Handled = " + ev.Handled))
+            //using (CreateTracer(GetCallerName(), "pointerId=" + currPoint.PointerId, () => "ev.Handled = " + ev.Handled))
             {
                 //_clickInfo.PointerDevice = pointerPoint.PointerDevice.PointerDeviceType;
                 var props = currPoint.Properties;
@@ -442,7 +442,7 @@ namespace Fmg.Uwp.Mosaic {
         protected void OnPointerReleased(object sender, PointerRoutedEventArgs ev) {
             var imgControl = Control;
             var currPoint = ev.GetCurrentPoint(imgControl);
-            //using (CreateTracer(GetFullCallerName(), string.Format($"pointerId={currPoint.PointerId}, _manipulationStarted={_manipulationStarted}"), () => "ev.Handled=" + ev.Handled))
+            //using (CreateTracer(GetCallerName(), string.Format($"pointerId={currPoint.PointerId}, _manipulationStarted={_manipulationStarted}"), () => "ev.Handled=" + ev.Handled))
             {
                 //if (_manipulationStarted)
                 if (ev.Pointer.PointerDeviceType == PointerDeviceType.Mouse) {
@@ -466,7 +466,7 @@ namespace Fmg.Uwp.Mosaic {
         protected void OnPointerCaptureLost(object sender, PointerRoutedEventArgs ev) {
             var imgControl = Control;
             var currPoint = ev.GetCurrentPoint(imgControl);
-            //using (CreateTracer(GetFullCallerName(), string.Format($"pointerId={currPoint.PointerId}, _manipulationStarted={_manipulationStarted}"), () => "ev.Handled=" + ev.Handled))
+            //using (CreateTracer(GetCallerName(), string.Format($"pointerId={currPoint.PointerId}, _manipulationStarted={_manipulationStarted}"), () => "ev.Handled=" + ev.Handled))
             {
                 if (!_clickInfo.Released) {
                     LoggerSimple.Put("ã OnPointerCaptureLost: forced left release click...");
@@ -477,7 +477,7 @@ namespace Fmg.Uwp.Mosaic {
 
 #if DEBUG
         protected void OnPointerMoved(object sender, PointerRoutedEventArgs ev) {
-            //using (var tracer = CreateTracer(GetFullCallerName(), () => "ev.Handled = " + ev.Handled))
+            //using (var tracer = CreateTracer(GetCallerName(), () => "ev.Handled = " + ev.Handled))
             {
                 Pointer ptr = ev.Pointer;
 
@@ -574,7 +574,7 @@ namespace Fmg.Uwp.Mosaic {
 
         protected void OnManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs ev) {
             var delta = ev.Delta;
-            using (var tracer = CreateTracer(GetFullCallerName(), string.Format($"pos={ev.Position}; Scale={delta.Scale}; Expansion={delta.Expansion}, Rotation={delta.Rotation}"))) {
+            using (var tracer = CreateTracer(GetCallerName(), string.Format($"pos={ev.Position}; Scale={delta.Scale}; Expansion={delta.Expansion}, Rotation={delta.Rotation}"))) {
                 ev.Handled = true;
                 if (Math.Abs(1 - delta.Scale) > 0.009) {
                     #region scale / zoom
@@ -590,15 +590,15 @@ namespace Fmg.Uwp.Mosaic {
                     var size = Model.Size;
                     #region check possibility dragging
                     if (_clickInfo.CellDown != null) {
-                        var noMarginPoint = ToImagePoint(ev.Position); // new Windows.Foundation.Point(ev.Position.X - o.Left, ev.Position.Y - o.Top);
-                        //var inCellRegion = _tmpClickedCell.PointInRegion(noMarginPoint.ToFmRect());
+                        var startPoint = ev.Position.ToFmPointDouble();
+                        //var inCellRegion = _tmpClickedCell.PointInRegion(startPoint.ToFmRect());
                         //this._contentRoot.Background = new SolidColorBrush(inCellRegion ? Colors.Aquamarine : Colors.DeepPink);
-                        var rcOuter = _clickInfo.CellDown.GetRcOuter();
-                        var min = Math.Min(size.Width / 20, size.Height / 20);
-                        rcOuter.MoveXY(-min, -min);
-                        rcOuter.Width += min * 2;
+                        var rcOuter = _clickInfo.CellDown.GetRcOuter().MoveXY(offset);
+                        var min = Cast.DpToPx(25);
+                        rcOuter = rcOuter.MoveXY(-min, -min);
+                        rcOuter.Width  += min * 2;
                         rcOuter.Height += min * 2;
-                        needDrag = !rcOuter.Contains(noMarginPoint);
+                        needDrag = !rcOuter.Contains(startPoint);
                     }
                     #endregion
 
@@ -672,7 +672,7 @@ namespace Fmg.Uwp.Mosaic {
 #endif
             //var pnt2 = ContentRoot.TransformToVisual(Mosaic.Container).TransformPoint(ev.Position);
             //var content = Window.Current.Content;
-            using (CreateTracer(GetFullCallerName(), $"Pos=[{ev.Position} / {pnt1}]; " +
+            using (CreateTracer(GetCallerName(), $"Pos=[{ev.Position} / {pnt1}]; " +
                                                      $"Container=[" +
                                                      $"{((ev.Container == null) ? "null" : ev.Container.GetType().ToString())}" +
                                                      $"]; Cumulative.Translation=[{ev.Cumulative.Translation}]")) {
@@ -683,7 +683,7 @@ namespace Fmg.Uwp.Mosaic {
 
 
         private void OnKeyUp(object sender, KeyRoutedEventArgs ev) {
-            //using (CreateTracer(GetFullCallerName(), "virtKey=" + ev.Key)) {
+            //using (CreateTracer(GetCallerName(), "virtKey=" + ev.Key)) {
             ev.Handled = true;
             switch (ev.Key) {
             case VirtualKey.F2:
@@ -737,16 +737,6 @@ namespace Fmg.Uwp.Mosaic {
             return offset;
         }
 
-        // TODO rename or remove
-        private PointDouble ToImagePoint(Windows.Foundation.Point pagePoint) {
-            //var imgControl = Control;
-            var point = pagePoint.ToFmPointDouble(); // imgControl.TransformToVisual(imgControl).TransformPoint(pagePoint).ToFmPointDouble();
-            //var o = GetOffset();
-            //var point2 = new PointDouble(pagePoint.X - o.Left, pagePoint.Y - o.Top);
-            //System.Diagnostics.Debug.Assert(point == point2);
-            return point;
-        }
-
         protected override bool CheckNeedRestoreLastGame() {
             return false;
         }
@@ -771,15 +761,12 @@ namespace Fmg.Uwp.Mosaic {
             //public PointerDeviceType PointerDevice { get; set; }
         }
 
-        private string GetFullCallerName([System.Runtime.CompilerServices.CallerMemberName] string callerName = null) {
+        private Tracer CreateTracer([System.Runtime.CompilerServices.CallerMemberName] string callerName = null, string ctorMessage = null, Func<string> disposeMessage = null) {
             var typeName = GetType().Name;
             var thisName = nameof(MosaicFrameworkElementController<TImageAsFrameworkElement, TImageInner, TMosaicView>);
             if (typeName != thisName)
                 typeName += "(" + thisName + ")";
-            return typeName + "." + callerName;
-        }
-        private Tracer CreateTracer([System.Runtime.CompilerServices.CallerMemberName] string callerName = null, string ctorMessage = null, Func<string> disposeMessage = null) {
-            return new Tracer(GetFullCallerName(callerName), ctorMessage, disposeMessage);
+            return new Tracer(typeName + "." + callerName, ctorMessage, disposeMessage);
         }
 
     }

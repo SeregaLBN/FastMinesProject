@@ -154,7 +154,7 @@ namespace Fmg.Uwp.Mosaic.Win2d {
         }
 
         protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            //LoggerSimple.Put(GetFullCallerName() + ": ev.PropertyName=" + ev.PropertyName);
+            //LoggerSimple.Put(GetCallerName() + ": ev.PropertyName=" + ev.PropertyName);
             base.OnPropertyChanged(sender, ev);
             if (ev.PropertyName == nameof(Image)) {
                 var _ = this.Image; // implicit call this.DrawModified
@@ -167,15 +167,12 @@ namespace Fmg.Uwp.Mosaic.Win2d {
             base.Disposing();
         }
 
-        private string GetFullCallerName([System.Runtime.CompilerServices.CallerMemberName] string callerName = null) {
+        private Tracer CreateTracer([System.Runtime.CompilerServices.CallerMemberName] string callerName = null, string ctorMessage = null, Func<string> disposeMessage = null) {
             var typeName = GetType().Name;
             var thisName = nameof(MosaicCanvasSwapChainPanelView);
             if (typeName != thisName)
                 typeName += "(" + thisName + ")";
-            return typeName + "." + callerName;
-        }
-        private Tracer CreateTracer([System.Runtime.CompilerServices.CallerMemberName] string callerName = null, string ctorMessage = null, Func<string> disposeMessage = null) {
-            return new Tracer(GetFullCallerName(callerName), ctorMessage, disposeMessage);
+            return new Tracer(typeName + "." + callerName, ctorMessage, disposeMessage);
         }
 
     }

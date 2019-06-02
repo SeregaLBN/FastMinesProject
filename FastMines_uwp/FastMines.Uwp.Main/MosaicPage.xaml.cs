@@ -131,7 +131,7 @@ namespace Fmg {
 
         protected override void OnPointerPressed(PointerRoutedEventArgs ev) {
             var currPoint = ev.GetCurrentPoint(this);
-            using (CreateTracer(GetFullCallerName(), "pointerId=" + currPoint.PointerId, () => "ev.Handled = " + ev.Handled)) {
+            using (CreateTracer(GetCallerName(), "pointerId=" + currPoint.PointerId, () => "ev.Handled = " + ev.Handled)) {
 
                 //_clickInfo.PointerDevice = pointerPoint.PointerDevice.PointerDeviceType;
                 var props = currPoint.Properties;
@@ -151,13 +151,13 @@ namespace Fmg {
         }
 
         protected override void OnKeyUp(KeyRoutedEventArgs ev) {
-            using (CreateTracer(GetFullCallerName(), "virtKey=" + ev.Key)) {
+            using (CreateTracer(GetCallerName(), "virtKey=" + ev.Key)) {
                 base.OnKeyUp(ev);
             }
         }
 
         private void OnKeyUp_CoreWindow(CoreWindow win, KeyEventArgs ev) {
-            //using (CreateTracer(GetFullCallerName(), "virtKey=" + ev.VirtualKey)) {
+            //using (CreateTracer(GetCallerName(), "virtKey=" + ev.VirtualKey)) {
             //ev.Handled = true;
             //switch (ev.VirtualKey) {
             //case VirtualKey.F2:
@@ -189,16 +189,15 @@ namespace Fmg {
             //MosaicController.SetGame(ESkillLevel.eCrazy);
         }
 
-        private string GetFullCallerName([System.Runtime.CompilerServices.CallerMemberName] string callerName = null) {
+        private string GetCallerName([System.Runtime.CompilerServices.CallerMemberName] string callerName = null) {
+            return callerName;
+        }
+        private Tracer CreateTracer([System.Runtime.CompilerServices.CallerMemberName] string callerName = null, string ctorMessage = null, Func<string> disposeMessage = null) {
             var typeName = GetType().Name;
             var thisName = nameof(MosaicPage);
             if (typeName != thisName)
                 typeName += "(" + thisName + ")";
-            return typeName + "." + callerName;
-        }
-
-        private Tracer CreateTracer([System.Runtime.CompilerServices.CallerMemberName] string callerName = null, string ctorMessage = null, Func<string> disposeMessage = null) {
-            return new Tracer(GetFullCallerName(callerName), ctorMessage, disposeMessage);
+            return new Tracer(typeName + "." + callerName, ctorMessage, disposeMessage);
         }
 
     }
