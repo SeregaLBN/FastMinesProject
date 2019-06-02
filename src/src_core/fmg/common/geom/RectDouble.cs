@@ -23,9 +23,21 @@ namespace Fmg.Common.Geom {
         public RectDouble(SizeDouble size) { X = Y = 0; Width = size.Width; Height = size.Height; }
         public RectDouble(double width, double height) { X = Y = 0; Width = width; Height = height; }
 
+        // TODO rename to IsIntersected
         public bool Intersection(RectDouble rc) {
-            return (X < (rc.X + rc.Width )) && ((X + Width ) > rc.X) &&
+            return (X < (rc.X + rc.Width)) && ((X + Width) > rc.X) &&
                    (Y < (rc.Y + rc.Height)) && ((Y + Height) > rc.Y);
+        }
+
+        // TODO rename to Intersection
+        public RectDouble? GetIntersection(RectDouble rc) {
+            if (!Intersection(rc))
+                return null;
+            var left   = Math.Max(this.Left  (), rc.Left  ());
+            var top    = Math.Max(this.Top   (), rc.Top   ());
+            var right  = Math.Min(this.Right (), rc.Right ());
+            var bottom = Math.Min(this.Bottom(), rc.Bottom());
+            return new RectDouble(left, top, right - left, bottom - top);
         }
 
         public bool Contains(PointDouble point) {

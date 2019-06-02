@@ -27,7 +27,7 @@ namespace Fmg.Uwp.Mosaic.Win2d {
             return Control;
         }
 
-        public virtual TControl Control { get;  protected set; }
+        public virtual TControl Control { get; protected set; }
 
         private Mine.CanvasBmpController ImgMine {
             get {

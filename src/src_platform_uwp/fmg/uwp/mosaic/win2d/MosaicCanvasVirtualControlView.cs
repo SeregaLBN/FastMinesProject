@@ -53,16 +53,6 @@ namespace Fmg.Uwp.Mosaic.Win2d {
                     return;
                 }
 
-                SizeDouble size;
-                if (double.IsNaN(canvasVirtualControl.Width) || double.IsNaN(canvasVirtualControl.Height)) {
-                    tracer.Put($"canvasVirtualControl.Width/Height is NaN; size={canvasVirtualControl.Size}, DesiredSize={canvasVirtualControl.DesiredSize}, RenderSize={canvasVirtualControl.RenderSize}");
-                    size = canvasVirtualControl.Size.ToFmSizeDouble();
-                } else {
-                    size = new SizeDouble(canvasVirtualControl.Width, canvasVirtualControl.Height); // double values
-                }
-                //if ((canvasVirtualControl.Size.Width == 0) || (canvasVirtualControl.Size.Height == 0))
-                //   return;
-
                 System.Diagnostics.Debug.Assert(!_alreadyPainted);
 
                 if (modifiedCells == null) {
@@ -71,31 +61,19 @@ namespace Fmg.Uwp.Mosaic.Win2d {
                     return;
                 }
 
-#if DEBUG
-                var tmp = new Windows.Foundation.Rect(0, 0, size.Width, size.Height);
-#endif
-
                 var model = Model;
                 var offset = model.MosaicOffset;
                 tracer.Put($"offset={offset}");
+                SizeDouble size = model.Size;
                 if (!_accumulateInvalidate) {
                     foreach (var cell in modifiedCells) {
                         var rc = cell.GetRcOuter();
                         rc.X += offset.Width;
                         rc.Y += offset.Height;
-#if DEBUG
-                        var containsLT = tmp.Contains(rc.PointLT().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Left()) && tmp.Top.HasMinDiff(rc.Top()));
-                        var containsLB = tmp.Contains(rc.PointLB().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Left()) && tmp.Top.HasMinDiff(rc.Bottom()));
-                        var containsRT = tmp.Contains(rc.PointRT().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Right()) && tmp.Top.HasMinDiff(rc.Top()));
-                        var containsRB = tmp.Contains(rc.PointRB().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Right()) && tmp.Top.HasMinDiff(rc.Bottom()));
-                        bool intersect = (tmp != Windows.Foundation.Rect.Empty);
-                        //LoggerSimple.Put($"intersect={intersect}; containsLT={containsLT}; containsLB={containsLB}; containsRT={containsRT}; containsRB={containsRB}");
-                        System.Diagnostics.Debug.Assert(intersect && containsLT && containsRT && containsLB && containsRB);
-                        if (!(intersect && containsLT && containsRT && containsLB && containsRB))
-                            return;
-#endif
-                        tracer.Put($"canvasVirtualControl.Invalidate(rc={rc})");
-                        canvasVirtualControl.Invalidate(rc.ToWinRect());
+                        var rcClip = rc.GetIntersection(new RectDouble(size));
+                        tracer.Put($"canvasVirtualControl.Invalidate(rc={rcClip})");
+                        if (rcClip.HasValue)
+                            canvasVirtualControl.Invalidate(rcClip.Value.ToWinRect());
                     }
                 } else {
                     double minX = 0, minY = 0, maxX = 0, maxY = 0;
@@ -115,13 +93,14 @@ namespace Fmg.Uwp.Mosaic.Win2d {
                             maxY = Math.Max(maxY, rc.Bottom());
                         }
                     }
-                    var rcClip = new Windows.Foundation.Rect(
-                        Math.Max(0, minX + offset.Width),
-                        Math.Max(0, minY + offset.Height),
+                    var rcClip = new RectDouble(
+                        minX + offset.Width,
+                        minY + offset.Height,
                         maxX - minX,
-                        maxY - minY);
+                        maxY - minY).GetIntersection(new RectDouble(size));
                     tracer.Put($"canvasVirtualControl.Invalidate(rcClip={rcClip})");
-                    canvasVirtualControl.Invalidate(rcClip);
+                    if (rcClip.HasValue)
+                        canvasVirtualControl.Invalidate(rcClip.Value.ToWinRect());
                 }
             }
         }

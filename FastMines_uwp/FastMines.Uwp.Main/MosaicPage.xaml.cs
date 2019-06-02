@@ -39,7 +39,7 @@ namespace Fmg {
         public IMosaicController MosaicController {
             get {
                 if (_mosaicController == null) {
-                    var useVirtCtrl = true;
+                    var useVirtCtrl = !true;
 
                     _canvasVirtualControl.Visibility = useVirtCtrl ? Visibility.Visible   : Visibility.Collapsed;
                     _canvasSwapChainPanel.Visibility = useVirtCtrl ? Visibility.Collapsed : Visibility.Visible;
