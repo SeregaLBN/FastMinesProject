@@ -64,14 +64,11 @@ namespace Fmg.Uwp.Mosaic.Win2d {
                 var model = Model;
                 var offset = model.MosaicOffset;
                 tracer.Put($"offset={offset}");
-                SizeDouble size = model.Size;
+                var rcAll = new RectDouble(model.Size);
                 if (!_accumulateInvalidate) {
                     foreach (var cell in modifiedCells) {
-                        var rc = cell.GetRcOuter();
-                        rc.X += offset.Width;
-                        rc.Y += offset.Height;
-                        var rcClip = rc.GetIntersection(new RectDouble(size));
-                        tracer.Put($"canvasVirtualControl.Invalidate(rc={rcClip})");
+                        var rcClip = cell.GetRcOuter().MoveXY(offset).GetIntersection(rcAll);
+                        tracer.Put($"canvasVirtualControl.Invalidate(rcClip={rcClip})");
                         if (rcClip.HasValue)
                             canvasVirtualControl.Invalidate(rcClip.Value.ToWinRect());
                     }
@@ -93,11 +90,7 @@ namespace Fmg.Uwp.Mosaic.Win2d {
                             maxY = Math.Max(maxY, rc.Bottom());
                         }
                     }
-                    var rcClip = new RectDouble(
-                        minX + offset.Width,
-                        minY + offset.Height,
-                        maxX - minX,
-                        maxY - minY).GetIntersection(new RectDouble(size));
+                    var rcClip = new RectDouble(minX, minY, maxX - minX, maxY - minY).MoveXY(offset).GetIntersection(rcAll);
                     tracer.Put($"canvasVirtualControl.Invalidate(rcClip={rcClip})");
                     if (rcClip.HasValue)
                         canvasVirtualControl.Invalidate(rcClip.Value.ToWinRect());

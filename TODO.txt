@@ -1,3 +1,8 @@
+* all: сократить цепочку рисования
+     modifiedCells -> rcClip -> drawedCells -> draw
+  к
+     modifiedCells -> draw
+
 * C#  review all Fmg.Common.Geom.*  to usage properties (without getter/setters)
 
 * rename all Rect(Double).Intersection -> Rect(Double).IsIntersected

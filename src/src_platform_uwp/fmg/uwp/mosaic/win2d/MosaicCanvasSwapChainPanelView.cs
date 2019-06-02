@@ -109,9 +109,11 @@ namespace Fmg.Uwp.Mosaic.Win2d {
                 var model = Model;
                 var rcMosaic = new RectDouble(model.MosaicSize).MoveXY(model.MosaicOffset);
 
-                var size = new RectDouble(model.Size);
-                if (rcMosaic.GetIntersection(size) != rcMosaic) {
-                    // TODO check all cels into modifiedCells
+                var rcAll = new RectDouble(model.Size);
+                if (rcMosaic.GetIntersection(rcAll) != rcMosaic) {
+                    if (modifiedCells == null)
+                        modifiedCells = model.Matrix;
+                    modifiedCells = modifiedCells.Where(x => x.GetRcOuter().Intersection(rcAll)).ToList();
                 }
                 using (var ds = ab.CreateDrawingSession()) {
                     if (bb != null) {
