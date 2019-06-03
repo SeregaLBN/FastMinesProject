@@ -9,6 +9,7 @@ using Microsoft.Graphics.Canvas.UI.Xaml;
 using Fmg.Common;
 using Fmg.Common.Geom;
 using Fmg.Core.Mosaic.Cells;
+using Fmg.Uwp.Utils;
 
 namespace Fmg.Uwp.Mosaic.Win2d {
 
@@ -48,23 +49,14 @@ namespace Fmg.Uwp.Mosaic.Win2d {
             get {
                 System.Diagnostics.Debug.Assert(Control != null);
                 System.Diagnostics.Debug.Assert(!Disposed);
-                var cw = Control.Width;
-                var ch = Control.Height;
-                if (double.IsNaN(cw) || double.IsNaN(ch)) {
-                    var s = Model.Size;
-                    cw = s.Width;
-                    ch = s.Height;
-                }
+                var size = Model.Size;
                 if (_swapChain == null) {
                     var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-                    SwapChain = new CanvasSwapChain(_resourceCreator, (float)cw, (float)ch, dpi);
+                    SwapChain = new CanvasSwapChain(_resourceCreator, (float)size.Width, (float)size.Height, dpi);
                 } else {
-                    var size = _swapChain.Size;
-                    if (!size.Width.HasMinDiff(cw) || !size.Height.HasMinDiff(ch)) {
-                        var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-                        _swapChain.ResizeBuffers((float)cw, (float)ch, dpi);
-                        //LoggerSimple.Put("MosaicCanvasSwapChainPanelView.getSwapChain: resized");
-                    }
+                    var sizeSize = _swapChain.Size;
+                    if (!sizeSize.Width.HasMinDiff(size.Width) || !sizeSize.Height.HasMinDiff(size.Height))
+                        _swapChain.ResizeBuffers(size.ToWinSize());
                 }
                 return _swapChain;
             }
@@ -97,13 +89,15 @@ namespace Fmg.Uwp.Mosaic.Win2d {
         }
 
         protected override void DrawModified(ICollection<BaseCell> modifiedCells) {
-            using (var tracer = CreateTracer(nameof(DrawModified), "modifiedCells=" + (modifiedCells == null ? "null" : "size_" + modifiedCells.Count))) {
+            Tracer tracer = null;
+            //using (tracer = CreateTracer(nameof(DrawModified), "modifiedCells=" + (modifiedCells == null ? "null" : "size_" + modifiedCells.Count)))
+            {
                 SwapDrawBuffer();
                 var ab = ActualBuffer;
                 var bb = BackBuffer;
                 if (bb == null) {
                     modifiedCells = null; // force redraw all
-                    tracer.Put("BackBuffer is null: force set modifiedCells as null");
+                    tracer?.Put("BackBuffer is null: force set modifiedCells as null");
                 }
                 bool needRedrawAll = (modifiedCells == null);
                 var model = Model;
@@ -118,7 +112,7 @@ namespace Fmg.Uwp.Mosaic.Win2d {
                 using (var ds = ab.CreateDrawingSession()) {
                     if (bb != null) {
                         ds.DrawImage(bb);
-                        tracer.Put("{0} BackBuffer != null: ds.DrawImage(BackBuffer): modifiedCells={1}", _bufferIndex, modifiedCells == null ? "null" : modifiedCells.Count().ToString());
+                        tracer?.Put("{0} BackBuffer != null: ds.DrawImage(BackBuffer): modifiedCells={1}", _bufferIndex, modifiedCells == null ? "null" : modifiedCells.Count().ToString());
                     }
 
                     bool drawBk = needRedrawAll;

@@ -140,6 +140,20 @@ namespace Fmg.Uwp.Mosaic {
             ctrl.KeyUp -= OnKeyUp;
         }
 
+        private SizeDouble Offset {
+            get => Model.MosaicOffset;
+#if !DEBUG
+            set => Model.MosaicOffset = value;
+#else
+            set {
+                using (CreateTracer(GetCallerName(), "" + Model.MosaicOffset, () => "" + value)) {
+                    Model.MosaicOffset = value;
+                }
+            }
+#endif
+        }
+
+
         /// <summary> Поменять игру на новый уровень сложности </summary>
         public void SetGame(ESkillLevel skill) {
             //if (isPaused())
@@ -172,22 +186,6 @@ namespace Fmg.Uwp.Mosaic {
             return area;
         }
         double? _maxArea; // cached value
-
-        private void CenteredMosaic() {
-            var size = Model.Size;
-
-            // 1. modify area
-            var model = Model;
-            var tmp = size;
-            model.Area = MosaicHelper.FindAreaBySize(model.MosaicType, model.SizeField, ref tmp);
-
-            // 2. modify offset
-            var offset = model.MosaicOffset;
-            var sizeMosaic   = model.MosaicSize;
-            offset.Width = (size.Width - sizeMosaic.Width) / 2;
-            offset.Height = (size.Height - sizeMosaic.Height) / 2;
-            model.MosaicOffset = offset;
-        }
 
         /// <summary> Zoom + </summary>
         void ZoomInc(double zoomPower = 1.3, Windows.Foundation.Point? mouseDevicePosition = null) {
@@ -289,7 +287,7 @@ namespace Fmg.Uwp.Mosaic {
             if (!ExtendedManipulation)
                 return;
             using (var tracer = CreateTracer(GetCallerName(), string.Format("newArea={0:0.00}, oldValue={1:0.00}", ev.NewValue, ev.OldValue))) {
-                var offset = Model.MosaicOffset;
+                var offset = Offset;
 
                 var newViewSize = Size;
                 if (_mouseDevicePosition_AreaChanging.HasValue) {
@@ -301,7 +299,7 @@ namespace Fmg.Uwp.Mosaic {
                     var percentX = pointOld.X / oldViewSize.Width;  // 0.0 .. 1.0
                     var percentY = pointOld.Y / oldViewSize.Height; // 0.0 .. 1.0
 
-                    // таже точка над игровым полем, но с учётом zoom'а (новой площади)
+                    // та же точка над игровым полем, но с учётом zoom'а (новой площади)
                     var pointNew = new PointDouble(newViewSize.Width * percentX, newViewSize.Height * percentY);
 
                     // смещаю игровое поле так, чтобы точка была на том же месте экрана
@@ -309,7 +307,7 @@ namespace Fmg.Uwp.Mosaic {
                     offset.Height += pointOld.Y - pointNew.Y;
                 }
 
-                Model.MosaicOffset = RecheckOffset(offset, newViewSize);
+                Offset = RecheckOffset(offset, newViewSize);
             }
         }
 
@@ -379,12 +377,12 @@ namespace Fmg.Uwp.Mosaic {
         }
 
         protected void OnDoubleTapped(object sender, DoubleTappedRoutedEventArgs ev) {
-            //using (new Fmg.Common.Tracer(GetCallerName(), () => "handled=" + ev.Handled))
+            using (new Tracer(GetCallerName(), null, () => "handled=" + ev.Handled))
             {
                 var imgControl = Control;
                 var model = Model;
                 var mosaicSize = model.MosaicSize;
-                var offset = model.MosaicOffset;
+                var offset = Offset;
                 var rcMosaic = new Windows.Foundation.Rect(offset.Width, offset.Height, mosaicSize.Width, mosaicSize.Height);
                 if (rcMosaic.Contains(ev.GetPosition(imgControl))) {
                     if (this.GameStatus == EGameStatus.eGSEnd) {
@@ -392,7 +390,21 @@ namespace Fmg.Uwp.Mosaic {
                         ev.Handled = true;
                     }
                 } else {
-                    CenteredMosaic();
+                    _mouseDevicePosition_AreaChanging = null;
+
+                    // centered mosaic
+                    var size = model.Size;
+
+                    // 1. modify area
+                    var tmp = size;
+                    model.Area = MosaicHelper.FindAreaBySize(model.MosaicType, model.SizeField, ref tmp);
+
+                    // 2. modify offset
+                    mosaicSize = model.MosaicSize; // ! reload value
+                    offset.Width  = (size.Width  - mosaicSize.Width ) / 2;
+                    offset.Height = (size.Height - mosaicSize.Height) / 2;
+                    Offset = offset;
+
                     ev.Handled = true;
                 }
             }
@@ -586,7 +598,7 @@ namespace Fmg.Uwp.Mosaic {
                 } else {
                     #region drag
                     var needDrag = true;
-                    var offset = Model.MosaicOffset;
+                    var offset = Offset;
                     var size = Model.Size;
                     #region check possibility dragging
                     if (_clickInfo.CellDown != null) {
@@ -657,7 +669,7 @@ namespace Fmg.Uwp.Mosaic {
                             offset.Width += deltaTrans.X;
                             offset.Height += deltaTrans.Y;
                         }
-                        Model.MosaicOffset = RecheckOffset(offset, sizeViewMosaic);
+                        Offset = RecheckOffset(offset, sizeViewMosaic);
                     }
                     #endregion
                 }

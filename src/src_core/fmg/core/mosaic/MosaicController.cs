@@ -579,7 +579,9 @@ namespace Fmg.Core.Mosaic {
             base.Disposing();
         }
 
-        protected string GetCallerName([System.Runtime.CompilerServices.CallerMemberName] string callerName = null) { return this.GetType().Name + '.' + callerName; }
+        protected string GetCallerName([System.Runtime.CompilerServices.CallerMemberName] string callerName = null) {
+            return callerName;
+        }
 
     }
 
