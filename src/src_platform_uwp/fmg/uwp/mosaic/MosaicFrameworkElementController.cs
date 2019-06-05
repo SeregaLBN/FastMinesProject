@@ -44,12 +44,19 @@ namespace Fmg.Uwp.Mosaic {
         private bool _turnX;
         private bool _turnY;
         private DateTime _dtInertiaStarting;
-        private Windows.Foundation.Point? _mouseDevicePosition_AreaChanging = null;
         private static double? _baseWheelDelta;
         private IDisposable _areaScaleObservable;
         private Transform _originalTransform;
         private CompositeTransform _scaleTransform;
         private double _deferredArea;
+
+        private class ZoomStartInfo {
+            public Windows.Foundation.Point _devicePosition;
+            public SizeDouble _mosaicSize;
+            public SizeDouble _mosaicOffset;
+        };
+        private ZoomStartInfo _zoomStartInfo;
+
 
         private sealed class NeedAreaChangingEventArgs { }
         private delegate void NeedAreaChangingEventHandler(object sender, NeedAreaChangingEventArgs ev);
@@ -187,23 +194,49 @@ namespace Fmg.Uwp.Mosaic {
         }
         double? _maxArea; // cached value
 
+        private void BeforeZoom(Windows.Foundation.Point? mouseDevicePosition) {
+            if (mouseDevicePosition.HasValue) {
+                if (_zoomStartInfo == null)
+                    _zoomStartInfo = new ZoomStartInfo();
+                _zoomStartInfo._devicePosition = mouseDevicePosition.Value;
+                _zoomStartInfo._mosaicOffset = Offset;
+                _zoomStartInfo._mosaicSize = Model.MosaicSize;
+            } else {
+                _zoomStartInfo = null;
+            }
+        }
+
+        private void AfterZoom() {
+            if (_zoomStartInfo == null)
+                return;
+
+            var devicePos = _zoomStartInfo._devicePosition;
+            var mosaicSizeNew = Model.MosaicSize;//GetMosaicSize(Model.SizeField, Model.Area);
+            var offsetNew = new SizeDouble(
+                        devicePos.X - (devicePos.X - _zoomStartInfo._mosaicOffset.Width ) * mosaicSizeNew.Width  / _zoomStartInfo._mosaicSize.Width,
+                        devicePos.Y - (devicePos.Y - _zoomStartInfo._mosaicOffset.Height) * mosaicSizeNew.Height / _zoomStartInfo._mosaicSize.Height);
+            Offset = offsetNew;
+        }
+
         /// <summary> Zoom + </summary>
         void ZoomInc(double zoomPower = 1.3, Windows.Foundation.Point? mouseDevicePosition = null) {
-            _mouseDevicePosition_AreaChanging = mouseDevicePosition;
+            BeforeZoom(mouseDevicePosition);
             if (DeferredZoom) {
                 Scale(1.01 * zoomPower);
             } else {
                 Model.Area *= 1.01 * zoomPower;
+                AfterZoom();
             }
         }
 
         /// <summary> Zoom - </summary>
         void ZoomDec(double zoomPower = 1.3, Windows.Foundation.Point? mouseDevicePosition = null) {
-            _mouseDevicePosition_AreaChanging = mouseDevicePosition;
+            BeforeZoom(mouseDevicePosition);
             if (DeferredZoom) {
                 Scale(0.99 / zoomPower);
             } else {
                 Model.Area *= 0.99 / zoomPower;
+                AfterZoom();
             }
         }
 
@@ -225,8 +258,8 @@ namespace Fmg.Uwp.Mosaic {
             var deferredViewSize = GetMosaicSize(Model.SizeField, _deferredArea);
             var currentViewSize = Size;
 
-            if (_mouseDevicePosition_AreaChanging.HasValue) {
-                var p = _mouseDevicePosition_AreaChanging.Value;
+            if (_zoomStartInfo != null) {
+                var p = _zoomStartInfo._devicePosition;
                 _scaleTransform.CenterX = p.X;
                 _scaleTransform.CenterY = p.Y;
             }
@@ -287,27 +320,7 @@ namespace Fmg.Uwp.Mosaic {
             if (!ExtendedManipulation)
                 return;
             using (var tracer = CreateTracer(GetCallerName(), string.Format("newArea={0:0.00}, oldValue={1:0.00}", ev.NewValue, ev.OldValue))) {
-                var offset = Offset;
-
-                var newViewSize = Size;
-                if (_mouseDevicePosition_AreaChanging.HasValue) {
-                    var devicePos = _mouseDevicePosition_AreaChanging.Value;
-                    var oldViewSize = GetMosaicSize(Model.SizeField, ev.OldValue);
-
-                    // точка над игровым полем со старой площадью ячеек
-                    var pointOld = devicePos;
-                    var percentX = pointOld.X / oldViewSize.Width;  // 0.0 .. 1.0
-                    var percentY = pointOld.Y / oldViewSize.Height; // 0.0 .. 1.0
-
-                    // та же точка над игровым полем, но с учётом zoom'а (новой площади)
-                    var pointNew = new PointDouble(newViewSize.Width * percentX, newViewSize.Height * percentY);
-
-                    // смещаю игровое поле так, чтобы точка была на том же месте экрана
-                    offset.Width  += pointOld.X - pointNew.X;
-                    offset.Height += pointOld.Y - pointNew.Y;
-                }
-
-                Offset = RecheckOffset(offset, newViewSize);
+                Offset = RecheckOffset(Offset, Size);
             }
         }
 
@@ -390,7 +403,7 @@ namespace Fmg.Uwp.Mosaic {
                         ev.Handled = true;
                     }
                 } else {
-                    _mouseDevicePosition_AreaChanging = null;
+                    _zoomStartInfo = null;
 
                     // centered mosaic
                     var size = model.Size;
