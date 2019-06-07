@@ -101,13 +101,19 @@ namespace Fmg.Uwp.Mosaic.Win2d {
                 }
                 bool needRedrawAll = (modifiedCells == null);
                 var model = Model;
-                var rcMosaic = new RectDouble(model.MosaicSize).MoveXY(model.MosaicOffset);
+                var offset = model.MosaicOffset;
+                var rcMosaic = new RectDouble(model.MosaicSize).MoveXY(offset);
 
                 var rcAll = new RectDouble(model.Size);
                 if (rcMosaic.GetIntersection(rcAll) != rcMosaic) {
                     if (modifiedCells == null)
                         modifiedCells = model.Matrix;
-                    modifiedCells = modifiedCells.Where(x => x.GetRcOuter().Intersection(rcAll)).ToList();
+                    modifiedCells = modifiedCells.Where(x => {
+                            var res = x.GetRcOuter().MoveXY(offset).Intersection(rcAll);
+                            if (!res)
+                                tracer?.Put("Excluded cell[{0}]", x.GetCoord());
+                            return res;
+                        }).ToList();
                 }
                 using (var ds = ab.CreateDrawingSession()) {
                     if (bb != null) {
