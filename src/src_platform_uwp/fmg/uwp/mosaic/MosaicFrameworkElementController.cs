@@ -149,15 +149,12 @@ namespace Fmg.Uwp.Mosaic {
 
         private SizeDouble Offset {
             get => Model.MosaicOffset;
-#if !DEBUG
-            set => Model.MosaicOffset = value;
-#else
             set {
-                using (CreateTracer(GetCallerName(), "" + Model.MosaicOffset, () => "" + value)) {
-                    Model.MosaicOffset = value;
+                //using (CreateTracer(GetCallerName(), "" + Model.MosaicOffset, () => "" + Model.MosaicOffset))
+                {
+                    Model.MosaicOffset = RecheckOffset(value);
                 }
             }
-#endif
         }
 
 
@@ -320,7 +317,7 @@ namespace Fmg.Uwp.Mosaic {
             if (!ExtendedManipulation)
                 return;
             using (var tracer = CreateTracer(GetCallerName(), string.Format("newArea={0:0.00}, oldValue={1:0.00}", ev.NewValue, ev.OldValue))) {
-                Offset = RecheckOffset(Offset, Size);
+                Offset = Offset; // implicit call RecheckOffset
             }
         }
 
@@ -502,7 +499,8 @@ namespace Fmg.Uwp.Mosaic {
 
 #if DEBUG
         protected void OnPointerMoved(object sender, PointerRoutedEventArgs ev) {
-            //using (var tracer = CreateTracer(GetCallerName(), () => "ev.Handled = " + ev.Handled))
+            Tracer tracer = null;
+            //using (tracer = CreateTracer(GetCallerName(), () => "ev.Handled = " + ev.Handled))
             {
                 Pointer ptr = ev.Pointer;
 
@@ -519,15 +517,15 @@ namespace Fmg.Uwp.Mosaic {
                     PointerPoint ptrPt = ev.GetCurrentPoint(null);
                     if (ptrPt.Properties.IsLeftButtonPressed) {
                         //tracer.Put("Left button: " + ptrPt.PointerId);
-                        LoggerSimple.Put("  OnPointerMoved: Left button: " + ptrPt.PointerId);
+                        tracer?.Put("Left button: " + ptrPt.PointerId);
                     }
                     if (ptrPt.Properties.IsMiddleButtonPressed) {
                         //tracer.Put("Wheel button: " + ptrPt.PointerId);
-                        LoggerSimple.Put("  OnPointerMoved: Wheel button: " + ptrPt.PointerId);
+                        tracer?.Put("Wheel button: " + ptrPt.PointerId);
                     }
                     if (ptrPt.Properties.IsRightButtonPressed) {
                         //tracer.Put("Right button: " + ptrPt.PointerId);
-                        LoggerSimple.Put("  OnPointerMoved: Right button: " + ptrPt.PointerId);
+                        tracer?.Put("Right button: " + ptrPt.PointerId);
                     }
                 } else {
                     if (_manipulationStarted) {
@@ -536,7 +534,7 @@ namespace Fmg.Uwp.Mosaic {
                         if (/*currProp.IsPrimary && */currProp.IsLeftButtonPressed) {
                             Action<PointerPoint> log = t => {
                                 var prop = t.Properties;
-                                LoggerSimple.Put($"  OnPointerMoved: point={{PointerId(frame)={t.PointerId}({t.FrameId}), "
+                                tracer?.Put($"point={{PointerId(frame)={t.PointerId}({t.FrameId}), "
                                     + $"IsInContact={t.IsInContact}, "
                                     + $"Position={t.Position.ToFmPointDouble()}, "
                                     //+ $"RawPosition={t.RawPosition.ToFmPointDouble()}, "
@@ -580,13 +578,33 @@ namespace Fmg.Uwp.Mosaic {
 #endif
 
         protected void OnManipulationStarting(object sender, ManipulationStartingRoutedEventArgs ev) {
-            using (CreateTracer()) {
+            //using (CreateTracer())
+            {
                 _manipulationStarted = false;
             }
         }
 
+        protected void OnManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs ev) {
+#if  DEBUG
+            var pnt1 = ev.Position; // thisPage.TransformToVisual(Control).TransformPoint(ev.Position);
+#else
+            var pnt1 = new Windows.Foundation.Point();
+#endif
+            //var pnt2 = ContentRoot.TransformToVisual(Mosaic.Container).TransformPoint(ev.Position);
+            //var content = Window.Current.Content;
+            //using (CreateTracer(GetCallerName(), $"Pos=[{ev.Position} / {pnt1}]; " +
+            //                                         $"Container=[" +
+            //                                         $"{((ev.Container == null) ? "null" : ev.Container.GetType().ToString())}" +
+            //                                         $"]; Cumulative.Translation=[{ev.Cumulative.Translation}]"))
+            {
+                //ev.Handled = true;
+                OnClickLost();
+            }
+        }
+
         protected void OnManipulationStarted(object sender, ManipulationStartedRoutedEventArgs ev) {
-            using (CreateTracer()) {
+            //using (CreateTracer())
+            {
                 _turnX = _turnY = false;
                 _dtInertiaStarting = DateTime.MinValue;
                 _manipulationStarted = true;
@@ -599,7 +617,9 @@ namespace Fmg.Uwp.Mosaic {
 
         protected void OnManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs ev) {
             var delta = ev.Delta;
-            using (var tracer = CreateTracer(GetCallerName(), string.Format($"pos={ev.Position}; Scale={delta.Scale}; Expansion={delta.Expansion}, Rotation={delta.Rotation}"))) {
+            Tracer tracer = null;
+            using (tracer = CreateTracer(GetCallerName(), string.Format($"pos={ev.Position}; Inertia={ev.IsInertial}; deltaTranslation=[{delta.Translation}]; deltaScale={delta.Scale}; deltaExpansion={delta.Expansion}, Rotation={delta.Rotation}")))
+            {
                 ev.Handled = true;
                 if (Math.Abs(1 - delta.Scale) > 0.009) {
                     #region scale / zoom
@@ -639,42 +659,38 @@ namespace Fmg.Uwp.Mosaic {
                         if (ev.IsInertial) {
                             //var coefFading = Math.Max(0.05, 1 - 0.32 * (DateTime.Now - _dtInertiaStarting).TotalSeconds);
                             var coefFading = Math.Max(0, 1 - 0.32 * (DateTime.Now - _dtInertiaStarting).TotalSeconds);
-                            tracer.Put("inertial coeff fading = " + coefFading);
+                            tracer?.Put("inertial coeff fading = " + coefFading);
                             deltaTrans.X *= coefFading;
                             deltaTrans.Y *= coefFading;
                         }
 
-                        var sizeViewMosaic = Size;
-                        if ((offset.Width + sizeViewMosaic.Width + deltaTrans.X) < MinIndent) {
-                            // правый край мозаики пересёк левую сторону страницы/экрана
+                        var mosaicSize = Model.MosaicSize;
+                        if ((offset.Width + mosaicSize.Width + deltaTrans.X) < MinIndent) { // правый край мозаики пересёк левую сторону контрола?
                             if (ev.IsInertial)
                                 _turnX = !_turnX; // разворачиавю по оси X
                             else
-                                offset.Width = MinIndent - sizeViewMosaic.Width; // привязываю к левой стороне страницы/экрана
+                                offset.Width = MinIndent - mosaicSize.Width; // привязываю к левой стороне контрола
                             applyDelta = ev.IsInertial;
                         } else
-                        if ((offset.Width + deltaTrans.X) > (size.Width - MinIndent)) {
-                            // левый край мозаики пересёк правую сторону страницы/экрана
+                        if ((offset.Width + deltaTrans.X) > (size.Width - MinIndent)) { // левый край мозаики пересёк правую сторону контрола?
                             if (ev.IsInertial)
                                 _turnX = !_turnX; // разворачиавю по оси X
                             else
-                                offset.Width = size.Width - MinIndent; // привязываю к правой стороне страницы/экрана
+                                offset.Width = size.Width - MinIndent; // привязываю к правой стороне контрола
                             applyDelta = ev.IsInertial;
                         }
-                        if ((offset.Height + sizeViewMosaic.Height + deltaTrans.Y) < MinIndent) {
-                            // нижний край мозаики пересёк верхнюю сторону страницы/экрана
+                        if ((offset.Height + mosaicSize.Height + deltaTrans.Y) < MinIndent) { // нижний край мозаики пересёк верхнюю сторону контрола?
                             if (ev.IsInertial)
                                 _turnY = !_turnY; // разворачиавю по оси Y
                             else
-                                offset.Height = MinIndent - sizeViewMosaic.Height; // привязываю к верхней стороне страницы/экрана
+                                offset.Height = MinIndent - mosaicSize.Height; // привязываю к верхней стороне контрола
                             applyDelta = ev.IsInertial;
                         } else
-                        if ((offset.Height + deltaTrans.Y) > (size.Height - MinIndent)) {
-                            // вержний край мозаики пересёк нижнюю сторону страницы/экрана
+                        if ((offset.Height + deltaTrans.Y) > (size.Height - MinIndent)) { // вержний край мозаики пересёк нижнюю сторону контрола?
                             if (ev.IsInertial)
                                 _turnY = !_turnY; // разворачиавю по оси Y
                             else
-                                offset.Height = size.Height - MinIndent; // привязываю к нижней стороне страницы/экрана
+                                offset.Height = size.Height - MinIndent; // привязываю к нижней стороне контрола
                             applyDelta = ev.IsInertial;
                         }
                         #endregion
@@ -682,28 +698,43 @@ namespace Fmg.Uwp.Mosaic {
                             offset.Width += deltaTrans.X;
                             offset.Height += deltaTrans.Y;
                         }
-                        Offset = RecheckOffset(offset, sizeViewMosaic);
+                        Offset = offset;
                     }
                     #endregion
                 }
             }
         }
 
-        protected void OnManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs ev) {
-#if  DEBUG
-            var pnt1 = ev.Position; // thisPage.TransformToVisual(Control).TransformPoint(ev.Position);
-#else
-            var pnt1 = new Windows.Foundation.Point();
-#endif
-            //var pnt2 = ContentRoot.TransformToVisual(Mosaic.Container).TransformPoint(ev.Position);
-            //var content = Window.Current.Content;
-            using (CreateTracer(GetCallerName(), $"Pos=[{ev.Position} / {pnt1}]; " +
-                                                     $"Container=[" +
-                                                     $"{((ev.Container == null) ? "null" : ev.Container.GetType().ToString())}" +
-                                                     $"]; Cumulative.Translation=[{ev.Cumulative.Translation}]")) {
-                //ev.Handled = true;
-                OnClickLost();
+        /// <summary> Перепроверить смещение к полю мозаики так, что поле мозаики было в пределах страницы </summary>
+        private SizeDouble RecheckOffset(SizeDouble offset) {
+            var size = Model.Size;
+            var mosaicSize = Model.MosaicSize;
+            if ((offset.Width + mosaicSize.Width) < MinIndent) { // правый край мозаики пересёк левую сторону контрола?
+                //var old = offset.Width;
+                offset.Width = MinIndent - mosaicSize.Width; // привязываю к левой стороне контрола
+                //LoggerSimple.Put("Fix left: {0}vs{1}", offset.Width, old);
+            } else {
+                if (offset.Width > (size.Width - MinIndent)) { // левый край мозаики пересёк правую сторону контрола?
+                    //var old = offset.Width;
+                    offset.Width = size.Width - MinIndent; // привязываю к правой стороне контрола
+                    //LoggerSimple.Put("Fix right side: {0}vs{1}", offset.Width, old);
+                }
             }
+
+            if ((offset.Height + mosaicSize.Height) < MinIndent) { // нижний край мозаики пересёк верхнюю сторону контрола?
+                //var old = offset.Height;
+                offset.Height = MinIndent - mosaicSize.Height; // привязываю к верхней стороне контрола
+                //LoggerSimple.Put("Fix down: {0}vs{1}", offset.Height, old);
+            }
+            else {
+                if (offset.Height > (size.Height - MinIndent)) { // вержний край мозаики пересёк нижнюю сторону контрола?
+                    //var old = offset.Height;
+                    offset.Height = size.Height - MinIndent; // привязываю к нижней стороне контрола
+                    //LoggerSimple.Put("Fix top: {0}vs{1}", offset.Height, old);
+                }
+            }
+
+            return offset;
         }
 
 
@@ -739,27 +770,6 @@ namespace Fmg.Uwp.Mosaic {
                 break;
             }
             //}
-        }
-
-        /// <summary> Перепроверить смещение к полю мозаики так, что поле мозаики было в пределах страницы </summary>
-        private SizeDouble RecheckOffset(SizeDouble offset, SizeDouble sizeWinMosaic) {
-            var size = Model.Size;
-
-            if (offset.Width < (MinIndent - sizeWinMosaic.Width)) { // правый край мозаики пересёк левую сторону страницы/экрана?
-                offset.Width = MinIndent - sizeWinMosaic.Width; // привязываю к левой стороне страницы/экрана
-            } else {
-                if (offset.Width > (size.Width - MinIndent)) // левый край мозаики пересёк правую сторону страницы/экрана?
-                    offset.Width = size.Width - MinIndent; // привязываю к правой стороне страницы/экрана
-            }
-
-            if (offset.Height < (MinIndent - sizeWinMosaic.Height)) { // нижний край мозаики пересёк верхнюю сторону страницы/экрана?
-                offset.Height = MinIndent - sizeWinMosaic.Height; // привязываю к верхней стороне страницы/экрана
-            } else {
-                if (offset.Height > (size.Height - MinIndent)) // вержний край мозаики пересёк нижнюю сторону страницы/экрана?
-                    offset.Height = size.Height - MinIndent; // привязываю к нижней стороне страницы/экрана
-            }
-
-            return offset;
         }
 
         protected override bool CheckNeedRestoreLastGame() {

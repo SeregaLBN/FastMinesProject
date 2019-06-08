@@ -131,7 +131,8 @@ namespace Fmg {
 
         protected override void OnPointerPressed(PointerRoutedEventArgs ev) {
             var currPoint = ev.GetCurrentPoint(this);
-            using (CreateTracer(GetCallerName(), "pointerId=" + currPoint.PointerId, () => "ev.Handled = " + ev.Handled)) {
+            //using (CreateTracer(GetCallerName(), "pointerId=" + currPoint.PointerId, () => "ev.Handled = " + ev.Handled))
+            {
 
                 //_clickInfo.PointerDevice = pointerPoint.PointerDevice.PointerDeviceType;
                 var props = currPoint.Properties;

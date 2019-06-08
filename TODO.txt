@@ -1,3 +1,5 @@
+* all: rename all OnPropertyXxxChanged => OnXxxPropertyChanged
+
 * all: сократить цепочку рисования
      modifiedCells -> rcClip -> drawedCells -> draw
   к
