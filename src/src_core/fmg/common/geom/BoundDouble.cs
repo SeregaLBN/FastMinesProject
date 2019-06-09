@@ -45,7 +45,10 @@
             }
         }
 
-        public override string ToString() { return $"{{Left:{Left}, Top:{Top}, Right:{Right}, Bottom:{Bottom}}}"; }
+        public override string ToString() {
+            return string.Format("{{Left:{0:0.00}, Top:{1:0.00}, Right:{2:0.00}, Bottom:{3:0.00}}}", Left, Top, Right, Bottom);
+        }
+
 
         public static bool operator ==(BoundDouble t1, BoundDouble t2) {
             return t1.Left.HasMinDiff(t2.Left) && t1.Top.HasMinDiff(t2.Top) && t1.Right.HasMinDiff(t2.Right) && t1.Bottom.HasMinDiff(t2.Bottom);

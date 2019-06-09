@@ -24,7 +24,7 @@ namespace Fmg.Core.Img {
         public SizeDouble Size {
             get { return _size; }
             set {
-                this.CheckSize(value);
+                this.CheckValue(value);
                 SizeDouble old = _size;
                 if (_notifier.SetProperty(ref _size, value))
                     Padding = this.RecalcPadding(Padding, _size, old);
@@ -34,7 +34,7 @@ namespace Fmg.Core.Img {
         public BoundDouble Padding {
             get => _padding;
             set {
-                this.CheckPadding(value);
+                this.CheckValue(value);
                 _notifier.SetProperty(ref this._padding, value);
             }
         }

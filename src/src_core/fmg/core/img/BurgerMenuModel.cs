@@ -62,7 +62,7 @@ namespace Fmg.Core.Img {
                 return _padding.Value;
             }
             set {
-                this.CheckPadding(value);
+                this.CheckValue(value);
                 _notifier.SetProperty(ref _padding, value);
             }
         }

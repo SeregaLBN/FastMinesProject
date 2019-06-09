@@ -616,17 +616,20 @@ namespace Fmg.Uwp.Mosaic {
         }
 
         protected void OnManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs ev) {
+            var isInertial = ev.IsInertial;
             var delta = ev.Delta;
+            var deltaTrans = delta.Translation;
+            var deltaScale = delta.Scale;
             Tracer tracer = null;
-            using (tracer = CreateTracer(GetCallerName(), string.Format($"pos={ev.Position}; Inertia={ev.IsInertial}; deltaTranslation=[{delta.Translation}]; deltaScale={delta.Scale}; deltaExpansion={delta.Expansion}, Rotation={delta.Rotation}")))
+            using (tracer = CreateTracer(GetCallerName(), string.Format($"pos={ev.Position}; Inertia={isInertial}; deltaTranslation=[{deltaTrans}]; deltaScale={deltaScale}; deltaExpansion={delta.Expansion}, Rotation={delta.Rotation}")))
             {
                 ev.Handled = true;
-                if (Math.Abs(1 - delta.Scale) > 0.009) {
+                if (Math.Abs(1 - deltaScale) > 0.009) {
                     #region scale / zoom
-                    if (delta.Scale > 0)
-                        ZoomInc(delta.Scale, ev.Position);
+                    if (deltaScale > 0)
+                        ZoomInc(deltaScale, ev.Position);
                     else
-                        ZoomDec(2 + delta.Scale, ev.Position);
+                        ZoomDec(2 + deltaScale, ev.Position);
                     #endregion
                 } else {
                     #region drag
@@ -648,17 +651,16 @@ namespace Fmg.Uwp.Mosaic {
                     #endregion
 
                     if (needDrag) {
-                        var deltaTrans = delta.Translation;
-                        var applyDelta = true;
                         #region Compound motion
                         if (_turnX)
                             deltaTrans.X *= -1;
                         if (_turnY)
                             deltaTrans.Y *= -1;
 
-                        if (ev.IsInertial) {
+                        double coefFading;
+                        if (isInertial) {
                             //var coefFading = Math.Max(0.05, 1 - 0.32 * (DateTime.Now - _dtInertiaStarting).TotalSeconds);
-                            var coefFading = Math.Max(0, 1 - 0.32 * (DateTime.Now - _dtInertiaStarting).TotalSeconds);
+                            coefFading = Math.Max(0, 1 - 0.32 * (DateTime.Now - _dtInertiaStarting).TotalSeconds);
                             tracer?.Put("inertial coeff fading = " + coefFading);
                             deltaTrans.X *= coefFading;
                             deltaTrans.Y *= coefFading;
@@ -666,38 +668,54 @@ namespace Fmg.Uwp.Mosaic {
 
                         var mosaicSize = Model.MosaicSize;
                         if ((offset.Width + mosaicSize.Width + deltaTrans.X) < MinIndent) { // правый край мозаики пересёк левую сторону контрола?
-                            if (ev.IsInertial)
-                                _turnX = !_turnX; // разворачиавю по оси X
-                            else
-                                offset.Width = MinIndent - mosaicSize.Width; // привязываю к левой стороне контрола
-                            applyDelta = ev.IsInertial;
+                            if (isInertial) {
+                                _turnX = !_turnX; // разворачиваю по оси X
+
+                                var dx1 = mosaicSize.Width + offset.Width - MinIndent; // часть deltaTrans.X которая не вылезла за границу
+                                var dx2 = deltaTrans.X + dx1;                          // часть deltaTrans.X которая вылезла за границу
+                                deltaTrans.X -= 2 * dx2;                               // та часть deltaTrans.X которая залезла за границу, разворачиваю обратно
+                            } else {
+                                offset.Width = MinIndent - mosaicSize.Width - deltaTrans.X; // привязываю к левой стороне контрола
+                            }
                         } else
                         if ((offset.Width + deltaTrans.X) > (size.Width - MinIndent)) { // левый край мозаики пересёк правую сторону контрола?
-                            if (ev.IsInertial)
-                                _turnX = !_turnX; // разворачиавю по оси X
-                            else
-                                offset.Width = size.Width - MinIndent; // привязываю к правой стороне контрола
-                            applyDelta = ev.IsInertial;
+                            if (isInertial) {
+                                _turnX = !_turnX; // разворачиваю по оси X
+
+                                var dx1 = size.Width - offset.Width - MinIndent; // часть deltaTrans.X которая не вылезла за границу
+                                var dx2 = deltaTrans.X - dx1;                    // часть deltaTrans.X которая вылезла за границу
+                                deltaTrans.X -= 2 * dx2;                         // та часть deltaTrans.X которая залезла за границу, разворачиваю обратно
+                            } else {
+                                offset.Width = size.Width - MinIndent - deltaTrans.X; // привязываю к правой стороне контрола
+                            }
                         }
+
                         if ((offset.Height + mosaicSize.Height + deltaTrans.Y) < MinIndent) { // нижний край мозаики пересёк верхнюю сторону контрола?
-                            if (ev.IsInertial)
-                                _turnY = !_turnY; // разворачиавю по оси Y
-                            else
-                                offset.Height = MinIndent - mosaicSize.Height; // привязываю к верхней стороне контрола
-                            applyDelta = ev.IsInertial;
+                            if (isInertial) {
+                                _turnY = !_turnY; // разворачиваю по оси Y
+
+                                var dy1 = mosaicSize.Height + offset.Height - MinIndent; // часть deltaTrans.Y которая не вылезла за границу
+                                var dy2 = deltaTrans.Y + dy1;                            // часть deltaTrans.Y которая вылезла за границу
+                                deltaTrans.Y -= 2 * dy2;                                 // та часть deltaTrans.Y которая залезла за границу, разворачиваю обратно
+                            } else {
+                                offset.Height = MinIndent - mosaicSize.Height - deltaTrans.Y; // привязываю к верхней стороне контрола
+                            }
                         } else
                         if ((offset.Height + deltaTrans.Y) > (size.Height - MinIndent)) { // вержний край мозаики пересёк нижнюю сторону контрола?
-                            if (ev.IsInertial)
-                                _turnY = !_turnY; // разворачиавю по оси Y
-                            else
-                                offset.Height = size.Height - MinIndent; // привязываю к нижней стороне контрола
-                            applyDelta = ev.IsInertial;
+                            if (isInertial) {
+                                _turnY = !_turnY; // разворачиваю по оси Y
+
+                                var dy1 = size.Height - offset.Height - MinIndent; // часть deltaTrans.Y которая не вылезла за границу
+                                var dy2 = deltaTrans.Y - dy1;                      // часть deltaTrans.Y которая вылезла за границу
+                                deltaTrans.Y -= 2 * dy2;                           // та часть deltaTrans.Y которая залезла за границу, разворачиваю обратно
+                            } else {
+                                offset.Height = size.Height - MinIndent - deltaTrans.Y; // привязываю к нижней стороне контрола
+                            }
                         }
                         #endregion
-                        if (applyDelta) {
-                            offset.Width += deltaTrans.X;
-                            offset.Height += deltaTrans.Y;
-                        }
+                        offset.Width  += deltaTrans.X;
+                        offset.Height += deltaTrans.Y;
+                        System.Diagnostics.Debug.Assert(offset == RecheckOffset(offset));
                         Offset = offset;
                     }
                     #endregion
@@ -710,28 +728,17 @@ namespace Fmg.Uwp.Mosaic {
             var size = Model.Size;
             var mosaicSize = Model.MosaicSize;
             if ((offset.Width + mosaicSize.Width) < MinIndent) { // правый край мозаики пересёк левую сторону контрола?
-                //var old = offset.Width;
                 offset.Width = MinIndent - mosaicSize.Width; // привязываю к левой стороне контрола
-                //LoggerSimple.Put("Fix left: {0}vs{1}", offset.Width, old);
             } else {
-                if (offset.Width > (size.Width - MinIndent)) { // левый край мозаики пересёк правую сторону контрола?
-                    //var old = offset.Width;
+                if (offset.Width > (size.Width - MinIndent)) // левый край мозаики пересёк правую сторону контрола?
                     offset.Width = size.Width - MinIndent; // привязываю к правой стороне контрола
-                    //LoggerSimple.Put("Fix right side: {0}vs{1}", offset.Width, old);
-                }
             }
 
             if ((offset.Height + mosaicSize.Height) < MinIndent) { // нижний край мозаики пересёк верхнюю сторону контрола?
-                //var old = offset.Height;
                 offset.Height = MinIndent - mosaicSize.Height; // привязываю к верхней стороне контрола
-                //LoggerSimple.Put("Fix down: {0}vs{1}", offset.Height, old);
-            }
-            else {
-                if (offset.Height > (size.Height - MinIndent)) { // вержний край мозаики пересёк нижнюю сторону контрола?
-                    //var old = offset.Height;
+            } else {
+                if (offset.Height > (size.Height - MinIndent)) // вержний край мозаики пересёк нижнюю сторону контрола?
                     offset.Height = size.Height - MinIndent; // привязываю к нижней стороне контрола
-                    //LoggerSimple.Put("Fix top: {0}vs{1}", offset.Height, old);
-                }
             }
 
             return offset;

@@ -89,7 +89,7 @@ namespace Fmg.Core.Mosaic {
                 return _size;
             }
             set {
-                this.CheckSize(value);
+                this.CheckValue(value);
                 _notifier.SetProperty(ref this._size, value);
             }
         }
@@ -97,7 +97,7 @@ namespace Fmg.Core.Mosaic {
         public BoundDouble Padding {
             get => _padding;
             set {
-                this.CheckPadding(value);
+                this.CheckValue(value);
                 _notifier.SetProperty(ref this._padding, value);
             }
         }
@@ -117,6 +117,7 @@ namespace Fmg.Core.Mosaic {
                 return new SizeDouble(offset.Width + dx / 2, offset.Height + dy / 2);
             }
             set {
+                this.CheckValue(value, true);
                 var pad = Padding;
                 var oldOffset = new SizeDouble(pad.Left, pad.Top);
                 var dx = value.Width  - oldOffset.Width;
