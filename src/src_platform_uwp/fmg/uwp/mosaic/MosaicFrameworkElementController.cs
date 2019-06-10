@@ -252,8 +252,8 @@ namespace Fmg.Uwp.Mosaic {
             _deferredArea *= scaleMul;
             _deferredArea = Math.Min(Math.Max(MosaicInitData.AREA_MINIMUM, _deferredArea), CalcMaxArea()); // recheck
 
-            var deferredViewSize = GetMosaicSize(Model.SizeField, _deferredArea);
-            var currentViewSize = Size;
+            var deferredMosaicSize = GetMosaicSize(Model.SizeField, _deferredArea);
+            var currentMosaicSize = Model.MosaicSize;
 
             if (_zoomStartInfo != null) {
                 var p = _zoomStartInfo._devicePosition;
@@ -261,14 +261,15 @@ namespace Fmg.Uwp.Mosaic {
                 _scaleTransform.CenterY = p.Y;
             }
 
-            _scaleTransform.ScaleX = deferredViewSize.Width / currentViewSize.Width;
-            _scaleTransform.ScaleY = deferredViewSize.Height / currentViewSize.Height;
+            _scaleTransform.ScaleX = deferredMosaicSize.Width / currentMosaicSize.Width;
+            _scaleTransform.ScaleY = deferredMosaicSize.Height / currentMosaicSize.Height;
 
             NeedAreaChanging(this, null); // fire event
         }
 
         private void OnDeferredAreaChanging(object sender, NeedAreaChangingEventArgs ev) {
             Model.Area = _deferredArea;
+            AfterZoom();
 
             // restore
             _scaleTransform.CenterX = _scaleTransform.CenterY = 0;
@@ -470,8 +471,10 @@ namespace Fmg.Uwp.Mosaic {
                 if (ev.Pointer.PointerDeviceType == PointerDeviceType.Mouse) {
                     var isLeftClick = (currPoint.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased);
                     var isRightClick = (currPoint.Properties.PointerUpdateKind == PointerUpdateKind.RightButtonReleased);
-                    System.Diagnostics.Debug.Assert(isLeftClick != isRightClick);
-                    ev.Handled = OnClick(currPoint.Position, isLeftClick, false);
+                    if (isLeftClick || isRightClick) {
+                        System.Diagnostics.Debug.Assert(isLeftClick != isRightClick);
+                        ev.Handled = OnClick(currPoint.Position, isLeftClick, false);
+                    }
                 } else {
                     AsyncRunner.InvokeFromUiLater(() => {
                         if (!_clickInfo.Released) {
