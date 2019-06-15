@@ -49,7 +49,7 @@ public class MosaicControllerTest {
     public void propertyChangedTest() {
         LoggerSimple.put("> MosaicControllerTest::propertyChangedTest");
 
-        new PropertyChangeExecutor<>(() -> new MosaicTestController()).run(100, 1000,
+        new PropertyChangeExecutor<>(MosaicTestController::new).run(500, 3000,
            ctrlr -> {
                MosaicModelTest.changeModel(ctrlr.getModel());
            }, (ctrlr, modifiedProperties) -> {
