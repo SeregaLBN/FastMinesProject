@@ -5,7 +5,10 @@ import java.util.Locale;
 /** Padding / Margin */
 public class BoundDouble {
 
-    public double left, right, top, bottom;
+    public double left;
+    public double top;
+    public double right;
+    public double bottom;
 
     public BoundDouble(BoundDouble copy) { this.left = copy.left; this.top = copy.top; this.right = copy.right; this.bottom = copy.bottom; }
     public BoundDouble(double bound) { left = top = right = bottom = bound; }
@@ -51,6 +54,6 @@ public class BoundDouble {
     }
 
     @Override
-    public String toString() { return String.format(Locale.US, "{lft=%.2f, rght=%.2f, top=%.2f, bttm=%.2f}", left, right, top, bottom); }
+    public String toString() { return String.format(Locale.US, "{lft=%.2f, top=%.2f, rght=%.2f, bttm=%.2f}", left, top, right, bottom); }
 
 }

@@ -44,7 +44,7 @@ namespace Fmg.Core.Mosaic {
             LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(MosaicGameModelPropertyChangedTest));
 
             MosaicGameModel m = null;
-            await new PropertyChangeExecutor<MosaicGameModel>(() => m = new MosaicGameModel(), false).Run(100, 1000,
+            await new PropertyChangeExecutor<MosaicGameModel>(() => m = new MosaicGameModel(), false).Run(300, 5000,
                 model => {
                     AssertTrue(model.Matrix.Any());
                     AssertTrue(ReferenceEquals(model.CellAttr, model.Matrix[0].Attr));
@@ -58,7 +58,7 @@ namespace Fmg.Core.Mosaic {
                     AssertEqual(2, modifiedProperties.Count);
                 });
 
-            await new PropertyChangeExecutor<MosaicGameModel>(() => m).Run(100, 1000,
+            await new PropertyChangeExecutor<MosaicGameModel>(() => m).Run(300, 5000,
                 model => {
                     model.Area = 12345;
                 }, (model, modifiedProperties) => {
@@ -669,6 +669,34 @@ namespace Fmg.Core.Mosaic {
                 }, (model, modifiedProperties) => {
                     AssertFalse(modifiedProperties.Any());
                 });
+        }
+
+        public virtual async Task NoChangeOffsetTest() {
+            async Task func(bool autofit) =>
+                await new PropertyChangeExecutor<MosaicTestModel>(() => new MosaicTestModel()).Run(10, 1000,
+                    model => {
+                        // change property
+                        model.AutoFit = autofit;
+                        var size = model.Size;
+                        size.Width *= 2;
+                        model.Size = size;
+
+                        // getsome properties
+                        var pad = model.Padding;
+                        var offset = model.MosaicOffset;
+
+                        // try facked change
+                        model.MosaicOffset = offset;
+
+                        // verify
+                        var pad2 = model.Padding;
+                        var offset2 = model.MosaicOffset;
+                        AssertEqual(pad, pad2);
+                        AssertEqual(offset, offset2);
+                    }, (model, modifiedProperties) => { });
+
+            await func(true);
+            await func(false);
         }
 
     }

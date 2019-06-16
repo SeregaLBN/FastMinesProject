@@ -15,7 +15,6 @@ import io.reactivex.Flowable;
 
 public class MosaicInitDataTest {
 
-
     @BeforeClass
     public static void setup() {
         LoggerSimple.put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
@@ -67,7 +66,7 @@ public class MosaicInitDataTest {
     @Test
     public void checkIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest() {
         LoggerSimple.put("> MosaicInitDataTest::checkIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest");
-        new PropertyChangeExecutor<>(MosaicInitDataTest::createMosaicInitData).run(100, 1000,
+        new PropertyChangeExecutor<>(MosaicInitDataTest::createMosaicInitData).run(300, 5000,
             initData -> {
                 initData.setMosaicType(EMosaic.eMosaicRhombus1);
             }, (initData, modifiedProperties) -> {
@@ -84,7 +83,7 @@ public class MosaicInitDataTest {
     @Test
     public void checkNoRepeatNotificationsTest() {
         LoggerSimple.put("> MosaicInitDataTest::checkNoRepeatNotificationsTest");
-            new PropertyChangeExecutor<>(MosaicInitDataTest::createMosaicInitData).run(100, 1000,
+            new PropertyChangeExecutor<>(MosaicInitDataTest::createMosaicInitData).run(300, 5000,
                 initData -> {
                     LoggerSimple.put("    initData.minesCount={0}", initData.getMinesCount());
                     initData.setMosaicType(EMosaic.eMosaicRhombus1);
@@ -106,7 +105,7 @@ public class MosaicInitDataTest {
     @Test
     public void checkChangedMosaicGroupTest() {
         LoggerSimple.put("> MosaicInitDataTest::checkChangedMosaicGroupTest");
-        new PropertyChangeExecutor<>(MosaicInitDataTest::createMosaicInitData).run(100, 1000,
+        new PropertyChangeExecutor<>(MosaicInitDataTest::createMosaicInitData).run(300, 5000,
             initData -> {
                 initData.setMosaicType(EMosaic.eMosaicHexagon1);
             }, (initData, modifiedProperties) -> {
@@ -117,7 +116,7 @@ public class MosaicInitDataTest {
     @Test
     public void checkNoChangedMosaicGroupTest() {
         LoggerSimple.put("> MosaicInitDataTest::checkNoChangedMosaicGroupTest");
-        new PropertyChangeExecutor<>(MosaicInitDataTest::createMosaicInitData).run(100, 1000,
+        new PropertyChangeExecutor<>(MosaicInitDataTest::createMosaicInitData).run(300, 5000,
             initData -> {
                 initData.setMosaicType(EMosaic.eMosaicRhombus1);
             }, (initData, modifiedProperties) -> {

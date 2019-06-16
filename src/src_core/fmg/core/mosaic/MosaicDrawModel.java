@@ -35,9 +35,12 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IMo
      *      <li> Мозаика равномерно вписывается во вcю область {@link #getSize()}
      *      <li> при этом Padding заного перерасчитывается с нуля
      *      </ol>
+     * <li> При изменении Area: при этом Size и Offset не меняются, но при этом меняется Padding.left и Padding.bottom.
+     * </ul>
+     *
+     * <ul>Одинаково
      * <li> При изменении Offset меняется Padding так, чтобы InnerSize остался прежним
      * <li> При изменении Padding перерасчитывается Area, так что бы мозаика вписывалась внутрь нового InnerSize.
-     * <li> При изменении Area: при этом Size и Offset не меняются, но при этом меняется Padding.left и Padding.bottom.
      * </ul>
      **/
     private boolean        _autoFit = true;
@@ -120,21 +123,21 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IMo
     @Override
     public SizeDouble getMosaicOffset() {
         BoundDouble pad = getPadding();
-        SizeDouble offset     = new SizeDouble(pad.left, pad.top);
+        SizeDouble padLT = new SizeDouble(pad.left, pad.top);
         SizeDouble mosaicSize = getMosaicSize();
         SizeDouble innerSize  = getInnerSize();
         if (mosaicSize.equals(innerSize))
-            return offset;
+            return padLT;
         double dx = innerSize.width  - mosaicSize.width;
         double dy = innerSize.height - mosaicSize.height;
-        return new SizeDouble(offset.width + dx / 2, offset.height + dy / 2);
+        return new SizeDouble(padLT.width + dx / 2, padLT.height + dy / 2);
     }
 
     /** set offset to mosaic */
     @Override
     public void setMosaicOffset(SizeDouble offset) {
         BoundDouble pad = getPadding();
-        SizeDouble oldOffset = new SizeDouble(pad.left, pad.top);
+        SizeDouble oldOffset = getMosaicOffset();
         double dx = offset.width  - oldOffset.width;
         double dy = offset.height - oldOffset.height;
         BoundDouble padNew = new BoundDouble(pad);

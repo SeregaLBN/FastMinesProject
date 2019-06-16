@@ -1,5 +1,6 @@
 package fmg.core.mosaic;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.junit.*;
@@ -59,7 +60,7 @@ public class MosaicModelTest {
         LoggerSimple.put("> MosaicModelTest::mosaicGameModelPropertyChangedTest");
 
         MosaicGameModel[] m = { null };
-        new PropertyChangeExecutor<>(() -> m[0] = new MosaicGameModel(), false).run(100, 1000,
+        new PropertyChangeExecutor<>(() -> m[0] = new MosaicGameModel(), false).run(300, 5000,
             model -> {
                 Assert.assertTrue(!model.getMatrix().isEmpty());
                 Assert.assertTrue(model.getCellAttr() == model.getMatrix().get(0).getAttr()); // reference equals
@@ -73,7 +74,7 @@ public class MosaicModelTest {
                 Assert.assertEquals(2, modifiedProperties.size());
             });
 
-        new PropertyChangeExecutor<>(() -> m[0]).run(100, 1000,
+        new PropertyChangeExecutor<>(() -> m[0]).run(300, 5000,
             model -> {
                 model.setArea(12345);
             }, (model, modifiedProperties) -> {
@@ -89,7 +90,7 @@ public class MosaicModelTest {
     public void mosaicDrawModelPropertyChangedTest() {
         LoggerSimple.put("> MosaicModelTest::mosaicDrawModelPropertyChangedTest");
 
-        new PropertyChangeExecutor<>(() -> new MosaicTestModel()).run(100, 1000,
+        new PropertyChangeExecutor<>(MosaicTestModel::new).run(300, 5000,
             model -> {
                 changeModel(model);
             }, (model, modifiedProperties) -> {
@@ -663,13 +664,13 @@ public class MosaicModelTest {
     }
 
     @Test
-    public void mosaicNoChangedTest() throws InterruptedException {
+    public void mosaicNoChangedTest()  {
         LoggerSimple.put("> MosaicModelTest::mosaicNoChangedTest");
 
         MosaicTestModel[] m = { null };
 
         // step 1: init
-        new PropertyChangeExecutor<>(() -> m[0] = new MosaicTestModel(), false).run(100, 1000,
+        new PropertyChangeExecutor<>(() -> m[0] = new MosaicTestModel(), false).run(300, 5000,
             model -> {
                 SizeDouble size = model.getSize(); // implicit call setter Size
                 Assert.assertNotNull(size);
@@ -680,7 +681,7 @@ public class MosaicModelTest {
             });
 
         // step 2: check no changes
-        new PropertyChangeExecutor<>(() -> m[0]).run(100, 1000,
+        new PropertyChangeExecutor<>(() -> m[0]).run(300, 5000,
             model -> {
                 model.setSize(new SizeDouble(model.getSize()));
                 model.setArea(model.getArea());
@@ -689,6 +690,35 @@ public class MosaicModelTest {
             }, (model, modifiedProperties) -> {
                 Assert.assertTrue(modifiedProperties.isEmpty());
             });
+    }
+
+    @Test
+    public void noChangeOffsetTest() {
+        Consumer<Boolean> func = autofit ->
+            new PropertyChangeExecutor<>(MosaicTestModel::new).run(10, 1000,
+              model -> {
+                  // change property
+                  model.setAutoFit(autofit);
+                  SizeDouble size = new SizeDouble(model.getSize());
+                  size.width *= 2;
+                  model.setSize(new SizeDouble(size));
+
+                  // getsome properties
+                  BoundDouble pad   = new BoundDouble(model.getPadding());
+                  SizeDouble offset = new SizeDouble(model.getMosaicOffset());
+
+                  // try facked change
+                  model.setMosaicOffset(new SizeDouble(offset));
+
+                  // verify
+                  BoundDouble pad2   = model.getPadding();
+                  SizeDouble offset2 = model.getMosaicOffset();
+                  Assert.assertEquals(pad, pad2);
+                  Assert.assertEquals(offset, offset2);
+              }, (model, modifiedProperties) -> {});
+
+        func.accept(true);
+        func.accept(false);
     }
 
 }

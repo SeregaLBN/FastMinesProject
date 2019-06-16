@@ -59,6 +59,7 @@ public class PropertyChangeExecutorTest {
                 LoggerSimple.put("    data modificator");
             }, (data, modifiedProperties) -> {
                 LoggerSimple.put("    data validator");
+                Assert.assertNotNull(data);
                 Assert.assertEquals(0, modifiedProperties.size());
                 Assert.assertFalse(data.isDisposed());
             });
@@ -71,11 +72,12 @@ public class PropertyChangeExecutorTest {
         LoggerSimple.put("> PropertyChangeExecutorTest::extendedUsageTest");
 
         SimpleDataObj[] d = { null };
-        new PropertyChangeExecutor<>(() -> d[0] = new SimpleDataObj(), false).run(10, 1000,
+        new PropertyChangeExecutor<>(() -> d[0] = new SimpleDataObj(), false).run(300, 1000,
             data -> {
                 LoggerSimple.put("    data modificator");
             }, (data, modifiedProperties) -> {
                 LoggerSimple.put("    data validator");
+                Assert.assertNotNull(data);
                 Assert.assertEquals(0, modifiedProperties.size());
                 Assert.assertFalse(data.isDisposed());
             });

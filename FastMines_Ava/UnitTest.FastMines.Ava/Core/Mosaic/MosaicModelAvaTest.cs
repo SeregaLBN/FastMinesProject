@@ -82,6 +82,12 @@ namespace Fmg.Core.Mosaic {
             await base.MosaicNoChangedTest();
         }
 
+        [Fact]
+        public override async Task NoChangeOffsetTest() {
+            Setup();
+            await base.NoChangeOffsetTest();
+        }
+
     }
 
 }

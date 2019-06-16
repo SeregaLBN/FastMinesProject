@@ -42,9 +42,14 @@ namespace Fmg.Core.Mosaic {
         ///     <item><description>при этом Padding заного перерасчитывается с нуля </description></item>
         ///     </list>
         /// </description></item>
+        /// <item> <description>При изменении Area: при этом Size и Offset не меняются, но при этом меняется Padding.left и Padding.bottom. </description></item>
+        /// </list>
+        ///
+        /// <br/>
+        /// Одинаково
+        /// <list type="number">
         /// <item> <description>При изменении Offset меняется Padding так, чтобы InnerSize остался прежним </description></item>
         /// <item> <description>При изменении Padding перерасчитывается Area, так что бы мозаика вписывалась внутрь нового InnerSize. </description></item>
-        /// <item> <description>При изменении Area: при этом Size и Offset не меняются, но при этом меняется Padding.left и Padding.bottom. </description></item>
         /// </list>
         /// </summary>
         private bool           _autoFit = true;
@@ -107,19 +112,19 @@ namespace Fmg.Core.Mosaic {
         public SizeDouble MosaicOffset {
             get {
                 var pad = Padding;
-                var offset     = new SizeDouble(pad.Left, pad.Top);
+                var padLT = new SizeDouble(pad.Left, pad.Top);
                 var mosaicSize = MosaicSize;
                 var innerSize  = InnerSize;
                 if (mosaicSize == innerSize)
-                    return offset;
+                    return padLT;
                 var dx = innerSize.Width  - mosaicSize.Width;
                 var dy = innerSize.Height - mosaicSize.Height;
-                return new SizeDouble(offset.Width + dx / 2, offset.Height + dy / 2);
+                return new SizeDouble(padLT.Width + dx / 2, padLT.Height + dy / 2);
             }
             set {
                 this.CheckValue(value, true);
                 var pad = Padding;
-                var oldOffset = new SizeDouble(pad.Left, pad.Top);
+                var oldOffset = MosaicOffset;
                 var dx = value.Width  - oldOffset.Width;
                 var dy = value.Height - oldOffset.Height;
                 var padNew = new BoundDouble(pad);

@@ -59,7 +59,7 @@ namespace Fmg.Core.Mosaic {
         public virtual async Task CheckIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest() {
             LoggerSimple.Put("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest));
 
-            await new PropertyChangeExecutor<MosaicInitData>(() => CreateMosaicInitData()).Run(100, 1000,
+            await new PropertyChangeExecutor<MosaicInitData>(() => CreateMosaicInitData()).Run(300, 5000,
                 initData => {
                     initData.MosaicType = EMosaic.eMosaicRhombus1;
                 }, (initData, modifiedProperties) => {
@@ -76,7 +76,7 @@ namespace Fmg.Core.Mosaic {
         public virtual async Task CheckNoRepeatNotificationsTest() {
             LoggerSimple.Put("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckNoRepeatNotificationsTest));
 
-            await new PropertyChangeExecutor<MosaicInitData>(() => CreateMosaicInitData()).Run(100, 1000,
+            await new PropertyChangeExecutor<MosaicInitData>(() => CreateMosaicInitData()).Run(300, 5000,
                 initData => {
                     LoggerSimple.Put("    initData.minesCount={0}", initData.MinesCount);
                     initData.MosaicType = EMosaic.eMosaicRhombus1;
@@ -98,7 +98,7 @@ namespace Fmg.Core.Mosaic {
         public virtual async Task CheckChangedMosaicGroupTest() {
             LoggerSimple.Put("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckChangedMosaicGroupTest));
 
-            await new PropertyChangeExecutor<MosaicInitData>(() => CreateMosaicInitData()).Run(100, 1000,
+            await new PropertyChangeExecutor<MosaicInitData>(() => CreateMosaicInitData()).Run(300, 5000,
                 initData => {
                     initData.MosaicType = EMosaic.eMosaicHexagon1;
                 }, (initData, modifiedProperties) => {
@@ -109,7 +109,7 @@ namespace Fmg.Core.Mosaic {
         public virtual async Task CheckNoChangedMosaicGroupTest() {
             LoggerSimple.Put("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckNoChangedMosaicGroupTest));
 
-            await new PropertyChangeExecutor<MosaicInitData>(() => CreateMosaicInitData()).Run(100, 1000,
+            await new PropertyChangeExecutor<MosaicInitData>(() => CreateMosaicInitData()).Run(300, 5000,
                 initData => {
                     initData.MosaicType = EMosaic.eMosaicRhombus1;
                 }, (initData, modifiedProperties) => {

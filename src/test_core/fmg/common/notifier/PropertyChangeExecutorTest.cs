@@ -56,6 +56,7 @@ namespace Fmg.Common.Notifier {
                     LoggerSimple.Put("    data modificator");
                 }, (data, modifiedProperties) => {
                     LoggerSimple.Put("    data validator");
+                    AssertNotNull(data);
                     AssertEqual(0, modifiedProperties.Count);
                     AssertFalse(data.Disposed);
                 });
@@ -72,6 +73,7 @@ namespace Fmg.Common.Notifier {
                     LoggerSimple.Put("    data modificator");
                 }, (data, modifiedProperties) => {
                     LoggerSimple.Put("    data validator");
+                    AssertNotNull(data);
                     AssertEqual(0, modifiedProperties.Count);
                     AssertFalse(data.Disposed);
                 });
