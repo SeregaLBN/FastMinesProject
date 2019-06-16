@@ -18,17 +18,10 @@
     <Page.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-
-                <!--
-                    Styles that define common aspects of the platform look and feel
-                    Required by Visual Studio project and item templates
-                 -->
                 <ResourceDictionary Source="Common/StandardStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
-            <!-- Application-specific resources -->
-
-            <x:String x:Key="AppName">FastMines</x:String>
+            <!--x:String x:Key="DemoKey">DemoValue</x:String-->
         </ResourceDictionary>
     </Page.Resources>
 

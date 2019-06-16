@@ -180,7 +180,10 @@ namespace Fmg {
             Frame frame = Window.Current.Content as Frame;
             System.Diagnostics.Debug.Assert(frame != null);
 
-            frame.Navigate(typeof(MosaicPage), InitData);
+            frame.Navigate(
+                typeof(MosaicPage)
+                //typeof(MosaicPagePrototype)
+                , InitData);
 
             //Window.Current.Content = new MosaicPage();
             //// Ensure the current window is active

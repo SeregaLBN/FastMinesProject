@@ -38,8 +38,14 @@ namespace Fmg {
         /// <summary> Mosaic controller </summary>
         public MosaicXamlController MosaicController {
             get {
-                if (mosaicController == null)
-                    MosaicController = new MosaicXamlController(MosaicContainer); // call setter
+                if (mosaicController == null) {
+                    var mc = new MosaicXamlController(MosaicContainer) { // call setter
+                        BindSizeDirection = false,
+                        ExtendedManipulation = true,
+                    };
+                    mc.Model.AutoFit = false;
+                    MosaicController = mc;
+                }
                 return mosaicController;
             }
             private set {
@@ -93,8 +99,8 @@ namespace Fmg {
                 ToolTipService.SetToolTip(bttnNewGame, new ToolTip {Content = "F2"});
                 ToolTipService.SetToolTip(bttnSkillBeginner, new ToolTip {Content = "1"});
                 ToolTipService.SetToolTip(bttnSkillAmateur, new ToolTip { Content = "2" });
-                ToolTipService.SetToolTip(bttnSkillCrazy, new ToolTip { Content = "3" });
-                ToolTipService.SetToolTip(bttnSkillProfi, new ToolTip {Content = "4"});
+                ToolTipService.SetToolTip(bttnSkillProfi, new ToolTip {Content = "3"});
+                ToolTipService.SetToolTip(bttnSkillCrazy, new ToolTip { Content = "4" });
             }
         }
 

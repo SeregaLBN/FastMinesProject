@@ -39,7 +39,7 @@ namespace Fmg.Uwp.Mosaic {
         #region if ExtendedManipulation
         /// <summary> мин отступ от краев экрана для мозаики </summary>
         private readonly double MinIndent = (30.0).DpToPx();
-        private const bool DeferredZoom = !true;
+        private const bool DeferredZoom = true;
         private bool _manipulationStarted;
         private bool _turnX;
         private bool _turnY;
