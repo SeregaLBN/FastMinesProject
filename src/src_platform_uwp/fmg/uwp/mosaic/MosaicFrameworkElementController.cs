@@ -157,21 +157,6 @@ namespace Fmg.Uwp.Mosaic {
             }
         }
 
-
-        /// <summary> Поменять игру на новый уровень сложности </summary>
-        public void SetGame(ESkillLevel skill) {
-            //if (isPaused())
-            //    ChangePause(e);
-
-            if (skill == ESkillLevel.eCustom) {
-                // TODO ... dialog box 'Select custom skill level...'
-                return;
-            }
-
-            Model.SizeField = skill.GetDefaultSize();
-            MinesCount = skill.GetNumberMines(Model.MosaicType);
-        }
-
         /// <summary> узнаю мах размер площади ячеек мозаики (для размера поля 3x3) так, чтобы поле влазило в текущий размер Control'а </summary>
         /// <returns>макс площадь ячейки</returns>
         private double CalcMaxArea() {
@@ -746,21 +731,27 @@ namespace Fmg.Uwp.Mosaic {
         private void OnKeyUp(object sender, KeyRoutedEventArgs ev) {
             //using (CreateTracer(GetCallerName(), "virtKey=" + ev.Key)) {
             ev.Handled = true;
+
+            void setSkillLevel(ESkillLevel skill) {
+                Model.SizeField = skill.GetDefaultSize();
+                MinesCount = skill.GetNumberMines(Model.MosaicType);
+            }
+
             switch (ev.Key) {
             case VirtualKey.F2:
                 GameNew();
                 break;
             case VirtualKey.Number1:
-                SetGame(ESkillLevel.eBeginner);
+                setSkillLevel(ESkillLevel.eBeginner);
                 break;
             case VirtualKey.Number2:
-                SetGame(ESkillLevel.eAmateur);
+                setSkillLevel(ESkillLevel.eAmateur);
                 break;
             case VirtualKey.Number3:
-                SetGame(ESkillLevel.eProfi);
+                setSkillLevel(ESkillLevel.eProfi);
                 break;
             case VirtualKey.Number4:
-                SetGame(ESkillLevel.eCrazy);
+                setSkillLevel(ESkillLevel.eCrazy);
                 break;
             case (VirtualKey)187: // Plus (without Shift)
             case VirtualKey.Add: // numpad Plus

@@ -21,13 +21,6 @@ using IMosaicController = Fmg.Core.Mosaic.IMosaicController<
                 object,
                 Fmg.Core.Mosaic.IMosaicDrawModel<object>>,
         Fmg.Core.Mosaic.IMosaicDrawModel<object>>;
-using MosaicFrameworkController = Fmg.Uwp.Mosaic.MosaicFrameworkElementController<
-        Windows.UI.Xaml.FrameworkElement,
-        object,
-        Fmg.Core.Mosaic.IMosaicView<
-                Windows.UI.Xaml.FrameworkElement,
-                object,
-                Fmg.Core.Mosaic.IMosaicDrawModel<object>>>;
 
 namespace Fmg {
 
@@ -180,7 +173,8 @@ namespace Fmg {
             MosaicController.GameNew();
         }
 
-        private void SetGame(ESkillLevel skill) {
+        /// <summary> Поменять игру на новый уровень сложности </summary>
+        private void ChangeGame(ESkillLevel skill) {
             //if (isPaused())
             //    ChangePause(e);
 
@@ -195,16 +189,16 @@ namespace Fmg {
         }
 
         private void OnClickBttnSkillBeginner(object sender, RoutedEventArgs ev) {
-            SetGame(ESkillLevel.eBeginner);
+            ChangeGame(ESkillLevel.eBeginner);
         }
         private void OnClickBttnSkillAmateur(object sender, RoutedEventArgs ev) {
-            SetGame(ESkillLevel.eAmateur);
+            ChangeGame(ESkillLevel.eAmateur);
         }
         private void OnClickBttnSkillProfi(object sender, RoutedEventArgs ev) {
-            SetGame(ESkillLevel.eProfi);
+            ChangeGame(ESkillLevel.eProfi);
         }
         private void OnClickBttnSkillCrazy(object sender, RoutedEventArgs ev) {
-            SetGame(ESkillLevel.eCrazy);
+            ChangeGame(ESkillLevel.eCrazy);
         }
 
         private string GetCallerName([System.Runtime.CompilerServices.CallerMemberName] string callerName = null) {
