@@ -94,7 +94,7 @@ namespace Fmg {
             this.Loaded -= OnPageLoaded;
 
             UpdateViewModel();
-            //StartNewGame(); // <<<<<<<<<  delete this line
+            StartNewGame(); // <<<<<<<<<  delete this line
         }
 
         private void OnPageUnloaded(object sender, RoutedEventArgs ev) {
@@ -180,10 +180,7 @@ namespace Fmg {
             Frame frame = Window.Current.Content as Frame;
             System.Diagnostics.Debug.Assert(frame != null);
 
-            frame.Navigate(
-                typeof(MosaicPage)
-                //typeof(MosaicPagePrototype)
-                , InitData);
+            frame.Navigate(typeof(MosaicPage), InitData);
 
             //Window.Current.Content = new MosaicPage();
             //// Ensure the current window is active

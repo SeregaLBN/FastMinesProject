@@ -21,7 +21,7 @@ namespace Fmg.Core.Mosaic {
         where TImage : class
         where TImageInner : class
         where TMosaicView : IMosaicView<TImage, TImageInner, TMosaicModel>
-        where TMosaicModel : MosaicDrawModel<TImageInner>
+        where TMosaicModel : IMosaicDrawModel<TImageInner>
     {
 
         /// <summary> кол-во мин на поле </summary>

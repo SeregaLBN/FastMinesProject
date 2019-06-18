@@ -11,23 +11,23 @@ using Fmg.Common.Geom;
 using Fmg.Core.Types;
 using Fmg.Core.Mosaic;
 using Fmg.Uwp.Utils;
-using MosaicVirtController = Fmg.Uwp.Mosaic.Win2d.MosaicCanvasVirtualControlController;
-using MosaicSwapController = Fmg.Uwp.Mosaic.Win2d.MosaicCanvasSwapChainPanelController;
-using IImageController = Fmg.Core.Img.IImageController<
-        Windows.UI.Xaml.FrameworkElement,
-        Fmg.Core.Mosaic.IMosaicView<
-                Windows.UI.Xaml.FrameworkElement,
-                Microsoft.Graphics.Canvas.CanvasBitmap,
-                Fmg.Core.Mosaic.MosaicDrawModel<Microsoft.Graphics.Canvas.CanvasBitmap>>,
-        Fmg.Core.Mosaic.MosaicDrawModel<Microsoft.Graphics.Canvas.CanvasBitmap>>;
+using Fmg.Uwp.Mosaic.Win2d;
+using Fmg.Uwp.Mosaic.Xaml;
 using IMosaicController = Fmg.Core.Mosaic.IMosaicController<
         Windows.UI.Xaml.FrameworkElement,
-        Microsoft.Graphics.Canvas.CanvasBitmap,
+        object,
         Fmg.Core.Mosaic.IMosaicView<
                 Windows.UI.Xaml.FrameworkElement,
-                Microsoft.Graphics.Canvas.CanvasBitmap,
-                Fmg.Core.Mosaic.MosaicDrawModel<Microsoft.Graphics.Canvas.CanvasBitmap>>,
-        Fmg.Core.Mosaic.MosaicDrawModel<Microsoft.Graphics.Canvas.CanvasBitmap>>;
+                object,
+                Fmg.Core.Mosaic.IMosaicDrawModel<object>>,
+        Fmg.Core.Mosaic.IMosaicDrawModel<object>>;
+using MosaicFrameworkController = Fmg.Uwp.Mosaic.MosaicFrameworkElementController<
+        Windows.UI.Xaml.FrameworkElement,
+        object,
+        Fmg.Core.Mosaic.IMosaicView<
+                Windows.UI.Xaml.FrameworkElement,
+                object,
+                Fmg.Core.Mosaic.IMosaicDrawModel<object>>>;
 
 namespace Fmg {
 
@@ -39,14 +39,18 @@ namespace Fmg {
         public IMosaicController MosaicController {
             get {
                 if (_mosaicController == null) {
-                    var useVirtCtrl = !true;
+                    IMosaicController ctrl;
+                    if (_canvasVirtualControl.Visibility == Visibility.Visible)
+                        ctrl = new MosaicCanvasVirtualControlController(CanvasDevice.GetSharedDevice(), _canvasVirtualControl) { BindSizeDirection = false, ExtendedManipulation = true };
+                    else
+                    if (_canvasSwapChainPanel.Visibility == Visibility.Visible)
+                        ctrl = new MosaicCanvasSwapChainPanelController(CanvasDevice.GetSharedDevice(), _canvasSwapChainPanel) { BindSizeDirection = false, ExtendedManipulation = true };
+                    else
+                    if (_canvasControl.Visibility == Visibility.Visible)
+                        ctrl = new MosaicXamlController(_canvasControl)                                                        { BindSizeDirection = false, ExtendedManipulation = true };
+                    else
+                        throw new Exception("Illegal usage...");
 
-                    _canvasVirtualControl.Visibility = useVirtCtrl ? Visibility.Visible   : Visibility.Collapsed;
-                    _canvasSwapChainPanel.Visibility = useVirtCtrl ? Visibility.Collapsed : Visibility.Visible;
-
-                    var ctrl = useVirtCtrl
-                        ? (IMosaicController)new MosaicVirtController(CanvasDevice.GetSharedDevice(), _canvasVirtualControl) { BindSizeDirection = false, ExtendedManipulation = true }
-                        : (IMosaicController)new MosaicSwapController(CanvasDevice.GetSharedDevice(), _canvasSwapChainPanel) { BindSizeDirection = false, ExtendedManipulation = true };
                     ctrl.Model.AutoFit = false;
                     MosaicController = ctrl; // call this setter
                 }
@@ -63,9 +67,6 @@ namespace Fmg {
                 }
             }
         }
-
-        // fix: XamlCompiler error WMC1110: Invalid binding path 'MosaicController.Size' : Property 'Size' can't be found on type 'IMosaicController'
-        public IImageController MosaicImageController => MosaicController;
 
         public MosaicPage() {
             this.InitializeComponent();
@@ -170,24 +171,40 @@ namespace Fmg {
             //}
         }
 
-        private void OnClickBttnBack___________not_binded(object sender, RoutedEventArgs ev) {
+        private void OnClickBttnBack(object sender, RoutedEventArgs ev) {
             GoBack();
         }
-        private void OnClickBttnNewGame___________not_binded(object sender, RoutedEventArgs ev) {
-            //MosaicController.GameNew();
+        private void OnClickBttnNewGame(object sender, RoutedEventArgs ev) {
+            topAppBar.IsOpen = false;
+            bottomAppBar.IsOpen = false;
+            MosaicController.GameNew();
         }
 
-        private void OnClickBttnSkillBeginner___________not_binded(object sender, RoutedEventArgs ev) {
-            //MosaicController.SetGame(ESkillLevel.eBeginner);
+        private void SetGame(ESkillLevel skill) {
+            //if (isPaused())
+            //    ChangePause(e);
+
+            if (skill == ESkillLevel.eCustom) {
+                // TODO ... dialog box 'Select custom skill level...'
+                return;
+            }
+
+            var model = MosaicController.Model;
+            model.SizeField = skill.GetDefaultSize();
+            MosaicController.MinesCount = skill.GetNumberMines(model.MosaicType);
         }
-        private void OnClickBttnSkillAmateur___________not_binded(object sender, RoutedEventArgs ev) {
-            //MosaicController.SetGame(ESkillLevel.eAmateur);
+
+        private void OnClickBttnSkillBeginner(object sender, RoutedEventArgs ev) {
+            SetGame(ESkillLevel.eBeginner);
         }
-        private void OnClickBttnSkillProfi___________not_binded(object sender, RoutedEventArgs ev) {
-            //MosaicController.SetGame(ESkillLevel.eProfi);
+        private void OnClickBttnSkillAmateur(object sender, RoutedEventArgs ev) {
+            SetGame(ESkillLevel.eAmateur);
         }
-        private void OnClickBttnSkillCrazy___________not_binded(object sender, RoutedEventArgs ev) {
-            //MosaicController.SetGame(ESkillLevel.eCrazy);
+        private void OnClickBttnSkillProfi(object sender, RoutedEventArgs ev) {
+            SetGame(ESkillLevel.eProfi);
+        }
+        private void OnClickBttnSkillCrazy(object sender, RoutedEventArgs ev) {
+            SetGame(ESkillLevel.eCrazy);
         }
 
         private string GetCallerName([System.Runtime.CompilerServices.CallerMemberName] string callerName = null) {
@@ -202,4 +219,5 @@ namespace Fmg {
         }
 
     }
+
 }

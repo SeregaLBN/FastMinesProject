@@ -23,10 +23,10 @@ namespace Fmg.Uwp.Mosaic {
     /// <typeparam name="TImageInner">image type of flag/mine into mosaic field</typeparam>
     /// <typeparam name="TMosaicView">mosaic view</typeparam>
     public abstract class MosaicFrameworkElementController<TImageAsFrameworkElement, TImageInner, TMosaicView>
-                                        : MosaicController<TImageAsFrameworkElement, TImageInner, TMosaicView, MosaicDrawModel<TImageInner>>
+                                        : MosaicController<TImageAsFrameworkElement, TImageInner, TMosaicView, IMosaicDrawModel<TImageInner>>
         where TImageAsFrameworkElement : FrameworkElement
         where TImageInner : class
-        where TMosaicView : IMosaicView<TImageAsFrameworkElement, TImageInner, MosaicDrawModel<TImageInner>>
+        where TMosaicView : IMosaicView<TImageAsFrameworkElement, TImageInner, IMosaicDrawModel<TImageInner>>
     {
 
         private readonly ClickInfo _clickInfo = new ClickInfo();
@@ -163,18 +163,13 @@ namespace Fmg.Uwp.Mosaic {
             //if (isPaused())
             //    ChangePause(e);
 
-            int numberMines;
-            Matrisize sizeFld;
             if (skill == ESkillLevel.eCustom) {
                 // TODO ... dialog box 'Select custom skill level...'
                 return;
-            } else {
-                numberMines = skill.GetNumberMines(Model.MosaicType);
-                sizeFld = skill.GetDefaultSize();
             }
 
-            Model.SizeField = sizeFld;
-            MinesCount = numberMines;
+            Model.SizeField = skill.GetDefaultSize();
+            MinesCount = skill.GetNumberMines(Model.MosaicType);
         }
 
         /// <summary> узнаю мах размер площади ячеек мозаики (для размера поля 3x3) так, чтобы поле влазило в текущий размер Control'а </summary>

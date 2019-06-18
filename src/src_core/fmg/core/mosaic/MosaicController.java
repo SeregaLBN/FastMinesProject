@@ -20,7 +20,7 @@ import fmg.core.types.*;
  */
 public abstract class MosaicController<TImage, TImageInner,
                                        TMosaicView extends IMosaicView<TImage, TImageInner, TMosaicModel>,
-                                       TMosaicModel extends MosaicDrawModel<TImageInner>>
+                                       TMosaicModel extends IMosaicDrawModel<TImageInner>>
                extends ImageController<TImage, TMosaicView, TMosaicModel>
           implements IMosaicController<TImage, TImageInner, TMosaicView, TMosaicModel>
 {
@@ -106,7 +106,7 @@ public abstract class MosaicController<TImage, TImageInner,
 
     /** arrange Mines */
     public void setMines_LoadRepository(List<Coord> repository) {
-        MosaicGameModel mosaic = getModel();
+        IMosaicDrawModel<TImageInner> mosaic = getModel();
         for (Coord c: repository)
             mosaic.getCell(c).setMine();
 
@@ -120,7 +120,7 @@ public abstract class MosaicController<TImage, TImageInner,
         if (_minesCount == 0)
             _minesCount = _oldMinesCount;
 
-        MosaicGameModel mosaic = getModel();
+        IMosaicDrawModel<TImageInner> mosaic = getModel();
         List<BaseCell> matrixClone = new ArrayList<>(getMatrix());
         matrixClone.remove(firstClickCell); // исключаю на которой кликал юзер
         List<BaseCell> neighbors = firstClickCell.getNeighbors(mosaic);
