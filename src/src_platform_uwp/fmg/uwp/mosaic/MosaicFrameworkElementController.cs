@@ -54,7 +54,7 @@ namespace Fmg.Uwp.Mosaic {
             public Windows.Foundation.Point _devicePosition;
             public SizeDouble _mosaicSize;
             public SizeDouble _mosaicOffset;
-        };
+        }
         private ZoomStartInfo _zoomStartInfo;
 
 
