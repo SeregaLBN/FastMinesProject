@@ -17,7 +17,7 @@ import fmg.core.img.IImageController;
 import fmg.core.img.MosaicAnimatedModel;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
-import fmg.swing.app.Main;
+import fmg.swing.app.MainApp;
 import fmg.swing.app.model.control.SpinNumberDocListener;
 import fmg.swing.app.model.control.SpinnerDiapasonModel;
 import fmg.swing.img.MosaicImg;
@@ -32,7 +32,7 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
     private JSpinner spin;
     private JComboBox<?> cmbxMosaicTypes;
     private JButton btnOk;
-    private Main parent;
+    private MainApp parent;
 
     private MosaicImg.ImageAwtController mosaicsImg, mosaicsImgRollover;
     private final PropertyChangeListener onMosaicsImgPropertyChangedListener = this::onMosaicsImgPropertyChanged;
@@ -44,8 +44,8 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
 
     public SelectMosaicDlg(JFrame parent, boolean modal) {
         super(parent, "Select mosaic", modal);
-        if (parent instanceof Main)
-            this.parent = (Main) parent;
+        if (parent instanceof MainApp)
+            this.parent = (MainApp) parent;
         initialize(parent);
     }
 

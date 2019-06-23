@@ -12,7 +12,7 @@ import javax.swing.table.TableCellRenderer;
 
 import fmg.core.types.viewmodel.User;
 import fmg.core.types.viewmodel.serializable.PlayersModel;
-import fmg.swing.app.Main;
+import fmg.swing.app.MainApp;
 import fmg.swing.app.model.view.ManageTblModel;
 import fmg.swing.utils.GuiTools;
 
@@ -24,14 +24,14 @@ public class ManageDlg extends JDialog {
 
     private JButton btnOk;
     private JTable table;
-    private Main parent;
+    private MainApp parent;
     private PlayersModel players;
     private JCheckBox doNotAskStartup;
 
     public ManageDlg(JFrame parent, boolean modal, PlayersModel players) {
         super(parent, DEFAULT_CAPTION, modal);
-        if (parent instanceof Main)
-            this.parent = (Main) parent;
+        if (parent instanceof MainApp)
+            this.parent = (MainApp) parent;
         this.players = players;
         initialize(parent);
     }
@@ -111,7 +111,7 @@ public class ManageDlg extends JDialog {
 //        System.out.println("OnDeleteRow");
         int rowIndex = table.getSelectedRow();
         if (rowIndex == -1)
-            Main.Beep();
+            MainApp.Beep();
         else
             players.removePlayer(players.getUser(rowIndex).getGuid());
     }

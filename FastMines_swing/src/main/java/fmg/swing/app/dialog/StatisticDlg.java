@@ -9,7 +9,7 @@ import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
 import fmg.core.types.viewmodel.User;
 import fmg.core.types.viewmodel.serializable.PlayersModel;
-import fmg.swing.app.Main;
+import fmg.swing.app.MainApp;
 import fmg.swing.app.model.view.ReportTableModel;
 import fmg.swing.app.model.view.StaticsticTblModel;
 
@@ -20,7 +20,7 @@ public class StatisticDlg extends ReportDlg {
 
     private PlayersModel players;
 
-    public StatisticDlg(Main parent, boolean modal, PlayersModel players) {
+    public StatisticDlg(MainApp parent, boolean modal, PlayersModel players) {
         super(parent, modal);
         this.players = players;
     }

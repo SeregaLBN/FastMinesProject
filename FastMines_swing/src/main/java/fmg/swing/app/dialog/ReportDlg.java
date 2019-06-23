@@ -26,7 +26,7 @@ import fmg.core.img.IImageController;
 import fmg.core.img.MosaicAnimatedModel;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
-import fmg.swing.app.Main;
+import fmg.swing.app.MainApp;
 import fmg.swing.app.model.view.ReportTableModel;
 import fmg.swing.img.MosaicImg;
 import fmg.swing.utils.ImgUtils;
@@ -45,10 +45,10 @@ public abstract class ReportDlg extends JDialog implements AutoCloseable {
     private Map<EMosaic, JScrollPane> scrollPanes = new HashMap<>(EMosaic.values().length);
     private List<MosaicImg.IconController> images = new ArrayList<>(EMosaic.values().length);
     protected ButtonGroup radioGroup;
-    protected Main parent;
+    protected MainApp parent;
     private final PropertyChangeListener onImagePropertyChangedListener = this::onImagePropertyChanged;
 
-    public ReportDlg(Main parent, boolean modal) {
+    public ReportDlg(MainApp parent, boolean modal) {
         super(parent, "report window...", modal);
         this.parent = parent;
         initialize(parent);

@@ -1,20 +1,16 @@
 package fmg.swing.app;
 
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.PrintStream;
 import java.util.*;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import javax.swing.*;
 import javax.swing.Timer;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
 
 import fmg.common.Color;
 import fmg.common.Pair;
@@ -22,11 +18,13 @@ import fmg.common.geom.BoundDouble;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.Rect;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.*;
-import fmg.core.img.IMosaicAnimatedModel.EMosaicRotateMode;
-import fmg.core.img.SmileModel.EFaceType;
+import fmg.core.img.IImageController;
+import fmg.core.img.LogoModel;
 import fmg.core.mosaic.*;
-import fmg.core.types.*;
+import fmg.core.types.EGameStatus;
+import fmg.core.types.EMosaic;
+import fmg.core.types.EMosaicGroup;
+import fmg.core.types.ESkillLevel;
 import fmg.core.types.draw.EShowElement;
 import fmg.core.types.draw.EZoomInterface;
 import fmg.core.types.viewmodel.User;
@@ -34,19 +32,26 @@ import fmg.core.types.viewmodel.event.ActionToUser;
 import fmg.core.types.viewmodel.serializable.ChampionsModel;
 import fmg.core.types.viewmodel.serializable.PlayersModel;
 import fmg.swing.app.dialog.*;
+import fmg.swing.app.menu.MainMenu;
 import fmg.swing.app.serializable.SerializeProjData;
-import fmg.swing.img.*;
+import fmg.swing.app.toolbar.EBtnNewGameState;
+import fmg.swing.app.toolbar.ToolBar;
+import fmg.swing.img.Animator;
+import fmg.swing.img.Logo;
 import fmg.swing.mosaic.MosaicJPanelController;
-import fmg.swing.utils.*;
+import fmg.swing.utils.Cast;
+import fmg.swing.utils.GuiTools;
+import fmg.swing.utils.ProjSettings;
+import fmg.swing.utils.ScreenResolutionHelper;
 
 /** Main window (Главное окно программы) */
-public class Main extends JFrame {
+public class MainApp extends JFrame {
 
     private static final long serialVersionUID = 3L;
 
     private JPanel     contentPane;
     private MainMenu   menu;
-    private Toolbar    toolbar;
+    private ToolBar    toolbar;
     private MosaicJPanelController _mosaicController;
     private PausePanel pausePanel;
     private StatusBar  statusBar;
@@ -70,7 +75,7 @@ public class Main extends JFrame {
             this.setIconImage(_logo.getImage());
     };
 
-    private ManageDlg getPlayerManageDlg() {
+    public ManageDlg getPlayerManageDlg() {
         if (_playerManageDialog == null)
             _playerManageDialog = new ManageDlg(this, false, getPlayers());
         return _playerManageDialog;
@@ -83,869 +88,31 @@ public class Main extends JFrame {
     }
 
     private boolean isSelectMosaicDialogExist() { return _selectMosaicDialog != null; }
-    private SelectMosaicDlg getSelectMosaicDialog() {
+    public SelectMosaicDlg getSelectMosaicDialog() {
         if (_selectMosaicDialog == null)
             _selectMosaicDialog = new SelectMosaicDlg(this, false);
         return _selectMosaicDialog;
     }
 
     private boolean isAboutDialogExist() { return _aboutDialog != null; }
-    private AboutDlg getAboutDialog() {
+    public AboutDlg getAboutDialog() {
         if (_aboutDialog == null)
             _aboutDialog = new AboutDlg(this, false);
         return _aboutDialog;
     }
 
     private boolean isChampionDialogExist() { return _championDialog != null; }
-    private ChampionDlg getChampionDialog() {
+    public ChampionDlg getChampionDialog() {
         if (_championDialog == null)
             _championDialog = new ChampionDlg(this, false, getChampions());
         return _championDialog;
     }
 
     private boolean isStatisticDialogExist() { return _statisticDialog != null; }
-    private StatisticDlg getStatisticDialog() {
+    public StatisticDlg getStatisticDialog() {
         if (_statisticDialog == null)
             _statisticDialog = new StatisticDlg(this, false, getPlayers());
         return _statisticDialog;
-    }
-
-    class MainMenu extends JMenuBar implements AutoCloseable {
-        private static final long serialVersionUID = 1L;
-        private static final int MenuHeightWithIcon = 32;
-        private static final int ZoomQualityFactor = 2; // 1 - as is
-
-        class Game extends JMenu implements AutoCloseable {
-            private static final long serialVersionUID = 1L;
-
-            private JMenuItem anew;
-            private Map<ESkillLevel, JRadioButtonMenuItem> skillLevel;
-            private List<MosaicSkillImg.IconController> skillLevelImages;
-            private JMenuItem playerManage;
-            private JMenuItem exit;
-            private final PropertyChangeListener onMosaicSkillImgPropertyChagedListener = (ev -> {
-                MosaicSkillImg.IconController img = (MosaicSkillImg.IconController)ev.getSource();
-                JRadioButtonMenuItem menuItem = skillLevel.get(img.getModel().getMosaicSkill());
-                Container parent = menuItem.getParent();
-                if ((parent == null) || !parent.isVisible())
-                    return;
-                if (ev.getPropertyName().equalsIgnoreCase(IImageController.PROPERTY_IMAGE)) {
-                    setMenuItemIcon(menuItem, img.getImage());
-                }
-            });
-
-            public Game() {
-                super("Game");
-                initialize();
-            }
-            private void initialize() {
-                this.setMnemonic(Main.KeyCombo.getMnemonic_MenuGame());
-
-                this.add(getAnew());
-                this.add(new JSeparator());
-//                this.add(getMosaics());
-//                this.add(new JSeparator());
-
-                for (ESkillLevel key: ESkillLevel.values())
-                    this.add(getMenuItemSkillLevel(key));
-                this.add(new JSeparator());
-                this.add(getPlayerManage());
-                this.add(new JSeparator());
-                this.add(getExit());
-
-                ButtonGroup bg = new ButtonGroup();
-                for (ESkillLevel key: ESkillLevel.values())
-                    bg.add(getMenuItemSkillLevel(key));
-            }
-
-            private JMenuItem getAnew() {
-                if (anew == null) {
-                    anew = new JMenuItem("New game");
-                    anew.setMnemonic(Main.KeyCombo.getMnemonic_NewGame());
-                    anew.setAccelerator(Main.KeyCombo.getKeyStroke_NewGame());
-                    anew.addActionListener(Main.this.getHandlers().getGameNewAction());
-                }
-                return anew;
-            }
-            private JRadioButtonMenuItem getMenuItemSkillLevel(ESkillLevel key) {
-                if (skillLevel == null) {
-                    skillLevel = new HashMap<>(ESkillLevel.values().length);
-                    skillLevelImages = new ArrayList<>(ESkillLevel.values().length);
-
-                    for (ESkillLevel val: ESkillLevel.values()) {
-                        JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem();
-
-                        switch (val) {
-                        case eCustom: menuItem.setText(val.getDescription() + "..."); break;
-                        default     : menuItem.setText(val.getDescription()); break;
-                        }
-
-                        menuItem.setMnemonic(Main.KeyCombo.getMnemonic_SkillLevel(val));
-                        menuItem.setAccelerator(Main.KeyCombo.getKeyStroke_SkillLevel(val));
-                        menuItem.addActionListener(Main.this.getHandlers().getSkillLevelAction(val));
-
-                        MosaicSkillImg.IconController img = new MosaicSkillImg.IconController(val);
-                        MosaicSkillModel imgModel = img.getModel();
-                        double sq = MenuHeightWithIcon*ZoomQualityFactor;
-                        imgModel.setSize(new SizeDouble(sq, sq));
-                        skillLevelImages.add(img);
-                        imgModel.setBorderWidth(1); // *ZoomQualityFactor);
-                        imgModel.setBorderColor(Color.RandomColor().darker(0.4));
-                        imgModel.setForegroundColor(Color.RandomColor().brighter(0.4));
-                        imgModel.setBackgroundColor(Color.Transparent());
-                        imgModel.setAnimated(true);
-                        imgModel.setAnimatePeriod(6400);
-                        imgModel.setTotalFrames(130);
-                        setMenuItemIcon(menuItem, img.getImage());
-                        img.addListener(onMosaicSkillImgPropertyChagedListener);
-
-                        skillLevel.put(val, menuItem);
-                    }
-
-                    recheckSelectedSkillLevel();
-                }
-                return skillLevel.get(key);
-            }
-
-            private JMenuItem getPlayerManage() {
-                if (playerManage == null) {
-                    playerManage = new JMenuItem("Players...");
-                    playerManage.setMnemonic(Main.KeyCombo.getMnemonic_PlayerManage());
-                    playerManage.setAccelerator(Main.KeyCombo.getKeyStroke_PlayerManage());
-                    playerManage.addActionListener(Main.this.getHandlers().getPlayerManageAction());
-                }
-                return playerManage;
-            }
-
-            private JMenuItem getExit() {
-                if (exit == null) {
-                    exit = new JMenuItem("Exit");
-                    exit.setMnemonic(Main.KeyCombo.getMnemonic_Exit());
-                    exit.setAccelerator(Main.KeyCombo.getKeyStroke_Exit());
-                    exit.addActionListener(Main.this.getHandlers().getGameExitAction());
-                }
-                return exit;
-            }
-
-            /** Выставить верный bullet (menu.setSelected) для меню skillLevel'a */
-            void recheckSelectedSkillLevel() {
-                ESkillLevel skill = getSkillLevel();
-                getMenuItemSkillLevel(skill).setSelected(true);
-                skillLevelImages.forEach(img -> img.useRotateTransforming(img.getModel().getMosaicSkill() == skill));
-            }
-
-            @Override
-            public void close() {
-                skillLevelImages.forEach(img -> {
-                    img.removeListener(onMosaicSkillImgPropertyChagedListener);
-                    img.close();
-                });
-            }
-
-        }
-
-        class Mosaics extends JMenu implements AutoCloseable {
-            private static final long serialVersionUID = 1L;
-
-            private Map<EMosaicGroup, JMenuItem> mosaicsGroup;
-            private List<MosaicGroupImg.IconController> mosaicsGroupImages;
-            private Map<EMosaic, JRadioButtonMenuItem> mosaics;
-            private List<MosaicImg.IconController> mosaicsImages;
-            private final PropertyChangeListener onMosaicImgPropertyChangedListener = ev -> {
-                MosaicImg.IconController img = (MosaicImg.IconController)ev.getSource();
-                JRadioButtonMenuItem menuItem = mosaics.get(img.getModel().getMosaicType());
-                Container parent = menuItem.getParent();
-                if ((parent == null) || !parent.isVisible())
-                    return;
-                if (ev.getPropertyName().equalsIgnoreCase(IImageController.PROPERTY_IMAGE)) {
-                    setMenuItemIcon(menuItem, img.getImage());
-                }
-            };
-            private final PropertyChangeListener onMosaicGroupImgPropertyChangedListener = ev -> {
-                MosaicGroupImg.IconController img = (MosaicGroupImg.IconController)ev.getSource();
-                JMenuItem menuItem = mosaicsGroup.get(img.getModel().getMosaicGroup());
-                Container parent = menuItem.getParent();
-                if ((parent == null) || !parent.isVisible())
-                    return;
-                if (ev.getPropertyName().equalsIgnoreCase(IImageController.PROPERTY_IMAGE)) {
-                    setMenuItemIcon(menuItem, img.getImage());
-                }
-            };
-
-            Mosaics() {
-                super("Mosaics");
-                initialize();
-            }
-            private void initialize() {
-                this.setMnemonic(Main.KeyCombo.getMnemonic_MenuMosaic());
-                for (EMosaicGroup key: EMosaicGroup.values())
-                    this.add(getMenuItemMosaicGroup(key));
-
-                ButtonGroup bg = new ButtonGroup();
-                for (EMosaic key: EMosaic.values())
-                    bg.add(getMenuItemMosaic(key));
-            }
-
-            static final boolean experimentalMenuMnemonic = true;
-            private JMenuItem getMenuItemMosaicGroup(EMosaicGroup key) {
-                if (mosaicsGroup == null) {
-                    mosaicsGroup = new HashMap<>(EMosaicGroup.values().length);
-                    mosaicsGroupImages = new ArrayList<>(EMosaicGroup.values().length);
-
-                    for (EMosaicGroup val: EMosaicGroup.values()) {
-                        JMenu menuItem = new JMenu(val.getDescription());// + (experimentalMenuMnemonic ?  "                      " : ""));
-                        for (EMosaic mosaic: val.getMosaics()) {
-                            menuItem.add(getMenuItemMosaic(mosaic));
-                            //menuItem.add(Box.createRigidArea(new Dimension(100,25)));
-                        }
-//                        menuItem.setMnemonic(Main.KeyCombo.getMnemonic_MenuMosaicGroup(val));
-                        MosaicGroupImg.IconController img = new MosaicGroupImg.IconController(val);
-                        MosaicGroupModel imgModel = img.getModel();
-                        double sq = MenuHeightWithIcon*ZoomQualityFactor;
-                        imgModel.setSize(new SizeDouble(sq, sq));
-                        mosaicsGroupImages.add(img);
-                        imgModel.setPolarLights(true);
-                        imgModel.setBorderWidth(1*ZoomQualityFactor);
-                        imgModel.setBorderColor(Color.RandomColor().darker(0.4));
-                        imgModel.setForegroundColor(Color.RandomColor().brighter(0.7));
-                        imgModel.setBackgroundColor(Color.Transparent());
-                        imgModel.setAnimeDirection(false);
-                        imgModel.setAnimated(true);
-                        imgModel.setAnimatePeriod(13000);
-                        imgModel.setTotalFrames(250);
-                        setMenuItemIcon(menuItem,  img.getImage());
-                        img.addListener(onMosaicGroupImgPropertyChangedListener);
-
-//                        if (experimentalMenuMnemonic) {
-//                            menuItem.setLayout(new FlowLayout(FlowLayout.RIGHT));
-//                            menuItem.add(new JLabel("Num+111111111111"));// + (char)(Main.KeyCombo.getMnemonic_MenuMosaicGroup(val))));
-//                        }
-
-                        mosaicsGroup.put(val, menuItem);
-                    }
-
-                    recheckSelectedMosaicType();
-                }
-                return mosaicsGroup.get(key);
-            }
-
-            private JRadioButtonMenuItem getMenuItemMosaic(EMosaic mosaicType) {
-                if (mosaics == null) {
-                    mosaics = new HashMap<>(EMosaic.values().length);
-                    mosaicsImages = new ArrayList<>(EMosaic.values().length);
-
-                    for (EMosaic val: EMosaic.values()) {
-                        String menuItemTxt = val.getDescription(false);
-                        if (experimentalMenuMnemonic)
-                            menuItemTxt += "                      ";
-                        JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(menuItemTxt);
-                        menuItem.setMnemonic(Main.KeyCombo.getMnemonic_Mosaic(val));
-                        menuItem.setAccelerator(Main.KeyCombo.getKeyStroke_Mosaic(val));
-                        menuItem.addActionListener(ev -> Main.this.changeGame(val));
-
-                        MosaicImg.IconController img = new MosaicImg.IconController();
-                        MosaicAnimatedModel<?> imgModel = img.getModel();
-                        imgModel.setMosaicType(val);
-                        imgModel.setSizeField(val.sizeIcoField(true));
-                        imgModel.setSize(new SizeDouble(MenuHeightWithIcon*ZoomQualityFactor, MenuHeightWithIcon*ZoomQualityFactor));
-                        mosaicsImages.add(img);
-                        imgModel.setRotateMode(EMosaicRotateMode.someCells);
-                        imgModel.getPenBorder().setWidth(1);// * ZoomQualityFactor);
-                        Color borderColor = Color.RandomColor().darker(0.4);
-                        imgModel.getPenBorder().setColorLight(borderColor);
-                        imgModel.getPenBorder().setColorShadow(borderColor);
-                        imgModel.setBackgroundColor(Color.Transparent());
-                        imgModel.setAnimatePeriod(5400);
-                        imgModel.setTotalFrames(110);
-                        setMenuItemIcon(menuItem, img.getImage());
-                        img.addListener(onMosaicImgPropertyChangedListener);
-
-                        if (experimentalMenuMnemonic) {
-                            menuItem.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, MenuHeightWithIcon/2 - 4));
-                            menuItem.add(new JLabel("NumPad " + val.getFastCode()));
-                        }
-
-                        mosaics.put(val, menuItem);
-                    }
-                }
-                return mosaics.get(mosaicType);
-            }
-
-            /** Выставить верный bullet для меню мозаики */
-            void recheckSelectedMosaicType() {
-                EMosaic currentMosaicType = getMosaicController().getMosaicType();
-                getMenuItemMosaic(currentMosaicType).setSelected(true);
-
-                mosaicsImages.forEach(img -> img.getModel().setAnimated(img.getModel().getMosaicType() == currentMosaicType));
-                mosaicsGroupImages.forEach(img -> {
-                    boolean isCurrentGroup = (img.getModel().getMosaicGroup() == currentMosaicType.getGroup());
-                    img.useRotateTransforming(isCurrentGroup);
-                });
-            }
-
-            @Override
-            public void close() {
-                mosaicsGroupImages.forEach(img -> {
-                    img.removeListener(onMosaicGroupImgPropertyChangedListener);
-                    img.close();
-                });
-                mosaicsImages.forEach(img -> {
-                    img.removeListener(onMosaicImgPropertyChangedListener);
-                    img.close();
-                });
-            }
-
-        }
-
-        @SuppressWarnings("unused")
-        private void setMenuItemIcon(JMenuItem menuItem, Icon ico) {
-            if (ZoomQualityFactor != 1)
-                ico = ImgUtils.zoom(ico, MenuHeightWithIcon, MenuHeightWithIcon);
-            menuItem.setIcon(ico);
-            if (ZoomQualityFactor == 1)
-                menuItem.repaint();
-        }
-
-        class Options extends JMenu {
-            private static final long serialVersionUID = 1L;
-
-            private JMenu zoom;
-            private Map<EZoomInterface, JMenuItem> zoomItems;
-            private JMenu theme;
-            private JRadioButtonMenuItem themeDefault, themeSystem;
-            private JCheckBoxMenuItem useUnknown, usePause;
-            private Map<EShowElement, JCheckBoxMenuItem> showElements;
-
-            Options() {
-                super("Options");
-                initialize();
-            }
-            private void initialize() {
-                this.setMnemonic(Main.KeyCombo.getMnemonic_MenuOptions());
-                this.add(getZoom());
-                this.add(getTheme());
-                this.add(getUsePause());
-                this.add(new JSeparator());
-                this.add(getUseUnknown());
-                this.add(new JSeparator());
-                for (EShowElement key: EShowElement.values())
-                    this.add(getShowElement(key));
-            }
-
-            private JMenu getZoom() {
-                if (zoom == null) {
-                    zoom = new JMenu("Zoom");
-                    zoom.setMnemonic(Main.KeyCombo.getMnemonic_MenuZoom());
-                    for (EZoomInterface key: EZoomInterface.values())
-                        zoom.add(getZoomItem(key));
-                }
-                return zoom;
-            }
-            private JMenuItem getZoomItem(EZoomInterface key) {
-                if (zoomItems == null) {
-                    zoomItems = new HashMap<>(EZoomInterface.values().length);
-
-                    for (EZoomInterface val: EZoomInterface.values()) {
-                        JMenuItem menuItem;
-                        switch (val) {
-                        case eAlwaysMax: menuItem = new JCheckBoxMenuItem(val.getDescription()); break;
-                        default        : menuItem = new         JMenuItem(val.getDescription()); break;
-                        }
-                        zoomItems.put(val, menuItem);
-
-                        menuItem.setMnemonic(Main.KeyCombo.getMnemonic_Zoom(val));
-                        menuItem.setAccelerator(Main.KeyCombo.getKeyStroke_Zoom(val));
-                        menuItem.addActionListener(Main.this.getHandlers().getZoomAction(val));
-                    }
-                }
-                return zoomItems.get(key);
-            }
-
-            private JMenu getTheme() {
-                if (theme == null) {
-                    theme = new JMenu("Theme");
-                    theme.setMnemonic(Main.KeyCombo.getMnemonic_Theme());
-                    theme.add(getThemeDefault());
-                    theme.add(getThemeSystem());
-                    ButtonGroup bg = new ButtonGroup();
-                    bg.add(getThemeDefault());
-                    bg.add(getThemeSystem());
-                    getThemeSystem().setSelected(true);
-                }
-                return theme;
-            }
-            private JRadioButtonMenuItem getThemeDefault() {
-                if (themeDefault == null) {
-                    themeDefault = new JRadioButtonMenuItem("Default");
-                    themeDefault.setMnemonic(Main.KeyCombo.getMnemonic_ThemeDefault());
-                    themeDefault.setAccelerator(Main.KeyCombo.getKeyStroke_ThemeDefault());
-                    themeDefault.addActionListener(Main.this.getHandlers().getThemeDefaultAction());
-                }
-                return themeDefault;
-            }
-            private JRadioButtonMenuItem getThemeSystem() {
-                if (themeSystem == null) {
-                    themeSystem = new JRadioButtonMenuItem("System");
-                    themeSystem.setMnemonic(Main.KeyCombo.getMnemonic_ThemeSystem());
-                    themeSystem.setAccelerator(Main.KeyCombo.getKeyStroke_ThemeSystem());
-                    themeSystem.addActionListener(Main.this.getHandlers().getThemeSystemAction());
-                }
-                return themeSystem;
-            }
-
-            private JCheckBoxMenuItem getUseUnknown() {
-                if (useUnknown == null) {
-                    useUnknown = new JCheckBoxMenuItem("Use '?'");
-                    useUnknown.setMnemonic(Main.KeyCombo.getMnemonic_UseUnknown());
-                    useUnknown.setAccelerator(Main.KeyCombo.getKeyStroke_UseUnknown());
-                    useUnknown.addActionListener(Main.this.getHandlers().getUseUnknownAction());
-                }
-                return useUnknown;
-            }
-            private JCheckBoxMenuItem getUsePause() {
-                if (usePause == null) {
-                    usePause = new JCheckBoxMenuItem("Pause for a background?");
-                    usePause.setMnemonic(Main.KeyCombo.getMnemonic_UsePause());
-                    usePause.setAccelerator(Main.KeyCombo.getKeyStroke_UsePause());
-                    usePause.addActionListener(Main.this.getHandlers().getUsePauseAction());
-                }
-                return usePause;
-            }
-
-            private JCheckBoxMenuItem getShowElement(EShowElement key) {
-                if (showElements == null) {
-                    showElements = new HashMap<>(EShowElement.values().length);
-
-                    for (EShowElement val: EShowElement.values()) {
-                        JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(val.getDescription());
-                        menuItem.setMnemonic(Main.KeyCombo.getMnemonic_ShowElements(val));
-                        menuItem.setAccelerator(Main.KeyCombo.getKeyStroke_ShowElements(val));
-                        menuItem.addActionListener(Main.this.getHandlers().getShowElementAction(val));
-
-                        showElements.put(val, menuItem);
-                    }
-                }
-                return showElements.get(key);
-            }
-        }
-        class Help extends JMenu {
-            private static final long serialVersionUID = 1L;
-
-            private JMenuItem champions, statistics, about;
-
-            private JMenuItem getChampions() {
-                if (champions == null) {
-                    champions = new JMenuItem("Champions");
-                    champions.setMnemonic(Main.KeyCombo.getMnemonic_Champions());
-                    champions.setAccelerator(Main.KeyCombo.getKeyStroke_Champions());
-                    champions.addActionListener(Main.this.getHandlers().getChampionsAction());
-                }
-                return champions;
-            }
-            private JMenuItem getStatistics() {
-                if (statistics == null) {
-                    statistics = new JMenuItem("Statistics");
-                    statistics.setMnemonic(Main.KeyCombo.getMnemonic_Statistics());
-                    statistics.setAccelerator(Main.KeyCombo.getKeyStroke_Statistics());
-                    statistics.addActionListener(Main.this.getHandlers().getStatisticsAction());
-                }
-                return statistics;
-            }
-            private JMenuItem getAbout() {
-                if (about == null) {
-                    about = new JMenuItem("About");
-                    about.setMnemonic(Main.KeyCombo.getMnemonic_About());
-                    about.setAccelerator(Main.KeyCombo.getKeyStroke_About());
-                    about.addActionListener(Main.this.getHandlers().getAboutAction());
-                }
-                return about;
-            }
-
-            Help() {
-                super("Help");
-                initialize();
-            }
-            private void initialize() {
-                this.setMnemonic(Main.KeyCombo.getMnemonic_MenuHelp());
-                this.add(getChampions());
-                this.add(getStatistics());
-                this.add(new JSeparator());
-                this.add(getAbout());
-            }
-        }
-
-        private Game game;
-        private Mosaics mosaics;
-        private Options options;
-        private Help help;
-
-        private Game getGame() {
-            if (game == null)
-                game = new Game();
-            return game;
-        }
-        private Mosaics getMosaics() {
-            if (mosaics == null)
-                mosaics = new Mosaics();
-            return mosaics;
-        }
-        private Options getOptions() {
-            if (options == null)
-                options = new Options();
-            return options;
-        }
-        private Help getHelp() {
-            if (help == null)
-                help = new Help();
-            return help;
-        }
-
-        public MainMenu() {
-            super();
-            initialise();
-        }
-        void initialise() {
-            this.setLayout(new FlowLayout(FlowLayout.LEFT, 0,0));
-
-            this.add(getGame());
-            this.add(getMosaics());
-            this.add(getOptions());
-            this.add(getHelp());
-
-//            this.setToolTipText("main menu");
-
-            // меняю вход в меню с F10 на Alt
-            // TODO проверить нуна ли это делать не под виндами...
-            InputMap menuBarInputMap = this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-            Object keyBind = menuBarInputMap.get(KeyStroke.getKeyStroke(KeyEvent.VK_F10, 0));
-            menuBarInputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F10, 0), "none");
-            menuBarInputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ALT, 0, !true), keyBind);
-        }
-
-        @Override
-        public Dimension getPreferredSize() {
-            Dimension dim = super.getPreferredSize();
-            dim.width = getMosaicPanel().getPreferredSize().width;
-            return dim;
-        }
-
-        @Override
-        public void close() {
-            this.getGame().close();
-            this.getMosaics().close();
-        }
-
-    }
-
-    public enum EBtnNewGameState {
-        eNormal,
-        ePressed,
-        eSelected,
-        eDisabled,
-        eDisabledSelected,
-        eRollover,
-        eRolloverSelected,
-
-        // addons
-        eNormalMosaic,
-        eNormalWin,
-        eNormalLoss;
-
-        public SmileModel.EFaceType mapToSmileType() {
-            switch (this) {
-            case eNormal          : return EFaceType.Face_WhiteSmiling;
-            case ePressed         : return EFaceType.Face_SavouringDeliciousFood;
-            case eSelected        : return null;
-            case eDisabled        : return null;
-            case eDisabledSelected: return null;
-            case eRollover        : return EFaceType.Face_WhiteSmiling;
-            case eRolloverSelected: return null;
-            case eNormalMosaic    : return EFaceType.Face_Grinning;
-            case eNormalWin       : return EFaceType.Face_SmilingWithSunglasses;
-            case eNormalLoss      : return EFaceType.Face_Disappointed;
-            }
-            throw new RuntimeException("Map me...");
-        }
-    }
-    public enum EBtnPauseState {
-        eNormal,
-        ePressed,
-        eSelected,
-        eDisabled,
-        eDisabledSelected,
-        eRollover,
-        eRolloverSelected,
-
-        /** типа ход ассистента - задел на будущее */
-        eAssistant;
-
-        public SmileModel.EFaceType mapToSmileType() {
-            switch (this) {
-            case eNormal          : return EFaceType.Face_EyesOpen;
-            case ePressed         : return EFaceType.Face_WinkingEyeLeft;
-            case eSelected        : return EFaceType.Face_EyesClosed;
-            case eDisabled        : return EFaceType.Eyes_OpenDisabled;
-            case eDisabledSelected: return EFaceType.Eyes_ClosedDisabled;
-            case eRollover        : return EFaceType.Face_EyesOpen;
-            case eRolloverSelected: return EFaceType.Face_WinkingEyeRight;
-            case eAssistant       : return EFaceType.Face_Assistant;
-            }
-            throw new RuntimeException("Map me...");
-        }
-    }
-
-    class Toolbar extends JPanel {
-        private static final long serialVersionUID = 1L;
-
-        private JTextField edtMinesLeft, edtTimePlay;
-        private BtnNew btnNew;
-        private BtnPause btnPause;
-
-        private Icon getSmileIco(SmileModel.EFaceType smileType, int size) {
-            try (Smile.IconController img = new Smile.IconController(smileType)) {
-                img.getModel().setSize(new SizeDouble(300, 300));//size, size);
-//                return smileImages.get(key).getImage();
-                return ImgUtils.zoom(img.getImage(), size, size);
-            }
-        }
-        public Icon getSmileIco(EBtnNewGameState btnNewGameState) {
-            SmileModel.EFaceType smileType = btnNewGameState.mapToSmileType();
-            if (smileType == null)
-                return null;
-            int size = (btnNewGameState == EBtnNewGameState.ePressed) ||
-                       (btnNewGameState == EBtnNewGameState.eRollover)
-                    ? 25 : 24;
-            return getSmileIco(smileType, size);
-        }
-        public Icon getSmileIco(EBtnPauseState btnPauseState) {
-            SmileModel.EFaceType smileType = btnPauseState.mapToSmileType();
-            if (smileType == null)
-                return null;
-            int size = (btnPauseState == EBtnPauseState.ePressed) ||
-                       (btnPauseState == EBtnPauseState.eRollover) ||
-                       (btnPauseState == EBtnPauseState.eRolloverSelected)
-                    ? 25 : 24;
-            return getSmileIco(smileType, size);
-        }
-
-        class BtnNew extends JButton {
-            private static final long serialVersionUID = 1L;
-
-            public BtnNew() {
-                super();
-                initialize();
-            }
-            private void initialize() {
-                this.setAction(Main.this.getHandlers().getGameNewAction());
-                this.setFocusable(false);
-
-                if (getSmileIco(EBtnNewGameState.eNormal) == null) {
-                    this.setText("N");
-                } else {
-                    this.setIcon(getSmileIco(EBtnNewGameState.eNormal));
-                    this.setPressedIcon(getSmileIco(EBtnNewGameState.ePressed));
-                    this.setSelectedIcon(getSmileIco(EBtnNewGameState.eSelected));
-                    this.setRolloverIcon(getSmileIco(EBtnNewGameState.eRollover));
-                    this.setRolloverSelectedIcon(getSmileIco(EBtnNewGameState.eRolloverSelected));
-                    this.setRolloverEnabled(true);
-                    this.setDisabledIcon(getSmileIco(EBtnNewGameState.eDisabled));
-                    this.setDisabledSelectedIcon(getSmileIco(EBtnNewGameState.eDisabledSelected));
-                }
-                this.setToolTipText("new Game");
-            }
-            @Override
-            public Insets getInsets() {
-                Insets ins = super.getInsets();
-                // иначе не виден текст (если нет картинки)
-                ins.bottom=ins.left=ins.right=ins.top = 0;
-                return ins;
-            }
-        }
-        class BtnPause extends JToggleButton {
-            private static final long serialVersionUID = 1L;
-
-            public BtnPause() {
-                super(Main.this.getHandlers().getPauseAction());
-                initialize();
-            }
-            private void initialize() {
-                this.setFocusable(false);
-                this.setEnabled(false);
-
-                if (getSmileIco(EBtnPauseState.eNormal) == null) {
-                    this.setText("P");
-                } else {
-                    this.setIcon(getSmileIco(EBtnPauseState.eNormal));
-                    this.setPressedIcon(getSmileIco(EBtnPauseState.ePressed));
-                    this.setSelectedIcon(getSmileIco(EBtnPauseState.eSelected));
-                    this.setRolloverIcon(getSmileIco(EBtnPauseState.eRollover));
-                    this.setRolloverSelectedIcon(getSmileIco(EBtnPauseState.eRolloverSelected));
-                    this.setRolloverEnabled(true);
-                    this.setDisabledIcon(getSmileIco(EBtnPauseState.eDisabled));
-                    this.setDisabledSelectedIcon(getSmileIco(EBtnPauseState.eDisabledSelected));
-                }
-                this.setToolTipText("Pause");
-            }
-            @Override
-            public Insets getInsets() {
-                Insets ins = super.getInsets();
-                // иначе не виден текст (если нет картинки)
-                ins.bottom=ins.left=ins.right=ins.top = 0;
-                return ins;
-            }
-        }
-
-        private JTextField getEdtMinesLeft() {
-            if (edtMinesLeft == null) {
-                edtMinesLeft = new JTextField("MinesLeft");
-//                edtMinesLeft.setBorder(BorderFactory.createLoweredBevelBorder());
-//                edtMinesLeft.setBorder(BorderFactory.createEtchedBorder());
-                edtMinesLeft.setFocusable(false);
-                edtMinesLeft.setEditable(false);
-                edtMinesLeft.setToolTipText("Mines left");
-            }
-            return edtMinesLeft;
-        }
-        private JTextField getEdtTimePlay() {
-            if (edtTimePlay == null) {
-                edtTimePlay = new JTextField("TimePlay");
-//                edtTimePlay.setBorder(BorderFactory.createLoweredBevelBorder());
-//                edtTimePlay.setBorder(BorderFactory.createEtchedBorder());
-                edtTimePlay.setFocusable(false);
-                edtTimePlay.setEditable(false);
-                edtTimePlay.setToolTipText("time...");
-            }
-            return edtTimePlay;
-        }
-        private BtnNew getBtnNew() {
-            if (btnNew == null)
-                btnNew = new BtnNew();
-            return btnNew;
-        }
-        private BtnPause getBtnPause() {
-            if (btnPause == null)
-                btnPause = new BtnPause();
-            return btnPause;
-        }
-
-        public Toolbar() {
-            super();
-            initialize();
-        }
-        private void initialize() {
-            {
-                Dimension dimBtn = new Dimension(31, 31);
-                getBtnNew().setPreferredSize(dimBtn);
-                getBtnNew().setMinimumSize(dimBtn);
-                getBtnNew().setMaximumSize(dimBtn);
-                getBtnPause().setPreferredSize(dimBtn);
-                getBtnPause().setMinimumSize(dimBtn);
-                getBtnPause().setMaximumSize(dimBtn);
-
-                Dimension dimEdt = new Dimension(40, 21);
-                getEdtTimePlay().setPreferredSize(dimEdt);
-//                getEdtTimePlay().setMinimumSize(dimEdt);
-                getEdtTimePlay().setMaximumSize(dimEdt);
-                getEdtMinesLeft().setPreferredSize(dimEdt);
-//                getEdtMinesLeft().setMinimumSize(dimEdt);
-                getEdtMinesLeft().setMaximumSize(dimEdt);
-            }
-            {
-                this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-
-                this.setBorder(new CompoundBorder(BorderFactory.createRaisedBevelBorder(), new EmptyBorder(2, 2, 2, 2)));
-//                this.setBorder(new CompoundBorder(BorderFactory.createEtchedBorder(), new EmptyBorder(2, 2, 2, 2)));
-//                this.setBorder(new CompoundBorder(BorderFactory.createMatteBorder(3, 3, 3, 3, new Color(255,0,0, 220)), new EmptyBorder(2, 2, 2, 2)));
-
-                this.add(getEdtMinesLeft());
-                getEdtMinesLeft().setAlignmentX(Component.CENTER_ALIGNMENT);
-
-                this.add(Box.createHorizontalGlue());
-
-                this.add(getBtnNew());
-                getBtnNew().setAlignmentX(Component.CENTER_ALIGNMENT);
-
-                this.add(Box.createHorizontalStrut(1));
-
-                this.add(getBtnPause());
-                getBtnPause().setAlignmentX(Component.CENTER_ALIGNMENT);
-
-                this.add(Box.createHorizontalGlue());
-
-                this.add(getEdtTimePlay());
-                getEdtTimePlay().setAlignmentX(Component.CENTER_ALIGNMENT);
-            }
-        }
-
-    }
-
-    class PausePanel extends JPanel {
-        private static final long serialVersionUID = 1L;
-
-        public PausePanel() {
-            this.addMouseListener(Main.this.getHandlers().getPausePanelMouseListener());
-        }
-
-        private Logo.IconController _logo;
-        private final PropertyChangeListener onLogoPausePropertyChangedListener = ev -> {
-            if (!PausePanel.this.isVisible())
-                return;
-            if (IImageController.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
-                PausePanel.this.repaint();
-            }
-        };
-        private Logo.IconController getLogo() {
-            if (_logo == null) {
-                _logo = new Logo.IconController();
-                LogoModel model = _logo.getModel();
-                model.setUseGradient(true);
-                model.setPadding(new BoundDouble(3));
-                model.setRotateMode(LogoModel.ERotateMode.color);
-                model.setAnimatePeriod(12500);
-                model.setTotalFrames(250);
-                _logo.usePolarLightFgTransforming(true);
-                _logo.addListener(onLogoPausePropertyChangedListener);
-            }
-            return _logo;
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            if (!isPaused())
-                return;
-
-            super.paintComponent(g);
-            Dimension sizeOutward = this.getSize();
-            Logo.IconController logo = getLogo();
-            double sq = Math.min(sizeOutward.getWidth(), sizeOutward.getHeight());
-            logo.getModel().setSize(new SizeDouble(sq, sq));
-
-            logo.getImage().paintIcon(this, g,
-                                      (int)((sizeOutward.width -logo.getModel().getSize().width)/2),
-                                      (int)((sizeOutward.height-logo.getModel().getSize().height)/2));
-        }
-
-        public void animateLogo(boolean start) {
-            getLogo().getModel().setAnimated(start);
-        }
-
-        void close() {
-            removeMouseListener(Main.this.getHandlers().getPausePanelMouseListener());
-            getLogo().removeListener(onLogoPausePropertyChangedListener);
-            getLogo().close();
-        }
-
-        /** /
-        @Override
-        public Dimension getPreferredSize() {
-//            return super.getPreferredSize();
-            return getMosaicPanel().getPreferredSize();
-        }
-        @Override
-        public Dimension getMinimumSize() {
-            return getMosaicPanel().getMinimumSize();
-        }
-        /**/
     }
 
     @Override
@@ -955,23 +122,6 @@ public class Main extends JFrame {
         dim.width  += in.left + in.right;
         dim.height += in.top  + in.bottom;
         return dim;
-    }
-
-    class StatusBar extends JLabel {
-        private static final long serialVersionUID = 1L;
-
-        public StatusBar() {
-            super();
-            initialize();
-        }
-        private void initialize() {
-            this.setText("Click count: 0");
-            this.setToolTipText("Sensible clicks...");
-            this.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-        }
-        public void setClickCount(int cnt) {
-            this.setText("Click count: " + Integer.toString(cnt));
-        }
     }
 
     @Override
@@ -993,13 +143,13 @@ public class Main extends JFrame {
 
     public MainMenu getMenu() {
         if (menu == null)
-            menu = new MainMenu();
+            menu = new MainMenu(this);
         return menu;
     }
 
-    private Toolbar getToolbar() {
+    public ToolBar getToolbar() {
         if (toolbar == null)
-            toolbar = new Toolbar();
+            toolbar = new ToolBar(getHandlers());
         return toolbar;
     }
 
@@ -1036,7 +186,7 @@ public class Main extends JFrame {
 
     private PausePanel getPausePanel() {
         if (pausePanel == null)
-            pausePanel = new PausePanel();
+            pausePanel = new PausePanel(this);
         return pausePanel;
     }
 
@@ -1052,11 +202,11 @@ public class Main extends JFrame {
         //setSysOut();
         //printSystemProperties();
         SwingUtilities.invokeLater(() ->
-            new Main().setVisible(true)
+            new MainApp().setVisible(true)
         );
     }
 
-    public Main() {
+    public MainApp() {
         super();
         initialize();
     }
@@ -1139,9 +289,9 @@ public class Main extends JFrame {
             for (EShowElement key: EShowElement.values()) {
                 getMenu().getOptions().getShowElement(key).setSelected(spm.getShowElement(key));
             }
-            getMenu().     setVisible(spm.getShowElement(EShowElement.eMenu));
-            applyInputActionMenuMap  (spm.getShowElement(EShowElement.eMenu));
-            getToolbar().  setVisible(spm.getShowElement(EShowElement.eToolbar));
+            getMenu().    setVisible(spm.getShowElement(EShowElement.eMenu));
+            applyInputActionMenuMap (spm.getShowElement(EShowElement.eMenu));
+            getToolbar(). setVisible(spm.getShowElement(EShowElement.eToolbar));
             getStatusBar().setVisible(spm.getShowElement(EShowElement.eStatusbar));
 
             startLocation.x = spm.getLocation().x;
@@ -1244,15 +394,15 @@ public class Main extends JFrame {
 
         _initialized = true;
         if (isZoomAlwaysMax)
-            invokeLater(() -> sizeAlwaysMax(new ActionEvent(Main.this, 0, null)));
+            invokeLater(() -> sizeAlwaysMax(new ActionEvent(MainApp.this, 0, null)));
         if (!doNotAskStartup)
             invokeLater(() ->
-                getHandlers().getPlayerManageAction().actionPerformed(new ActionEvent(Main.this, 0, "Main::initialize"))
+                getHandlers().getPlayerManageAction().actionPerformed(new ActionEvent(MainApp.this, 0, "Main::initialize"))
             );
     }
     boolean _initialized;
 
-    ESkillLevel getSkillLevel() {
+    public ESkillLevel getSkillLevel() {
         EMosaic eMosaic = getMosaicController().getMosaicType();
         Matrisize sizeFld = getMosaicController().getSizeField();
         int numberMines = getMosaicController().getMinesCount();
@@ -1266,94 +416,6 @@ public class Main extends JFrame {
         if (sizeFld.equals(ESkillLevel.eCrazy.getDefaultSize()) && (numberMines == ESkillLevel.eCrazy.getNumberMines(eMosaic)))
             return ESkillLevel.eCrazy;
         return ESkillLevel.eCustom;
-    }
-
-    /** my key combinations */
-    static final class KeyCombo {
-        public static final KeyStroke getKeyStroke_Minimized      () { return KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false); }
-        public static final KeyStroke getKeyStroke_CenterScreenPos() { return KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD5, InputEvent.CTRL_DOWN_MASK, false); }
-        public static final KeyStroke getKeyStroke_CenterScreenPos2() { return KeyStroke.getKeyStroke(KeyEvent.VK_0, InputEvent.CTRL_DOWN_MASK, false); }
-        public static final KeyStroke getKeyStroke_NewGame        () { return KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true); }
-        public static final KeyStroke getKeyStroke_SkillLevel(ESkillLevel key) { return KeyStroke.getKeyStroke(KeyEvent.VK_1+key.ordinal(), 0, true); }
-        public static final KeyStroke getKeyStroke_PlayerManage   () { return KeyStroke.getKeyStroke(KeyEvent.VK_BACK_QUOTE, 0, false); }
-        public static final KeyStroke getKeyStroke_Exit           () { return KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.ALT_DOWN_MASK, false); }
-        public static final KeyStroke getKeyStroke_Zoom(EZoomInterface key) {
-            switch (key) {
-            case eMax: return KeyStroke.getKeyStroke(KeyEvent.VK_MULTIPLY, 0, true);
-            case eMin: return KeyStroke.getKeyStroke(KeyEvent.VK_DIVIDE  , 0, true);
-            case eInc: return KeyStroke.getKeyStroke(KeyEvent.VK_ADD     , 0, true);
-            case eDec: return KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, 0, true);
-            default: return null; // throw new RuntimeException();
-            }
-        }
-        public static final KeyStroke getKeyStroke_ZoomMaxAlternative() { return KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, InputEvent.CTRL_DOWN_MASK, true); }
-        public static final KeyStroke getKeyStroke_ZoomMinAlternative() { return KeyStroke.getKeyStroke(KeyEvent.VK_MINUS , InputEvent.CTRL_DOWN_MASK, true); }
-        public static final KeyStroke getKeyStroke_ZoomIncAlternative() { return KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, 0, true); }
-        public static final KeyStroke getKeyStroke_ZoomDecAlternative() { return KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, 0, true); }
-        public static final KeyStroke getKeyStroke_ThemeDefault   () { return KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, false); }
-        public static final KeyStroke getKeyStroke_ThemeSystem    () { return KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK, false); }
-        public static final KeyStroke getKeyStroke_UseUnknown     () { return null; }
-        public static final KeyStroke getKeyStroke_UsePause       () { return null; }
-        public static final KeyStroke getKeyStroke_ShowElements   (EShowElement key) {
-//            switch (key) {
-//            case eCaption  : return KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0, false);
-//            case eMenu     : return KeyStroke.getKeyStroke(KeyEvent.VK_F10, 0, false);
-//            case eToolbar  : return KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0, false);
-//            case eStatusbar: return KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0, false);
-//            default: return null; // throw new RuntimeException();
-//            }
-            return KeyStroke.getKeyStroke(KeyEvent.VK_F9 + key.ordinal(), 0, false);
-        }
-        public static final KeyStroke getKeyStroke_Pause1         () { return KeyStroke.getKeyStroke(KeyEvent.VK_PAUSE, 0, false); }
-        public static final KeyStroke getKeyStroke_Pause2         () { return KeyStroke.getKeyStroke(KeyEvent.VK_P, 0, false); }
-        public static final KeyStroke getKeyStroke_About          () { return KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0, false); }
-        public static final KeyStroke getKeyStroke_Champions      () { return KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0, false); }
-        public static final KeyStroke getKeyStroke_Statistics     () { return KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0, false); }
-
-        public static final KeyStroke getKeyStroke_Mosaic(EMosaic key) { return null; }//KeyStroke.getKeyStroke(KeyEvent.VK_, 0, false); }
-
-        public static final KeyStroke getKeyStroke_MosaicFieldXInc() { return KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.ALT_DOWN_MASK, true); }
-        public static final KeyStroke getKeyStroke_MosaicFieldXDec() { return KeyStroke.getKeyStroke(KeyEvent.VK_LEFT , InputEvent.ALT_DOWN_MASK, true); }
-        public static final KeyStroke getKeyStroke_MosaicFieldYInc() { return KeyStroke.getKeyStroke(KeyEvent.VK_DOWN , InputEvent.ALT_DOWN_MASK, true); }
-        public static final KeyStroke getKeyStroke_MosaicFieldYDec() { return KeyStroke.getKeyStroke(KeyEvent.VK_UP   , InputEvent.ALT_DOWN_MASK, true); }
-
-        public static final KeyStroke getKeyStroke_SelectMosaic(EMosaicGroup key) { return KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD3+key.ordinal(), 0, false); }
-
-        // ------ Mnemonics
-        private static final int VK_NULL = 0;//'\0';
-
-        public static final int getMnemonic_MenuGame       () { return KeyEvent.VK_G; }
-        public static final int getMnemonic_MenuMosaic     () { return KeyEvent.VK_M; }
-        public static final int getMnemonic_MenuMosaicGroup(EMosaicGroup key) { return KeyEvent.VK_NUMPAD3 + key.ordinal(); }
-        public static final int getMnemonic_MenuOptions    () { return KeyEvent.VK_O; }
-        public static final int getMnemonic_MenuZoom       () { return KeyEvent.VK_Z; }
-        public static final int getMnemonic_MenuHelp       () { return KeyEvent.VK_H; }
-
-        public static final int getMnemonic_NewGame        () { return KeyEvent.VK_N; }
-        public static final int getMnemonic_SkillLevel(ESkillLevel key) {
-            switch (key) {
-            case eBeginner: return KeyEvent.VK_B;
-            case eAmateur : return KeyEvent.VK_A;
-            case eProfi   : return KeyEvent.VK_P;
-            case eCrazy   : return KeyEvent.VK_R;
-            case eCustom  : return KeyEvent.VK_C;
-            default       : return VK_NULL;
-            }
-        }
-        public static final int getMnemonic_PlayerManage   () { return KeyEvent.VK_P; }
-        public static final int getMnemonic_Exit           () { return KeyEvent.VK_E; }
-        public static final int getMnemonic_Zoom(EZoomInterface key) { return VK_NULL; }
-        public static final int getMnemonic_Theme          () { return KeyEvent.VK_T; }
-        public static final int getMnemonic_ThemeDefault   () { return KeyEvent.VK_D; }
-        public static final int getMnemonic_ThemeSystem    () { return KeyEvent.VK_Y; }
-        public static final int getMnemonic_UseUnknown     () { return KeyEvent.VK_U; }
-        public static final int getMnemonic_UsePause       () { return KeyEvent.VK_P; }
-        public static final int getMnemonic_ShowElements   (EShowElement key) { return KeyEvent.VK_S; }
-        public static final int getMnemonic_About          () { return VK_NULL; }
-        public static final int getMnemonic_Champions      () { return VK_NULL; }
-        public static final int getMnemonic_Statistics     () { return VK_NULL; }
-
-        public static final int getMnemonic_Mosaic(EMosaic key) { return VK_NULL; }
     }
 
     /** прочие комбинации клавиш (не из меню) */
@@ -1800,21 +862,21 @@ public class Main extends JFrame {
                 getMenu().getOptions().getZoomItem(key).setEnabled(!checked);
     }
 
-    void optionsThemeDefault() {
+    public void optionsThemeDefault() {
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-            SwingUtilities.updateComponentTreeUI(Main.this);
-            Main.this.pack();
+            SwingUtilities.updateComponentTreeUI(MainApp.this);
+            MainApp.this.pack();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    void optionsThemeSystem() {
+    public void optionsThemeSystem() {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            SwingUtilities.updateComponentTreeUI(Main.this);
-            Main.this.pack();
+            SwingUtilities.updateComponentTreeUI(MainApp.this);
+            MainApp.this.pack();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -1860,17 +922,17 @@ public class Main extends JFrame {
                 //if (this.isDisplayable())
                     this.dispose();
                 invokeLater(() -> {
-                        Main.this.setUndecorated(!mapShow.get(EShowElement.eCaption).booleanValue());
-                        Main.this.setBounds(rc);
-                        Main.this.getMenu()     .setVisible(mapShow.get(EShowElement.eMenu).booleanValue());
-                        Main.this.getToolbar()  .setVisible(mapShow.get(EShowElement.eToolbar).booleanValue());
-                        Main.this.getStatusBar().setVisible(mapShow.get(EShowElement.eStatusbar).booleanValue());
+                        MainApp.this.setUndecorated(!mapShow.get(EShowElement.eCaption).booleanValue());
+                        MainApp.this.setBounds(rc);
+                        MainApp.this.getMenu()     .setVisible(mapShow.get(EShowElement.eMenu).booleanValue());
+                        MainApp.this.getToolbar()  .setVisible(mapShow.get(EShowElement.eToolbar).booleanValue());
+                        MainApp.this.getStatusBar().setVisible(mapShow.get(EShowElement.eStatusbar).booleanValue());
 
                         if (isNotPaused && isUsePause())
-                            Main.this.changePause();
+                            MainApp.this.changePause();
 
-                        Main.this.setVisible(true);
-                        Main.this.pack();
+                        MainApp.this.setVisible(true);
+                        MainApp.this.pack();
                 });
             }
             break;
@@ -1944,443 +1006,10 @@ public class Main extends JFrame {
 
     private Handlers handlers;
     /** all Action handlers */
-    private Handlers getHandlers() {
+    public Handlers getHandlers() {
         if (handlers == null)
-            handlers = new Handlers();
+            handlers = new Handlers(this);
         return handlers;
-    }
-
-    /** В обработчиках минимум логики. Вся логика в соотв Main.this.ZZZ функциях... */
-    class Handlers {
-        private Action gameNewAction;
-        public Action getGameNewAction() {
-            if (gameNewAction == null)
-                gameNewAction = new AbstractAction() {
-                    private static final long serialVersionUID = 1L;
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        Main.this.gameNew();
-                    }
-                };
-
-            return gameNewAction;
-        }
-
-        private Map<ESkillLevel, Action> skillLevelActions;
-        public Action getSkillLevelAction(ESkillLevel key) {
-            if (skillLevelActions == null) {
-                skillLevelActions = new EnumMap<>(ESkillLevel.class);
-
-                for (final ESkillLevel val: ESkillLevel.values())
-                    skillLevelActions.put(val, new AbstractAction() {
-                        private static final long serialVersionUID = 1L;
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            Main.this.changeGame(val);
-                        }
-                    });
-            }
-
-            return skillLevelActions.get(key);
-        }
-
-        private Action playerManageAction;
-        public Action getPlayerManageAction() {
-            if (playerManageAction == null)
-                playerManageAction = new AbstractAction() {
-                    private static final long serialVersionUID = 1L;
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        Main.this.getPlayerManageDlg().setVisible(
-                                !Main.this.getPlayerManageDlg().isVisible());
-                    }
-                };
-
-            return playerManageAction;
-        }
-
-        private Action gameExitAction;
-        public Action getGameExitAction() {
-            if (gameExitAction == null)
-                gameExitAction = new AbstractAction() {
-                    private static final long serialVersionUID = 1L;
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        Main.this.onClose();
-                    }
-                };
-
-            return gameExitAction;
-        }
-
-        private Action pauseAction;
-        /** Action на нажатие кнопки/клавиши паузы */
-        public Action getPauseAction() {
-            if (pauseAction == null)
-                pauseAction = new AbstractAction() {
-                    private static final long serialVersionUID = 1L;
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if (Main.this.isUsePause())
-                            Main.this.changePause();
-                    }
-                };
-            return pauseAction;
-        }
-
-        private Action minimizedAction;
-        public Action getMinimizedAction() {
-            if (minimizedAction == null)
-                minimizedAction = new AbstractAction() {
-                    private static final long serialVersionUID = 1L;
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        Main.this.iconify();
-                    }
-                };
-
-            return minimizedAction;
-        }
-
-        private Action centerScreenAction;
-        public Action getCenterScreenAction() {
-            if (centerScreenAction == null)
-                centerScreenAction = new AbstractAction() {
-                    private static final long serialVersionUID = 1L;
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        Main.this.toCenterScreen();
-                    }
-                };
-
-            return centerScreenAction;
-        }
-
-        private Map<EShowElement, Action> showElementsAction;
-        public Action getShowElementAction(EShowElement key) {
-            if (showElementsAction == null) {
-                showElementsAction = new EnumMap<>(EShowElement.class);
-
-                for (final EShowElement val: EShowElement.values())
-                    showElementsAction.put(val, new AbstractAction() {
-                        private static final long serialVersionUID = 1L;
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            Main.this.optionsShowElement(val, e);
-                        }
-                    });
-            }
-            return showElementsAction.get(key);
-        }
-
-        private Action themeDefaultAction;
-        public Action getThemeDefaultAction() {
-            if (themeDefaultAction == null)
-                themeDefaultAction = new AbstractAction() {
-                    private static final long serialVersionUID = 1L;
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        optionsThemeDefault();
-                    }
-                };
-
-            return themeDefaultAction;
-        }
-
-        private Action themeSystemAction;
-        public Action getThemeSystemAction() {
-            if (themeSystemAction == null)
-                themeSystemAction = new AbstractAction() {
-                    private static final long serialVersionUID = 1L;
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        optionsThemeSystem();
-                    }
-                };
-
-            return themeSystemAction;
-        }
-
-        private Consumer<ClickResult> mosaicClickHandler;
-        public Consumer<ClickResult> getMosaicClickHandler() {
-            if (mosaicClickHandler == null)
-                mosaicClickHandler = (clickResult) -> {
-                    //System.out.println("OnMosaicClick: down=" + clickResult.isDown() + "; leftClick=" + clickResult.isLeft());
-                    if (clickResult.isLeft() && (Main.this.getMosaicController().getGameStatus() == EGameStatus.eGSPlay)) {
-                        Icon img = Main.this.getToolbar().getSmileIco(
-                                clickResult.isDown() ?
-                                    EBtnNewGameState.eNormalMosaic :
-                                    EBtnNewGameState.eNormal);
-                        if (img != null)
-                            Main.this.getToolbar().getBtnNew().setIcon(img);
-                    }
-                };
-
-            return mosaicClickHandler;
-        }
-
-        private MouseListener pausePanelMouseListener;
-        public MouseListener getPausePanelMouseListener() {
-            if (pausePanelMouseListener == null)
-                pausePanelMouseListener = new MouseAdapter() {
-                    @Override
-                    public void mousePressed(MouseEvent e) {
-                        if (SwingUtilities.isRightMouseButton(e) && Main.this.isPaused())
-                            Main.this.changePause();
-                    }
-                };
-            return pausePanelMouseListener;
-        }
-
-        private WindowListener windowListener;
-        public WindowListener getWindowListener() {
-            if (windowListener == null)
-                windowListener = new WindowAdapter() {
-                    @Override
-                    public void windowClosing(WindowEvent we) {
-                        Main.this.onClose();
-                    }
-                };
-            return windowListener;
-        }
-
-        private WindowFocusListener windowFocusListener;
-        public WindowFocusListener getWindowFocusListener() {
-            if (windowFocusListener == null)
-                windowFocusListener = new WindowFocusListener() {
-                    @Override
-                    public void windowLostFocus(WindowEvent e) {
-                        if (!Main.this.isPaused()) {
-                            if (Main.this.isUsePause())
-                                Main.this.changePause();
-
-                            Icon img = Main.this.getToolbar().getSmileIco(EBtnNewGameState.eNormal);
-                            if (img != null)
-                                Main.this.getToolbar().getBtnNew().setIcon(img);
-                        }
-//                        getRootPane().requestFocusInWindow();
-                    }
-                    @Override
-                    public void windowGainedFocus(WindowEvent e) {}
-                };
-            return windowFocusListener;
-        }
-
-        private MouseWheelListener mouseWheelListener;
-        public MouseWheelListener getMouseWheelListener() {
-            if (mouseWheelListener == null)
-                mouseWheelListener = evt -> {
-//                      System.out.println("FMG::mouseWheelMoved: " + evt);
-                    if (!Main.this.getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected())
-                        switch (evt.getWheelRotation()) {
-                        case  1: Main.this.sizeDec(); break;
-                        case -1: Main.this.sizeInc(); break;
-                        }
-                };
-
-            return mouseWheelListener;
-        }
-
-        private Map<EZoomInterface, Action> zoomActions;
-        public Action getZoomAction(EZoomInterface key) {
-            if (zoomActions == null) {
-                zoomActions = new EnumMap<>(EZoomInterface.class);
-
-                for (final EZoomInterface val: EZoomInterface.values())
-                    zoomActions.put(val, new AbstractAction() {
-                        private static final long serialVersionUID = 1L;
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            boolean alwaysMax = Main.this.getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected();
-                            switch (val) {
-                            case eAlwaysMax:           Main.this.sizeAlwaysMax(e); break;
-                            case eMax: if (!alwaysMax) Main.this.sizeMax(); break;
-                            case eMin: if (!alwaysMax) Main.this.sizeMin(); break;
-                            case eInc: if (!alwaysMax) Main.this.sizeInc(); break;
-                            case eDec: if (!alwaysMax) Main.this.sizeDec(); break;
-                            }
-                        }
-                    });
-            }
-            return zoomActions.get(key);
-        }
-
-        private Action championsAction;
-        public Action getChampionsAction() {
-            if (championsAction == null)
-                championsAction = new AbstractAction() {
-                    private static final long serialVersionUID = 1L;
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if (Main.this.getChampionDialog().isVisible())
-                            Main.this.getChampionDialog().setVisible(false);
-                        else {
-                            Main.this.getChampionDialog().showData(
-                                    Main.this.getSkillLevel(),
-                                    Main.this.getMosaicController().getMosaicType());
-                        }
-                    }
-                };
-
-            return championsAction;
-        }
-
-        private Action statisticsAction;
-        public Action getStatisticsAction() {
-            if (statisticsAction == null)
-                statisticsAction = new AbstractAction() {
-                    private static final long serialVersionUID = 1L;
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if (Main.this.getStatisticDialog().isVisible())
-                            Main.this.getStatisticDialog().setVisible(false);
-                        else
-                            Main.this.getStatisticDialog().showData(Main.this.getSkillLevel(), Main.this.getMosaicController().getMosaicType());
-                    }
-                };
-
-            return statisticsAction;
-        }
-
-        private Action aboutAction;
-        public Action getAboutAction() {
-            if (aboutAction == null)
-                aboutAction = new AbstractAction() {
-                    private static final long serialVersionUID = 1L;
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        Main.this.getAboutDialog().setVisible(!Main.this.getAboutDialog().isVisible());
-                    }
-                };
-
-            return aboutAction;
-        }
-
-        private Map<EMosaicGroup, Action> selectMosaicActions;
-        public Action getSelectMosaicAction(final EMosaicGroup key) {
-            if (selectMosaicActions == null) {
-                selectMosaicActions = new EnumMap<>(EMosaicGroup.class);
-
-                for (final EMosaicGroup val: EMosaicGroup.values())
-                    selectMosaicActions.put(val, new AbstractAction() {
-                        private static final long serialVersionUID = 1L;
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                        Main.this.getSelectMosaicDialog().startSelect(val);
-                        }
-                    });
-            }
-
-            return selectMosaicActions.get(key);
-        }
-
-        private Action useUnknownAction;
-        public Action getUseUnknownAction() {
-            if (useUnknownAction == null)
-                useUnknownAction = new AbstractAction() {
-                    private static final long serialVersionUID = 1L;
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        Main.this.optionsUseUnknown(e);
-                    }
-                };
-
-            return useUnknownAction;
-        }
-        private Action usePauseAction;
-        public Action getUsePauseAction() {
-            if (usePauseAction == null)
-                usePauseAction = new AbstractAction() {
-                    private static final long serialVersionUID = 1L;
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        Main.this.optionsUsePause(e);
-                    }
-                };
-
-            return usePauseAction;
-        }
-
-        private Action timePlayAction;
-        public Action getTimePlayAction() {
-            if (timePlayAction == null)
-                timePlayAction = new AbstractAction() {
-                    private static final long serialVersionUID = 1L;
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        try {
-                            int val = Integer.parseInt(getToolbar().getEdtTimePlay().getText());
-                            getToolbar().getEdtTimePlay().setText(Integer.toString(++val));
-                        } catch (Exception ex) {
-                            System.err.println(ex);
-                        }
-                    }
-                };
-
-            return timePlayAction;
-        }
-
-        private Action mosaicSizeIncX, mosaicSizeDecX, mosaicSizeIncY, mosaicSizeDecY;
-        public Action getMosaicSizeIncX() {
-            if (mosaicSizeIncX == null)
-                mosaicSizeIncX = new AbstractAction() {
-                    private static final long serialVersionUID = 1L;
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        Matrisize size = Main.this.getMosaicController().getSizeField();
-                        size = new Matrisize(size);
-                        size.m++;
-                        Main.this.changeGame(size);
-                    }
-                };
-
-            return mosaicSizeIncX;
-        }
-        public Action getMosaicSizeDecX() {
-            if (mosaicSizeDecX == null)
-                mosaicSizeDecX = new AbstractAction() {
-                    private static final long serialVersionUID = 1L;
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        Matrisize size = Main.this.getMosaicController().getSizeField();
-                        size = new Matrisize(size);
-                        size.m = Math.max(3, size.m - 1);
-                        Main.this.changeGame(size);
-                    }
-                };
-
-            return mosaicSizeDecX;
-        }
-        public Action getMosaicSizeIncY() {
-            if (mosaicSizeIncY == null)
-                mosaicSizeIncY = new AbstractAction() {
-                    private static final long serialVersionUID = 1L;
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        Matrisize size = Main.this.getMosaicController().getSizeField();
-                        size = new Matrisize(size);
-                        size.n++;
-                        Main.this.changeGame(size);
-                    }
-                };
-
-            return mosaicSizeIncY;
-        }
-        public Action getMosaicSizeDecY() {
-            if (mosaicSizeDecY == null)
-                mosaicSizeDecY = new AbstractAction() {
-                    private static final long serialVersionUID = 1L;
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        Matrisize size = Main.this.getMosaicController().getSizeField();
-                        size = new Matrisize(size);
-                        size.n = Math.max(3, size.n - 1);
-                        Main.this.changeGame(size);
-                    }
-                };
-
-            return mosaicSizeDecY;
-        }
     }
 
     public static void Beep() {
@@ -2484,13 +1113,13 @@ public class Main extends JFrame {
         if (!victory && (getActiveUserId() == null))
             return; // не напрягаю игрока окном выбора пользователя, пока он не выиграет разок...
 
-        final ESkillLevel eSkill = Main.this.getSkillLevel();
+        final ESkillLevel eSkill = MainApp.this.getSkillLevel();
         if (eSkill == ESkillLevel.eCustom)
             return;
 
         final EMosaic eMosaic = mosaicCtrllr.getMosaicType();
         final long realCountOpen = mosaicCtrllr.isVictory() ? mosaicCtrllr.getMinesCount() : mosaicCtrllr.getCountOpen();
-        final long playTime = Long.parseLong(Main.this.getToolbar().getEdtTimePlay().getText());
+        final long playTime = Long.parseLong(MainApp.this.getToolbar().getEdtTimePlay().getText());
         final long clickCount = mosaicCtrllr.getCountClick();
 
         // логика сохранения...
@@ -2504,10 +1133,10 @@ public class Main extends JFrame {
 
                 // ...чемпиона
                 if (victory) {
-                    User user = Main.this.getPlayers().getUser(userId);
-                    int pos = Main.this.getChampions().add(user, playTime, eMosaic, eSkill);
+                    User user = MainApp.this.getPlayers().getUser(userId);
+                    int pos = MainApp.this.getChampions().add(user, playTime, eMosaic, eSkill);
                     if (pos != -1)
-                        Main.this.getChampionDialog().showData(eSkill, eMosaic, pos);
+                        MainApp.this.getChampionDialog().showData(eSkill, eMosaic, pos);
                 }
             }
         };

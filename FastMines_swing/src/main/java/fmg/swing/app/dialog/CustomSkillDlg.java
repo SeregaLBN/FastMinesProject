@@ -18,7 +18,7 @@ import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.MosaicInitData;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.ESkillLevel;
-import fmg.swing.app.Main;
+import fmg.swing.app.MainApp;
 import fmg.swing.utils.GuiTools;
 
 public class CustomSkillDlg extends JDialog {
@@ -31,14 +31,14 @@ public class CustomSkillDlg extends JDialog {
     private JRadioButton radioFullScreenCurrSizeArea, radioFullScreenMiniSizeArea;
     private ButtonGroup radioGroup;
     private JPopupMenu popupMenu;
-    private Main parent;
+    private MainApp parent;
     private final PropertyChangeListener _mosaicListener;
 
     public CustomSkillDlg(JFrame parent, boolean modal) {
         super(parent, "Select skill", modal);
         _mosaicListener = ev -> onMosaicModelPropertyChanged(ev);
-        if (parent instanceof Main)
-            this.parent = (Main) parent;
+        if (parent instanceof MainApp)
+            this.parent = (MainApp) parent;
         initialize(parent);
     }
 
