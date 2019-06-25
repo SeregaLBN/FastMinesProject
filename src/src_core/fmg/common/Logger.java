@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+/** Very simple logger */
 public final class LoggerSimple {
 
     /** may be override */

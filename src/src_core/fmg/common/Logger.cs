@@ -4,9 +4,10 @@ using System.Threading.Tasks;
 
 namespace Fmg.Common {
 
-    public class LoggerSimple {
+    /// <summary> Very simple logger </summary>
+    public class Logger {
 
-        public static void Put(string format, params object[] args) {
+        public static void Info(string format, params object[] args) {
 #if DEBUG
             if (args.Length > 0)
                 format = string.Format(format, args);
@@ -27,18 +28,18 @@ namespace Fmg.Common {
             _disposeMessage = disposeMessage;
 #if DEBUG
             if (ctorMessage == null)
-                LoggerSimple.Put($"> {hint}");
+                Logger.Info($"> {hint}");
             else
-                LoggerSimple.Put($"> {hint}: {ctorMessage}");
+                Logger.Info($"> {hint}: {ctorMessage}");
 #endif
         }
 
         public void Dispose() {
 #if DEBUG
             if (_disposeMessage == null)
-                LoggerSimple.Put($"< {_hint}");
+                Logger.Info($"< {_hint}");
             else
-                LoggerSimple.Put($"< {_hint}: {_disposeMessage()}");
+                Logger.Info($"< {_hint}: {_disposeMessage()}");
 #endif
         }
 
@@ -46,7 +47,7 @@ namespace Fmg.Common {
 #if DEBUG
             if (args.Length > 0)
                 format = string.Format(format, args);
-            LoggerSimple.Put($"  {_hint}: {format}");
+            Logger.Info($"  {_hint}: {format}");
 #endif
         }
 
