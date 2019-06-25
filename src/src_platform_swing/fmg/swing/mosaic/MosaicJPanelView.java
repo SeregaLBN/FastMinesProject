@@ -143,7 +143,7 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
                             g.setColor(Cast.toColor(model.getBackgroundColor()));
                             g.fillRect(0, 0, sizeCtrl.width, sizeCtrl.height);
 
-                            if (isControlResized) {
+                            if (isControlResized && (lastImg != null)) {
                                 // if this control is resized  then use cached image
                                 g2d = (Graphics2D)g2d.create();
 

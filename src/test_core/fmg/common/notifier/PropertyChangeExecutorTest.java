@@ -4,7 +4,7 @@ import java.beans.PropertyChangeListener;
 
 import org.junit.*;
 
-import fmg.common.LoggerSimple;
+import fmg.common.Logger;
 import fmg.core.mosaic.MosaicModelTest;
 import io.reactivex.Flowable;
 
@@ -29,36 +29,36 @@ public class PropertyChangeExecutorTest {
 
     @BeforeClass
     public static void setup() {
-        LoggerSimple.put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        LoggerSimple.put("> PropertyChangeExecutorTest::setup");
+        Logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        Logger.info("> PropertyChangeExecutorTest::setup");
 
         MosaicModelTest.ProjSettings();
 
-        Flowable.just("UI factory inited...").subscribe(LoggerSimple::put);
+        Flowable.just("UI factory inited...").subscribe(Logger::info);
     }
 
     @Before
     public void before() {
-        LoggerSimple.put("======================================================");
+        Logger.info("======================================================");
     }
 
     @AfterClass
     public static void after() {
-        LoggerSimple.put("======================================================");
-        LoggerSimple.put("< PropertyChangeExecutorTest closed");
-        LoggerSimple.put("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        Logger.info("======================================================");
+        Logger.info("< PropertyChangeExecutorTest closed");
+        Logger.info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     }
 
     @Test
     public void simpleUsageTest() {
-        LoggerSimple.put("> PropertyChangeExecutorTest::simpleUsageTest");
+        Logger.info("> PropertyChangeExecutorTest::simpleUsageTest");
 
         SimpleDataObj[] d = { null };
         new PropertyChangeExecutor<>(() -> d[0] = new SimpleDataObj()).run(10, 1000,
             data -> {
-                LoggerSimple.put("    data modificator");
+                Logger.info("    data modificator");
             }, (data, modifiedProperties) -> {
-                LoggerSimple.put("    data validator");
+                Logger.info("    data validator");
                 Assert.assertNotNull(data);
                 Assert.assertEquals(0, modifiedProperties.size());
                 Assert.assertFalse(data.isDisposed());
@@ -69,14 +69,14 @@ public class PropertyChangeExecutorTest {
 
     @Test
     public void extendedUsageTest() {
-        LoggerSimple.put("> PropertyChangeExecutorTest::extendedUsageTest");
+        Logger.info("> PropertyChangeExecutorTest::extendedUsageTest");
 
         SimpleDataObj[] d = { null };
         new PropertyChangeExecutor<>(() -> d[0] = new SimpleDataObj(), false).run(300, 1000,
             data -> {
-                LoggerSimple.put("    data modificator");
+                Logger.info("    data modificator");
             }, (data, modifiedProperties) -> {
-                LoggerSimple.put("    data validator");
+                Logger.info("    data validator");
                 Assert.assertNotNull(data);
                 Assert.assertEquals(0, modifiedProperties.size());
                 Assert.assertFalse(data.isDisposed());
@@ -86,9 +86,9 @@ public class PropertyChangeExecutorTest {
 
         new PropertyChangeExecutor<>(() -> d[0]).run(10, 1000,
             data -> {
-                LoggerSimple.put("    data modificator");
+                Logger.info("    data modificator");
             }, (data, modifiedProperties) -> {
-                LoggerSimple.put("    data validator");
+                Logger.info("    data validator");
                 Assert.assertEquals(0, modifiedProperties.size());
                 Assert.assertFalse(data.isDisposed());
             });
@@ -97,16 +97,16 @@ public class PropertyChangeExecutorTest {
 
     @Test
     public void creatorFailTest() {
-        LoggerSimple.put("> PropertyChangeExecutorTest::creatorFailTest");
+        Logger.info("> PropertyChangeExecutorTest::creatorFailTest");
 
         IllegalArgumentException failEx = new IllegalArgumentException("Tested exception");
         try {
             new PropertyChangeExecutor<>(() -> { throw failEx; }).run(10, 1000,
                data -> {
-                   LoggerSimple.put("    data modificator");
+                   Logger.info("    data modificator");
                    Assert.fail();
                }, (data, modifiedProperties) -> {
-                   LoggerSimple.put("    data validator");
+                   Logger.info("    data validator");
                    Assert.fail();
                });
             Assert.fail();
@@ -117,16 +117,16 @@ public class PropertyChangeExecutorTest {
 
     @Test
     public void modificatorFailTest() {
-        LoggerSimple.put("> PropertyChangeExecutorTest::modificatorFailTest");
+        Logger.info("> PropertyChangeExecutorTest::modificatorFailTest");
 
         IllegalArgumentException failEx = new IllegalArgumentException("Tested exception");
         try {
             new PropertyChangeExecutor<>(SimpleDataObj::new).run(10, 1000,
                data -> {
-                   LoggerSimple.put("    data modificator");
+                   Logger.info("    data modificator");
                    throw failEx;
                }, (data, modifiedProperties) -> {
-                   LoggerSimple.put("    data validator");
+                   Logger.info("    data validator");
                    Assert.fail();
                });
             Assert.fail();
@@ -138,15 +138,15 @@ public class PropertyChangeExecutorTest {
 
     @Test
     public void validatorFailTest() {
-        LoggerSimple.put("> PropertyChangeExecutorTest::modificatorFailTest");
+        Logger.info("> PropertyChangeExecutorTest::modificatorFailTest");
 
         IllegalArgumentException failEx = new IllegalArgumentException("Tested exception");
         try {
             new PropertyChangeExecutor<>(SimpleDataObj::new).run(10, 1000,
                data -> {
-                   LoggerSimple.put("    data modificator");
+                   Logger.info("    data modificator");
                }, (data, modifiedProperties) -> {
-                   LoggerSimple.put("    data validator");
+                   Logger.info("    data validator");
                    throw failEx;
                });
             Assert.fail();

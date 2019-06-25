@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import org.junit.*;
 
-import fmg.common.LoggerSimple;
+import fmg.common.Logger;
 import fmg.common.geom.SizeDouble;
 import fmg.common.notifier.PropertyChangeExecutor;
 import fmg.core.img.IImageView;
@@ -17,7 +17,7 @@ class MosaicTestView extends MosaicView<DummyImage, DummyImage, MosaicTestModel>
     private int drawCount;
     int getDrawCount() { return drawCount; }
     @Override protected void drawModified(Collection<BaseCell> modifiedCells) {
-        LoggerSimple.put("MosaicTestView::drawModified");
+        Logger.info("MosaicTestView::drawModified");
         ++drawCount;
     }
     @Override public void close() {
@@ -33,28 +33,28 @@ public class MosaicViewTest {
 
     @BeforeClass
     public static void setup() {
-        LoggerSimple.put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        LoggerSimple.put("> MosaicViewTest::setup");
+        Logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        Logger.info("> MosaicViewTest::setup");
 
         MosaicModelTest.ProjSettings();
 
-        Flowable.just("UI factory inited...").subscribe(LoggerSimple::put);
+        Flowable.just("UI factory inited...").subscribe(Logger::info);
     }
 
     @Before
     public void before() {
-        LoggerSimple.put("======================================================");
+        Logger.info("======================================================");
     }
     @AfterClass
     public static void after() {
-        LoggerSimple.put("======================================================");
-        LoggerSimple.put("< MosaicViewTest closed");
-        LoggerSimple.put("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        Logger.info("======================================================");
+        Logger.info("< MosaicViewTest closed");
+        Logger.info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     }
 
     @Test
     public void propertyChangedTest() {
-        LoggerSimple.put("> MosaicTestView::propertyChangedTest");
+        Logger.info("> MosaicTestView::propertyChangedTest");
 
         new PropertyChangeExecutor<>(MosaicTestView::new).run(100, 1000,
             view -> {
@@ -72,7 +72,7 @@ public class MosaicViewTest {
 
     @Test
     public void readinessAtTheStartTest() {
-        LoggerSimple.put("> MosaicTestView::readinessAtTheStartTest");
+        Logger.info("> MosaicTestView::readinessAtTheStartTest");
 
         new PropertyChangeExecutor<>(MosaicTestView::new).run(10, 1000,
             view -> {
@@ -84,7 +84,7 @@ public class MosaicViewTest {
 
     @Test
     public void multipleChangeModelOneDrawViewTest() throws InterruptedException {
-        LoggerSimple.put("> MosaicTestView::multipleChangeModelOneDrawViewTest");
+        Logger.info("> MosaicTestView::multipleChangeModelOneDrawViewTest");
 
         DummyImage[] img = { null };
         MosaicTestView[] v = { null };
@@ -120,7 +120,7 @@ public class MosaicViewTest {
 
     @Test
     public void oneNotificationOfImageChangedTest() {
-        LoggerSimple.put("> MosaicTestView::oneNotificationOfImageChangedTest");
+        Logger.info("> MosaicTestView::oneNotificationOfImageChangedTest");
 
         new PropertyChangeExecutor<>(MosaicTestView::new).run(100, 1000,
            view -> {

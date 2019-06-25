@@ -8,7 +8,7 @@ import fmg.android.app.BuildConfig;
 import fmg.android.img.Animator;
 import fmg.common.AProjSettings;
 import fmg.common.Color;
-import fmg.common.LoggerSimple;
+import fmg.common.Logger;
 import fmg.common.ui.UiInvoker;
 import fmg.core.mosaic.MosaicDrawModel;
 
@@ -31,7 +31,7 @@ public final class ProjSettings extends AProjSettings {
         isMobile = true;
 
         AProjSettings.setDebug(BuildConfig.DEBUG);
-        LoggerSimple.DEFAULT_WRITER = BuildConfig.DEBUG_OUTPUT ? message -> Log.d("fmg", message) : null;
+        Logger.DEFAULT_WRITER = BuildConfig.DEBUG_OUTPUT ? message -> Log.d("fmg", message) : null;
         DrawModeFull = BuildConfig.DRAW_MODE_FULL;
     }
 

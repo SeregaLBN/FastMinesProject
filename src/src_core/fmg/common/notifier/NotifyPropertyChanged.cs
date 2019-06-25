@@ -26,7 +26,7 @@ namespace Fmg.Common.Notifier {
 
                 var count = _propertyChanges.Count;
                 if (count > 4)
-                    LoggerSimple.Put("Suspiciously many subscribers! count={0}", count);
+                    Logger.Info("Suspiciously many subscribers! count={0}", count);
             }
             remove {
                 if (!_propertyChanges.ContainsKey(value))
@@ -160,7 +160,7 @@ namespace Fmg.Common.Notifier {
             Disposed = true;
 #if DEBUG
             if (_deferrNotifications.Any())
-                LoggerSimple.Put("Not all deferred notifications handled! Count={0}", _deferrNotifications.Count);
+                Logger.Info("Not all deferred notifications handled! Count={0}", _deferrNotifications.Count);
 #endif
             _deferrNotifications.Clear();
 
@@ -181,7 +181,7 @@ namespace Fmg.Common.Notifier {
             //if (!propertyChangedEventHandler.Target.ToString().Contains("Page_obj")) // etc.. Fmg.SelectMosaicPage+SelectMosaicPage_obj1_Bindings+SelectMosaicPage_obj1_BindingsTracking
             if (!Regex.IsMatch(propertyChangedEventHandler.Target.ToString(), "^.+Page_obj\\d+_BindingsTracking$"))
                 throw new InvalidOperationException(errorMesage);
-            LoggerSimple.Put(errorMesage);
+            Logger.Info(errorMesage);
         }
 #endif
 

@@ -8,7 +8,7 @@ namespace Fmg.Common.Notifier {
 
         internal static void ProjSettings() {
             UiInvoker.Deferred = SimpleUiThreadLoop.AddTask;
-            LoggerSimple.Put("Simple UI factory inited...");
+            Logger.Info("Simple UI factory inited...");
         }
 
         protected override void AssertEqual(int expected, int actual) {

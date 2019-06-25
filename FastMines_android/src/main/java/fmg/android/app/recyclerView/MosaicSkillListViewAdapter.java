@@ -28,7 +28,7 @@ public class MosaicSkillListViewAdapter extends RecyclerView.Adapter<MosaicSkill
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-//        LoggerSimple.put("  MosaicSkillListViewAdapter::onCreateViewHolder");
+//        Logger.info("  MosaicSkillListViewAdapter::onCreateViewHolder");
 
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         MosaicSkillItemBinding binding = MosaicSkillItemBinding.inflate(layoutInflater, parent, false);
@@ -38,12 +38,12 @@ public class MosaicSkillListViewAdapter extends RecyclerView.Adapter<MosaicSkill
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-//        LoggerSimple.put("  MosaicSkillListViewAdapter::onBindViewHolder pos=" + position);
+//        Logger.info("  MosaicSkillListViewAdapter::onBindViewHolder pos=" + position);
 
         holder.bind(items.get(position));
         if (!holder.binding.getRoot().hasOnClickListeners())
             holder.binding.getRoot().setOnClickListener(view -> {
-                //LoggerSimple.put("  MosaicSkillListViewAdapter::onBindViewHolder:OnClickListener: layoutPos={0}, adapterPos={1}", holder.getLayoutPosition(), holder.getAdapterPosition());
+                //Logger.info("  MosaicSkillListViewAdapter::onBindViewHolder:OnClickListener: layoutPos={0}, adapterPos={1}", holder.getLayoutPosition(), holder.getAdapterPosition());
                 int pos = holder.getLayoutPosition(); // holder.getAdapterPosition();
                 if (onItemClick != null)
                     onItemClick.accept(view, pos);

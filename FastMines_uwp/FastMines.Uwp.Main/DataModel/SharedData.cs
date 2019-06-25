@@ -39,7 +39,7 @@ namespace Fmg.Uwp.App.Model {
                     };
                     return loadData;
                 } catch(Exception ex) {
-                    LoggerSimple.Put($"Fail load data: {ex.Message}");
+                    Logger.Info($"Fail load data: {ex.Message}");
                     System.Diagnostics.Debug.Assert(false, ex.Message);
                 }
             return new MosaicInitData();
@@ -65,7 +65,7 @@ namespace Fmg.Uwp.App.Model {
                     };
                     return menuSettings;
                 } catch(Exception ex) {
-                    LoggerSimple.Put($"Fail load data: {ex.Message}");
+                    Logger.Info($"Fail load data: {ex.Message}");
                     System.Diagnostics.Debug.Assert(false, ex.Message);
                 }
             return new MenuSettings();

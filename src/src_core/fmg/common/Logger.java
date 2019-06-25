@@ -7,12 +7,12 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /** Very simple logger */
-public final class LoggerSimple {
+public final class Logger {
 
     /** may be override */
     public static Consumer<String> DEFAULT_WRITER = null; // System.out::println;
 
-    public static void put(String format, Object... args) {
+    public static void info(String format, Object... args) {
         if (DEFAULT_WRITER == null)
             return;
 
@@ -45,23 +45,23 @@ public final class LoggerSimple {
             _hint = hint;
             _disposeMessage = disposeMessage;
             if (ctorMessage == null)
-                LoggerSimple.put("> {0}", hint);
+                Logger.info("> {0}", hint);
             else
-                LoggerSimple.put("> {0}: {1}", hint, ctorMessage);
+                Logger.info("> {0}: {1}", hint, ctorMessage);
         }
 
         @Override
         public void close() {
             if (_disposeMessage == null)
-                LoggerSimple.put("< {0}", _hint);
+                Logger.info("< {0}", _hint);
             else
-                LoggerSimple.put("< {0}: {1}", _hint, _disposeMessage.get());
+                Logger.info("< {0}: {1}", _hint, _disposeMessage.get());
         }
 
         public void put(String format, Object... args) {
             if (args.length > 0)
                 format = new MessageFormat(format).format(args);
-            LoggerSimple.put("  {0}: {1}", _hint, format);
+            Logger.info("  {0}: {1}", _hint, format);
         }
 
     }

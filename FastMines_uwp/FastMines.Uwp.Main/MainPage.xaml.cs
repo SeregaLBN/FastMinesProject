@@ -162,7 +162,7 @@ namespace Fmg {
             RightFrame.SourcePageType = typeof(CustomSkillPage);
         }
         private void ShowHypnosisLogoPage() {
-            LoggerSimple.Put("TODO:  redirect to HypnosisLogoPage...");
+            Logger.Info("TODO:  redirect to HypnosisLogoPage...");
         }
 
         private void OnMenuCurrentItemChanged(bool senderIsMosaicGroup, MosaicGroupDataItem currentGroupItem, MosaicSkillDataItem currentSkillItem) {

@@ -14,7 +14,7 @@ namespace Fmg.Core.Mosaic {
         protected override DummyImage CreateImage() { return new DummyImage(); }
         internal int DrawCount { get; private set; }
         protected override void DrawModified(ICollection<BaseCell> modifiedCells) {
-            LoggerSimple.Put(nameof(MosaicTestView) + "::DrawModified");
+            Logger.Info(nameof(MosaicTestView) + "::DrawModified");
             ++DrawCount;
         }
         protected override void Disposing() {
@@ -36,22 +36,22 @@ namespace Fmg.Core.Mosaic {
         protected abstract void AssertNotEqual(object expected, object actual);
 
         public virtual void Setup() {
-            LoggerSimple.Put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-            LoggerSimple.Put("> " + nameof(MosaicViewTest) + "::" + nameof(Setup));
+            Logger.Info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            Logger.Info("> " + nameof(MosaicViewTest) + "::" + nameof(Setup));
         }
 
         public virtual void Before() {
-            LoggerSimple.Put("======================================================");
+            Logger.Info("======================================================");
         }
 
         public virtual void After() {
-            LoggerSimple.Put("======================================================");
-            LoggerSimple.Put("< " + nameof(MosaicViewTest) + " closed");
-            LoggerSimple.Put("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+            Logger.Info("======================================================");
+            Logger.Info("< " + nameof(MosaicViewTest) + " closed");
+            Logger.Info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         }
 
         public virtual async Task PropertyChangedTest() {
-            LoggerSimple.Put("> " + nameof(MosaicViewTest) + "::" + nameof(PropertyChangedTest));
+            Logger.Info("> " + nameof(MosaicViewTest) + "::" + nameof(PropertyChangedTest));
 
             await new PropertyChangeExecutor<MosaicTestView>(() => new MosaicTestView()).Run(100, 1000,
                 view => {
@@ -68,7 +68,7 @@ namespace Fmg.Core.Mosaic {
         }
 
         public virtual async Task ReadinessAtTheStartTest() {
-            LoggerSimple.Put("> " + nameof(MosaicViewTest) + "::" + nameof(ReadinessAtTheStartTest));
+            Logger.Info("> " + nameof(MosaicViewTest) + "::" + nameof(ReadinessAtTheStartTest));
 
             await new PropertyChangeExecutor<MosaicTestView>(() => new MosaicTestView()).Run(10, 1000,
                 view => {
@@ -79,7 +79,7 @@ namespace Fmg.Core.Mosaic {
         }
 
         public virtual async Task MultipleChangeModelOneDrawViewTest() {
-            LoggerSimple.Put("> " + nameof(MosaicViewTest) + "::" + nameof(MultipleChangeModelOneDrawViewTest));
+            Logger.Info("> " + nameof(MosaicViewTest) + "::" + nameof(MultipleChangeModelOneDrawViewTest));
 
             DummyImage img = null;
             MosaicTestView v = null;
@@ -114,7 +114,7 @@ namespace Fmg.Core.Mosaic {
         }
 
         public virtual async Task OneNotificationOfImageChangedTest() {
-            LoggerSimple.Put("> " + nameof(MosaicViewTest) + "::" + nameof(OneNotificationOfImageChangedTest));
+            Logger.Info("> " + nameof(MosaicViewTest) + "::" + nameof(OneNotificationOfImageChangedTest));
 
             await new PropertyChangeExecutor<MosaicTestView>(() => new MosaicTestView()).Run(300, 1000,
                 view => {

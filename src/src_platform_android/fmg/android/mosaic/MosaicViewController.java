@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 import fmg.android.app.DrawableView;
 import fmg.android.utils.Cast;
-import fmg.common.LoggerSimple;
+import fmg.common.Logger;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
@@ -189,14 +189,14 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
 
     protected boolean onGenericMotion(MotionEvent ev) {
         boolean[] handled = { false };
-        try (LoggerSimple.Tracer tracer = new LoggerSimple.Tracer("Mosaic.onGenericMotion", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGenericMotion", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
         {
             return handled[0];
         }
     }
     protected boolean onTouch(MotionEvent ev) {
         boolean[] handled = { false };
-        try (LoggerSimple.Tracer tracer = new LoggerSimple.Tracer("Mosaic.onTouch", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onTouch", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
         {
             _gd.onTouchEvent(ev);
             switch (ev.getAction()) {
@@ -212,66 +212,66 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
     }
     protected boolean onGestureDoubleTap(MotionEvent ev) {
         boolean[] handled = { !false };
-        try (LoggerSimple.Tracer tracer = new LoggerSimple.Tracer("Mosaic.onGestureDoubleTap", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureDoubleTap", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
         {
             return handled[0];
         }
     }
     protected boolean onGestureDoubleTapEvent(MotionEvent ev) {
         boolean[] handled = { !false };
-        try (LoggerSimple.Tracer tracer = new LoggerSimple.Tracer("Mosaic.onGestureDoubleTapEvent", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureDoubleTapEvent", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
         {
             return handled[0];
         }
     }
     protected boolean onGestureDown(MotionEvent ev) {
         boolean[] handled = { false };
-        try (LoggerSimple.Tracer tracer = new LoggerSimple.Tracer("Mosaic.onGestureDown", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureDown", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
         {
             return handled[0];
         }
     }
     protected void onClick() {
-        try (LoggerSimple.Tracer tracer = new LoggerSimple.Tracer("Mosaic.onClick"))
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onClick"))
         {
         }
     }
     protected void onGestureLongPress(MotionEvent ev) {
-        try (LoggerSimple.Tracer tracer = new LoggerSimple.Tracer("Mosaic.onGestureLongPress", "action=" + eventActionToString(ev.getAction())))
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureLongPress", "action=" + eventActionToString(ev.getAction())))
         {
             return;
         }
     }
     protected boolean onLongClick() {
         boolean[] handled = { false };
-        try (LoggerSimple.Tracer tracer = new LoggerSimple.Tracer("Mosaic.onLongClick", () -> "handled="+handled[0]))
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onLongClick", () -> "handled="+handled[0]))
         {
             return handled[0];
         }
     }
     protected boolean onDrag(DragEvent ev) {
         boolean[] handled = { false };
-        try (LoggerSimple.Tracer tracer = new LoggerSimple.Tracer("Mosaic.onDrag", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onDrag", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
         {
             return handled[0];
         }
     }
     protected boolean onHover(MotionEvent ev) {
         boolean[] handled = { false };
-        try (LoggerSimple.Tracer tracer = new LoggerSimple.Tracer("Mosaic.onHover", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onHover", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
         {
             return handled[0];
         }
     }
     protected boolean onContextClick() {
         boolean[] handled = { false };
-        try (LoggerSimple.Tracer tracer = new LoggerSimple.Tracer("Mosaic.onContextClick", () -> "handled="+handled[0]))
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onContextClick", () -> "handled="+handled[0]))
         {
             return handled[0];
         }
     }
     protected void onScrollChange(int var1, int var2, int var3, int var4) {
-        try (LoggerSimple.Tracer tracer = new LoggerSimple.Tracer("Mosaic.onScrollChange"))
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onScrollChange"))
         {
         }
     }
@@ -337,10 +337,10 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
             subjSizeChanged = PublishSubject.create();
             sizeChangedObservable = subjSizeChanged.debounce(200, TimeUnit.MILLISECONDS)
                     .subscribe(ev -> {
-//                        LoggerSimple.put("  MosaicViewController::onGlobalLayoutListener: Debounce: onNext: ev=" + ev);
+//                        Logger.info("  MosaicViewController::onGlobalLayoutListener: Debounce: onNext: ev=" + ev);
                         UiInvoker.DEFERRED.accept(() -> onControlSizeChanged(ev));
                     }, ex -> {
-                        LoggerSimple.put("  MosaicViewController: sizeChangedObservable: Debounce: onError: " + ex);
+                        Logger.info("  MosaicViewController: sizeChangedObservable: Debounce: onError: " + ex);
                     });
             control.getViewTreeObserver().addOnGlobalLayoutListener(this::onGlobalLayoutListener);
         }

@@ -2,7 +2,7 @@ package fmg.core.mosaic;
 
 import org.junit.*;
 
-import fmg.common.LoggerSimple;
+import fmg.common.Logger;
 import fmg.common.geom.Matrisize;
 import fmg.common.notifier.PropertyChangeExecutor;
 import fmg.core.img.IImageController;
@@ -26,28 +26,28 @@ public class MosaicControllerTest {
 
     @BeforeClass
     public static void setup() {
-        LoggerSimple.put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        LoggerSimple.put("> MosaicControllerTest::setup");
+        Logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        Logger.info("> MosaicControllerTest::setup");
 
         MosaicModelTest.ProjSettings();
 
-        Flowable.just("UI factory inited...").subscribe(LoggerSimple::put);
+        Flowable.just("UI factory inited...").subscribe(Logger::info);
     }
 
     @Before
     public void before() {
-        LoggerSimple.put("======================================================");
+        Logger.info("======================================================");
     }
     @AfterClass
     public static void after() {
-        LoggerSimple.put("======================================================");
-        LoggerSimple.put("< MosaicControllerTest closed");
-        LoggerSimple.put("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        Logger.info("======================================================");
+        Logger.info("< MosaicControllerTest closed");
+        Logger.info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     }
 
     @Test
     public void propertyChangedTest() {
-        LoggerSimple.put("> MosaicControllerTest::propertyChangedTest");
+        Logger.info("> MosaicControllerTest::propertyChangedTest");
 
         new PropertyChangeExecutor<>(MosaicTestController::new).run(500, 3000,
            ctrlr -> {
@@ -60,7 +60,7 @@ public class MosaicControllerTest {
 
     @Test
     public void readinessAtTheStartTest() {
-        LoggerSimple.put("> MosaicControllerTest::readinessAtTheStartTest");
+        Logger.info("> MosaicControllerTest::readinessAtTheStartTest");
 
         final int defArea = 500;
         new PropertyChangeExecutor<>(MosaicTestController::new).run(10, 1000,

@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.junit.*;
 
-import fmg.common.LoggerSimple;
+import fmg.common.Logger;
 import fmg.common.notifier.PropertyChangeExecutor;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
@@ -17,24 +17,24 @@ public class MosaicInitDataTest {
 
     @BeforeClass
     public static void setup() {
-        LoggerSimple.put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        LoggerSimple.put("> MosaicInitDataTest::setup");
+        Logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        Logger.info("> MosaicInitDataTest::setup");
 
         MosaicModelTest.ProjSettings();
 
-        Flowable.just("UI factory inited...").subscribe(LoggerSimple::put);
+        Flowable.just("UI factory inited...").subscribe(Logger::info);
     }
 
     @Before
     public void before() {
-        LoggerSimple.put("======================================================");
+        Logger.info("======================================================");
     }
 
     @AfterClass
     public static void after() {
-        LoggerSimple.put("======================================================");
-        LoggerSimple.put("< MosaicInitDataTest closed");
-        LoggerSimple.put("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        Logger.info("======================================================");
+        Logger.info("< MosaicInitDataTest closed");
+        Logger.info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     }
 
     private static MosaicInitData createMosaicInitData() {
@@ -51,7 +51,7 @@ public class MosaicInitDataTest {
 
     @Test
     public void checkTheImpossibilitySetCustomSkillLevelTest() {
-        LoggerSimple.put("> MosaicInitDataTest::checkTheImpossibilitySetCustomSkillLevelTest");
+        Logger.info("> MosaicInitDataTest::checkTheImpossibilitySetCustomSkillLevelTest");
         try {
             new PropertyChangeExecutor<>(MosaicInitDataTest::createMosaicInitData).run(10, 1000,
                initData -> {
@@ -65,7 +65,7 @@ public class MosaicInitDataTest {
 
     @Test
     public void checkIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest() {
-        LoggerSimple.put("> MosaicInitDataTest::checkIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest");
+        Logger.info("> MosaicInitDataTest::checkIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest");
         new PropertyChangeExecutor<>(MosaicInitDataTest::createMosaicInitData).run(300, 5000,
             initData -> {
                 initData.setMosaicType(EMosaic.eMosaicRhombus1);
@@ -82,14 +82,14 @@ public class MosaicInitDataTest {
 
     @Test
     public void checkNoRepeatNotificationsTest() {
-        LoggerSimple.put("> MosaicInitDataTest::checkNoRepeatNotificationsTest");
+        Logger.info("> MosaicInitDataTest::checkNoRepeatNotificationsTest");
             new PropertyChangeExecutor<>(MosaicInitDataTest::createMosaicInitData).run(300, 5000,
                 initData -> {
-                    LoggerSimple.put("    initData.minesCount={0}", initData.getMinesCount());
+                    Logger.info("    initData.minesCount={0}", initData.getMinesCount());
                     initData.setMosaicType(EMosaic.eMosaicRhombus1);
-                    LoggerSimple.put("    initData.minesCount={0}", initData.getMinesCount());
+                    Logger.info("    initData.minesCount={0}", initData.getMinesCount());
                     initData.setMosaicType(EMosaic.eMosaicHexagon1);
-                    LoggerSimple.put("    initData.minesCount={0}", initData.getMinesCount());
+                    Logger.info("    initData.minesCount={0}", initData.getMinesCount());
                 }, (initData, modifiedProperties) -> {
                     Assert.assertTrue  (   modifiedProperties.containsKey(MosaicInitData.PROPERTY_MOSAIC_TYPE));
                     Assert.assertEquals(1, modifiedProperties.get(        MosaicInitData.PROPERTY_MOSAIC_TYPE).first.intValue());
@@ -104,7 +104,7 @@ public class MosaicInitDataTest {
 
     @Test
     public void checkChangedMosaicGroupTest() {
-        LoggerSimple.put("> MosaicInitDataTest::checkChangedMosaicGroupTest");
+        Logger.info("> MosaicInitDataTest::checkChangedMosaicGroupTest");
         new PropertyChangeExecutor<>(MosaicInitDataTest::createMosaicInitData).run(300, 5000,
             initData -> {
                 initData.setMosaicType(EMosaic.eMosaicHexagon1);
@@ -115,7 +115,7 @@ public class MosaicInitDataTest {
 
     @Test
     public void checkNoChangedMosaicGroupTest() {
-        LoggerSimple.put("> MosaicInitDataTest::checkNoChangedMosaicGroupTest");
+        Logger.info("> MosaicInitDataTest::checkNoChangedMosaicGroupTest");
         new PropertyChangeExecutor<>(MosaicInitDataTest::createMosaicInitData).run(300, 5000,
             initData -> {
                 initData.setMosaicType(EMosaic.eMosaicRhombus1);
@@ -126,7 +126,7 @@ public class MosaicInitDataTest {
 
     @Test
     public void checkRestoreIndexInGroupTest() {
-        LoggerSimple.put("> MosaicInitDataTest::checkRestoreIndexInGroupTest");
+        Logger.info("> MosaicInitDataTest::checkRestoreIndexInGroupTest");
 
         new PropertyChangeExecutor<>(MosaicInitDataTest::createMosaicInitData).run(10, 1000,
             initData -> {

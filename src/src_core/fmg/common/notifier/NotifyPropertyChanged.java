@@ -7,7 +7,7 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.stream.Stream;
 
-import fmg.common.LoggerSimple;
+import fmg.common.Logger;
 import fmg.common.Pair;
 import fmg.common.ui.UiInvoker;
 
@@ -119,7 +119,7 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
             }
             if (shedule) {
                 /** /
-                LoggerSimple.put("Defer shedule:\n   " +
+                Logger.info("Defer shedule:\n   " +
                         Stream.of(Thread.currentThread().getStackTrace())
                             .filter(x -> x.getClassName().startsWith("fmg."))
                             .map(x -> x.toString())
@@ -187,7 +187,7 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
         _cachedFields.clear();
 
         if (!_deferrNotifications.isEmpty())
-            LoggerSimple.put("Not all deferred notifications handled! Count={0}", _deferrNotifications.size());
+            Logger.info("Not all deferred notifications handled! Count={0}", _deferrNotifications.size());
         _deferrNotifications.clear();
 
         if (!_propertyChanges.isEmpty())

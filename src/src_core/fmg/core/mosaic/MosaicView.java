@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
-import fmg.common.LoggerSimple;
+import fmg.common.Logger;
 import fmg.common.geom.DoubleExt;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
@@ -33,7 +33,7 @@ public abstract class MosaicView<TImage,
 
     protected Collection<BaseCell> toDrawCells(RectDouble invalidatedRect) {
         if (_DEBUG_DRAW_FLOW)
-            LoggerSimple.put("<>MosaicView.toDrawCells: invalidatedRect=" + (invalidatedRect==null ? "null" : invalidatedRect.toString()));
+            Logger.info("<>MosaicView.toDrawCells: invalidatedRect=" + (invalidatedRect==null ? "null" : invalidatedRect.toString()));
 
         if (invalidatedRect == null)
             return null; // equals Model.Matrix
@@ -56,7 +56,7 @@ public abstract class MosaicView<TImage,
             .collect(Collectors.toList());
 
         if (_DEBUG_DRAW_FLOW)
-            LoggerSimple.put("< MosaicView.toDrawCells: cnt=" + toDrawCells.size());
+            Logger.info("< MosaicView.toDrawCells: cnt=" + toDrawCells.size());
         return toDrawCells;
     }
 

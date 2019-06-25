@@ -12,7 +12,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import fmg.android.app.presentation.MenuSettings;
-import fmg.common.LoggerSimple;
+import fmg.common.Logger;
 import fmg.core.mosaic.MosaicInitData;
 import fmg.android.app.model.SharedData;
 import fmg.android.utils.ProjSettings;
@@ -39,7 +39,7 @@ public class App extends Application implements LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     private void onForegrounded() {
-        LoggerSimple.put("FastMinesApp::onForegrounded");
+        Logger.info("FastMinesApp::onForegrounded");
 
         getMenuSettings  ().addListener(onMenuSettingsPropertyChangedListener);
         getMosaicInitData().addListener(onMosaicInitDataPropertyChangedListener);
@@ -47,7 +47,7 @@ public class App extends Application implements LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     private void onBackgrounded() {
-        LoggerSimple.put("FastMinesApp::onBackgrounded");
+        Logger.info("FastMinesApp::onBackgrounded");
         save();
 
         getMenuSettings  ().removeListener(onMenuSettingsPropertyChangedListener);
@@ -73,11 +73,11 @@ public class App extends Application implements LifecycleObserver {
     }
 
     private void onMenuSettingsPropertyChanged(PropertyChangeEvent ev) {
-        LoggerSimple.put("FastMinesApp::onMenuSettingsPropertyChanged: ev={0}", ev);
+        Logger.info("FastMinesApp::onMenuSettingsPropertyChanged: ev={0}", ev);
     }
 
     private void onMosaicInitDataPropertyChanged(PropertyChangeEvent ev) {
-        LoggerSimple.put("FastMinesApp::onMosaicInitDataPropertyChanged: ev={0}", ev);
+        Logger.info("FastMinesApp::onMosaicInitDataPropertyChanged: ev={0}", ev);
     }
 
 }

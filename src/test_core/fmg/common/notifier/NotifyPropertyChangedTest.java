@@ -5,7 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.junit.*;
 
-import fmg.common.LoggerSimple;
+import fmg.common.Logger;
 import fmg.core.mosaic.MosaicModelTest;
 import io.reactivex.Flowable;
 
@@ -32,29 +32,29 @@ public class NotifyPropertyChangedTest {
 
     @BeforeClass
     public static void setup() {
-        LoggerSimple.put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        LoggerSimple.put("> NotifyPropertyChangedTest::setup");
+        Logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        Logger.info("> NotifyPropertyChangedTest::setup");
 
         MosaicModelTest.ProjSettings();
 
-        Flowable.just("UI factory inited...").subscribe(LoggerSimple::put);
+        Flowable.just("UI factory inited...").subscribe(Logger::info);
     }
 
     @Before
     public void before() {
-        LoggerSimple.put("======================================================");
+        Logger.info("======================================================");
     }
 
     @AfterClass
     public static void after() {
-        LoggerSimple.put("======================================================");
-        LoggerSimple.put("< NotifyPropertyChangedTest closed");
-        LoggerSimple.put("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        Logger.info("======================================================");
+        Logger.info("< NotifyPropertyChangedTest closed");
+        Logger.info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     }
 
     @Test
     public void notifyPropertyChangedSyncTest() {
-        LoggerSimple.put("> NotifyPropertyChangedTest::notifyPropertyChangedSyncTest");
+        Logger.info("> NotifyPropertyChangedTest::notifyPropertyChangedSyncTest");
 
         try (SimpleProperty data = new SimpleProperty(-1, false)) {
             int countFiredEvents = 3 + ThreadLocalRandom.current().nextInt(10);
@@ -72,7 +72,7 @@ public class NotifyPropertyChangedTest {
 
     @Test
     public void notifyPropertyChangedAsyncTest() {
-        LoggerSimple.put("> NotifyPropertyChangedTest::notifyPropertyChangedAsyncTest");
+        Logger.info("> NotifyPropertyChangedTest::notifyPropertyChangedAsyncTest");
 
         final int initialValue = 1;
         final int countFiredEvents = 3 + ThreadLocalRandom.current().nextInt(10);
@@ -93,16 +93,16 @@ public class NotifyPropertyChangedTest {
 
     @Test
     public void checkForNoEventTest() {
-        LoggerSimple.put("> NotifyPropertyChangedTest::checkForNoEventTest");
+        Logger.info("> NotifyPropertyChangedTest::checkForNoEventTest");
 
         final int initialValue = 1;
         new PropertyChangeExecutor<>(() -> new SimpleProperty(initialValue, true)).run(100, 1000,
             data -> {
-                LoggerSimple.put("    data.Property={0}", data.getProperty());
+                Logger.info("    data.Property={0}", data.getProperty());
                 data.setProperty(initialValue + 123);
-                LoggerSimple.put("    data.Property={0}", data.getProperty());
+                Logger.info("    data.Property={0}", data.getProperty());
                 data.setProperty(initialValue); // restore original value
-                LoggerSimple.put("    data.Property={0}", data.getProperty());
+                Logger.info("    data.Property={0}", data.getProperty());
             }, (data, modifiedProperties) -> {
                 Assert.assertEquals(0, modifiedProperties.size());
             });
@@ -110,7 +110,7 @@ public class NotifyPropertyChangedTest {
 
     @Test
     public void forgotToUnsubscribeTest() {
-        LoggerSimple.put("> NotifyPropertyChangedTest::forgotToUnsubscribeTest");
+        Logger.info("> NotifyPropertyChangedTest::forgotToUnsubscribeTest");
 
         try {
             try (SimpleProperty obj = new SimpleProperty(null, false)) {

@@ -18,7 +18,7 @@ public abstract class AProjSettings {
 
             AProjSettings.IsDebug = isDebug || debugMode;
             if (AProjSettings.IsDebug)
-                LoggerSimple.DEFAULT_WRITER = System.out::println;
+                Logger.DEFAULT_WRITER = System.out::println;
 
         } catch(Error ex) {
             // android: java.lang.NoClassDefFoundError: Failed resolution of: Ljava/lang/management/ManagementFactory;

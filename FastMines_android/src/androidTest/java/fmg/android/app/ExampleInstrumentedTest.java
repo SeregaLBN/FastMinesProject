@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 import fmg.android.img.Animator;
 import fmg.android.utils.Timer;
-import fmg.common.LoggerSimple;
+import fmg.common.Logger;
 
 import static org.junit.Assert.*;
 
@@ -32,7 +32,7 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
-        LoggerSimple.put(">>>>>>>>>>>>>> appContext.PackageName={0}", appContext.getPackageName());
+        Logger.info(">>>>>>>>>>>>>> appContext.PackageName={0}", appContext.getPackageName());
         assertTrue(appContext.getPackageName().startsWith("fmg.android.app"));
     }
 

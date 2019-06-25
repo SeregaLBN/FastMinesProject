@@ -27,7 +27,7 @@ import fmg.android.app.recyclerView.MosaicGroupListViewAdapter;
 import fmg.android.app.recyclerView.MosaicSkillListViewAdapter;
 import fmg.android.utils.Cast;
 import fmg.common.Color;
-import fmg.common.LoggerSimple;
+import fmg.common.Logger;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        LoggerSimple.put("MainActivity.onCreate: this.hash={0}", this.hashCode());
+        Logger.info("MainActivity.onCreate: this.hash={0}", this.hashCode());
         super.onCreate(savedInstanceState);
         activityStatus = EActivityStatus.eCreated;
 
@@ -113,35 +113,35 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        LoggerSimple.put("MainActivity.onStart: this.hash={0}", this.hashCode());
+        Logger.info("MainActivity.onStart: this.hash={0}", this.hashCode());
         super.onStart();
         activityStatus = EActivityStatus.eStarted;
     }
 
     @Override
     protected void onRestart() {
-        LoggerSimple.put("MainActivity.onRestart: this.hash={0}", this.hashCode());
+        Logger.info("MainActivity.onRestart: this.hash={0}", this.hashCode());
         super.onRestart();
         activityStatus = EActivityStatus.eRestarted;
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        LoggerSimple.put("MainActivity.onSaveInstanceState: this.hash={0}", this.hashCode());
+        Logger.info("MainActivity.onSaveInstanceState: this.hash={0}", this.hashCode());
         SharedData.save(savedInstanceState, getInitData());
         super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
     public void onResume() {
-        LoggerSimple.put("MainActivity.onResume: this.hash={0}", this.hashCode());
+        Logger.info("MainActivity.onResume: this.hash={0}", this.hashCode());
         super.onResume();
         activityStatus = EActivityStatus.eResumed;
         UiInvoker.DEFERRED.accept(() -> {
             if (activityStatus != EActivityStatus.eResumed)
                 return;
             activityStatus = EActivityStatus.eRunning;
-            LoggerSimple.put("MainActivity.onResume: this.hash={0}: activityStatus={1}", this.hashCode(), activityStatus);
+            Logger.info("MainActivity.onResume: this.hash={0}: activityStatus={1}", this.hashCode(), activityStatus);
         });
 
         // subscribe all
@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onPause() {
-        LoggerSimple.put("MainActivity.onPause: this.hash={0}", this.hashCode());
+        Logger.info("MainActivity.onPause: this.hash={0}", this.hashCode());
         super.onPause();
         activityStatus = EActivityStatus.ePaused;
 
@@ -186,14 +186,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        LoggerSimple.put("MainActivity.onStop: this.hash={0}", this.hashCode());
+        Logger.info("MainActivity.onStop: this.hash={0}", this.hashCode());
         super.onStop();
         activityStatus = EActivityStatus.eStopped;
     }
 
     @Override
     protected void onDestroy() {
-        LoggerSimple.put("MainActivity.onDestroy: this.hash={0}", this.hashCode());
+        Logger.info("MainActivity.onDestroy: this.hash={0}", this.hashCode());
         super.onDestroy();
         activityStatus = EActivityStatus.eDestroyed;
     }
@@ -272,7 +272,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showSelectMosaicFragment() {
-        LoggerSimple.put("MainActivity.showSelectMosaicFragment: this.hash={0}", this.hashCode());
+        Logger.info("MainActivity.showSelectMosaicFragment: this.hash={0}", this.hashCode());
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.rightFrame);
         if (fragment instanceof SelectMosaicFragment) {
             SelectMosaicFragment smf = (SelectMosaicFragment)fragment;
@@ -295,12 +295,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showCustomSkillFragment() {
-        LoggerSimple.put("TODO:  redirect to CustomSkillFragment...");
+        Logger.info("TODO:  redirect to CustomSkillFragment...");
         Toast.makeText(this, "TODO:  redirect to CustomSkillFragment...", Toast.LENGTH_LONG).show();
     }
 
     private void showHypnosisLogoFragment() {
-        LoggerSimple.put("TODO:  redirect to HypnosisLogoFragment...");
+        Logger.info("TODO:  redirect to HypnosisLogoFragment...");
         Toast.makeText(this, "TODO:  redirect to HypnosisLogoFragment...", Toast.LENGTH_LONG).show();
     }
 
@@ -317,7 +317,7 @@ public class MainActivity extends AppCompatActivity {
         if (!senderIsMosaicGroup && (currentSkillItem.getSkillLevel() == ESkillLevel.eCustom)) {
             showCustomSkillFragment();
         } else {
-            //LoggerSimple.put("> MainActivity.onMenuCurrentItemChanged: " + currentGroupItem.getMosaicGroup());
+            //Logger.info("> MainActivity.onMenuCurrentItemChanged: " + currentGroupItem.getMosaicGroup());
             showSelectMosaicFragment();
         }
     }
@@ -326,10 +326,10 @@ public class MainActivity extends AppCompatActivity {
         if (isFailedStatus("onMosaicGroupDsPropertyChanged"))
             return;
 
-        //LoggerSimple.put("> MainActivity.onMosaicGroupDsPropertyChanged: ev.Name=" + ev.getPropertyName());
+        //Logger.info("> MainActivity.onMosaicGroupDsPropertyChanged: ev.Name=" + ev.getPropertyName());
         switch (ev.getPropertyName()) {
         case MosaicGroupDataSource.PROPERTY_CURRENT_ITEM_POS:
-//            LoggerSimple.put("  MainActivity.onMosaicGroupDsPropertyChanged: ev=" + ev);
+//            Logger.info("  MainActivity.onMosaicGroupDsPropertyChanged: ev=" + ev);
             int oldPos = (Integer)ev.getOldValue();
             int newPos = (Integer)ev.getNewValue();
 
@@ -355,10 +355,10 @@ public class MainActivity extends AppCompatActivity {
         if (isFailedStatus("onMosaicSkillDsPropertyChanged"))
             return;
 
-        //LoggerSimple.put("> MainActivity.onMosaicSkillDsPropertyChanged: ev.Name=" + ev.getPropertyName());
+        //Logger.info("> MainActivity.onMosaicSkillDsPropertyChanged: ev.Name=" + ev.getPropertyName());
         switch (ev.getPropertyName()) {
         case MosaicSkillDataSource.PROPERTY_CURRENT_ITEM_POS:
-            //LoggerSimple.put("  MainActivity.onMosaicSkillDsPropertyChanged: ev=" + ev);
+            //Logger.info("  MainActivity.onMosaicSkillDsPropertyChanged: ev=" + ev);
             int oldPos = (Integer)ev.getOldValue();
             int newPos = (Integer)ev.getNewValue();
 
@@ -390,7 +390,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onActivitySizeChanged(SizeDouble newSize) {
-//        LoggerSimple.put("> MainActivity.onActivitySizeChanged: newSize={0}", newSize);
+//        Logger.info("> MainActivity.onActivitySizeChanged: newSize={0}", newSize);
         final float minSize       = Cast.dpToPx(45);
         final float maxSize       = Cast.dpToPx(80);
         final float topElemHeight = Cast.dpToPx(40);
@@ -424,7 +424,7 @@ public class MainActivity extends AppCompatActivity {
             smf.updateHeader(sizeHeader.height + Cast.dpToPx((float)viewModel.getMenuGroupPaddingInDip().dip));
         }
 
-//        LoggerSimple.put("< MainActivity.onActivitySizeChanged: " +
+//        Logger.info("< MainActivity.onActivitySizeChanged: " +
 //                "sizeItem={0}, " +
 //                "sizeHeader={1}/{4}, " +
 //                "padHeader={2}, " +
@@ -442,7 +442,7 @@ public class MainActivity extends AppCompatActivity {
         if (activityStatus.isRunning())
             return false;
 
-        LoggerSimple.put("MainActivity.{0}: this.hash={1}; failed activityStatus={2}", methodName, this.hashCode(), activityStatus);
+        Logger.info("MainActivity.{0}: this.hash={1}; failed activityStatus={2}", methodName, this.hashCode(), activityStatus);
         return true;
     }
 

@@ -4,7 +4,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.junit.*;
 
-import fmg.common.LoggerSimple;
+import fmg.common.Logger;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.SizeDouble;
 import fmg.common.notifier.Signal;
@@ -15,27 +15,27 @@ public class MosaicHelperTest {
 
     @BeforeClass
     public static void setup() {
-        LoggerSimple.put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        LoggerSimple.put("> MosaicHelperTest::setup");
+        Logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        Logger.info("> MosaicHelperTest::setup");
 
         MosaicModelTest.ProjSettings();
     }
 
     @Before
     public void before() {
-        LoggerSimple.put("======================================================");
+        Logger.info("======================================================");
     }
     @AfterClass
     public static void after() {
-        LoggerSimple.put("======================================================");
-        LoggerSimple.put("< MosaicHelperTest closed");
-        LoggerSimple.put("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        Logger.info("======================================================");
+        Logger.info("< MosaicHelperTest closed");
+        Logger.info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     }
 
 
     @Test
     public void findSizeByArea_eMosaicSquare1_Test() {
-        LoggerSimple.put("> MosaicHelperTest::findSizeByArea_eMosaicSquare1_Test");
+        Logger.info("> MosaicHelperTest::findSizeByArea_eMosaicSquare1_Test");
 
         {
             SizeDouble sizeClient = new SizeDouble(100, 100);
@@ -59,7 +59,7 @@ public class MosaicHelperTest {
 
     @Test
     public void findAreaBySize_eMosaicSquare1_Test1() {
-        LoggerSimple.put("> MosaicHelperTest::findAreaBySize_eMosaicSquare1_Test1");
+        Logger.info("> MosaicHelperTest::findAreaBySize_eMosaicSquare1_Test1");
 
         SizeDouble sizeClientIn = new SizeDouble(100, 100);
         SizeDouble sizeClientOut = new SizeDouble();
@@ -75,7 +75,7 @@ public class MosaicHelperTest {
 
     @Test
     public void findAreaBySize_eMosaicSquare1_Test2() {
-        LoggerSimple.put("> MosaicHelperTest::findAreaBySize_eMosaicSquare1_Test2");
+        Logger.info("> MosaicHelperTest::findAreaBySize_eMosaicSquare1_Test2");
 
         SizeDouble sizeClientIn = new SizeDouble(200, 200);
         SizeDouble sizeClientOut = new SizeDouble();
@@ -91,7 +91,7 @@ public class MosaicHelperTest {
 
     @Test
     public void findAreaBySize_eMosaicSquare1_Test3() {
-        LoggerSimple.put("> MosaicHelperTest::findAreaBySize_eMosaicSquare1_Test3");
+        Logger.info("> MosaicHelperTest::findAreaBySize_eMosaicSquare1_Test3");
 
         {
             SizeDouble sizeClientIn = new SizeDouble(200, 400);
@@ -121,7 +121,7 @@ public class MosaicHelperTest {
 
     @Test
     public void findAreaBySize_Random_Test() {
-        LoggerSimple.put("> MosaicHelperTest::findAreaBySize_Random_Test");
+        Logger.info("> MosaicHelperTest::findAreaBySize_Random_Test");
 
         ThreadLocalRandom r = ThreadLocalRandom.current();
 
@@ -153,7 +153,7 @@ public class MosaicHelperTest {
 
     @Test
     public void findAreaBySize_eMosaicTrapezoid3_Test() {
-        LoggerSimple.put("> MosaicHelperTest::findAreaBySize_eMosaicTrapezoid3_Test");
+        Logger.info("> MosaicHelperTest::findAreaBySize_eMosaicTrapezoid3_Test");
 
         Signal signal = new Signal();
         double[] area = { -1 };
@@ -171,7 +171,7 @@ public class MosaicHelperTest {
 
     @Test
     public void findAreaBySize_eMosaicTriangle1_Test() {
-        LoggerSimple.put("> MosaicHelperTest::findAreaBySize_eMosaicTriangle1_Test");
+        Logger.info("> MosaicHelperTest::findAreaBySize_eMosaicTriangle1_Test");
 
         SizeDouble sizeClientIn = new SizeDouble(186.89486693318347, 294.28309563827116);
         SizeDouble sizeClientOut = new SizeDouble();

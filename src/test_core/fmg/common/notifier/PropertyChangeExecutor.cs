@@ -40,7 +40,7 @@ namespace Fmg.Common.Notifier {
             var subject = new Subject<PropertyChangedEventArgs>();
             void onDataPropertyChanged(object sender, PropertyChangedEventArgs ev) {
                 var name = ev.PropertyName;
-                LoggerSimple.Put("PropertyChangeExecutor.onDataPropertyChanged: ev.name=" + name);
+                Logger.Info("PropertyChangeExecutor.onDataPropertyChanged: ev.name=" + name);
                 int oldValue;
                 if (_modifiedProperties.TryGetValue(name, out oldValue))
                     _modifiedProperties[name] = 1 + oldValue;
@@ -56,10 +56,10 @@ namespace Fmg.Common.Notifier {
                     using (var dis = subject
                         .Timeout(TimeSpan.FromMilliseconds(notificationsTimeoutMs))
                         .Subscribe(ev => {
-                            LoggerSimple.Put("OnNext: ev={0}", ev);
+                            Logger.Info("OnNext: ev={0}", ev);
                         }, ex => {
                             //LoggerSimple.Put("OnError: " + ex);
-                            LoggerSimple.Put("Timeout after " + notificationsTimeoutMs + "ms.");
+                            Logger.Info("Timeout after " + notificationsTimeoutMs + "ms.");
                             signal.Set();
                         }))
                     {
@@ -78,7 +78,7 @@ namespace Fmg.Common.Notifier {
                             ex1 = new Exception("Wait timeout " + maxWaitTimeoutMs + "ms.");
                         } else {
                             if (ex1 == null) {
-                                LoggerSimple.Put("  checking... {0}=[{1}]", nameof(_modifiedProperties), String.Join(",", _modifiedProperties.Select(kv => kv.Key+":"+kv.Value)));
+                                Logger.Info("  checking... {0}=[{1}]", nameof(_modifiedProperties), String.Join(",", _modifiedProperties.Select(kv => kv.Key+":"+kv.Value)));
                                 try {
                                     validator(data, _modifiedProperties);
                                 } catch(Exception ex) {

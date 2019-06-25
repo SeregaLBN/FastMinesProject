@@ -54,7 +54,7 @@ namespace Fmg.Uwp.Mosaic.Wbmp {
 
 #if DEBUG
             if (MosaicViewCfg.DEBUG_DRAW_FLOW)
-                LoggerSimple.Put($"MosaicWBmpView.Draw: {((toDrawCells==null) ? "all" : "cnt="+ toDrawCells.Count)}"
+                Logger.Info($"MosaicWBmpView.Draw: {((toDrawCells==null) ? "all" : "cnt="+ toDrawCells.Count)}"
                                                         + $"; drawBk={drawBk}");
 #endif
 
@@ -169,7 +169,7 @@ namespace Fmg.Uwp.Mosaic.Wbmp {
             }
 #if DEBUG
             if (MosaicViewCfg.DEBUG_DRAW_FLOW)
-                LoggerSimple.Put("-------------------------------");
+                Logger.Info("-------------------------------");
 #endif
         _alreadyPainted = false;
         }

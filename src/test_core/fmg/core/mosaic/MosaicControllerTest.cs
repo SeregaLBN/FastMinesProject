@@ -31,22 +31,22 @@ namespace Fmg.Core.Mosaic {
         protected abstract void AssertFalse(bool condition);
 
         public virtual void Setup() {
-            LoggerSimple.Put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-            LoggerSimple.Put("> " + nameof(MosaicControllerTest) + "::" + nameof(Setup));
+            Logger.Info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            Logger.Info("> " + nameof(MosaicControllerTest) + "::" + nameof(Setup));
         }
 
         public virtual void Before() {
-            LoggerSimple.Put("======================================================");
+            Logger.Info("======================================================");
         }
 
         public virtual void After() {
-            LoggerSimple.Put("======================================================");
-            LoggerSimple.Put("< " + nameof(MosaicControllerTest) + " closed");
-            LoggerSimple.Put("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+            Logger.Info("======================================================");
+            Logger.Info("< " + nameof(MosaicControllerTest) + " closed");
+            Logger.Info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         }
 
         public virtual async Task PropertyChangedTest() {
-            LoggerSimple.Put("> " + nameof(MosaicControllerTest) + "::" + nameof(PropertyChangedTest));
+            Logger.Info("> " + nameof(MosaicControllerTest) + "::" + nameof(PropertyChangedTest));
 
             await new PropertyChangeExecutor<MosaicTestController>(() => new MosaicTestController()).Run(300, 1000,
                 ctrlr => {
@@ -58,7 +58,7 @@ namespace Fmg.Core.Mosaic {
         }
 
         public virtual async Task ReadinessAtTheStartTest() {
-            LoggerSimple.Put("> " + nameof(MosaicControllerTest) + "::" + nameof(ReadinessAtTheStartTest));
+            Logger.Info("> " + nameof(MosaicControllerTest) + "::" + nameof(ReadinessAtTheStartTest));
 
             const int defArea = 500;
             await new PropertyChangeExecutor<MosaicTestController>(() => new MosaicTestController()).Run(10, 1000,

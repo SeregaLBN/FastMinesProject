@@ -38,7 +38,7 @@ public class MosaicListViewAdapter extends RecyclerView.Adapter<MosaicListViewAd
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-//        LoggerSimple.put("  MosaicListViewAdapter::onCreateViewHolder");
+//        Logger.info("  MosaicListViewAdapter::onCreateViewHolder");
 
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         MosaicItemBinding binding = MosaicItemBinding.inflate(layoutInflater, parent, false);
@@ -48,13 +48,13 @@ public class MosaicListViewAdapter extends RecyclerView.Adapter<MosaicListViewAd
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-//        LoggerSimple.put("  MosaicListViewAdapter::onBindViewHolder pos=" + position);
+//        Logger.info("  MosaicListViewAdapter::onBindViewHolder pos=" + position);
 
         holder.bind(items.get(position));
         if (!holder.binding.getRoot().hasOnClickListeners()) {
             View root = holder.binding.getRoot();
             root.setOnClickListener(view -> {
-                //LoggerSimple.put("  MosaicListViewAdapter::OnClickListener: layoutPos={0}, adapterPos={1}", holder.getLayoutPosition(), holder.getAdapterPosition());
+                //Logger.info("  MosaicListViewAdapter::OnClickListener: layoutPos={0}, adapterPos={1}", holder.getLayoutPosition(), holder.getAdapterPosition());
                 int pos = holder.getLayoutPosition(); // holder.getAdapterPosition();
                 if (onItemClick != null)
                     onItemClick.accept(view, pos);

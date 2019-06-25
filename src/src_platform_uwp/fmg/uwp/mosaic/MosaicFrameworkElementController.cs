@@ -458,7 +458,7 @@ namespace Fmg.Uwp.Mosaic {
                 } else {
                     AsyncRunner.InvokeFromUiLater(() => {
                         if (!_clickInfo.Released) {
-                            LoggerSimple.Put("ã OnPointerReleased: forced left release click...");
+                            Logger.Info("ã OnPointerReleased: forced left release click...");
                             OnClick(currPoint.Position, true, false);
                         }
                     }, CoreDispatcherPriority.High);
@@ -474,7 +474,7 @@ namespace Fmg.Uwp.Mosaic {
             //using (CreateTracer(GetCallerName(), string.Format($"pointerId={currPoint.PointerId}, _manipulationStarted={_manipulationStarted}"), () => "ev.Handled=" + ev.Handled))
             {
                 if (!_clickInfo.Released) {
-                    LoggerSimple.Put("ã OnPointerCaptureLost: forced left release click...");
+                    Logger.Info("ã OnPointerCaptureLost: forced left release click...");
                     OnClick(currPoint.Position, true, false);
                 }
             }

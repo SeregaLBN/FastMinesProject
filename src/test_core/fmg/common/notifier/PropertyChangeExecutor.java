@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import fmg.common.LoggerSimple;
+import fmg.common.Logger;
 import fmg.common.Pair;
 import fmg.common.ui.UiInvoker;
 import io.reactivex.disposables.Disposable;
@@ -55,7 +55,7 @@ public class PropertyChangeExecutor<T extends INotifyPropertyChanged & AutoClose
         Subject<PropertyChangeEvent> subject = PublishSubject.create();
         PropertyChangeListener onDataPropertyChanged = ev -> {
             String name = ev.getPropertyName();
-            LoggerSimple.put("PropertyChangeExecutor.onDataPropertyChanged: ev.name=" + name);
+            Logger.info("PropertyChangeExecutor.onDataPropertyChanged: ev.name=" + name);
             modifiedProperties.put(name, new Pair<>(1 + (modifiedProperties.containsKey(name) ? modifiedProperties.get(name).first : 0), ev.getNewValue()));
             subject.onNext(ev);
         };
@@ -68,10 +68,10 @@ public class PropertyChangeExecutor<T extends INotifyPropertyChanged & AutoClose
             dis = subject
                 .timeout(notificationsTimeoutMs, TimeUnit.MILLISECONDS)
                 .subscribe(ev -> {
-                    LoggerSimple.put("onNext: ev={0}", ev);
+                    Logger.info("onNext: ev={0}", ev);
                 }, ex -> {
-                  //LoggerSimple.put("onError: " + ex);
-                    LoggerSimple.put("timeout after " + notificationsTimeoutMs + "ms.");
+                  //Logger.info("onError: " + ex);
+                    Logger.info("timeout after " + notificationsTimeoutMs + "ms.");
                     signal.set();
                 });
             UiInvoker.DEFERRED.accept(() -> {
@@ -90,7 +90,7 @@ public class PropertyChangeExecutor<T extends INotifyPropertyChanged & AutoClose
                 ex1[0] = new RuntimeException("Wait timeout " + maxWaitTimeoutMs + "ms.");
             } else {
                 if (ex1[0] == null) {
-                    LoggerSimple.put("  checking... modifiedProperties=[{0}]", modifiedProperties.entrySet().stream().map(kv -> kv.getKey()+":"+kv.getValue().first).collect(Collectors.joining("; ")));
+                    Logger.info("  checking... modifiedProperties=[{0}]", modifiedProperties.entrySet().stream().map(kv -> kv.getKey()+":"+kv.getValue().first).collect(Collectors.joining("; ")));
                     @SuppressWarnings("unchecked")
                     T d = (T)data[0];
                     try {

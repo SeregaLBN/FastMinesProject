@@ -26,22 +26,22 @@ namespace Fmg.Core.Mosaic {
         protected abstract void AssertLessOrEqual(int valToBeLess, int valToBeGreater);
 
         public virtual void Setup() {
-            LoggerSimple.Put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-            LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(Setup));
+            Logger.Info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            Logger.Info("> " + nameof(MosaicModelTest) + "::" + nameof(Setup));
         }
 
         public virtual void Before() {
-            LoggerSimple.Put("======================================================");
+            Logger.Info("======================================================");
         }
 
         public virtual void After() {
-            LoggerSimple.Put("======================================================");
-            LoggerSimple.Put("< " + nameof(MosaicModelTest) + " closed");
-            LoggerSimple.Put("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+            Logger.Info("======================================================");
+            Logger.Info("< " + nameof(MosaicModelTest) + " closed");
+            Logger.Info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         }
 
         public virtual async Task MosaicGameModelPropertyChangedTest() {
-            LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(MosaicGameModelPropertyChangedTest));
+            Logger.Info("> " + nameof(MosaicModelTest) + "::" + nameof(MosaicGameModelPropertyChangedTest));
 
             MosaicGameModel m = null;
             await new PropertyChangeExecutor<MosaicGameModel>(() => m = new MosaicGameModel(), false).Run(300, 5000,
@@ -71,7 +71,7 @@ namespace Fmg.Core.Mosaic {
         }
 
         public virtual async Task MosaicDrawModelPropertyChangedTest() {
-            LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(MosaicDrawModelPropertyChangedTest));
+            Logger.Info("> " + nameof(MosaicModelTest) + "::" + nameof(MosaicDrawModelPropertyChangedTest));
 
             await new PropertyChangeExecutor<MosaicTestModel>(() => new MosaicTestModel()).Run(200, 1000,
                 model => {
@@ -99,7 +99,7 @@ namespace Fmg.Core.Mosaic {
         }
 
         public virtual async Task MosaicDrawModelAsIsTest() {
-            LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(MosaicDrawModelAsIsTest));
+            Logger.Info("> " + nameof(MosaicModelTest) + "::" + nameof(MosaicDrawModelAsIsTest));
 
             await new PropertyChangeExecutor<MosaicTestModel>(() => new MosaicTestModel()).Run(10, 1000,
                 model => {
@@ -110,7 +110,7 @@ namespace Fmg.Core.Mosaic {
         }
 
         public virtual async Task AutoFitTrueCheckAffectsToPaddingTest() {
-            LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(AutoFitTrueCheckAffectsToPaddingTest));
+            Logger.Info("> " + nameof(MosaicModelTest) + "::" + nameof(AutoFitTrueCheckAffectsToPaddingTest));
 
             await new PropertyChangeExecutor<MosaicTestModel>(() => new MosaicTestModel()).Run(10, 1000,
                 model => {
@@ -131,7 +131,7 @@ namespace Fmg.Core.Mosaic {
         }
 
         public virtual async Task AutoFitTrueCheckAffectsTest() {
-            LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(AutoFitTrueCheckAffectsTest));
+            Logger.Info("> " + nameof(MosaicModelTest) + "::" + nameof(AutoFitTrueCheckAffectsTest));
 
             MosaicTestModel createTestModel() {
                 var model = new MosaicTestModel {
@@ -407,7 +407,7 @@ namespace Fmg.Core.Mosaic {
         }
 
         public virtual async Task AutoFitFalseCheckAffectsTest() {
-            LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(AutoFitFalseCheckAffectsTest));
+            Logger.Info("> " + nameof(MosaicModelTest) + "::" + nameof(AutoFitFalseCheckAffectsTest));
 
             MosaicTestModel createTestModel() {
                 var model = new MosaicTestModel {
@@ -645,7 +645,7 @@ namespace Fmg.Core.Mosaic {
         }
 
         public virtual async Task MosaicNoChangedTest() {
-            LoggerSimple.Put("> " + nameof(MosaicModelTest) + "::" + nameof(MosaicNoChangedTest));
+            Logger.Info("> " + nameof(MosaicModelTest) + "::" + nameof(MosaicNoChangedTest));
 
             MosaicTestModel m = null;
             // step 1: init

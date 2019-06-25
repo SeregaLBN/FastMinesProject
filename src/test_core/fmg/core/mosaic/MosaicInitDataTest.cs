@@ -16,18 +16,18 @@ namespace Fmg.Core.Mosaic {
         protected abstract void AssertFail();
 
         public virtual void Setup() {
-            LoggerSimple.Put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-            LoggerSimple.Put("> " + nameof(MosaicInitDataTest) + "::" + nameof(Setup));
+            Logger.Info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            Logger.Info("> " + nameof(MosaicInitDataTest) + "::" + nameof(Setup));
         }
 
         public virtual void Before() {
-            LoggerSimple.Put("======================================================");
+            Logger.Info("======================================================");
         }
 
         public virtual void After() {
-            LoggerSimple.Put("======================================================");
-            LoggerSimple.Put("< " + nameof(MosaicInitDataTest) + " closed");
-            LoggerSimple.Put("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+            Logger.Info("======================================================");
+            Logger.Info("< " + nameof(MosaicInitDataTest) + " closed");
+            Logger.Info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         }
 
         private MosaicInitData CreateMosaicInitData() {
@@ -44,7 +44,7 @@ namespace Fmg.Core.Mosaic {
 
 
         public virtual async Task CheckTheImpossibilitySetCustomSkillLevelTest() {
-            LoggerSimple.Put("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckTheImpossibilitySetCustomSkillLevelTest));
+            Logger.Info("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckTheImpossibilitySetCustomSkillLevelTest));
             try {
                 await new PropertyChangeExecutor<MosaicInitData>(CreateMosaicInitData).Run(10, 1000,
                     initData => {
@@ -57,7 +57,7 @@ namespace Fmg.Core.Mosaic {
         }
 
         public virtual async Task CheckIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest() {
-            LoggerSimple.Put("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest));
+            Logger.Info("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest));
 
             await new PropertyChangeExecutor<MosaicInitData>(() => CreateMosaicInitData()).Run(300, 5000,
                 initData => {
@@ -74,15 +74,15 @@ namespace Fmg.Core.Mosaic {
         }
 
         public virtual async Task CheckNoRepeatNotificationsTest() {
-            LoggerSimple.Put("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckNoRepeatNotificationsTest));
+            Logger.Info("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckNoRepeatNotificationsTest));
 
             await new PropertyChangeExecutor<MosaicInitData>(() => CreateMosaicInitData()).Run(300, 5000,
                 initData => {
-                    LoggerSimple.Put("    initData.minesCount={0}", initData.MinesCount);
+                    Logger.Info("    initData.minesCount={0}", initData.MinesCount);
                     initData.MosaicType = EMosaic.eMosaicRhombus1;
-                    LoggerSimple.Put("    initData.minesCount={0}", initData.MinesCount);
+                    Logger.Info("    initData.minesCount={0}", initData.MinesCount);
                     initData.MosaicType = EMosaic.eMosaicHexagon1;
-                    LoggerSimple.Put("    initData.minesCount={0}", initData.MinesCount);
+                    Logger.Info("    initData.minesCount={0}", initData.MinesCount);
                 }, (initData, modifiedProperties) => {
                     AssertTrue  (  modifiedProperties.ContainsKey(nameof(MosaicInitData.MosaicType)));
                     AssertEqual(1, modifiedProperties[            nameof(MosaicInitData.MosaicType)]);
@@ -96,7 +96,7 @@ namespace Fmg.Core.Mosaic {
         }
 
         public virtual async Task CheckChangedMosaicGroupTest() {
-            LoggerSimple.Put("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckChangedMosaicGroupTest));
+            Logger.Info("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckChangedMosaicGroupTest));
 
             await new PropertyChangeExecutor<MosaicInitData>(() => CreateMosaicInitData()).Run(300, 5000,
                 initData => {
@@ -107,7 +107,7 @@ namespace Fmg.Core.Mosaic {
         }
 
         public virtual async Task CheckNoChangedMosaicGroupTest() {
-            LoggerSimple.Put("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckNoChangedMosaicGroupTest));
+            Logger.Info("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckNoChangedMosaicGroupTest));
 
             await new PropertyChangeExecutor<MosaicInitData>(() => CreateMosaicInitData()).Run(300, 5000,
                 initData => {
@@ -118,7 +118,7 @@ namespace Fmg.Core.Mosaic {
         }
 
         public virtual async Task CheckRestoreIndexInGroupTest() {
-            LoggerSimple.Put("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckRestoreIndexInGroupTest));
+            Logger.Info("> " + nameof(MosaicInitDataTest) + "::" + nameof(CheckRestoreIndexInGroupTest));
 
             await new PropertyChangeExecutor<MosaicInitData>(CreateMosaicInitData).Run(10, 1000,
                 initData => {

@@ -41,7 +41,7 @@ namespace Fmg {
         }
 
         protected override void OnActivated(IActivatedEventArgs args) {
-            LoggerSimple.Put("FastMinesApp::OnActivated");
+            Logger.Info("FastMinesApp::OnActivated");
             base.OnActivated(args);
         }
 
@@ -51,7 +51,7 @@ namespace Fmg {
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs ev) {
-            LoggerSimple.Put("FastMinesApp::OnLaunched");
+            Logger.Info("FastMinesApp::OnLaunched");
 #if  DEBUG
             if (System.Diagnostics.Debugger.IsAttached) {
                 // disabled, obscures the hamburger button, enable if you need it
@@ -125,14 +125,14 @@ namespace Fmg {
         }
 
         private void OnForegrounded(object sender, LeavingBackgroundEventArgs ev) {
-            LoggerSimple.Put("FastMinesApp::OnForegrounded");
+            Logger.Info("FastMinesApp::OnForegrounded");
 
             MenuSettings.PropertyChanged += OnMenuSettingsPropertyChanged;
             InitData    .PropertyChanged += OnInitDataPropertyChanged;
         }
 
         private void OnBackgrounded(object sender, EnteredBackgroundEventArgs ev) {
-            LoggerSimple.Put("FastMinesApp::OnBackgrounded");
+            Logger.Info("FastMinesApp::OnBackgrounded");
 
             var deferral = ev.GetDeferral();
             SaveAppData();
@@ -150,7 +150,7 @@ namespace Fmg {
         /// <param name="sender">The source of the suspend request.</param>
         /// <param name="e">Details about the suspend request.</param>
         private void OnSuspending(object sender, SuspendingEventArgs e) {
-            LoggerSimple.Put("FastMinesApp::OnSuspending");
+            Logger.Info("FastMinesApp::OnSuspending");
             var deferral = e.SuspendingOperation.GetDeferral();
 
             // Save application state and stop any background activity
@@ -169,18 +169,18 @@ namespace Fmg {
         }
 
         protected override void OnBackgroundActivated(BackgroundActivatedEventArgs ev) {
-            LoggerSimple.Put("FastMinesApp::OnBackgroundActivated");
+            Logger.Info("FastMinesApp::OnBackgroundActivated");
             base.OnBackgroundActivated(ev);
         }
 
         protected override void OnWindowCreated(WindowCreatedEventArgs ev) {
-            LoggerSimple.Put($"FastMinesApp::OnWindowCreated: ev={ev}");
+            Logger.Info($"FastMinesApp::OnWindowCreated: ev={ev}");
             base.OnWindowCreated(ev);
         }
 
         // handle hardware back button press
         void OnBackPressed(object sender, BackPressedEventArgs ev) {
-            LoggerSimple.Put("FastMinesApp::OnBackPressed");
+            Logger.Info("FastMinesApp::OnBackPressed");
             var frame = (Frame)Window.Current.Content;
             if (frame.CanGoBack) {
                 ev.Handled = true;
@@ -190,7 +190,7 @@ namespace Fmg {
 
         // handle software back button press
         void OnBackRequested(object sender, BackRequestedEventArgs ev) {
-            LoggerSimple.Put("FastMinesApp::OnBackRequested");
+            Logger.Info("FastMinesApp::OnBackRequested");
             var frame = (Frame)Window.Current.Content;
             if (frame.CanGoBack) {
                 ev.Handled = true;
@@ -213,7 +213,7 @@ namespace Fmg {
         }
 
         void OnNavigated(object sender, NavigationEventArgs ev) {
-            LoggerSimple.Put($"FastMinesApp::OnNavigated: ev={ev}");
+            Logger.Info($"FastMinesApp::OnNavigated: ev={ev}");
             UpdateBackButtonVisibility();
         }
 
@@ -223,7 +223,7 @@ namespace Fmg {
         /// <param name="sender">The Frame which failed navigation</param>
         /// <param name="ev">Details about the navigation failure</param>
         void OnNavigationFailed(object sender, NavigationFailedEventArgs ev) {
-            LoggerSimple.Put("FastMinesApp::OnNavigationFailed");
+            Logger.Info("FastMinesApp::OnNavigationFailed");
             throw new Exception("Failed to load Page " + ev.SourcePageType.FullName);
         }
 
@@ -246,11 +246,11 @@ namespace Fmg {
         }
 
         private void OnMenuSettingsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            LoggerSimple.Put("FastMinesApp::OnMenuSettingsPropertyChanged: ev={0}", ev);
+            Logger.Info("FastMinesApp::OnMenuSettingsPropertyChanged: ev={0}", ev);
         }
 
         private void OnInitDataPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            LoggerSimple.Put("FastMinesApp::OnInitDataPropertyChanged: ev={0}", ev);
+            Logger.Info("FastMinesApp::OnInitDataPropertyChanged: ev={0}", ev);
         }
 
     }

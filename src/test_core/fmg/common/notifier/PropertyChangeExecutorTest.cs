@@ -33,29 +33,29 @@ namespace Fmg.Common.Notifier {
         protected abstract void AssertFail();
 
         public virtual void Setup() {
-            LoggerSimple.Put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-            LoggerSimple.Put(">" + nameof(PropertyChangeExecutorTest) + "::" + nameof(Setup));
+            Logger.Info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            Logger.Info(">" + nameof(PropertyChangeExecutorTest) + "::" + nameof(Setup));
         }
 
         public virtual void Before() {
-            LoggerSimple.Put("======================================================");
+            Logger.Info("======================================================");
         }
 
         public virtual void After() {
-            LoggerSimple.Put("======================================================");
-            LoggerSimple.Put("< " + nameof(PropertyChangeExecutorTest) + " closed");
-            LoggerSimple.Put("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+            Logger.Info("======================================================");
+            Logger.Info("< " + nameof(PropertyChangeExecutorTest) + " closed");
+            Logger.Info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         }
 
         public virtual async Task SimpleUsageTest() {
-            LoggerSimple.Put("> PropertyChangeExecutorTest::SimpleUsageTest");
+            Logger.Info("> PropertyChangeExecutorTest::SimpleUsageTest");
 
             SimpleDataObj d = null;
             await new PropertyChangeExecutor<SimpleDataObj>(() => d = new SimpleDataObj()).Run(10, 1000,
                 data => {
-                    LoggerSimple.Put("    data modificator");
+                    Logger.Info("    data modificator");
                 }, (data, modifiedProperties) => {
-                    LoggerSimple.Put("    data validator");
+                    Logger.Info("    data validator");
                     AssertNotNull(data);
                     AssertEqual(0, modifiedProperties.Count);
                     AssertFalse(data.Disposed);
@@ -65,14 +65,14 @@ namespace Fmg.Common.Notifier {
         }
 
         public virtual async Task ExtendedUsageTest() {
-            LoggerSimple.Put("> PropertyChangeExecutorTest::ExtendedUsageTest");
+            Logger.Info("> PropertyChangeExecutorTest::ExtendedUsageTest");
 
             SimpleDataObj d = null;
             await new PropertyChangeExecutor<SimpleDataObj>(() => d = new SimpleDataObj(), false).Run(10, 1000,
                 data => {
-                    LoggerSimple.Put("    data modificator");
+                    Logger.Info("    data modificator");
                 }, (data, modifiedProperties) => {
-                    LoggerSimple.Put("    data validator");
+                    Logger.Info("    data validator");
                     AssertNotNull(data);
                     AssertEqual(0, modifiedProperties.Count);
                     AssertFalse(data.Disposed);
@@ -82,9 +82,9 @@ namespace Fmg.Common.Notifier {
 
             await new PropertyChangeExecutor<SimpleDataObj>(() => d).Run(10, 1000,
                 data => {
-                    LoggerSimple.Put("    data modificator");
+                    Logger.Info("    data modificator");
                 }, (data, modifiedProperties) => {
-                    LoggerSimple.Put("    data validator");
+                    Logger.Info("    data validator");
                     AssertEqual(0, modifiedProperties.Count);
                     AssertFalse(data.Disposed);
                 });
@@ -92,16 +92,16 @@ namespace Fmg.Common.Notifier {
         }
 
         public virtual async Task CreatorFailTest() {
-            LoggerSimple.Put("> PropertyChangeExecutorTest::CreatorFailTest");
+            Logger.Info("> PropertyChangeExecutorTest::CreatorFailTest");
 
             var failEx = new ArgumentException("Tested exception");
             try {
                 await new PropertyChangeExecutor<SimpleDataObj>(() => { throw failEx; }).Run(10, 1000,
                    data => {
-                       LoggerSimple.Put("    data modificator");
+                       Logger.Info("    data modificator");
                        AssertFail();
                    }, (data, modifiedProperties) => {
-                       LoggerSimple.Put("    data validator");
+                       Logger.Info("    data validator");
                        AssertFail();
                    });
                 AssertFail();
@@ -112,16 +112,16 @@ namespace Fmg.Common.Notifier {
         }
 
         public virtual async Task ModificatorFailTest() {
-            LoggerSimple.Put("> PropertyChangeExecutorTest::ModificatorFailTest");
+            Logger.Info("> PropertyChangeExecutorTest::ModificatorFailTest");
 
             var failEx = new ArgumentException("Tested exception");
             try {
                 await new PropertyChangeExecutor<SimpleDataObj>(() => new SimpleDataObj()).Run(10, 1000,
                    data => {
-                       LoggerSimple.Put("    data modificator");
+                       Logger.Info("    data modificator");
                        throw failEx;
                    }, (data, modifiedProperties) => {
-                       LoggerSimple.Put("    data validator");
+                       Logger.Info("    data validator");
                        AssertFail();
                    });
                 AssertFail();
@@ -132,15 +132,15 @@ namespace Fmg.Common.Notifier {
         }
 
         public virtual async Task ValidatorFailTest() {
-            LoggerSimple.Put("> PropertyChangeExecutorTest::ModificatorFailTest");
+            Logger.Info("> PropertyChangeExecutorTest::ModificatorFailTest");
 
             var failEx = new ArgumentException("Tested exception");
             try {
                 await new PropertyChangeExecutor<SimpleDataObj>(() => new SimpleDataObj()).Run(10, 1000,
                    data => {
-                       LoggerSimple.Put("    data modificator");
+                       Logger.Info("    data modificator");
                    }, (data, modifiedProperties) => {
-                       LoggerSimple.Put("    data validator");
+                       Logger.Info("    data validator");
                        throw failEx;
                    });
                 AssertFail();

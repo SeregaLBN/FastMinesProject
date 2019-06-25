@@ -30,7 +30,7 @@ import fmg.android.utils.Cast;
 import fmg.android.utils.ProjSettings;
 import fmg.common.Color;
 import fmg.common.HSV;
-import fmg.common.LoggerSimple;
+import fmg.common.Logger;
 import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
@@ -119,7 +119,7 @@ public class SelectMosaicFragment extends Fragment {
             try {
                 AsyncRunner.Repeat(run, 100, () -> !rotateBkColorOfGameBttn);
             } catch (Exception ex) {
-                LoggerSimple.put("SelectMosaicFragment::onResume: AsyncRunner.Repeat: {0}", ex);
+                Logger.info("SelectMosaicFragment::onResume: AsyncRunner.Repeat: {0}", ex);
             }
         }
 
@@ -140,10 +140,10 @@ public class SelectMosaicFragment extends Fragment {
             subjSizeChanged = PublishSubject.create();
             sizeChangedObservable = subjSizeChanged.debounce(200, TimeUnit.MILLISECONDS)
                     .subscribe(ev -> {
-//                        LoggerSimple.put("  SelectMosaicFragment::onGlobalLayoutListener: Debounce: onNext: ev=" + ev);
+//                        Logger.info("  SelectMosaicFragment::onGlobalLayoutListener: Debounce: onNext: ev=" + ev);
                         UiInvoker.DEFERRED.accept(() -> onFragmentSizeChanged(ev));
                     }, ex -> {
-                        LoggerSimple.put("  SelectMosaicFragment: sizeChangedObservable: Debounce: onError: " + ex);
+                        Logger.info("  SelectMosaicFragment: sizeChangedObservable: Debounce: onError: " + ex);
                     });
             binding.rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(this::onGlobalLayoutListener);
         }
@@ -189,12 +189,12 @@ public class SelectMosaicFragment extends Fragment {
     }
 
     private void onFragmentSizeChanged(Size newSize) {
-//        LoggerSimple.put("> SelectMosaicFragment::onFragmentSizeChanged: newSize={0}", newSize);
+//        Logger.info("> SelectMosaicFragment::onFragmentSizeChanged: newSize={0}", newSize);
 
 //        int size = Math.min(newSize.height, newSize.width);
 //        double size2 = size / 3.9;
 //        double wh = Math.min(Math.max(TileMinSize, size2), TileMaxSize);
-////        LoggerSimple.put("Math.min(Math.max(TileMinSize={0}, size2={1}), TileMaxSize={2}) = {3}", TileMinSize, size2, TileMaxSize, wh);
+////        Logger.info("Math.min(Math.max(TileMinSize={0}, size2={1}), TileMaxSize={2}) = {3}", TileMinSize, size2, TileMaxSize, wh);
 //        viewModel.setImageSize(new SizeDouble(wh, wh));
 
 
@@ -223,12 +223,12 @@ public class SelectMosaicFragment extends Fragment {
         double tileWidth = spaceToItemsClear / rows;
         double tileWidth2 = Math.min(Math.max(tileWidth, minTileWidth), maxTileWidth);
         double imageSize = tileWidth2 - cardViewItemBorderWidth;
-        //LoggerSimple.put("tileWidth={0}, tileWidth2={1}, imageSize={2}", tileWidth, tileWidth2, imageSize);
+        //Logger.info("tileWidth={0}, tileWidth2={1}, imageSize={2}", tileWidth, tileWidth2, imageSize);
         viewModel.setImageSize(new SizeDouble(imageSize, imageSize));
 //        gridLayoutManager.setSpanCount(rows);
 
 
-//        LoggerSimple.put("< SelectMosaicFragment::onFragmentSizeChanged: imageSize={0}", wh);
+//        Logger.info("< SelectMosaicFragment::onFragmentSizeChanged: imageSize={0}", wh);
 
 //        mosaicListViewAdapter.notifyItemRangeChanged(0, viewModel.getMosaicDS().getDataSource().size());
     }
@@ -246,17 +246,17 @@ public class SelectMosaicFragment extends Fragment {
     }
 
     private void onMosaicItemDoubleClick(View view, int position) {
-        //LoggerSimple.put("> SelectMosaicFragment::onMosaicItemDoubleClick");
+        //Logger.info("> SelectMosaicFragment::onMosaicItemDoubleClick");
         StartNewGame();
     }
 
     private void onMosaicItemLongClick(View view, int position) {
-        //LoggerSimple.put("> SelectMosaicFragment::onMosaicItemLongClick");
+        //Logger.info("> SelectMosaicFragment::onMosaicItemLongClick");
         StartNewGame();
     }
 
     private void onClickBttnBeginGame(View v) {
-        //LoggerSimple.put("> SelectMosaicFragment::onClickBttnBeginGame");
+        //Logger.info("> SelectMosaicFragment::onClickBttnBeginGame");
         StartNewGame();
     }
 
@@ -281,7 +281,7 @@ public class SelectMosaicFragment extends Fragment {
     private void onMosaicDsPropertyChanged(PropertyChangeEvent ev) {
         switch(ev.getPropertyName()) {
         case MosaicDataSource.PROPERTY_CURRENT_ITEM_POS: {
-                //LoggerSimple.put("  MenuMosaicListViewAdapter::onMosaicDsPropertyChanged: ev=" + ev);
+                //Logger.info("  MenuMosaicListViewAdapter::onMosaicDsPropertyChanged: ev=" + ev);
                 int oldPos = (Integer) ev.getOldValue();
                 int newPos = (Integer) ev.getNewValue();
 

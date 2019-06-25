@@ -35,22 +35,22 @@ namespace Fmg.Common.Notifier {
         protected abstract void AssertFail();
 
         public virtual void Setup() {
-            LoggerSimple.Put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-            LoggerSimple.Put("> " + nameof(NotifyPropertyChangedTest) + "::" + nameof(Setup));
+            Logger.Info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            Logger.Info("> " + nameof(NotifyPropertyChangedTest) + "::" + nameof(Setup));
         }
 
         public virtual void Before() {
-            LoggerSimple.Put("======================================================");
+            Logger.Info("======================================================");
         }
 
         public virtual void After() {
-            LoggerSimple.Put("======================================================");
-            LoggerSimple.Put("< " + nameof(NotifyPropertyChangedTest) + " closed");
-            LoggerSimple.Put("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+            Logger.Info("======================================================");
+            Logger.Info("< " + nameof(NotifyPropertyChangedTest) + " closed");
+            Logger.Info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         }
 
         public virtual void NotifyPropertyChangedSyncTest() {
-            LoggerSimple.Put("> " + nameof(NotifyPropertyChangedTest) + "::" + nameof(NotifyPropertyChangedSyncTest));
+            Logger.Info("> " + nameof(NotifyPropertyChangedTest) + "::" + nameof(NotifyPropertyChangedSyncTest));
 
             using (var data = new SimpleProperty(-1, false)) {
                 int countFiredEvents = 3 + ThreadLocalRandom.Current.Next(10);
@@ -67,7 +67,7 @@ namespace Fmg.Common.Notifier {
         }
 
         public virtual async Task NotifyPropertyChangedAsyncTest() {
-            LoggerSimple.Put("> " + nameof(NotifyPropertyChangedTest) + "::" + nameof(NotifyPropertyChangedAsyncTest));
+            Logger.Info("> " + nameof(NotifyPropertyChangedTest) + "::" + nameof(NotifyPropertyChangedAsyncTest));
 
             const int initialValue = 1;
             int countFiredEvents = 3 + ThreadLocalRandom.Current.Next(10);
@@ -89,25 +89,25 @@ namespace Fmg.Common.Notifier {
         }
 
         public virtual async Task CheckForNoEventTest() {
-            LoggerSimple.Put("> " + nameof(NotifyPropertyChangedTest) + "::" + nameof(CheckForNoEventTest));
+            Logger.Info("> " + nameof(NotifyPropertyChangedTest) + "::" + nameof(CheckForNoEventTest));
 
             const int initialValue = 1;
             await new PropertyChangeExecutor<SimpleProperty>(() => new SimpleProperty(initialValue, true)).Run(
                 100,
                 1000,
                 data => {
-                    LoggerSimple.Put("    data.Property={0}", data.Property);
+                    Logger.Info("    data.Property={0}", data.Property);
                     data.Property = initialValue + 123;
-                    LoggerSimple.Put("    data.Property={0}", data.Property);
+                    Logger.Info("    data.Property={0}", data.Property);
                     data.Property = initialValue; // restore original value
-                    LoggerSimple.Put("    data.Property={0}", data.Property);
+                    Logger.Info("    data.Property={0}", data.Property);
                 }, (data, modifiedProperties) => {
                     AssertEqual(0, modifiedProperties.Count);
                 });
         }
 
         public virtual void ForgotToUnsubscribeTest() {
-            LoggerSimple.Put("> " + nameof(NotifyPropertyChangedTest) + "::" + nameof(ForgotToUnsubscribeTest));
+            Logger.Info("> " + nameof(NotifyPropertyChangedTest) + "::" + nameof(ForgotToUnsubscribeTest));
 
             try {
                 using (var obj = new SimpleProperty(null, false)) {

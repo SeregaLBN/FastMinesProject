@@ -24,14 +24,14 @@ public enum ESkillLevel {
             BaseCell.BaseAttribute attr = MosaicHelper.createAttributeInstance(mosaicType);
 
             // variant 1 - сложность в зависимости от кол-ва пересечений ячеек в одной точке
-//            mosaicCoefficient.put(mosaicType, attr.getVertexIntersection());
+//            mosaicCoefficient.info(mosaicType, attr.getVertexIntersection());
 
             // variant 2 - сложность в зависимости от кол-ва соседних ячеек
 //            int cntDir = attr.GetDirectionCount();
 //            int neighbors = 0;
 //            for (int i=0; i<cntDir; i++)
 //               neighbors += attr.getNeighborNumber(i);
-//            mosaicCoefficient.put(mosaicType, ((double)neighbors)/cntDir);
+//            mosaicCoefficient.info(mosaicType, ((double)neighbors)/cntDir);
 
             // variant 3 - сложность в зависимости от кол-ва соседних ячеек и кол-ва точек пересечения
             double neighbors = IntStream.range(0, attr.getDirectionCount())

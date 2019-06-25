@@ -58,7 +58,7 @@ namespace Fmg.Uwp.Mosaic.Win2d {
 
 #if DEBUG
             if (MosaicViewCfg.DEBUG_DRAW_FLOW)
-                LoggerSimple.Put("MosaicWin2DView.Draw: " + (toDrawCells == null ? "all" : ("cnt=" + toDrawCells.Count))
+                Logger.Info("MosaicWin2DView.Draw: " + (toDrawCells == null ? "all" : ("cnt=" + toDrawCells.Count))
                                                           + "; drawBk=" + drawBk);
 #endif
             if (toDrawCells == null)
@@ -165,7 +165,7 @@ namespace Fmg.Uwp.Mosaic.Win2d {
 
 #if DEBUG
             if (MosaicViewCfg.DEBUG_DRAW_FLOW)
-                LoggerSimple.Put("-------------------------------");
+                Logger.Info("-------------------------------");
 #endif
 
             _alreadyPainted = false;

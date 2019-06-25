@@ -109,7 +109,7 @@ public final class SmoothHelper {
                 Color clrTo   = context.clrStop;
 
                 double coef = context.getSmoothCoefficient();
-                //LoggerSimple.put("  forward={0}; currStepAngle={1}, coef={2}", context.isForward(), context.getCurrentStepAngle(), coef);
+                //Logger.info("  forward={0}; currStepAngle={1}, coef={2}", context.isForward(), context.getCurrentStepAngle(), coef);
                 Color clrCurr = new Color((int)(clrFrom.getA() + coef * (clrTo.getA() - clrFrom.getA())),
                                           (int)(clrFrom.getR() + coef * (clrTo.getR() - clrFrom.getR())),
                                           (int)(clrFrom.getG() + coef * (clrTo.getG() - clrFrom.getG())),
@@ -180,7 +180,7 @@ public final class SmoothHelper {
                 .setDuration(0); // mark as called
 
         double h = calcHeight.get();
-//        LoggerSimple.put("height=" + h);
+//        Logger.info("height=" + h);
         if (targetIsVisible) {
             Converters.setViewHeight(menuView, 0.1); // first  - set min height
             menuView.setVisibility(View.VISIBLE);           // second - set Visibility.Visible before smoothing

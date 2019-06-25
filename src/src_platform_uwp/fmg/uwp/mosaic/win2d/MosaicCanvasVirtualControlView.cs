@@ -116,7 +116,7 @@ namespace Fmg.Uwp.Mosaic.Win2d {
         }
 
         protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            LoggerSimple.Put(GetCallerName() + ": ev.PropertyName=" + ev.PropertyName);
+            Logger.Info(GetCallerName() + ": ev.PropertyName=" + ev.PropertyName);
             base.OnPropertyChanged(sender, ev);
             if (ev.PropertyName == nameof(Image)) {
                 var _ = this.Image; // implicit call this.DrawModified

@@ -109,7 +109,7 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
     }
 
     protected void onPropertyModelChanged(PropertyChangeEvent ev) {
-//        LoggerSimple.put("  ImageView::onPropertyModelChanged: ev.name=" + ev.getPropertyName());
+//        Logger.info("  ImageView::onPropertyModelChanged: ev.name=" + ev.getPropertyName());
         _notifier.firePropertyChanged(null, getModel(), PROPERTY_MODEL);
         if (IImageModel.PROPERTY_SIZE.equals(ev.getPropertyName())) {
             setImage(null);

@@ -85,7 +85,7 @@ namespace Fmg {
         }
 
         private void OnClickBttnStartGame(object sender, RoutedEventArgs ev) {
-            LoggerSimple.Put("OnClickBttnStartGame");
+            Logger.Info("OnClickBttnStartGame");
             StartNewGame();
         }
 

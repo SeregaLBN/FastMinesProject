@@ -24,7 +24,7 @@ namespace Fmg.Common.Converters {
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language) {
-            LoggerSimple.Put($"SizeToHeightConverter::ConvertBack: value={value}, targetType={targetType}, parameter={parameter}, language={language}");
+            Logger.Info($"SizeToHeightConverter::ConvertBack: value={value}, targetType={targetType}, parameter={parameter}, language={language}");
             throw new NotImplementedException("Not supported...");
         }
 

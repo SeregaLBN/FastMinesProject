@@ -6,7 +6,7 @@ import java.util.function.Supplier;
 import org.junit.*;
 
 import fmg.common.Color;
-import fmg.common.LoggerSimple;
+import fmg.common.Logger;
 import fmg.common.SimpleUiThreadLoop;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.Matrisize;
@@ -30,34 +30,34 @@ public class MosaicModelTest {
 
     public static void ProjSettings() {
         UiInvoker.DEFERRED = SimpleUiThreadLoop::addTask;
-        LoggerSimple.DEFAULT_WRITER = System.out::println;
+        Logger.DEFAULT_WRITER = System.out::println;
     }
 
     @BeforeClass
     public static void setup() {
-        LoggerSimple.put(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        LoggerSimple.put("> MosaicModelTest::setup");
+        Logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        Logger.info("> MosaicModelTest::setup");
 
         ProjSettings();
 
-        Flowable.just("UI factory inited...").subscribe(LoggerSimple::put);
+        Flowable.just("UI factory inited...").subscribe(Logger::info);
     }
 
     @Before
     public void before() {
-        LoggerSimple.put("======================================================");
+        Logger.info("======================================================");
     }
 
     @AfterClass
     public static void after() {
-        LoggerSimple.put("======================================================");
-        LoggerSimple.put("< MosaicModelTest closed");
-        LoggerSimple.put("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        Logger.info("======================================================");
+        Logger.info("< MosaicModelTest closed");
+        Logger.info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     }
 
     @Test
     public void mosaicGameModelPropertyChangedTest() {
-        LoggerSimple.put("> MosaicModelTest::mosaicGameModelPropertyChangedTest");
+        Logger.info("> MosaicModelTest::mosaicGameModelPropertyChangedTest");
 
         MosaicGameModel[] m = { null };
         new PropertyChangeExecutor<>(() -> m[0] = new MosaicGameModel(), false).run(300, 5000,
@@ -88,7 +88,7 @@ public class MosaicModelTest {
 
     @Test
     public void mosaicDrawModelPropertyChangedTest() {
-        LoggerSimple.put("> MosaicModelTest::mosaicDrawModelPropertyChangedTest");
+        Logger.info("> MosaicModelTest::mosaicDrawModelPropertyChangedTest");
 
         new PropertyChangeExecutor<>(MosaicTestModel::new).run(300, 5000,
             model -> {
@@ -117,7 +117,7 @@ public class MosaicModelTest {
 
     @Test
     public void mosaicDrawModelAsIsTest() {
-        LoggerSimple.put("> MosaicModelTest::mosaicDrawModelAsIsTest");
+        Logger.info("> MosaicModelTest::mosaicDrawModelAsIsTest");
 
         new PropertyChangeExecutor<>(MosaicTestModel::new).run(10, 1000,
             model -> {
@@ -129,7 +129,7 @@ public class MosaicModelTest {
 
     @Test
     public void autoFitTrueCheckAffectsToPaddingTest() {
-        LoggerSimple.put("> MosaicModelTest::autoFitTrueCheckAffectsToPaddingTest");
+        Logger.info("> MosaicModelTest::autoFitTrueCheckAffectsToPaddingTest");
 
         new PropertyChangeExecutor<>(MosaicTestModel::new).run(10, 1000,
             model -> {
@@ -151,7 +151,7 @@ public class MosaicModelTest {
 
     @Test
     public void autoFitTrueCheckAffectsTest() {
-        LoggerSimple.put("> MosaicModelTest::autoFitTrueCheckAffectsTest");
+        Logger.info("> MosaicModelTest::autoFitTrueCheckAffectsTest");
 
         Supplier<MosaicTestModel> createTestModel = () -> {
             MosaicTestModel model = new MosaicTestModel();
@@ -427,7 +427,7 @@ public class MosaicModelTest {
 
     @Test
     public void autoFitFalseCheckAffectsTest() {
-        LoggerSimple.put("> MosaicModelTest::autoFitFalseCheckAffectsTest");
+        Logger.info("> MosaicModelTest::autoFitFalseCheckAffectsTest");
 
         Supplier<MosaicTestModel> createTestModel = () -> {
             MosaicTestModel model = new MosaicTestModel();
@@ -665,7 +665,7 @@ public class MosaicModelTest {
 
     @Test
     public void mosaicNoChangedTest()  {
-        LoggerSimple.put("> MosaicModelTest::mosaicNoChangedTest");
+        Logger.info("> MosaicModelTest::mosaicNoChangedTest");
 
         MosaicTestModel[] m = { null };
 

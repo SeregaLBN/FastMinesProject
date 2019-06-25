@@ -150,8 +150,8 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
 //        });
 
 //        final Object keyBind = "Enter pressed in txt field";
-//        txtField.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false), keyBind);
-//        txtField.getActionMap().put(keyBind, new AbstractAction() {
+//        txtField.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).info(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false), keyBind);
+//        txtField.getActionMap().info(keyBind, new AbstractAction() {
 //            private static final long serialVersionUID = 1L;
 //            @Override
 //            public void actionPerformed(ActionEvent e) {

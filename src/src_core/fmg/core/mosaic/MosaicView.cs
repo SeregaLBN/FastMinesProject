@@ -35,7 +35,7 @@ namespace Fmg.Core.Mosaic {
         protected ICollection<BaseCell> ToDrawCells(RectDouble? invalidatedRect) {
 #if DEBUG
             if (MosaicViewCfg.DEBUG_DRAW_FLOW)
-                LoggerSimple.Put("> MosaicView.ToDrawCells: invalidatedRect=" + (invalidatedRect==null ? "null" : invalidatedRect.ToString()));
+                Logger.Info("> MosaicView.ToDrawCells: invalidatedRect=" + (invalidatedRect==null ? "null" : invalidatedRect.ToString()));
 #endif
 
             if (invalidatedRect == null)
@@ -61,7 +61,7 @@ namespace Fmg.Core.Mosaic {
 
 #if DEBUG
             if (MosaicViewCfg.DEBUG_DRAW_FLOW)
-                LoggerSimple.Put("< MosaicView.ToDrawCells: cnt=" + toDrawCells.Count);
+                Logger.Info("< MosaicView.ToDrawCells: cnt=" + toDrawCells.Count);
 #endif
             return toDrawCells;
         }
@@ -73,7 +73,7 @@ namespace Fmg.Core.Mosaic {
                 _modifiedCells.UnionWith(modifiedCells);
 #if DEBUG
             if (MosaicViewCfg.DEBUG_DRAW_FLOW)
-                LoggerSimple.Put("MosaicView.Invalidate: " + ((modifiedCells == null) ? "all" : ("cnt=" + modifiedCells.Count) + ": " + modifiedCells.Take(5).ToList()));
+                Logger.Info("MosaicView.Invalidate: " + ((modifiedCells == null) ? "all" : ("cnt=" + modifiedCells.Count) + ": " + modifiedCells.Take(5).ToList()));
 #endif
             Invalidate();
         }
@@ -86,7 +86,7 @@ namespace Fmg.Core.Mosaic {
         protected override void DrawBody() {
 #if DEBUG
             if (MosaicViewCfg.DEBUG_DRAW_FLOW)
-                LoggerSimple.Put("MosaicView.DrawBody: " + (!_modifiedCells.Any() ? "all" : ("cnt=" + _modifiedCells.Count) + ": " + _modifiedCells.Take(5).ToList()));
+                Logger.Info("MosaicView.DrawBody: " + (!_modifiedCells.Any() ? "all" : ("cnt=" + _modifiedCells.Count) + ": " + _modifiedCells.Take(5).ToList()));
 #endif
             DrawModified(!_modifiedCells.Any() ? null : _modifiedCells);
             _modifiedCells.Clear();
