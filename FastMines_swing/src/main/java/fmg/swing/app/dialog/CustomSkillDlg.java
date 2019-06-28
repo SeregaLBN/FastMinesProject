@@ -21,57 +21,63 @@ import fmg.core.types.ESkillLevel;
 import fmg.swing.app.MainApp;
 import fmg.swing.utils.GuiTools;
 
-public class CustomSkillDlg extends JDialog {
+public class CustomSkillDlg {
 
-    private static final long serialVersionUID = 1L;
-
-    private JSpinner spinX, spinY, spinMines;
+    private final JDialog dialog;
+    private JSpinner spinX;
+    private JSpinner spinY;
+    private JSpinner spinMines;
     private JButton btnPopup;
-    private JButton btnCancel, btnOk;
-    private JRadioButton radioFullScreenCurrSizeArea, radioFullScreenMiniSizeArea;
+    private JButton btnOk;
+    private JButton btnCancel;
+    private JRadioButton radioFullScreenCurrSizeArea;
+    private JRadioButton radioFullScreenMiniSizeArea;
     private ButtonGroup radioGroup;
     private JPopupMenu popupMenu;
     private MainApp parent;
-    private final PropertyChangeListener _mosaicListener;
+    private final PropertyChangeListener mosaicListener = this::onMosaicModelPropertyChanged;
 
     public CustomSkillDlg(JFrame parent, boolean modal) {
-        super(parent, "Select skill", modal);
-        _mosaicListener = ev -> onMosaicModelPropertyChanged(ev);
+        dialog = new JDialog(parent, "Select skill", modal);
         if (parent instanceof MainApp)
             this.parent = (MainApp) parent;
         initialize(parent);
     }
 
+    public JDialog getDialog() {
+        return dialog;
+    }
+
     private void initialize(JFrame parent) {
         Object keyBind = "OnOk";
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false), keyBind);
-        getRootPane().getActionMap().put(keyBind, new AbstractAction() {
+        dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false), keyBind);
+        dialog.getRootPane().getActionMap().put(keyBind, new AbstractAction() {
             private static final long serialVersionUID = 1L;
             @Override
             public void actionPerformed(ActionEvent e) { onOk(); }
         });
 
         keyBind = "CloseDialog";
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), keyBind);
-        getRootPane().getActionMap().put(keyBind, new AbstractAction() {
+        dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), keyBind);
+        dialog.getRootPane().getActionMap().put(keyBind, new AbstractAction() {
             private static final long serialVersionUID = 1L;
             @Override
             public void actionPerformed(ActionEvent e) { onClose(); }
         });
 
-        addWindowListener(new WindowAdapter() {
+        dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) { onClose(); }
         });
 
-        this.setResizable(false);
+        dialog.setResizable(false);
         createComponents();
         // задаю предпочтительный размер
-        pack();
-        this.setLocationRelativeTo(parent);
+        dialog.pack();
+        dialog.setLocationRelativeTo(parent);
 
         if (this.parent != null)
-            this.parent.getMosaicController().getModel().addListener(_mosaicListener);
+            this.parent.getMosaicController().getModel().addListener(mosaicListener);
     }
 
     // создаю панели с нужным расположением
@@ -177,8 +183,8 @@ public class CustomSkillDlg extends JDialog {
         boxCenter.add(panel4Radio);
 
         // добавляю расположение в центр окна и внизу
-        getContentPane().add(boxCenter, BorderLayout.CENTER);
-        getContentPane().add(boxBottom, BorderLayout.SOUTH);
+        dialog.getContentPane().add(boxCenter, BorderLayout.CENTER);
+        dialog.getContentPane().add(boxBottom, BorderLayout.SOUTH);
     }
 
     private void onChangeSizeField() {
@@ -213,7 +219,7 @@ public class CustomSkillDlg extends JDialog {
             }
         }
         Rectangle rc = btnPopup.getBounds();
-        popupMenu.show(this, rc.x, rc.y + rc.height);
+        popupMenu.show(dialog, rc.x, rc.y + rc.height);
     }
 
     private void onOk() {
@@ -230,8 +236,8 @@ public class CustomSkillDlg extends JDialog {
     }
     private void onClose() {
         if (this.parent != null)
-            this.parent.getMosaicController().removeListener(_mosaicListener);
-        dispose();
+            this.parent.getMosaicController().removeListener(mosaicListener);
+        dialog.dispose();
     }
 
     private int getNeighborNumber() {
@@ -284,7 +290,6 @@ public class CustomSkillDlg extends JDialog {
         spinMines.setModel(new SpinnerNumberModel(minesCurr, minesMin, minesMax, 1));
     }
 
-    @Override
     public void setVisible(boolean b) {
 //        System.out.println("setVisible: " + b);
         if (b) {
@@ -292,7 +297,7 @@ public class CustomSkillDlg extends JDialog {
             recalcModelValueMines();
             radioGroup.clearSelection();
         }
-        super.setVisible(b);
+        dialog.setVisible(b);
     }
 
     private void onFullScreenCurrArea() {
@@ -315,7 +320,7 @@ public class CustomSkillDlg extends JDialog {
     private void onMosaicModelPropertyChanged(PropertyChangeEvent evt) {
         switch (evt.getPropertyName()) {
         case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
-            if (isVisible())
+            if (dialog.isVisible())
                 onChangeMosaicType();
             break;
         case MosaicGameModel.PROPERTY_AREA:

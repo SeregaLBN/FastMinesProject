@@ -16,8 +16,6 @@ import fmg.swing.app.model.view.StaticsticTblModel;
 /** Диалог отображения статистики пользователя */
 public class StatisticDlg extends ReportDlg {
 
-    private static final long serialVersionUID = 1L;
-
     private PlayersModel players;
 
     public StatisticDlg(MainApp parent, boolean modal, PlayersModel players) {
@@ -27,7 +25,7 @@ public class StatisticDlg extends ReportDlg {
 
     @Override
     protected void updateModel(ESkillLevel eSkill) {
-        setTitle("Statistics - " + getSelectedMosaicType().getDescription(false));
+        dialog.setTitle("Statistics - " + getSelectedMosaicType().getDescription(false));
         super.updateModel(eSkill);
 
         // выделяю рядок текущего пользователя

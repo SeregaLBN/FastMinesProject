@@ -19,7 +19,7 @@ import fmg.core.types.draw.EShowElement;
 import fmg.core.types.draw.EZoomInterface;
 import fmg.swing.app.toolbar.EBtnNewGameState;
 
-/** В обработчиках минимум логики. Вся логика в соотв Main.this.ZZZ функциях... */
+/** MainApp action handlers */
 public class Handlers {
 
     private final MainApp app;
@@ -68,7 +68,7 @@ public class Handlers {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     app.getPlayerManageDlg().setVisible(
-                        !app.getPlayerManageDlg().isVisible());
+                        !app.getPlayerManageDlg().getDialog().isVisible());
                 }
             };
 
@@ -288,7 +288,7 @@ public class Handlers {
                 private static final long serialVersionUID = 1L;
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    if (app.getChampionDialog().isVisible())
+                    if (app.getChampionDialog().getDialog().isVisible())
                         app.getChampionDialog().setVisible(false);
                     else {
                         app.getChampionDialog().showData(
@@ -308,7 +308,7 @@ public class Handlers {
                 private static final long serialVersionUID = 1L;
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    if (app.getStatisticDialog().isVisible())
+                    if (app.getStatisticDialog().getDialog().isVisible())
                         app.getStatisticDialog().setVisible(false);
                     else
                         app.getStatisticDialog().showData(app.getSkillLevel(), app.getMosaicController().getMosaicType());
@@ -325,7 +325,7 @@ public class Handlers {
                 private static final long serialVersionUID = 1L;
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    app.getAboutDialog().setVisible(!app.getAboutDialog().isVisible());
+                    app.getAboutDialog().getDialog().setVisible(!app.getAboutDialog().getDialog().isVisible());
                 }
             };
 

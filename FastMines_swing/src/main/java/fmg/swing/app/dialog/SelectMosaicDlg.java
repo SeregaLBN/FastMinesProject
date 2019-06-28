@@ -25,10 +25,9 @@ import fmg.swing.utils.Cast;
 import fmg.swing.utils.GuiTools;
 import fmg.swing.utils.ImgUtils;
 
-public class SelectMosaicDlg extends JDialog implements AutoCloseable {
+public class SelectMosaicDlg implements AutoCloseable {
 
-    private static final long serialVersionUID = 1L;
-
+    private final JDialog dialog;
     private JSpinner spin;
     private JComboBox<?> cmbxMosaicTypes;
     private JButton btnOk;
@@ -43,7 +42,7 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
     private static final Color bkTabBkColorSelected = UIManager.getColor("Button.shadow"); // "Button.select" "Button.darkShadow"
 
     public SelectMosaicDlg(JFrame parent, boolean modal) {
-        super(parent, "Select mosaic", modal);
+        dialog = new JDialog(parent, "Select mosaic", modal);
         if (parent instanceof MainApp)
             this.parent = (MainApp) parent;
         initialize(parent);
@@ -51,30 +50,30 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
 
     private void initialize(JFrame parent) {
         Object keyBind = "onOk";
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false), keyBind);
-        getRootPane().getActionMap().put(keyBind, new AbstractAction() {
+        dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false), keyBind);
+        dialog.getRootPane().getActionMap().put(keyBind, new AbstractAction() {
             private static final long serialVersionUID = 1L;
             @Override
             public void actionPerformed(ActionEvent e) { SelectMosaicDlg.this.onOk(); }
         });
 
         keyBind = "CloseDialog";
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), keyBind);
-        getRootPane().getActionMap().put(keyBind, new AbstractAction() {
+        dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), keyBind);
+        dialog.getRootPane().getActionMap().put(keyBind, new AbstractAction() {
             private static final long serialVersionUID = 1L;
             @Override
             public void actionPerformed(ActionEvent e) { SelectMosaicDlg.this.onClose(); }
         });
 
-        addWindowListener(new WindowAdapter() {
+        dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) { SelectMosaicDlg.this.onClose(); }
         });
 
-        this.setResizable(false);
+        dialog.setResizable(false);
         createComponents();
-        pack();
-        this.setLocationRelativeTo(parent);
+        dialog.pack();
+        dialog.setLocationRelativeTo(parent);
     }
 
     public void startSelect(EMosaicGroup initMosaicGroup) {
@@ -215,7 +214,7 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
 //        GuiTools.makeSameWidth(new JComponent[] {boxLine, lbl2, cmbxMosaicTypes});
 
         // добавляю расположение в центр окна
-        getContentPane().add(boxCenter, BorderLayout.CENTER);
+        dialog.getContentPane().add(boxCenter, BorderLayout.CENTER);
     }
 
     private void onChangeMosaicType(ItemEvent e) {
@@ -295,7 +294,7 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
     }
 
     private void onMosaicsImgPropertyChanged(PropertyChangeEvent ev) {
-        if (!isVisible())
+        if (!dialog.isVisible())
             return;
         if (ev.getPropertyName().equalsIgnoreCase(IImageController.PROPERTY_IMAGE)) {
             btnOk.setIcon(ImgUtils.toIco(mosaicsImg.getImage(), ImgSize, ImgSize));
@@ -314,8 +313,8 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
     }
 
     private void onClose() {
-        if (isModal())
-            dispose();
+        if (dialog.isModal())
+            dialog.dispose();
         else
             setVisible(false);
     }
@@ -334,10 +333,9 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
     }
 
 
-    @Override
     public void setVisible(boolean b) {
         mosaicsImg.getModel().setAnimated(b);
-        super.setVisible(b);
+        dialog.setVisible(b);
     }
 
     @Override

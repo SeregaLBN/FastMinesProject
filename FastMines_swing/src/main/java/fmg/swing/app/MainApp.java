@@ -656,7 +656,7 @@ public class MainApp extends JFrame {
     void changeGame(ESkillLevel skill) {
         if (skill == ESkillLevel.eCustom) {
             //System.out.println("... dialog box 'Select custom skill level...' ");
-            getCustomSkillDialog().setVisible(!getCustomSkillDialog().isVisible());
+            getCustomSkillDialog().setVisible(!getCustomSkillDialog().getDialog().isVisible());
             return;
         }
 
@@ -1127,7 +1127,7 @@ public class MainApp extends JFrame {
             if (userId != null) {
                 // ...статистики
                 getPlayers().setStatistic(userId, eMosaic, eSkill, victory, realCountOpen, playTime, clickCount);
-                if (getStatisticDialog().isVisible())
+                if (getStatisticDialog().getDialog().isVisible())
                     // если окно открыто - сфокусируюсь на нужной закладке/скилле и пользователе
                     getStatisticDialog().showData(eSkill, eMosaic);
 

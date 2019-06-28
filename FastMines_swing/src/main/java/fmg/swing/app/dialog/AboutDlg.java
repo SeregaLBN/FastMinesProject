@@ -21,55 +21,57 @@ import fmg.swing.img.Smile;
 import fmg.swing.utils.GuiTools;
 import fmg.swing.utils.ImgUtils;
 
-public class AboutDlg extends JDialog implements AutoCloseable {
+public class AboutDlg implements AutoCloseable {
 
-    private static final long serialVersionUID = 1L;
-    private static final int ImgZoomQuality = 3;
-    private static final int constSize = 48;
+    private static final int IMAGE_ZOOM_QUALITY = 3;
+    private static final int ICON_SIZE = 48;
+    private static final String HTML_BODY = "<html><body ";
+    private static final String HTML_CENTER_WIDTH = "><center width='";
+    private static final String HTML_A_HREF = "'><a href='";
 
-    private Logo.IconController _logo;
-    private Smile.IconController _smile;
+    private final JDialog dialog;
+    private Logo.IconController logo;
+    private Smile.IconController smile;
     private JButton btnLogo;
     private final PropertyChangeListener onLogoPropertyChangedListener = this::onLogoPropertyChanged;
 
     public AboutDlg(JFrame parent, boolean modal) {
-        super(parent, "About", modal);
+        dialog = new JDialog(parent, "About", modal);
         initialize(parent);
+    }
+
+    public JDialog getDialog() {
+        return dialog;
     }
 
     private void initialize(JFrame parent) {
         Object keyBind = "CloseDialog";
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), keyBind);
-        getRootPane().getActionMap().put(keyBind, new AbstractAction() {
+        dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), keyBind);
+        dialog.getRootPane().getActionMap().put(keyBind, new AbstractAction() {
             private static final long serialVersionUID = 1L;
             @Override
             public void actionPerformed(ActionEvent e) { onClose(); }
         });
 
-        addWindowListener(new WindowAdapter() {
+        dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) { onClose(); }
         });
 
-        this.setResizable(false);
+        dialog.setResizable(false);
         createComponents();
-        // задаю предпочтительный размер
-        pack();
-        this.setLocationRelativeTo(parent);
+        dialog.pack();
+        dialog.setLocationRelativeTo(parent);
     }
 
     private void onClose() {
-        // при выходе из диалогового окна - освобождаю ресурсы
-        dispose();
-//        System.exit(0);
+        dialog.dispose();
     }
 
     // создаю панели с нужным расположением
     private void createComponents() {
         // 1. Создаю панель, которая будет содержать все остальные элементы и панели расположения
         Box boxCenter = Box.createVerticalBox();
-        // Чтобы интерфейс отвечал требованиям Java, необходимо отделить его содержимое от границ окна на 12 пикселов.
-        // использую пустую рамку
         //boxCenter.setBorder(BorderFactory.createEmptyBorder(12,12,12,12));
         boxCenter.setBorder(
             new CompoundBorder(
@@ -86,9 +88,9 @@ public class AboutDlg extends JDialog implements AutoCloseable {
 //            firstLine.setBorder(GuiTools.getDummyBorder(Color.RED));
 
             // слева - кнопка иконки
-            JComponent logo = createPanelLogo();
-            logo.setAlignmentY(Component.TOP_ALIGNMENT);
-            firstLine.add(logo);
+            JComponent logo2 = createPanelLogo();
+            logo2.setAlignmentY(Component.TOP_ALIGNMENT);
+            firstLine.add(logo2);
 
             firstLine.add(Box.createHorizontalStrut(5));
 
@@ -107,14 +109,14 @@ public class AboutDlg extends JDialog implements AutoCloseable {
         boxCenter.add(Box.createVerticalStrut(12));
 
         // добавляю расположение в центр окна
-        getContentPane().add(boxCenter, BorderLayout.CENTER);
+        dialog.getContentPane().add(boxCenter, BorderLayout.CENTER);
         // ряд кнопок внизу
-        getContentPane().add(createPanelOk(), BorderLayout.SOUTH);
+        dialog.getContentPane().add(createPanelOk(), BorderLayout.SOUTH);
     }
 
     private void onLogoPropertyChanged(PropertyChangeEvent ev) {
         if (IImageController.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
-            btnLogo.setIcon(ImgUtils.zoom(_logo.getImage(), constSize, constSize));
+            btnLogo.setIcon(ImgUtils.zoom(logo.getImage(), ICON_SIZE, ICON_SIZE));
             btnLogo.repaint();
         }
     }
@@ -124,24 +126,24 @@ public class AboutDlg extends JDialog implements AutoCloseable {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
 //        panel.setBorder(BorderFactory.createTitledBorder("Logos"));// getDefaultBorder());
 
-        int icoSize = constSize * ImgZoomQuality;
-        if (_logo == null)
-            _logo = new Logo.IconController();
-        LogoModel lm = _logo.getModel();
+        int icoSize = ICON_SIZE * IMAGE_ZOOM_QUALITY;
+        if (logo == null)
+            logo = new Logo.IconController();
+        LogoModel lm = logo.getModel();
         lm.setUseGradient(true);
         lm.setSize(new SizeDouble(icoSize, icoSize));
         lm.setPadding(new BoundDouble(1));
         lm.setRotateMode(LogoModel.ERotateMode.color);
-        _logo.usePolarLightFgTransforming(true);
+        logo.usePolarLightFgTransforming(true);
         lm.setAnimated(true);
         lm.setAnimatePeriod(12000);
         lm.setTotalFrames(250);
-        btnLogo = new JButton(ImgUtils.zoom(_logo.getImage(), constSize, constSize));
-        _logo.addListener(onLogoPropertyChangedListener);
+        btnLogo = new JButton(ImgUtils.zoom(logo.getImage(), ICON_SIZE, ICON_SIZE));
+        logo.addListener(onLogoPropertyChangedListener);
 
-        _smile = new Smile.IconController(SmileModel.EFaceType.Face_Disappointed);
-        _smile.getModel().setSize(new SizeDouble(icoSize, icoSize));
-        btnLogo.setPressedIcon(ImgUtils.zoom(_smile.getImage(), constSize, constSize));
+        smile = new Smile.IconController(SmileModel.EFaceType.Face_Disappointed);
+        smile.getModel().setSize(new SizeDouble(icoSize, icoSize));
+        btnLogo.setPressedIcon(ImgUtils.zoom(smile.getImage(), ICON_SIZE, ICON_SIZE));
         btnLogo.setFocusable(false);
 
         Insets margin = btnLogo.getMargin();
@@ -157,16 +159,9 @@ public class AboutDlg extends JDialog implements AutoCloseable {
 //        panel.setBorder(BorderFactory.createTitledBorder("titles"));// getDefaultBorder());
 
         String htmpWidth = "190px";
-        JLabel lblTitle = new JLabel("<html><body " +
+        JLabel lblTitle = new JLabel(HTML_BODY +
 //              "bgcolor='#FEEF98'" +
               "><font size=6 color=dark face='serif'><center width='"+htmpWidth+"'>FastMines" ); // arial verdana
-        /* Универсальные семейства шрифтов:
-         *     serif — шрифты с засечками (антиквенные), типа Times;
-         *     sans-serif — рубленные шрифты (шрифты без засечек или гротески), типичный представитель — Arial;
-         *     cursive — курсивные шрифты;
-         *     fantasy — декоративные шрифты;
-         *     monospace — моноширинные шрифты, ширина каждого символа в таком семействе одинакова (шрифт Courier).
-         **/
         lblTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 //        lblTitle.setBorder(BorderFactory.createEtchedBorder());
         panel.add(lblTitle);
@@ -188,13 +183,15 @@ public class AboutDlg extends JDialog implements AutoCloseable {
         panel.add(Box.createVerticalStrut(2));
 
         final String licenseUrl = "http://www.gnu.org/licenses/gpl.html";
-        JLabel lblFreeSoft = new JLabel("<html><body " +
-//             "bgcolor='#FEEF98'" +
-             "><center width='"+htmpWidth+"'><a href='"+licenseUrl+"'>Free software, open source (GPL)");
+        JLabel lblFreeSoft = new JLabel(HTML_BODY +
+                                      //"bgcolor='#FEEF98'" +
+                                        HTML_CENTER_WIDTH + htmpWidth +
+                                        HTML_A_HREF + licenseUrl +
+                                        "'>Free software, open source (GPL)");
         lblFreeSoft.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                OpenURI(licenseUrl);
+                openURI(licenseUrl);
             }});
         lblFreeSoft.setAlignmentX(Component.CENTER_ALIGNMENT);
 //        lblFreeSoft.setBorder(BorderFactory.createEtchedBorder());
@@ -216,13 +213,14 @@ public class AboutDlg extends JDialog implements AutoCloseable {
             mail.add(lblLeftMail);
             mail.add(Box.createHorizontalStrut(2));
             final String mailTo = "FastMines@gmail.com";
-            JLabel lblMail = new JLabel("<html><body " +
-//                  "bgcolor='#FEEF98'" +
-                  "><center width='"+htmpWidth+"'><a href='"+mailTo+"'>"+mailTo);
+            JLabel lblMail = new JLabel(HTML_BODY +
+                                      //"bgcolor='#FEEF98'" +
+                                        HTML_CENTER_WIDTH + htmpWidth +
+                                        HTML_A_HREF + mailTo + "'>" + mailTo);
             lblMail.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    OpenMail("mailto:"+mailTo);
+                    openMail("mailto:"+mailTo);
                 }});
             lblMail.setBorder(customBorder);
             mail.add(lblMail);
@@ -236,13 +234,15 @@ public class AboutDlg extends JDialog implements AutoCloseable {
             web.add(lblLeftWeb);
             web.add(Box.createHorizontalStrut(2));
             final String webPage = "https://github.com/seregalbn/FastMines";
-            JLabel lblWeb = new JLabel("<html><body " +
-//                  "bgcolor='#FEEF98'" +
-                  "><center width='"+htmpWidth+"'><a href='"+webPage+"'>"+webPage);
+            JLabel lblWeb = new JLabel(HTML_BODY +
+                                       //"bgcolor='#FEEF98'" +
+                                       HTML_CENTER_WIDTH + htmpWidth +
+                                       HTML_A_HREF + webPage +
+                                       "'>" + webPage);
             lblWeb.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    OpenURI(webPage);
+                    openURI(webPage);
                 }});
             lblWeb.setBorder(customBorder);
             web.add(lblWeb);
@@ -278,7 +278,7 @@ public class AboutDlg extends JDialog implements AutoCloseable {
         return panel;
     }
 
-    public static boolean OpenURI(String uri) {
+    public static boolean openURI(String uri) {
         if (!Desktop.isDesktopSupported()) {
             System.err.println("Fail - Desktop is not supported.");
             return false;
@@ -297,7 +297,7 @@ public class AboutDlg extends JDialog implements AutoCloseable {
         }
     }
 
-    public static boolean OpenMail(String mailTo) {
+    public static boolean openMail(String mailTo) {
         if (!Desktop.isDesktopSupported()) {
             System.err.println("Fail - Desktop is not supported.");
             return false;
@@ -318,9 +318,9 @@ public class AboutDlg extends JDialog implements AutoCloseable {
 
     @Override
     public void close() {
-        _logo.removeListener(onLogoPropertyChangedListener);
-        _logo.close();
-        _smile.close();
+        logo.removeListener(onLogoPropertyChangedListener);
+        logo.close();
+        smile.close();
     }
 
 }

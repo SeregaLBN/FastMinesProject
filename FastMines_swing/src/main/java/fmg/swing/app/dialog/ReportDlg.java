@@ -11,7 +11,7 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,58 +31,60 @@ import fmg.swing.app.model.view.ReportTableModel;
 import fmg.swing.img.MosaicImg;
 import fmg.swing.utils.ImgUtils;
 
-public abstract class ReportDlg extends JDialog implements AutoCloseable {
+public abstract class ReportDlg implements AutoCloseable {
 
-    private static final long serialVersionUID = 1L;
-
-    private static final int ImgSize = 40;
-    private static final int ImgZoomQuality = 3;
+    private static final int IMG_SIZE = 40;
+    private static final int IMAGE_ZOOM_QUALITY = 3;
     private static final Color bkTabBkColor = fmg.common.Color.Transparent(); // Cast.toColor(UIManager.getColor("TabbedPane.light")); // Cast.toColor(getContentPane().getBackground());
     private static final Color bkTabBkColorSelected = fmg.common.Color.Aquamarine().brighter();//Cast.toColor(UIManager.getColor("TabbedPane.shadow")); // "TabbedPane.darkShadow"
 
+    protected final JDialog dialog;
     protected JTabbedPane tabPanel;
     protected JToggleButton[] btns = new JToggleButton[ESkillLevel.values().length-1];
-    private Map<EMosaic, JScrollPane> scrollPanes = new HashMap<>(EMosaic.values().length);
+    private Map<EMosaic, JScrollPane> scrollPanes = new EnumMap<>(EMosaic.class);
     private List<MosaicImg.IconController> images = new ArrayList<>(EMosaic.values().length);
     protected ButtonGroup radioGroup;
     protected MainApp parent;
     private final PropertyChangeListener onImagePropertyChangedListener = this::onImagePropertyChanged;
 
     public ReportDlg(MainApp parent, boolean modal) {
-        super(parent, "report window...", modal);
+        dialog = new JDialog(parent, "report window...", modal);
         this.parent = parent;
         initialize(parent);
     }
 
+    public JDialog getDialog() {
+        return dialog;
+    }
+
     private void initialize(JFrame parent) {
         Object keyBind = "CloseDialog";
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), keyBind);
-        getRootPane().getActionMap().put(keyBind, new AbstractAction() {
+        dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), keyBind);
+        dialog.getRootPane().getActionMap().put(keyBind, new AbstractAction() {
             private static final long serialVersionUID = 1L;
             @Override
             public void actionPerformed(ActionEvent e) { onClose(); }
         });
 
-        addWindowListener(new WindowAdapter() {
+        dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) { onClose(); }
         });
 
-        this.setResizable(!false);
+        dialog.setResizable(true);
         createComponents();
 
-//        Dimension preferredSize = this.getPreferredSize();
-//        preferredSize.width = Toolkit.getDefaultToolkit().getScreenSize().width-100;
-//        this.setPreferredSize(preferredSize);
-//        this.setVisible(true);
-        // задаю предпочтительный размер
-        pack();
-        this.setLocationRelativeTo(parent);
+//        Dimension preferredSize = dialog.getPreferredSize();
+//        preferredSize.width = Toolkit.getDefaultToolkit().getScreenSize().width - 100;
+//        dialog.setPreferredSize(preferredSize);
+//        dialog.setVisible(true);
+        dialog.pack();
+        dialog.setLocationRelativeTo(parent);
     }
 
     private void onClose() {
-        if (isModal())
-            dispose();
+        if (dialog.isModal())
+            dialog.dispose();
         else
             setVisible(false);
     }
@@ -104,8 +106,8 @@ public abstract class ReportDlg extends JDialog implements AutoCloseable {
                 MosaicAnimatedModel<?> imgModel = imgCntrllr.getModel();
                 imgModel.setMosaicType(eMosaic);
                 imgModel.setSizeField(eMosaic.sizeIcoField(true));
-                imgModel.setSize(new SizeDouble(ImgSize*ImgZoomQuality, ImgSize*ImgZoomQuality));
-                imgModel.setPadding(new BoundDouble(5 * ImgZoomQuality));
+                imgModel.setSize(new SizeDouble(IMG_SIZE*IMAGE_ZOOM_QUALITY, IMG_SIZE * IMAGE_ZOOM_QUALITY));
+                imgModel.setPadding(new BoundDouble(5 * IMAGE_ZOOM_QUALITY));
                 imgModel.setBackgroundColor(bkTabBkColor);
                 int redrawInterval = 50;
                 double rotateAngleDelta = 3.5;
@@ -115,7 +117,7 @@ public abstract class ReportDlg extends JDialog implements AutoCloseable {
                 imgCntrllr.addListener(onImagePropertyChangedListener);
                 images.add(imgCntrllr);
 
-                tabPanel.addTab(null, ImgUtils.zoom(imgCntrllr.getImage(), ImgSize, ImgSize), scroll, eMosaic.getDescription(false));
+                tabPanel.addTab(null, ImgUtils.zoom(imgCntrllr.getImage(), IMG_SIZE, IMG_SIZE), scroll, eMosaic.getDescription(false));
                 scroll.setPreferredSize(getPreferredScrollPaneSize());
                 scrollPanes.put(eMosaic, scroll);
             }
@@ -141,9 +143,9 @@ public abstract class ReportDlg extends JDialog implements AutoCloseable {
         }
 
         // добавляю расположение в центр окна
-        getContentPane().add(tabPanel, BorderLayout.CENTER);
+        dialog.getContentPane().add(tabPanel, BorderLayout.CENTER);
         // ряд кнопок внизу
-        getContentPane().add(panelBottom, BorderLayout.SOUTH);
+        dialog.getContentPane().add(panelBottom, BorderLayout.SOUTH);
     }
 
     protected boolean isOneLineSkillLevelButtons() { return false; }
@@ -203,8 +205,9 @@ public abstract class ReportDlg extends JDialog implements AutoCloseable {
 
         // Проверяю если ли таблица? Если нет - создаю...
         Component cmpnt = scroll.getViewport().getView();
-        JTable table = (cmpnt != null) ? (JTable) cmpnt : createTable(eMosaic, scroll);
-        return table;
+        if (cmpnt != null)
+            return (JTable)cmpnt;
+        return createTable(eMosaic, scroll);
     }
 
     protected int getTableCellHorizontalAlignment(int row, int column) { return SwingConstants.CENTER; }
@@ -215,7 +218,7 @@ public abstract class ReportDlg extends JDialog implements AutoCloseable {
     protected EMosaic getSelectedMosaicType() {
         int i = tabPanel.getSelectedIndex();
         if (i == -1)
-            throw new RuntimeException("dialog Report::getSelectedMosaicType: tabPanel.getSelectedIndex() return -1 ???");
+            throw new IllegalArgumentException("dialog Report::getSelectedMosaicType: tabPanel.getSelectedIndex() return -1 ???");
         return EMosaic.fromOrdinal(i);
     }
     protected ESkillLevel getSelectedSkillLevel() {
@@ -223,15 +226,15 @@ public abstract class ReportDlg extends JDialog implements AutoCloseable {
         for (int i=0; i < btns.length; i++)
             if (model == btns[i].getModel())
                 return ESkillLevel.fromOrdinal(i);
-        throw new RuntimeException("dialog Report::getSelectedSkillLevel: radioGroup.getSelection() return unknown model ???");
+        throw new IllegalArgumentException("dialog Report::getSelectedSkillLevel: radioGroup.getSelection() return unknown model ???");
     }
 
     private void onImagePropertyChanged(PropertyChangeEvent ev) {
-        if (!isVisible())
+        if (!dialog.isVisible())
             return;
         if (IImageController.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
             MosaicImg.IconController imgCtrllr = ((MosaicImg.IconController)ev.getSource());
-            tabPanel.setIconAt(imgCtrllr.getMosaicType().ordinal(), ImgUtils.zoom(imgCtrllr.getImage(), ImgSize, ImgSize));
+            tabPanel.setIconAt(imgCtrllr.getMosaicType().ordinal(), ImgUtils.zoom(imgCtrllr.getImage(), IMG_SIZE, IMG_SIZE));
         }
     }
 
@@ -274,7 +277,6 @@ public abstract class ReportDlg extends JDialog implements AutoCloseable {
         return table;
     }
 
-    @Override
     public void setVisible(boolean b) {
         EMosaic mosaicType = getSelectedMosaicType();
         MosaicImg.IconController imgCtrllr = images.stream().filter(img -> img.getMosaicType() == mosaicType).findAny().get();
@@ -282,7 +284,7 @@ public abstract class ReportDlg extends JDialog implements AutoCloseable {
         if (!b)
             imgCtrllr.getModel().setBackgroundColor(bkTabBkColor);
 
-        super.setVisible(b);
+        dialog.setVisible(b);
     }
 
     @Override
@@ -291,7 +293,7 @@ public abstract class ReportDlg extends JDialog implements AutoCloseable {
             imgCtrllr.removeListener(onImagePropertyChangedListener);
             imgCtrllr.close();
         });
-        dispose();
+        dialog.dispose();
     }
 
     DefaultTableCellRenderer defaultTableCellRenderer = new CustomHeaderTableCellRenderer();

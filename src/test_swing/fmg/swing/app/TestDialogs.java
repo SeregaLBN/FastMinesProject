@@ -43,7 +43,7 @@ public class TestDialogs {
 
     private static void testAboutDlg() {
         try (AboutDlg dlg = new AboutDlg(null, true)) {
-            dlg.setVisible(true);
+            dlg.getDialog().setVisible(true);
         }
     }
 
@@ -62,7 +62,7 @@ public class TestDialogs {
 
     private static void testLoginDlg() {
         LoginDlg dlg = new LoginDlg(null, true, "aasd", true);
-        dlg.setVisible(true);
+        dlg.getDialog().setVisible(true);
     }
 
     private static void testManageDlg() {
@@ -78,7 +78,7 @@ public class TestDialogs {
     }
 
     private static void testReportDlg() {
-        try (ReportDlg dlg = new ReportDlg(null, true) { private static final long serialVersionUID = 1L; }) {
+        try (ReportDlg dlg = new ReportDlg(null, true) { }) {
             dlg.showData(ESkillLevel.eAmateur, EMosaic.eMosaicTriangle1, -1);
         }
     }

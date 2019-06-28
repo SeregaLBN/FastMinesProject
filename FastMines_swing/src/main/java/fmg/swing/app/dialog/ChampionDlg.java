@@ -14,8 +14,6 @@ import fmg.swing.app.model.view.ReportTableModel;
 /** Диалог отображения чемпионов */
 public class ChampionDlg extends ReportDlg {
 
-    private static final long serialVersionUID = 1L;
-
     private final ChampionsModel champions;
 
     public ChampionDlg(MainApp parent, boolean modal, ChampionsModel champions) {
@@ -25,7 +23,7 @@ public class ChampionDlg extends ReportDlg {
 
     @Override
     protected void updateModel(ESkillLevel eSkill) {
-        setTitle("Champions - " + getSelectedMosaicType().getDescription(false));
+        dialog.setTitle("Champions - " + getSelectedMosaicType().getDescription(false));
         super.updateModel(eSkill);
     }
 

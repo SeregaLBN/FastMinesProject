@@ -1,6 +1,7 @@
 package fmg.swing.app.dialog;
 
 import java.awt.*;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.*;
 
 import javax.swing.*;
@@ -8,10 +9,9 @@ import javax.swing.*;
 import fmg.swing.utils.BoxLayoutUtils;
 import fmg.swing.utils.GuiTools;
 
-public class LoginDlg extends JDialog {
+public class LoginDlg {
 
-    private static final long serialVersionUID = 1L;
-
+    private final JDialog dialog;
     private JTextField nameField, passwrdField;
     private ActionListener onOkActionListener, onCancelActionListener;
 
@@ -21,38 +21,42 @@ public class LoginDlg extends JDialog {
         String username,
         boolean usePassword)
     {
-        super(parent, (username==null) ? "New user" : "Confirm password", modal ? Dialog.DEFAULT_MODALITY_TYPE : ModalityType.MODELESS);
+        dialog = new JDialog(parent, (username==null) ? "New user" : "Confirm password", modal ? Dialog.DEFAULT_MODALITY_TYPE : ModalityType.MODELESS);
         initialize(parent, username, usePassword);
+    }
+
+    public JDialog getDialog() {
+        return dialog;
     }
 
     private void initialize(Window parent, String username, boolean usePassword) {
         Object keyBind = "OnOk";
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false), keyBind);
-        getRootPane().getActionMap().put(keyBind, new AbstractAction() {
+        dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false), keyBind);
+        dialog.getRootPane().getActionMap().put(keyBind, new AbstractAction() {
             private static final long serialVersionUID = 1L;
             @Override
             public void actionPerformed(ActionEvent e) { LoginDlg.this.onOk(e); }
         });
 
         keyBind = "CloseDialog";
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), keyBind);
-        getRootPane().getActionMap().put(keyBind, new AbstractAction() {
+        dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), keyBind);
+        dialog.getRootPane().getActionMap().put(keyBind, new AbstractAction() {
             private static final long serialVersionUID = 1L;
             @Override
             public void actionPerformed(ActionEvent e) { LoginDlg.this.onCancel(e); }
         });
 
-        addWindowListener(new WindowAdapter() {
+        dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) { LoginDlg.this.onCancel(new ActionEvent(we.getSource(), we.getID(), "windowClosing")); }
         });
 
         // добавляем расположение в центр окна
-        getContentPane().add(createComponents(username, usePassword));
+        dialog.getContentPane().add(createComponents(username, usePassword));
 
         // задаем предпочтительный размер
-        pack();
-        this.setLocationRelativeTo(parent);
+        dialog.pack();
+        dialog.setLocationRelativeTo(parent);
     }
 
     /** этот метод будет возвращать панель с созданным расположением */
@@ -143,16 +147,13 @@ public class LoginDlg extends JDialog {
         onClose();
     }
     private void onClose() {
-        // при выходе из диалогового окна - освобождаю ресурсы
-        dispose();
-        //System.exit(0);
+        dialog.dispose();
     }
 
-    @Override
     public String getName() { return nameField.getText(); }
     public String getPass() { return passwrdField.getText(); }
 
     public void setOkActionListener(ActionListener onOkActionListener) { this.onOkActionListener = onOkActionListener; }
-    public void setCancelActionListener(ActionListener CancelOkActionListener) { this.onCancelActionListener = CancelOkActionListener; }
+    public void setCancelActionListener(ActionListener onCancelOkActionListener) { this.onCancelActionListener = onCancelOkActionListener; }
 
 }

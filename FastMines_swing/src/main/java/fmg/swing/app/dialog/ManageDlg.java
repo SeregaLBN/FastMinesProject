@@ -17,11 +17,11 @@ import fmg.swing.app.model.view.ManageTblModel;
 import fmg.swing.utils.GuiTools;
 
 /** Диалог управления пользователями */
-public class ManageDlg extends JDialog {
+public class ManageDlg {
 
-    private static final long serialVersionUID = 1L;
-    private static String DEFAULT_CAPTION = "Users manage";
+    private static final String DEFAULT_CAPTION = "Users manage";
 
+    private final JDialog dialog;
     private JButton btnOk;
     private JTable table;
     private MainApp parent;
@@ -29,33 +29,37 @@ public class ManageDlg extends JDialog {
     private JCheckBox doNotAskStartup;
 
     public ManageDlg(JFrame parent, boolean modal, PlayersModel players) {
-        super(parent, DEFAULT_CAPTION, modal);
+        dialog = new JDialog(parent, DEFAULT_CAPTION, modal);
         if (parent instanceof MainApp)
             this.parent = (MainApp) parent;
         this.players = players;
         initialize(parent);
     }
 
+    public JDialog getDialog() {
+        return dialog;
+    }
+
     private void initialize(JFrame parent) {
         Object keyBind = "CloseDialog";
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), keyBind);
-        getRootPane().getActionMap().put(keyBind, new AbstractAction() {
+        dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), keyBind);
+        dialog.getRootPane().getActionMap().put(keyBind, new AbstractAction() {
             private static final long serialVersionUID = 1L;
             @Override
             public void actionPerformed(ActionEvent e) { ManageDlg.this.onCancel(); }
         });
 
-        addWindowListener(new WindowAdapter() {
+        dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) { ManageDlg.this.onCancel(); }
         });
 
-        this.setResizable(!false);
+        dialog.setResizable(!false);
         createComponents();
 
         // задаю предпочтительный размер
-        pack();
-        this.setLocationRelativeTo(parent);
+        dialog.pack();
+        dialog.setLocationRelativeTo(parent);
     }
 
     private void onOk() {
@@ -80,14 +84,13 @@ public class ManageDlg extends JDialog {
         onClose();
     }
     private void onClose() {
-        // при выходе из диалогового окна - освобождаю ресурсы
-        dispose();
+        dialog.dispose();
     }
 
     private void onNewPlayer() {
 //        System.out.println("OnNewPlayer");
-        final LoginDlg loginDialog = new LoginDlg(this.isVisible() ? this : parent, true, null, false);
-        final Runnable anew = () -> loginDialog.setVisible(true);
+        final LoginDlg loginDialog = new LoginDlg(dialog.isVisible() ? dialog : parent, true, null, false);
+        final Runnable anew = () -> loginDialog.getDialog().setVisible(true);
 
         loginDialog.setOkActionListener(
             e -> {
@@ -100,7 +103,7 @@ public class ManageDlg extends JDialog {
                         int maxPos = ManageDlg.this.players.size()-1; // new user added to end list
                         ManageDlg.this.table.getSelectionModel().setSelectionInterval(maxPos, maxPos);
                     } catch (Exception ex) {
-                        GuiTools.alert(ManageDlg.this, ex.getMessage());
+                        GuiTools.alert(dialog, ex.getMessage());
                         SwingUtilities.invokeLater(anew);
                     }
             });
@@ -265,16 +268,15 @@ public class ManageDlg extends JDialog {
         }
 
         // добавляю расположение в центр окна
-        getContentPane().add(boxCenter, BorderLayout.CENTER);
+        dialog.getContentPane().add(boxCenter, BorderLayout.CENTER);
         // ряд кнопок слева
-        getContentPane().add(panelLeft, BorderLayout.EAST);
+        dialog.getContentPane().add(panelLeft, BorderLayout.EAST);
     }
 
-    @Override
     public void setVisible(boolean b) {
         //System.out.println("> Manage::setVisible: " + b);
         if (b) {
-            this.setTitle(DEFAULT_CAPTION);
+            dialog.setTitle(DEFAULT_CAPTION);
 
             UUID activeUserId = (parent==null) ? null : parent.getActiveUserId();
             if ((activeUserId!=null) && players.isExist(activeUserId)) {
@@ -288,7 +290,7 @@ public class ManageDlg extends JDialog {
             if (players.size() == 0)
                 SwingUtilities.invokeLater(() -> ManageDlg.this.onNewPlayer());
         }
-        super.setVisible(b);
+        dialog.setVisible(b);
     }
 
     public boolean isDoNotAskStartupChecked() {
