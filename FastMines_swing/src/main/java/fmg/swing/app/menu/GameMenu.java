@@ -18,10 +18,10 @@ import fmg.swing.app.KeyCombo;
 import fmg.swing.app.MainApp;
 import fmg.swing.img.MosaicSkillImg;
 
-public class GameMenu extends JMenu implements AutoCloseable {
-    private static final long serialVersionUID = 1L;
+public class GameMenu implements AutoCloseable {
 
     private final MainApp app;
+    private final JMenu menu = new JMenu("Game");
     private JMenuItem anew;
     private Map<ESkillLevel, JRadioButtonMenuItem> skillLevel;
     private List<MosaicSkillImg.IconController> skillLevelImages;
@@ -40,25 +40,28 @@ public class GameMenu extends JMenu implements AutoCloseable {
     });
 
     public GameMenu(MainApp app) {
-        super("Game");
         this.app = app;
         initialize();
     }
 
-    private void initialize() {
-        this.setMnemonic(KeyCombo.getMnemonic_MenuGame());
+    public JMenu getMenu() {
+        return menu;
+    }
 
-        this.add(getAnew());
-        this.add(new JSeparator());
+    private void initialize() {
+        menu.setMnemonic(KeyCombo.getMnemonic_MenuGame());
+
+        menu.add(getAnew());
+        menu.add(new JSeparator());
 //                this.add(getMosaics());
 //                this.add(new JSeparator());
 
         for (ESkillLevel key: ESkillLevel.values())
-            this.add(getMenuItemSkillLevel(key));
-        this.add(new JSeparator());
-        this.add(getPlayerManage());
-        this.add(new JSeparator());
-        this.add(getExit());
+            menu.add(getMenuItemSkillLevel(key));
+        menu.add(new JSeparator());
+        menu.add(getPlayerManage());
+        menu.add(new JSeparator());
+        menu.add(getExit());
 
         ButtonGroup bg = new ButtonGroup();
         for (ESkillLevel key: ESkillLevel.values())
@@ -93,7 +96,7 @@ public class GameMenu extends JMenu implements AutoCloseable {
 
                 MosaicSkillImg.IconController img = new MosaicSkillImg.IconController(val);
                 MosaicSkillModel imgModel = img.getModel();
-                double sq = MainMenu.MenuHeightWithIcon * MainMenu.ZoomQualityFactor;
+                double sq = MainMenu.MENU_HEIGHT_WITH_ICON * MainMenu.ZOOM_QUALITY_FACTOR;
                 imgModel.setSize(new SizeDouble(sq, sq));
                 skillLevelImages.add(img);
                 imgModel.setBorderWidth(1); // *ZoomQualityFactor);

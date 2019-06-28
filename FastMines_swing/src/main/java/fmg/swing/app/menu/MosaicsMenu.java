@@ -20,12 +20,12 @@ import fmg.swing.app.MainApp;
 import fmg.swing.img.MosaicGroupImg;
 import fmg.swing.img.MosaicImg;
 
-public class MosaicsMenu extends JMenu implements AutoCloseable {
+public class MosaicsMenu implements AutoCloseable {
 
-    private static final long serialVersionUID = 1L;
-    private static final boolean experimentalMenuMnemonic = true;
+    private static final boolean EXPERIMENTAL_MENU_MNEMONIC = true;
 
     private final MainApp app;
+    private final JMenu menu = new JMenu("Mosaics");
     private EnumMap<EMosaicGroup, JMenuItem> mosaicsGroup;
     private List<MosaicGroupImg.IconController> mosaicsGroupImages;
     private Map<EMosaic, JRadioButtonMenuItem> mosaics;
@@ -54,15 +54,18 @@ public class MosaicsMenu extends JMenu implements AutoCloseable {
     };
 
     public MosaicsMenu(MainApp app) {
-        super("Mosaics");
         this.app = app;
         initialize();
     }
 
+    public JMenu getMenu() {
+        return menu;
+    }
+
     private void initialize() {
-        this.setMnemonic(KeyCombo.getMnemonic_MenuMosaic());
+        menu.setMnemonic(KeyCombo.getMnemonic_MenuMosaic());
         for (EMosaicGroup key: EMosaicGroup.values())
-            this.add(getMenuItemMosaicGroup(key));
+            menu.add(getMenuItemMosaicGroup(key));
 
         ButtonGroup bg = new ButtonGroup();
         for (EMosaic key: EMosaic.values())
@@ -83,11 +86,11 @@ public class MosaicsMenu extends JMenu implements AutoCloseable {
 //                        menuItem.setMnemonic(Main.KeyCombo.getMnemonic_MenuMosaicGroup(val));
                 MosaicGroupImg.IconController img = new MosaicGroupImg.IconController(val);
                 MosaicGroupModel imgModel = img.getModel();
-                double sq = MainMenu.MenuHeightWithIcon * MainMenu.ZoomQualityFactor;
+                double sq = MainMenu.MENU_HEIGHT_WITH_ICON * MainMenu.ZOOM_QUALITY_FACTOR;
                 imgModel.setSize(new SizeDouble(sq, sq));
                 mosaicsGroupImages.add(img);
                 imgModel.setPolarLights(true);
-                imgModel.setBorderWidth(1 * MainMenu.ZoomQualityFactor);
+                imgModel.setBorderWidth(1 * MainMenu.ZOOM_QUALITY_FACTOR);
                 imgModel.setBorderColor(Color.RandomColor().darker(0.4));
                 imgModel.setForegroundColor(Color.RandomColor().brighter(0.7));
                 imgModel.setBackgroundColor(Color.Transparent());
@@ -118,7 +121,7 @@ public class MosaicsMenu extends JMenu implements AutoCloseable {
 
             for (EMosaic val: EMosaic.values()) {
                 String menuItemTxt = val.getDescription(false);
-                if (experimentalMenuMnemonic)
+                if (EXPERIMENTAL_MENU_MNEMONIC)
                     menuItemTxt += "                      ";
                 JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(menuItemTxt);
                 menuItem.setMnemonic(KeyCombo.getMnemonic_Mosaic(val));
@@ -129,7 +132,7 @@ public class MosaicsMenu extends JMenu implements AutoCloseable {
                 MosaicAnimatedModel<?> imgModel = img.getModel();
                 imgModel.setMosaicType(val);
                 imgModel.setSizeField(val.sizeIcoField(true));
-                imgModel.setSize(new SizeDouble(MainMenu.MenuHeightWithIcon * MainMenu.ZoomQualityFactor, MainMenu.MenuHeightWithIcon * MainMenu.ZoomQualityFactor));
+                imgModel.setSize(new SizeDouble(MainMenu.MENU_HEIGHT_WITH_ICON * MainMenu.ZOOM_QUALITY_FACTOR, MainMenu.MENU_HEIGHT_WITH_ICON * MainMenu.ZOOM_QUALITY_FACTOR));
                 mosaicsImages.add(img);
                 imgModel.setRotateMode(EMosaicRotateMode.someCells);
                 imgModel.getPenBorder().setWidth(1);// * ZoomQualityFactor);
@@ -142,8 +145,8 @@ public class MosaicsMenu extends JMenu implements AutoCloseable {
                 MainMenu.setMenuItemIcon(menuItem, img.getImage());
                 img.addListener(onMosaicImgPropertyChangedListener);
 
-                if (experimentalMenuMnemonic) {
-                    menuItem.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, MainMenu.MenuHeightWithIcon/2 - 4));
+                if (EXPERIMENTAL_MENU_MNEMONIC) {
+                    menuItem.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, MainMenu.MENU_HEIGHT_WITH_ICON/2 - 4));
                     menuItem.add(new JLabel("NumPad " + val.getFastCode()));
                 }
 

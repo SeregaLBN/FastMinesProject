@@ -289,10 +289,10 @@ public class MainApp extends JFrame {
             for (EShowElement key: EShowElement.values()) {
                 getMenu().getOptions().getShowElement(key).setSelected(spm.getShowElement(key));
             }
-            getMenu().    setVisible(spm.getShowElement(EShowElement.eMenu));
-            applyInputActionMenuMap (spm.getShowElement(EShowElement.eMenu));
-            getToolbar(). setVisible(spm.getShowElement(EShowElement.eToolbar));
-            getStatusBar().setVisible(spm.getShowElement(EShowElement.eStatusbar));
+            getMenu().getMenuBar().setVisible(spm.getShowElement(EShowElement.eMenu));
+            applyInputActionMenuMap          (spm.getShowElement(EShowElement.eMenu));
+            getToolbar().          setVisible(spm.getShowElement(EShowElement.eToolbar));
+            getStatusBar().        setVisible(spm.getShowElement(EShowElement.eStatusbar));
 
             startLocation.x = spm.getLocation().x;
             startLocation.y = spm.getLocation().y;
@@ -302,7 +302,7 @@ public class MainApp extends JFrame {
 //        setMinimumSize(getMinimumSize());
 //        setMinimumSize(new Dimension(400, 400));
 
-        this.setJMenuBar(getMenu());
+        this.setJMenuBar(getMenu().getMenuBar());
         this.setTitle("FastMines");
         this._logo = new Logo.ImageAwtController();
         LogoModel logoModel = this._logo.getModel();
@@ -681,7 +681,7 @@ public class MainApp extends JFrame {
                 ? this.getInsets()
                 : new Insets(0,0,0,0);
         Dimension menuSize = getMenu().getOptions().getShowElement(EShowElement.eMenu).isSelected()
-                ? getMenu().getSize()
+                ? getMenu().getMenuBar().getSize()
                 : new Dimension();
         Dimension toolbarSize = getMenu().getOptions().getShowElement(EShowElement.eToolbar).isSelected()
                 ? getToolbar().getSize()
@@ -924,9 +924,9 @@ public class MainApp extends JFrame {
                 invokeLater(() -> {
                         MainApp.this.setUndecorated(!mapShow.get(EShowElement.eCaption).booleanValue());
                         MainApp.this.setBounds(rc);
-                        MainApp.this.getMenu()     .setVisible(mapShow.get(EShowElement.eMenu).booleanValue());
-                        MainApp.this.getToolbar()  .setVisible(mapShow.get(EShowElement.eToolbar).booleanValue());
-                        MainApp.this.getStatusBar().setVisible(mapShow.get(EShowElement.eStatusbar).booleanValue());
+                        MainApp.this.getMenu().getMenuBar().setVisible(mapShow.get(EShowElement.eMenu).booleanValue());
+                        MainApp.this.getToolbar()          .setVisible(mapShow.get(EShowElement.eToolbar).booleanValue());
+                        MainApp.this.getStatusBar()        .setVisible(mapShow.get(EShowElement.eStatusbar).booleanValue());
 
                         if (isNotPaused && isUsePause())
                             MainApp.this.changePause();
@@ -939,7 +939,7 @@ public class MainApp extends JFrame {
         case eMenu:
             {
                 boolean show = getMenu().getOptions().getShowElement(key).isSelected();
-                getMenu().setVisible(show);
+                getMenu().getMenuBar().setVisible(show);
                 applyInputActionMenuMap(show);
                 pack();
             }

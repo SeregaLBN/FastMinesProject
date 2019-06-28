@@ -7,19 +7,21 @@ import javax.swing.JSeparator;
 import fmg.swing.app.KeyCombo;
 import fmg.swing.app.MainApp;
 
-public class HelpMenu extends JMenu {
-
-    private static final long serialVersionUID = 1L;
+public class HelpMenu {
 
     private final MainApp app;
+    private final JMenu menu = new JMenu("Help");
     private JMenuItem champions;
     private JMenuItem statistics;
     private JMenuItem about;
 
     public HelpMenu(MainApp app) {
-        super("Help");
         this.app = app;
         initialize();
+    }
+
+    public JMenu getMenu() {
+        return menu;
     }
 
     private JMenuItem getChampions() {
@@ -52,11 +54,11 @@ public class HelpMenu extends JMenu {
     }
 
     private void initialize() {
-        this.setMnemonic(KeyCombo.getMnemonic_MenuHelp());
-        this.add(getChampions());
-        this.add(getStatistics());
-        this.add(new JSeparator());
-        this.add(getAbout());
+        menu.setMnemonic(KeyCombo.getMnemonic_MenuHelp());
+        menu.add(getChampions());
+        menu.add(getStatistics());
+        menu.add(new JSeparator());
+        menu.add(getAbout());
     }
 
 }

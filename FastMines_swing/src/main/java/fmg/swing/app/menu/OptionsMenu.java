@@ -10,11 +10,10 @@ import fmg.core.types.draw.EZoomInterface;
 import fmg.swing.app.KeyCombo;
 import fmg.swing.app.MainApp;
 
-public class OptionsMenu extends JMenu {
-
-    private static final long serialVersionUID = 1L;
+public class OptionsMenu {
 
     private final MainApp app;
+    private final JMenu menu = new JMenu("Options");
     private JMenu zoom;
     private Map<EZoomInterface, JMenuItem> zoomItems;
     private JMenu theme;
@@ -23,21 +22,24 @@ public class OptionsMenu extends JMenu {
     private Map<EShowElement, JCheckBoxMenuItem> showElements;
 
     public OptionsMenu(MainApp app) {
-        super("Options");
         this.app = app;
         initialize();
     }
 
+    public JMenu getMenu() {
+        return menu;
+    }
+
     private void initialize() {
-        this.setMnemonic(KeyCombo.getMnemonic_MenuOptions());
-        this.add(getZoom());
-        this.add(getTheme());
-        this.add(getUsePause());
-        this.add(new JSeparator());
-        this.add(getUseUnknown());
-        this.add(new JSeparator());
+        menu.setMnemonic(KeyCombo.getMnemonic_MenuOptions());
+        menu.add(getZoom());
+        menu.add(getTheme());
+        menu.add(getUsePause());
+        menu.add(new JSeparator());
+        menu.add(getUseUnknown());
+        menu.add(new JSeparator());
         for (EShowElement key: EShowElement.values())
-            this.add(getShowElement(key));
+            menu.add(getShowElement(key));
     }
 
     private JMenu getZoom() {
@@ -139,4 +141,5 @@ public class OptionsMenu extends JMenu {
         }
         return showElements.get(key);
     }
+
 }
