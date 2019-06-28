@@ -188,7 +188,7 @@ public class Handlers {
                                 EBtnNewGameState.eNormalMosaic :
                                 EBtnNewGameState.eNormal);
                     if (img != null)
-                        app.getToolbar().getBtnNew().setIcon(img);
+                        app.getToolbar().getBtnNew().getButton().setIcon(img);
                 }
             };
 
@@ -232,7 +232,7 @@ public class Handlers {
 
                         Icon img = app.getToolbar().getSmileIco(EBtnNewGameState.eNormal);
                         if (img != null)
-                            app.getToolbar().getBtnNew().setIcon(img);
+                            app.getToolbar().getBtnNew().getButton().setIcon(img);
                     }
 //                        getRootPane().requestFocusInWindow();
                 }

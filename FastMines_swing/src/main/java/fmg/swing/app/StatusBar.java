@@ -4,22 +4,26 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.border.BevelBorder;
 
-class StatusBar extends JLabel {
+class StatusBar {
 
-    private static final long serialVersionUID = 1L;
+    private final JLabel label = new JLabel();
 
     public StatusBar() {
         initialize();
     }
 
+    public JLabel getLabel() {
+        return label;
+    }
+
     private void initialize() {
-        this.setText("Click count: 0");
-        this.setToolTipText("Sensible clicks...");
-        this.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+        label.setText("Click count: 0");
+        label.setToolTipText("Sensible clicks...");
+        label.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
     }
 
     public void setClickCount(int cnt) {
-        this.setText("Click count: " + Integer.toString(cnt));
+        label.setText("Click count: " + Integer.toString(cnt));
     }
 
 }

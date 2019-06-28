@@ -13,29 +13,33 @@ import fmg.swing.app.Handlers;
 import fmg.swing.img.Smile;
 import fmg.swing.utils.ImgUtils;
 
-public class ToolBar extends JPanel {
-    private static final long serialVersionUID = 1L;
+public class ToolBar {
 
     private final Handlers handlers;
+    private final JPanel panel;
     private JTextField edtMinesLeft, edtTimePlay;
     private BtnNew btnNew;
     private BtnPause btnPause;
 
     public ToolBar(Handlers handlers) {
-        super();
         this.handlers = handlers;
+        panel = new JPanel();
         initialize();
+    }
+
+    public JPanel getPanel() {
+        return panel;
     }
 
     private void initialize() {
         {
             Dimension dimBtn = new Dimension(31, 31);
-            getBtnNew().setPreferredSize(dimBtn);
-            getBtnNew().setMinimumSize(dimBtn);
-            getBtnNew().setMaximumSize(dimBtn);
-            getBtnPause().setPreferredSize(dimBtn);
-            getBtnPause().setMinimumSize(dimBtn);
-            getBtnPause().setMaximumSize(dimBtn);
+            getBtnNew  ().getButton().setPreferredSize(dimBtn);
+            getBtnNew  ().getButton().setMinimumSize(dimBtn);
+            getBtnNew  ().getButton().setMaximumSize(dimBtn);
+            getBtnPause().getButton().setPreferredSize(dimBtn);
+            getBtnPause().getButton().setMinimumSize(dimBtn);
+            getBtnPause().getButton().setMaximumSize(dimBtn);
 
             Dimension dimEdt = new Dimension(40, 21);
             getEdtTimePlay().setPreferredSize(dimEdt);
@@ -46,28 +50,28 @@ public class ToolBar extends JPanel {
             getEdtMinesLeft().setMaximumSize(dimEdt);
         }
         {
-            this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+            panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 
-            this.setBorder(new CompoundBorder(BorderFactory.createRaisedBevelBorder(), new EmptyBorder(2, 2, 2, 2)));
-//                this.setBorder(new CompoundBorder(BorderFactory.createEtchedBorder(), new EmptyBorder(2, 2, 2, 2)));
-//                this.setBorder(new CompoundBorder(BorderFactory.createMatteBorder(3, 3, 3, 3, new Color(255,0,0, 220)), new EmptyBorder(2, 2, 2, 2)));
+            panel.setBorder(new CompoundBorder(BorderFactory.createRaisedBevelBorder(), new EmptyBorder(2, 2, 2, 2)));
+//            panel.setBorder(new CompoundBorder(BorderFactory.createEtchedBorder(), new EmptyBorder(2, 2, 2, 2)));
+//            panel.setBorder(new CompoundBorder(BorderFactory.createMatteBorder(3, 3, 3, 3, new Color(255,0,0, 220)), new EmptyBorder(2, 2, 2, 2)));
 
-            this.add(getEdtMinesLeft());
+            panel.add(getEdtMinesLeft());
             getEdtMinesLeft().setAlignmentX(Component.CENTER_ALIGNMENT);
 
-            this.add(Box.createHorizontalGlue());
+            panel.add(Box.createHorizontalGlue());
 
-            this.add(getBtnNew());
-            getBtnNew().setAlignmentX(Component.CENTER_ALIGNMENT);
+            panel.add(getBtnNew().getButton());
+            getBtnNew().getButton().setAlignmentX(Component.CENTER_ALIGNMENT);
 
-            this.add(Box.createHorizontalStrut(1));
+            panel.add(Box.createHorizontalStrut(1));
 
-            this.add(getBtnPause());
-            getBtnPause().setAlignmentX(Component.CENTER_ALIGNMENT);
+            panel.add(getBtnPause().getButton());
+            getBtnPause().getButton().setAlignmentX(Component.CENTER_ALIGNMENT);
 
-            this.add(Box.createHorizontalGlue());
+            panel.add(Box.createHorizontalGlue());
 
-            this.add(getEdtTimePlay());
+            panel.add(getEdtTimePlay());
             getEdtTimePlay().setAlignmentX(Component.CENTER_ALIGNMENT);
         }
     }

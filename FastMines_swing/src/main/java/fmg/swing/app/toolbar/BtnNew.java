@@ -4,42 +4,49 @@ import java.awt.Insets;
 
 import javax.swing.JButton;
 
-public class BtnNew extends JButton {
+public class BtnNew {
 
-    private static final long serialVersionUID = 1L;
     private final ToolBar toolbar;
+    private final JButton button = new JButton() {
+
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public Insets getInsets() {
+            Insets ins = super.getInsets();
+            // иначе не виден текст (если нет картинки)
+            ins.bottom=ins.left=ins.right=ins.top = 0;
+            return ins;
+        }
+
+    };
 
     public BtnNew(ToolBar toolbar) {
-        super();
         this.toolbar = toolbar;
         initialize();
     }
 
-    private void initialize() {
-        this.setAction(toolbar.getHandlers().getGameNewAction());
-        this.setFocusable(false);
-
-        if (toolbar.getSmileIco(EBtnNewGameState.eNormal) == null) {
-            this.setText("N");
-        } else {
-            this.setIcon(                toolbar.getSmileIco(EBtnNewGameState.eNormal));
-            this.setPressedIcon(         toolbar.getSmileIco(EBtnNewGameState.ePressed));
-            this.setSelectedIcon(        toolbar.getSmileIco(EBtnNewGameState.eSelected));
-            this.setRolloverIcon(        toolbar.getSmileIco(EBtnNewGameState.eRollover));
-            this.setRolloverSelectedIcon(toolbar.getSmileIco(EBtnNewGameState.eRolloverSelected));
-            this.setRolloverEnabled(true);
-            this.setDisabledIcon(        toolbar.getSmileIco(EBtnNewGameState.eDisabled));
-            this.setDisabledSelectedIcon(toolbar.getSmileIco(EBtnNewGameState.eDisabledSelected));
-        }
-        this.setToolTipText("new Game");
+    public JButton getButton() {
+        return button;
     }
 
-    @Override
-    public Insets getInsets() {
-        Insets ins = super.getInsets();
-        // иначе не виден текст (если нет картинки)
-        ins.bottom=ins.left=ins.right=ins.top = 0;
-        return ins;
+    private void initialize() {
+        button.setAction(toolbar.getHandlers().getGameNewAction());
+        button.setFocusable(false);
+
+        if (toolbar.getSmileIco(EBtnNewGameState.eNormal) == null) {
+            button.setText("N");
+        } else {
+            button.setIcon(                toolbar.getSmileIco(EBtnNewGameState.eNormal));
+            button.setPressedIcon(         toolbar.getSmileIco(EBtnNewGameState.ePressed));
+            button.setSelectedIcon(        toolbar.getSmileIco(EBtnNewGameState.eSelected));
+            button.setRolloverIcon(        toolbar.getSmileIco(EBtnNewGameState.eRollover));
+            button.setRolloverSelectedIcon(toolbar.getSmileIco(EBtnNewGameState.eRolloverSelected));
+            button.setRolloverEnabled(true);
+            button.setDisabledIcon(        toolbar.getSmileIco(EBtnNewGameState.eDisabled));
+            button.setDisabledSelectedIcon(toolbar.getSmileIco(EBtnNewGameState.eDisabledSelected));
+        }
+        button.setToolTipText("new Game");
     }
 
 }

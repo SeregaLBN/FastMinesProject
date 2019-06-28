@@ -16,8 +16,8 @@ public class ChampionDlg extends ReportDlg {
 
     private final ChampionsModel champions;
 
-    public ChampionDlg(MainApp parent, boolean modal, ChampionsModel champions) {
-        super(parent, modal);
+    public ChampionDlg(MainApp app, boolean modal, ChampionsModel champions) {
+        super(app, modal);
         this.champions = champions;
     }
 
@@ -49,7 +49,7 @@ public class ChampionDlg extends ReportDlg {
 
     public void showData(ESkillLevel eSkill, EMosaic eMosaic) {
         // найдёт позицию первого вхождения пользователя...
-        int pos = champions.getPos((parent==null) ? null : parent.getActiveUserId(), eMosaic, eSkill);
+        int pos = champions.getPos((app == null) ? null : app.getActiveUserId(), eMosaic, eSkill);
         // ...на этой позиции и фокусируюсь
         super.showData(eSkill, eMosaic, pos);
     }

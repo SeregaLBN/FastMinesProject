@@ -4,42 +4,50 @@ import java.awt.Insets;
 
 import javax.swing.JToggleButton;
 
-public class BtnPause extends JToggleButton {
+public class BtnPause {
 
-    private static final long serialVersionUID = 1L;
     private final ToolBar toolbar;
+    private final JToggleButton button;
 
     public BtnPause(ToolBar toolbar) {
-        super(toolbar.getHandlers().getPauseAction());
         this.toolbar = toolbar;
+        button = new JToggleButton(toolbar.getHandlers().getPauseAction()) {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Insets getInsets() {
+                Insets ins = super.getInsets();
+                // иначе не виден текст (если нет картинки)
+                ins.bottom=ins.left=ins.right=ins.top = 0;
+                return ins;
+            }
+
+        };
         initialize();
     }
 
-    private void initialize() {
-        this.setFocusable(false);
-        this.setEnabled(false);
-
-        if (toolbar.getSmileIco(EBtnPauseState.eNormal) == null) {
-            this.setText("P");
-        } else {
-            this.setIcon(                toolbar.getSmileIco(EBtnPauseState.eNormal));
-            this.setPressedIcon(         toolbar.getSmileIco(EBtnPauseState.ePressed));
-            this.setSelectedIcon(        toolbar.getSmileIco(EBtnPauseState.eSelected));
-            this.setRolloverIcon(        toolbar.getSmileIco(EBtnPauseState.eRollover));
-            this.setRolloverSelectedIcon(toolbar.getSmileIco(EBtnPauseState.eRolloverSelected));
-            this.setRolloverEnabled(true);
-            this.setDisabledIcon(        toolbar.getSmileIco(EBtnPauseState.eDisabled));
-            this.setDisabledSelectedIcon(toolbar.getSmileIco(EBtnPauseState.eDisabledSelected));
-        }
-        this.setToolTipText("Pause");
+    public JToggleButton getButton() {
+        return button;
     }
 
-    @Override
-    public Insets getInsets() {
-        Insets ins = super.getInsets();
-        // иначе не виден текст (если нет картинки)
-        ins.bottom=ins.left=ins.right=ins.top = 0;
-        return ins;
+    private void initialize() {
+        button.setFocusable(false);
+        button.setEnabled(false);
+
+        if (toolbar.getSmileIco(EBtnPauseState.eNormal) == null) {
+            button.setText("P");
+        } else {
+            button.setIcon(                toolbar.getSmileIco(EBtnPauseState.eNormal));
+            button.setPressedIcon(         toolbar.getSmileIco(EBtnPauseState.ePressed));
+            button.setSelectedIcon(        toolbar.getSmileIco(EBtnPauseState.eSelected));
+            button.setRolloverIcon(        toolbar.getSmileIco(EBtnPauseState.eRollover));
+            button.setRolloverSelectedIcon(toolbar.getSmileIco(EBtnPauseState.eRolloverSelected));
+            button.setRolloverEnabled(true);
+            button.setDisabledIcon(        toolbar.getSmileIco(EBtnPauseState.eDisabled));
+            button.setDisabledSelectedIcon(toolbar.getSmileIco(EBtnPauseState.eDisabledSelected));
+        }
+        button.setToolTipText("Pause");
     }
 
 }

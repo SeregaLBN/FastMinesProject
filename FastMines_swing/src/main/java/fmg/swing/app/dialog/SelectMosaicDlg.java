@@ -27,11 +27,11 @@ import fmg.swing.utils.ImgUtils;
 
 public class SelectMosaicDlg implements AutoCloseable {
 
+    private final MainApp app;
     private final JDialog dialog;
     private JSpinner spin;
     private JComboBox<?> cmbxMosaicTypes;
     private JButton btnOk;
-    private MainApp parent;
 
     private MosaicImg.ImageAwtController mosaicsImg, mosaicsImgRollover;
     private final PropertyChangeListener onMosaicsImgPropertyChangedListener = this::onMosaicsImgPropertyChanged;
@@ -41,14 +41,13 @@ public class SelectMosaicDlg implements AutoCloseable {
     private static final Color bkTabBkColor = Cast.toColor(fmg.common.Color.Transparent()); // UIManager.getColor("Button.light"); // "Button.light" "Button.foreground"
     private static final Color bkTabBkColorSelected = UIManager.getColor("Button.shadow"); // "Button.select" "Button.darkShadow"
 
-    public SelectMosaicDlg(JFrame parent, boolean modal) {
-        dialog = new JDialog(parent, "Select mosaic", modal);
-        if (parent instanceof MainApp)
-            this.parent = (MainApp) parent;
-        initialize(parent);
+    public SelectMosaicDlg(MainApp app, boolean modal) {
+        this.app = app;
+        dialog = new JDialog((app == null) ? null : app.getFrame(), "Select mosaic", modal);
+        initialize();
     }
 
-    private void initialize(JFrame parent) {
+    private void initialize() {
         Object keyBind = "onOk";
         dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false), keyBind);
         dialog.getRootPane().getActionMap().put(keyBind, new AbstractAction() {
@@ -73,7 +72,7 @@ public class SelectMosaicDlg implements AutoCloseable {
         dialog.setResizable(false);
         createComponents();
         dialog.pack();
-        dialog.setLocationRelativeTo(parent);
+        dialog.setLocationRelativeTo((app == null) ? null : app.getFrame());
     }
 
     public void startSelect(EMosaicGroup initMosaicGroup) {
@@ -304,9 +303,9 @@ public class SelectMosaicDlg implements AutoCloseable {
     private void onOk() {
 //        System.out.println("onOk");
 
-        if (parent != null) {
+        if (app != null) {
             EMosaic selectedMosaicType = getSelectedMosaicType();
-            SwingUtilities.invokeLater(() -> parent.changeGame(selectedMosaicType) );
+            SwingUtilities.invokeLater(() -> app.changeGame(selectedMosaicType) );
         }
 
         onClose();

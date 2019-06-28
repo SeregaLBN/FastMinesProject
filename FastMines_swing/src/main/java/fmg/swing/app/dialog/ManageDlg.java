@@ -3,6 +3,7 @@ package fmg.swing.app.dialog;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Window;
 import java.awt.event.*;
 import java.util.UUID;
 
@@ -21,6 +22,7 @@ public class ManageDlg {
 
     private static final String DEFAULT_CAPTION = "Users manage";
 
+    private final MainApp app;
     private final JDialog dialog;
     private JButton btnOk;
     private JTable table;
@@ -28,19 +30,18 @@ public class ManageDlg {
     private PlayersModel players;
     private JCheckBox doNotAskStartup;
 
-    public ManageDlg(JFrame parent, boolean modal, PlayersModel players) {
-        dialog = new JDialog(parent, DEFAULT_CAPTION, modal);
-        if (parent instanceof MainApp)
-            this.parent = (MainApp) parent;
+    public ManageDlg(MainApp app, boolean modal, PlayersModel players) {
+        this.app = app;
+        dialog = new JDialog((app == null) ? null : app.getFrame(), DEFAULT_CAPTION, modal);
         this.players = players;
-        initialize(parent);
+        initialize();
     }
 
     public JDialog getDialog() {
         return dialog;
     }
 
-    private void initialize(JFrame parent) {
+    private void initialize() {
         Object keyBind = "CloseDialog";
         dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), keyBind);
         dialog.getRootPane().getActionMap().put(keyBind, new AbstractAction() {
@@ -59,7 +60,7 @@ public class ManageDlg {
 
         // задаю предпочтительный размер
         dialog.pack();
-        dialog.setLocationRelativeTo(parent);
+        dialog.setLocationRelativeTo((app == null) ? null : app.getFrame());
     }
 
     private void onOk() {
@@ -89,7 +90,8 @@ public class ManageDlg {
 
     private void onNewPlayer() {
 //        System.out.println("OnNewPlayer");
-        final LoginDlg loginDialog = new LoginDlg(dialog.isVisible() ? dialog : parent, true, null, false);
+        Window winParent = dialog.isVisible() ? dialog : ((app == null) ? null : app.getFrame());
+        final LoginDlg loginDialog = new LoginDlg(winParent, true, null, false);
         final Runnable anew = () -> loginDialog.getDialog().setVisible(true);
 
         loginDialog.setOkActionListener(

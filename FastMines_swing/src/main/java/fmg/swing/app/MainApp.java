@@ -45,78 +45,106 @@ import fmg.swing.utils.ProjSettings;
 import fmg.swing.utils.ScreenResolutionHelper;
 
 /** Main window (Главное окно программы) */
-public class MainApp extends JFrame {
+public class MainApp {
 
-    private static final long serialVersionUID = 3L;
+    private final JFrame frame = new JFrame() {
 
+        private static final long serialVersionUID = 3L;
+
+        @Override
+        public Dimension getMinimumSize() {
+            return MainApp.this.getMinimumSize();
+        }
+
+        @Override
+        public JPanel getContentPane() {
+            return MainApp.this.getContentPane();
+        }
+
+    };
     private JPanel     contentPane;
     private MainMenu   menu;
     private ToolBar    toolbar;
-    private MosaicJPanelController _mosaicController;
+    private MosaicJPanelController mosaicController;
     private PausePanel pausePanel;
     private StatusBar  statusBar;
 
-    private Logo.ImageAwtController _logo;
+    private Logo.ImageAwtController logo;
     private PlayersModel players;
     private UUID activeUserId; // current user
     private ChampionsModel champions;
 
-    private ManageDlg       _playerManageDialog;
-    private StatisticDlg    _statisticDialog;
-    private ChampionDlg     _championDialog;
-    private AboutDlg        _aboutDialog;
-    private SelectMosaicDlg _selectMosaicDialog;
-    private CustomSkillDlg  _customSkillDialog;
+    private ManageDlg       playerManageDialog;
+    private StatisticDlg    statisticDialog;
+    private ChampionDlg     championDialog;
+    private AboutDlg        aboutDialog;
+    private SelectMosaicDlg selectMosaicDialog;
+    private CustomSkillDlg  customSkillDialog;
+
+    boolean initialized;
+    private Timer timerGame;
+    private Handlers handlers;
+    private Pair<InputMap, ActionMap> keyPairBindAsMenuAccelerator;
+    //private boolean sheduleCheckArea;
+    private boolean shedulePack;
 
     private final PropertyChangeListener      onMosaicModelPropertyChangedListener = this::onMosaicModelPropertyChanged;
     private final PropertyChangeListener onMosaicControllerPropertyChangedListener = this::onMosaicControllerPropertyChanged;
     private final PropertyChangeListener onLogoMainIconPropertyChangedListener = ev -> {
         if (IImageController.PROPERTY_IMAGE.equals(ev.getPropertyName()))
-            this.setIconImage(_logo.getImage());
+            frame.setIconImage(logo.getImage());
     };
 
+    public MainApp() {
+        super();
+        initialize();
+    }
+
+    public JFrame getFrame() {
+        return frame;
+    }
+
     public ManageDlg getPlayerManageDlg() {
-        if (_playerManageDialog == null)
-            _playerManageDialog = new ManageDlg(this, false, getPlayers());
-        return _playerManageDialog;
+        if (playerManageDialog == null)
+            playerManageDialog = new ManageDlg(this, false, getPlayers());
+        return playerManageDialog;
     }
 
     private CustomSkillDlg getCustomSkillDialog() {
-        if (_customSkillDialog == null)
-            _customSkillDialog = new CustomSkillDlg(this, false);
-        return _customSkillDialog;
+        if (customSkillDialog == null)
+            customSkillDialog = new CustomSkillDlg(this, false);
+        return customSkillDialog;
     }
 
-    private boolean isSelectMosaicDialogExist() { return _selectMosaicDialog != null; }
+    private boolean isSelectMosaicDialogExist() { return selectMosaicDialog != null; }
     public SelectMosaicDlg getSelectMosaicDialog() {
-        if (_selectMosaicDialog == null)
-            _selectMosaicDialog = new SelectMosaicDlg(this, false);
-        return _selectMosaicDialog;
+        if (selectMosaicDialog == null)
+            selectMosaicDialog = new SelectMosaicDlg(this, false);
+        return selectMosaicDialog;
     }
 
-    private boolean isAboutDialogExist() { return _aboutDialog != null; }
+    private boolean isAboutDialogExist() { return aboutDialog != null; }
     public AboutDlg getAboutDialog() {
-        if (_aboutDialog == null)
-            _aboutDialog = new AboutDlg(this, false);
-        return _aboutDialog;
+        if (aboutDialog == null)
+            aboutDialog = new AboutDlg(frame, false);
+        return aboutDialog;
     }
 
-    private boolean isChampionDialogExist() { return _championDialog != null; }
+    private boolean isChampionDialogExist() { return championDialog != null; }
     public ChampionDlg getChampionDialog() {
-        if (_championDialog == null)
-            _championDialog = new ChampionDlg(this, false, getChampions());
-        return _championDialog;
+        if (championDialog == null)
+            championDialog = new ChampionDlg(this, false, getChampions());
+        return championDialog;
     }
 
-    private boolean isStatisticDialogExist() { return _statisticDialog != null; }
+    private boolean isStatisticDialogExist() { return statisticDialog != null; }
     public StatisticDlg getStatisticDialog() {
-        if (_statisticDialog == null)
-            _statisticDialog = new StatisticDlg(this, false, getPlayers());
-        return _statisticDialog;
+        if (statisticDialog == null)
+            statisticDialog = new StatisticDlg(this, false, getPlayers());
+        return statisticDialog;
     }
 
-    @Override
-    public Dimension getMinimumSize() {
+    private Dimension getMinimumSize() {
         Insets in = getMosaicMargin();
         Dimension dim = getMosaicPanel().getMinimumSize();
         dim.width  += in.left + in.right;
@@ -124,19 +152,18 @@ public class MainApp extends JFrame {
         return dim;
     }
 
-    @Override
-    public JPanel getContentPane() {
+    private JPanel getContentPane() {
         if (contentPane == null) {
             contentPane = new JPanel();
-            JPanel centerPanel = getPausePanel();
+            JPanel centerPanel = getPausePanel().getPanel();
             centerPanel.setLayout(new GridLayout());
             centerPanel.add(getMosaicPanel());
 
             //contentPane.setBorder(BorderFactory.createEmptyBorder());
             contentPane.setLayout(new BorderLayout());
-            contentPane.add(getToolbar(), BorderLayout.NORTH);
+            contentPane.add(getToolbar().getPanel(), BorderLayout.NORTH);
             contentPane.add(centerPanel, BorderLayout.CENTER);
-            contentPane.add(getStatusBar(), BorderLayout.SOUTH);
+            contentPane.add(getStatusBar().getLabel(), BorderLayout.SOUTH);
         }
         return contentPane;
     }
@@ -155,25 +182,25 @@ public class MainApp extends JFrame {
 
     /** mosaic controller */
     private void setMosaicController(MosaicJPanelController mosaicController) {
-        if (_mosaicController != null) {
-            _mosaicController.getModel().removeListener(onMosaicModelPropertyChangedListener);
-            _mosaicController.removeListener(onMosaicControllerPropertyChangedListener);
-            _mosaicController.close();
+        if (this.mosaicController != null) {
+            this.mosaicController.getModel().removeListener(onMosaicModelPropertyChangedListener);
+            this.mosaicController.removeListener(onMosaicControllerPropertyChangedListener);
+            this.mosaicController.close();
         }
-        _mosaicController = mosaicController;
-        if (_mosaicController != null) {
+        this.mosaicController = mosaicController;
+        if (mosaicController != null) {
             MosaicDrawModel<?> model = mosaicController.getModel();
             model.setPadding(new BoundDouble(0));
             model.setBackgroundColor(model.getBackgroundColor().darker(0.2));
             model.addListener(onMosaicModelPropertyChangedListener);
-            _mosaicController.addListener(onMosaicControllerPropertyChangedListener);
+            mosaicController.addListener(onMosaicControllerPropertyChangedListener);
         }
     }
     /** mosaic controller */
     public MosaicJPanelController getMosaicController() {
-        if (_mosaicController == null)
+        if (mosaicController == null)
             setMosaicController(new MosaicJPanelController());
-        return _mosaicController;
+        return mosaicController;
     }
 //    /** mosaic data */
 //    public Mosaic getMosaic() {
@@ -196,30 +223,15 @@ public class MainApp extends JFrame {
         return statusBar;
     }
 
-    public static void main(String[] args) {
-        ProjSettings.init();
-        //ViewAllEvents();
-        //setSysOut();
-        //printSystemProperties();
-        SwingUtilities.invokeLater(() ->
-            new MainApp().setVisible(true)
-        );
-    }
-
-    public MainApp() {
-        super();
-        initialize();
-    }
-
     void iconify() {
         if (Toolkit.getDefaultToolkit().isFrameStateSupported(Frame.ICONIFIED)) {
-            int state = this.getExtendedState();
+            int state = frame.getExtendedState();
 
             // Set the iconified bit
             state ^= Frame.ICONIFIED;
 
             // Iconify the frame
-            this.setExtendedState(state);
+            frame.setExtendedState(state);
         }
     }
 
@@ -227,7 +239,7 @@ public class MainApp extends JFrame {
 //        Dimension desktopSize = getDesktopSize();
 //        Dimension sizeWin = getRealSize();
 //        setLocation((desktopSize.width - sizeWin.width) / 2, (desktopSize.height - sizeWin.height) / 2);
-        this.setLocationRelativeTo(null);
+        frame.setLocationRelativeTo(null);
     }
 
     private void initialize() {
@@ -239,7 +251,7 @@ public class MainApp extends JFrame {
         }
 
 //        iconify();
-//        this.setResizable(false);
+//        mainFrame.setResizable(false);
 
         boolean isZoomAlwaysMax;
         final Point startLocation = new Point();
@@ -262,7 +274,7 @@ public class MainApp extends JFrame {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-            this.setUndecorated(!spm.getShowElement(EShowElement.eCaption));
+            frame.setUndecorated(!spm.getShowElement(EShowElement.eCaption));
 
             mosaicCtrllr = getMosaicController();
             mosaicCtrllr.setSizeField(spm.getSizeField());
@@ -283,29 +295,29 @@ public class MainApp extends JFrame {
                 getMenu().getOptions().getThemeDefault().setSelected(true);
             getMenu().getOptions().getUsePause()  .setSelected(spm.isUsePause());
             getMenu().getOptions().getUseUnknown().setSelected(spm.isUseUnknown());
-            getToolbar().getBtnPause().setVisible(spm.isUsePause());
+            getToolbar().getBtnPause().getButton().setVisible(spm.isUsePause());
             mosaicCtrllr.setUseUnknown(           spm.isUseUnknown());
 
             for (EShowElement key: EShowElement.values()) {
                 getMenu().getOptions().getShowElement(key).setSelected(spm.getShowElement(key));
             }
-            getMenu().getMenuBar().setVisible(spm.getShowElement(EShowElement.eMenu));
-            applyInputActionMenuMap          (spm.getShowElement(EShowElement.eMenu));
-            getToolbar().          setVisible(spm.getShowElement(EShowElement.eToolbar));
-            getStatusBar().        setVisible(spm.getShowElement(EShowElement.eStatusbar));
+            getMenu().getMenuBar()   .setVisible(spm.getShowElement(EShowElement.eMenu));
+            applyInputActionMenuMap             (spm.getShowElement(EShowElement.eMenu));
+            getToolbar().getPanel()  .setVisible(spm.getShowElement(EShowElement.eToolbar));
+            getStatusBar().getLabel().setVisible(spm.getShowElement(EShowElement.eStatusbar));
 
             startLocation.x = spm.getLocation().x;
             startLocation.y = spm.getLocation().y;
         }
 
-        this.setContentPane(getContentPane());
+        frame.setContentPane(getContentPane());
 //        setMinimumSize(getMinimumSize());
 //        setMinimumSize(new Dimension(400, 400));
 
-        this.setJMenuBar(getMenu().getMenuBar());
-        this.setTitle("FastMines");
-        this._logo = new Logo.ImageAwtController();
-        LogoModel logoModel = this._logo.getModel();
+        frame.setJMenuBar(getMenu().getMenuBar());
+        frame.setTitle("FastMines");
+        this.logo = new Logo.ImageAwtController();
+        LogoModel logoModel = this.logo.getModel();
         logoModel.setUseGradient(true);
         logoModel.setSize(new SizeDouble(128, 128));
         logoModel.setPadding(new BoundDouble(1));
@@ -313,10 +325,10 @@ public class MainApp extends JFrame {
         logoModel.setRotateMode(LogoModel.ERotateMode.combi);
         logoModel.setAnimatePeriod(25000);
         logoModel.setTotalFrames(260);
-        this._logo.useRotateTransforming(true);
-        this._logo.usePolarLightFgTransforming(true);
+        this.logo.useRotateTransforming(true);
+        this.logo.usePolarLightFgTransforming(true);
         /** /
-         this._logo.addModelTransformer((currentFrame, totalFrames, model) -> {
+         this.logo.addModelTransformer((currentFrame, totalFrames, model) -> {
              double angle = currentFrame * 180.0 * 2 / totalFrames;
             //System.out.println("sin("+angle+")=" + Math.sin(FigureHelper.toRadian(angle)));
 //            logoModel.setPadding(1);
@@ -327,8 +339,8 @@ public class MainApp extends JFrame {
         });
         /**/
         logoModel.setAnimated(true);
-        this.setIconImage(_logo.getImage());
-        this._logo.addListener(onLogoMainIconPropertyChangedListener);
+        frame.setIconImage(logo.getImage());
+        this.logo.addListener(onLogoMainIconPropertyChangedListener);
 
 //        this.getHandlers().getMosaicListener().OnChangedArea(new MosaicEvent(getMosaic())); // TODO: это нужно только тогда, когда нет десериализации
         getToolbar().getEdtMinesLeft().setText(Integer.toString(mosaicCtrllr.getCountMinesLeft()));
@@ -336,22 +348,22 @@ public class MainApp extends JFrame {
 
         mosaicCtrllr.setOnClickEvent(this.getHandlers().getMosaicClickHandler());
         //setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.addWindowListener(this.getHandlers().getWindowListener());
-//        this.addKeyListener(new KeyListener() {
+        frame.addWindowListener(this.getHandlers().getWindowListener());
+//        mainFrame.addKeyListener(new KeyListener() {
 //            @Override public void keyTyped   (KeyEvent e) { System.out.println("Main::KeyListener:keyTyped: "    + e); }
 //            @Override public void keyReleased(KeyEvent e) { System.out.println("Main::KeyListener:keyReleased: " + e); }
 //            @Override public void keyPressed (KeyEvent e) { System.out.println("Main::KeyListener:keyPressed: "  + e); }
 //        });
-        this.addWindowFocusListener(this.getHandlers().getWindowFocusListener());
-        this.addMouseWheelListener(this.getHandlers().getMouseWheelListener());
-//        this.addWindowListener(new WindowAdapter() {
+        frame.addWindowFocusListener(this.getHandlers().getWindowFocusListener());
+        frame.addMouseWheelListener(this.getHandlers().getMouseWheelListener());
+//        mainFrame.addWindowListener(new WindowAdapter() {
 //
 //           @Override
 //           public void windowActivated(WindowEvent e) {
-////             if (Main.this.isAlwaysOnTopSupported())
+//             if (isAlwaysOnTopSupported())
 //                  try {
 //                      System.out.println("windowActivated");
-//                      Main.this.setAlwaysOnTop(true);
+//                      setAlwaysOnTop(true);
 //                  } catch (Exception ex) {
 //                      ex.printStackTrace();
 //                  }
@@ -360,10 +372,10 @@ public class MainApp extends JFrame {
 //           @Override
 //           public void windowDeactivated(WindowEvent e) {
 ////                System.out.println("windowDeactivated: " + e.getSource());
-//                if (Main.this.isAlwaysOnTopSupported())
+//                if (mainFrame.isAlwaysOnTopSupported())
 //                    try {
 //                        System.out.println("windowDeactivated");
-//                        Main.this.setAlwaysOnTop(false);
+//                        mainFrame.setAlwaysOnTop(false);
 //                    } catch (Exception ex) {
 //                        ex.printStackTrace();
 //                    }
@@ -374,7 +386,7 @@ public class MainApp extends JFrame {
 //        this.addComponentListener(new ComponentAdapter() {
 //            @Override
 //            public void componentShown(ComponentEvent ev) {
-//                Main.this.recheckLocation();
+//                mainFrame.recheckLocation();
 //            }
 //            @Override
 //            public void componentHidden(ComponentEvent ev) {
@@ -384,15 +396,15 @@ public class MainApp extends JFrame {
 
         customKeyBinding();
 
-        pack();
+        frame.pack();
 //        System.out.println("ThreadId=" + Thread.currentThread().getId() + ": Main::initialize: after pack");
         if (defaultData)
-            setLocationRelativeTo(null);
+            frame.setLocationRelativeTo(null);
         else
-            setLocation(startLocation);
+            frame.setLocation(startLocation);
 //        System.out.println("Main::initialize: after setLocation");
 
-        _initialized = true;
+        initialized = true;
         if (isZoomAlwaysMax)
             invokeLater(() -> sizeAlwaysMax(new ActionEvent(MainApp.this, 0, null)));
         if (!doNotAskStartup)
@@ -400,7 +412,6 @@ public class MainApp extends JFrame {
                 getHandlers().getPlayerManageAction().actionPerformed(new ActionEvent(MainApp.this, 0, "Main::initialize"))
             );
     }
-    boolean _initialized;
 
     public ESkillLevel getSkillLevel() {
         EMosaic eMosaic = getMosaicController().getMosaicType();
@@ -420,61 +431,61 @@ public class MainApp extends JFrame {
 
     /** прочие комбинации клавиш (не из меню) */
     void customKeyBinding() {
-        if (getRootPane().getInputMap().size() == 0) {
+        JRootPane rootPane = frame.getRootPane();
+        if (rootPane.getInputMap().size() == 0) {
             // on ESC key iconic frame
             Object keyBind = "Minimized";
-            getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyCombo.getKeyStroke_Minimized(), keyBind);
-            getRootPane().getActionMap().put(keyBind, this.getHandlers().getMinimizedAction());
+            rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyCombo.getKeyStroke_Minimized(), keyBind);
+            rootPane.getActionMap().put(keyBind, this.getHandlers().getMinimizedAction());
 
             // Num5 - center screen window
             keyBind = "CenterScreenPos";
-            getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyCombo.getKeyStroke_CenterScreenPos(), keyBind);
-            getRootPane().getActionMap().put(keyBind, this.getHandlers().getCenterScreenAction());
+            rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyCombo.getKeyStroke_CenterScreenPos(), keyBind);
+            rootPane.getActionMap().put(keyBind, this.getHandlers().getCenterScreenAction());
             keyBind = "CenterScreenPos2";
-            getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyCombo.getKeyStroke_CenterScreenPos2(), keyBind);
-            getRootPane().getActionMap().put(keyBind, this.getHandlers().getCenterScreenAction());
+            rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyCombo.getKeyStroke_CenterScreenPos2(), keyBind);
+            rootPane.getActionMap().put(keyBind, this.getHandlers().getCenterScreenAction());
 
 
             keyBind = "MaxSize";
-            getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyCombo.getKeyStroke_ZoomMaxAlternative(), keyBind);
-            getRootPane().getActionMap().put(keyBind, this.getHandlers().getZoomAction(EZoomInterface.eMax));
+            rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyCombo.getKeyStroke_ZoomMaxAlternative(), keyBind);
+            rootPane.getActionMap().put(keyBind, this.getHandlers().getZoomAction(EZoomInterface.eMax));
 
             keyBind = "MinSize";
-            getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyCombo.getKeyStroke_ZoomMinAlternative(), keyBind);
-            getRootPane().getActionMap().put(keyBind, this.getHandlers().getZoomAction(EZoomInterface.eMin));
+            rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyCombo.getKeyStroke_ZoomMinAlternative(), keyBind);
+            rootPane.getActionMap().put(keyBind, this.getHandlers().getZoomAction(EZoomInterface.eMin));
 
 
             keyBind = "Pause";
-            getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyCombo.getKeyStroke_Pause1(), keyBind);
-            getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyCombo.getKeyStroke_Pause2(), keyBind);
-            getRootPane().getActionMap().put(keyBind, this.getHandlers().getPauseAction());
+            rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyCombo.getKeyStroke_Pause1(), keyBind);
+            rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyCombo.getKeyStroke_Pause2(), keyBind);
+            rootPane.getActionMap().put(keyBind, this.getHandlers().getPauseAction());
 
             // < > ^ V
             keyBind = "Increment by X mosaic field";
-            getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyCombo.getKeyStroke_MosaicFieldXInc(), keyBind);
-            getRootPane().getActionMap().put(keyBind, this.getHandlers().getMosaicSizeIncX());
+            rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyCombo.getKeyStroke_MosaicFieldXInc(), keyBind);
+            rootPane.getActionMap().put(keyBind, this.getHandlers().getMosaicSizeIncX());
             keyBind = "Decrement by X mosaic field";
-            getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyCombo.getKeyStroke_MosaicFieldXDec(), keyBind);
-            getRootPane().getActionMap().put(keyBind, this.getHandlers().getMosaicSizeDecX());
+            rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyCombo.getKeyStroke_MosaicFieldXDec(), keyBind);
+            rootPane.getActionMap().put(keyBind, this.getHandlers().getMosaicSizeDecX());
             keyBind = "Increment by Y mosaic field";
-            getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyCombo.getKeyStroke_MosaicFieldYInc(), keyBind);
-            getRootPane().getActionMap().put(keyBind, this.getHandlers().getMosaicSizeIncY());
+            rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyCombo.getKeyStroke_MosaicFieldYInc(), keyBind);
+            rootPane.getActionMap().put(keyBind, this.getHandlers().getMosaicSizeIncY());
             keyBind = "Decrement by Y mosaic field";
-            getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyCombo.getKeyStroke_MosaicFieldYDec(), keyBind);
-            getRootPane().getActionMap().put(keyBind, this.getHandlers().getMosaicSizeDecY());
+            rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyCombo.getKeyStroke_MosaicFieldYDec(), keyBind);
+            rootPane.getActionMap().put(keyBind, this.getHandlers().getMosaicSizeDecY());
 
             for (EMosaicGroup mosGr: EMosaicGroup.values()) {
                 keyBind = "SelectMosaic_"+mosGr;
-                getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyCombo.getKeyStroke_SelectMosaic(mosGr), keyBind);
-                getRootPane().getActionMap().put(keyBind, this.getHandlers().getSelectMosaicAction(mosGr));
+                rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyCombo.getKeyStroke_SelectMosaic(mosGr), keyBind);
+                rootPane.getActionMap().put(keyBind, this.getHandlers().getSelectMosaicAction(mosGr));
             }
         }
     }
 
-    private Pair<InputMap, ActionMap> keyPairBindAsMenuAccelerator;
     Pair<InputMap, ActionMap> getKeyPairBindAsMenuAccelerator() {
         if (keyPairBindAsMenuAccelerator == null) {
-            InputMap inputMap = new ComponentInputMap(getRootPane());
+            InputMap inputMap = new ComponentInputMap(frame.getRootPane());
             ActionMap actionMap = new ActionMap();
             keyPairBindAsMenuAccelerator = new Pair<>(inputMap, actionMap);
 
@@ -520,7 +531,7 @@ public class MainApp extends JFrame {
 //        System.out.println("> FMG::ChangePause: " + KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner() );
 
         boolean paused = isPaused();
-        getToolbar().getBtnPause().setSelected(!paused);
+        getToolbar().getBtnPause().getButton().setSelected(!paused);
         getPausePanel().animateLogo(!paused);
         if (paused) {
             getTimerGame().restart();
@@ -531,7 +542,7 @@ public class MainApp extends JFrame {
             getTimerGame().stop();
 
             getMosaicPanel().setVisible(false);
-            getRootPane().requestFocusInWindow(); // ! иначе на компонентах нат фокуса, и mouse wheel не пашет...
+            frame.getRootPane().requestFocusInWindow(); // ! иначе на компонентах нат фокуса, и mouse wheel не пашет...
         }
 //        System.out.println("< FMG::ChangePause: " + KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner() );
     }
@@ -574,7 +585,7 @@ public class MainApp extends JFrame {
             spm.setZoomAlwaysMax(getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected());
             spm.setUseUnknown(getMenu().getOptions().getUseUnknown().isSelected());
             spm.setUsePause(getMenu().getOptions().getUsePause().isSelected());
-            spm.setLocation(Cast.toPoint(this.getLocation()));
+            spm.setLocation(Cast.toPoint(frame.getLocation()));
 
             spm.save();
         } catch (Exception ex) {
@@ -592,18 +603,18 @@ public class MainApp extends JFrame {
         if (isAboutDialogExist())
             getAboutDialog().close();
 
-//        setVisible(false);
+//      mainFrame.setVisible(false);
         setMosaicController(null);
 
-        _logo.removeListener(onLogoMainIconPropertyChangedListener);
-        _logo.close();
+        logo.removeListener(onLogoMainIconPropertyChangedListener);
+        logo.close();
 
 
-        this.removeWindowListener     (this.getHandlers().getWindowListener());
-        this.removeWindowFocusListener(this.getHandlers().getWindowFocusListener());
-        this.removeMouseWheelListener (this.getHandlers().getMouseWheelListener());
+        frame.removeWindowListener     (this.getHandlers().getWindowListener());
+        frame.removeWindowFocusListener(this.getHandlers().getWindowFocusListener());
+        frame.removeMouseWheelListener (this.getHandlers().getMouseWheelListener());
 
-        dispose();
+        frame.dispose();
         Animator.getSingleton().close();
 //        System.exit(0);
     }
@@ -678,16 +689,16 @@ public class MainApp extends JFrame {
     /** get margin around mosaic control */
     Insets getMosaicMargin() {
         Insets mainPadding = getMenu().getOptions().getShowElement(EShowElement.eCaption).isSelected()
-                ? this.getInsets()
+                ? frame.getInsets()
                 : new Insets(0,0,0,0);
         Dimension menuSize = getMenu().getOptions().getShowElement(EShowElement.eMenu).isSelected()
                 ? getMenu().getMenuBar().getSize()
                 : new Dimension();
         Dimension toolbarSize = getMenu().getOptions().getShowElement(EShowElement.eToolbar).isSelected()
-                ? getToolbar().getSize()
+                ? getToolbar().getPanel().getSize()
                 : new Dimension();
         Dimension statusBarSize = getMenu().getOptions().getShowElement(EShowElement.eStatusbar).isSelected()
-                ? getStatusBar().getSize()
+                ? getStatusBar().getLabel().getSize()
                 : new Dimension();
         return new Insets(
             mainPadding.top + menuSize.height + toolbarSize.height,
@@ -720,7 +731,7 @@ public class MainApp extends JFrame {
      * @return мах размер мозаики в пикселях
      */
     SizeDouble calcMaxMosaicSize(Matrisize mosaicSizeField) {
-        SizeDouble sizeMosaicIn = calcMosaicWindowSize(ScreenResolutionHelper.getDesktopSize(this.getGraphicsConfiguration()));
+        SizeDouble sizeMosaicIn = calcMosaicWindowSize(ScreenResolutionHelper.getDesktopSize(frame.getGraphicsConfiguration()));
         SizeDouble sizeMosaicOut = new SizeDouble();
         MosaicHelper.findAreaBySize(getMosaicController().getMosaicType(), mosaicSizeField, sizeMosaicIn, sizeMosaicOut);
         return sizeMosaicOut;
@@ -732,32 +743,32 @@ public class MainApp extends JFrame {
      * @return max размер поля мозаики
      */
     public Matrisize calcMaxMosaicSize(double area) {
-        SizeDouble sizeMosaic = calcMosaicWindowSize(ScreenResolutionHelper.getDesktopSize(this.getGraphicsConfiguration()));
+        SizeDouble sizeMosaic = calcMosaicWindowSize(ScreenResolutionHelper.getDesktopSize(frame.getGraphicsConfiguration()));
         return MosaicHelper.findSizeByArea(getMosaicController().getMosaicType(), area, sizeMosaic);
     }
 
     /** проверить что находится в рамках экрана */
     void recheckLocation() {
-        if (!_shedulePack) {
-            _shedulePack = true;
+        if (!shedulePack) {
+            shedulePack = true;
             invokeLater(() -> {
-                _shedulePack = false;
+                shedulePack = false;
 
                 {
-                    fmg.common.geom.Point center = Rect.getCenter(Cast.toRect(this.getBounds()));
-//                    Point center = new Rect(this.getBounds()).center();
-                    pack();
-//                    Rectangle newBounds = new Rect(this.getBounds()).center(center);
-                    Rectangle newBounds = Cast.toRect(Rect.setCenter(Cast.toRect(this.getBounds()), center));
-                    this.setBounds(newBounds);
-                    revalidate();
+                    fmg.common.geom.Point center = Rect.getCenter(Cast.toRect(frame.getBounds()));
+//                    Point center = new Rect(mainFrame.getBounds()).center();
+                    frame.pack();
+//                    Rectangle newBounds = new Rect(mainFrame.getBounds()).center(center);
+                    Rectangle newBounds = Cast.toRect(Rect.setCenter(Cast.toRect(frame.getBounds()), center));
+                    frame.setBounds(newBounds);
+                    frame.revalidate();
                 }
 
-//                 if (!_sheduleCheckArea) {
-//                    _sheduleCheckArea = true;
+//                 if (!sheduleCheckArea) {
+//                    sheduleCheckArea = true;
 //                    invokeLater(() -> {
-//                       _sheduleCheckArea = false;
-//                       if (!this.isVisible())
+//                       sheduleCheckArea = false;
+//                       if (!mainFrame.isVisible())
 //                           return;
                         if (getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected()) {
                             sizeMax();
@@ -770,8 +781,8 @@ public class MainApp extends JFrame {
                         // check that within the screen
                         {
                             Dimension screenSize = ScreenResolutionHelper.getScreenSize();
-                            Insets padding = ScreenResolutionHelper.getScreenPadding(this.getGraphicsConfiguration());
-                            Rect rcThis = Cast.toRect(this.getBounds());
+                            Insets padding = ScreenResolutionHelper.getScreenPadding(frame.getGraphicsConfiguration());
+                            Rect rcThis = Cast.toRect(frame.getBounds());
 
                             boolean changed = false;
                             { // check that the bottom-right boundary within the screen
@@ -799,7 +810,7 @@ public class MainApp extends JFrame {
                                 }
                             }
                             if (changed)
-                                this.setLocation(Cast.toPoint(rcThis.PointLT()));
+                                frame.setLocation(Cast.toPoint(rcThis.PointLT()));
                         }
 //                    });
 //                 }
@@ -807,8 +818,6 @@ public class MainApp extends JFrame {
             });
         }
     }
-    //private boolean _sheduleCheckArea;
-    private boolean _shedulePack;
 
     /** mosaic size in pixels */
     void setMosaicSize(SizeDouble size) {
@@ -818,7 +827,7 @@ public class MainApp extends JFrame {
         Insets o = getMosaicMargin();
         Dimension dim = new Dimension();
         dim.setSize(size.width + o.left + o.right, size.height + o.top + o.bottom);
-        this.setSize(dim);
+        frame.setSize(dim);
     }
 
     /** Zoom + */
@@ -848,8 +857,8 @@ public class MainApp extends JFrame {
         setMosaicSize(newSize);
     }
     /** Zoom always maximum */
-    public void sizeAlwaysMax(ActionEvent e) {
-//        if (!isMenuEvent(e))
+    public void sizeAlwaysMax(ActionEvent ev) {
+//        if (!isMenuEvent(ev))
 //            getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).setSelected(!getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected());
 
         boolean checked = getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected();
@@ -865,8 +874,8 @@ public class MainApp extends JFrame {
     public void optionsThemeDefault() {
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-            SwingUtilities.updateComponentTreeUI(MainApp.this);
-            MainApp.this.pack();
+            SwingUtilities.updateComponentTreeUI(frame);
+            frame.pack();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -875,8 +884,8 @@ public class MainApp extends JFrame {
     public void optionsThemeSystem() {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            SwingUtilities.updateComponentTreeUI(MainApp.this);
-            MainApp.this.pack();
+            SwingUtilities.updateComponentTreeUI(frame);
+            frame.pack();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -897,7 +906,7 @@ public class MainApp extends JFrame {
             getMenu().getOptions().getUsePause().setSelected(!getMenu().getOptions().getUsePause().isSelected());
 
         boolean usePause = isUsePause();
-        this.getToolbar().getBtnPause().setVisible(usePause);
+        this.getToolbar().getBtnPause().getButton().setVisible(usePause);
 //        this.getToolbar().revalidate();
 
         if (!usePause && isPaused())
@@ -911,28 +920,28 @@ public class MainApp extends JFrame {
         switch (key) {
         case eCaption:
             {
-                final Rectangle rc = getBounds();
+                final Rectangle rc = frame.getBounds();
                 final Map<EShowElement, Boolean> mapShow = new HashMap<>(EShowElement.values().length);
                 for (EShowElement val: EShowElement.values())
                     mapShow.put(val, getMenu().getOptions().getShowElement(val).isSelected());
 
-                // вызов this.dispose(); приводит к потере фокуса, т.е, когда идёт игра, - к срабатыванию паузы
+                // вызов mainFrame.dispose(); приводит к потере фокуса, т.е, когда идёт игра, - к срабатыванию паузы
                 // т.е. нужно позже снять паузу...
                 final boolean isNotPaused = (getMosaicController().getGameStatus() == EGameStatus.eGSPlay) && !isPaused();
-                //if (this.isDisplayable())
-                    this.dispose();
+                //if (mainFrame.isDisplayable())
+                    frame.dispose();
                 invokeLater(() -> {
-                        MainApp.this.setUndecorated(!mapShow.get(EShowElement.eCaption).booleanValue());
-                        MainApp.this.setBounds(rc);
-                        MainApp.this.getMenu().getMenuBar().setVisible(mapShow.get(EShowElement.eMenu).booleanValue());
-                        MainApp.this.getToolbar()          .setVisible(mapShow.get(EShowElement.eToolbar).booleanValue());
-                        MainApp.this.getStatusBar()        .setVisible(mapShow.get(EShowElement.eStatusbar).booleanValue());
+                        frame.setUndecorated(                     !mapShow.get(EShowElement.eCaption).booleanValue());
+                        frame.setBounds(rc);
+                        getMenu().getMenuBar()   .setVisible(mapShow.get(EShowElement.eMenu).booleanValue());
+                        getToolbar().getPanel()  .setVisible(mapShow.get(EShowElement.eToolbar).booleanValue());
+                        getStatusBar().getLabel().setVisible(mapShow.get(EShowElement.eStatusbar).booleanValue());
 
                         if (isNotPaused && isUsePause())
-                            MainApp.this.changePause();
+                            changePause();
 
-                        MainApp.this.setVisible(true);
-                        MainApp.this.pack();
+                        frame.setVisible(true);
+                        frame.pack();
                 });
             }
             break;
@@ -941,20 +950,20 @@ public class MainApp extends JFrame {
                 boolean show = getMenu().getOptions().getShowElement(key).isSelected();
                 getMenu().getMenuBar().setVisible(show);
                 applyInputActionMenuMap(show);
-                pack();
+                frame.pack();
             }
             break;
         case eToolbar:
             {
-                getToolbar().setVisible(getMenu().getOptions().getShowElement(key).isSelected());
-                pack();
+                getToolbar().getPanel().setVisible(getMenu().getOptions().getShowElement(key).isSelected());
+                frame.pack();
             }
             break;
         case eStatusbar:
             {
                 boolean sel = getMenu().getOptions().getShowElement(key).isSelected();
-                getStatusBar().setVisible(sel);
-                pack();
+                getStatusBar().getLabel().setVisible(sel);
+                frame.pack();
             }
             break;
         }
@@ -965,8 +974,8 @@ public class MainApp extends JFrame {
 //           getRootPane().getActionMap().setParent(null);
 //        } else {
             Pair<InputMap, ActionMap> bind = getKeyPairBindAsMenuAccelerator();
-            getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).setParent(bind.first);
-            getRootPane().getActionMap().setParent(bind.second);
+            frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).setParent(bind.first);
+            frame.getRootPane().getActionMap().setParent(bind.second);
 //        }
     }
 
@@ -984,11 +993,10 @@ public class MainApp extends JFrame {
         return src instanceof JMenuItem;
     }
 
-    private Timer _timerGame;
     Timer getTimerGame() {
-        if (_timerGame == null)
-            _timerGame = new Timer(1000, getHandlers().getTimePlayAction());
-        return _timerGame;
+        if (timerGame == null)
+            timerGame = new Timer(1000, getHandlers().getTimePlayAction());
+        return timerGame;
     }
 
 //    private static String getProperties() {
@@ -1004,7 +1012,6 @@ public class MainApp extends JFrame {
 //        return sb.toString();
 //    }
 
-    private Handlers handlers;
     /** all Action handlers */
     public Handlers getHandlers() {
         if (handlers == null)
@@ -1113,13 +1120,13 @@ public class MainApp extends JFrame {
         if (!victory && (getActiveUserId() == null))
             return; // не напрягаю игрока окном выбора пользователя, пока он не выиграет разок...
 
-        final ESkillLevel eSkill = MainApp.this.getSkillLevel();
+        final ESkillLevel eSkill = getSkillLevel();
         if (eSkill == ESkillLevel.eCustom)
             return;
 
         final EMosaic eMosaic = mosaicCtrllr.getMosaicType();
         final long realCountOpen = mosaicCtrllr.isVictory() ? mosaicCtrllr.getMinesCount() : mosaicCtrllr.getCountOpen();
-        final long playTime = Long.parseLong(MainApp.this.getToolbar().getEdtTimePlay().getText());
+        final long playTime = Long.parseLong(getToolbar().getEdtTimePlay().getText());
         final long clickCount = mosaicCtrllr.getCountClick();
 
         // логика сохранения...
@@ -1133,10 +1140,10 @@ public class MainApp extends JFrame {
 
                 // ...чемпиона
                 if (victory) {
-                    User user = MainApp.this.getPlayers().getUser(userId);
-                    int pos = MainApp.this.getChampions().add(user, playTime, eMosaic, eSkill);
+                    User user = getPlayers().getUser(userId);
+                    int pos = getChampions().add(user, playTime, eMosaic, eSkill);
                     if (pos != -1)
-                        MainApp.this.getChampionDialog().showData(eSkill, eMosaic, pos);
+                        getChampionDialog().showData(eSkill, eMosaic, pos);
                 }
             }
         };
@@ -1187,7 +1194,7 @@ public class MainApp extends JFrame {
             break;
         case MosaicController.PROPERTY_GAME_STATUS:
             {
-                getToolbar().getBtnPause().setEnabled(getMosaicController().getGameStatus() == EGameStatus.eGSPlay);
+                getToolbar().getBtnPause().getButton().setEnabled(getMosaicController().getGameStatus() == EGameStatus.eGSPlay);
                 //System.out.println("OnChangeGameStatus: " + e.getSource().getGameStatus());
                 switch ((EGameStatus)ev.getNewValue()) {
                 case eGSCreateGame:
@@ -1197,7 +1204,7 @@ public class MainApp extends JFrame {
                         getToolbar().getEdtTimePlay().setText("0");
                         Icon img = getToolbar().getSmileIco(EBtnNewGameState.eNormal);
                         if (img != null)
-                            getToolbar().getBtnNew().setIcon(img);
+                            getToolbar().getBtnNew().getButton().setIcon(img);
                     }
                     break;
                 case eGSPlay:
@@ -1213,7 +1220,7 @@ public class MainApp extends JFrame {
                                 EBtnNewGameState.eNormalWin :
                                 EBtnNewGameState.eNormalLoss);
                         if (img != null)
-                            getToolbar().getBtnNew().setIcon(img);
+                            getToolbar().getBtnNew().getButton().setIcon(img);
 
                         if (getSkillLevel() != ESkillLevel.eCustom)
                             // сохраняю статистику и чемпиона
@@ -1240,10 +1247,20 @@ public class MainApp extends JFrame {
 
 
     void invokeLater(Runnable doRun) {
-        if (!_initialized)
+        if (!initialized)
             doRun.run();
         else
             SwingUtilities.invokeLater(doRun);
+    }
+
+    public static void main(String[] args) {
+        ProjSettings.init();
+        //ViewAllEvents();
+        //setSysOut();
+        //printSystemProperties();
+        SwingUtilities.invokeLater(() ->
+            new MainApp().getFrame().setVisible(true)
+        );
     }
 
 }

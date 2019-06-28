@@ -18,8 +18,8 @@ public class StatisticDlg extends ReportDlg {
 
     private PlayersModel players;
 
-    public StatisticDlg(MainApp parent, boolean modal, PlayersModel players) {
-        super(parent, modal);
+    public StatisticDlg(MainApp app, boolean modal, PlayersModel players) {
+        super(app, modal);
         this.players = players;
     }
 
@@ -30,7 +30,7 @@ public class StatisticDlg extends ReportDlg {
 
         // выделяю рядок текущего пользователя
         try {
-            User user = (parent == null) ? null : parent.getActiveUser();
+            User user = (app == null) ? null : app.getActiveUser();
             int pos = (user == null) ? -1 : players.indexOf(user);
             if (pos != -1) {
                 JTable table = getSelectedTable();
@@ -62,7 +62,7 @@ public class StatisticDlg extends ReportDlg {
     protected boolean isOneLineSkillLevelButtons() { return true; }
 
     public void showData(ESkillLevel eSkill, EMosaic eMosaic) {
-        int pos = players.getPos((parent==null) ? null : parent.getActiveUserId());
+        int pos = players.getPos((app == null) ? null : app.getActiveUserId());
         super.showData(eSkill, eMosaic, pos);
     }
 

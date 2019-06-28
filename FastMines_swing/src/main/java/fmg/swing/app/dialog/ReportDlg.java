@@ -38,26 +38,26 @@ public abstract class ReportDlg implements AutoCloseable {
     private static final Color bkTabBkColor = fmg.common.Color.Transparent(); // Cast.toColor(UIManager.getColor("TabbedPane.light")); // Cast.toColor(getContentPane().getBackground());
     private static final Color bkTabBkColorSelected = fmg.common.Color.Aquamarine().brighter();//Cast.toColor(UIManager.getColor("TabbedPane.shadow")); // "TabbedPane.darkShadow"
 
+    protected final MainApp app;
     protected final JDialog dialog;
     protected JTabbedPane tabPanel;
     protected JToggleButton[] btns = new JToggleButton[ESkillLevel.values().length-1];
     private Map<EMosaic, JScrollPane> scrollPanes = new EnumMap<>(EMosaic.class);
     private List<MosaicImg.IconController> images = new ArrayList<>(EMosaic.values().length);
     protected ButtonGroup radioGroup;
-    protected MainApp parent;
     private final PropertyChangeListener onImagePropertyChangedListener = this::onImagePropertyChanged;
 
-    public ReportDlg(MainApp parent, boolean modal) {
-        dialog = new JDialog(parent, "report window...", modal);
-        this.parent = parent;
-        initialize(parent);
+    public ReportDlg(MainApp app, boolean modal) {
+        this.app = app;
+        dialog = new JDialog((app == null) ? null : app.getFrame(), "report window...", modal);
+        initialize();
     }
 
     public JDialog getDialog() {
         return dialog;
     }
 
-    private void initialize(JFrame parent) {
+    private void initialize() {
         Object keyBind = "CloseDialog";
         dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), keyBind);
         dialog.getRootPane().getActionMap().put(keyBind, new AbstractAction() {
@@ -79,7 +79,7 @@ public abstract class ReportDlg implements AutoCloseable {
 //        dialog.setPreferredSize(preferredSize);
 //        dialog.setVisible(true);
         dialog.pack();
-        dialog.setLocationRelativeTo(parent);
+        dialog.setLocationRelativeTo((app == null) ? null : app.getFrame());
     }
 
     private void onClose() {

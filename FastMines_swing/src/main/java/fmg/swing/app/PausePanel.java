@@ -2,6 +2,7 @@ package fmg.swing.app;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.JPanel;
@@ -12,40 +13,50 @@ import fmg.core.img.IImageController;
 import fmg.core.img.LogoModel;
 import fmg.swing.img.Logo;
 
-class PausePanel extends JPanel {
-
-    private static final long serialVersionUID = 1L;
+class PausePanel {
 
     private final MainApp app;
+    private final JPanel panel;
     private Logo.IconController logo;
+    private final PropertyChangeListener onLogoPausePropertyChangedListener = this::onLogoPausePropertyChanged;
 
     public PausePanel(MainApp app) {
         this.app = app;
-        addMouseListener(app.getHandlers().getPausePanelMouseListener());
+        panel = new JPanel() {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                if (!app.isPaused())
+                    return;
+
+                super.paintComponent(g);
+                PausePanel.this.paintComponent(g);
+            }
+        };
+        panel.addMouseListener(app.getHandlers().getPausePanelMouseListener());
     }
 
-    private final PropertyChangeListener onLogoPausePropertyChangedListener = ev -> {
-        if (!this.isVisible())
-            return;
-        if (IImageController.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
-            this.repaint();
-        }
-    };
+    public JPanel getPanel() {
+        return panel;
+    }
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        if (!app.isPaused())
+    private void onLogoPausePropertyChanged(PropertyChangeEvent ev) {
+        if (!panel.isVisible())
             return;
+        if (IImageController.PROPERTY_IMAGE.equals(ev.getPropertyName()))
+            panel.repaint();
+    }
 
-        super.paintComponent(g);
-        Dimension sizeOutward = this.getSize();
-        Logo.IconController logo = getLogo();
+    private void paintComponent(Graphics g) {
+        Dimension sizeOutward = panel.getSize();
+        Logo.IconController l = getLogo();
         double sq = Math.min(sizeOutward.getWidth(), sizeOutward.getHeight());
-        logo.getModel().setSize(new SizeDouble(sq, sq));
-
-        logo.getImage().paintIcon(this, g,
-                                  (int)((sizeOutward.width -logo.getModel().getSize().width)/2),
-                                  (int)((sizeOutward.height-logo.getModel().getSize().height)/2));
+        l.getModel().setSize(new SizeDouble(sq, sq));
+        l.getImage().paintIcon(panel, g,
+                               (int)((sizeOutward.width  - l.getModel().getSize().width ) / 2),
+                               (int)((sizeOutward.height - l.getModel().getSize().height) / 2));
     }
 
     private Logo.IconController getLogo() {
@@ -68,7 +79,7 @@ class PausePanel extends JPanel {
     }
 
     void close() {
-        this.removeMouseListener(app.getHandlers().getPausePanelMouseListener());
+        panel.removeMouseListener(app.getHandlers().getPausePanelMouseListener());
         getLogo().removeListener(onLogoPausePropertyChangedListener);
         getLogo().close();
     }

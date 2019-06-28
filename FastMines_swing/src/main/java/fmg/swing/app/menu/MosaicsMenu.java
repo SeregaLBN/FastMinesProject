@@ -2,6 +2,7 @@ package fmg.swing.app.menu;
 
 import java.awt.Container;
 import java.awt.FlowLayout;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.*;
 
@@ -30,28 +31,8 @@ public class MosaicsMenu implements AutoCloseable {
     private List<MosaicGroupImg.IconController> mosaicsGroupImages;
     private Map<EMosaic, JRadioButtonMenuItem> mosaics;
     private List<MosaicImg.IconController> mosaicsImages;
-
-    private final PropertyChangeListener onMosaicImgPropertyChangedListener = ev -> {
-        MosaicImg.IconController img = (MosaicImg.IconController)ev.getSource();
-        JRadioButtonMenuItem menuItem = mosaics.get(img.getModel().getMosaicType());
-        Container parent = menuItem.getParent();
-        if ((parent == null) || !parent.isVisible())
-            return;
-        if (ev.getPropertyName().equalsIgnoreCase(IImageController.PROPERTY_IMAGE)) {
-            MainMenu.setMenuItemIcon(menuItem, img.getImage());
-        }
-    };
-
-    private final PropertyChangeListener onMosaicGroupImgPropertyChangedListener = ev -> {
-        MosaicGroupImg.IconController img = (MosaicGroupImg.IconController)ev.getSource();
-        JMenuItem menuItem = mosaicsGroup.get(img.getModel().getMosaicGroup());
-        Container parent = menuItem.getParent();
-        if ((parent == null) || !parent.isVisible())
-            return;
-        if (ev.getPropertyName().equalsIgnoreCase(IImageController.PROPERTY_IMAGE)) {
-            MainMenu.setMenuItemIcon(menuItem, img.getImage());
-        }
-    };
+    private final PropertyChangeListener onMosaicImgPropertyChangedListener      = this::onMosaicImgPropertyChanged;
+    private final PropertyChangeListener onMosaicGroupImgPropertyChangedListener = this::onMosaicGroupImgPropertyChanged;
 
     public MosaicsMenu(MainApp app) {
         this.app = app;
@@ -60,6 +41,28 @@ public class MosaicsMenu implements AutoCloseable {
 
     public JMenu getMenu() {
         return menu;
+    }
+
+    private void onMosaicImgPropertyChanged(PropertyChangeEvent ev) {
+        MosaicImg.IconController img = (MosaicImg.IconController)ev.getSource();
+        JRadioButtonMenuItem menuItem = mosaics.get(img.getModel().getMosaicType());
+        Container parent = menuItem.getParent();
+        if ((parent == null) || !parent.isVisible())
+            return;
+        if (ev.getPropertyName().equalsIgnoreCase(IImageController.PROPERTY_IMAGE)) {
+            MainMenu.setMenuItemIcon(menuItem, img.getImage());
+        }
+    }
+
+    private void onMosaicGroupImgPropertyChanged(PropertyChangeEvent ev) {
+        MosaicGroupImg.IconController img = (MosaicGroupImg.IconController)ev.getSource();
+        JMenuItem menuItem = mosaicsGroup.get(img.getModel().getMosaicGroup());
+        Container parent = menuItem.getParent();
+        if ((parent == null) || !parent.isVisible())
+            return;
+        if (ev.getPropertyName().equalsIgnoreCase(IImageController.PROPERTY_IMAGE)) {
+            MainMenu.setMenuItemIcon(menuItem, img.getImage());
+        }
     }
 
     private void initialize() {

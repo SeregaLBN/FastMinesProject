@@ -1,6 +1,7 @@
 package fmg.swing.app.menu;
 
 import java.awt.Container;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,17 +28,7 @@ public class GameMenu implements AutoCloseable {
     private List<MosaicSkillImg.IconController> skillLevelImages;
     private JMenuItem playerManage;
     private JMenuItem exit;
-
-    private final PropertyChangeListener onMosaicSkillImgPropertyChagedListener = (ev -> {
-        MosaicSkillImg.IconController img = (MosaicSkillImg.IconController)ev.getSource();
-        JRadioButtonMenuItem menuItem = skillLevel.get(img.getModel().getMosaicSkill());
-        Container parent = menuItem.getParent();
-        if ((parent == null) || !parent.isVisible())
-            return;
-        if (ev.getPropertyName().equalsIgnoreCase(IImageController.PROPERTY_IMAGE)) {
-            MainMenu.setMenuItemIcon(menuItem, img.getImage());
-        }
-    });
+    private final PropertyChangeListener onMosaicSkillImgPropertyChagedListener = this::onMosaicSkillImgPropertyChaged;
 
     public GameMenu(MainApp app) {
         this.app = app;
@@ -46,6 +37,17 @@ public class GameMenu implements AutoCloseable {
 
     public JMenu getMenu() {
         return menu;
+    }
+
+    private void onMosaicSkillImgPropertyChaged(PropertyChangeEvent ev) {
+        MosaicSkillImg.IconController img = (MosaicSkillImg.IconController)ev.getSource();
+        JRadioButtonMenuItem menuItem = skillLevel.get(img.getModel().getMosaicSkill());
+        Container parent = menuItem.getParent();
+        if ((parent == null) || !parent.isVisible())
+            return;
+        if (ev.getPropertyName().equalsIgnoreCase(IImageController.PROPERTY_IMAGE)) {
+            MainMenu.setMenuItemIcon(menuItem, img.getImage());
+        }
     }
 
     private void initialize() {

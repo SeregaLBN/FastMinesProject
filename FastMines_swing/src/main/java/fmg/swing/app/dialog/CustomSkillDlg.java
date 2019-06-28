@@ -23,6 +23,7 @@ import fmg.swing.utils.GuiTools;
 
 public class CustomSkillDlg {
 
+    private final MainApp app;
     private final JDialog dialog;
     private JSpinner spinX;
     private JSpinner spinY;
@@ -34,21 +35,19 @@ public class CustomSkillDlg {
     private JRadioButton radioFullScreenMiniSizeArea;
     private ButtonGroup radioGroup;
     private JPopupMenu popupMenu;
-    private MainApp parent;
     private final PropertyChangeListener mosaicListener = this::onMosaicModelPropertyChanged;
 
-    public CustomSkillDlg(JFrame parent, boolean modal) {
-        dialog = new JDialog(parent, "Select skill", modal);
-        if (parent instanceof MainApp)
-            this.parent = (MainApp) parent;
-        initialize(parent);
+    public CustomSkillDlg(MainApp app, boolean modal) {
+        this.app = app;
+        dialog = new JDialog((app == null) ? null : app.getFrame(), "Select skill", modal);
+        initialize();
     }
 
     public JDialog getDialog() {
         return dialog;
     }
 
-    private void initialize(JFrame parent) {
+    private void initialize() {
         Object keyBind = "OnOk";
         dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false), keyBind);
         dialog.getRootPane().getActionMap().put(keyBind, new AbstractAction() {
@@ -74,10 +73,10 @@ public class CustomSkillDlg {
         createComponents();
         // задаю предпочтительный размер
         dialog.pack();
-        dialog.setLocationRelativeTo(parent);
+        dialog.setLocationRelativeTo((app == null) ? null : app.getFrame());
 
-        if (this.parent != null)
-            this.parent.getMosaicController().getModel().addListener(mosaicListener);
+        if (app != null)
+            app.getMosaicController().getModel().addListener(mosaicListener);
     }
 
     // создаю панели с нужным расположением
@@ -225,48 +224,49 @@ public class CustomSkillDlg {
     private void onOk() {
 //        System.out.println("OnOk");
 
-        if (parent != null) {
+        if (app != null) {
             int x = (Integer)spinX.getValue();
             int y = (Integer)spinY.getValue();
             int m = (Integer)spinMines.getValue();
-            SwingUtilities.invokeLater(() -> parent.changeGame(new Matrisize(x,y), m) );
+            SwingUtilities.invokeLater(() -> app.changeGame(new Matrisize(x,y), m) );
         }
 
         onClose();
     }
     private void onClose() {
-        if (this.parent != null)
-            this.parent.getMosaicController().removeListener(mosaicListener);
+        if (this.app != null)
+            this.app.getMosaicController().removeListener(mosaicListener);
         dialog.dispose();
     }
 
     private int getNeighborNumber() {
-        if (parent == null)
+        if (app == null)
             return 21;
-        BaseCell.BaseAttribute attr = MosaicHelper.createAttributeInstance(parent.getMosaicController().getMosaicType());
+        BaseCell.BaseAttribute attr = MosaicHelper.createAttributeInstance(app.getMosaicController().getMosaicType());
         int max = IntStream.range(0, attr.getDirectionCount())
-                .map(i -> attr.getNeighborNumber(i))
+                .map(attr::getNeighborNumber)
                 .max().getAsInt();
         return max + 1; // +thisCell
     }
 
     private void recalcModelValueXY(boolean isFullScreen, boolean isFullScreenAtCurrArea) {
         int currSizeX, currSizeY, miniSizeX, miniSizeY, maxiSizeX, maxiSizeY;
-        if (parent == null) {
+        if (app == null) {
             currSizeX = currSizeY = 10;
             miniSizeX = miniSizeY = 5;
             maxiSizeX = maxiSizeY = 50;
         } else {
             miniSizeX = miniSizeY = 5;
 
-            Matrisize s = parent.calcMaxMosaicSize(MosaicInitData.AREA_MINIMUM);
+            Matrisize s = app.calcMaxMosaicSize(MosaicInitData.AREA_MINIMUM);
             maxiSizeX = s.m; maxiSizeY = s.n;
 
             if (isFullScreen) {
                 if (isFullScreenAtCurrArea)
-                    s = parent.calcMaxMosaicSize(parent.getMosaicController().getModel().getArea());
-            } else
-                s = parent.getMosaicController().getSizeField();
+                    s = app.calcMaxMosaicSize(app.getMosaicController().getModel().getArea());
+            } else {
+                s = app.getMosaicController().getSizeField();
+            }
             currSizeX = s.m; currSizeY = s.n;
         }
 //        // recheck
@@ -280,7 +280,7 @@ public class CustomSkillDlg {
     }
 
     private void recalcModelValueMines() {
-        int minesCurr = (parent == null) ? 15 : parent.getMosaicController().getMinesCount();
+        int minesCurr = (app == null) ? 15 : app.getMosaicController().getMinesCount();
         int minesMin = 1;
         int minesMax = (Integer)spinX.getValue() * (Integer)spinY.getValue() - getNeighborNumber();
 //        // recheck
@@ -310,10 +310,10 @@ public class CustomSkillDlg {
     }
 
     private void onPopupSetSize(ESkillLevel eSkill) {
-        if (parent == null)
+        if (app == null)
             return;
         Matrisize size = new Matrisize((Integer)spinX.getValue(), (Integer)spinY.getValue());
-        int mines = eSkill.getNumberMines(parent.getMosaicController().getMosaicType(), size);
+        int mines = eSkill.getNumberMines(app.getMosaicController().getMosaicType(), size);
         spinMines.setValue(mines);
     }
 
