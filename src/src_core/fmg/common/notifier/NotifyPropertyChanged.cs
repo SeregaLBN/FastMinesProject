@@ -166,6 +166,7 @@ namespace Fmg.Common.Notifier {
 
 #if DEBUG
             if (_propertyChanges.Any()) {
+                // strong unsubscribe
                 var first = _propertyChanges.First();
                 var error = "Illegal usage: Not all listeners were unsubscribed (type " + GetType().FullName
                         + "; target " + first.Key.Target + "); subscribed from: " + first.Value + "\n count=" + _propertyChanges.Count;

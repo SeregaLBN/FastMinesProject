@@ -191,6 +191,7 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
         _deferrNotifications.clear();
 
         if (!_propertyChanges.isEmpty())
+            // strong unsubscribe
             throw new IllegalStateException("Illegal usage: Not all listeners were unsubscribed (type " + _owner.getClass().getName() + "): count=" + _propertyChanges.size());
         _propertyChanges.clear();
     }

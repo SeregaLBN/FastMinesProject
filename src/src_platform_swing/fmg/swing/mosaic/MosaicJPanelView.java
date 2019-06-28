@@ -12,6 +12,7 @@ import javax.swing.Icon;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import fmg.common.Logger;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicDrawModel;
@@ -41,12 +42,11 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
     private boolean useDebounce = true;
     private final Subject<SizeDouble> sizeObserv;
     private final Disposable sizeDebounce;
+    private boolean isControlResizing;
 
-    private class ZoomStartInfo {
-        public SizeDouble mosaicSize;
-        public SizeDouble mosaicOffset;
-    }
-    private ZoomStartInfo zoomStartInfo;
+    private BufferedImage lastImg;
+    private SizeDouble lastImgMosaicSize;
+    private SizeDouble lastImgMosaicOffset;
 
     public MosaicJPanelView() {
         super(new MosaicDrawModel<Icon>());
@@ -56,8 +56,7 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
         sizeDebounce = !useDebounce ? null : sizeObserv
                 .debounce(300, TimeUnit.MILLISECONDS)
                 .subscribe(size -> SwingUtilities.invokeLater(() -> {
-                    zoomStartInfo = null;
-                    this.setSize(size);
+                    setSizeFinish(size);
                 }));
     }
 
@@ -67,147 +66,45 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
         return getControl();
     }
 
+    @Override
+    public void setSize(SizeDouble size) {
+        if (useDebounce) {
+            isControlResizing = true;
+            sizeObserv.onNext(size);
+        } else {
+            super.setSize(size);
+        }
+    }
+    private void setSizeFinish(SizeDouble size) {
+        isControlResizing = false;
+        if (this.getSize().equals(size))
+            this.getControl().repaint();
+        else
+            super.setSize(size);
+    }
+
     public JPanel getControl() {
         if (_control == null)
             _control = new JPanel() {
                 private static final long serialVersionUID = 1L;
 
-                BufferedImage lastImg;
-
                 @Override
                 protected void paintComponent(Graphics g) {
                     //super.paintComponent(g);
-
-                    MosaicDrawModel<?> model = getModel();
-
-                    java.util.function.Consumer<Graphics2D> draw = gg -> {
-                        Rectangle clipBounds = g.getClipBounds();
-                        MosaicJPanelView.this.drawSwing(gg,
-                                                        (clipBounds==null)
-                                                            ? null
-                                                            : toDrawCells(Cast.toRectDouble(clipBounds)),
-                                                        true/*_modifiedCells.isEmpty() || (_modifiedCells.size() == model.getMatrix().size())*/);
-                        _modifiedCells.clear();
-                    };
-
-                    Graphics2D g2d = (Graphics2D)g;
-                    if (forceSimpleDraw) {
-                        // classic simple draw
-                        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                        draw.accept(g2d);
-
-                    } else {
-                        // smart drawing
-
-                        Dimension sizeCtrl = this.getSize();
-                        SizeDouble sizeModel = model.getSize();
-                        boolean isControlResized = (zoomStartInfo != null);
-
-                        if (zoomFocusToMosaicField) {
-                            SizeDouble sm = model.getMosaicSize();
-                            Dimension sizeField = new Dimension();
-                            sizeField.setSize(sm.width, sm.height);
-
-                            SizeDouble offset = model.getMosaicOffset();
-
-                            Dimension sizeImage = new Dimension();
-                            sizeImage.setSize(sm.width + offset.width, sm.height + offset.height); // exclude left and bottom offsets
-
-                            if ((lastImg == null) || (lastImg.getWidth() != sizeImage.width || lastImg.getHeight() != sizeImage.height))
-                                lastImg = new BufferedImage(sizeImage.width, sizeImage.height, BufferedImage.TYPE_INT_ARGB);
-
-
-                            if (!isControlResized)
-                            { // draw to buffered image
-                                Graphics2D gImg = lastImg.createGraphics();
-                                gImg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                                gImg.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-
-                                draw.accept(gImg);
-
-                                gImg.dispose();
-                            } // else // no else!
-                            {
-                                g2d = (Graphics2D)g2d.create();
-
-                                double sx = sizeCtrl.width  / sizeField.width;
-                                double sy = sizeCtrl.height / sizeField.height;
-                                g2d.scale(sx, sy);
-
-                                g2d.drawImage(lastImg, (int)-offset.width, (int)-offset.height, null);
-
-                                g2d.dispose();
-                            }
-                        } else {
-
-                            g.setColor(Cast.toColor(model.getBackgroundColor()));
-                            g.fillRect(0, 0, sizeCtrl.width, sizeCtrl.height);
-
-                            if (isControlResized && (lastImg != null)) {
-                                // if this control is resized  then use cached image
-                                g2d = (Graphics2D)g2d.create();
-
-                                try (MosaicDrawModel<?> tmp = new MosaicDrawModel<>()) {
-                                    tmp.setMosaicType(model.getMosaicType());
-                                    tmp.setSizeField(model.getSizeField());
-                                    tmp.setSize(new SizeDouble(sizeCtrl.width, sizeCtrl.height));
-
-                                    SizeDouble offsetNew     = tmp.getMosaicOffset();
-                                    SizeDouble mosaicSizeNew = tmp.getMosaicSize();
-
-                                    g2d.drawImage(lastImg,
-                                                  (int) offsetNew.width,
-                                                  (int) offsetNew.height,
-                                                  (int)(offsetNew.width  + mosaicSizeNew.width),
-                                                  (int)(offsetNew.height + mosaicSizeNew.height),
-                                                  (int) zoomStartInfo.mosaicOffset.width,
-                                                  (int) zoomStartInfo.mosaicOffset.height,
-                                                  (int)(zoomStartInfo.mosaicOffset.width  + zoomStartInfo.mosaicSize.width),
-                                                  (int)(zoomStartInfo.mosaicOffset.height + zoomStartInfo.mosaicSize.height),
-                                                  (ImageObserver)null);
-                                }
-
-                                g2d.dispose();
-                            } else {
-                                if ((lastImg == null) || (lastImg.getWidth() != sizeModel.width || lastImg.getHeight() != sizeModel.height))
-                                    lastImg = new BufferedImage((int)sizeModel.width, (int)sizeModel.height, BufferedImage.TYPE_INT_ARGB);
-
-                                // draw to buffered image (caching image)
-                                Graphics2D gImg = lastImg.createGraphics();
-                                gImg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                                gImg.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-
-                                draw.accept(gImg);
-                                g2d.drawImage(lastImg, 0,0, null);
-
-                                gImg.dispose();
-                            }
-                        }
-                    }
+                    MosaicJPanelView.this.drawJPanel(g);
                 }
 
                 @Override
                 public void setBounds(int x, int y, int width, int height) {
-                    if ((width > 0) && (height > 0)) {
-                        SizeDouble size = new SizeDouble(width, height);
-                        if (useDebounce) {
-                            if (zoomStartInfo == null) {
-                                zoomStartInfo = new ZoomStartInfo();
-                                zoomStartInfo.mosaicSize = getModel().getMosaicSize();
-                                zoomStartInfo.mosaicOffset = getModel().getMosaicOffset();
-                            }
-                            sizeObserv.onNext(size);
-                        } else {
-                            getModel().setSize(size);
-                        }
-                    }
+                    //Logger.info("MosaicJPanelView::getControl::JPanel::setBounds: x={0}, y={1}, width={2}, height={3}", x, y, width, height);
+                    if ((width > 0) && (height > 0))
+                        MosaicJPanelView.this.setSize(new SizeDouble(width, height));
                     super.setBounds(x, y, width, height);
                 }
 
                 @Override
                 public Dimension getPreferredSize() {
-                    SizeDouble size = getModel().getSize();
-                    return Cast.toSize(size);
+                    return Cast.toSize(getModel().getSize());
                 }
 
                 @Override
@@ -269,7 +166,120 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
             SizeDouble offset = model.getMosaicOffset();
             control.repaint((int)(minX + offset.width), (int)(minY + offset.height), (int)(maxX-minX), (int)(maxY-minY));
         }
-        //control.invalidate();
+    }
+
+    private void drawJPanel(Graphics g) {
+        MosaicDrawModel<?> model = getModel();
+
+        java.util.function.Consumer<Graphics2D> draw = gg -> {
+            Rectangle clipBounds = g.getClipBounds();
+            MosaicJPanelView.this.drawSwing(gg,
+                                            (clipBounds==null)
+                                                ? null
+                                                : toDrawCells(Cast.toRectDouble(clipBounds)),
+                                            true/*_modifiedCells.isEmpty() || (_modifiedCells.size() == model.getMatrix().size())*/);
+            _modifiedCells.clear();
+        };
+
+        Graphics2D g2d = (Graphics2D)g;
+        if (forceSimpleDraw) {
+            // classic simple draw
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            draw.accept(g2d);
+
+        } else {
+            // smart drawing
+
+            Dimension sizeCtrl = getControl().getSize();
+            SizeDouble size       = model.getSize();
+            SizeDouble mosaicSize = model.getMosaicSize();
+            SizeDouble offset     = model.getMosaicOffset();
+
+            if (zoomFocusToMosaicField) {
+                Dimension sizeField = new Dimension();
+                sizeField.setSize(mosaicSize.width, mosaicSize.height);
+
+                Dimension sizeImage = new Dimension();
+                sizeImage.setSize(mosaicSize.width + offset.width, mosaicSize.height + offset.height); // exclude left and bottom offsets
+
+                if ((lastImg == null) || (lastImg.getWidth() != sizeImage.width || lastImg.getHeight() != sizeImage.height))
+                    lastImg = new BufferedImage(sizeImage.width, sizeImage.height, BufferedImage.TYPE_INT_ARGB);
+
+
+                if (!isControlResizing)
+                { // draw to buffered image
+                    Graphics2D gImg = lastImg.createGraphics();
+                    gImg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    gImg.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+
+                    draw.accept(gImg);
+
+                    gImg.dispose();
+                } // else // no else!
+                {
+                    g2d = (Graphics2D)g2d.create();
+
+                    double sx = sizeCtrl.width  / sizeField.width;
+                    double sy = sizeCtrl.height / sizeField.height;
+                    g2d.scale(sx, sy);
+
+                    g2d.drawImage(lastImg, (int)-offset.width, (int)-offset.height, null);
+
+                    g2d.dispose();
+                }
+            } else {
+
+                g.setColor(Cast.toColor(model.getBackgroundColor()));
+                g.fillRect(0, 0, sizeCtrl.width, sizeCtrl.height);
+
+                if (isControlResizing && (lastImg != null)) {
+                    // if this control is resized  then use cached image
+                    g2d = (Graphics2D)g2d.create();
+
+
+                    // tmp update
+                    model.setSize(new SizeDouble(sizeCtrl.width, sizeCtrl.height));
+
+                    // calc new values
+                    SizeDouble newOffset     = model.getMosaicOffset();
+                    SizeDouble newMosaicSize = model.getMosaicSize();
+
+                    // restore
+                    model.setSize(size);
+
+                    Logger.info("sizeCtrl={0}", sizeCtrl);
+                    Logger.info("newOffset={0}, newMosaicSize={1}", newOffset, newMosaicSize);
+                    Logger.info("lastImgMosaicSize={0}, lastImgMosaicSize={1}", lastImgMosaicSize, lastImgMosaicSize);
+
+                    g2d.drawImage(lastImg,
+                                  (int) newOffset.width,
+                                  (int) newOffset.height,
+                                  (int)(newOffset.width  + newMosaicSize.width),
+                                  (int)(newOffset.height + newMosaicSize.height),
+                                  (int) lastImgMosaicOffset.width,
+                                  (int) lastImgMosaicOffset.height,
+                                  (int)(lastImgMosaicOffset.width  + lastImgMosaicSize.width),
+                                  (int)(lastImgMosaicOffset.height + lastImgMosaicSize.height),
+                                  (ImageObserver)null);
+                    g2d.dispose();
+                } else {
+                    if ((lastImg == null) || (lastImg.getWidth() != size.width) || (lastImg.getHeight() != size.height))
+                        lastImg = new BufferedImage((int)size.width, (int)size.height, BufferedImage.TYPE_INT_ARGB);
+
+                    // draw to buffered image (caching image)
+                    Graphics2D gImg = lastImg.createGraphics();
+                    gImg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    gImg.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+
+                    draw.accept(gImg);
+                    g2d.drawImage(lastImg, 0,0, null);
+                    lastImgMosaicSize   = mosaicSize;
+                    lastImgMosaicOffset = offset;
+
+                    gImg.dispose();
+                }
+            }
+        }
     }
 
     @Override
