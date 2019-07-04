@@ -138,6 +138,7 @@ public class LoginDlg {
             onOkActionListener.actionPerformed(e);
         onClose();
     }
+
     private void onCancel(ActionEvent e) {
 //        System.out.println("OnCancel");
         nameField.setText(null);
@@ -146,6 +147,7 @@ public class LoginDlg {
             onCancelActionListener.actionPerformed(e);
         onClose();
     }
+
     private void onClose() {
         dialog.dispose();
     }

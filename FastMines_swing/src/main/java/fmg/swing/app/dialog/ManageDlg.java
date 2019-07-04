@@ -116,7 +116,7 @@ public class ManageDlg {
 //        System.out.println("OnDeleteRow");
         int rowIndex = table.getSelectedRow();
         if (rowIndex == -1)
-            MainApp.Beep();
+            MainApp.beep();
         else
             players.removePlayer(players.getUser(rowIndex).getGuid());
     }

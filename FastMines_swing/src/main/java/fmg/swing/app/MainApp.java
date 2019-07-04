@@ -2,12 +2,16 @@ package fmg.swing.app;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.PrintStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 import javax.swing.*;
 import javax.swing.Timer;
@@ -40,28 +44,15 @@ import fmg.swing.img.Animator;
 import fmg.swing.img.Logo;
 import fmg.swing.mosaic.MosaicJPanelController;
 import fmg.swing.utils.Cast;
-import fmg.swing.utils.GuiTools;
 import fmg.swing.utils.ProjSettings;
 import fmg.swing.utils.ScreenResolutionHelper;
 
 /** Main window (Главное окно программы) */
 public class MainApp {
 
-    private final JFrame frame = new JFrame() {
+    private final JFrame frame = new JFrame();
+    private int windowState;
 
-        private static final long serialVersionUID = 3L;
-
-        @Override
-        public Dimension getMinimumSize() {
-            return MainApp.this.getMinimumSize();
-        }
-
-        @Override
-        public JPanel getContentPane() {
-            return MainApp.this.getContentPane();
-        }
-
-    };
     private JPanel     contentPane;
     private MainMenu   menu;
     private ToolBar    toolbar;
@@ -81,19 +72,16 @@ public class MainApp {
     private SelectMosaicDlg selectMosaicDialog;
     private CustomSkillDlg  customSkillDialog;
 
-    boolean initialized;
     private Timer timerGame;
     private Handlers handlers;
     private Pair<InputMap, ActionMap> keyPairBindAsMenuAccelerator;
-    //private boolean sheduleCheckArea;
     private boolean shedulePack;
+
+    private static final boolean IS_WIN_10 = System.getProperty("os.name").equalsIgnoreCase("Windows 10");
 
     private final PropertyChangeListener      onMosaicModelPropertyChangedListener = this::onMosaicModelPropertyChanged;
     private final PropertyChangeListener onMosaicControllerPropertyChangedListener = this::onMosaicControllerPropertyChanged;
-    private final PropertyChangeListener onLogoMainIconPropertyChangedListener = ev -> {
-        if (IImageController.PROPERTY_IMAGE.equals(ev.getPropertyName()))
-            frame.setIconImage(logo.getImage());
-    };
+    private final PropertyChangeListener     onLogoMainIconPropertyChangedListener = this::onLogoMainIconPropertyChanged;
 
     public MainApp() {
         super();
@@ -110,6 +98,7 @@ public class MainApp {
         return playerManageDialog;
     }
 
+    private boolean isCustomSkillDialogExist() { return customSkillDialog != null; }
     private CustomSkillDlg getCustomSkillDialog() {
         if (customSkillDialog == null)
             customSkillDialog = new CustomSkillDlg(this, false);
@@ -144,6 +133,7 @@ public class MainApp {
         return statisticDialog;
     }
 
+/** /
     private Dimension getMinimumSize() {
         Insets in = getMosaicMargin();
         Dimension dim = getMosaicPanel().getMinimumSize();
@@ -151,6 +141,7 @@ public class MainApp {
         dim.height += in.top  + in.bottom;
         return dim;
     }
+/**/
 
     private JPanel getContentPane() {
         if (contentPane == null) {
@@ -251,7 +242,7 @@ public class MainApp {
         }
 
 //        iconify();
-//        mainFrame.setResizable(false);
+//        frame.setResizable(false);
 
         boolean isZoomAlwaysMax;
         final Point startLocation = new Point();
@@ -280,7 +271,7 @@ public class MainApp {
             mosaicCtrllr.setSizeField(spm.getSizeField());
             mosaicCtrllr.setMosaicType(spm.getMosaicType());
             mosaicCtrllr.setMinesCount(spm.getMinesCount());
-            setMosaicSize(spm.getSizeMosaic());
+            mosaicCtrllr.getModel().setSize(spm.getSizeMosaic());
 
             setActiveUserId(spm.getActiveUserId());
             getPlayerManageDlg().setDoNotAskStartupChecked(spm.isDoNotAskStartup());
@@ -295,8 +286,8 @@ public class MainApp {
                 getMenu().getOptions().getThemeDefault().setSelected(true);
             getMenu().getOptions().getUsePause()  .setSelected(spm.isUsePause());
             getMenu().getOptions().getUseUnknown().setSelected(spm.isUseUnknown());
-            getToolbar().getBtnPause().getButton().setVisible(spm.isUsePause());
-            mosaicCtrllr.setUseUnknown(           spm.isUseUnknown());
+            getToolbar().getBtnPause().getButton().setVisible( spm.isUsePause());
+            mosaicCtrllr.setUseUnknown(                        spm.isUseUnknown());
 
             for (EShowElement key: EShowElement.values()) {
                 getMenu().getOptions().getShowElement(key).setSelected(spm.getShowElement(key));
@@ -311,8 +302,7 @@ public class MainApp {
         }
 
         frame.setContentPane(getContentPane());
-//        setMinimumSize(getMinimumSize());
-//        setMinimumSize(new Dimension(400, 400));
+        frame.setMinimumSize(new Dimension(400, 400));
 
         frame.setJMenuBar(getMenu().getMenuBar());
         frame.setTitle("FastMines");
@@ -348,15 +338,16 @@ public class MainApp {
 
         mosaicCtrllr.setOnClickEvent(this.getHandlers().getMosaicClickHandler());
         //setDefaultCloseOperation(EXIT_ON_CLOSE);
-        frame.addWindowListener(this.getHandlers().getWindowListener());
-//        mainFrame.addKeyListener(new KeyListener() {
+        frame.addWindowListener(     this.getHandlers().getWindowListener());
+        frame.addWindowStateListener(this.getHandlers().getWindowStateListener());
+//        frame.addKeyListener(new KeyListener() {
 //            @Override public void keyTyped   (KeyEvent e) { System.out.println("Main::KeyListener:keyTyped: "    + e); }
 //            @Override public void keyReleased(KeyEvent e) { System.out.println("Main::KeyListener:keyReleased: " + e); }
 //            @Override public void keyPressed (KeyEvent e) { System.out.println("Main::KeyListener:keyPressed: "  + e); }
 //        });
         frame.addWindowFocusListener(this.getHandlers().getWindowFocusListener());
         frame.addMouseWheelListener(this.getHandlers().getMouseWheelListener());
-//        mainFrame.addWindowListener(new WindowAdapter() {
+//        frame.addWindowListener(new WindowAdapter() {
 //
 //           @Override
 //           public void windowActivated(WindowEvent e) {
@@ -372,10 +363,10 @@ public class MainApp {
 //           @Override
 //           public void windowDeactivated(WindowEvent e) {
 ////                System.out.println("windowDeactivated: " + e.getSource());
-//                if (mainFrame.isAlwaysOnTopSupported())
+//                if (frame.isAlwaysOnTopSupported())
 //                    try {
 //                        System.out.println("windowDeactivated");
-//                        mainFrame.setAlwaysOnTop(false);
+//                        frame.setAlwaysOnTop(false);
 //                    } catch (Exception ex) {
 //                        ex.printStackTrace();
 //                    }
@@ -386,7 +377,7 @@ public class MainApp {
 //        this.addComponentListener(new ComponentAdapter() {
 //            @Override
 //            public void componentShown(ComponentEvent ev) {
-//                mainFrame.recheckLocation();
+//                frame.recheckLocation();
 //            }
 //            @Override
 //            public void componentHidden(ComponentEvent ev) {
@@ -402,13 +393,13 @@ public class MainApp {
             frame.setLocationRelativeTo(null);
         else
             frame.setLocation(startLocation);
+
 //        System.out.println("Main::initialize: after setLocation");
 
-        initialized = true;
         if (isZoomAlwaysMax)
-            invokeLater(() -> sizeAlwaysMax(new ActionEvent(MainApp.this, 0, null)));
+            SwingUtilities.invokeLater(() -> sizeAlwaysMax(new ActionEvent(MainApp.this, 0, null)));
         if (!doNotAskStartup)
-            invokeLater(() ->
+            SwingUtilities.invokeLater(() ->
                 getHandlers().getPlayerManageAction().actionPerformed(new ActionEvent(MainApp.this, 0, "Main::initialize"))
             );
     }
@@ -602,8 +593,10 @@ public class MainApp {
             getSelectMosaicDialog().close();
         if (isAboutDialogExist())
             getAboutDialog().close();
+        if (isCustomSkillDialogExist())
+            getCustomSkillDialog().close();
 
-//      mainFrame.setVisible(false);
+//      frame.setVisible(false);
         setMosaicController(null);
 
         logo.removeListener(onLogoMainIconPropertyChangedListener);
@@ -611,12 +604,24 @@ public class MainApp {
 
 
         frame.removeWindowListener     (this.getHandlers().getWindowListener());
+        frame.removeWindowStateListener(this.getHandlers().getWindowStateListener());
         frame.removeWindowFocusListener(this.getHandlers().getWindowFocusListener());
         frame.removeMouseWheelListener (this.getHandlers().getMouseWheelListener());
 
         frame.dispose();
         Animator.getSingleton().close();
 //        System.exit(0);
+    }
+
+    void onWindowStateChanged(WindowEvent ev) {
+        windowState = ev.getNewState();
+    }
+
+    private boolean isWindowMinimized() {
+        return (windowState & Frame.ICONIFIED) == Frame.ICONIFIED;
+    }
+    private boolean isWindowMaximized() {
+        return (windowState & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH;
     }
 
     /** Попытаться установить новый размер на мозаику (при возможности, сохраняя ESkillLevel) */
@@ -633,8 +638,6 @@ public class MainApp {
         if (isPaused())
             changePause();
 
-//        setMinimumSize(new Dimension());
-
         ESkillLevel skill = getSkillLevel();
         getMosaicController().setMosaicType(mosaicType);
         if (skill != ESkillLevel.eCustom) {
@@ -646,18 +649,16 @@ public class MainApp {
     /** Поменять игру на новый размер & кол-во мин */
     public void changeGame(Matrisize newSize, int numberMines) {
         if ((newSize.m < 1) || (newSize.n < 1)) {
-            Beep();
+            beep();
             return;
         }
         if (numberMines < 0) {
-            Beep();
+            beep();
             return;
         }
 
         if (isPaused())
             changePause();
-
-//        setMinimumSize(new Dimension());
 
         getMosaicController().setSizeField(newSize);
         getMosaicController().setMinesCount(numberMines);
@@ -688,8 +689,23 @@ public class MainApp {
 
     /** get margin around mosaic control */
     Insets getMosaicMargin() {
+        Supplier<Insets> getInsets = () -> {
+            Insets res = frame.getInsets(); // TODO wrong under Windows 10
+            if (IS_WIN_10 &&
+               (res.left    > 7) &&
+               (res.top     > 7) &&
+               (res.right   > 7) &&
+               (res.bottom  > 7))
+            { // 8-\
+                res.left   -= 7;
+                res.top    -= 7;
+                res.right  -= 7;
+                res.bottom -= 7;
+            }
+            return res;
+        };
         Insets mainPadding = getMenu().getOptions().getShowElement(EShowElement.eCaption).isSelected()
-                ? frame.getInsets()
+                ? getInsets.get()
                 : new Insets(0,0,0,0);
         Dimension menuSize = getMenu().getOptions().getShowElement(EShowElement.eMenu).isSelected()
                 ? getMenu().getMenuBar().getSize()
@@ -749,74 +765,70 @@ public class MainApp {
 
     /** проверить что находится в рамках экрана */
     void recheckLocation() {
-        if (!shedulePack) {
-            shedulePack = true;
-            invokeLater(() -> {
-                shedulePack = false;
+        if (shedulePack)
+            return;
 
-                {
-                    fmg.common.geom.Point center = Rect.getCenter(Cast.toRect(frame.getBounds()));
-//                    Point center = new Rect(mainFrame.getBounds()).center();
-                    frame.pack();
-//                    Rectangle newBounds = new Rect(mainFrame.getBounds()).center(center);
-                    Rectangle newBounds = Cast.toRect(Rect.setCenter(Cast.toRect(frame.getBounds()), center));
-                    frame.setBounds(newBounds);
-                    frame.revalidate();
+        shedulePack = true;
+        SwingUtilities.invokeLater(() -> {
+            shedulePack = false;
+
+            if (isWindowMaximized())
+                return;
+
+//            {
+//                fmg.common.geom.Point center = Rect.getCenter(Cast.toRect(frame.getBounds()));
+////                    Point center = new Rect(frame.getBounds()).center();
+//                frame.pack();
+////                    Rectangle newBounds = new Rect(frame.getBounds()).center(center);
+//                Rectangle newBounds = Cast.toRect(Rect.setCenter(Cast.toRect(frame.getBounds()), center));
+//                frame.setBounds(newBounds);
+//                frame.revalidate();
+//            }
+
+            if (getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected()) {
+                sizeMax();
+            } else {
+                SizeDouble maxSize = calcMaxMosaicSize(getMosaicController().getSizeField());
+                if ((maxSize.height < getMosaicController().getSize().height) || (maxSize.width < getMosaicController().getSize().width))
+                    setMosaicSize(maxSize);
+            }
+
+            // check that within the screen
+            {
+                Dimension screenSize = ScreenResolutionHelper.getScreenSize();
+                Insets padding = ScreenResolutionHelper.getScreenPadding(frame.getGraphicsConfiguration());
+                Rect rcThis = Cast.toRect(frame.getBounds());
+
+                boolean changed = false;
+                { // check that the bottom-right boundary within the screen
+                    fmg.common.geom.Point pRB = rcThis.PointRB();
+                    int offsetX = 0, offsetY = 0;
+                    if (pRB.x > (screenSize.width-padding.right))
+                        offsetX = pRB.x - (screenSize.width - padding.right);
+                    if (pRB.y > (screenSize.height-padding.bottom))
+                        offsetY = pRB.y - (screenSize.height - padding.bottom);
+                    if ((offsetX != 0) || (offsetY != 0)) {
+                        rcThis.moveXY(-offsetX, -offsetY);
+                        changed = true;
+                    }
                 }
+                { // check that the top-left boundary within the screen
+                    fmg.common.geom.Point pLT = rcThis.PointLT();
+                    int offsetX = 0, offsetY = 0;
+                    if (pLT.x < padding.left)
+                        offsetX = padding.left - pLT.x;
+                    if (pLT.y < padding.top)
+                        offsetY = padding.top - pLT.y;
+                    if ((offsetX != 0) || (offsetY != 0)) {
+                        rcThis.moveXY(offsetX, offsetY);
+                        changed = true;
+                    }
+                }
+                if (changed)
+                    frame.setLocation(Cast.toPoint(rcThis.PointLT()));
+            }
 
-//                 if (!sheduleCheckArea) {
-//                    sheduleCheckArea = true;
-//                    invokeLater(() -> {
-//                       sheduleCheckArea = false;
-//                       if (!mainFrame.isVisible())
-//                           return;
-                        if (getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected()) {
-                            sizeMax();
-                        } else {
-                            SizeDouble maxSize = calcMaxMosaicSize(getMosaicController().getSizeField());
-                            if ((maxSize.height < getMosaicController().getSize().height) || (maxSize.width < getMosaicController().getSize().width))
-                                setMosaicSize(maxSize);
-                        }
-
-                        // check that within the screen
-                        {
-                            Dimension screenSize = ScreenResolutionHelper.getScreenSize();
-                            Insets padding = ScreenResolutionHelper.getScreenPadding(frame.getGraphicsConfiguration());
-                            Rect rcThis = Cast.toRect(frame.getBounds());
-
-                            boolean changed = false;
-                            { // check that the bottom-right boundary within the screen
-                                fmg.common.geom.Point pRB = rcThis.PointRB();
-                                int offsetX = 0, offsetY = 0;
-                                if (pRB.x > (screenSize.width-padding.right))
-                                    offsetX = pRB.x - (screenSize.width - padding.right);
-                                if (pRB.y > (screenSize.height-padding.bottom))
-                                    offsetY = pRB.y - (screenSize.height - padding.bottom);
-                                if ((offsetX != 0) || (offsetY != 0)) {
-                                    rcThis.moveXY(-offsetX, -offsetY);
-                                    changed = true;
-                                }
-                            }
-                            { // check that the top-left boundary within the screen
-                                fmg.common.geom.Point pLT = rcThis.PointLT();
-                                int offsetX = 0, offsetY = 0;
-                                if (pLT.x < padding.left)
-                                    offsetX = padding.left - pLT.x;
-                                if (pLT.y < padding.top)
-                                    offsetY = padding.top - pLT.y;
-                                if ((offsetX != 0) || (offsetY != 0)) {
-                                    rcThis.moveXY(offsetX, offsetY);
-                                    changed = true;
-                                }
-                            }
-                            if (changed)
-                                frame.setLocation(Cast.toPoint(rcThis.PointLT()));
-                        }
-//                    });
-//                 }
-
-            });
-        }
+        });
     }
 
     /** mosaic size in pixels */
@@ -925,13 +937,13 @@ public class MainApp {
                 for (EShowElement val: EShowElement.values())
                     mapShow.put(val, getMenu().getOptions().getShowElement(val).isSelected());
 
-                // вызов mainFrame.dispose(); приводит к потере фокуса, т.е, когда идёт игра, - к срабатыванию паузы
+                // вызов frame.dispose(); приводит к потере фокуса, т.е, когда идёт игра, - к срабатыванию паузы
                 // т.е. нужно позже снять паузу...
                 final boolean isNotPaused = (getMosaicController().getGameStatus() == EGameStatus.eGSPlay) && !isPaused();
-                //if (mainFrame.isDisplayable())
+                //if (frame.isDisplayable())
                     frame.dispose();
-                invokeLater(() -> {
-                        frame.setUndecorated(                     !mapShow.get(EShowElement.eCaption).booleanValue());
+                SwingUtilities.invokeLater(() -> {
+                        frame.setUndecorated(               !mapShow.get(EShowElement.eCaption).booleanValue());
                         frame.setBounds(rc);
                         getMenu().getMenuBar()   .setVisible(mapShow.get(EShowElement.eMenu).booleanValue());
                         getToolbar().getPanel()  .setVisible(mapShow.get(EShowElement.eToolbar).booleanValue());
@@ -979,12 +991,6 @@ public class MainApp {
 //        }
     }
 
-//     @Override
-//     protected void processKeyEvent(KeyEvent e) {
-//         System.out.println(e);
-//         super.processKeyEvent(e);
-//     }
-
     boolean isPaused() {
         return !getMosaicPanel().isVisible();
     }
@@ -1017,65 +1023,6 @@ public class MainApp {
         if (handlers == null)
             handlers = new Handlers(this);
         return handlers;
-    }
-
-    public static void Beep() {
-        java.awt.Toolkit.getDefaultToolkit().beep();
-        //ASCII value 7 is a beep. So just print that character
-    }
-
-    static void printSystemProperties() {
-        System.getProperties().entrySet().forEach(kv -> System.out.println(kv.getKey() + "=" + kv.getValue()));
-    }
-
-    static void setSysOut() {
-        try {
-            Properties props = System.getProperties();
-            Object val = props.get("user.dir");
-            if (val != null) {
-                String file = val.toString();
-
-                val = props.get("file.separator");
-                if (val == null)
-                    val = '/';
-
-                file += val + "FastMines.log";
-                GuiTools.alert(file);
-
-                //new FileOutputStream(file);
-                PrintStream ps = new PrintStream(file);
-                System.setOut(ps);
-                System.setErr(ps);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            GuiTools.alert(ex.toString());
-        }
-    }
-
-
-//     @Override
-//     protected void processKeyEvent(KeyEvent e) {
-//         System.out.println(e);
-//         super.processKeyEvent(e);
-//     }
-//
-//     @Override
-//     protected void processEvent(AWTEvent e) {
-//         System.out.println(e);
-//         super.processEvent(e);
-//     }
-
-    static void ViewAllEvents() {
-        EventQueue eq = Toolkit.getDefaultToolkit().getSystemEventQueue();
-        EventQueue eq2 = new EventQueue() {
-            @Override
-            protected void dispatchEvent(AWTEvent event) {
-                System.out.println(event);
-                super.dispatchEvent(event);
-            }
-        };
-        eq.push(eq2);
     }
 
     public PlayersModel getPlayers() {
@@ -1167,6 +1114,11 @@ public class MainApp {
         return getPlayers().getUser(userId);
     }
 
+    private void onLogoMainIconPropertyChanged(PropertyChangeEvent ev) {
+        if (IImageController.PROPERTY_IMAGE.equals(ev.getPropertyName()))
+            frame.setIconImage(logo.getImage());
+    }
+
     private void onMosaicModelPropertyChanged(PropertyChangeEvent ev) {
         switch (ev.getPropertyName()) {
         case MosaicDrawModel.PROPERTY_SIZE:
@@ -1174,16 +1126,15 @@ public class MainApp {
             break;
         case MosaicGameModel.PROPERTY_SIZE_FIELD:
             getMenu().getGame().recheckSelectedSkillLevel();
-//            setMinimumSize(getMinimumSize());
             break;
         case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
             getMenu().getMosaics().recheckSelectedMosaicType();
-//            setMinimumSize(getMinimumSize());
             break;
         default:
             // none
         }
     }
+
     private void onMosaicControllerPropertyChanged(PropertyChangeEvent ev) {
 //        System.out.println("Main::propertyChange: eventName=" + ev.getSource().getClass().getSimpleName() + "." + ev.getPropertyName());
 //        MosaicControllerSwing source = (MosaicControllerSwing)ev.getSource();
@@ -1246,11 +1197,54 @@ public class MainApp {
     }
 
 
-    void invokeLater(Runnable doRun) {
-        if (!initialized)
-            doRun.run();
-        else
-            SwingUtilities.invokeLater(doRun);
+    /** /
+    static void printSystemProperties() {
+        System.getProperties().entrySet().forEach(kv -> System.out.println(kv.getKey() + "=" + kv.getValue()));
+    }
+
+    /** /
+    static void setSysOut() {
+        try {
+            Properties props = System.getProperties();
+            Object val = props.get("user.dir");
+            if (val != null) {
+                String file = val.toString();
+
+                val = props.get("file.separator");
+                if (val == null)
+                    val = '/';
+
+                file += val + "FastMines.log";
+                GuiTools.alert(file);
+
+                //new FileOutputStream(file);
+                PrintStream ps = new PrintStream(file);
+                System.setOut(ps);
+                System.setErr(ps);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            GuiTools.alert(ex.toString());
+        }
+    }
+
+    /** /
+    static void ViewAllEvents() {
+        EventQueue eq = Toolkit.getDefaultToolkit().getSystemEventQueue();
+        EventQueue eq2 = new EventQueue() {
+            @Override
+            protected void dispatchEvent(AWTEvent event) {
+                System.out.println(event);
+                super.dispatchEvent(event);
+            }
+        };
+        eq.push(eq2);
+    }
+    /**/
+
+    public static void beep() {
+        java.awt.Toolkit.getDefaultToolkit().beep();
+        //ASCII value 7 is a beep. So just print that character
     }
 
     public static void main(String[] args) {

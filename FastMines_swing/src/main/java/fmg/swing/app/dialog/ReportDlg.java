@@ -82,13 +82,6 @@ public abstract class ReportDlg implements AutoCloseable {
         dialog.setLocationRelativeTo((app == null) ? null : app.getFrame());
     }
 
-    private void onClose() {
-        if (dialog.isModal())
-            dialog.dispose();
-        else
-            setVisible(false);
-    }
-
     protected Dimension getPreferredScrollPaneSize() {
         return new Dimension(450, 100);
     }
@@ -285,6 +278,13 @@ public abstract class ReportDlg implements AutoCloseable {
             imgCtrllr.getModel().setBackgroundColor(bkTabBkColor);
 
         dialog.setVisible(b);
+    }
+
+    private void onClose() {
+        if (dialog.isModal())
+            dialog.dispose();
+        else
+            setVisible(false);
     }
 
     @Override

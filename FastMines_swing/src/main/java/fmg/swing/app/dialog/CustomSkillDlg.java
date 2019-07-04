@@ -21,7 +21,7 @@ import fmg.core.types.ESkillLevel;
 import fmg.swing.app.MainApp;
 import fmg.swing.utils.GuiTools;
 
-public class CustomSkillDlg {
+public class CustomSkillDlg implements AutoCloseable {
 
     private final MainApp app;
     private final JDialog dialog;
@@ -35,7 +35,7 @@ public class CustomSkillDlg {
     private JRadioButton radioFullScreenMiniSizeArea;
     private ButtonGroup radioGroup;
     private JPopupMenu popupMenu;
-    private final PropertyChangeListener mosaicListener = this::onMosaicModelPropertyChanged;
+    private final PropertyChangeListener onMosaicModelPropertyChangedListener = this::onMosaicModelPropertyChanged;
 
     public CustomSkillDlg(MainApp app, boolean modal) {
         this.app = app;
@@ -76,7 +76,7 @@ public class CustomSkillDlg {
         dialog.setLocationRelativeTo((app == null) ? null : app.getFrame());
 
         if (app != null)
-            app.getMosaicController().getModel().addListener(mosaicListener);
+            app.getMosaicController().getModel().addListener(onMosaicModelPropertyChangedListener);
     }
 
     // создаю панели с нужным расположением
@@ -221,24 +221,6 @@ public class CustomSkillDlg {
         popupMenu.show(dialog, rc.x, rc.y + rc.height);
     }
 
-    private void onOk() {
-//        System.out.println("OnOk");
-
-        if (app != null) {
-            int x = (Integer)spinX.getValue();
-            int y = (Integer)spinY.getValue();
-            int m = (Integer)spinMines.getValue();
-            SwingUtilities.invokeLater(() -> app.changeGame(new Matrisize(x,y), m) );
-        }
-
-        onClose();
-    }
-    private void onClose() {
-        if (this.app != null)
-            this.app.getMosaicController().removeListener(mosaicListener);
-        dialog.dispose();
-    }
-
     private int getNeighborNumber() {
         if (app == null)
             return 21;
@@ -331,6 +313,30 @@ public class CustomSkillDlg {
         //    ...
         //    break;
         }
+    }
+
+    private void onOk() {
+//      System.out.println("OnOk");
+
+        if (app != null) {
+            int x = (Integer)spinX.getValue();
+            int y = (Integer)spinY.getValue();
+            int m = (Integer)spinMines.getValue();
+            SwingUtilities.invokeLater(() -> app.changeGame(new Matrisize(x,y), m) );
+        }
+
+        dialog.dispose();
+    }
+
+    private void onClose() {
+        dialog.dispose();
+    }
+
+    @Override
+    public void close() {
+        if (this.app != null)
+            app.getMosaicController().getModel().removeListener(onMosaicModelPropertyChangedListener);
+        dialog.dispose();
     }
 
 }

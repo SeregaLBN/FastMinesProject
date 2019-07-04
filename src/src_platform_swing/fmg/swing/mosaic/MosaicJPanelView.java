@@ -12,7 +12,6 @@ import javax.swing.Icon;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import fmg.common.Logger;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicDrawModel;
@@ -247,9 +246,9 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
                     // restore
                     model.setSize(size);
 
-                    Logger.info("sizeCtrl={0}", sizeCtrl);
-                    Logger.info("newOffset={0}, newMosaicSize={1}", newOffset, newMosaicSize);
-                    Logger.info("lastImgMosaicSize={0}, lastImgMosaicSize={1}", lastImgMosaicSize, lastImgMosaicSize);
+//                    Logger.info("sizeCtrl={0}", sizeCtrl);
+//                    Logger.info("newOffset={0}, newMosaicSize={1}", newOffset, newMosaicSize);
+//                    Logger.info("lastImgMosaicSize={0}, lastImgMosaicSize={1}", lastImgMosaicSize, lastImgMosaicSize);
 
                     g2d.drawImage(lastImg,
                                   (int) newOffset.width,
@@ -296,6 +295,15 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
         case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
         case MosaicGameModel.PROPERTY_AREA:
             changeSizeImagesMineFlag();
+            break;
+        default:
+            // none
+        }
+        super.onPropertyModelChanged(ev);
+        switch (ev.getPropertyName()) {
+        case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
+        case MosaicGameModel.PROPERTY_SIZE_FIELD:
+            lastImg = null;
             break;
         default:
             // none

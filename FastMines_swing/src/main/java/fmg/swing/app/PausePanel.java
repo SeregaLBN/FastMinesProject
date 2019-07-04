@@ -92,7 +92,7 @@ class PausePanel {
     }
     @Override
     public Dimension getMinimumSize() {
-        return app.getMosaicPanel().getMinimumSize();
+        return new Dimension(300, 300);
     }
     /**/
 

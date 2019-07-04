@@ -6,6 +6,7 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 
 public final class ScreenResolutionHelper {
+    private ScreenResolutionHelper() {}
 
     /** get current display size */
     public static Dimension getScreenSize() {

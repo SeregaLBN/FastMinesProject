@@ -64,10 +64,6 @@ public class AboutDlg implements AutoCloseable {
         dialog.setLocationRelativeTo(parent);
     }
 
-    private void onClose() {
-        dialog.dispose();
-    }
-
     // создаю панели с нужным расположением
     private void createComponents() {
         // 1. Создаю панель, которая будет содержать все остальные элементы и панели расположения
@@ -316,11 +312,16 @@ public class AboutDlg implements AutoCloseable {
         }
     }
 
+    private void onClose() {
+        dialog.dispose();
+    }
+
     @Override
     public void close() {
         logo.removeListener(onLogoPropertyChangedListener);
         logo.close();
         smile.close();
+        dialog.dispose();
     }
 
 }

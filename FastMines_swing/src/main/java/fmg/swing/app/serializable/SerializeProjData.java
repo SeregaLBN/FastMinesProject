@@ -74,6 +74,8 @@ public class SerializeProjData implements Externalizable {
         out.writeInt(location.y);
         out.writeDouble(sizeMosaicWidth);
         out.writeDouble(sizeMosaicHeight);
+
+//        Logger.info("Write: location={0}, sizeMosaic=[{1}, {2}]", location, sizeMosaicWidth, sizeMosaicHeight);
     }
 
     @Override
@@ -98,6 +100,8 @@ public class SerializeProjData implements Externalizable {
         location.y = in.readInt();
         sizeMosaicWidth  = in.readDouble();
         sizeMosaicHeight = in.readDouble();
+
+//        Logger.info("Read: location={0}, sizeMosaic=[{1}, {2}]", location, sizeMosaicWidth, sizeMosaicHeight);
     }
 
     /**

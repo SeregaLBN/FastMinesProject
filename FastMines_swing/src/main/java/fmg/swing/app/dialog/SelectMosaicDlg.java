@@ -300,24 +300,6 @@ public class SelectMosaicDlg implements AutoCloseable {
         }
     }
 
-    private void onOk() {
-//        System.out.println("onOk");
-
-        if (app != null) {
-            EMosaic selectedMosaicType = getSelectedMosaicType();
-            SwingUtilities.invokeLater(() -> app.changeGame(selectedMosaicType) );
-        }
-
-        onClose();
-    }
-
-    private void onClose() {
-        if (dialog.isModal())
-            dialog.dispose();
-        else
-            setVisible(false);
-    }
-
     private EMosaic getSelectedMosaicType() {
         return EMosaic.fromDescription(cmbxMosaicTypes.getSelectedItem().toString());
     }
@@ -336,6 +318,24 @@ public class SelectMosaicDlg implements AutoCloseable {
         mosaicsImg.getModel().setAnimated(b);
         dialog.setVisible(b);
     }
+
+    private void onOk() {
+//      System.out.println("onOk");
+
+      if (app != null) {
+          EMosaic selectedMosaicType = getSelectedMosaicType();
+          SwingUtilities.invokeLater(() -> app.changeGame(selectedMosaicType) );
+      }
+
+      onClose();
+  }
+
+  private void onClose() {
+      if (dialog.isModal())
+          dialog.dispose();
+      else
+          setVisible(false);
+  }
 
     @Override
     public void close() {

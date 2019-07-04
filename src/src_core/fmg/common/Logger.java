@@ -3,6 +3,7 @@ package fmg.common;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -19,7 +20,7 @@ public final class Logger {
         try {
             String prefix = '[' + new SimpleDateFormat("HH:mm:ss.SSS").format(new Date()) + "]  Th=" + Thread.currentThread().getId() + "  ";
             if (args.length > 0) {
-                DEFAULT_WRITER.accept(prefix + new MessageFormat(format).format(args));
+                DEFAULT_WRITER.accept(prefix + new MessageFormat(format, Locale.US).format(args));
             } else {
                 DEFAULT_WRITER.accept(prefix + format);
             }

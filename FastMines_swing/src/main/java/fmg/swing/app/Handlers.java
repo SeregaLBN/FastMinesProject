@@ -208,16 +208,26 @@ public class Handlers {
         return pausePanelMouseListener;
     }
 
-    private WindowListener windowListener;
-    public WindowListener getWindowListener() {
-        if (windowListener == null)
-            windowListener = new WindowAdapter() {
+    private WindowAdapter windowAdapter;
+    private WindowAdapter getWindowAdapter() {
+        if (windowAdapter == null)
+            windowAdapter = new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent we) {
                     app.onClose();
                 }
+                @Override
+                public void windowStateChanged(WindowEvent ev) {
+                    app.onWindowStateChanged(ev);
+                }
             };
-        return windowListener;
+        return windowAdapter;
+    }
+    public WindowListener getWindowListener() {
+        return getWindowAdapter();
+    }
+    public WindowStateListener getWindowStateListener() {
+        return getWindowAdapter();
     }
 
     private WindowFocusListener windowFocusListener;
