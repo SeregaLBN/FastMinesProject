@@ -1,6 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'application'
 
+/** /
 // see https://plugins.gradle.org/plugin/com.palantir.graal
 buildscript {
     repositories {
@@ -9,7 +10,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "gradle.plugin.com.palantir.graal:gradle-graal:0.3.0-28-g6c0e597"
+        classpath "gradle.plugin.com.palantir.graal:gradle-graal:0.3.0-37-g77aa98f"
     }
 }
 apply plugin: 'com.palantir.graal'
@@ -18,12 +19,13 @@ graal {
 //    //mainClass 'com.palantir.test.Main'
 //    //outputName 'hello-world'
 //    //graalVersion '1.0.0-rc5'
-    graalVersion '1.0.0-rc12'
+    graalVersion '1.0.0-rc16'
     downloadBaseUrl 'https://github.com/oracle/graal/releases/download/'
 //    //graalVersion '19.0.0'
 //    //option '-H:EnableURLProtocols=http'
 //    //option '-H:Name=foo'
 }
+/**/
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -32,8 +34,6 @@ compileJava.options.encoding = 'UTF-8'
 
 group = 'FastMinesGame' // fmg
 
-defaultTasks 'clean', 'build'
-
 jar {
     manifest {
         attributes 'Vendor': 'SeregaLBN',
@@ -41,7 +41,7 @@ jar {
     }
 }
 
-mainClassName = "fmg.swing.app.Main"
+mainClassName = "fmg.swing.app.MainApp"
 
 sourceSets {
     main {
@@ -72,8 +72,8 @@ sourceSets {
 
 
 dependencies {
-    implementation project(':FastMines_core')
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.8'
+    compile project(':FastMines_core')
+    compile 'io.reactivex.rxjava2:rxjava:2.2.8'
 
     testImplementation project(':FastMines_core').sourceSets.test.output
 
@@ -91,12 +91,64 @@ test.dependsOn(":FastMines_core:test")
 //    }
 //}
 
-//version = '2.0.3'
+version = '2.0.3'
 
 jar {
     manifest {
-        attributes 'Main-Class': 'fmg.swing.app.Main',
-                   'Title': 'FastMines game - Java SWING desktop application',
-                   'Version': '2.0.3'
+        attributes 'Main-Class': mainClassName,
+                   'Title'     : 'FastMines game - Java SWING desktop application',
+                   'Version'   : version
+    }
+}
+
+
+task fastMinesSwingFatJar(type: Jar) {
+    manifest {
+        attributes jar.manifest.attributes
+    }
+    baseName = 'FastMines_swing-fat'
+    from {
+        configurations.compile.collect {
+            it.isDirectory()
+                ? it
+                : zipTree(it).matching{exclude{
+                    //println it
+                    //it.name == 'META-INF'
+                    it.toString().contains('!META-INF')
+                }}
+        }
+    }
+    with jar
+}
+project(':FastMines_swing').tasks.fastMinesSwingFatJar.dependsOn project(':FastMines_core' ).tasks.build
+project(':FastMines_swing').tasks.build               .dependsOn project(':FastMines_swing').tasks.fastMinesSwingFatJar
+
+task fastMinesSwingNative(dependsOn: fastMinesSwingFatJar) { task ->
+    doLast {
+        /** /
+        def execResult = exec {
+            workingDir System.env.GRAALVM_HOME + '/bin'
+            executable 'native-image'
+            args '-cp ' + project(':FastMines_swing').buildDir.absolutePath + '/libs/FastMines_swing-fat-' + version + '.jar'\
+                , '-H:Class=' + mainClassName\
+                , '-H:Name=FastMines_swing'\
+                , '--no-fallback'\
+                , '-H:+ReportExceptionStackTraces'\
+                , '--allow-incomplete-classpath'
+                
+        }
+        /**/
+        exec {
+            //commandLine 'sh', '-c', \
+            commandLine 'cmd', '/c', \
+                   System.env.GRAALVM_HOME + '/bin/native-image' \
+                + ' -cp ' + project(':FastMines_swing').buildDir.absolutePath + '/libs/FastMines_swing-fat-' + version + '.jar'\
+                + ' -H:Class=' + mainClassName \
+                + ' -H:Name=FastMines_swing' \
+                + ' --no-fallback' \
+                + ' -H:+ReportExceptionStackTraces' \
+                + ' --allow-incomplete-classpath'
+        }
+        /**/
     }
 }
