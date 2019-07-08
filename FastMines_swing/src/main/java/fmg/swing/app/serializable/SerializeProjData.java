@@ -6,6 +6,8 @@ import java.util.UUID;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.Point;
 import fmg.common.geom.SizeDouble;
+import fmg.core.mosaic.MosaicHelper;
+import fmg.core.mosaic.MosaicInitData;
 import fmg.core.types.EMosaic;
 import fmg.core.types.draw.EShowElement;
 
@@ -32,6 +34,10 @@ public class SerializeProjData implements Externalizable {
 
     private void setDefaults() {
         mosaicData = new SerializeMosaicData();
+
+        SizeDouble size = MosaicHelper.getSize(mosaicData.getMosaicType(), MosaicInitData.AREA_MINIMUM, mosaicData.getSizeField());
+        sizeMosaicWidth  = size.width;
+        sizeMosaicHeight = size.height;
 
         activeUserId = null;
         doNotAskStartup = true;
