@@ -123,7 +123,7 @@ task fastMinesSwingFatJar(type: Jar) {
 project(':FastMines_swing').tasks.fastMinesSwingFatJar.dependsOn project(':FastMines_core' ).tasks.build
 project(':FastMines_swing').tasks.build               .dependsOn project(':FastMines_swing').tasks.fastMinesSwingFatJar
 
-task fastMinesSwingNative(dependsOn: fastMinesSwingFatJar) { task ->
+task fastMinesSwingGraalNative(dependsOn: fastMinesSwingFatJar) { task ->
     doLast {
         /** /
         def execResult = exec {
@@ -150,5 +150,25 @@ task fastMinesSwingNative(dependsOn: fastMinesSwingFatJar) { task ->
                 + ' --allow-incomplete-classpath'
         }
         /**/
+    }
+}
+task fastMinesSwingJPackNative(dependsOn: fastMinesSwingFatJar) { task ->
+    doLast {
+        exec {
+            commandLine 'javapackager',
+                '-deploy -native exe',
+                '-BsystemWide=true',
+                '-BjvmOptions=-Xmx128m', 
+                '-BjvmOptions=-Xms128m',
+                '-outdir ' + project(':FastMines_swing').buildDir.toPath().resolve('distributions').toFile().absolutePath,
+                '-outfile FastMines' + version,
+                //'-srcdir ' + project(':FastMines_swing').srcDir.absolutePath,   // Base directory of the files to pack.
+                '-srcdir ' + sourceSets.main.java.srcDirs,
+              //'-srcfiles zzzzz.jar',                                   // List of files in srcdir. If omitted, all files in srcdir (which is a mandatory argument in this case) will be used.
+                '-appclass ' + mainClassName,
+                '-description "FastMines game - Java SWING desktop application"',
+                '-name FastMines',
+                '-title "FastMines"'
+        }
     }
 }
