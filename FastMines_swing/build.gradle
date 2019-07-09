@@ -125,50 +125,40 @@ project(':FastMines_swing').tasks.build               .dependsOn project(':FastM
 
 task fastMinesSwingGraalNative(dependsOn: fastMinesSwingFatJar) { task ->
     doLast {
-        /** /
-        def execResult = exec {
-            workingDir System.env.GRAALVM_HOME + '/bin'
-            executable 'native-image'
-            args '-cp ' + project(':FastMines_swing').buildDir.absolutePath + '/libs/FastMines_swing-fat-' + version + '.jar'\
-                , '-H:Class=' + mainClassName\
-                , '-H:Name=FastMines_swing'\
-                , '--no-fallback'\
-                , '-H:+ReportExceptionStackTraces'\
-                , '--allow-incomplete-classpath'
-                
-        }
-        /**/
+        def isWin = org.gradle.internal.os.OperatingSystem.current().isWindows()
         exec {
-            //commandLine 'sh', '-c', \
-            commandLine 'cmd', '/c', \
-                   System.env.GRAALVM_HOME + '/bin/native-image' \
-                + ' -cp ' + project(':FastMines_swing').buildDir.absolutePath + '/libs/FastMines_swing-fat-' + version + '.jar'\
-                + ' -H:Class=' + mainClassName \
-                + ' -H:Name=FastMines_swing' \
-                + ' --no-fallback' \
-                + ' -H:+ReportExceptionStackTraces' \
-                + ' --allow-incomplete-classpath'
+            commandLine isWin ? 'cmd' : 'sh',
+                        isWin ? '/c' : '-c',
+                        System.env.GRAALVM_HOME + '/bin/native-image' +
+                        ' -cp ' + project(':FastMines_swing').buildDir.absolutePath + '/libs/FastMines_swing-fat-' + version + '.jar' +
+                        ' -H:Class=' + mainClassName +
+                        ' -H:Name=FastMines_swing'
+//                + ' --no-fallback' \
+//                + ' -H:+ReportExceptionStackTraces' \
+//                + ' -H:ClassInitialization=sun.java2d.opengl.OGLRenderQueue:run_time' \
+//                + ' --allow-incomplete-classpath'
         }
-        /**/
     }
 }
+
 task fastMinesSwingJPackNative(dependsOn: fastMinesSwingFatJar) { task ->
     doLast {
+        def isWin = org.gradle.internal.os.OperatingSystem.current().isWindows()
         exec {
-            commandLine 'javapackager',
-                '-deploy -native exe',
-                '-BsystemWide=true',
-                '-BjvmOptions=-Xmx128m', 
-                '-BjvmOptions=-Xms128m',
-                '-outdir ' + project(':FastMines_swing').buildDir.toPath().resolve('distributions').toFile().absolutePath,
-                '-outfile FastMines' + version,
-                //'-srcdir ' + project(':FastMines_swing').srcDir.absolutePath,   // Base directory of the files to pack.
-                '-srcdir ' + sourceSets.main.java.srcDirs,
-              //'-srcfiles zzzzz.jar',                                   // List of files in srcdir. If omitted, all files in srcdir (which is a mandatory argument in this case) will be used.
-                '-appclass ' + mainClassName,
-                '-description "FastMines game - Java SWING desktop application"',
-                '-name FastMines',
-                '-title "FastMines"'
+            commandLine isWin ? 'cmd' : 'sh',
+                        isWin ? '/c' : '-c',
+                        'javapackager -deploy -native image' +
+                        ' -BsystemWide=true' +
+                        ' -BjvmOptions=-Xmx128m' +
+                        ' -BjvmOptions=-Xms128m' +
+                        ' -outdir ' + project(':FastMines_swing').buildDir.toPath().resolve('distributionsJPack').toFile().absolutePath +
+                        ' -outfile FastMines_swing_' + version +
+                        ' -srcdir ' + project(':FastMines_swing').buildDir.absolutePath + '/libs/' +
+                        ' -srcfiles FastMines_swing-fat-' + version + '.jar' +
+                        ' -appclass ' + mainClassName +
+                        ' -description "FastMines game - Java SWING desktop application"' +
+                        ' -name FastMines' +
+                        ' -title "FastMines"'
         }
     }
 }
