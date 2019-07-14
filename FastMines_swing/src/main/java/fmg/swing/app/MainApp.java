@@ -845,29 +845,36 @@ public class MainApp {
     /** Zoom + */
     void sizeInc() {
         MosaicGameModel model = getMosaicController().getModel();
-        SizeDouble newSize = MosaicHelper.getSize(model.getMosaicType(), model.getArea() * 1.05, model.getSizeField());
-        setMosaicSize(newSize);
+        model.setArea(model.getArea() * 1.05);
+        frame.pack();
     }
+
     /** Zoom - */
     void sizeDec() {
         MosaicGameModel model = getMosaicController().getModel();
         double newArea = Math.max(model.getArea() * 0.95, MosaicInitData.AREA_MINIMUM);
-        SizeDouble newSize = MosaicHelper.getSize(model.getMosaicType(), newArea, model.getSizeField());
-        setMosaicSize(newSize);
+        model.setArea(newArea);
+        frame.pack();
     }
+
     /** Zoom minimum */
     void sizeMin() {
         MosaicGameModel model = getMosaicController().getModel();
-        double newArea = MosaicInitData.AREA_MINIMUM;
-        SizeDouble newSize = MosaicHelper.getSize(model.getMosaicType(), newArea, model.getSizeField());
-        setMosaicSize(newSize);
+        model.setArea(MosaicInitData.AREA_MINIMUM);
+        frame.pack();
     }
 
     /** Zoom maximum */
     void sizeMax() {
-        SizeDouble newSize = calcMaxMosaicSize(getMosaicController().getSizeField());
-        setMosaicSize(newSize);
+        SizeDouble sizeMosaicIn = calcMosaicWindowSize(ScreenResolutionHelper.getDesktopSize(frame.getGraphicsConfiguration()));
+        SizeDouble sizeMosaicOut = new SizeDouble();
+        MosaicJPanelController ctrllr = getMosaicController();
+        MosaicGameModel model = ctrllr.getModel();
+        double newArea = MosaicHelper.findAreaBySize(ctrllr.getMosaicType(), ctrllr.getSizeField(), sizeMosaicIn, sizeMosaicOut);
+        model.setArea(newArea);
+        frame.pack();
     }
+
     /** Zoom always maximum */
     public void sizeAlwaysMax(ActionEvent ev) {
 //        if (!isMenuEvent(ev))
