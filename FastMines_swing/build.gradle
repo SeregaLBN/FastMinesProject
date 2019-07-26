@@ -33,15 +33,23 @@ targetCompatibility = JavaVersion.VERSION_1_8
 compileJava.options.encoding = 'UTF-8'
 
 group = 'FastMinesGame' // fmg
+mainClassName = "fmg.swing.app.MainApp"
+version = '2.1.1'
 
 jar {
     manifest {
-        attributes 'Vendor': 'SeregaLBN',
+        attributes 'Main-Class': mainClassName,
+                   'Title'     : 'FastMines game - Java SWING desktop application',
+                   'Version'   : version,
+                   'Vendor'    : 'SeregaLBN',
                    'Build-Date': new Date().format("yyyy-MM-dd'T 'HH:mm:ss.SSSZZ")
     }
+//    into('res') {
+//        from '../res'
+//        exclude '**/*~*'
+//        include '**/*.png'
+//    }
 }
-
-mainClassName = "fmg.swing.app.MainApp"
 
 sourceSets {
     main {
@@ -82,25 +90,6 @@ dependencies {
 }
 
 test.dependsOn(":FastMines_core:test")
-
-//jar {
-//    into('res') {
-//        from '../res'
-//        exclude '**/*~*'
-//        include '**/*.png'
-//    }
-//}
-
-version = '2.0.3'
-
-jar {
-    manifest {
-        attributes 'Main-Class': mainClassName,
-                   'Title'     : 'FastMines game - Java SWING desktop application',
-                   'Version'   : version
-    }
-}
-
 
 task fastMinesSwingFatJar(type: Jar) {
     manifest {
