@@ -16,12 +16,12 @@ import fmg.core.img.IImageController;
 import fmg.core.img.MosaicSkillModel;
 import fmg.core.types.ESkillLevel;
 import fmg.swing.app.KeyCombo;
-import fmg.swing.app.MainApp;
+import fmg.swing.app.FastMinesSwing;
 import fmg.swing.img.MosaicSkillImg;
 
 public class GameMenu implements AutoCloseable {
 
-    private final MainApp app;
+    private final FastMinesSwing app;
     private final JMenu menu = new JMenu("Game");
     private JMenuItem anew;
     private Map<ESkillLevel, JRadioButtonMenuItem> skillLevel;
@@ -30,7 +30,7 @@ public class GameMenu implements AutoCloseable {
     private JMenuItem exit;
     private final PropertyChangeListener onMosaicSkillImgPropertyChagedListener = this::onMosaicSkillImgPropertyChaged;
 
-    public GameMenu(MainApp app) {
+    public GameMenu(FastMinesSwing app) {
         this.app = app;
         initialize();
     }

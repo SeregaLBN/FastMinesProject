@@ -33,7 +33,7 @@ targetCompatibility = JavaVersion.VERSION_1_8
 compileJava.options.encoding = 'UTF-8'
 
 group = 'FastMinesGame' // fmg
-mainClassName = "fmg.swing.app.MainApp"
+mainClassName = "fmg.swing.app.FastMinesSwing"
 version = '2.1.1'
 
 jar {

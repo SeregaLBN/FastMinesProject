@@ -22,9 +22,9 @@ import fmg.swing.app.toolbar.EBtnNewGameState;
 /** MainApp action handlers */
 public class Handlers {
 
-    private final MainApp app;
+    private final FastMinesSwing app;
 
-    public Handlers(MainApp app) {
+    public Handlers(FastMinesSwing app) {
         this.app = app;
     }
 

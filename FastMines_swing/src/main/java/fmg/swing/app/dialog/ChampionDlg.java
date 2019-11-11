@@ -7,7 +7,7 @@ import javax.swing.SwingConstants;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
 import fmg.core.types.viewmodel.serializable.ChampionsModel;
-import fmg.swing.app.MainApp;
+import fmg.swing.app.FastMinesSwing;
 import fmg.swing.app.model.view.ChampionTblModel;
 import fmg.swing.app.model.view.ReportTableModel;
 
@@ -16,7 +16,7 @@ public class ChampionDlg extends ReportDlg {
 
     private final ChampionsModel champions;
 
-    public ChampionDlg(MainApp app, boolean modal, ChampionsModel champions) {
+    public ChampionDlg(FastMinesSwing app, boolean modal, ChampionsModel champions) {
         super(app, modal);
         this.champions = champions;
     }

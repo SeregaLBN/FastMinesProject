@@ -8,11 +8,11 @@ import javax.swing.*;
 import fmg.core.types.draw.EShowElement;
 import fmg.core.types.draw.EZoomInterface;
 import fmg.swing.app.KeyCombo;
-import fmg.swing.app.MainApp;
+import fmg.swing.app.FastMinesSwing;
 
 public class OptionsMenu {
 
-    private final MainApp app;
+    private final FastMinesSwing app;
     private final JMenu menu = new JMenu("Options");
     private JMenu zoom;
     private Map<EZoomInterface, JMenuItem> zoomItems;
@@ -21,7 +21,7 @@ public class OptionsMenu {
     private JCheckBoxMenuItem useUnknown, usePause;
     private Map<EShowElement, JCheckBoxMenuItem> showElements;
 
-    public OptionsMenu(MainApp app) {
+    public OptionsMenu(FastMinesSwing app) {
         this.app = app;
         initialize();
     }

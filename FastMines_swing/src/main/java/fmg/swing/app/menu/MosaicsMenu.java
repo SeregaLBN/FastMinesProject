@@ -17,7 +17,7 @@ import fmg.core.img.MosaicGroupModel;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.swing.app.KeyCombo;
-import fmg.swing.app.MainApp;
+import fmg.swing.app.FastMinesSwing;
 import fmg.swing.img.MosaicGroupImg;
 import fmg.swing.img.MosaicImg;
 
@@ -25,7 +25,7 @@ public class MosaicsMenu implements AutoCloseable {
 
     private static final boolean EXPERIMENTAL_MENU_MNEMONIC = true;
 
-    private final MainApp app;
+    private final FastMinesSwing app;
     private final JMenu menu = new JMenu("Mosaics");
     private EnumMap<EMosaicGroup, JMenuItem> mosaicsGroup;
     private List<MosaicGroupImg.IconController> mosaicsGroupImages;
@@ -34,7 +34,7 @@ public class MosaicsMenu implements AutoCloseable {
     private final PropertyChangeListener onMosaicImgPropertyChangedListener      = this::onMosaicImgPropertyChanged;
     private final PropertyChangeListener onMosaicGroupImgPropertyChangedListener = this::onMosaicGroupImgPropertyChanged;
 
-    public MosaicsMenu(MainApp app) {
+    public MosaicsMenu(FastMinesSwing app) {
         this.app = app;
         initialize();
     }

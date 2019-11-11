@@ -48,7 +48,7 @@ import fmg.swing.utils.ProjSettings;
 import fmg.swing.utils.ScreenResolutionHelper;
 
 /** Main window (Главное окно программы) */
-public class MainApp {
+public class FastMinesSwing {
 
     private final JFrame frame = new JFrame();
     private int windowState;
@@ -83,7 +83,7 @@ public class MainApp {
     private final PropertyChangeListener onMosaicControllerPropertyChangedListener = this::onMosaicControllerPropertyChanged;
     private final PropertyChangeListener     onLogoMainIconPropertyChangedListener = this::onLogoMainIconPropertyChanged;
 
-    public MainApp() {
+    public FastMinesSwing() {
         super();
         initialize();
     }
@@ -397,10 +397,10 @@ public class MainApp {
 //        System.out.println("Main::initialize: after setLocation");
 
         if (isZoomAlwaysMax)
-            SwingUtilities.invokeLater(() -> sizeAlwaysMax(new ActionEvent(MainApp.this, 0, null)));
+            SwingUtilities.invokeLater(() -> sizeAlwaysMax(new ActionEvent(FastMinesSwing.this, 0, null)));
         if (!doNotAskStartup)
             SwingUtilities.invokeLater(() ->
-                getHandlers().getPlayerManageAction().actionPerformed(new ActionEvent(MainApp.this, 0, "Main::initialize"))
+                getHandlers().getPlayerManageAction().actionPerformed(new ActionEvent(FastMinesSwing.this, 0, "Main::initialize"))
             );
     }
 
@@ -1260,7 +1260,7 @@ public class MainApp {
         //setSysOut();
         //printSystemProperties();
         SwingUtilities.invokeLater(() ->
-            new MainApp().getFrame().setVisible(true)
+            new FastMinesSwing().getFrame().setVisible(true)
         );
     }
 

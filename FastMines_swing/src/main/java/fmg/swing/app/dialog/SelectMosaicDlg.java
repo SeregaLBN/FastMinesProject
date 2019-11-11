@@ -17,7 +17,7 @@ import fmg.core.img.IImageController;
 import fmg.core.img.MosaicAnimatedModel;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
-import fmg.swing.app.MainApp;
+import fmg.swing.app.FastMinesSwing;
 import fmg.swing.app.model.control.SpinNumberDocListener;
 import fmg.swing.app.model.control.SpinnerDiapasonModel;
 import fmg.swing.img.MosaicImg;
@@ -27,7 +27,7 @@ import fmg.swing.utils.ImgUtils;
 
 public class SelectMosaicDlg implements AutoCloseable {
 
-    private final MainApp app;
+    private final FastMinesSwing app;
     private final JDialog dialog;
     private JSpinner spin;
     private JComboBox<?> cmbxMosaicTypes;
@@ -41,7 +41,7 @@ public class SelectMosaicDlg implements AutoCloseable {
     private static final Color bkTabBkColor = Cast.toColor(fmg.common.Color.Transparent()); // UIManager.getColor("Button.light"); // "Button.light" "Button.foreground"
     private static final Color bkTabBkColorSelected = UIManager.getColor("Button.shadow"); // "Button.select" "Button.darkShadow"
 
-    public SelectMosaicDlg(MainApp app, boolean modal) {
+    public SelectMosaicDlg(FastMinesSwing app, boolean modal) {
         this.app = app;
         dialog = new JDialog((app == null) ? null : app.getFrame(), "Select mosaic", modal);
         initialize();
