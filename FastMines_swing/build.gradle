@@ -37,6 +37,7 @@ mainClassName = "fmg.swing.app.FastMinesSwing"
 version = '2.1.1'
 
 jar {
+    excludes = [ 'fmApplet.html' ]
     manifest {
         attributes 'Main-Class': mainClassName,
                    'Title'     : 'FastMines game - Java SWING desktop application',
@@ -59,7 +60,7 @@ sourceSets {
             include '**/*.java'
         }
         resources {
-          //srcDir 'src/test/resources'
+            srcDir 'src/main/resources'
 //          srcDir '../res'
 //          exclude '**/*~*'
 //          include '**/*.gif'
@@ -116,13 +117,17 @@ task fastMinesSwingGraalNative(dependsOn: fastMinesSwingFatJar) { task ->
     doLast {
         def isWin = org.gradle.internal.os.OperatingSystem.current().isWindows()
         exec {
+            // HINT: see META-INF/native-image/${groupId}/${artifactId}/native-image.properties
             commandLine isWin ? 'cmd' : 'sh',
                         isWin ? '/c' : '-c',
                         System.env.GRAALVM_HOME + '/bin/native-image' +
                         ' -cp ' + project(':FastMines_swing').buildDir.absolutePath + '/libs/FastMines_swing-fat-' + version + '.jar' +
                         ' -H:Class=' + mainClassName +
-                        ' -H:Name=FastMines_swing'
-//                + ' --no-fallback' \
+                        ' -H:Name=FastMines_swing' +
+                        ' --no-server' +
+                        ' --no-fallback'
+//                        ' --initialize-at-run-time=sun.awt' +
+//                        ' --initialize-at-build-time=sun.java2d.opengl.OGLRenderQueue'
 //                + ' -H:+ReportExceptionStackTraces' \
 //                + ' -H:ClassInitialization=sun.java2d.opengl.OGLRenderQueue:run_time' \
 //                + ' --allow-incomplete-classpath'

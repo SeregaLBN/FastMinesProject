@@ -1,0 +1,326 @@
+[
+{
+  "name":"fmg.core.img.AnimatedImageModel",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.img.AnimatedInnerModel",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.img.BurgerMenuModel",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.img.FlagModel",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.img.ImageController",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.img.ImageView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.img.LogoModel",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.img.MosaicAnimatedModel",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.img.MosaicGroupModel",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.img.MosaicSkillModel",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.img.SmileModel",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.img.WithBurgerMenuView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.mosaic.BackgroundFill",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.mosaic.MosaicController",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.mosaic.MosaicDrawModel",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.mosaic.MosaicGameModel",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.mosaic.MosaicInitData",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.mosaic.MosaicView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.mosaic.cells.Hexagon1",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Hexagon1$AttrHexagon1","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Hexagon1$AttrHexagon1",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Parquet1",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Parquet1$AttrParquet1","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Parquet1$AttrParquet1",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Parquet2",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Parquet2$AttrParquet2","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Parquet2$AttrParquet2",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.PenrousePeriodic1",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.PenrousePeriodic1$AttrPenrousePeriodic1","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.PenrousePeriodic1$AttrPenrousePeriodic1",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.PentagonT10",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.PentagonT10$AttrPentagonT10","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.PentagonT10$AttrPentagonT10",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.PentagonT24",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.PentagonT24$AttrPentagonT24","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.PentagonT24$AttrPentagonT24",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.PentagonT5",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.PentagonT5$AttrPentagonT5","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.PentagonT5$AttrPentagonT5",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Quadrangle1",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Quadrangle1$AttrQuadrangle1","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Quadrangle1$AttrQuadrangle1",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Rhombus1",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Rhombus1$AttrRhombus1","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Rhombus1$AttrRhombus1",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.SqTrHex",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.SqTrHex$AttrSqTrHex","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.SqTrHex$AttrSqTrHex",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Square1",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Square1$AttrSquare1","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Square1$AttrSquare1",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Square2",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Square2$AttrSquare2","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Square2$AttrSquare2",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.TrSq1",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.TrSq1$AttrTrSq1","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.TrSq1$AttrTrSq1",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.TrSq2",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.TrSq2$AttrTrSq2","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.TrSq2$AttrTrSq2",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Trapezoid1",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Trapezoid1$AttrTrapezoid1","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Trapezoid1$AttrTrapezoid1",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Trapezoid2",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Trapezoid2$AttrTrapezoid2","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Trapezoid2$AttrTrapezoid2",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Trapezoid3",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Trapezoid3$AttrTrapezoid3","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Trapezoid3$AttrTrapezoid3",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Triangle1",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Triangle1$AttrTriangle1","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Triangle1$AttrTriangle1",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Triangle2",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Triangle2$AttrTriangle2","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Triangle2$AttrTriangle2",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Triangle3",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Triangle3$AttrTriangle3","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Triangle3$AttrTriangle3",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Triangle4",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Triangle4$AttrTriangle4","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Triangle4$AttrTriangle4",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.types.draw.PenBorder",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.app.serializable.SerializeMosaicData",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.Flag$IconView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.Flag$SwingView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.Logo$IconView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.Logo$ImageAwtView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.Logo$SwingView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.MosaicGroupImg$IconView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.MosaicGroupImg$SwingView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.MosaicImg$IconView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.MosaicImg$ImageAwtView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.MosaicImg$SwingView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.MosaicSkillImg$IconView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.MosaicSkillImg$SwingView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.MosaicSkillOrGroupView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.Smile$IconView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.Smile$SwingView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.mosaic.MosaicJPanelController",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.mosaic.MosaicJPanelView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.mosaic.MosaicSwingView",
+  "allDeclaredFields":true
+},
+{
+  "name":"java.lang.Object",
+  "allDeclaredFields":true
+}
+]
