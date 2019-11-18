@@ -122,8 +122,7 @@ task fastMinesSwingGraalNative(dependsOn: fastMinesSwingFatJar) { task ->
             commandLine isWin ? 'cmd' : 'sh',
                         isWin ? '/c' : '-c',
                         System.env.GRAALVM_HOME + '/bin/native-image' +
-                        ' -cp ' + project(':FastMines_swing').buildDir.absolutePath + '/libs/FastMines_swing-fat-' + version + '.jar' +
-                        ' -H:Class=' + mainClassName +
+                        ' -jar ' + project(':FastMines_swing').buildDir.absolutePath + '/libs/FastMines_swing-fat-' + version + '.jar' +
                         ' -H:Name=FastMines_swing' +
                         ' --no-server' +
                         ' --no-fallback'
@@ -132,6 +131,8 @@ task fastMinesSwingGraalNative(dependsOn: fastMinesSwingFatJar) { task ->
 //                + ' -H:+ReportExceptionStackTraces' \
 //                + ' -H:ClassInitialization=sun.java2d.opengl.OGLRenderQueue:run_time' \
 //                + ' --allow-incomplete-classpath'
+//  --initialize-at-build-time=sun.java2d.opengl.OGLRenderQueue \
+//  --initialize-at-run-time=sun.awt.SunHints$Value \
         }
     }
 }

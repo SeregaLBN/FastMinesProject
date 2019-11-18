@@ -17,10 +17,15 @@ public final class ProjSettings extends AProjSettings {
         UiInvoker.ANIMATOR = Animator::getSingleton;
         UiInvoker.TIMER_CREATOR = Timer::new;
 
-        UIDefaults uiDef = UIManager.getDefaults();
-        java.awt.Color clr = uiDef.getColor("Panel.background");
-        if (clr != null)
-            MosaicDrawModel.DefaultBkColor = Cast.toColor(clr);
+
+        try {
+            UIDefaults uiDef = UIManager.getDefaults();
+            java.awt.Color clr = uiDef.getColor("Panel.background");
+            if (clr != null)
+                MosaicDrawModel.DefaultBkColor = Cast.toColor(clr);
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
+        }
     }
 
     public static void init() {
