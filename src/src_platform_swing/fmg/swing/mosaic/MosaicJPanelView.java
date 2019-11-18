@@ -6,11 +6,10 @@ import java.awt.image.ImageObserver;
 import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.Icon;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
@@ -23,9 +22,6 @@ import fmg.swing.img.Flag;
 import fmg.swing.img.Mine;
 import fmg.swing.utils.Cast;
 import fmg.swing.utils.ImgUtils;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
 
 /** MVC: view. SWING implementation over control {@link JPanel} */
 public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawModel<Icon>> {
@@ -38,10 +34,11 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
     boolean zoomFocusToMosaicField = false; // experimental
     boolean forceSimpleDraw = false;
 
+    private Timer timerDebunceSize;
     private boolean useDebounce = true;
-    private final Subject<SizeDouble> sizeObserv;
-    private final Disposable sizeDebounce;
     private boolean isControlResizing;
+    private SizeDouble lastSize;
+
 
     private BufferedImage lastImg;
     private SizeDouble lastImgMosaicSize;
@@ -51,12 +48,10 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
         super(new MosaicDrawModel<Icon>());
         changeSizeImagesMineFlag();
 
-        sizeObserv   = !useDebounce ? null : PublishSubject.create();
-        sizeDebounce = !useDebounce ? null : sizeObserv
-                .debounce(300, TimeUnit.MILLISECONDS)
-                .subscribe(size -> SwingUtilities.invokeLater(() -> {
-                    setSizeFinish(size);
-                }));
+        timerDebunceSize = new Timer(300, ev -> {
+            timerDebunceSize.stop();
+            setSizeFinish(lastSize);
+        });
     }
 
     @Override
@@ -69,7 +64,12 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
     public void setSize(SizeDouble size) {
         if (useDebounce) {
             isControlResizing = true;
-            sizeObserv.onNext(size);
+
+            lastSize = size;
+            if (timerDebunceSize.isRunning())
+                timerDebunceSize.restart();
+            else
+                timerDebunceSize.start();
         } else {
             super.setSize(size);
         }
@@ -338,8 +338,8 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
 
     @Override
     public void close() {
-        if (sizeDebounce != null)
-            sizeDebounce.dispose();
+        if ((timerDebunceSize != null) && timerDebunceSize.isRunning())
+            timerDebunceSize.stop();
         super.close();
         getModel().close();
         _control = null;

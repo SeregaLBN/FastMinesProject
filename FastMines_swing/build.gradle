@@ -82,7 +82,8 @@ sourceSets {
 
 dependencies {
     compile project(':FastMines_core')
-    compile 'io.reactivex.rxjava2:rxjava:2.2.8'
+
+    testCompile 'io.reactivex.rxjava2:rxjava:2.2.8'
 
     testImplementation project(':FastMines_core').sourceSets.test.output
 
