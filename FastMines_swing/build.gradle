@@ -37,7 +37,7 @@ mainClassName = "fmg.swing.app.FastMinesSwing"
 version = '2.1.1'
 
 jar {
-    excludes = [ 'fmApplet.html' ]
+    excludes = [ 'fmApplet.html', 'runNativeImageAgent.sh' ]
     manifest {
         attributes 'Main-Class': mainClassName,
                    'Title'     : 'FastMines game - Java SWING desktop application',
@@ -83,6 +83,8 @@ sourceSets {
 dependencies {
     compile project(':FastMines_core')
 
+    // !! do not use external dependencies to minimize assembly size
+
     testCompile 'io.reactivex.rxjava2:rxjava:2.2.8'
 
     testImplementation project(':FastMines_core').sourceSets.test.output
@@ -115,6 +117,11 @@ project(':FastMines_swing').tasks.fastMinesSwingFatJar.dependsOn project(':FastM
 project(':FastMines_swing').tasks.build               .dependsOn project(':FastMines_swing').tasks.fastMinesSwingFatJar
 
 task fastMinesSwingGraalNative(dependsOn: fastMinesSwingFatJar) { task ->
+
+// graalvm-ce-java8-19.3.0 (Ubuntu 18.06):
+// > java.lang.IllegalArgumentException: AWT is currently not supported on Substrate VM
+// ;(
+
     doLast {
         def isWin = org.gradle.internal.os.OperatingSystem.current().isWindows()
         exec {
@@ -126,13 +133,7 @@ task fastMinesSwingGraalNative(dependsOn: fastMinesSwingFatJar) { task ->
                         ' -H:Name=FastMines_swing' +
                         ' --no-server' +
                         ' --no-fallback'
-//                        ' --initialize-at-run-time=sun.awt' +
-//                        ' --initialize-at-build-time=sun.java2d.opengl.OGLRenderQueue'
-//                + ' -H:+ReportExceptionStackTraces' \
-//                + ' -H:ClassInitialization=sun.java2d.opengl.OGLRenderQueue:run_time' \
-//                + ' --allow-incomplete-classpath'
-//  --initialize-at-build-time=sun.java2d.opengl.OGLRenderQueue \
-//  --initialize-at-run-time=sun.awt.SunHints$Value \
+            // HINT: @see file ./FastMines_swing/src/main/resources/META-INF/native-image/FastMinesGame/FastMines_swing/native-image.properties
         }
     }
 }

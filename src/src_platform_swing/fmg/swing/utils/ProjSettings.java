@@ -23,7 +23,7 @@ public final class ProjSettings extends AProjSettings {
             java.awt.Color clr = uiDef.getColor("Panel.background");
             if (clr != null)
                 MosaicDrawModel.DefaultBkColor = Cast.toColor(clr);
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
             ex.printStackTrace(System.err);
         }
     }
