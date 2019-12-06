@@ -125,7 +125,8 @@ task fastMinesSwingGraalNative(dependsOn: fastMinesSwingFatJar) { task ->
     doLast {
         def isWin = org.gradle.internal.os.OperatingSystem.current().isWindows()
         exec {
-            // HINT: see META-INF/native-image/${groupId}/${artifactId}/native-image.properties
+            // HINT: see            META-INF/native-image/${groupId}/${artifactId}/native-image.properties
+            // ./src/main/resources/META-INF/native-image/FastMinesGame/FastMines_swing/native-image.properties
             commandLine isWin ? 'cmd' : 'sh',
                         isWin ? '/c' : '-c',
                         System.env.GRAALVM_HOME + '/bin/native-image' +
@@ -133,7 +134,6 @@ task fastMinesSwingGraalNative(dependsOn: fastMinesSwingFatJar) { task ->
                         ' -H:Name=FastMines_swing' +
                         ' --no-server' +
                         ' --no-fallback'
-            // HINT: @see file ./FastMines_swing/src/main/resources/META-INF/native-image/FastMinesGame/FastMines_swing/native-image.properties
         }
     }
 }
