@@ -29,19 +29,19 @@ jar {
     }
 }
 
-//#if use Java 11
-//repositories {
-//    flatDir {
-//        // 1. download https://gluonhq.com/products/javafx/
-//        // 2. define system environment variable: example JAVAFX_HOME = youPath/Java/javafx-sdk-11.0.2
-//        dirs System.getenv('JAVAFX_HOME') + '/lib'
-//        // to run fmg.jfx.app.DemoApp from Eclipse:
-//        //   1. open 'Run Configurations'
-//        //   2. in tab 'Arguments' in block 'VM arguments' add next
-//        //      --module-path "${env_var:JAVAFX_HOME}\lib" --add-modules=javafx.controls
-//    }
-//}
-//#endif
+repositories {
+    if (JavaVersion.current() >= JavaVersion.VERSION_11) {
+        flatDir {
+            // 1. download https://gluonhq.com/products/javafx/
+            // 2. define system environment variable: example JAVAFX_HOME = youPath/Java/javafx-sdk-11.0.2
+            dirs System.getenv('JAVAFX_HOME') + '/lib'
+            // to run fmg.jfx.app.DemoApp from Eclipse:
+            //   1. open 'Run Configurations'
+            //   2. in tab 'Arguments' in block 'VM arguments' add next
+            //      --module-path "${env_var:JAVAFX_HOME}\lib" --add-modules=javafx.controls
+        }
+    }
+}
 
 sourceSets {
     main {
@@ -59,7 +59,6 @@ sourceSets {
     }
 }
 
-/** /
 def currentOS = org.gradle.internal.os.OperatingSystem.current()
 def platform
 if (currentOS.isWindows()) {
@@ -69,22 +68,24 @@ if (currentOS.isWindows()) {
 } else if (currentOS.isMacOsX()) {
     platform = 'mac'
 }
-/**/
+println 'Current platform is ' + platform
 
 dependencies {
     implementation project(':FastMines_core')
 
-//#if use Java 11
-//    compile name: 'javafx.base'
-//    compile name: 'javafx.controls'
-//    compile name: 'javafx.graphics'
-//    testCompile name : 'javafx.swing' //(use in unit test)
-//#endif
+    if (JavaVersion.current() >= JavaVersion.VERSION_11) {
+        implementation name: 'javafx.base'
+        implementation name: 'javafx.controls'
+        implementation name: 'javafx.graphics'
 
-    //implementation 'org.openjfx:javafx-base:11.0.2:${platform}' // for java 11
-    //implementation 'org.openjfx:javafx-graphics:11.0.2:${platform}' // for java 11
-    //implementation 'org.openjfx:javafx-controls:11.0.2:${platform}' // for java 11
-    //testImplementation 'org.openjfx:javafx-swing:11.0.2:${platform}' // for java 11 (use in unit test)
+        implementation     'org.openjfx:javafx-base' +':11.0.2:' + platform
+        implementation     'org.openjfx:javafx-graphics:11.0.2:' + platform
+        implementation     'org.openjfx:javafx-controls:11.0.2:' + platform
+        testImplementation 'org.openjfx:javafx-swing'+':11.0.2:' + platform
+
+        testImplementation name : 'javafx.swing' //(use in unit test)
+    }
+
     testImplementation project(':FastMines_core').sourceSets.test.output
 
     // Use JUnit test framework
