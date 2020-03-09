@@ -17,13 +17,9 @@ namespace Test.FastMines.Ava.Images {
         static void Main(string[] args) {
             AppBuilder.Configure<App>()
                 .UsePlatformDetect()
+//                .UseReactiveUI()
+//                .LogToDebug()
                 .Start<DemoWindow>();
-        }
-
-        public static void AttachDevTools(Window window) {
-#if DEBUG
-            DevTools.Attach(window);
-#endif
         }
 
     }
