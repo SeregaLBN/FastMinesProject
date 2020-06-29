@@ -44,6 +44,9 @@ version = '2.1.1'
 
 jar {
     excludes = [ 'fmApplet.html', 'runNativeImageAgent.sh' ]
+    if (!org.gradle.internal.jvm.Jvm.current().toString().contains("GraalVM"))
+        excludes += [ 'META-INF/native-image' ]
+
     manifest {
         attributes 'Main-Class': mainClassName,
                    'Title'     : 'FastMines game - Java SWING desktop application',
@@ -121,12 +124,21 @@ project(':FastMines_swing').tasks.build               .dependsOn project(':FastM
 
 task fastMinesSwingGraalNative(dependsOn: fastMinesSwingFatJar) { task ->
 
-// graalvm-ce-java8-19.3.0 (Ubuntu 18.06):
-// > java.lang.IllegalArgumentException: AWT is currently not supported on Substrate VM
-// ;(
-
     doLast {
+        if (!org.gradle.internal.jvm.Jvm.current().toString().contains("GraalVM"))
+            // can`t build
+            throw new RuntimeException(task.name + ': Unsupported JDK. Can usage GraalVM JDK')
+
         def isWin = org.gradle.internal.os.OperatingSystem.current().isWindows()
+
+        // pre requirements
+        exec {
+            commandLine isWin ? 'cmd' : 'sh',
+                        isWin ? '/c' : '-c',
+                        System.env.GRAALVM_HOME + '/bin/gu install native-image'
+        }
+
+        // TODO: if isWin exec from command line etc "p:\ProgramFiles\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
         exec {
             // HINT: see            META-INF/native-image/${groupId}/${artifactId}/native-image.properties
             // ./src/main/resources/META-INF/native-image/FastMinesGame/FastMines_swing/native-image.properties
@@ -135,14 +147,31 @@ task fastMinesSwingGraalNative(dependsOn: fastMinesSwingFatJar) { task ->
                         System.env.GRAALVM_HOME + '/bin/native-image' +
                         ' -jar ' + project(':FastMines_swing').buildDir.absolutePath + '/libs/FastMines_swing-fat-' + version + '.jar' +
                         ' -H:Name=FastMines_swing' +
+                        (isWin ? ' -H:NativeLinkerOption=prefs.lib' : '') +
                         ' --no-server' +
                         ' --no-fallback'
+
+            // exec > ./FastMines_swing/FastMines_swing(.exe) 
+            // > Exception in thread "main" java.lang.IllegalArgumentException: AWT is currently not supported on Substrate VM
+            // ;(
+            // try in graalvm-ce-java8-19.3.0 (Ubuntu 18.04):
+            // try in graalvm-ce-java11-20.1.0 (Win 10)
         }
     }
 }
 
 task fastMinesSwingJPackNative(dependsOn: fastMinesSwingFatJar) { task ->
     doLast {
+        // tested in Open/Oracle JDK 8
+
+        if (!JavaVersion.current().isJava8())
+            // can`t build
+            throw new RuntimeException(task.name + ': Unsupported JDK. Can usage JDK 8')
+
+        if (org.gradle.internal.jvm.Jvm.current().toString().contains("GraalVM"))
+            // can`t build
+            throw new RuntimeException(task.name + ': Unsupported JDK. Can usage Open/Oracle JDK 8')
+
         def isWin = org.gradle.internal.os.OperatingSystem.current().isWindows()
         exec {
             commandLine isWin ? 'cmd' : 'sh',
