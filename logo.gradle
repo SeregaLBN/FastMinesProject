@@ -9,9 +9,9 @@ def printLogo() {
         int inW = inImg.getWidth()
         int inH = inImg.getHeight()
         int maxIn = Math.max(inW, inH)
-        int maxOut = 35 + r.nextInt(25)
+        int maxOut = 25 + r.nextInt(25)
         int outW = inW*maxOut/maxIn
-        int outH = (int)(0.6 * inH*maxOut/maxIn) // fix console char size
+        int outH = outW / 3.5 // (int)(0.6 * inH*maxOut/maxIn) // fix console char size
         def outImg = new java.awt.image.BufferedImage(outW, outH, java.awt.image.BufferedImage.TYPE_USHORT_GRAY)
         def g = outImg.createGraphics()
         g.setColor(java.awt.Color.WHITE)
@@ -28,7 +28,7 @@ def printLogo() {
             StringBuilder line = new StringBuilder()
             for (int col = 0; col < w; col++)
                 line.append((img.getRGB(col, row) == -1) ? " " : "█")
-           
+
             int[] colorCodes = [31,32,33,34,35,36];
             println(String.format("%c[%dm", 0x1B, colorCodes[r.nextInt(colorCodes.length)])) // http://www.termsys.demon.co.uk/vtansi.htm
             println(line.toString())

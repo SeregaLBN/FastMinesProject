@@ -15,6 +15,12 @@ buildscript {
     }
 }
 
+if (org.gradle.internal.os.OperatingSystem.current().isWindows())
+    exec {
+        // Using UTF-8 Encoding (CHCP 65001) in Command Prompt / Windows Powershell
+        commandLine 'cmd', '/c', 'chcp 65001'
+    }
+
 apply from: 'logo.gradle'
 apply from: 'gitInfo.gradle'
 

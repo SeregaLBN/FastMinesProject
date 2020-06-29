@@ -96,11 +96,21 @@ task checkJfxrtJarExist(type: DefaultTask) {
         return
 
     def jfxrtJarExist = java.nio.file.Paths.get(org.gradle.internal.jvm.Jvm.current().javaHome.path, 'jre', 'lib', 'ext', 'jfxrt.jar').toFile().exists()
-    if (jfxrtJarExist || !org.gradle.internal.jvm.Jvm.current().toString().contains("JetBrains"))
+    if (jfxrtJarExist)
         return
 
-    // can`t build
-    throw new RuntimeException("If you want successfully build the FastMines_jfx\n\
+    if (org.gradle.internal.jvm.Jvm.current().toString().contains("GraalVM"))
+        // can`t build
+        throw new RuntimeException("GraalVM 8 don`t support JFX. If you want successfully build the FastMines_jfx\n\
+ * upgrade JDK to GraalVM 11:\n\
+    https://www.graalvm.org/downloads/\n\
+ * or use another JDK 8:\n\
+    https://developers.redhat.com/products/openjdk/download\n\
+    https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html")
+
+    if (org.gradle.internal.jvm.Jvm.current().toString().contains("JetBrains"))
+        // can`t build
+        throw new RuntimeException("If you want successfully build the FastMines_jfx from AndroidStudio IDE / IDEA\n\
  * change internal JDK to external\n\
    Menu 'File' -> Project Structure... -> SDK Location -> JDK location -> unselect embedded " + org.gradle.internal.jvm.Jvm.current().javaHome + " -> select path to you JDK8/JDK11 -> Ok\n\
  * or manualy copy file Java8 jfxrt.jar\n\
