@@ -18,6 +18,10 @@ buildscript {
 apply from: 'logo.gradle'
 apply from: 'gitInfo.gradle'
 
+
+println 'JVM ' + org.gradle.internal.jvm.Jvm.current()
+println org.gradle.internal.jvm.Jvm.current().javaHome
+
 allprojects {
     repositories {
         google()
