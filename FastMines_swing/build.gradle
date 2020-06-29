@@ -87,13 +87,13 @@ sourceSets {
 
 dependencies {
     implementation project(':FastMines_core')
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.8'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.19'
 
     // !! do not use external dependencies to minimize assembly size
 
-    testImplementation 'io.reactivex.rxjava2:rxjava:2.2.8'
+    testImplementation 'io.reactivex.rxjava2:rxjava:2.2.19'
     testImplementation project(':FastMines_core').sourceSets.test.output
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13'
 }
 
 test.dependsOn(":FastMines_core:test")
