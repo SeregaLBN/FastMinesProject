@@ -5,7 +5,7 @@
             ./FastMines_swing   - SWING support                 open in Eclipse or IDEA(Android Studio) or VS Code
             ./FastMines_jfx     - JavaFX support                open in Eclipse or IDEA(Android Studio) or VS Code
             ./FastMines_android - Android version               open in Android Studio(IDEA)
-   ./FastMines.sln  - solutions for Visual Studio 2017
+   ./FastMines.sln  - solutions for Visual Studio
          subprojects in subdirectories:
             ./FastMines_core                    - C#    - Core of FastMines project
                 ./FastMines.Core                            - shared library - common utils  &  core business logic
@@ -51,7 +51,7 @@ TIP: all worked in Eclipse Version: 2019-03 (4.11.0)
 <!--
  If you want to import FastMines_android into Eclipse IDE (open without build)
    * temporarily change in ./build.gradle
-     to   classpath 'com.android.tools.build:gradle:3.2.1'
+     to   classpath 'com.android.tools.build:gradle:x.x.x'
      and restore after successful import
 -->
  If you do not want to import FastMines_android into Eclipse IDE
@@ -65,16 +65,6 @@ How to:
 * Open FastMinesProject:
  1. Import project (Gradle ...)
  2. and select root FastMinesProject directory
-
-Lifehacks:
-If you want successfully build the FastMines_jfx
- * change internal JDK to external
-   Menu 'File' -> Project Structure... -> SDK Location -> unselect 'Use embedded JDK (recommended)' -> select path to you JDK8 -> Ok
- * or manualy copy file  jfxrt.jar
-   from external JDK
-      %JAVA_HOME_8%\jre\lib\ext\
-   to
-      you_path\Android Studio\jre\jre\lib\ext\
 
 ----------------------------------
 Eclipse (Java)

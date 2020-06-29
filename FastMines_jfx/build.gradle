@@ -2,18 +2,16 @@ apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'eclipse'
 
-//#if use Java 11
-//    // TODO see https://stackoverflow.com/questions/52569724/javafx-11-create-a-jar-file-with-gradle
-//    //          https://stackoverflow.com/questions/52144931/how-to-add-javafx-runtime-to-eclipse-in-java-11
-//    // to use only gradle config (without manually set javafx sdk)
-//    sourceCompatibility = '1.11'
-//    targetCompatibility = '1.11'
-//#if else use Java 8
-  sourceCompatibility = JavaVersion.VERSION_1_8
-  targetCompatibility = JavaVersion.VERSION_1_8
-//#endif
+if (JavaVersion.current().isJava11Compatible()) {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+} else {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
 
 compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = "UTF-8"
 
 group = 'FastMinesGame' // fmg
 mainClassName = "fmg.jfx.app.Main"
@@ -23,25 +21,25 @@ jar {
     manifest {
         attributes 'Main-Class': mainClassName,
                    'Title'     : 'FastMines game - demo Java FX desktop application',
-                   'Version'   : version,
+                   'Version'   : archiveVersion,
                    'Vendor'    : 'SeregaLBN',
                    'Build-Date': new Date().format("yyyy-MM-dd'T 'HH:mm:ss.SSSZZ")
     }
 }
 
-//#if use Java 11
-//repositories {
-//    flatDir {
-//        // 1. download https://gluonhq.com/products/javafx/
-//        // 2. define system environment variable: example JAVAFX_HOME = youPath/Java/javafx-sdk-11.0.2
-//        dirs System.getenv('JAVAFX_HOME') + '/lib'
-//        // to run fmg.jfx.app.DemoApp from Eclipse:
-//        //   1. open 'Run Configurations'
-//        //   2. in tab 'Arguments' in block 'VM arguments' add next
-//        //      --module-path "${env_var:JAVAFX_HOME}\lib" --add-modules=javafx.controls
-//    }
-//}
-//#endif
+repositories {
+    if (JavaVersion.current().isJava11Compatible()) {
+        flatDir {
+            // 1. download https://gluonhq.com/products/javafx/
+            // 2. define system environment variable: example JAVAFX_HOME = youPath/Java/javafx-sdk-11.0.2
+            dirs System.getenv('JAVAFX_HOME') + '/lib'
+            // to run fmg.jfx.app.DemoApp from Eclipse:
+            //   1. open 'Run Configurations'
+            //   2. in tab 'Arguments' in block 'VM arguments' add next
+            //      --module-path "${env_var:JAVAFX_HOME}\lib" --add-modules=javafx.controls
+        }
+    }
+}
 
 sourceSets {
     main {
@@ -59,7 +57,6 @@ sourceSets {
     }
 }
 
-/** /
 def currentOS = org.gradle.internal.os.OperatingSystem.current()
 def platform
 if (currentOS.isWindows()) {
@@ -69,28 +66,61 @@ if (currentOS.isWindows()) {
 } else if (currentOS.isMacOsX()) {
     platform = 'mac'
 }
-/**/
+//println 'Current platform is ' + platform
 
 dependencies {
     implementation project(':FastMines_core')
 
-//#if use Java 11
-//    compile name: 'javafx.base'
-//    compile name: 'javafx.controls'
-//    compile name: 'javafx.graphics'
-//    testCompile name : 'javafx.swing' //(use in unit test)
-//#endif
+    if (JavaVersion.current().isJava11Compatible()) {
+        implementation name: 'javafx.base'
+        implementation name: 'javafx.controls'
+        implementation name: 'javafx.graphics'
 
-    //implementation 'org.openjfx:javafx-base:11.0.2:${platform}' // for java 11
-    //implementation 'org.openjfx:javafx-graphics:11.0.2:${platform}' // for java 11
-    //implementation 'org.openjfx:javafx-controls:11.0.2:${platform}' // for java 11
-    //testImplementation 'org.openjfx:javafx-swing:11.0.2:${platform}' // for java 11 (use in unit test)
+        implementation     'org.openjfx:javafx-base' +':11.0.2:' + platform
+        implementation     'org.openjfx:javafx-graphics:11.0.2:' + platform
+        implementation     'org.openjfx:javafx-controls:11.0.2:' + platform
+        testImplementation 'org.openjfx:javafx-swing'+':11.0.2:' + platform
+
+        testImplementation name : 'javafx.swing' // used in unit test
+    }
+
     testImplementation project(':FastMines_core').sourceSets.test.output
 
     // Use JUnit test framework
-    testImplementation 'junit:junit:4.12'
-    testImplementation 'io.reactivex.rxjava2:rxjava:2.2.8'
+    testImplementation 'junit:junit:4.13'
+    testImplementation 'io.reactivex.rxjava2:rxjava:2.2.19'
 }
+
+task checkJfxrtJarExist(type: DefaultTask) {
+    if (!JavaVersion.current().isJava8())
+        return
+
+    def jfxrtJarExist = java.nio.file.Paths.get(org.gradle.internal.jvm.Jvm.current().javaHome.path, 'jre', 'lib', 'ext', 'jfxrt.jar').toFile().exists()
+    if (jfxrtJarExist)
+        return
+
+    if (org.gradle.internal.jvm.Jvm.current().toString().contains("GraalVM"))
+        // can`t build
+        throw new RuntimeException("GraalVM 8 don`t support JFX. If you want successfully build the FastMines_jfx\n\
+ * upgrade JDK to GraalVM 11:\n\
+    https://www.graalvm.org/downloads/\n\
+ * or use another JDK 8:\n\
+    https://developers.redhat.com/products/openjdk/download\n\
+    https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html")
+
+    if (org.gradle.internal.jvm.Jvm.current().toString().contains("JetBrains"))
+        // can`t build
+        throw new RuntimeException("If you want successfully build the FastMines_jfx from AndroidStudio IDE / IDEA\n\
+ * change internal JDK to external\n\
+   Menu 'File' -> Project Structure... -> SDK Location -> JDK location -> unselect embedded " + org.gradle.internal.jvm.Jvm.current().javaHome + " -> select path to you JDK8/JDK11 -> Ok\n\
+ * or manualy copy file Java8 jfxrt.jar\n\
+   from external JDK\n\
+      %JAVA_HOME_8%\\jre\\lib\\ext\\\n\
+   to\n\
+      " + org.gradle.internal.jvm.Jvm.current().javaHome + "\\jre\\lib\\ext\\")
+}
+project(':FastMines_jfx').tasks.build.dependsOn project(':FastMines_jfx').tasks.checkJfxrtJarExist
+
 
 eclipse.classpath {
     file.whenMerged {
