@@ -45,7 +45,7 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
     private SizeDouble lastImgMosaicOffset;
 
     public MosaicJPanelView() {
-        super(new MosaicDrawModel<Icon>());
+        super(new MosaicDrawModel<>());
         changeSizeImagesMineFlag();
 
         timerDebunceSize = new Timer(300, ev -> {

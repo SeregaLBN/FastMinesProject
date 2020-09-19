@@ -35,6 +35,7 @@ import fmg.core.mosaic.MosaicInitData;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
 
+/** Main window activity */
 public class MainActivity extends AppCompatActivity {
 
     public static final int MenuTextWidthDp = 95; // dp

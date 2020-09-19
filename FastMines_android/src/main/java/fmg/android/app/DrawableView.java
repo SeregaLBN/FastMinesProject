@@ -7,6 +7,7 @@ import android.view.View;
 
 import java.util.function.Consumer;
 
+/** Default android {@link View} where can define onDraw method dynamically via consumer {@link DrawableView#drawMethod} */
 public class DrawableView extends View {
 
     public Consumer<Canvas> drawMethod;

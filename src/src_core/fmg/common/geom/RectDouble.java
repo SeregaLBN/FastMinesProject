@@ -111,7 +111,11 @@ public class RectDouble {
     }
 
     public boolean contains(PointDouble point) {
-        return (point.x >= left()) && (point.x < right()) && (point.y >= top()) && (point.y < bottom());
+        return contains(point.x, point.y);
+    }
+
+    public boolean contains(double x, double y) {
+        return (x >= left()) && (x < right()) && (y >= top()) && (y < bottom());
     }
 
     @Override

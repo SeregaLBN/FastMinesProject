@@ -16,7 +16,7 @@ import fmg.common.Logger;
 import fmg.core.mosaic.MosaicGameModel;
 import fmg.core.mosaic.MosaicInitData;
 
-/** general activity of project */
+/** Game field activity of the project */
 public class MosaicActivity extends AppCompatActivity {
 
     private MosaicActivityBinding binding;

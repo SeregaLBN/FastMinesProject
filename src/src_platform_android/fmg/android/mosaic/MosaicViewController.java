@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.util.Size;
 import android.view.DragEvent;
 import android.view.GestureDetector;
@@ -12,18 +13,22 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.beans.PropertyChangeEvent;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import fmg.android.app.DrawableView;
 import fmg.android.utils.Cast;
 import fmg.common.Logger;
 import fmg.common.geom.PointDouble;
+import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
 import fmg.core.mosaic.MosaicController;
 import fmg.core.mosaic.MosaicDrawModel;
+import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.ClickResult;
+import fmg.core.types.EGameStatus;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -36,11 +41,51 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
     /** true : bind Control.SizeProperty to Model.Size
      *  false: bind Model.Size to Control.SizeProperty */
     private boolean bindSizeDirection = true;
+
     private Subject<Size> subjSizeChanged;
     private Disposable sizeChangedObservable;
     private Size cachedControlSize = new Size(-1, -1);
+
     private GestureDetector _gd;
-    private final GestureDetector.SimpleOnGestureListener _gestureListener = new GestureDetector.SimpleOnGestureListener(){
+    private final GestureDetector.OnGestureListener _gestureListener = new GestureDetector.SimpleOnGestureListener(){
+
+        /// interface OnGestureListener
+        @Override
+        public boolean onDown(MotionEvent ev) {
+            return MosaicViewController.this.onGestureDown(ev);
+        }
+
+        @Override
+        public void onShowPress(MotionEvent ev) {
+            MosaicViewController.this.onGestureShowPress(ev);
+        }
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent ev) {
+            return MosaicViewController.this.onGestureSingleTapUp(ev);
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent ev1, MotionEvent ev2, float distanceX, float distanceY) {
+            return MosaicViewController.this.onGestureScroll(ev1, ev2, distanceX, distanceY);
+        }
+
+        @Override
+        public void onLongPress(MotionEvent ev) {
+            MosaicViewController.this.onGestureLongPress(ev);
+        }
+
+        @Override
+        public boolean onFling(MotionEvent ev1, MotionEvent ev2, float velocityX, float velocityY) {
+            return MosaicViewController.this.onGestureFling(ev1, ev2, velocityX, velocityY);
+        }
+
+        /// interface OnDoubleTapListener
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent ev) {
+            return MosaicViewController.this.onGestureSingleTapConfirmed(ev);
+        }
 
         @Override
         public boolean onDoubleTap(MotionEvent ev) {
@@ -48,23 +93,38 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
         }
 
         @Override
-        public void onLongPress(MotionEvent ev) {
-            super.onLongPress(ev);
-            MosaicViewController.this.onGestureLongPress(ev);
-        }
-
-        @Override
         public boolean onDoubleTapEvent(MotionEvent ev) {
             return MosaicViewController.this.onGestureDoubleTapEvent(ev);
         }
 
+        // interface OnContextClickListener
         @Override
-        public boolean onDown(MotionEvent ev) {
-            return MosaicViewController.this.onGestureDown(ev);
+        public boolean onContextClick(MotionEvent ev) {
+            return MosaicViewController.this.onGestureContextClick(ev);
         }
-
     };
 
+    // #region if ExtendedManipulation
+    /// <summary> мин отступ от краев экрана для мозаики </summary>
+    private final double minIndent = Cast.dpToPx(30.0f);
+    private final boolean DeferredZoom = true;
+    private boolean _manipulationStarted;
+    private boolean _turnX;
+    private boolean _turnY;
+    private Date _dtInertiaStarting;
+    private static Double _baseWheelDelta;
+    private Object/*IDisposable*/ _areaScaleObservable;
+    private Object/*Transform*/ _originalTransform;
+    private Object/*CompositeTransform*/ _scaleTransform;
+    private double _deferredArea;
+
+    private static class ZoomStartInfo {
+        public Point _devicePosition;
+        public SizeDouble _mosaicSize;
+        public SizeDouble _mosaicOffset;
+    }
+    private ZoomStartInfo _zoomStartInfo;
+    // #endregion
 
     public MosaicViewController(Context context) {
         super(new MosaicViewView(context));
@@ -111,6 +171,9 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
 
     private void onGlobalLayoutListener() {
         View control = getViewControl();
+        if (control == null)
+            return;
+
         int w = control.getWidth();
         int h = control.getHeight();
         if ((w <= 0) || (h <= 0))
@@ -148,7 +211,19 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
     }
 
 
-    static String eventActionToString(int eventAction) {
+    static String dragEventToString(DragEvent ev) {
+        switch (ev.getAction()) {
+        case DragEvent.ACTION_DRAG_STARTED : return "Started";
+        case DragEvent.ACTION_DRAG_ENTERED : return "Entered";
+        case DragEvent.ACTION_DRAG_LOCATION: return "Location";
+        case DragEvent.ACTION_DROP         : return "Drop";
+        case DragEvent.ACTION_DRAG_EXITED  : return "Exited";
+        case DragEvent.ACTION_DRAG_ENDED   : return "Ended";
+        }
+        return "???";
+    }
+
+    static String motionEventActionToString(int eventAction) {
         switch (eventAction) {
         case MotionEvent.ACTION_CANCEL      : return "Cancel";
         case MotionEvent.ACTION_DOWN        : return "Down";
@@ -159,6 +234,22 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
         case MotionEvent.ACTION_POINTER_UP  : return "Pointer Up";
         }
         return "???";
+    }
+
+    static String motionEventToString(MotionEvent ev) {
+        /** /
+        switch (ev.getAction()) {
+        case MotionEvent.ACTION_CANCEL      : return "Cancel";
+        case MotionEvent.ACTION_DOWN        : return "Down";
+        case MotionEvent.ACTION_MOVE        : return "Move";
+        case MotionEvent.ACTION_OUTSIDE     : return "Outside";
+        case MotionEvent.ACTION_UP          : return "Up";
+        case MotionEvent.ACTION_POINTER_DOWN: return "Pointer Down";
+        case MotionEvent.ACTION_POINTER_UP  : return "Pointer Up";
+        }
+        return "???";
+        /**/
+        return ev.toString();
     }
 
     boolean clickHandler(ClickResult clickResult) {
@@ -189,57 +280,123 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
 
     protected boolean onGenericMotion(MotionEvent ev) {
         boolean[] handled = { false };
-        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGenericMotion", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGenericMotion", "ev=" + motionEventToString(ev), () -> "handled="+handled[0]))
         {
             return handled[0];
         }
     }
     protected boolean onTouch(MotionEvent ev) {
+        _clickInfo.motionEventHandled = false;
         boolean[] handled = { false };
-        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onTouch", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onTouch", "ev=" + motionEventToString(ev), () -> "handled="+handled[0])) {
+            return handled[0] = _gd.onTouchEvent(ev);
+        }
+    }
+
+    ///////////////// begin Gesture
+    protected boolean onGestureDown(MotionEvent ev) {
+        boolean[] handled = { false };
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureDown", "ev=" + motionEventToString(ev), () -> "handled=" + handled[0])) {
+            if (_clickInfo.motionEventHandled)
+                // already handled
+                return handled[0] = false;
+
+            return handled[0] = onClickCommon(ev, true, true);
+        }
+    }
+    protected void onGestureShowPress(MotionEvent ev) {
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureShowPress", "ev=" + motionEventToString(ev)))
         {
-            _gd.onTouchEvent(ev);
-            switch (ev.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                handled[0] = onClickCommon(ev, true, true);
-                break;
-            case MotionEvent.ACTION_UP:
-                handled[0] = onClickCommon(ev, true, false);
-                break;
-            }
+            return;
+        }
+    }
+    protected boolean onGestureSingleTapUp(MotionEvent ev) {
+        boolean[] handled = { false };
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureSingleTapUp", "ev=" + motionEventToString(ev), () -> "handled=" + handled[0])) {
+            return handled[0] = onClickCommon(ev, true, false);
+        }
+    }
+    protected boolean onGestureScroll(MotionEvent ev1, MotionEvent ev2, float distanceX, float distanceY) {
+        boolean[] handled = { false };
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureScroll", "ev1=" + motionEventToString(ev1) + "; ev2=" + motionEventToString(ev2) + "; distX=" + distanceX + "; distY=" + distanceY, () -> "handled=" + handled[0]))
+        {
+            return handled[0];
+        }
+    }
+    protected void onGestureLongPress(MotionEvent ev) {
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureLongPress", "ev=" + motionEventToString(ev)))
+        {
+            return;
+        }
+    }
+    protected boolean onGestureFling(MotionEvent ev1, MotionEvent ev2, float velocityX, float velocityY) {
+        boolean[] handled = { false };
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureFling", "ev1=" + motionEventToString(ev1) + "; ev2=" + motionEventToString(ev2) + "; velocityX=" + velocityX + "; velocityY=" + velocityY, () -> "handled=" + handled[0]))
+        {
+            return handled[0];
+        }
+    }
+    /// interface OnDoubleTapListener
+    protected boolean onGestureSingleTapConfirmed(MotionEvent ev) {
+        boolean[] handled = { false };
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureSingleTapConfirmed", "ev=" + motionEventToString(ev), () -> "handled="+handled[0]))
+        {
             return handled[0];
         }
     }
     protected boolean onGestureDoubleTap(MotionEvent ev) {
-        boolean[] handled = { !false };
-        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureDoubleTap", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
+        boolean[] handled = { false };
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureDoubleTap", "ev=" + motionEventToString(ev), () -> "handled="+handled[0]))
         {
+            MosaicDrawModel<Bitmap> model = getModel();
+            SizeDouble mosaicSize = model.getMosaicSize();
+            SizeDouble offset = getOffset();
+            RectDouble rcMosaic = new RectDouble(offset.width, offset.height, mosaicSize.width, mosaicSize.height);
+            if (rcMosaic.contains(ev.getX(), ev.getY())) {
+                if (this.getGameStatus() == EGameStatus.eGSEnd) {
+                    this.gameNew();
+                    _clickInfo.motionEventHandled = handled[0] = true;
+                }
+            } else {
+                _zoomStartInfo = null;
+
+                // centered mosaic
+                SizeDouble size = model.getSize();
+
+                // 1. modify area
+                model.setArea(MosaicHelper.findAreaBySize(model.getMosaicType(), model.getSizeField(), size, new SizeDouble()));
+
+                // 2. modify offset
+                mosaicSize = model.getMosaicSize(); // ! reload value
+                offset.width  = (size.width  - mosaicSize.width ) / 2;
+                offset.height = (size.height - mosaicSize.height) / 2;
+                setOffset(offset);
+
+                _clickInfo.motionEventHandled = handled[0] = true;
+            }
             return handled[0];
         }
     }
     protected boolean onGestureDoubleTapEvent(MotionEvent ev) {
-        boolean[] handled = { !false };
-        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureDoubleTapEvent", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
-        {
-            return handled[0];
-        }
-    }
-    protected boolean onGestureDown(MotionEvent ev) {
         boolean[] handled = { false };
-        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureDown", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureDoubleTapEvent", "ev=" + motionEventToString(ev), () -> "handled="+handled[0]))
         {
             return handled[0];
         }
     }
+    /// interface OnContextClickListener
+    protected boolean onGestureContextClick(MotionEvent ev) {
+        boolean[] handled = { false };
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureContextClick", "ev=" + motionEventToString(ev), () -> "handled="+handled[0]))
+        {
+            return handled[0];
+        }
+    }
+    ///////////////// end Gesture
+
     protected void onClick() {
         try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onClick"))
         {
-        }
-    }
-    protected void onGestureLongPress(MotionEvent ev) {
-        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureLongPress", "action=" + eventActionToString(ev.getAction())))
-        {
-            return;
         }
     }
     protected boolean onLongClick() {
@@ -251,14 +408,14 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
     }
     protected boolean onDrag(DragEvent ev) {
         boolean[] handled = { false };
-        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onDrag", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onDrag", "ev=" + dragEventToString(ev), () -> "handled="+handled[0]))
         {
             return handled[0];
         }
     }
     protected boolean onHover(MotionEvent ev) {
         boolean[] handled = { false };
-        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onHover", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onHover", "ev=" + motionEventToString(ev), () -> "handled="+handled[0]))
         {
             return handled[0];
         }
@@ -348,10 +505,10 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
         control.setFocusable(true); // ? иначе не будет срабатывать FocusListener
         control.setOnFocusChangeListener((v, hasFocus) -> onFocusChange(hasFocus));
         control.setOnTouchListener((v, ev) -> onTouch(ev));
-        control.setOnClickListener(v -> onClick());
-        control.setOnLongClickListener(v -> onLongClick());
-        control.setOnDragListener((v, ev) -> onDrag(ev));
-        control.setOnHoverListener((v, ev) -> onHover(ev));
+//        control.setOnClickListener(v -> onClick());
+//        control.setOnLongClickListener(v -> onLongClick());
+//        control.setOnDragListener((v, ev) -> onDrag(ev));
+//        control.setOnHoverListener((v, ev) -> onHover(ev));
       //control.setOnCapturedPointerListener();
         control.setOnContextClickListener(v -> onContextClick());
         control.setOnGenericMotionListener((v, ev) -> onGenericMotion(ev));
@@ -380,6 +537,31 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
         control.setFocusable(false);
     }
 
+    private SizeDouble getOffset() { return getModel().getMosaicOffset(); }
+    private void setOffset(SizeDouble offset) { getModel().setMosaicOffset(recheckOffset(offset)); }
+
+    private SizeDouble recheckOffset(SizeDouble offset) {
+        /* TODO
+        var size = Model.Size;
+        var mosaicSize = Model.MosaicSize;
+        if ((offset.Width + mosaicSize.Width) < MinIndent) { // правый край мозаики пересёк левую сторону контрола?
+            offset.Width = MinIndent - mosaicSize.Width; // привязываю к левой стороне контрола
+        } else {
+            if (offset.Width > (size.Width - MinIndent)) // левый край мозаики пересёк правую сторону контрола?
+                offset.Width = size.Width - MinIndent; // привязываю к правой стороне контрола
+        }
+
+        if ((offset.Height + mosaicSize.Height) < MinIndent) { // нижний край мозаики пересёк верхнюю сторону контрола?
+            offset.Height = MinIndent - mosaicSize.Height; // привязываю к верхней стороне контрола
+        } else {
+            if (offset.Height > (size.Height - MinIndent)) // вержний край мозаики пересёк нижнюю сторону контрола?
+                offset.Height = size.Height - MinIndent; // привязываю к нижней стороне контрола
+        }
+        */
+
+        return offset;
+    }
+
     @Override
     public void close() {
         unsubscribeToViewControl();
@@ -398,6 +580,7 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
     }
 
     class ClickInfo {
+        boolean motionEventHandled;
         public BaseCell cellDown;
         public boolean isLeft;
         /** pressed or released */
