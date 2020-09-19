@@ -7,11 +7,11 @@
    </PropertyGroup>
 
    <ItemGroup>
-      <PackageReference Include="nunit" Version="3.11.0" />
-      <PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
-      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
-      <PackageReference Include="System.Reactive.Core" Version="4.1.5" />
-      <PackageReference Include="System.Reactive.Linq" Version="4.1.5" />
+      <PackageReference Include="nunit" Version="3.12.0" />
+      <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
+      <PackageReference Include="System.Reactive.Core" Version="4.4.1" />
+      <PackageReference Include="System.Reactive.Linq" Version="4.4.1" />
    </ItemGroup>
 
    <Import Project="..\..\FastMines_core\FastMines.Core\FastMines.Core.projitems" Label="Shared" />

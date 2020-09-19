@@ -13,8 +13,8 @@
         </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="0.9.3" />
-        <PackageReference Include="Avalonia.Desktop" Version="0.9.3" />
+        <PackageReference Include="Avalonia" Version="0.9.12" />
+        <PackageReference Include="Avalonia.Desktop" Version="0.9.12" />
     </ItemGroup>
     <Import Project="..\..\FastMines_core\FastMines.Core\FastMines.Core.projitems" Label="Shared" />
     <Import Project="..\FastMines.Ava.Draw\FastMines.Ava.Draw.projitems" Label="Shared" />
