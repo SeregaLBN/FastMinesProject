@@ -94,7 +94,7 @@ namespace Fmg {
             this.Loaded -= OnPageLoaded;
 
             UpdateViewModel();
-            StartNewGame(); // <<<<<<<<<  delete this line
+            //StartNewGame(); // <<<<<<<<<  delete this line
         }
 
         private void OnPageUnloaded(object sender, RoutedEventArgs ev) {
