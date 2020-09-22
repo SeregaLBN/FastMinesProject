@@ -2,6 +2,7 @@ package fmg.common;
 
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 import java.util.function.Consumer;
@@ -32,7 +33,12 @@ public final class Logger {
 
     public static final class Tracer implements AutoCloseable {
         private final String _hint;
-        private final Supplier<String>_disposeMessage;
+        private final Supplier<String> _disposeMessage;
+
+        private static final ThreadLocal<Integer> THREAD_CONTEXT = new ThreadLocal<>();
+        static {
+            THREAD_CONTEXT.set(-1);
+        }
 
         public Tracer() { this(null, null, null); }
 
@@ -43,26 +49,42 @@ public final class Logger {
         public Tracer(String hint, Supplier<String> disposeMessage) { this(hint, null, disposeMessage); }
 
         public Tracer(String hint, String ctorMessage, Supplier<String> disposeMessage) {
+            inc();
             _hint = hint;
             _disposeMessage = disposeMessage;
             if (ctorMessage == null)
-                Logger.info("> {0}", hint);
+                Logger.info("{0}> {1}", prefix(), hint);
             else
-                Logger.info("> {0}: {1}", hint, ctorMessage);
+                Logger.info("{0}> {1}: {2}", prefix(), hint, ctorMessage);
+        }
+
+        private static void inc() {
+            THREAD_CONTEXT.set(THREAD_CONTEXT.get() + 1);
+        }
+        private static void dec() {
+            THREAD_CONTEXT.set(THREAD_CONTEXT.get() - 1);
+        }
+        private static String prefix() {
+            int n = THREAD_CONTEXT.get();
+            String tab = "   ";
+            //return String.format("%0" + n + "d", 0).replace("0", tab);
+            return String.join("", Collections.nCopies(n, tab));
+            //return tab.repeat(n); // java 11
         }
 
         @Override
         public void close() {
             if (_disposeMessage == null)
-                Logger.info("< {0}", _hint);
+                Logger.info("{0}< {1}", prefix(), _hint);
             else
-                Logger.info("< {0}: {1}", _hint, _disposeMessage.get());
+                Logger.info("{0}< {1}: {2}", prefix(), _hint, _disposeMessage.get());
+            dec();
         }
 
         public void put(String format, Object... args) {
             if (args.length > 0)
                 format = new MessageFormat(format).format(args);
-            Logger.info("  {0}: {1}", _hint, format);
+            Logger.info("{0}  {1}: {2}", prefix(), _hint, format);
         }
 
     }
