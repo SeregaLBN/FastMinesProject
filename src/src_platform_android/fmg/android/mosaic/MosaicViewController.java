@@ -29,6 +29,7 @@ import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.ClickResult;
 import fmg.core.types.EGameStatus;
+import fmg.core.types.EState;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -321,7 +322,6 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
     protected void onGestureShowPress(MotionEvent ev) {
         try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureShowPress", "ev=" + motionEventToString(ev)))
         {
-            return;
         }
     }
     protected boolean onGestureSingleTapUp(MotionEvent ev) {
@@ -341,8 +341,14 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
     protected void onGestureLongPress(MotionEvent ev) {
         try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureLongPress", "ev=" + motionEventToString(ev)))
         {
-            _clickInfo.isLongPress = true;
-            return;
+            if (_clickInfo.cellDown.getState().getStatus() == EState._Close) {
+                // imitate right mouse click - to (un)set flag
+                mouseReleased(null, true);
+                onClickCommon(ev, false, true);
+                onClickCommon(ev, false, false);
+            } else {
+                _clickInfo.isLongPress = true;
+            }
         }
     }
     protected boolean onGestureFling(MotionEvent ev1, MotionEvent ev2, float velocityX, float velocityY) {
