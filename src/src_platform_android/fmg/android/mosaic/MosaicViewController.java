@@ -293,20 +293,21 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
     }
     protected boolean onTouch(MotionEvent ev) {
         boolean[] handled = { false };
-        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onTouch", "ev=" + motionEventToString(ev), () -> "handled="+handled[0])) {
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onTouch", "ev=" + motionEventToString(ev), () -> "handled="+handled[0] + "\n-----------------------------")) {
             handled[0] = _gd.onTouchEvent(ev);
 
             if (!handled[0]) {
                 switch (ev.getAction()) {
                 case MotionEvent.ACTION_UP:
-                    if (_clickInfo.isLongPress)
-                        handled[0] = onClickCommon(ev, true, false);
+                    handled[0] = onClickCommon(ev, true, false);
                     break;
                 }
             }
 
-            return handled[0];
+            //return handled[0];
         }
+
+        return true;
     }
 
     ///////////////// begin Gesture
@@ -327,7 +328,6 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
     protected boolean onGestureSingleTapUp(MotionEvent ev) {
         boolean[] handled = { false };
         try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureSingleTapUp", "ev=" + motionEventToString(ev), () -> "handled=" + handled[0])) {
-            _clickInfo.isLongPress = false;
             return handled[0] = onClickCommon(ev, true, false);
         }
     }
@@ -346,8 +346,6 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
                 mouseReleased(null, true);
                 onClickCommon(ev, false, true);
                 onClickCommon(ev, false, false);
-            } else {
-                _clickInfo.isLongPress = true;
             }
         }
     }
@@ -455,26 +453,6 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
         {
         }
     }
-
-    /*
-    public void mousePressed(MouseEvent e) {
-        if (SwingUtilities.isLeftMouseButton(e)) {
-            mousePressed(Cast.toPointDouble(e.getPoint()), true);
-        } else
-        if (SwingUtilities.isRightMouseButton(e)) {
-            mousePressed(Cast.toPointDouble(e.getPoint()), false);
-        }
-    }
-
-    public void mouseReleased(MouseEvent e) {
-        if (SwingUtilities.isLeftMouseButton(e)) {
-            mouseReleased(Cast.toPointDouble(e.getPoint()), true);
-        } else
-        if (SwingUtilities.isRightMouseButton(e)) {
-            mouseReleased(Cast.toPointDouble(e.getPoint()), false);
-        }
-    }
-    */
 
     public void onFocusChange(boolean hasFocus) {
         System.out.println("Mosaic.onFocusChange: hasFocus=" + hasFocus);
@@ -603,7 +581,6 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
     }
 
     class ClickInfo {
-        boolean isLongPress;
         boolean isDoubleTap;
         public BaseCell cellDown;
         public boolean isLeft;
