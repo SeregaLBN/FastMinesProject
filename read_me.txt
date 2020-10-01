@@ -46,41 +46,52 @@ FastMines_xxx - projects of a specific language implementation, for a specific U
 
 
 ----------------------------------
+Requirements:
+ * Java v8 or v11
+    https://jdk.java.net
+
+ * Gradle v6
+    https://gradle.org/releases/
+
+ * Microsoft Visual Studio Community 2019  ( to build UWP application )
+    https://visualstudio.microsoft.com/downloads/
+
+ * .NET Core
+    https://docs.microsoft.com/en-us/dotnet/core/install/
+
+----------------------------------
 Run from command line
 
  * FastMines_swing
     Main app:
         gradle :FastMines_swing:run
-    Test demo app
+    Test demo app:
         gradle :FastMines_swing:runDemoApp
 
  * FastMines_jfx
     Simple app:
         gradle :FastMines_jfx:run
-    Test demo app
+    Test demo app:
         gradle :FastMines_jfx:runDemoApp
 
  * FastMines_Ava
     Test demo app
-        dotnet run --project .\FastMines_Ava\Test.FastMines.Ava.Images\Test.FastMines.Ava.Images.csproj
+        dotnet run --project ./FastMines_Ava/Test.FastMines.Ava.Images/Test.FastMines.Ava.Images.csproj
 
  * FastMines_svg
-        .\FastMines_svg\DemoApp.html
+        ./FastMines_svg/DemoApp.html
     (try reload F5; see output console F12)
 
-----------------------------------
-GRADLE lifehacks
-TIP: all worked in Eclipse Version: 2019-03 (4.11.0)
-<!--
- If you want to import FastMines_android into Eclipse IDE (open without build)
-   * temporarily change in ./build.gradle
-     to   classpath 'com.android.tools.build:gradle:x.x.x'
-     and restore after successful import
--->
- If you do not want to import FastMines_android into Eclipse IDE
-   * temporarily comment on the following line in ./settings.gradle
-     include ':FastMines_android'
-     and restore after successful import
+ * FastMines_android
+    run manual emulator
+    Build:
+        gradle FastMines_android:build
+    Main app:
+        adb install -t -r ./FastMines_android/build/outputs/apk/app/debug/FastMines_android-app-debug.apk
+        adb shell am start -a android.intent.action.MAIN -n fmg.android.app.debug/fmg.android.app.MainActivity
+    Test demo app:
+        adb install -t -r ./FastMines_android/build/outputs/apk/demo/debug/FastMines_android-demo-debug.apk
+        adb shell am start -a android.intent.action.MAIN -n fmg.android.app.demo.debug/fmg.android.app.DemoActivity
 
 ----------------------------------
 Android Studio
@@ -93,7 +104,6 @@ How to:
 Eclipse (Java)
 How to:
 * Open FastMinesProject
-  (see up GRADLE lifehacks)
 1. Create new or open existing workspace in different external folder.
 2. Menu 'File' -> Import... -> expand 'Gradle' -> select 'Existing Gradle Project' -> button 'Next >' -> 'Next >' -> in 'Project root directory' click 'Browse...' -> select path ./FastMinesProject -> Ok -> Finish
 
