@@ -21,6 +21,13 @@ import fmg.swing.img.Animator;
 import fmg.swing.mosaic.MosaicJPanelController;
 import fmg.swing.utils.ProjSettings;
 
+/** dialogs test
+ * <p>run from command line
+ * <br> <code>
+
+  gradle :FastMines_swing:runTestDialogs
+
+ */
 public class TestDialogs {
 
     private static void testMosaicJPanelController() {

@@ -47,7 +47,13 @@ import fmg.jfx.mosaic.MosaicCanvasController;
 import fmg.jfx.utils.Cast;
 import fmg.jfx.utils.ProjSettings;
 
-/** live UI test application */
+/** live UI test application
+ * <p>run from command line
+ * <br> <code>
+
+  gradle :FastMines_jfx:runDemoApp
+
+ */
 public final class DemoApp extends Application {
 
     static final int MARGIN = 10;

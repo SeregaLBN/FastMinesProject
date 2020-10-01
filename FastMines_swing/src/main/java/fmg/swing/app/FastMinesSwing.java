@@ -47,7 +47,13 @@ import fmg.swing.utils.Cast;
 import fmg.swing.utils.ProjSettings;
 import fmg.swing.utils.ScreenResolutionHelper;
 
-/** Main window (Главное окно программы) */
+/** Main window (Главное окно программы)
+ * <p>run from command line
+ * <br> <code>
+
+  gradle :FastMines_swing:run
+
+ */
 public class FastMinesSwing {
 
     private final JFrame frame = new JFrame();

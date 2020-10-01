@@ -24,7 +24,7 @@
             ./FastMines_Ava                     - C#    - Avalonia framework (can be opened and run in VS Code)
                 ./FastMines.Ava.Draw                        - shared library for all Avalonia projects
                 ./Test.FastMines.Ava.Images                 - Template for future visual check drawing demo-program
-                ./UnitTest.FastMines.Ava                    - unit test for UWP over xUnit
+                ./UnitTest.FastMines.Ava                    - unit test for Avalonia over xUnit
 
 ./src - common code base
 ./res - shared resources files
@@ -44,6 +44,29 @@ FastMines_xxx - projects of a specific language implementation, for a specific U
    FastMines_Ava      - (try demo) - C# desktop Avalonia project (multiplatform - .NET Core)         (open in VS code / VS)
    ...
 
+
+----------------------------------
+Run from command line
+
+ * FastMines_swing
+    Main app:
+        gradle :FastMines_swing:run
+    Test demo app
+        gradle :FastMines_swing:runDemoApp
+
+ * FastMines_jfx
+    Simple app:
+        gradle :FastMines_jfx:run
+    Test demo app
+        gradle :FastMines_jfx:runDemoApp
+
+ * FastMines_Ava
+    Test demo app
+        dotnet run --project .\FastMines_Ava\Test.FastMines.Ava.Images\Test.FastMines.Ava.Images.csproj
+
+ * FastMines_svg
+        .\FastMines_svg\DemoApp.html
+    (try reload F5; see output console F12)
 
 ----------------------------------
 GRADLE lifehacks

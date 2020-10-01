@@ -101,6 +101,21 @@ dependencies {
 
 test.dependsOn(":FastMines_core:test")
 
+task runDemoApp(type: JavaExec) {
+    group = 'Execution'
+    description = 'Run the demo swing (animation test)'
+    classpath = sourceSets.test.runtimeClasspath
+    main = 'fmg.swing.app.DemoApp'
+}
+
+task runTestDialogs(type: JavaExec) {
+    group = 'Execution'
+    description = 'Run the demo swing (dailogs test)'
+    classpath = sourceSets.test.runtimeClasspath
+    main = 'fmg.swing.app.TestDialogs'
+}
+
+
 task fastMinesSwingFatJar(type: Jar) {
     manifest {
         attributes jar.manifest.attributes

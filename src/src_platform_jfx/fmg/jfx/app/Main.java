@@ -9,6 +9,13 @@ import fmg.core.mosaic.MosaicView;
 import fmg.jfx.mosaic.MosaicCanvasController;
 import fmg.jfx.utils.ProjSettings;
 
+/** Simple app
+ * <p>run from command line
+ * <br> <code>
+
+  gradle :FastMines_jfx:run
+
+ */
 public class Main extends Application {
 
     @Override

@@ -6,6 +6,11 @@ using Fmg.Ava.Utils;
 
 namespace Test.FastMines.Ava.Images {
 
+    /// <summary>
+    /// live UI test application
+    /// <para>run from command line</para>
+    /// <c>dotnet run --project .\FastMines_Ava\Test.FastMines.Ava.Images\Test.FastMines.Ava.Images.csproj</c>
+    /// </summary>
     class App : Application {
 
         public override void Initialize() {

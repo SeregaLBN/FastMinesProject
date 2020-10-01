@@ -11,10 +11,10 @@ if (JavaVersion.current().isJava11Compatible()) {
 }
 
 compileJava.options.encoding = 'UTF-8'
-compileTestJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = 'UTF-8'
 
 group = 'FastMinesGame' // fmg
-mainClassName = "fmg.jfx.app.Main"
+mainClassName = 'fmg.jfx.app.Main'
 version = '0.0.1'
 
 jar {
@@ -91,6 +91,37 @@ dependencies {
     testImplementation 'io.reactivex.rxjava2:rxjava:2.2.19'
 }
 
+if (JavaVersion.current().isJava11Compatible()) {
+    run {
+        doFirst {
+            jvmArgs = [
+                    '--module-path', classpath.asPath,
+                    '--add-modules', 'javafx.controls'
+            ]
+        }
+    }
+}
+
+if (JavaVersion.current().isJava11Compatible()) {
+    task runDemoApp(type: Exec) {
+        dependsOn build
+        group = 'Execution'
+        description = 'Run the demo javafx (animation test)'
+        commandLine 'java', 
+            '--module-path', sourceSets.test.runtimeClasspath.asPath,
+            '--add-modules', 'javafx.controls',
+            '-classpath', sourceSets.test.runtimeClasspath.asPath,
+            'fmg.jfx.app.DemoApp'
+    }
+} else {
+    task runDemoApp(type: JavaExec) {
+        group = 'Execution'
+        description = 'Run the demo javafx (animation test)'
+        classpath = sourceSets.test.runtimeClasspath
+        main = 'fmg.jfx.app.DemoApp'
+    }
+}
+
 task checkJfxrtJarExist(type: DefaultTask) {
     doLast {
         if (!JavaVersion.current().isJava8())
@@ -116,7 +147,7 @@ task checkJfxrtJarExist(type: DefaultTask) {
       %JAVA_HOME_8%\\jre\\lib\\ext\\\n\
    to\n\
       " + org.gradle.internal.jvm.Jvm.current().javaHome + "\\jre\\lib\\ext\\")
-      }
+    }
 }
 project(':FastMines_jfx').tasks.build.dependsOn project(':FastMines_jfx').tasks.checkJfxrtJarExist
 

@@ -31,7 +31,13 @@ import fmg.swing.img.*;
 import fmg.swing.mosaic.MosaicJPanelController;
 import fmg.swing.utils.ProjSettings;
 
-/** live UI test application */
+/** live UI test application
+ * <p>run from command line
+ * <br> <code>
+
+  gradle :FastMines_swing:runDemoApp
+
+ */
 public class DemoApp  {
 
     private static final int MARGIN = 10; // panel margin - padding to inner images
