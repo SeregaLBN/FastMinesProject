@@ -8,6 +8,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import java.beans.PropertyChangeEvent;
@@ -75,6 +77,11 @@ public class MainActivity extends AppCompatActivity {
         Logger.info("MainActivity.onCreate: this.hash={0}", this.hashCode());
         super.onCreate(savedInstanceState);
         activityStatus = EActivityStatus.eCreated;
+
+        // Remove title bar
+        //this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        // Remove notification bar
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         binding = DataBindingUtil.setContentView(this, R.layout.main_activity);
         viewModel = ViewModelProviders.of(this).get(MainMenuViewModel.class);

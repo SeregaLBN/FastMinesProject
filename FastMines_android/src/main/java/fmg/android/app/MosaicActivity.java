@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.WindowManager;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -29,6 +30,9 @@ public class MosaicActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         Logger.info("MosaicActivity.onCreate: this.hash={0}", this.hashCode());
         super.onCreate(savedInstanceState);
+
+        // Remove notification bar
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         binding = DataBindingUtil.setContentView(this, R.layout.mosaic_activity);
         viewModel = ViewModelProviders
