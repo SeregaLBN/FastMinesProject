@@ -39,6 +39,7 @@ public class MosaicActivity extends AppCompatActivity {
                 .of(this)
                 .get(MosaicViewModel.class);
         viewModel.getMosaicController().setBindSizeDirection(false);
+        viewModel.getMosaicController().setExtendedManipulation(true);
         binding.setViewModel(viewModel);
         binding.executePendingBindings();
 

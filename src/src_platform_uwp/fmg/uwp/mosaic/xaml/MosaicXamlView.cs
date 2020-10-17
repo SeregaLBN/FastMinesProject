@@ -261,7 +261,7 @@ namespace Fmg.Uwp.Mosaic.Xaml {
             }
         }
 
-        protected override void OnPropertyModelChanged(object sender, PropertyChangedEventArgs ev) {
+        protected override void OnModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             System.Diagnostics.Debug.Assert(ReferenceEquals(sender, Model));
             switch (ev.PropertyName) {
             case nameof(Model.MosaicType):
@@ -270,7 +270,7 @@ namespace Fmg.Uwp.Mosaic.Xaml {
                 FillShapes();
                 break;
             }
-            base.OnPropertyModelChanged(sender, ev);
+            base.OnModelPropertyChanged(sender, ev);
         }
 
         /// <summary> переустанавливаю заного размер мины/флага для мозаики </summary>

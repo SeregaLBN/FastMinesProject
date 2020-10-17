@@ -11,8 +11,8 @@ namespace Fmg.Uwp.Mosaic.Wbmp {
             : base(new MosaicImageView())
         { }
 
-        protected override void OnPropertyViewChanged(object sender, PropertyChangedEventArgs ev) {
-            base.OnPropertyViewChanged(sender, ev);
+        protected override void OnViewPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            base.OnViewPropertyChanged(sender, ev);
             switch (ev.PropertyName) {
             case nameof(View.Image):
                 Control.Source = View.InnerImage;

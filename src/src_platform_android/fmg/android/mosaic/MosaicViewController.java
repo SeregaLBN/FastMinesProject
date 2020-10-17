@@ -41,11 +41,30 @@ import io.reactivex.subjects.Subject;
 /** MVC: controller. Android implementation */
 public class MosaicViewController extends MosaicController<DrawableView, Bitmap, MosaicViewView, MosaicDrawModel<Bitmap>> {
 
+    public static final String PROPERTY_EXTENDED_MANIPULATION = "ExtendedManipulation";
+
     private Context context;
     private final ClickInfo _clickInfo = new ClickInfo();
-    /** true : bind Control.SizeProperty to Model.Size
-     *  false: bind Model.Size to Control.SizeProperty */
+    /** <li>true : bind Control.SizeProperty to Model.Size
+     *  <li>false: bind Model.Size to Control.SizeProperty */
     private boolean bindSizeDirection = true;
+    private boolean _extendedManipulation = false;
+
+    // #region if ExtendedManipulation
+    /// <summary> мин отступ от краев экрана для мозаики </summary>
+    private final double minIndent = Cast.dpToPx(30.0f);
+    private final boolean DeferredZoom = true;
+    private boolean _manipulationStarted;
+    private boolean _turnX;
+    private boolean _turnY;
+    private long _dtInertiaStarting;
+    private static Double _baseWheelDelta;
+    private Object/*IDisposable*/ _areaScaleObservable;
+    private Object/*Transform*/ _originalTransform;
+    private Object/*CompositeTransform*/ _scaleTransform;
+    private double _deferredArea;
+
+    private PointDouble lastScrollPosition;
 
     private Subject<Size> subjSizeChanged;
     private Disposable sizeChangedObservable;
@@ -72,6 +91,9 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
 
         @Override
         public boolean onScroll(MotionEvent ev1, MotionEvent ev2, float distanceX, float distanceY) {
+            if (!getExtendedManipulation())
+                return false;
+
             return MosaicViewController.this.onGestureScroll(ev1, ev2, distanceX, distanceY);
         }
 
@@ -82,6 +104,9 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
 
         @Override
         public boolean onFling(MotionEvent ev1, MotionEvent ev2, float velocityX, float velocityY) {
+            if (!getExtendedManipulation())
+                return false;
+
             return MosaicViewController.this.onGestureFling(ev1, ev2, velocityX, velocityY);
         }
 
@@ -109,20 +134,6 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
         }
     };
 
-    // #region if ExtendedManipulation
-    /// <summary> мин отступ от краев экрана для мозаики </summary>
-    private final double minIndent = Cast.dpToPx(30.0f);
-    private final boolean DeferredZoom = true;
-    private boolean _manipulationStarted;
-    private boolean _turnX;
-    private boolean _turnY;
-    private long _dtInertiaStarting;
-    private PointDouble lastScrollPosition;
-    private static Double _baseWheelDelta;
-    private Object/*IDisposable*/ _areaScaleObservable;
-    private Object/*Transform*/ _originalTransform;
-    private Object/*CompositeTransform*/ _scaleTransform;
-    private double _deferredArea;
 
     private static class ZoomStartInfo {
         public Point _devicePosition;
@@ -153,7 +164,6 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
         return getView().getControl();
     }
 
-
     public boolean getBindSizeDirection() {
         return bindSizeDirection;
     }
@@ -161,18 +171,103 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
         this.bindSizeDirection = bindSizeDirection;
     }
 
-
-    @Override
-    protected void onPropertyModelChanged(PropertyChangeEvent ev) {
-        super.onPropertyModelChanged(ev);
-        switch (ev.getPropertyName()) {
-        case MosaicDrawModel.PROPERTY_SIZE:
-            onSizeChanged(ev);
-            break;
-        case MosaicDrawModel.PROPERTY_AREA:
-//            onAreaChanged(ev as PropertyChangedExEventArgs<double>);
-            break;
+    public boolean getExtendedManipulation() {
+        return _extendedManipulation;
+    }
+    public void setExtendedManipulation(boolean value) {
+        if (_notifier.setProperty(_extendedManipulation, value, PROPERTY_EXTENDED_MANIPULATION)) {
+            unsubscribeToViewControl();
+            subscribeToViewControl();
         }
+    }
+
+    private void subscribeToViewControl() {
+        View control = getViewControl();
+        if (control == null)
+            return;
+
+        { // onControlSizeChanged(newSize);
+            subjSizeChanged = PublishSubject.create();
+            sizeChangedObservable = subjSizeChanged.debounce(200, TimeUnit.MILLISECONDS)
+                    .subscribe(ev -> {
+//                        Logger.info("  MosaicViewController::onGlobalLayoutListener: Debounce: onNext: ev=" + ev);
+                        UiInvoker.DEFERRED.accept(() -> onControlSizeChanged(ev));
+                    }, ex -> {
+                        Logger.info("  MosaicViewController: sizeChangedObservable: Debounce: onError: " + ex);
+                    });
+            control.getViewTreeObserver().addOnGlobalLayoutListener(this::onGlobalLayoutListener);
+        }
+
+        control.setFocusable(true); // ? иначе не будет срабатывать FocusListener
+        control.setOnFocusChangeListener((v, hasFocus) -> onFocusChange(hasFocus));
+        control.setOnTouchListener((v, ev) -> onTouch(ev));
+
+//        control.setOnClickListener(v -> onClick());
+//        control.setOnLongClickListener(v -> onLongClick());
+//        control.setOnDragListener((v, ev) -> onDrag(ev));
+//        control.setOnHoverListener((v, ev) -> onHover(ev));
+//        control.setOnCapturedPointerListener();
+
+        if (!getExtendedManipulation())
+            return;
+
+        control.setOnScrollChangeListener((v, _1, _2, _3, _4) -> onScrollChange(_1, _2, _3, _4));
+        control.setOnGenericMotionListener((v, ev) -> onGenericMotion(ev));
+        control.setOnContextClickListener(v -> onContextClick());
+    }
+
+    private void unsubscribeToViewControl() {
+        View control = getViewControl();
+        if (control == null)
+            return;
+
+        control.getViewTreeObserver().removeOnGlobalLayoutListener(this::onGlobalLayoutListener);
+        sizeChangedObservable.dispose();
+        subjSizeChanged = null;
+
+        control.setFocusable(false);
+        control.setOnFocusChangeListener(null);
+        control.setOnTouchListener(null);
+
+//        control.setOnClickListener(null);
+//        control.setOnLongClickListener(null);
+//        control.setOnDragListener(null);
+//        control.setOnHoverListener(null);
+//        control.setOnCapturedPointerListener(null);
+
+        if (!getExtendedManipulation())
+            return;
+
+        control.setOnScrollChangeListener(null);
+        control.setOnGenericMotionListener(null);
+        control.setOnContextClickListener(null);
+    }
+
+    private SizeDouble getOffset() {
+        return getModel().getMosaicOffset();
+    }
+    private void setOffset(SizeDouble offset) {
+        getModel().setMosaicOffset(recheckOffset(offset));
+    }
+
+    private SizeDouble recheckOffset(SizeDouble offset) {
+        SizeDouble size = getModel().getSize();
+        SizeDouble mosaicSize = getModel().getMosaicSize();
+        if ((offset.width + mosaicSize.width) < minIndent) { // правый край мозаики пересёк левую сторону контрола?
+            offset.width = minIndent - mosaicSize.width; // привязываю к левой стороне контрола
+        } else {
+            if (offset.width > (size.width - minIndent)) // левый край мозаики пересёк правую сторону контрола?
+                offset.width = size.width - minIndent; // привязываю к правой стороне контрола
+        }
+
+        if ((offset.height + mosaicSize.height) < minIndent) { // нижний край мозаики пересёк верхнюю сторону контрола?
+            offset.height = minIndent - mosaicSize.height; // привязываю к верхней стороне контрола
+        } else {
+            if (offset.height > (size.height - minIndent)) // вержний край мозаики пересёк нижнюю сторону контрола?
+                offset.height = size.height - minIndent; // привязываю к нижней стороне контрола
+        }
+
+        return offset;
     }
 
     private void onGlobalLayoutListener() {
@@ -192,13 +287,136 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
         cachedControlSize = newSize;
         subjSizeChanged.onNext(newSize);
     }
+/*
+
+        /// <summary> узнаю мах размер площади ячеек мозаики (для размера поля 3x3) так, чтобы поле влазило в текущий размер Control'а </summary>
+        /// <returns>макс площадь ячейки</returns>
+        private double CalcMaxArea() {
+            if (_maxArea.HasValue)
+                return _maxArea.Value;
+            var mosaicSizeField = new Matrisize(3, 3);
+            var size = Model.Size;
+            double area = MosaicHelper.FindAreaBySize(this.MosaicType, mosaicSizeField, ref size);
+            //System.Diagnostics.Debug.WriteLine("MosaicFrameworkElementController.CalcMaxArea: area="+area);
+            _maxArea = area; // caching value
+            return area;
+        }
+        double? _maxArea; // cached value
+
+        private void BeforeZoom(Windows.Foundation.Point? mouseDevicePosition) {
+            if (mouseDevicePosition.HasValue) {
+                if (_zoomStartInfo == null)
+                    _zoomStartInfo = new ZoomStartInfo();
+                _zoomStartInfo._devicePosition = mouseDevicePosition.Value;
+                _zoomStartInfo._mosaicOffset = Offset;
+                _zoomStartInfo._mosaicSize = Model.MosaicSize;
+            } else {
+                _zoomStartInfo = null;
+            }
+        }
+
+        private void AfterZoom() {
+            if (_zoomStartInfo == null)
+                return;
+
+            var devicePos = _zoomStartInfo._devicePosition;
+            var mosaicSizeNew = Model.MosaicSize;//GetMosaicSize(Model.SizeField, Model.Area);
+            var offsetNew = new SizeDouble(
+                        devicePos.X - (devicePos.X - _zoomStartInfo._mosaicOffset.Width ) * mosaicSizeNew.Width  / _zoomStartInfo._mosaicSize.Width,
+                        devicePos.Y - (devicePos.Y - _zoomStartInfo._mosaicOffset.Height) * mosaicSizeNew.Height / _zoomStartInfo._mosaicSize.Height);
+            Offset = offsetNew;
+        }
+
+        /// <summary> Zoom + </summary>
+        void ZoomInc(double zoomPower = 1.3, Windows.Foundation.Point? mouseDevicePosition = null) {
+            BeforeZoom(mouseDevicePosition);
+            if (DeferredZoom) {
+                Scale(1.01 * zoomPower);
+            } else {
+                Model.Area *= 1.01 * zoomPower;
+                AfterZoom();
+            }
+        }
+
+        /// <summary> Zoom - </summary>
+        void ZoomDec(double zoomPower = 1.3, Windows.Foundation.Point? mouseDevicePosition = null) {
+            BeforeZoom(mouseDevicePosition);
+            if (DeferredZoom) {
+                Scale(0.99 / zoomPower);
+            } else {
+                Model.Area *= 0.99 / zoomPower;
+                AfterZoom();
+            }
+        }
+
+        private void Scale(double scaleMul) {
+            var ctrl = Control;
+            if (!(ctrl.RenderTransform is CompositeTransform)) {
+                if (_scaleTransform == null) {
+                    _scaleTransform = new CompositeTransform();
+                    _originalTransform = ctrl.RenderTransform;
+                }
+                ctrl.RenderTransform = _scaleTransform;
+                _deferredArea = Model.Area;
+            }
+
+
+            _deferredArea *= scaleMul;
+            _deferredArea = Math.Min(Math.Max(MosaicInitData.AREA_MINIMUM, _deferredArea), CalcMaxArea()); // recheck
+
+            var deferredMosaicSize = GetMosaicSize(Model.SizeField, _deferredArea);
+            var currentMosaicSize = Model.MosaicSize;
+
+            if (_zoomStartInfo != null) {
+                var p = _zoomStartInfo._devicePosition;
+                _scaleTransform.CenterX = p.X;
+                _scaleTransform.CenterY = p.Y;
+            }
+
+            _scaleTransform.ScaleX = deferredMosaicSize.Width / currentMosaicSize.Width;
+            _scaleTransform.ScaleY = deferredMosaicSize.Height / currentMosaicSize.Height;
+
+            NeedAreaChanging(this, null); // fire event
+        }
+
+        private void OnDeferredAreaChanging(object sender, NeedAreaChangingEventArgs ev) {
+            Model.Area = _deferredArea;
+            AfterZoom();
+
+            // restore
+            _scaleTransform.CenterX = _scaleTransform.CenterY = 0;
+            _scaleTransform.ScaleX = _scaleTransform.ScaleY = 1;
+            Control.RenderTransform = _originalTransform;
+        }
+
+        /// <summary> Zoom minimum </summary>
+        private void ZoomMin() {
+            Model.Area = MosaicInitData.AREA_MINIMUM;
+        }
+
+        /// <summary> Zoom maximum </summary>
+        private void ZoomMax() {
+            var maxArea = CalcMaxArea();
+            Model.Area = maxArea;
+        }
+*/
+    @Override
+    protected void onModelPropertyChanged(PropertyChangeEvent ev) {
+        super.onModelPropertyChanged(ev);
+        switch (ev.getPropertyName()) {
+        case MosaicDrawModel.PROPERTY_SIZE:
+            onSizeChanged(ev);
+            break;
+        case MosaicDrawModel.PROPERTY_AREA:
+//            onAreaChanged(ev as PropertyChangedExEventArgs<double>);
+            break;
+        }
+    }
+
 
     private void onControlSizeChanged(Size newSize) {
         if (!bindSizeDirection)
             getModel().setSize(Cast.toSizeDouble(newSize));
-
-//        if (_extendedManipulation)
-//            RecheckLocation();
     }
 
     private void onSizeChanged(PropertyChangeEvent ev) {
@@ -216,6 +434,17 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
         lp.height = (int)newSize.height;
     }
 
+    /*
+    private void OnAreaChanged(PropertyChangedExEventArgs<double> ev) {
+        if (!ExtendedManipulation)
+            return;
+        using (var tracer = CreateTracer(GetCallerName(), string.Format("newArea={0:0.00}, oldValue={1:0.00}", ev.NewValue, ev.OldValue))) {
+            Offset = Offset; // implicit call RecheckOffset
+        }
+    }
+    */
+
+//    #region control handlers
 
     static String dragEventToString(DragEvent ev) {
         switch (ev.getAction()) {
@@ -281,7 +510,7 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
         boolean[] handled = { false };
         try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onClickCommon", "ev=" + motionEventToString(ev), () -> "handled="+handled[0]))
         {
-            PointDouble point = toImagePoint(ev);
+            PointDouble point = new PointDouble(ev.getX(), ev.getY());
             handled[0] = clickHandler(down
                     ? mousePressed(point, leftClick)
                     : mouseReleased(point, leftClick));
@@ -599,6 +828,8 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
             mouseFocusLost();
     }
 
+//    #endregion control handlers
+
     @Override
     protected boolean checkNeedRestoreLastGame() {
         boolean[] selectedNo = { true };
@@ -625,81 +856,6 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
         return selectedNo[0];
     }
 
-    private void subscribeToViewControl() {
-        View control = getViewControl();
-        if (control == null)
-            return;
-
-        { // onControlSizeChanged(newSize);
-            subjSizeChanged = PublishSubject.create();
-            sizeChangedObservable = subjSizeChanged.debounce(200, TimeUnit.MILLISECONDS)
-                    .subscribe(ev -> {
-//                        Logger.info("  MosaicViewController::onGlobalLayoutListener: Debounce: onNext: ev=" + ev);
-                        UiInvoker.DEFERRED.accept(() -> onControlSizeChanged(ev));
-                    }, ex -> {
-                        Logger.info("  MosaicViewController: sizeChangedObservable: Debounce: onError: " + ex);
-                    });
-            control.getViewTreeObserver().addOnGlobalLayoutListener(this::onGlobalLayoutListener);
-        }
-
-        control.setFocusable(true); // ? иначе не будет срабатывать FocusListener
-        control.setOnFocusChangeListener((v, hasFocus) -> onFocusChange(hasFocus));
-        control.setOnTouchListener((v, ev) -> onTouch(ev));
-//        control.setOnClickListener(v -> onClick());
-//        control.setOnLongClickListener(v -> onLongClick());
-//        control.setOnDragListener((v, ev) -> onDrag(ev));
-//        control.setOnHoverListener((v, ev) -> onHover(ev));
-      //control.setOnCapturedPointerListener();
-        control.setOnContextClickListener(v -> onContextClick());
-        control.setOnGenericMotionListener((v, ev) -> onGenericMotion(ev));
-        control.setOnScrollChangeListener((v, _1, _2, _3, _4) -> onScrollChange(_1, _2, _3, _4));
-    }
-
-    private void unsubscribeToViewControl() {
-        View control = getViewControl();
-        if (control == null)
-            return;
-
-        control.getViewTreeObserver().removeOnGlobalLayoutListener(this::onGlobalLayoutListener);
-        sizeChangedObservable.dispose();
-        subjSizeChanged = null;
-
-        control.setOnDragListener(null);
-        control.setOnHoverListener(null);
-      //control.setOnCapturedPointerListener(null);
-        control.setOnContextClickListener(null);
-        control.setOnGenericMotionListener(null);
-        control.setOnScrollChangeListener(null);
-        control.setOnLongClickListener(null);
-        control.setOnClickListener(null);
-        control.setOnTouchListener(null);
-        control.setOnFocusChangeListener(null);
-        control.setFocusable(false);
-    }
-
-    private SizeDouble getOffset() { return getModel().getMosaicOffset(); }
-    private void setOffset(SizeDouble offset) { getModel().setMosaicOffset(recheckOffset(offset)); }
-
-    private SizeDouble recheckOffset(SizeDouble offset) {
-        SizeDouble size = getModel().getSize();
-        SizeDouble mosaicSize = getModel().getMosaicSize();
-        if ((offset.width + mosaicSize.width) < minIndent) { // правый край мозаики пересёк левую сторону контрола?
-            offset.width = minIndent - mosaicSize.width; // привязываю к левой стороне контрола
-        } else {
-            if (offset.width > (size.width - minIndent)) // левый край мозаики пересёк правую сторону контрола?
-                offset.width = size.width - minIndent; // привязываю к правой стороне контрола
-        }
-
-        if ((offset.height + mosaicSize.height) < minIndent) { // нижний край мозаики пересёк верхнюю сторону контрола?
-            offset.height = minIndent - mosaicSize.height; // привязываю к верхней стороне контрола
-        } else {
-            if (offset.height > (size.height - minIndent)) // вержний край мозаики пересёк нижнюю сторону контрола?
-                offset.height = size.height - minIndent; // привязываю к нижней стороне контрола
-        }
-
-        return offset;
-    }
-
     @Override
     public void close() {
         _dtInertiaStarting = 0;
@@ -708,15 +864,6 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
         getView().close();
     }
 
-
-    private PointDouble toImagePoint(MotionEvent ev) {
-//        View imgControl = this.getViewPanel();
-        PointDouble point = new PointDouble(ev.getX(), ev.getY()); // imgControl.TransformToVisual(imgControl).TransformPoint(pagePoint).ToFmPointDouble();
-        //var o = GetOffset();
-        //var point2 = new PointDouble(pagePoint.X - o.Left, pagePoint.Y - o.Top);
-        //System.Diagnostics.Debug.Assert(point == point2);
-        return point;
-    }
 
     class ClickInfo {
         boolean isDoubleTap;

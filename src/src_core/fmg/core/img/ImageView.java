@@ -31,12 +31,12 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
     protected boolean _isDisposed;
 
     private final PropertyChangeListener      onPropertyChangedListener = this::onPropertyChanged;
-    private final PropertyChangeListener onPropertyModelChangedListener = this::onPropertyModelChanged;
+    private final PropertyChangeListener onModelPropertyChangedListener = this::onModelPropertyChanged;
 
     protected ImageView(TImageModel imageModel) {
         _model = imageModel;
         _notifier.addListener(onPropertyChangedListener);
-        _model.addListener(onPropertyModelChangedListener);
+        _model.addListener(onModelPropertyChangedListener);
     }
 
     @Override
@@ -108,8 +108,8 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
         _notifierAsync.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
     }
 
-    protected void onPropertyModelChanged(PropertyChangeEvent ev) {
-//        Logger.info("  ImageView::onPropertyModelChanged: ev.name=" + ev.getPropertyName());
+    protected void onModelPropertyChanged(PropertyChangeEvent ev) {
+//        Logger.info("  ImageView::onModelPropertyChanged: ev.name=" + ev.getPropertyName());
         _notifier.firePropertyChanged(null, getModel(), PROPERTY_MODEL);
         if (IImageModel.PROPERTY_SIZE.equals(ev.getPropertyName())) {
             setImage(null);
@@ -126,7 +126,7 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
         _isDisposed = true;
 
         _notifier.removeListener(onPropertyChangedListener);
-        _model.removeListener(onPropertyModelChangedListener);
+        _model.removeListener(onModelPropertyChangedListener);
 
         _notifier.close();
         _notifierAsync.close();

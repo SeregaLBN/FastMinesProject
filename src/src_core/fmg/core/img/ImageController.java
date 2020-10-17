@@ -23,11 +23,11 @@ public abstract class ImageController<TImage,
     /** MVC: view */
     private final TImageView _imageView;
     protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this, true);
-    private final PropertyChangeListener onPropertyViewChangedListener = this::onPropertyViewChanged;
+    private final PropertyChangeListener onViewPropertyChangedListener = this::onViewPropertyChanged;
 
     protected ImageController(TImageView imageView) {
         _imageView = imageView;
-        _imageView.addListener(onPropertyViewChangedListener);
+        _imageView.addListener(onViewPropertyChangedListener);
     }
 
     protected TImageView  getView()  { return _imageView; }
@@ -38,7 +38,7 @@ public abstract class ImageController<TImage,
     @Override
     public    SizeDouble  getSize()  { return getView().getSize(); }
 
-    protected void onPropertyViewChanged(PropertyChangeEvent ev) {
+    protected void onViewPropertyChanged(PropertyChangeEvent ev) {
         switch (ev.getPropertyName()) {
         case IImageView.PROPERTY_MODEL:
             _notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_MODEL);
@@ -65,7 +65,7 @@ public abstract class ImageController<TImage,
 
     @Override
     public void close() {
-        _imageView.removeListener(onPropertyViewChangedListener);
+        _imageView.removeListener(onViewPropertyChangedListener);
         _notifier.close();
     }
 

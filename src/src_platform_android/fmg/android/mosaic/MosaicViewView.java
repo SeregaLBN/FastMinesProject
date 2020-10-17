@@ -138,8 +138,8 @@ public class MosaicViewView extends MosaicAndroidView<DrawableView, Bitmap, Mosa
     }
 
     @Override
-    protected void onPropertyModelChanged(PropertyChangeEvent ev) {
-        super.onPropertyModelChanged(ev);
+    protected void onModelPropertyChanged(PropertyChangeEvent ev) {
+        super.onModelPropertyChanged(ev);
         switch (ev.getPropertyName()) {
         case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
         case MosaicGameModel.PROPERTY_AREA:

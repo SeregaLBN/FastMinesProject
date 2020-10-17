@@ -42,7 +42,7 @@ public abstract class MosaicController<TImage, TImageInner,
     /** использовать ли флажок на поле */
     private boolean _useUnknown = true;
 
-    private final PropertyChangeListener onPropertyModelChangedListener = this::onPropertyModelChanged;
+    private final PropertyChangeListener onModelPropertyChangedListener = this::onModelPropertyChanged;
 
     public static final String PROPERTY_MINES_COUNT       = "MinesCount";
     public static final String PROPERTY_COUNT_MINES_LEFT  = "CountMinesLeft";
@@ -56,7 +56,7 @@ public abstract class MosaicController<TImage, TImageInner,
 
     protected MosaicController(TMosaicView mosaicView) {
         super(mosaicView);
-        getModel().addListener(onPropertyModelChangedListener);
+        getModel().addListener(onModelPropertyChangedListener);
     }
 
 
@@ -517,7 +517,7 @@ public abstract class MosaicController<TImage, TImageInner,
         return (getGameStatus() == EGameStatus.eGSEnd) && (0 == getCountMinesLeft());
     }
 
-    protected void onPropertyModelChanged(PropertyChangeEvent ev) {
+    protected void onModelPropertyChanged(PropertyChangeEvent ev) {
         switch (ev.getPropertyName()) {
         case MosaicGameModel.PROPERTY_SIZE_FIELD:
             setCellDown(null); // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
@@ -604,7 +604,7 @@ public abstract class MosaicController<TImage, TImageInner,
 
     @Override
     public void close() {
-        getModel().removeListener(onPropertyModelChangedListener);
+        getModel().removeListener(onModelPropertyChangedListener);
         super.close();
     }
 

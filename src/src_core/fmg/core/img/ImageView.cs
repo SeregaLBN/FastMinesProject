@@ -43,7 +43,7 @@ namespace Fmg.Core.Img {
             _notifier      = new NotifyPropertyChanged(this, false);
             _notifierAsync = new NotifyPropertyChanged(this, true);
             this .PropertyChangedSync += OnPropertyChanged;
-            Model.PropertyChanged     += OnPropertyModelChanged;
+            Model.PropertyChanged     += OnModelPropertyChanged;
         }
 
         /// <summary> width and height in pixel </summary>
@@ -108,7 +108,7 @@ namespace Fmg.Core.Img {
             // refire as async event
             _notifierAsync.FirePropertyChanged(ev);
         }
-        protected virtual void OnPropertyModelChanged(object sender, PropertyChangedEventArgs ev) {
+        protected virtual void OnModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             System.Diagnostics.Debug.Assert(ReferenceEquals(sender, Model));
             _notifier.FirePropertyChanged(default(TImageModel), sender, nameof(this.Model));
             //_notifier.FirePropertyChanged(nameof(this.Model) + '.' + ev.PropertyName);
@@ -125,7 +125,7 @@ namespace Fmg.Core.Img {
         // <summary>  Dispose managed resources </summary>/
         protected virtual void Disposing() {
             this .PropertyChangedSync -= OnPropertyChanged;
-            Model.PropertyChanged     -= OnPropertyModelChanged;
+            Model.PropertyChanged     -= OnModelPropertyChanged;
             _notifier.Dispose();
             _notifierAsync.Dispose();
             Image = null;

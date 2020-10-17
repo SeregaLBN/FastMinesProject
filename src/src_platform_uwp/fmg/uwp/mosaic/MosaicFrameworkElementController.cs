@@ -157,6 +157,27 @@ namespace Fmg.Uwp.Mosaic {
             }
         }
 
+        /// <summary> Перепроверить смещение к полю мозаики так, что поле мозаики было в пределах страницы </summary>
+        private SizeDouble RecheckOffset(SizeDouble offset) {
+            var size = Model.Size;
+            var mosaicSize = Model.MosaicSize;
+            if ((offset.Width + mosaicSize.Width) < MinIndent) { // правый край мозаики пересёк левую сторону контрола?
+                offset.Width = MinIndent - mosaicSize.Width; // привязываю к левой стороне контрола
+            } else {
+                if (offset.Width > (size.Width - MinIndent)) // левый край мозаики пересёк правую сторону контрола?
+                    offset.Width = size.Width - MinIndent; // привязываю к правой стороне контрола
+            }
+
+            if ((offset.Height + mosaicSize.Height) < MinIndent) { // нижний край мозаики пересёк верхнюю сторону контрола?
+                offset.Height = MinIndent - mosaicSize.Height; // привязываю к верхней стороне контрола
+            } else {
+                if (offset.Height > (size.Height - MinIndent)) // вержний край мозаики пересёк нижнюю сторону контрола?
+                    offset.Height = size.Height - MinIndent; // привязываю к нижней стороне контрола
+            }
+
+            return offset;
+        }
+
         /// <summary> узнаю мах размер площади ячеек мозаики (для размера поля 3x3) так, чтобы поле влазило в текущий размер Control'а </summary>
         /// <returns>макс площадь ячейки</returns>
         private double CalcMaxArea() {
@@ -302,6 +323,7 @@ namespace Fmg.Uwp.Mosaic {
             }
         }
 
+        #region control handlers
         private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs ev) {
             //using (CreateTracer()) {
             var wheelDelta = ev.GetCurrentPoint(Control).Properties.MouseWheelDelta;
@@ -721,28 +743,6 @@ namespace Fmg.Uwp.Mosaic {
             }
         }
 
-        /// <summary> Перепроверить смещение к полю мозаики так, что поле мозаики было в пределах страницы </summary>
-        private SizeDouble RecheckOffset(SizeDouble offset) {
-            var size = Model.Size;
-            var mosaicSize = Model.MosaicSize;
-            if ((offset.Width + mosaicSize.Width) < MinIndent) { // правый край мозаики пересёк левую сторону контрола?
-                offset.Width = MinIndent - mosaicSize.Width; // привязываю к левой стороне контрола
-            } else {
-                if (offset.Width > (size.Width - MinIndent)) // левый край мозаики пересёк правую сторону контрола?
-                    offset.Width = size.Width - MinIndent; // привязываю к правой стороне контрола
-            }
-
-            if ((offset.Height + mosaicSize.Height) < MinIndent) { // нижний край мозаики пересёк верхнюю сторону контрола?
-                offset.Height = MinIndent - mosaicSize.Height; // привязываю к верхней стороне контрола
-            } else {
-                if (offset.Height > (size.Height - MinIndent)) // вержний край мозаики пересёк нижнюю сторону контрола?
-                    offset.Height = size.Height - MinIndent; // привязываю к нижней стороне контрола
-            }
-
-            return offset;
-        }
-
-
         private void OnKeyUp(object sender, KeyRoutedEventArgs ev) {
             //using (CreateTracer(GetCallerName(), "virtKey=" + ev.Key)) {
             ev.Handled = true;
@@ -782,6 +782,8 @@ namespace Fmg.Uwp.Mosaic {
             }
             //}
         }
+
+        #endregion control handlers
 
         protected override bool CheckNeedRestoreLastGame() {
             return false;

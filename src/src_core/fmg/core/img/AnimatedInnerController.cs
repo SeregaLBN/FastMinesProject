@@ -27,7 +27,7 @@ namespace Fmg.Core.Img {
 
         public AnimatedInnerController(TImageModel model) {
             _model = model;
-            _model.PropertyChanged += OnPropertyModelChanged;
+            _model.PropertyChanged += OnModelPropertyChanged;
         }
 
 
@@ -49,7 +49,7 @@ namespace Fmg.Core.Img {
                 _transformers.Add(transformer.GetType(), transformer);
         }
 
-        private void OnPropertyModelChanged(object sender, PropertyChangedEventArgs ev) {
+        private void OnModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             switch (ev.PropertyName) {
             case nameof(IAnimatedModel.Animated):
                 _animationWasUsed = true;
@@ -75,7 +75,7 @@ namespace Fmg.Core.Img {
         }
 
         public void Dispose() {
-            _model.PropertyChanged -= OnPropertyModelChanged;
+            _model.PropertyChanged -= OnModelPropertyChanged;
             if (_animationWasUsed) // do not call UiInvoker.Animator if it is not already used
                 UiInvoker.Animator().Unsubscribe(this);
             _transformers.Clear();

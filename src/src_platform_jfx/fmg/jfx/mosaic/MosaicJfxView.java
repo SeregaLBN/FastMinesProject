@@ -307,8 +307,8 @@ public abstract class MosaicJfxView<TImage,
     }
 
     @Override
-    protected void onPropertyModelChanged(PropertyChangeEvent ev) {
-        super.onPropertyModelChanged(ev);
+    protected void onModelPropertyChanged(PropertyChangeEvent ev) {
+        super.onModelPropertyChanged(ev);
         if (MosaicDrawModel.PROPERTY_FONT_INFO.equals(ev.getPropertyName())) {
             _font = null;
             _mapText.clear();

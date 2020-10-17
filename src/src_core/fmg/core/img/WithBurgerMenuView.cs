@@ -17,18 +17,18 @@ namespace Fmg.Core.Img {
             : base(imageModel)
         {
             _burgerMenuModel = new BurgerMenuModel(imageModel);
-            _burgerMenuModel.PropertyChanged += OnPropertyBurgerMenuModelChanged;
+            _burgerMenuModel.PropertyChanged += OnBurgerMenuModelPropertyChanged;
         }
 
         public BurgerMenuModel BurgerMenuModel => _burgerMenuModel;
 
-        protected void OnPropertyBurgerMenuModelChanged(object sender, PropertyChangedEventArgs ev) {
+        protected void OnBurgerMenuModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _burgerMenuModel));
             Invalidate();
         }
 
         protected override void Disposing() {
-            _burgerMenuModel.PropertyChanged -= OnPropertyBurgerMenuModelChanged;
+            _burgerMenuModel.PropertyChanged -= OnBurgerMenuModelPropertyChanged;
             _burgerMenuModel.Dispose();
             base.Disposing();
         }

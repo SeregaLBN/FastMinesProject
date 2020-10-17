@@ -45,8 +45,8 @@ namespace Fmg.Uwp.Mosaic.Win2d {
             }
         }
 
-        protected override void OnPropertyModelChanged(object sender, PropertyChangedEventArgs ev) {
-            base.OnPropertyModelChanged(sender, ev);
+        protected override void OnModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            base.OnModelPropertyChanged(sender, ev);
             switch (ev.PropertyName) {
             case nameof(MosaicGameModel.MosaicType):
             case nameof(MosaicGameModel.Area):

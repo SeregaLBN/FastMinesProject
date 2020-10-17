@@ -30,7 +30,7 @@ namespace Fmg.Core.Img {
         protected ImageController(TImageView imageView) {
             _notifier = new NotifyPropertyChanged(this, true);
             _imageView = imageView;
-            _imageView.PropertyChanged += OnPropertyViewChanged;
+            _imageView.PropertyChanged += OnViewPropertyChanged;
         }
 
         protected TImageView View => _imageView;
@@ -38,7 +38,7 @@ namespace Fmg.Core.Img {
         public TImage      Image => View.Image;
         public SizeDouble  Size  => View.Size;
 
-        protected virtual void OnPropertyViewChanged(object sender, PropertyChangedEventArgs ev) {
+        protected virtual void OnViewPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             switch (ev.PropertyName) {
             case nameof(View.Model):
                 _notifier.FirePropertyChanged<TImageModel>(ev, nameof(this.Model));
@@ -54,7 +54,7 @@ namespace Fmg.Core.Img {
 
         // <summary>  Dispose managed resources </summary>/
         protected virtual void Disposing() {
-            _imageView.PropertyChanged -= OnPropertyViewChanged;
+            _imageView.PropertyChanged -= OnViewPropertyChanged;
             _notifier.Dispose();
         }
 
