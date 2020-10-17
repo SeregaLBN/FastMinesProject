@@ -32,6 +32,7 @@ public final class ProjSettings extends AProjSettings {
 
         AProjSettings.setDebug(BuildConfig.DEBUG);
         Logger.DEFAULT_WRITER = BuildConfig.DEBUG_OUTPUT ? message -> Log.d("fmg", message) : null;
+        Logger.USE_DATE_PREFIX = false;
         DrawModeFull = BuildConfig.DRAW_MODE_FULL;
     }
 

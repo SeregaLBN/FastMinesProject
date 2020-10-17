@@ -330,6 +330,7 @@ namespace Fmg.Uwp.Mosaic {
             else
                 _clickInfo.UpHandled = handled;
             _clickInfo.Released = !clickResult.IsDown;
+            //Logger.Info(">>>>>> _clickInfo= " + _clickInfo + "\n" + System.Environment.StackTrace);
             return handled;
         }
 
@@ -640,13 +641,27 @@ namespace Fmg.Uwp.Mosaic {
                         if (_turnY)
                             deltaTrans.Y *= -1;
 
-                        double coefFading;
                         if (isInertial) {
                             //var coefFading = Math.Max(0.05, 1 - 0.32 * (DateTime.Now - _dtInertiaStarting).TotalSeconds);
-                            coefFading = Math.Max(0, 1 - 0.32 * (DateTime.Now - _dtInertiaStarting).TotalSeconds);
-                            tracer?.Put("inertial coeff fading = " + coefFading);
+                            var coefFading = Math.Max(0, 1 - 0.32 * (DateTime.Now - _dtInertiaStarting).TotalSeconds);
+
                             deltaTrans.X *= coefFading;
                             deltaTrans.Y *= coefFading;
+
+                            int fullX = (int)(deltaTrans.X / size.Width);
+                            int fullY = (int)(deltaTrans.Y / size.Height);
+                            if (fullX != 0) {
+                                deltaTrans.X -= fullX * size.Width;
+                                if ((fullX & 1) == 1)
+                                    _turnX = !_turnX;
+                            }
+                            if (fullY != 0) {
+                                deltaTrans.Y -= fullY * size.Height;
+                                if ((fullY & 1) == 1)
+                                    _turnY = !_turnY;
+                            }
+
+                            tracer?.Put("inertial coeff fading = " + coefFading + "; deltaTrans=" + deltaTrans);
                         }
 
                         var mosaicSize = Model.MosaicSize;
@@ -790,6 +805,13 @@ namespace Fmg.Uwp.Mosaic {
             public bool DownHandled { get; set; }
             public bool UpHandled { get; set; }
             //public PointerDeviceType PointerDevice { get; set; }
+            public override string ToString() {
+                return "{ IsLeft=" + IsLeft
+                    + ", Released=" + Released
+                    + ", CellDown=" + (CellDown == null ? "null" : CellDown.ToString())
+                    + " }";
+            }
+
         }
 
         private Tracer CreateTracer([System.Runtime.CompilerServices.CallerMemberName] string callerName = null, string ctorMessage = null, Func<string> disposeMessage = null) {

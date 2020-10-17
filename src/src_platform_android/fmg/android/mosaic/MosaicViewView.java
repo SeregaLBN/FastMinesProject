@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import fmg.android.app.DrawableView;
+import fmg.common.Logger;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicDrawModel;
@@ -77,6 +78,8 @@ public class MosaicViewView extends MosaicAndroidView<DrawableView, Bitmap, Mosa
     @Override
     protected void drawModified(Collection<BaseCell> modifiedCells) {
         View control = getControl();
+        if (control == null)
+            return;
 
         assert !_alreadyPainted;
 
@@ -161,10 +164,15 @@ public class MosaicViewView extends MosaicAndroidView<DrawableView, Bitmap, Mosa
             model.setImgFlag(_imgFlag.getImage());
             model.setImgMine(_imgMine.getImage());
         } else {
+            int imgSize = (int)sq;
+            if (imgSize < 1) {
+                Logger.info("bad image size " + sq);
+                imgSize = 1;
+            }
             _imgFlag.getModel().setSize(new SizeDouble(max, max));
-            model.setImgFlag(ImgUtils.zoom(_imgFlag.getImage(), (int)sq, (int)sq));
+            model.setImgFlag(ImgUtils.zoom(_imgFlag.getImage(), imgSize, imgSize));
             _imgMine.getModel().setSize(new SizeDouble(max, max));
-            model.setImgMine(ImgUtils.zoom(_imgMine.getImage(), (int)sq, (int)sq));
+            model.setImgMine(ImgUtils.zoom(_imgMine.getImage(), imgSize, imgSize));
         }
     }
 

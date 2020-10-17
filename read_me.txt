@@ -125,4 +125,10 @@ How to:
                   -> in 'Tab size'    enter 4
                   -> click Ok
             -> click 'Apply and Close'
-      (PS: Use ctrl+shift+f to format a java class which will replace tab with space.)
+
+----------------------------------
+Identic
+UWP
+./src/src_platform_uwp/fmg/uwp/mosaic/MosaicFrameworkElementController.cs
+Android
+./src/src_platform_android/fmg/android/mosaic/MosaicViewController.java

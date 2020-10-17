@@ -465,6 +465,10 @@ namespace Fmg.Core.Mosaic.Cells {
             }
         }
 
+        public override string ToString() {
+            return this.GetType().Name + "{ x:" + coord.x + ", y:" + coord.y + " }";
+        }
+
     }
 
 }

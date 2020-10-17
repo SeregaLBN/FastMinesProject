@@ -13,13 +13,16 @@ public final class Logger {
 
     /** may be override */
     public static Consumer<String> DEFAULT_WRITER = null; // System.out::println;
+    public static boolean USE_DATE_PREFIX = true;
 
     public static void info(String format, Object... args) {
         if (DEFAULT_WRITER == null)
             return;
 
         try {
-            String prefix = '[' + new SimpleDateFormat("HH:mm:ss.SSS").format(new Date()) + "]  Th=" + Thread.currentThread().getId() + "  ";
+            String prefix = USE_DATE_PREFIX
+                                ? '[' + new SimpleDateFormat("HH:mm:ss.SSS").format(new Date()) + "]  Th=" + Thread.currentThread().getId() + "  "
+                                :                                                                    "Th=" + Thread.currentThread().getId() + "  ";
             if (args.length > 0) {
                 DEFAULT_WRITER.accept(prefix + new MessageFormat(format, Locale.US).format(args));
             } else {
