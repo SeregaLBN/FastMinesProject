@@ -664,8 +664,8 @@ namespace Fmg.Uwp.Mosaic {
                             deltaTrans.Y *= -1;
 
                         if (isInertial) {
-                            //var coefFading = Math.Max(0.05, 1 - 0.32 * (DateTime.Now - _dtInertiaStarting).TotalSeconds);
-                            var coefFading = Math.Max(0, 1 - 0.32 * (DateTime.Now - _dtInertiaStarting).TotalSeconds);
+                            var totalSeconds = (DateTime.Now - _dtInertiaStarting).TotalSeconds;
+                            var coefFading = Math.Max(0, 1 - 0.32 * totalSeconds);
 
                             deltaTrans.X *= coefFading;
                             deltaTrans.Y *= coefFading;
