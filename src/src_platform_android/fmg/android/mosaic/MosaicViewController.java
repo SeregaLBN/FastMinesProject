@@ -9,18 +9,13 @@ import android.util.Size;
 import android.view.DragEvent;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.beans.PropertyChangeEvent;
-import java.sql.Array;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-import java.util.function.DoubleConsumer;
-import java.util.function.DoubleFunction;
-import java.util.function.DoublePredicate;
-import java.util.stream.Collectors;
 
 import fmg.android.app.DrawableView;
 import fmg.android.utils.AsyncRunner;
@@ -47,25 +42,25 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
     public static final String PROPERTY_EXTENDED_MANIPULATION = "ExtendedManipulation";
 
     private Context context;
-    private final ClickInfo _clickInfo = new ClickInfo();
+    private final ClickInfo clickInfo = new ClickInfo();
     /** <li>true : bind Control.SizeProperty to Model.Size
      *  <li>false: bind Model.Size to Control.SizeProperty */
     private boolean bindSizeDirection = true;
-    private boolean _extendedManipulation = false;
+    private boolean extendedManipulation = false;
 
     // #region if ExtendedManipulation
     /// <summary> мин отступ от краев экрана для мозаики </summary>
     private final double minIndent = Cast.dpToPx(30.0f);
     private final boolean DeferredZoom = true;
-    private boolean _manipulationStarted;
-    private boolean _turnX;
-    private boolean _turnY;
-    private long _dtInertiaStarting;
-    private static Double _baseWheelDelta;
-    private Object/*IDisposable*/ _areaScaleObservable;
-    private Object/*Transform*/ _originalTransform;
-    private Object/*CompositeTransform*/ _scaleTransform;
-    private double _deferredArea;
+    private boolean manipulationStarted;
+    private boolean turnX;
+    private boolean turnY;
+    private long dtInertiaStarting;
+    private static Double baseWheelDelta;
+    private Object/*IDisposable*/ areaScaleObservable;
+    private Object/*Transform*/ originalTransform;
+    private Object/*CompositeTransform*/ scaleTransform;
+    private double deferredArea;
 
     private PointDouble lastScrollPosition;
 
@@ -73,8 +68,28 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
     private Disposable sizeChangedObservable;
     private Size cachedControlSize = new Size(-1, -1);
 
-    private GestureDetector _gd;
-    private final GestureDetector.OnGestureListener _gestureListener = new GestureDetector.SimpleOnGestureListener() {
+    private GestureDetector gestureDetector;
+    private ScaleGestureDetector scaleGestureDetector;
+
+    private final ScaleGestureDetector.OnScaleGestureListener scaleGestureListener = new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+
+        @Override
+        public boolean onScaleBegin(ScaleGestureDetector detector) {
+            return MosaicViewController.this.onGestureScaleBegin();
+        }
+
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            return MosaicViewController.this.onGestureScale();
+        }
+
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector) {
+            MosaicViewController.this.onGestureScaleEnd();
+        }
+    };
+
+    private final GestureDetector.OnGestureListener gestureListener = new GestureDetector.SimpleOnGestureListener() {
 
         /// interface OnGestureListener
         @Override
@@ -139,17 +154,24 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
 
 
     private static class ZoomStartInfo {
-        public Point _devicePosition;
-        public SizeDouble _mosaicSize;
-        public SizeDouble _mosaicOffset;
+        public Point devicePosition;
+        public SizeDouble mosaicSize;
+        public SizeDouble mosaicOffset;
     }
-    private ZoomStartInfo _zoomStartInfo;
+    private ZoomStartInfo zoomStartInfo;
     // #endregion
 
     public MosaicViewController(Context context) {
         super(new MosaicViewView(context));
+
+        if (context == null)
+            return;
+
         this.context = context;
-        _gd = new GestureDetector(context, _gestureListener);
+
+        scaleGestureDetector = new ScaleGestureDetector(context, scaleGestureListener);
+        gestureDetector      = new      GestureDetector(context,      gestureListener);
+
         subscribeToViewControl();
     }
 
@@ -158,7 +180,8 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
 
         getView().setControl(view);
         context = (view==null) ? null : view.getContext();
-        _gd = (context==null) ? null : new GestureDetector(context, _gestureListener);
+        scaleGestureDetector = (context==null) ? null : new ScaleGestureDetector(context, scaleGestureListener);
+        gestureDetector      = (context==null) ? null : new      GestureDetector(context,      gestureListener);
 
         subscribeToViewControl();
     }
@@ -175,10 +198,10 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
     }
 
     public boolean getExtendedManipulation() {
-        return _extendedManipulation;
+        return extendedManipulation;
     }
     public void setExtendedManipulation(boolean value) {
-        if (_notifier.setProperty(_extendedManipulation, value, PROPERTY_EXTENDED_MANIPULATION)) {
+        if (_notifier.setProperty(extendedManipulation, value, PROPERTY_EXTENDED_MANIPULATION)) {
             unsubscribeToViewControl();
             subscribeToViewControl();
         }
@@ -493,15 +516,15 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
     boolean clickHandler(ClickResult clickResult) {
         if (clickResult == null)
             return false;
-        _clickInfo.cellDown = clickResult.getCellDown();
-        _clickInfo.isLeft = clickResult.isLeft();
+        clickInfo.cellDown = clickResult.getCellDown();
+        clickInfo.isLeft = clickResult.isLeft();
         boolean handled = clickResult.isAnyChanges();
         if (clickResult.isDown())
-            _clickInfo.downHandled = handled;
+            clickInfo.downHandled = handled;
         else
-            _clickInfo.upHandled = handled;
-        _clickInfo.released = !clickResult.isDown();
-        Logger.info(">>>>>>> _clickInfo=" + _clickInfo + "\n" + Arrays.asList(Thread.currentThread().getStackTrace()).stream().map(x -> x.toString()).filter(x -> x.startsWith("fmg.")).collect(Collectors.joining("\n")));
+            clickInfo.upHandled = handled;
+        clickInfo.released = !clickResult.isDown();
+        //Logger.info(">>>>>>> clickInfo=" + clickInfo + "\n" + Arrays.asList(Thread.currentThread().getStackTrace()).stream().map(x -> x.toString()).filter(x -> x.startsWith("fmg.")).collect(Collectors.joining("\n")));
         return handled;
     }
 
@@ -522,19 +545,22 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
     }
 
 
-    protected boolean onGenericMotion(MotionEvent ev) {
+    private boolean onGenericMotion(MotionEvent ev) {
         boolean[] handled = { false };
         try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGenericMotion", "ev=" + motionEventToString(ev), () -> "handled="+handled[0]))
         {
             return handled[0];
         }
     }
-    protected boolean onTouch(MotionEvent ev) {
+
+    private boolean onTouch(MotionEvent ev) {
         boolean[] handled = { false };
         try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onTouch", "ev=" + motionEventToString(ev), () -> "handled="+handled[0] + "\n-----------------------------")) {
-            handled[0] = _gd.onTouchEvent(ev);
+            handled[0] = scaleGestureDetector.onTouchEvent(ev);
+            if (ev.getPointerCount() == 1)
+                handled[0] = gestureDetector.onTouchEvent(ev) || handled[0];
 
-            if ((ev.getAction() == MotionEvent.ACTION_UP) && !_clickInfo.released)
+            if ((ev.getAction() == MotionEvent.ACTION_UP) && !clickInfo.released)
                 handled[0] = onClickCommon(ev, true, false);
 
             //return handled[0];
@@ -544,32 +570,33 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
     }
 
     ///////////////// begin Gesture
-    protected boolean onGestureDown(MotionEvent ev) {
+    /// interface OnGestureListener
+    private boolean onGestureDown(MotionEvent ev) {
         boolean[] handled = { false };
         try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureDown", "ev=" + motionEventToString(ev), () -> "handled=" + handled[0])) {
-            _turnX = _turnY = false;
-            _dtInertiaStarting = 0;
+            turnX = turnY = false;
+            dtInertiaStarting = 0;
             lastScrollPosition = null;
 
-            if (!_clickInfo.isDoubleTap)
+            if (!clickInfo.isDoubleTap)
                 return handled[0] = onClickCommon(ev, true, true);
 
             return handled[0];
         }
     }
-    protected void onGestureShowPress(MotionEvent ev) {
+    private void onGestureShowPress(MotionEvent ev) {
         try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureShowPress", "ev=" + motionEventToString(ev)))
         {
         }
     }
-    protected boolean onGestureSingleTapUp(MotionEvent ev) {
+    private boolean onGestureSingleTapUp(MotionEvent ev) {
         boolean[] handled = { false };
         try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureSingleTapUp", "ev=" + motionEventToString(ev), () -> "handled=" + handled[0])) {
             return handled[0] = onClickCommon(ev, true, false);
         }
     }
 
-    protected boolean onGestureScroll(MotionEvent ev1, MotionEvent ev2, float distanceX, float distanceY) {
+    private boolean onGestureScroll(MotionEvent ev1, MotionEvent ev2, float distanceX, float distanceY) {
         boolean[] handled = { false };
         try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureScroll", "ev1=" + motionEventToString(ev1) + "; ev2=" + motionEventToString(ev2) + "; distX=" + distanceX + "; distY=" + distanceY, () -> "handled=" + handled[0]))
         {
@@ -581,10 +608,10 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
         }
     }
 
-    protected void onGestureLongPress(MotionEvent ev) {
+    private void onGestureLongPress(MotionEvent ev) {
         try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureLongPress", "ev=" + motionEventToString(ev)))
         {
-            if ((_clickInfo.cellDown != null) && (_clickInfo.cellDown.getState().getStatus() == EState._Close)) {
+            if ((clickInfo.cellDown != null) && (clickInfo.cellDown.getState().getStatus() == EState._Close)) {
                 // imitate right mouse click - to (un)set flag
                 mouseReleased(null, true);
                 onClickCommon(ev, false, true);
@@ -592,7 +619,7 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
             }
         }
     }
-    protected boolean onGestureFling(MotionEvent ev1, MotionEvent ev2, float velocityX, float velocityY) {
+    private boolean onGestureFling(MotionEvent ev1, MotionEvent ev2, float velocityX, float velocityY) {
         // I spied the inertia in Windows UWP.
         // Chose the formula of inertia by similarity.
         //  https://www.rapidtables.com/tools/scatter-plot.html
@@ -615,7 +642,7 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
         boolean[] handled = { false };
         try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureFling", "ev1=" + motionEventToString(ev1) + "; ev2=" + motionEventToString(ev2) + "; velocityX=" + velocityX + "; velocityY=" + velocityY, () -> "handled=" + handled[0]))
         {
-            _dtInertiaStarting = new Date().getTime();
+            dtInertiaStarting = new Date().getTime();
             onManipulationDelta(new PointDouble(ev2.getX(), ev2.getY()), true, 0, 0);
             return handled[0] = true;
         } finally {
@@ -635,20 +662,21 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
                 },
         5,
                 () -> {
-                    currTime[0] = new Date().getTime() - _dtInertiaStarting;
+                    currTime[0] = new Date().getTime() - dtInertiaStarting;
                     return currTime[0] > totalTime;
                 });
         }
     }
+
     /// interface OnDoubleTapListener
-    protected boolean onGestureSingleTapConfirmed(MotionEvent ev) {
+    private boolean onGestureSingleTapConfirmed(MotionEvent ev) {
         boolean[] handled = { false };
         try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureSingleTapConfirmed", "ev=" + motionEventToString(ev), () -> "handled="+handled[0]))
         {
             return handled[0];
         }
     }
-    protected boolean onGestureDoubleTap(MotionEvent ev) {
+    private boolean onGestureDoubleTap(MotionEvent ev) {
         boolean[] handled = { false };
         try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureDoubleTap", "ev=" + motionEventToString(ev), () -> "handled="+handled[0]))
         {
@@ -662,7 +690,7 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
                     handled[0] = true;
                 }
             } else {
-                _zoomStartInfo = null;
+                zoomStartInfo = null;
 
                 // centered mosaic
                 SizeDouble size = model.getSize();
@@ -681,27 +709,49 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
             return handled[0];
         }
     }
-    protected boolean onGestureDoubleTapEvent(MotionEvent ev) {
+    private boolean onGestureDoubleTapEvent(MotionEvent ev) {
         boolean[] handled = { false };
         try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureDoubleTapEvent", "ev=" + motionEventToString(ev), () -> "handled="+handled[0]))
         {
-            _clickInfo.isDoubleTap = (ev.getAction() == MotionEvent.ACTION_DOWN);
+            clickInfo.isDoubleTap = (ev.getAction() == MotionEvent.ACTION_DOWN);
             return handled[0];
         }
     }
     /// interface OnContextClickListener
-    protected boolean onGestureContextClick(MotionEvent ev) {
+    private boolean onGestureContextClick(MotionEvent ev) {
         boolean[] handled = { false };
         try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureContextClick", "ev=" + motionEventToString(ev), () -> "handled="+handled[0]))
         {
             return handled[0];
         }
     }
+
+    /// interface OnScaleGestureListener
+    private boolean onGestureScaleBegin() {
+        boolean[] handled = { false };
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGesturScaleBegin", () -> "handled="+handled[0])) {
+            return handled[0] = true;
+        }
+    }
+
+    private boolean onGestureScale() {
+        boolean[] handled = { false };
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGesturScale", () -> "handled="+handled[0])) {
+            return handled[0] = true;
+        }
+    }
+
+    private void onGestureScaleEnd() {
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGesturScaleEnd")) {
+            return;
+        }
+    }
+
     ///////////////// end Gesture
 
     private void onManipulationDelta(PointDouble evCurrPosition, boolean isInertial, float deltaTransX, float deltaTransY) {
         //var deltaScale = delta.Scale;
-        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onManipulationDelta", "pos=" + evCurrPosition + "; isInertial=" + isInertial + "; deltaTransX=" + deltaTransX + "; deltaTransY=" + deltaTransY))
+        //try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onManipulationDelta", "pos=" + evCurrPosition + "; isInertial=" + isInertial + "; deltaTransX=" + deltaTransX + "; deltaTransY=" + deltaTransY))
         {
 //            if (Math.Abs(1 - deltaScale) > 0.009) {
 //                #region scale / zoom
@@ -717,11 +767,11 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
                 SizeDouble offset = getOffset();
                 SizeDouble size = getModel().getSize();
                 // #region check possibility dragging
-                if (_clickInfo.cellDown != null) {
+                if (clickInfo.cellDown != null) {
                     PointDouble startPoint = evCurrPosition;
                     //var inCellRegion = _tmpClickedCell.PointInRegion(startPoint.ToFmRect());
                     //this._contentRoot.Background = new SolidColorBrush(inCellRegion ? Colors.Aquamarine : Colors.DeepPink);
-                    RectDouble rcOuter = _clickInfo.cellDown.getRcOuter().moveXY(offset);
+                    RectDouble rcOuter = clickInfo.cellDown.getRcOuter().moveXY(offset);
                     float min = Cast.dpToPx(25);
                     rcOuter = rcOuter.moveXY(-min, -min);
                     rcOuter.width  += min * 2;
@@ -733,13 +783,13 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
                 if (needDrag) {
                     // #region Compound motion
 
-                    if (_turnX)
+                    if (turnX)
                         deltaTransX *= -1;
-                    if (_turnY)
+                    if (turnY)
                         deltaTransY *= -1;
 
                     if (isInertial) {
-                        double totalSeconds = (new Date().getTime() - _dtInertiaStarting) / 1000.0; // TimeUnit.MILLISECONDS.toSeconds(new Date().getTime() - _dtInertiaStarting);
+                        double totalSeconds = (new Date().getTime() - dtInertiaStarting) / 1000.0; // TimeUnit.MILLISECONDS.toSeconds(new Date().getTime() - _dtInertiaStarting);
                         double coefFading = Math.max(0, 1 - 0.32 * totalSeconds);
                         deltaTransX *= coefFading;
                         deltaTransY *= coefFading;
@@ -749,21 +799,21 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
                         if (fullX != 0) {
                             deltaTransX -=  fullX * size.width;
                             if ((fullX & 1) == 1)
-                                _turnX = !_turnX;
+                                turnX = !turnX;
                         }
                         if (fullY != 0) {
                             deltaTransY -=  fullY * size.height;
                             if ((fullY & 1) == 1)
-                                _turnY = !_turnY;
+                                turnY = !turnY;
                         }
 
-                        tracer.put("inertial coeff fading = " + coefFading + "; deltaTrans={" + deltaTransX + ", " + deltaTransY + "}");
+                        //tracer.put("inertial coeff fading = " + coefFading + "; deltaTrans={" + deltaTransX + ", " + deltaTransY + "}");
                     }
 
                     SizeDouble mosaicSize = getModel().getMosaicSize();
                     if ((offset.width + mosaicSize.width + deltaTransX) < minIndent) { // правый край мозаики пересёк левую сторону контрола?
                         if (isInertial) {
-                            _turnX = !_turnX; // разворачиваю по оси X
+                            turnX = !turnX; // разворачиваю по оси X
 
                             double dx1 = mosaicSize.width + offset.width - minIndent;  // часть deltaTrans.X которая не вылезла за границу
                             double dx2 = deltaTransX +  dx1;                           // часть deltaTrans.X которая вылезла за границу
@@ -774,7 +824,7 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
                     } else
                     if ((offset.width + deltaTransX) > (size.width - minIndent)) { // левый край мозаики пересёк правую сторону контрола?
                         if (isInertial) {
-                            _turnX = !_turnX; // разворачиваю по оси X
+                            turnX = !turnX; // разворачиваю по оси X
 
                             double dx1 = size.width - offset.width - minIndent;    // часть deltaTrans.X которая не вылезла за границу
                             double dx2 = deltaTransX - dx1;                        // часть deltaTrans.X которая вылезла за границу
@@ -786,7 +836,7 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
 
                     if ((offset.height + mosaicSize.height + deltaTransY) < minIndent) { // нижний край мозаики пересёк верхнюю сторону контрола?
                         if (isInertial) {
-                            _turnY = !_turnY; // разворачиваю по оси Y
+                            turnY = !turnY; // разворачиваю по оси Y
 
                             double dy1 = mosaicSize.height + offset.height - minIndent;  // часть deltaTrans.Y которая не вылезла за границу
                             double dy2 = deltaTransY + dy1;                              // часть deltaTrans.Y которая вылезла за границу
@@ -797,7 +847,7 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
                     } else
                     if ((offset.height + deltaTransY) > (size.height - minIndent)) { // вержний край мозаики пересёк нижнюю сторону контрола?
                         if (isInertial) {
-                            _turnY = !_turnY; // разворачиваю по оси Y
+                            turnY = !turnY; // разворачиваю по оси Y
 
                             double dy1 = size.height - offset.height - minIndent;    // часть deltaTrans.Y которая не вылезла за границу
                             double dy2 = deltaTransY - dy1;                          // часть deltaTrans.Y которая вылезла за границу
@@ -818,40 +868,40 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
         }
     }
 
-    protected void onClick() {
+    private void onClick() {
         try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onClick"))
         {
         }
     }
-    protected boolean onLongClick() {
+    private boolean onLongClick() {
         boolean[] handled = { false };
         try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onLongClick", () -> "handled="+handled[0]))
         {
             return handled[0];
         }
     }
-    protected boolean onDrag(DragEvent ev) {
+    private boolean onDrag(DragEvent ev) {
         boolean[] handled = { false };
         try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onDrag", "ev=" + dragEventToString(ev), () -> "handled="+handled[0]))
         {
             return handled[0];
         }
     }
-    protected boolean onHover(MotionEvent ev) {
+    private boolean onHover(MotionEvent ev) {
         boolean[] handled = { false };
         try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onHover", "ev=" + motionEventToString(ev), () -> "handled="+handled[0]))
         {
             return handled[0];
         }
     }
-    protected boolean onContextClick() {
+    private boolean onContextClick() {
         boolean[] handled = { false };
         try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onContextClick", () -> "handled="+handled[0]))
         {
             return handled[0];
         }
     }
-    protected void onScrollChange(int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+    private void onScrollChange(int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
         try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onScrollChange"))
         {
         }
@@ -893,7 +943,7 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
 
     @Override
     public void close() {
-        _dtInertiaStarting = 0;
+        dtInertiaStarting = 0;
         unsubscribeToViewControl();
         super.close();
         getView().close();
