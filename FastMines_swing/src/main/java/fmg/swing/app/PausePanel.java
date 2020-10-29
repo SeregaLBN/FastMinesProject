@@ -53,10 +53,11 @@ class PausePanel {
         Dimension sizeOutward = panel.getSize();
         Logo.IconController l = getLogo();
         double sq = Math.min(sizeOutward.getWidth(), sizeOutward.getHeight());
-        l.getModel().setSize(new SizeDouble(sq, sq));
+        LogoModel lModel = l.getModel();
+        lModel.setSize(new SizeDouble(sq, sq));
         l.getImage().paintIcon(panel, g,
-                               (int)((sizeOutward.width  - l.getModel().getSize().width ) / 2),
-                               (int)((sizeOutward.height - l.getModel().getSize().height) / 2));
+                               (int)((sizeOutward.width  - lModel.getSize().width ) / 2),
+                               (int)((sizeOutward.height - lModel.getSize().height) / 2));
     }
 
     private Logo.IconController getLogo() {

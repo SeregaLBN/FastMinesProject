@@ -63,8 +63,9 @@ public class TestDialogs {
     }
 
     private static void testCustomSkillDlg() {
-        CustomSkillDlg sm = new CustomSkillDlg(null, true);
-        sm.setVisible(true);
+        try (CustomSkillDlg sm = new CustomSkillDlg(null, true)) {
+            sm.setVisible(true);
+        }
     }
 
     private static void testLoginDlg() {

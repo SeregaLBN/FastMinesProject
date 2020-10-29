@@ -623,9 +623,11 @@ public class FastMinesSwing {
         windowState = ev.getNewState();
     }
 
+    /*
     private boolean isWindowMinimized() {
         return (windowState & Frame.ICONIFIED) == Frame.ICONIFIED;
     }
+    */
     private boolean isWindowMaximized() {
         return (windowState & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH;
     }
@@ -794,8 +796,9 @@ public class FastMinesSwing {
             if (getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected()) {
                 sizeMax();
             } else {
-                SizeDouble maxSize = calcMaxMosaicSize(getMosaicController().getSizeField());
-                if ((maxSize.height < getMosaicController().getSize().height) || (maxSize.width < getMosaicController().getSize().width))
+                MosaicJPanelController mosaicController = getMosaicController();
+                SizeDouble maxSize = calcMaxMosaicSize(mosaicController.getSizeField());
+                if ((maxSize.height < mosaicController.getSize().height) || (maxSize.width < mosaicController.getSize().width))
                     setMosaicSize(maxSize);
             }
 
@@ -1135,6 +1138,7 @@ public class FastMinesSwing {
     private void onMosaicModelPropertyChanged(PropertyChangeEvent ev) {
         switch (ev.getPropertyName()) {
         case MosaicDrawModel.PROPERTY_SIZE:
+            System.out.println(">>>>>>>>>>>>>>>>>>>>>");
             recheckLocation();
             break;
         case MosaicGameModel.PROPERTY_SIZE_FIELD:
