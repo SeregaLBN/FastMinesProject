@@ -39,15 +39,15 @@ public enum ESkillLevel {
                   .average().getAsDouble();
             mosaicCoefficient.put(mosaicType, attr.getVertexIntersection()/neighbors);
 
-//            System.out.println(attr.getClass().getSimpleName() + ": " + mosaicCoefficient.get(mosaicType));
+//            Logger.info(attr.getClass().getSimpleName() + ": " + mosaicCoefficient.get(mosaicType));
         }
 
         // x*y * coefficient / mosaicCoefficient  = 15
         // 15*mosaicCoefficient/(x*y)  = coefficient
-//        System.out.println(mosaicCoefficient.get(EMosaic.eMosaicSquare1) * 15  / (10*10));
-//        System.out.println(mosaicCoefficient.get(EMosaic.eMosaicSquare1) * 54  / (20*15));
-//        System.out.println(mosaicCoefficient.get(EMosaic.eMosaicSquare1) * 126 / (30*20));
-//        System.out.println(mosaicCoefficient.get(EMosaic.eMosaicSquare1) * 281 / (45*25));
+//        Logger.info(mosaicCoefficient.get(EMosaic.eMosaicSquare1) * 15  / (10*10));
+//        Logger.info(mosaicCoefficient.get(EMosaic.eMosaicSquare1) * 54  / (20*15));
+//        Logger.info(mosaicCoefficient.get(EMosaic.eMosaicSquare1) * 126 / (30*20));
+//        Logger.info(mosaicCoefficient.get(EMosaic.eMosaicSquare1) * 281 / (45*25));
 
 //        System.exit(0);
     }

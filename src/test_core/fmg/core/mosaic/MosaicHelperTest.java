@@ -141,7 +141,7 @@ public class MosaicHelperTest {
                 Assert.assertTrue((MosaicHelper.AREA_PRECISION >= (sizeClientIn.width  - sizeClientOut.width )/magicNumber) ||
                                   (MosaicHelper.AREA_PRECISION >= (sizeClientIn.height - sizeClientOut.height)/magicNumber));
             } catch (Throwable ex) {
-                System.err.println("Failed for sizeClientIn=" + sizeClientIn
+                Logger.error("Failed for sizeClientIn=" + sizeClientIn
                                    + "; sizeClientOut=" + sizeClientOut
                                    + "; mosaicType=" + mosaicType
                                    + "; mSize=" + mSize

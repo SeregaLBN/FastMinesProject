@@ -74,7 +74,7 @@ public class MosaicJPanelController extends MosaicController<JPanel, Icon, Mosai
         public void mouseMoved(MouseEvent e) {}
         @Override
         public void focusLost(FocusEvent e) {
-            //System.out.println("Mosaic::MosaicMouseListeners::focusLost: " + e);
+            //Logger.info("Mosaic::MosaicMouseListeners::focusLost: " + e);
             MosaicJPanelController.this.mouseFocusLost();
         }
         @Override

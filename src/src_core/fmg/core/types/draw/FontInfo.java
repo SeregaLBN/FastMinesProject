@@ -2,6 +2,7 @@ package fmg.core.types.draw;
 
 import java.beans.PropertyChangeListener;
 
+import fmg.common.Logger;
 import fmg.common.geom.DoubleExt;
 import fmg.common.notifier.INotifyPropertyChanged;
 import fmg.common.notifier.NotifyPropertyChanged;
@@ -51,7 +52,7 @@ public class FontInfo implements INotifyPropertyChanged {
         assert(size > 0.01);
         if (size < 0.01) {
             //throw new IllegalArgumentException("Font size value must be positive: size=" + size);
-            System.err.println("Font size value must be positive: size=" + size);
+            Logger.error("Font size value must be positive: size=" + size);
             size = 0.1;
         }
         double old = _size;

@@ -64,24 +64,24 @@ public class ManageDlg {
     }
 
     private void onOk() {
-//        System.out.println("OnOk");
+//        Logger.info("OnOk");
         int rowIndex = table.getSelectedRow();
         if (rowIndex == -1) {
 //            if (parent != null)
-//                System.out.println("User not changet. Active user id is " + parent.getActiveUserId());
+//                Logger.info("User not changet. Active user id is " + parent.getActiveUserId());
 //            else
-//                System.out.println("User not selected");
+//                Logger.info("User not selected");
         } else {
             User user = players.getUser(rowIndex);
             UUID activeUserId = user.getGuid();
-//            System.out.println("Active user is: "+user);
+//            Logger.info("Active user is: "+user);
             if (parent != null)
                 parent.setActiveUserId(activeUserId);
         }
         onClose();
     }
     private void onCancel() {
-//        System.out.println("OnCancel");
+//        Logger.info("OnCancel");
         onClose();
     }
     private void onClose() {
@@ -89,7 +89,7 @@ public class ManageDlg {
     }
 
     private void onNewPlayer() {
-//        System.out.println("OnNewPlayer");
+//        Logger.info("OnNewPlayer");
         Window winParent = dialog.isVisible() ? dialog : ((app == null) ? null : app.getFrame());
         final LoginDlg loginDialog = new LoginDlg(winParent, true, null, false);
         final Runnable anew = () -> loginDialog.getDialog().setVisible(true);
@@ -113,7 +113,7 @@ public class ManageDlg {
     }
 
     private void onDeleteRow() {
-//        System.out.println("OnDeleteRow");
+//        Logger.info("OnDeleteRow");
         int rowIndex = table.getSelectedRow();
         if (rowIndex == -1)
             FastMinesSwing.beep();
@@ -198,11 +198,11 @@ public class ManageDlg {
                 public void mouseClicked(MouseEvent e) {
                     switch (e.getClickCount()) {
                     case 1:
-//                        System.out.println(" sigle click" );
+//                        Logger.info(" sigle click" );
 //                        btnOk.setEnabled(table.getSelectedRow() != -1);
                         break;
                     case 2:
-//                        System.out.println(" double click" );
+//                        Logger.info(" double click" );
                         ManageDlg.this.onOk();
                         break;
                     }
@@ -214,16 +214,16 @@ public class ManageDlg {
 //               if (e.getSource() == table.getSelectionModel() && table.getRowSelectionAllowed()) {
 //                   int first = e.getFirstIndex();
 //                   int last = e.getLastIndex();
-//                   System.out.println("Column selection changed: " + first+".."+last);
+//                   Logger.info("Column selection changed: " + first+".."+last);
 //               } else
 //               if (e.getSource() == table.getColumnModel().getSelectionModel() && table.getColumnSelectionAllowed())
 //               {
 //                   int first = e.getFirstIndex();
 //                   int last = e.getLastIndex();
-//                   System.out.println("Row selection changed: " + first+".."+last);
+//                   Logger.info("Row selection changed: " + first+".."+last);
 //               }
 //
-//               System.out.println(e.getValueIsAdjusting());
+//               Logger.info(e.getValueIsAdjusting());
 //               if (e.getValueIsAdjusting()) {
 //                   // The mouse button has not yet been released
 //               }
@@ -276,7 +276,7 @@ public class ManageDlg {
     }
 
     public void setVisible(boolean b) {
-        //System.out.println("> Manage::setVisible: " + b);
+        //Logger.info("> Manage::setVisible: " + b);
         if (b) {
             dialog.setTitle(DEFAULT_CAPTION);
 

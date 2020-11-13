@@ -3,6 +3,7 @@ package fmg.core.mosaic;
 import java.lang.reflect.Constructor;
 import java.security.InvalidParameterException;
 
+import fmg.common.Logger;
 import fmg.common.geom.Coord;
 import fmg.common.geom.DoubleExt;
 import fmg.common.geom.Matrisize;
@@ -66,9 +67,8 @@ public final class MosaicHelper {
             BaseCell.BaseAttribute attr = constructor.newInstance();
             return attr;
         } catch (Exception ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
-            throw new RuntimeException("Unknown type "+mosaicType + ": "+ex.getMessage(), ex);
+            Logger.error("createAttributeInstance", ex);
+            throw new RuntimeException("Unknown type " + mosaicType, ex);
         }
     }
 
@@ -110,9 +110,8 @@ public final class MosaicHelper {
             cell.init();
             return cell;
         } catch (Exception ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
-            throw new RuntimeException("Unknown type "+mosaicType + ": "+ex.getMessage(), ex);
+            Logger.error("createCellInstance", ex);
+            throw new RuntimeException("Unknown type " + mosaicType, ex);
         }
     }
 

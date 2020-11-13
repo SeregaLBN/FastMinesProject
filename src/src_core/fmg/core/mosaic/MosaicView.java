@@ -67,7 +67,7 @@ public abstract class MosaicView<TImage,
         else
             _modifiedCells.addAll(modifiedCells);
         if (_DEBUG_DRAW_FLOW)
-            System.out.println("MosaicView.invalidate: " + ((modifiedCells==null) ? "all" : ("cnt=" + modifiedCells.size()) + ": " + modifiedCells.stream().limit(5).collect(Collectors.toList())));
+            Logger.info("MosaicView.invalidate: " + ((modifiedCells==null) ? "all" : ("cnt=" + modifiedCells.size()) + ": " + modifiedCells.stream().limit(5).collect(Collectors.toList())));
         invalidate();
     }
 
@@ -80,7 +80,7 @@ public abstract class MosaicView<TImage,
     @Override
     protected void drawBody() {
         if (_DEBUG_DRAW_FLOW)
-            System.out.println("MosaicView.drawBody: " + (_modifiedCells.isEmpty() ? "all" : ("cnt=" + _modifiedCells.size()) + ": " + _modifiedCells.stream().limit(5).collect(Collectors.toList())));
+            Logger.info("MosaicView.drawBody: " + (_modifiedCells.isEmpty() ? "all" : ("cnt=" + _modifiedCells.size()) + ": " + _modifiedCells.stream().limit(5).collect(Collectors.toList())));
         drawModified(_modifiedCells.isEmpty() ? null : _modifiedCells);
         _modifiedCells.clear();
     }

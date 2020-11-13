@@ -98,7 +98,7 @@ public class PentagonT10 extends BaseCell {
                         throw new RuntimeException("Забыл case #" + dir);
                     }
                 vertexIntersection = sum / cntDirection;
-//              System.out.println("PentagonT10::getVertexNeighbor == " + vertexIntersection);
+//              Logger.info("PentagonT10::getVertexNeighbor == " + vertexIntersection);
             }
             return vertexIntersection;
         }

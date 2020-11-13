@@ -93,7 +93,7 @@ public class Trapezoid3 extends BaseCell {
                         throw new RuntimeException("Забыл case #" + dir);
                     }
                 vertexIntersection = sum / cntDirection;
-//              System.out.println("Trapezoid3::getVertexNeighbor == " + vertexIntersection);
+//              Logger.info("Trapezoid3::getVertexNeighbor == " + vertexIntersection);
             }
             return vertexIntersection;
         }

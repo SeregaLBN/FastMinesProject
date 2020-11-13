@@ -10,6 +10,7 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.SwingUtilities;
 
+import fmg.common.Logger;
 import fmg.common.geom.Matrisize;
 import fmg.core.types.ClickResult;
 import fmg.core.types.EGameStatus;
@@ -181,7 +182,7 @@ public class Handlers {
     public Consumer<ClickResult> getMosaicClickHandler() {
         if (mosaicClickHandler == null)
             mosaicClickHandler = (clickResult) -> {
-                //System.out.println("OnMosaicClick: down=" + clickResult.isDown() + "; leftClick=" + clickResult.isLeft());
+                //Logger.info("OnMosaicClick: down=" + clickResult.isDown() + "; leftClick=" + clickResult.isLeft());
                 if (clickResult.isLeft() && (app.getMosaicController().getGameStatus() == EGameStatus.eGSPlay)) {
                     Icon img = app.getToolbar().getSmileIco(
                             clickResult.isDown() ?
@@ -256,7 +257,7 @@ public class Handlers {
     public MouseWheelListener getMouseWheelListener() {
         if (mouseWheelListener == null)
             mouseWheelListener = evt -> {
-//                      System.out.println("FMG::mouseWheelMoved: " + evt);
+//                      Logger.info("FMG::mouseWheelMoved: " + evt);
                 if (!app.getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected())
                     switch (evt.getWheelRotation()) {
                     case  1: app.sizeDec(); break;
@@ -398,7 +399,7 @@ public class Handlers {
                         int val = Integer.parseInt(app.getToolbar().getEdtTimePlay().getText());
                         app.getToolbar().getEdtTimePlay().setText(Integer.toString(++val));
                     } catch (Exception ex) {
-                        System.err.println(ex);
+                        Logger.error("Handlers::getTimePlayAction", ex);
                     }
                 }
             };

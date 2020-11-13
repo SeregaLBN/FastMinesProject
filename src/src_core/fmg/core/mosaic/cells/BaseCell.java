@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import fmg.common.Color;
+import fmg.common.Logger;
 import fmg.common.geom.*;
 import fmg.common.notifier.INotifyPropertyChanged;
 import fmg.common.notifier.NotifyPropertyChanged;
@@ -396,7 +397,7 @@ public abstract class BaseCell {
     public Color getBackgroundFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
         switch (fillMode) {
         default:
-            System.err.println(getClass().getSimpleName()+".getBackgroundFillColor: fillMode="+fillMode+":  добавь цветовую обработку для этого режима!");
+            Logger.error(getClass().getSimpleName()+".getBackgroundFillColor: fillMode="+fillMode+":  добавь цветовую обработку для этого режима!");
             // !!! no break
         case 0:
             if ((getState().getStatus() == EState._Open) && (getState().getOpen() == EOpen._Mine) && getState().isDown())

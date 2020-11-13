@@ -134,7 +134,7 @@ public class Square1 extends BaseCell {
             return super.getBackgroundFillColor(fillMode, defaultColor, repositoryColor);
         case 1: // перекрываю базовый на основе direction
             int pos = (-getCoord().x + getCoord().y) % ((getAttr().hashCode() & 0x3)+fillMode);
-//          System.out.println(pos);
+//          Logger.info(pos);
             return repositoryColor.get(pos);
         }
     }

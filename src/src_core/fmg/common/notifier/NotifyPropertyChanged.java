@@ -33,7 +33,7 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
 
         int count = _propertyChanges.size();
         if (count > 4)
-            System.err.println("Suspiciously many subscribers! count=" + count);
+            Logger.error("Suspiciously many subscribers! count=" + count);
     }
     @Override
     public void removeListener(PropertyChangeListener listener) {
@@ -47,7 +47,7 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
     public <T> boolean setProperty(T oldValue, T newValue, String propertyName) {
         if (_disposed) {
             if (newValue != null) {
-                System.err.println("Illegal call property " + _owner.getClass().getCanonicalName() + "."+ propertyName + ": object already disposed!");
+                Logger.error("Illegal call property " + _owner.getClass().getCanonicalName() + "."+ propertyName + ": object already disposed!");
                 return false;
             }
         }
@@ -59,7 +59,7 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
                 ((oldValueReal != null) && !oldValueReal.equals(oldValue)))
             {
                 // illegal usage
-                System.err.println("Different old values");
+                Logger.error("Different old values");
             }
             if ((oldValueReal == null) && (newValue == null))
                 return false;
@@ -95,7 +95,7 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
             return;
 
         if (!_deferredNotifications) {
-            //System.out.println("firePropertyChanged: " + propertyName + ": " + newValue);
+            //Logger.info("firePropertyChanged: " + propertyName + ": " + newValue);
             _propertyChanges.forEach(item -> item.propertyChange(new PropertyChangeEvent(_owner, propertyName, oldValue, newValue)));
         } else {
             boolean shedule;
@@ -136,7 +136,7 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
                         return; // event already deleted (see HINT_1)
                     Pair<Object /* old value */, Object /* new value */> event = _deferrNotifications.remove(propertyName);
                     if (event == null)
-                        System.err.println("hmmm... invalid usage ;(");
+                        Logger.error("hmmm... invalid usage ;(");
                     else
                         _propertyChanges.forEach(item -> item.propertyChange(new PropertyChangeEvent(_owner, propertyName, event.first, event.second)));
                 });
@@ -187,7 +187,7 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
         _cachedFields.clear();
 
         if (!_deferrNotifications.isEmpty())
-            Logger.info("Not all deferred notifications handled! Count={0}", _deferrNotifications.size());
+            Logger.debug("Not all deferred notifications handled! Count={0}", _deferrNotifications.size());
         _deferrNotifications.clear();
 
         if (!_propertyChanges.isEmpty())

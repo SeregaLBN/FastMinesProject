@@ -27,8 +27,8 @@ public class SpinnerDiapasonModel extends SpinnerNumberModel {
 
     @Override
     public void setValue(Object value) {
-//        System.out.println("> setValue: value=" + value);
-        int oldValue = (Integer) this.getValue();
+//        Logger.info("> setValue: value=" + value);
+        int oldValue = this.getValue();
 
         // check new value (is valid?)
         if (vals.contains(oldValue)) {
@@ -46,12 +46,12 @@ public class SpinnerDiapasonModel extends SpinnerNumberModel {
                 if (newValue < oldValue) // set prev value
                     value = iter.previous(); // change to valid value
 
-//                System.out.println("  setValue: value changet to " + value);
+//                Logger.info("  setValue: value changet to " + value);
             }
         }
 
         super.setValue(value);
-//        System.out.println("< setValue ");
+//        Logger.info("< setValue ");
     }
 
     @Override

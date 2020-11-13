@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import fmg.common.Color;
+import fmg.common.Logger;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.RegionDouble;
@@ -97,7 +98,7 @@ public abstract class MosaicSwingView<TImage,
         /**/
 
         if (_DEBUG_DRAW_FLOW)
-            System.out.println("MosaicSwingView.drawSwing: " + ((toDrawCells==null) ? "all" : ("cnt=" + toDrawCells.size()))
+            Logger.info("MosaicSwingView.drawSwing: " + ((toDrawCells==null) ? "all" : ("cnt=" + toDrawCells.size()))
                                                              + "; drawBk=" + drawBk);
         if (toDrawCells == null)
             toDrawCells = model.getMatrix();
@@ -241,7 +242,7 @@ public abstract class MosaicSwingView<TImage,
         /**/
 
         if (_DEBUG_DRAW_FLOW)
-            System.out.println("-------------------------------");
+            Logger.info("-------------------------------");
 
         // restore
         g.setFont(oldFont);

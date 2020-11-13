@@ -120,7 +120,7 @@ public class PropertyChangeExecutor<T extends INotifyPropertyChanged & AutoClose
                         if (ex1[0] == null)
                             ex1[0] = ex;
                         else
-                            System.err.println(ex);
+                            Logger.error(ex.toString());
                     }
                 });
                 if (!signal.await(maxWaitTimeoutMs)) {
@@ -128,7 +128,7 @@ public class PropertyChangeExecutor<T extends INotifyPropertyChanged & AutoClose
                     if (ex1[0] == null) {
                         ex1[0] = new RuntimeException(errMsg);
                     } else {
-                        System.err.println(errMsg);
+                        Logger.error(errMsg);
                     }
                 }
             }
@@ -136,7 +136,7 @@ public class PropertyChangeExecutor<T extends INotifyPropertyChanged & AutoClose
 
         if (ex1[0] != null) {
             Throwable ex = ex1[0];
-            System.err.println(ex);
+            Logger.error(ex.toString());
             if (ex instanceof Error)
                 throw (Error)ex;
             if (ex instanceof RuntimeException)

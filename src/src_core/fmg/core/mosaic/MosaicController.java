@@ -7,6 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
+import fmg.common.Logger;
 import fmg.common.geom.*;
 import fmg.core.img.ImageController;
 import fmg.core.mosaic.cells.BaseCell;
@@ -132,7 +133,7 @@ public abstract class MosaicController<TImage, TImageInner,
         do {
             int len = matrixClone.size();
             if (len == 0) {
-                System.err.println("ээээ..... лажа......\r\nЗахотели установить больше мин чем возможно");
+                Logger.error("ээээ..... лажа......\r\nЗахотели установить больше мин чем возможно");
                 _minesCount = count;
                 break;
             }
@@ -339,7 +340,7 @@ public abstract class MosaicController<TImage, TImageInner,
             if (getGameStatus() == EGameStatus.eGSCreateGame)
                 return result;
 
-//          System.out.println("OnLeftButtonUp: coordLUp="+coordLUp);
+//          Logger.info("OnLeftButtonUp: coordLUp="+coordLUp);
             boolean gameBegin = (getGameStatus() == EGameStatus.eGSReady) && (cellDown == cellLeftUp);
             if (gameBegin) {
                 gameBegin(cellDown);
@@ -436,14 +437,14 @@ public abstract class MosaicController<TImage, TImageInner,
     /** Request to user */
     protected boolean checkNeedRestoreLastGame() {
         //  need override in child class
-        System.out.println("Restore last game?");
+        Logger.info("Restore last game?");
         return false;
     }
 
     /** Подготовиться к началу игры - сбросить все ячейки */
     @Override
     public boolean gameNew() {
-//        System.out.println("Mosaic::GameNew()");
+//        Logger.info("Mosaic::GameNew()");
         TMosaicModel m = getModel();
         m.getBackgroundFill().setMode(
                 1 + ThreadLocalRandom.current().nextInt(

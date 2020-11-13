@@ -31,7 +31,10 @@ public final class ProjSettings extends AProjSettings {
         isMobile = true;
 
         AProjSettings.setDebug(BuildConfig.DEBUG);
-        Logger.DEFAULT_WRITER = BuildConfig.DEBUG_OUTPUT ? message -> Log.d("fmg", message) : null;
+        Logger.  ERROR_WRITER = message -> Log.e("fmg", message);
+        Logger.WARNING_WRITER = message -> Log.w("fmg", message);
+        Logger.   INFO_WRITER = message -> Log.i("fmg", message);
+        Logger.  DEBUG_WRITER = BuildConfig.DEBUG_OUTPUT ? message -> Log.d("fmg", message) : null;
         Logger.USE_DATE_PREFIX = false;
         DrawModeFull = BuildConfig.DRAW_MODE_FULL;
     }

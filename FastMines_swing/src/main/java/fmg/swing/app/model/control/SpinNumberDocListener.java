@@ -18,18 +18,18 @@ public class SpinNumberDocListener implements DocumentListener {
     }
 
     @Override
-    public void insertUpdate(DocumentEvent e) { OnChangeTextSpin(e); } // System.out.println("insertUpdate"); } //
+    public void insertUpdate(DocumentEvent e) { OnChangeTextSpin(e); } // Logger.info("insertUpdate"); } //
     @Override
     public void removeUpdate(DocumentEvent e) {
         final DocumentEvent e2 = e;
-        //System.out.println("removeUpdate");
+        //Logger.info("removeUpdate");
         SwingUtilities.invokeLater(() -> OnChangeTextSpin(e2));
     }
     @Override
-    public void changedUpdate(DocumentEvent e) {} // System.out.println("changedUpdate");
+    public void changedUpdate(DocumentEvent e) {} // Logger.info("changedUpdate");
 
     protected boolean OnChangeTextSpin(DocumentEvent e) {
-//        System.out.println("OnChangeTextSpin: " + e.getDocument());
+//        Logger.info("OnChangeTextSpin: " + e.getDocument());
         final JTextField txtFld = ((JSpinner.DefaultEditor)spin.getEditor()).getTextField();
         SpinnerNumberModel model = (SpinnerNumberModel) spin.getModel();
 
@@ -50,7 +50,7 @@ public class SpinNumberDocListener implements DocumentListener {
                 needTxt.append(model.getMinimum().toString());
         }
         if (needTxt.length() > 0) {
-    //         System.out.println(needTxt);
+    //         Logger.info(needTxt);
             SwingUtilities.invokeLater(() -> txtFld.setText(needTxt.toString()));
             return false; // fail
         } else

@@ -3,6 +3,7 @@ package fmg.core.img;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import fmg.common.Logger;
 import fmg.common.geom.SizeDouble;
 import fmg.common.notifier.NotifyPropertyChanged;
 
@@ -91,7 +92,7 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
     private void draw() {
         assert !_isDisposed;
         if (_isDisposed) {
-            System.err.println(" Already disposed! " + this.getClass().getSimpleName());
+            Logger.error(" Already disposed! " + this.getClass().getSimpleName());
             return;
         }
         drawBegin();

@@ -11,6 +11,7 @@ import javax.swing.Icon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import fmg.common.Logger;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicDrawModel;
@@ -159,7 +160,7 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
                 }
             }
             if (_DEBUG_DRAW_FLOW)
-                System.out.println("MosaicViewSwing.draw: repaint={" + (int)minX +","+ (int)minY +","+ (int)(maxX-minX) +","+ (int)(maxY-minY) + "}");
+                Logger.info("MosaicViewSwing.draw: repaint={" + (int)minX +","+ (int)minY +","+ (int)(maxX-minX) +","+ (int)(maxY-minY) + "}");
 
             MosaicDrawModel<?> model = getModel();
             SizeDouble offset = model.getMosaicOffset();
@@ -315,7 +316,7 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
         MosaicDrawModel<Icon> model = getModel();
         double sq = model.getCellAttr().getSq(model.getPenBorder().getWidth());
         if (sq <= 0) {
-            System.err.println("Error: too thick pen! There is no area for displaying the flag/mine image...");
+            Logger.error("Error: too thick pen! There is no area for displaying the flag/mine image...");
             sq = 3; // ат балды...
         }
 

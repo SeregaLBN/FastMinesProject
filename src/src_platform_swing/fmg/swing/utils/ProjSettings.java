@@ -4,6 +4,7 @@ import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 
 import fmg.common.AProjSettings;
+import fmg.common.Logger;
 import fmg.common.ui.UiInvoker;
 import fmg.core.mosaic.MosaicDrawModel;
 import fmg.swing.img.Animator;
@@ -24,7 +25,7 @@ public final class ProjSettings extends AProjSettings {
             if (clr != null)
                 MosaicDrawModel.DefaultBkColor = Cast.toColor(clr);
         } catch (Throwable ex) {
-            ex.printStackTrace(System.err);
+            Logger.error("ProjSettings", ex);
         }
     }
 

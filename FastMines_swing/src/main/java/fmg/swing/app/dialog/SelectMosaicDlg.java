@@ -85,16 +85,16 @@ public class SelectMosaicDlg implements AutoCloseable {
 //        SwingUtilities.invokeLater(new Runnable() {
 //            @Override
 //            public void run() {
-//                System.out.println(spin.getValue());
+//                Logger.info(spin.getValue());
                 JTextField txtField = ((JSpinner.DefaultEditor)spin.getEditor()).getTextField();
                 txtField.setText(spin.getValue().toString()); // TODO хз... иначе select не работет :(
-//                System.out.println(txtField.getText());
+//                Logger.info(txtField.getText());
                 txtField.select(1, 2);
 
-//                System.out.println(KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner());
-//                System.out.println(SelectMosaicDlg.this.getFocusOwner());
-//                System.out.println(spin.hasFocus());
-//                System.out.println(spin.getEditor().hasFocus());
+//                Logger.info(KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner());
+//                Logger.info(SelectMosaicDlg.this.getFocusOwner());
+//                Logger.info(spin.hasFocus());
+//                Logger.info(spin.getEditor().hasFocus());
 //            }
 //        });
 
@@ -153,7 +153,7 @@ public class SelectMosaicDlg implements AutoCloseable {
 //            private static final long serialVersionUID = 1L;
 //            @Override
 //            public void actionPerformed(ActionEvent e) {
-//                System.out.println(keyBind.toString());
+//                Logger.info(keyBind.toString());
 //            }
 //        });
 
@@ -221,7 +221,7 @@ public class SelectMosaicDlg implements AutoCloseable {
         if ( e.getStateChange() == ItemEvent.SELECTED ) {
             // показываю выбранный номер
             final EMosaic item = EMosaic.fromDescription(e.getItem().toString());
-//            System.out.println(item);
+//            Logger.info(item);
             final int groupNumber = item.getFastCode();
             if (groupNumber != (Integer)spin.getValue()) {
                 SwingUtilities.invokeLater(() -> {
@@ -232,7 +232,7 @@ public class SelectMosaicDlg implements AutoCloseable {
         }
     }
     private void onChangeMosaicNumber() {
-//        System.out.println("onChangeMosaicNumber: getMosaicNumber()=" + getMosaicNumber());
+//        Logger.info("onChangeMosaicNumber: getMosaicNumber()=" + getMosaicNumber());
         int val;
         try {
             val = Integer.parseInt(getMosaicNumber());
@@ -320,7 +320,7 @@ public class SelectMosaicDlg implements AutoCloseable {
     }
 
     private void onOk() {
-//      System.out.println("onOk");
+//      Logger.info("onOk");
 
       if (app != null) {
           EMosaic selectedMosaicType = getSelectedMosaicType();

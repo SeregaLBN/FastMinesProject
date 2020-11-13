@@ -11,6 +11,7 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EtchedBorder;
 
+import fmg.common.Logger;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.IImageController;
@@ -276,12 +277,12 @@ public class AboutDlg implements AutoCloseable {
 
     public static boolean openURI(String uri) {
         if (!Desktop.isDesktopSupported()) {
-            System.err.println("Fail - Desktop is not supported.");
+            Logger.error("Fail - Desktop is not supported.");
             return false;
         }
         Desktop desktop = Desktop.getDesktop();
         if (!desktop.isSupported(Desktop.Action.BROWSE)) {
-            System.err.println("Fail - Desktop doesn't support the browse action");
+            Logger.error("Fail - Desktop doesn't support the browse action");
             return false;
         }
         try {
@@ -295,12 +296,12 @@ public class AboutDlg implements AutoCloseable {
 
     public static boolean openMail(String mailTo) {
         if (!Desktop.isDesktopSupported()) {
-            System.err.println("Fail - Desktop is not supported.");
+            Logger.error("Fail - Desktop is not supported.");
             return false;
         }
         Desktop desktop = Desktop.getDesktop();
         if (!desktop.isSupported(Desktop.Action.MAIL)) {
-            System.err.println("Fail - Desktop doesn't support the mail action");
+            Logger.error("Fail - Desktop doesn't support the mail action");
             return false;
         }
         try {

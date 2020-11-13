@@ -12,7 +12,7 @@ public final class UiInvoker {
     /** Delayed execution in the thread of the user interface. */
     public static Consumer<Runnable> DEFERRED = run -> {
         throw new UnsupportedOperationException("Not implemented...");
-//        System.out.println("need redefine!");
+//        Logger.info("need redefine!");
 //        run.run();
     };
 

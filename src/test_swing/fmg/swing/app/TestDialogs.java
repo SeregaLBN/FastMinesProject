@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import fmg.common.Logger;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
@@ -81,7 +82,7 @@ public class TestDialogs {
             manage.setVisible(true);
             players.Save();
         } catch (Exception ex) {
-            System.err.println(ex);
+            Logger.error("testManageDlg", ex);
         }
     }
 

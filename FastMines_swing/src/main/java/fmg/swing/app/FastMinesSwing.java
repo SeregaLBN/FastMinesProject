@@ -240,7 +240,7 @@ public class FastMinesSwing {
     }
 
     private void initialize() {
-//        System.out.println(getProperties());
+//        Logger.info(getProperties());
 
         {
             ToolTipManager ttm = ToolTipManager.sharedInstance();
@@ -326,10 +326,10 @@ public class FastMinesSwing {
         /** /
          this.logo.addModelTransformer((currentFrame, totalFrames, model) -> {
              double angle = currentFrame * 180.0 * 2 / totalFrames;
-            //System.out.println("sin("+angle+")=" + Math.sin(FigureHelper.toRadian(angle)));
+            //Logger.info("sin("+angle+")=" + Math.sin(FigureHelper.toRadian(angle)));
 //            logoModel.setPadding(1);
-//            System.out.println(model.getSize());
-//            System.out.println(logoModel.getPadding());
+//            Logger.info(model.getSize());
+//            Logger.info(logoModel.getPadding());
             double padding = -20 + 5 * Math.sin(FigureHelper.toRadian(angle));
             logoModel.setPadding((int)padding);
         });
@@ -347,9 +347,9 @@ public class FastMinesSwing {
         frame.addWindowListener(     this.getHandlers().getWindowListener());
         frame.addWindowStateListener(this.getHandlers().getWindowStateListener());
 //        frame.addKeyListener(new KeyListener() {
-//            @Override public void keyTyped   (KeyEvent e) { System.out.println("Main::KeyListener:keyTyped: "    + e); }
-//            @Override public void keyReleased(KeyEvent e) { System.out.println("Main::KeyListener:keyReleased: " + e); }
-//            @Override public void keyPressed (KeyEvent e) { System.out.println("Main::KeyListener:keyPressed: "  + e); }
+//            @Override public void keyTyped   (KeyEvent e) { Logger.info("Main::KeyListener:keyTyped: "    + e); }
+//            @Override public void keyReleased(KeyEvent e) { Logger.info("Main::KeyListener:keyReleased: " + e); }
+//            @Override public void keyPressed (KeyEvent e) { Logger.info("Main::KeyListener:keyPressed: "  + e); }
 //        });
         frame.addWindowFocusListener(this.getHandlers().getWindowFocusListener());
         frame.addMouseWheelListener(this.getHandlers().getMouseWheelListener());
@@ -359,7 +359,7 @@ public class FastMinesSwing {
 //           public void windowActivated(WindowEvent e) {
 //             if (isAlwaysOnTopSupported())
 //                  try {
-//                      System.out.println("windowActivated");
+//                      Logger.info("windowActivated");
 //                      setAlwaysOnTop(true);
 //                  } catch (Exception ex) {
 //                      ex.printStackTrace();
@@ -368,10 +368,10 @@ public class FastMinesSwing {
 //           }
 //           @Override
 //           public void windowDeactivated(WindowEvent e) {
-////                System.out.println("windowDeactivated: " + e.getSource());
+////                Logger.info("windowDeactivated: " + e.getSource());
 //                if (frame.isAlwaysOnTopSupported())
 //                    try {
-//                        System.out.println("windowDeactivated");
+//                        Logger.info("windowDeactivated");
 //                        frame.setAlwaysOnTop(false);
 //                    } catch (Exception ex) {
 //                        ex.printStackTrace();
@@ -387,20 +387,20 @@ public class FastMinesSwing {
 //            }
 //            @Override
 //            public void componentHidden(ComponentEvent ev) {
-//                System.out.println ( "Component hidden" );
+//                Logger.info ( "Component hidden" );
 //            }
 //        });
 
         customKeyBinding();
 
         frame.pack();
-//        System.out.println("ThreadId=" + Thread.currentThread().getId() + ": Main::initialize: after pack");
+//        Logger.info("ThreadId=" + Thread.currentThread().getId() + ": Main::initialize: after pack");
         if (defaultData)
             frame.setLocationRelativeTo(null);
         else
             frame.setLocation(startLocation);
 
-//        System.out.println("Main::initialize: after setLocation");
+//        Logger.info("Main::initialize: after setLocation");
 
         if (isZoomAlwaysMax)
             SwingUtilities.invokeLater(() -> sizeAlwaysMax(new ActionEvent(FastMinesSwing.this, 0, null)));
@@ -525,7 +525,7 @@ public class FastMinesSwing {
         if (getMosaicController().getGameStatus() != EGameStatus.eGSPlay)
             return;
 
-//        System.out.println("> FMG::ChangePause: " + KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner() );
+//        Logger.info("> FMG::ChangePause: " + KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner() );
 
         boolean paused = isPaused();
         getToolbar().getBtnPause().getButton().setSelected(!paused);
@@ -541,7 +541,7 @@ public class FastMinesSwing {
             getMosaicPanel().setVisible(false);
             frame.getRootPane().requestFocusInWindow(); // ! иначе на компонентах нат фокуса, и mouse wheel не пашет...
         }
-//        System.out.println("< FMG::ChangePause: " + KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner() );
+//        Logger.info("< FMG::ChangePause: " + KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner() );
     }
 
     void gameNew() {
@@ -675,7 +675,7 @@ public class FastMinesSwing {
     /** Поменять игру на новый уровень сложности */
     void changeGame(ESkillLevel skill) {
         if (skill == ESkillLevel.eCustom) {
-            //System.out.println("... dialog box 'Select custom skill level...' ");
+            //Logger.info("... dialog box 'Select custom skill level...' ");
             getCustomSkillDialog().setVisible(!getCustomSkillDialog().getDialog().isVisible());
             return;
         }
@@ -1138,7 +1138,7 @@ public class FastMinesSwing {
     private void onMosaicModelPropertyChanged(PropertyChangeEvent ev) {
         switch (ev.getPropertyName()) {
         case MosaicDrawModel.PROPERTY_SIZE:
-            System.out.println(">>>>>>>>>>>>>>>>>>>>>");
+          //Logger.info(">>>>>>>>>>>>>>>>>>>>>");
             recheckLocation();
             break;
         case MosaicGameModel.PROPERTY_SIZE_FIELD:
@@ -1153,7 +1153,7 @@ public class FastMinesSwing {
     }
 
     private void onMosaicControllerPropertyChanged(PropertyChangeEvent ev) {
-//        System.out.println("Main::propertyChange: eventName=" + ev.getSource().getClass().getSimpleName() + "." + ev.getPropertyName());
+//        Logger.info("Main::propertyChange: eventName=" + ev.getSource().getClass().getSimpleName() + "." + ev.getPropertyName());
 //        MosaicControllerSwing source = (MosaicControllerSwing)ev.getSource();
         switch (ev.getPropertyName()) {
         case MosaicController.PROPERTY_MINES_COUNT:
@@ -1163,7 +1163,7 @@ public class FastMinesSwing {
         case MosaicController.PROPERTY_GAME_STATUS:
             {
                 getToolbar().getBtnPause().getButton().setEnabled(getMosaicController().getGameStatus() == EGameStatus.eGSPlay);
-                //System.out.println("OnChangeGameStatus: " + e.getSource().getGameStatus());
+                //Logger.info("OnChangeGameStatus: " + e.getSource().getGameStatus());
                 switch ((EGameStatus)ev.getNewValue()) {
                 case eGSCreateGame:
                 case eGSReady:
@@ -1216,7 +1216,7 @@ public class FastMinesSwing {
 
     /** /
     static void printSystemProperties() {
-        System.getProperties().entrySet().forEach(kv -> System.out.println(kv.getKey() + "=" + kv.getValue()));
+        System.getProperties().entrySet().forEach(kv -> Logger.info(kv.getKey() + "=" + kv.getValue()));
     }
 
     /** /
@@ -1251,7 +1251,7 @@ public class FastMinesSwing {
         EventQueue eq2 = new EventQueue() {
             @Override
             protected void dispatchEvent(AWTEvent event) {
-                System.out.println(event);
+                Logger.info(event);
                 super.dispatchEvent(event);
             }
         };

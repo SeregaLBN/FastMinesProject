@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.function.Consumer;
 
 import fmg.common.Color;
+import fmg.common.Logger;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.RegionDouble;
@@ -93,7 +94,7 @@ public abstract class MosaicAndroidView<TImage,
         BackgroundFill bkFill = model.getBackgroundFill();
 
         if (_DEBUG_DRAW_FLOW)
-            System.out.println("MosaicAndroidView.drawAndroid: " + ((toDrawCells==null) ? "all" : ("cnt=" + toDrawCells.size()))
+            Logger.info("MosaicAndroidView.drawAndroid: " + ((toDrawCells==null) ? "all" : ("cnt=" + toDrawCells.size()))
                                                                  + "; drawBk=" + drawBk);
         if (toDrawCells == null)
             toDrawCells = model.getMatrix();
@@ -237,7 +238,7 @@ public abstract class MosaicAndroidView<TImage,
         /**/
 
         if (_DEBUG_DRAW_FLOW)
-            System.out.println("-------------------------------");
+            Logger.info("-------------------------------");
 
         // restore
         g.restore();
@@ -281,7 +282,7 @@ public abstract class MosaicAndroidView<TImage,
             try {
                 tf = Typeface.create(fi.getName(), fi.isBold() ? Typeface.BOLD : Typeface.NORMAL);
             } catch(Throwable ex) {
-                ex.printStackTrace(System.err);
+                Logger.error("MosaicAndroidView::onModelPropertyChanged", ex);
                 tf = Typeface.create(Typeface.DEFAULT, fi.isBold() ? Typeface.BOLD : Typeface.NORMAL);
             }
             _textPaint.setTypeface(tf);

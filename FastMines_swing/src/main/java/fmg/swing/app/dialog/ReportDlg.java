@@ -144,12 +144,12 @@ public abstract class ReportDlg implements AutoCloseable {
     protected boolean isOneLineSkillLevelButtons() { return false; }
 
     protected void onClickBtnSkill(ESkillLevel eSkill) {
-//        System.out.println("OnClickBtnSkill: " + eSkill);
+//        Logger.info("OnClickBtnSkill: " + eSkill);
         updateModel(eSkill);
     }
 
     protected void onChangeTab(EMosaic eMosaic) {
-//        System.out.println("OnChangeTab: " + mosaicType);
+//        Logger.info("OnChangeTab: " + mosaicType);
         updateModel(getSelectedSkillLevel());
 
         images.forEach(imgCtrllr -> {
@@ -257,13 +257,13 @@ public abstract class ReportDlg implements AutoCloseable {
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 //        ((JTextArea)table.getEditorComponent()).setEditable(false);
 //        table.getCellEditor().stopCellEditing();// // TODO непашет ??
-//        System.out.println(table.getModel()); // javax.swing.table.DefaultTableModel
+//        Logger.info(table.getModel()); // javax.swing.table.DefaultTableModel
 
 //        // выравниваю текст заголовков таблицы по центру
 //        // TODO Хоть текст и выравнивается, но сами ячейки заголовка таблицы уже выглядят хуже чем
 //        //      в оригинальном рендере (особо заметно под Маком).
 //        //      Т.е. DefaultTableCellRenderer выглядит паршиво, а как достать орининальный рендер заголовка - хз
-//        //System.out.println(table.getColumnModel().getColumn(0).getHeaderRenderer()); // print null... hmmm
+//        //Logger.info(table.getColumnModel().getColumn(0).getHeaderRenderer()); // print null... hmmm
 //        javax.swing.table.TableColumnModel tableColumnModel = table.getColumnModel();
 //        for (int i=0; i<tableColumnModel.getColumnCount(); i++)
 //            tableColumnModel.getColumn(i).setHeaderRenderer(defaultTableCellRenderer);

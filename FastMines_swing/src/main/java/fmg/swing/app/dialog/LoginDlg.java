@@ -133,14 +133,14 @@ public class LoginDlg {
     }
 
     private void onOk(ActionEvent e) {
-//        System.out.println("OnOk");
+//        Logger.info("OnOk");
         if (onOkActionListener != null)
             onOkActionListener.actionPerformed(e);
         onClose();
     }
 
     private void onCancel(ActionEvent e) {
-//        System.out.println("OnCancel");
+//        Logger.info("OnCancel");
         nameField.setText(null);
         passwrdField.setText(null);
         if (onCancelActionListener != null)

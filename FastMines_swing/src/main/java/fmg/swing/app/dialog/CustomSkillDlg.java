@@ -187,7 +187,7 @@ public class CustomSkillDlg implements AutoCloseable {
     }
 
     private void onChangeSizeField() {
-//        System.out.println("OnChangeSizeField");
+//        Logger.info("OnChangeSizeField");
         int max = (Integer)spinX.getValue() * (Integer)spinY.getValue() - getNeighborNumber();
         ((SpinnerNumberModel )spinMines.getModel()).setMaximum(max);
         if ((Integer)spinMines.getValue() > max)
@@ -203,7 +203,7 @@ public class CustomSkillDlg implements AutoCloseable {
     }
 
     private void onPopup() {
-//        System.out.println("CustomSkill::OnPopup: ");
+//        Logger.info("CustomSkill::OnPopup: ");
         if (popupMenu == null) {
             popupMenu = new JPopupMenu();
             for (final ESkillLevel val: ESkillLevel.values()) {
@@ -273,7 +273,7 @@ public class CustomSkillDlg implements AutoCloseable {
     }
 
     public void setVisible(boolean b) {
-//        System.out.println("setVisible: " + b);
+//        Logger.info("setVisible: " + b);
         if (b) {
             recalcModelValueXY(false, false);
             recalcModelValueMines();
@@ -283,11 +283,11 @@ public class CustomSkillDlg implements AutoCloseable {
     }
 
     private void onFullScreenCurrArea() {
-//        System.out.println("OnFullScreenCurrArea");
+//        Logger.info("OnFullScreenCurrArea");
         recalcModelValueXY(true, true);
     }
     private void onFullScreenMiniArea() {
-//        System.out.println("OnFullScreenMiniArea");
+//        Logger.info("OnFullScreenMiniArea");
         recalcModelValueXY(true, false);
     }
 
@@ -316,7 +316,7 @@ public class CustomSkillDlg implements AutoCloseable {
     }
 
     private void onOk() {
-//      System.out.println("OnOk");
+//      Logger.info("OnOk");
 
         if (app != null) {
             int x = (Integer)spinX.getValue();

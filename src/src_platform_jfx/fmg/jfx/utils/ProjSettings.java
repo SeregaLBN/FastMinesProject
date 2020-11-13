@@ -19,7 +19,7 @@ public final class ProjSettings extends AProjSettings {
 //            java.util.List<javafx.scene.layout.BackgroundFill> fills = bk.getFills();
 //            javafx.scene.layout.BackgroundFill fill = fills.iterator().next();
 //            javafx.scene.paint.Paint p = fill.getFill();
-//            System.out.println("ButtonColor = " + p);
+//            Logger.info("ButtonColor = " + p);
 //        } catch (Exception e) {
 //            fmg.core.mosaic.MosaicDrawModel.DefaultBkColor = fmg.common.Color.Gray().brighter();
 //        }

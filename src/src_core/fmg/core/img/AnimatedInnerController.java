@@ -5,6 +5,7 @@ import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 
+import fmg.common.Logger;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
 
@@ -69,7 +70,7 @@ public final class AnimatedInnerController<TImage,
                 UiInvoker.ANIMATOR.get().subscribe(this, timeFromStartSubscribe -> {
                     long mod = timeFromStartSubscribe % model.getAnimatePeriod();
                     long frame = mod * model.getTotalFrames() / model.getAnimatePeriod();
-                    //System.out.println("ANIMATOR : " + getClass().getSimpleName() + ": "+ timeFromStartSubscribe);
+                    //Logger.info("ANIMATOR : " + getClass().getSimpleName() + ": "+ timeFromStartSubscribe);
                     model.setCurrentFrame((int)frame);
                 });
             } else {
@@ -78,7 +79,7 @@ public final class AnimatedInnerController<TImage,
             break;
         case IAnimatedModel.PROPERTY_CURRENT_FRAME:
             if (_transformers.size() == 0)
-                System.err.println("No any transformer! " + getClass().getSimpleName()); // зачем работать анимации если нет трансформеров модели
+                Logger.error("No any transformer! " + getClass().getSimpleName()); // зачем работать анимации если нет трансформеров модели
             _transformers.forEach((k,v) -> v.execute(_model));
             break;
         }

@@ -16,6 +16,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 import fmg.common.Color;
+import fmg.common.Logger;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.RegionDouble;
@@ -79,7 +80,7 @@ public abstract class MosaicJfxView<TImage,
         BackgroundFill bkFill = model.getBackgroundFill();
 
         if (_DEBUG_DRAW_FLOW)
-            System.out.println("MosaicJfxView.drawJfx: " + ((toDrawCells==null) ? "all" : ("cnt=" + toDrawCells.size()))
+            Logger.info("MosaicJfxView.drawJfx: " + ((toDrawCells==null) ? "all" : ("cnt=" + toDrawCells.size()))
                                                          + "; drawBk=" + drawBk);
 
         /** HINT: Using the {@link GraphicsContext#clip} method slows down drawing (animation).
@@ -256,7 +257,7 @@ public abstract class MosaicJfxView<TImage,
         /**/
 
         if (_DEBUG_DRAW_FLOW)
-            System.out.println("-------------------------------");
+            Logger.info("-------------------------------");
 
         // restore
         g.setFont(oldFont);

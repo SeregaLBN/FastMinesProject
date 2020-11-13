@@ -30,7 +30,6 @@ public class MosaicModelTest {
 
     public static void ProjSettings() {
         UiInvoker.DEFERRED = SimpleUiThreadLoop::addTask;
-        Logger.DEFAULT_WRITER = System.out::println;
     }
 
     @BeforeClass

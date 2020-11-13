@@ -6,6 +6,7 @@ import java.util.Collection;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
 
+import fmg.common.Logger;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicDrawModel;
@@ -63,7 +64,7 @@ public class MosaicCanvasView extends MosaicJfxView<Canvas, Image, MosaicDrawMod
         SizeDouble offset = model.getMosaicOffset();
         RectDouble rcClip = new RectDouble(minX + offset.width, minY + offset.height, maxX-minX, maxY-minY);
 //        if (_DEBUG_DRAW_FLOW)
-//            System.out.println("MosaicViewJfx.draw: repaint=" + rcClip);
+//            Logger.info("MosaicViewJfx.draw: repaint=" + rcClip);
         drawJfx(_canvas.getGraphics(), toDrawCells(rcClip), false);
     }
 
@@ -92,7 +93,7 @@ public class MosaicCanvasView extends MosaicJfxView<Canvas, Image, MosaicDrawMod
         MosaicDrawModel<Image> model = getModel();
         double sq = model.getCellAttr().getSq(model.getPenBorder().getWidth());
         if (sq <= 0) {
-            System.err.println("Error: too thick pen! There is no area for displaying the flag/mine image...");
+            Logger.error("Error: too thick pen! There is no area for displaying the flag/mine image...");
             sq = 3; // ат балды...
         }
 

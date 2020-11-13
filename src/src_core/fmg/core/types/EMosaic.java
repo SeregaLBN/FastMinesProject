@@ -3,6 +3,7 @@ package fmg.core.types;
 import java.util.ArrayList;
 import java.util.List;
 
+import fmg.common.Logger;
 import fmg.common.geom.Matrisize;
 
 /* Перечень мозаик */
@@ -163,7 +164,7 @@ public enum EMosaic {
         case eMosaicTrSq2            : return 71;
         case eMosaicSqTrHex          : return 72;
         }
-        System.err.println(getClass().getName()+".getFastCode: Mosaic '" + this.toString() + "' not implemented");
+        Logger.error(getClass().getName()+".getFastCode: Mosaic '" + this.toString() + "' not implemented");
         return 0;
     }
     /** Перечень 'быстрых' кодов */
@@ -242,7 +243,7 @@ public enum EMosaic {
         case eMosaicTrSq2            : res.m = 4; res.n = smallSize ? 4 : 5; break;
         case eMosaicSqTrHex          : res.m = 4; res.n = smallSize ? 4 : 5; break;
         default:
-            System.err.println("EMosaic.SizeIcoField: Mosaic '" + this + "' not implemented");
+            Logger.error("EMosaic.SizeIcoField: Mosaic '" + this + "' not implemented");
         }
         return res;
     }

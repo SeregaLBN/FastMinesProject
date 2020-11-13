@@ -45,7 +45,7 @@ public final class ConsoleImage {
             img = scaleToConsole(img);
             printImage(img, System.out);
         }catch (Exception ex) {
-            ex.printStackTrace(System.err);
+            Logger.error("ConsoleImage::main", ex);
         }
     }
 

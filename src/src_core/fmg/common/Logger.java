@@ -1,5 +1,7 @@
 package fmg.common;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -11,32 +13,103 @@ import java.util.function.Supplier;
 /** Very simple logger */
 public final class Logger {
 
-    /** may be override */
-    public static Consumer<String> DEFAULT_WRITER = null; // System.out::println;
+    /** may be rewrited */
+    public static Consumer<String>   ERROR_WRITER = System.err::println;
+    public static Consumer<String> WARNING_WRITER = System.out::println;
+    public static Consumer<String>    INFO_WRITER = System.out::println;
+    public static Consumer<String>   DEBUG_WRITER = null;
     public static boolean USE_DATE_PREFIX = true;
 
-    public static void info(String format, Object... args) {
-        if (DEFAULT_WRITER == null)
+    private enum ELevel { ERROR, WARNING, INFO, DEBUG }
+
+    private static final String SEPAR_SPACES = "  ";
+
+    private static void write(ELevel level, String format, Object... args) {
+        Consumer<String> writer = null;
+        switch (level) {
+        case ERROR  : writer =   ERROR_WRITER; break;
+        case WARNING: writer = WARNING_WRITER; break;
+        case INFO   : writer =    INFO_WRITER; break;
+        case DEBUG  : writer =   DEBUG_WRITER; break;
+        }
+        if (writer == null)
             return;
 
         try {
-            String prefix = USE_DATE_PREFIX
-                                ? '[' + new SimpleDateFormat("HH:mm:ss.SSS").format(new Date()) + "]  Th=" + Thread.currentThread().getId() + "  "
-                                :                                                                    "Th=" + Thread.currentThread().getId() + "  ";
-            if (args.length > 0) {
-                DEFAULT_WRITER.accept(prefix + new MessageFormat(format, Locale.US).format(args));
-            } else {
-                DEFAULT_WRITER.accept(prefix + format);
-            }
-        } catch(Throwable ex) {
+
+            StringBuilder sb = new StringBuilder();
+
+            if (USE_DATE_PREFIX)
+                sb.append('[')
+                  .append(new SimpleDateFormat("HH:mm:ss.SSS").format(new Date()))
+                  .append("]  ");
+
+            sb.append(level.name()).append(SEPAR_SPACES);
+            if (level == ELevel.INFO)
+                sb.append(' ');
+
+            sb.append("Th=")
+              .append(Thread.currentThread().getId())
+              .append(SEPAR_SPACES);
+            if (args.length > 0)
+                sb.append(new MessageFormat(format, Locale.US).format(args));
+            else
+                sb.append(format);
+
+            writer.accept(sb.toString());
+
+        } catch(Exception ex) {
             System.err.println(ex);
-            DEFAULT_WRITER.accept(format);
+            writer.accept(format);
         }
     }
 
+    public static void error(String message, Throwable ex) {
+        try (StringWriter sw = new StringWriter();
+             PrintWriter pw = new PrintWriter(sw))
+        {
+            ex.printStackTrace(pw);
+            write(ELevel.ERROR, "{0}: {1}", message, sw.toString());
+        } catch (Exception ex2) {
+            // ignore
+        }
+    }
+
+    public static void error(String message) {
+        write(ELevel.ERROR, message);
+    }
+
+    public static void warn(String message) {
+        write(ELevel.WARNING, message);
+    }
+
+    public static void info(String message) {
+        write(ELevel.INFO, message);
+    }
+
+    public static void debug(String message) {
+        write(ELevel.DEBUG, message);
+    }
+
+    public static void error(String format, Object... args) {
+        write(ELevel.ERROR, format, args);
+    }
+
+    public static void warn(String format, Object... args) {
+        write(ELevel.WARNING, format, args);
+    }
+
+    public static void info(String format, Object... args) {
+        write(ELevel.INFO, format, args);
+    }
+
+    public static void debug(String format, Object... args) {
+        write(ELevel.DEBUG, format, args);
+    }
+
     public static final class Tracer implements AutoCloseable {
-        private final String _hint;
-        private final Supplier<String> _disposeMessage;
+        private final String hint;
+        private final Supplier<String> disposeMessage;
 
         private static final ThreadLocal<Integer> THREAD_CONTEXT = new ThreadLocal<>();
         static {
@@ -53,12 +126,12 @@ public final class Logger {
 
         public Tracer(String hint, String ctorMessage, Supplier<String> disposeMessage) {
             inc();
-            _hint = hint;
-            _disposeMessage = disposeMessage;
+            this.hint = hint;
+            this.disposeMessage = disposeMessage;
             if (ctorMessage == null)
-                Logger.info("{0}> {1}", prefix(), hint);
+                Logger.debug("{0}> {1}", prefix(), hint);
             else
-                Logger.info("{0}> {1}: {2}", prefix(), hint, ctorMessage);
+                Logger.debug("{0}> {1}: {2}", prefix(), hint, ctorMessage);
         }
 
         private static void inc() {
@@ -77,17 +150,17 @@ public final class Logger {
 
         @Override
         public void close() {
-            if (_disposeMessage == null)
-                Logger.info("{0}< {1}", prefix(), _hint);
+            if (disposeMessage == null)
+                Logger.debug("{0}< {1}", prefix(), hint);
             else
-                Logger.info("{0}< {1}: {2}", prefix(), _hint, _disposeMessage.get());
+                Logger.debug("{0}< {1}: {2}", prefix(), hint, disposeMessage.get());
             dec();
         }
 
         public void put(String format, Object... args) {
             if (args.length > 0)
                 format = new MessageFormat(format).format(args);
-            Logger.info("{0}  {1}: {2}", prefix(), _hint, format);
+            Logger.debug("{0}  {1}: {2}", prefix(), hint, format);
         }
 
     }

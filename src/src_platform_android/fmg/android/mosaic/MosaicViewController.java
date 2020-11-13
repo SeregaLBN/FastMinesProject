@@ -908,7 +908,7 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
     }
 
     public void onFocusChange(boolean hasFocus) {
-        System.out.println("Mosaic.onFocusChange: hasFocus=" + hasFocus);
+        Logger.info("Mosaic.onFocusChange: hasFocus=" + hasFocus);
         if (!hasFocus)
             mouseFocusLost();
     }

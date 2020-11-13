@@ -218,10 +218,10 @@ public class HSV {
             Color clrIn = new Color(0xFF985410);
             HSV hsv = new HSV(clrIn);
             Color clrOut = hsv.toColor();
-            System.out.println("clrIn=" + clrIn + "  =>  " + hsv);
-            System.out.println("clrOt=" + clrOut+ "  <=  HSV");
+            Logger.info("clrIn=" + clrIn + "  =>  " + hsv);
+            Logger.info("clrOt=" + clrOut+ "  <=  HSV");
         } catch (Exception ex) {
-            ex.printStackTrace(System.err);
+            Logger.error("", ex);
         }
     }
 */
