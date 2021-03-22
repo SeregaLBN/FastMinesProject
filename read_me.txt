@@ -16,7 +16,7 @@
                 ./FastMines.Uwp.Shared                      - shared library for all UWP projects
                 ./Test.FastMines.Uwp.Images                 - visual check drawing demo-program
                 ./FastMines.Uwp.Draw.Win2D                  - shared library (used https://github.com/Microsoft/Win2D)
-                ./FastMines.Uwp.Draw.XamlElem               - shared library (uses a composite mosaic of XAML elements; left as an example)  (obsolete; left as an example)
+                ./FastMines.Uwp.Draw.Xaml                   - shared library (uses a composite mosaic of XAML elements; left as an example)  (obsolete; left as an example)
                 ./FastMines.Uwp.Draw.WBmp                   - shared library (used WritableBitmap extension https://github.com/reneschulte/WriteableBitmapEx) (obsolete because brakes; left as an example)
                 ./FastMines.Uwp.BackgroundTasks             - service for main program
                 ./UnitTest.FastMines.Uwp                    - unit test for UWP over MSTest
@@ -132,3 +132,38 @@ UWP
 ./src/src_platform_uwp/fmg/uwp/mosaic/MosaicFrameworkElementController.cs
 Android
 ./src/src_platform_android/fmg/android/mosaic/MosaicViewController.java
+
+{A} - GUI platform
+{B} - rendering subsytem (optional)
+{C} - {A} or {B} if exist
+{D} - UI control
+{E} - UI image
+Mosaic Views as UI controls:                             fmg.{A}    .mosaic{.B}  .Mosaic{C}View      ->  fmg.{A}    .mosaic{.B}  .Mosaic{D}View                            {D}
+   Java SWING                                      /-->  fmg.swing  .mosaic      .MosaicSwingView    ->  fmg.swing  .mosaic      .MosaicJPanelView                 over javax.swing.JPanel
+   Java JFX     ... -> fmg.core.mosaic.MosaicView  --->  fmg.jfx    .mosaic      .MosaicJfxView      ->  fmg.jfx    .mosaic      .MosaicCanvasView                 over javafx.scene.canvas.Canvas
+   Java Android                                    \-->  fmg.android.mosaic      .MosaicAndroidView  ->  fmg.android.mosaic      .MosaicViewView                   over android.view.View
+   C#   UWP     ... -> Fmg.Core.Mosaic.MosaicView  --->  Fmg.Uwp    .Mosaic.Win2d.MosaicWin2DView    ->  Fmg.Uwp    .Mosaic.Win2d.MosaicFrameworkElementView --    over Windows.UI.Xaml.FrameworkElement
+                                                   \                                              /-----------------------------------------------------------/
+                                                   |                                              \--->  Fmg.Uwp    .Mosaic.Win2d.MosaicCanvasSwapChainPanelView   over Microsoft.Graphics.Canvas.UI.Xaml.CanvasSwapChainPanel
+                                                   |                                               \-->  Fmg.Uwp    .Mosaic.Win2d.MosaicCanvasVirtualControlView   over Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl
+                                                   |-------------------------------------------------->  Fmg.Uwp    .Mosaic.Wbmp .MosaicImageView                  over Windows.UI.Xaml.Controls.Image
+                                                    \--> Fmg.Uwp    .Mosaic.Wbmp .MosaicWBmpView ----->  Fmg.Uwp    .Mosaic.Wbmp .MosaicImageView.InnerView        over Windows.UI.Xaml.Media.Imaging.WriteableBitmap
+                                                     \------------------------------------------------>  Fmg.Uwp    .Mosaic.Xaml .MosaicXamlView                   over Windows.UI.Xaml.Controls.Panel
+
+Mosaic Views as image:                                   fmg.{A}    .mosaic{.B}  .Mosaic{C}View      ->  fmg.{A}    .img{.B}  .MosaicImg.{A or E}View                      {E}
+   Java SWING                                       /->  fmg.swing  .mosaic      .MosaicSwingView    ->  fmg.swing  .img      .MosaicImg.SwingView --
+                                                   |                                              /-------------------------------------------------/
+                                                   |                                              \--->  fmg.swing  .img      .MosaicImg.IconView                  over javax.swing.Icon
+                                                   /                                               \-->  fmg.swing  .img      .MosaicImg.ImageAwtView              over java.awt.Image
+   Java JFX     ... -> fmg.core.mosaic.MosaicView  --->  fmg.jfx    .mosaic      .MosaicJfxView      ->  fmg.jfx    .img      .MosaicImg.JfxView ---
+                                                   \                                              /------------------------------------------------/
+                                                   |                                              \--->  fmg.jfx    .img      .MosaicImg.CanvasView                over javafx.scene.canvas.Canvas
+                                                   |                                               \-->  fmg.jfx    .img      .MosaicImg.ImageJfxView              over javafx.scene.image.Image
+   Java Android                                     \->  fmg.android.mosaic      .MosaicAndroidView  ->  fmg.android.img      .MosaicImg.AndroidView --
+                                                                                                  /---------------------------------------------------/
+                                                                                                  \--->  fmg.android.img      .MosaicImg.BitmapView                over android.graphics.Bitmap
+   C#   UWP     ... -> Fmg.Core.Mosaic.MosaicView  --->  Fmg.Uwp    .Mosaic.Win2d.MosaicWin2DView    ->  Fmg.Uwp    .Img.Win2d.MosaicImg.Win2DView --              over Microsoft.Graphics.Canvas.ICanvasResourceCreator
+                                                   \                                              /-------------------------------------------------/
+                                                   |                                              \--->  Fmg.Uwp    .Img.Win2d.MosaicImg.CanvasBmpView             over Microsoft.Graphics.Canvas.CanvasBitmap
+                                                   \                                               \-->  Fmg.Uwp    .Img.Win2d.MosaicImg.CanvasImgSrcView          over Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource
+                                                    \--> Fmg.Uwp    .Mosaic.Wbmp .MosaicWBmpView ----->  Fmg.Uwp    .Img.Wbmp .MosaicImg.WBmpView                  over Windows.UI.Xaml.Media.Imaging.WriteableBitmap

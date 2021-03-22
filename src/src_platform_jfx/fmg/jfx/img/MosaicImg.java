@@ -61,7 +61,7 @@ public final class MosaicImg {
     // custom implementations
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /** Mosaic image view implementation over {@link javafx.scene.canvas.CanvasView.scene.canvas.Canvas} */
+    /** Mosaic image view implementation over {@link javafx.scene.canvas.Canvas} */
     static class CanvasView extends JfxView<javafx.scene.canvas.Canvas> {
 
         private CanvasJfx canvas = new CanvasJfx(this);

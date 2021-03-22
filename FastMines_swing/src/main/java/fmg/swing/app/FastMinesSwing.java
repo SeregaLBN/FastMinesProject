@@ -752,8 +752,7 @@ public class FastMinesSwing {
 
     /** узнаю мах размер мозаики в пикселях, при котором окно проекта вмещается в текущее разрешение экрана
      * @param mosaicSizeField - интересуемый размер поля мозаики
-     * @return мах размер мозаики в пикселях
-     */
+     * @return мах размер мозаики в пикселях */
     SizeDouble calcMaxMosaicSize(Matrisize mosaicSizeField) {
         SizeDouble sizeMosaicIn = calcMosaicWindowSize(ScreenResolutionHelper.getDesktopSize(frame.getGraphicsConfiguration()));
         SizeDouble sizeMosaicOut = new SizeDouble();
@@ -764,8 +763,7 @@ public class FastMinesSwing {
     /**
      * узнаю max размер поля мозаики, при котором окно проекта вмещается в текущее разрешение экрана
      * @param area - интересуемая площадь ячеек мозаики
-     * @return max размер поля мозаики
-     */
+     * @return max размер поля мозаики */
     public Matrisize calcMaxMosaicSize(double area) {
         SizeDouble sizeMosaic = calcMosaicWindowSize(ScreenResolutionHelper.getDesktopSize(frame.getGraphicsConfiguration()));
         return MosaicHelper.findSizeByArea(getMosaicController().getMosaicType(), area, sizeMosaic);
