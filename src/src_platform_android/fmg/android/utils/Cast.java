@@ -5,9 +5,7 @@ import android.util.DisplayMetrics;
 
 import java.util.List;
 
-/**
- * Приведение типов от платформо-независимых чистых Java классов fmg.common.geom.* к библиотечным android классам
- */
+/** Приведение типов от платформо-независимых чистых Java классов fmg.common.geom.* к библиотечным android классам */
 public final class Cast {
 
     public static android.graphics.Point       toPoint      ( fmg.common.geom.Point       p) { return new android.graphics.Point      (       p.x,        p.y); }
@@ -55,19 +53,19 @@ public final class Cast {
     public static              int toColor(fmg.common.Color clr) { return (clr.getA() & 0xFF) << 24 | (clr.getR() & 0xFF) << 16 | (clr.getG() & 0xFF) << 8 | (clr.getB() & 0xFF); }
     public static fmg.common.Color toColor(             int clr) { return new fmg.common.Color(clr); }
 
+    private static final float displayDensity = Resources.getSystem().getDisplayMetrics().density;
 
     public static float pxToDp(float px) {
         // dp = px / (dpi / 160)
         // dp = px / density
-        return px / Resources.getSystem().getDisplayMetrics().density;
+        return px / displayDensity;
     }
 
     public static float dpToPx(float dp) {
         // px = dp * dpi / 160
         // px = dp * density
-        DisplayMetrics dm = Resources.getSystem().getDisplayMetrics();
-        //return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, dm);
-        return dp * dm.density;
+        //return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, Resources.getSystem().getDisplayMetrics());
+        return dp * displayDensity;
     }
 
 }

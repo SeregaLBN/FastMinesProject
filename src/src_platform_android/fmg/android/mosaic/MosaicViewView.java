@@ -47,7 +47,7 @@ public class MosaicViewView extends MosaicAndroidView<DrawableView, Bitmap, Mosa
     private void onDraw(Canvas canvas) {
         Rect clipBounds = canvas.getClipBounds();
 
-        MosaicViewView.this.drawAndroid(canvas,
+        drawAndroid(canvas,
                 (clipBounds==null)
                         ? null
                         : toDrawCells(Cast.toRectDouble(clipBounds)),

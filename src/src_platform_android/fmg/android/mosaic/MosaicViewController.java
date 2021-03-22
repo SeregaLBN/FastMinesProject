@@ -431,7 +431,7 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
         super.onModelPropertyChanged(ev);
         switch (ev.getPropertyName()) {
         case MosaicDrawModel.PROPERTY_SIZE:
-            onSizeChanged(ev);
+            onModelSizeChanged(ev);
             break;
         case MosaicDrawModel.PROPERTY_AREA:
 //            onAreaChanged(ev as PropertyChangedExEventArgs<double>);
@@ -445,7 +445,7 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
             getModel().setSize(Cast.toSizeDouble(newSize));
     }
 
-    private void onSizeChanged(PropertyChangeEvent ev) {
+    private void onModelSizeChanged(PropertyChangeEvent ev) {
         if (!bindSizeDirection)
             return;
         View control = getViewControl();

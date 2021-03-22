@@ -112,7 +112,7 @@ public abstract class MosaicAndroidView<TImage,
             { // 2.1. paint component
 
                 // 2.1.1. paint cell background
-                //if (!isSimpleDraw) // когда русуется иконка, а не игровое поле, - делаю попроще...
+                //if (!isSimpleDraw) // когда рисуется иконка, а не игровое поле, - делаю попроще...
                 {
                     Color bkClrCell = cell.getBackgroundFillColor(bkFill.getMode(),
                                                                     bkClr,
