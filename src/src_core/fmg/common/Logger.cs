@@ -19,10 +19,10 @@ namespace Fmg.Common {
         private static void Write(ELevel level, string format, params object[] args) {
             Action<string> writer = null;
             switch (level) {
-            case ELevel.error: writer = ErrorWriter; break;
+            case ELevel.error  : writer =   ErrorWriter; break;
             case ELevel.warning: writer = WarningWriter; break;
-            case ELevel.info: writer = InfoWriter; break;
-            case ELevel.debug: writer = DebugWriter; break;
+            case ELevel.info   : writer =    InfoWriter; break;
+            case ELevel.debug  : writer =   DebugWriter; break;
             }
             if (writer == null)
                 return;
@@ -35,10 +35,11 @@ namespace Fmg.Common {
                     ? string.Format($"{Environment.CurrentManagedThreadId}-T{Task.CurrentId.Value}")
                     : Environment.CurrentManagedThreadId.ToString();
 
+                var lev = level.ToString().ToUpper();
                 if (UseDatePrefix)
-                    writer($"[{DateTime.Now:HH:mm:ss.fff}]  {level}  Th={thr}  {format}");
+                    writer($"[{DateTime.Now:HH:mm:ss.fff}]  {lev}  Th={thr}  {format}");
                 else
-                    writer($"{level}  Th={thr}  {format}");
+                    writer($"{lev}  Th={thr}  {format}");
 
             } catch (Exception ex) {
                 System.Diagnostics.Debug.WriteLine(ex);

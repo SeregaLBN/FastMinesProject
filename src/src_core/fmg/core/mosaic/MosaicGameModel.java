@@ -26,6 +26,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import fmg.common.Logger;
 import fmg.common.geom.Coord;
 import fmg.common.geom.Matrisize;
 import fmg.common.notifier.INotifyPropertyChanged;
@@ -92,7 +93,9 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
     public void setArea(double area) {
         if (area <= 0)
             throw new IllegalArgumentException("Area must be positive");
-        getCellAttr().setArea(area);
+        if (area < MosaicInitData.AREA_MINIMUM)
+            Logger.warn("The area is very small = " + area);
+        getCellAttr().setArea(Math.max(MosaicInitData.AREA_MINIMUM, area));
     }
 
     @Override

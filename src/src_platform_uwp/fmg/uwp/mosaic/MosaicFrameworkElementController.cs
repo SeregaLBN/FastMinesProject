@@ -160,6 +160,7 @@ namespace Fmg.Uwp.Mosaic {
         /// <summary> Перепроверить смещение к полю мозаики так, что поле мозаики было в пределах страницы </summary>
         private SizeDouble RecheckOffset(SizeDouble offset) {
             var size = Model.Size;
+            Logger.Info("MosaicFrameworkElementController::RecheckOffset: ModelSize=" + size);
             var mosaicSize = Model.MosaicSize;
             if ((offset.Width + mosaicSize.Width) < MinIndent) { // правый край мозаики пересёк левую сторону контрола?
                 offset.Width = MinIndent - mosaicSize.Width; // привязываю к левой стороне контрола
@@ -181,16 +182,16 @@ namespace Fmg.Uwp.Mosaic {
         /// <summary> узнаю мах размер площади ячеек мозаики (для размера поля 3x3) так, чтобы поле влазило в текущий размер Control'а </summary>
         /// <returns>макс площадь ячейки</returns>
         private double CalcMaxArea() {
-            if (_maxArea.HasValue)
-                return _maxArea.Value;
+            if (cachedMaxArea.HasValue)
+                return cachedMaxArea.Value;
             var mosaicSizeField = new Matrisize(3, 3);
             var size = Model.Size;
             double area = MosaicHelper.FindAreaBySize(this.MosaicType, mosaicSizeField, ref size);
             //System.Diagnostics.Debug.WriteLine("MosaicFrameworkElementController.CalcMaxArea: area="+area);
-            _maxArea = area; // caching value
+            cachedMaxArea = area; // caching value
             return area;
         }
-        double? _maxArea; // cached value
+        double? cachedMaxArea; // cached value
 
         private void BeforeZoom(Windows.Foundation.Point? mouseDevicePosition) {
             if (mouseDevicePosition.HasValue) {
@@ -222,7 +223,8 @@ namespace Fmg.Uwp.Mosaic {
             if (DeferredZoom) {
                 Scale(1.01 * zoomPower);
             } else {
-                Model.Area *= 1.01 * zoomPower;
+                var newArea = Model.Area * 1.01 * zoomPower;
+                Model.Area = Math.Min(newArea, CalcMaxArea());
                 AfterZoom();
             }
         }
@@ -233,7 +235,8 @@ namespace Fmg.Uwp.Mosaic {
             if (DeferredZoom) {
                 Scale(0.99 / zoomPower);
             } else {
-                Model.Area *= 0.99 / zoomPower;
+                var newArea = Model.Area * 0.99 / zoomPower;
+                Model.Area = Math.Max(newArea, MosaicInitData.AREA_MINIMUM);
                 AfterZoom();
             }
         }
@@ -293,10 +296,10 @@ namespace Fmg.Uwp.Mosaic {
             base.OnModelPropertyChanged(sender, ev);
             switch (ev.PropertyName) {
             case nameof(Model.Size):
-                OnSizeChanged(ev as PropertyChangedExEventArgs<SizeDouble>);
+                OnModelSizeChanged(ev as PropertyChangedExEventArgs<SizeDouble>);
                 break;
             case nameof(Model.Area):
-                OnAreaChanged(ev as PropertyChangedExEventArgs<double>);
+                OnModelAreaChanged(ev as PropertyChangedExEventArgs<double>);
                 break;
             }
         }
@@ -306,7 +309,7 @@ namespace Fmg.Uwp.Mosaic {
                 Model.Size = ev.NewSize.ToFmSizeDouble();
         }
 
-        private void OnSizeChanged(PropertyChangedExEventArgs<SizeDouble> ev) {
+        private void OnModelSizeChanged(PropertyChangedExEventArgs<SizeDouble> ev) {
             if (!BindSizeDirection)
                 return;
             var control = Control;
@@ -315,7 +318,7 @@ namespace Fmg.Uwp.Mosaic {
             control.Height = newSize.Height;
         }
 
-        private void OnAreaChanged(PropertyChangedExEventArgs<double> ev) {
+        private void OnModelAreaChanged(PropertyChangedExEventArgs<double> ev) {
             if (!ExtendedManipulation)
                 return;
             using (var tracer = CreateTracer(GetCallerName(), string.Format("newArea={0:0.00}, oldValue={1:0.00}", ev.NewValue, ev.OldValue))) {

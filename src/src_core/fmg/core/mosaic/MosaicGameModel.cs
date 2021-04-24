@@ -26,6 +26,7 @@ using Fmg.Common.Geom;
 using Fmg.Common.Notifier;
 using Fmg.Core.Types;
 using Fmg.Core.Mosaic.Cells;
+using Fmg.Common;
 
 namespace Fmg.Core.Mosaic {
 
@@ -90,7 +91,9 @@ namespace Fmg.Core.Mosaic {
             set {
                 if (value <= 0)
                     throw new ArgumentException("Area must be positive");
-                CellAttr.Area = value;
+                if (value < MosaicInitData.AREA_MINIMUM)
+                    Logger.Warn("The area is very small = " + value);
+                CellAttr.Area = Math.Max(MosaicInitData.AREA_MINIMUM, value);
             }
         }
 

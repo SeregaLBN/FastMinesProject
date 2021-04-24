@@ -92,7 +92,7 @@ namespace Fmg.Common.Notifier {
 
             void fireOwnerEvent(PropertyChangedEventArgs ev3) {
                 //if (ev3.PropertyName == "Image")
-                //   LoggerSimple.Put("  Fire event '" + ev3.PropertyName + "'! class " + _owner.GetType().FullName);
+                //   Logger.Debug("  Fire event '" + ev3.PropertyName + "'! class " + _owner.GetType().FullName);
 #if DEBUG
                 foreach (var kv in _propertyChanges)
                     kv.Key.Invoke(_owner, ev3);

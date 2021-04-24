@@ -38,8 +38,10 @@ public class MosaicActivity extends AppCompatActivity {
         viewModel = ViewModelProviders
                 .of(this)
                 .get(MosaicViewModel.class);
-        viewModel.getMosaicController().setBindSizeDirection(false);
-        viewModel.getMosaicController().setExtendedManipulation(true);
+        MosaicViewController ctrl = viewModel.getMosaicController();
+        ctrl.setBindSizeDirection(false);
+        ctrl.setExtendedManipulation(true);
+        ctrl.getModel().setAutoFit(false);
         binding.setViewModel(viewModel);
         binding.executePendingBindings();
 

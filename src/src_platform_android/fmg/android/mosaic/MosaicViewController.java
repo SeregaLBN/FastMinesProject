@@ -8,6 +8,7 @@ import android.graphics.Point;
 import android.util.Size;
 import android.view.DragEvent;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -21,6 +22,7 @@ import fmg.android.app.DrawableView;
 import fmg.android.utils.AsyncRunner;
 import fmg.android.utils.Cast;
 import fmg.common.Logger;
+import fmg.common.geom.Matrisize;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
@@ -28,6 +30,7 @@ import fmg.common.ui.UiInvoker;
 import fmg.core.mosaic.MosaicController;
 import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.mosaic.MosaicHelper;
+import fmg.core.mosaic.MosaicInitData;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.ClickResult;
 import fmg.core.types.EGameStatus;
@@ -51,7 +54,7 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
     // #region if ExtendedManipulation
     /// <summary> мин отступ от краев экрана для мозаики </summary>
     private final double minIndent = Cast.dpToPx(30.0f);
-    private final boolean DeferredZoom = true;
+    private final boolean deferredZoom = !true;
     private boolean manipulationStarted;
     private boolean turnX;
     private boolean turnY;
@@ -61,6 +64,7 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
     private Object/*Transform*/ originalTransform;
     private Object/*CompositeTransform*/ scaleTransform;
     private double deferredArea;
+    private MotionEvent latestOnTouchEv;
 
     private PointDouble lastScrollPosition;
 
@@ -154,7 +158,7 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
 
 
     private static class ZoomStartInfo {
-        public Point devicePosition;
+        public PointDouble devicePosition;
         public SizeDouble mosaicSize;
         public SizeDouble mosaicOffset;
     }
@@ -227,6 +231,7 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
         control.setFocusable(true); // ? иначе не будет срабатывать FocusListener
         control.setOnFocusChangeListener((v, hasFocus) -> onFocusChange(hasFocus));
         control.setOnTouchListener((v, ev) -> onTouch(ev));
+        control.setOnKeyListener((v, kc, ev) -> onKey(kc, ev));
 
 //        control.setOnClickListener(v -> onClick());
 //        control.setOnLongClickListener(v -> onLongClick());
@@ -278,6 +283,7 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
 
     private SizeDouble recheckOffset(SizeDouble offset) {
         SizeDouble size = getModel().getSize();
+        Logger.info("MosaicViewController::recheckOffset: Model.size=" + size);
         SizeDouble mosaicSize = getModel().getMosaicSize();
         if ((offset.width + mosaicSize.width) < minIndent) { // правый край мозаики пересёк левую сторону контрола?
             offset.width = minIndent - mosaicSize.width; // привязываю к левой стороне контрола
@@ -313,119 +319,124 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
         cachedControlSize = newSize;
         subjSizeChanged.onNext(newSize);
     }
-/*
 
-        /// <summary> узнаю мах размер площади ячеек мозаики (для размера поля 3x3) так, чтобы поле влазило в текущий размер Control'а </summary>
-        /// <returns>макс площадь ячейки</returns>
-        private double CalcMaxArea() {
-            if (_maxArea.HasValue)
-                return _maxArea.Value;
-            var mosaicSizeField = new Matrisize(3, 3);
-            var size = Model.Size;
-            double area = MosaicHelper.FindAreaBySize(this.MosaicType, mosaicSizeField, ref size);
-            //System.Diagnostics.Debug.WriteLine("MosaicFrameworkElementController.CalcMaxArea: area="+area);
-            _maxArea = area; // caching value
-            return area;
+    /** узнаю мах размер площади ячеек мозаики (для размера поля 3x3) так, чтобы поле влазило в текущий размер Control'а
+      * @return макс площадь ячейки */
+    private double calcMaxArea() {
+        if (cachedMaxArea != null)
+            return cachedMaxArea;
+        Matrisize mosaicSizeField = new Matrisize(3, 3);
+        SizeDouble sizeIn = getModel().getSize();
+        SizeDouble sizeOut = new SizeDouble();
+        double area = MosaicHelper.findAreaBySize(this.getMosaicType(), mosaicSizeField, sizeIn, sizeOut);
+        //logger.debug("MosaicFrameworkElementController.CalcMaxArea: area="+area);
+        cachedMaxArea = area; // caching value
+        return area;
+    }
+    private Double cachedMaxArea; // cached value
+
+    private void beforeZoom(PointDouble mouseDevicePosition) {
+        if (mouseDevicePosition != null) {
+            if (zoomStartInfo == null)
+                zoomStartInfo = new ZoomStartInfo();
+            zoomStartInfo.devicePosition = mouseDevicePosition;
+            zoomStartInfo.mosaicOffset = getOffset();
+            zoomStartInfo.mosaicSize = getModel().getMosaicSize();
+        } else {
+            zoomStartInfo = null;
         }
-        double? _maxArea; // cached value
+    }
 
-        private void BeforeZoom(Windows.Foundation.Point? mouseDevicePosition) {
-            if (mouseDevicePosition.HasValue) {
-                if (_zoomStartInfo == null)
-                    _zoomStartInfo = new ZoomStartInfo();
-                _zoomStartInfo._devicePosition = mouseDevicePosition.Value;
-                _zoomStartInfo._mosaicOffset = Offset;
-                _zoomStartInfo._mosaicSize = Model.MosaicSize;
-            } else {
-                _zoomStartInfo = null;
+    private void afterZoom() {
+        if (zoomStartInfo == null)
+            return;
+
+        PointDouble devicePos = zoomStartInfo.devicePosition;
+        SizeDouble mosaicSizeNew = getModel().getMosaicSize();//GetMosaicSize(Model.SizeField, Model.Area);
+        SizeDouble offsetNew = new SizeDouble(
+                    devicePos.x - (devicePos.x - zoomStartInfo.mosaicOffset.width ) * mosaicSizeNew.width  / zoomStartInfo.mosaicSize.width,
+                    devicePos.y - (devicePos.y - zoomStartInfo.mosaicOffset.height) * mosaicSizeNew.height / zoomStartInfo.mosaicSize.height);
+        setOffset(offsetNew);
+    }
+
+    /** Zoom + */
+    void zoomInc(double zoomPower/* = 1.3 */, PointDouble mouseDevicePosition/* = null */) {
+        beforeZoom(mouseDevicePosition);
+        if (deferredZoom) {
+            scale(1.01 * zoomPower);
+        } else {
+            double newArea = getModel().getArea() * 1.01 * zoomPower;
+            getModel().setArea(Math.min(newArea, calcMaxArea()));
+            afterZoom();
+        }
+    }
+
+    /** Zoom - */
+    void zoomDec(double zoomPower/* = 1.3 */, PointDouble mouseDevicePosition/* = null */) {
+        beforeZoom(mouseDevicePosition);
+        if (deferredZoom) {
+            scale(0.99 / zoomPower);
+        } else {
+            double newArea = getModel().getArea() * 0.99 / zoomPower;
+            getModel().setArea(Math.max(newArea, MosaicInitData.AREA_MINIMUM));
+            afterZoom();
+        }
+    }
+
+    private void scale(double scaleMul) {
+        View ctrl = getViewControl();
+        throw new RuntimeException("Not implemented...");
+        /*
+        if (!(ctrl.RenderTransform is CompositeTransform)) {
+            if (_scaleTransform == null) {
+                _scaleTransform = new CompositeTransform();
+                _originalTransform = ctrl.RenderTransform;
             }
+            ctrl.RenderTransform = _scaleTransform;
+            _deferredArea = Model.Area;
         }
 
-        private void AfterZoom() {
-            if (_zoomStartInfo == null)
-                return;
 
-            var devicePos = _zoomStartInfo._devicePosition;
-            var mosaicSizeNew = Model.MosaicSize;//GetMosaicSize(Model.SizeField, Model.Area);
-            var offsetNew = new SizeDouble(
-                        devicePos.X - (devicePos.X - _zoomStartInfo._mosaicOffset.Width ) * mosaicSizeNew.Width  / _zoomStartInfo._mosaicSize.Width,
-                        devicePos.Y - (devicePos.Y - _zoomStartInfo._mosaicOffset.Height) * mosaicSizeNew.Height / _zoomStartInfo._mosaicSize.Height);
-            Offset = offsetNew;
+        _deferredArea *= scaleMul;
+        _deferredArea = Math.Min(Math.Max(MosaicInitData.AREA_MINIMUM, _deferredArea), CalcMaxArea()); // recheck
+
+        var deferredMosaicSize = GetMosaicSize(Model.SizeField, _deferredArea);
+        var currentMosaicSize = Model.MosaicSize;
+
+        if (_zoomStartInfo != null) {
+            var p = _zoomStartInfo._devicePosition;
+            _scaleTransform.CenterX = p.X;
+            _scaleTransform.CenterY = p.Y;
         }
 
-        /// <summary> Zoom + </summary>
-        void ZoomInc(double zoomPower = 1.3, Windows.Foundation.Point? mouseDevicePosition = null) {
-            BeforeZoom(mouseDevicePosition);
-            if (DeferredZoom) {
-                Scale(1.01 * zoomPower);
-            } else {
-                Model.Area *= 1.01 * zoomPower;
-                AfterZoom();
-            }
-        }
+        _scaleTransform.ScaleX = deferredMosaicSize.Width / currentMosaicSize.Width;
+        _scaleTransform.ScaleY = deferredMosaicSize.Height / currentMosaicSize.Height;
 
-        /// <summary> Zoom - </summary>
-        void ZoomDec(double zoomPower = 1.3, Windows.Foundation.Point? mouseDevicePosition = null) {
-            BeforeZoom(mouseDevicePosition);
-            if (DeferredZoom) {
-                Scale(0.99 / zoomPower);
-            } else {
-                Model.Area *= 0.99 / zoomPower;
-                AfterZoom();
-            }
-        }
+        NeedAreaChanging(this, null); // fire event
+    }
 
-        private void Scale(double scaleMul) {
-            var ctrl = Control;
-            if (!(ctrl.RenderTransform is CompositeTransform)) {
-                if (_scaleTransform == null) {
-                    _scaleTransform = new CompositeTransform();
-                    _originalTransform = ctrl.RenderTransform;
-                }
-                ctrl.RenderTransform = _scaleTransform;
-                _deferredArea = Model.Area;
-            }
+    private void OnDeferredAreaChanging(object sender, NeedAreaChangingEventArgs ev) {
+        Model.Area = _deferredArea;
+        AfterZoom();
 
+        // restore
+        _scaleTransform.CenterX = _scaleTransform.CenterY = 0;
+        _scaleTransform.ScaleX = _scaleTransform.ScaleY = 1;
+        Control.RenderTransform = _originalTransform;
+        */
+    }
 
-            _deferredArea *= scaleMul;
-            _deferredArea = Math.Min(Math.Max(MosaicInitData.AREA_MINIMUM, _deferredArea), CalcMaxArea()); // recheck
+    /** Zoom minimum */
+    private void zoomMin() {
+        getModel().setArea(MosaicInitData.AREA_MINIMUM);
+    }
 
-            var deferredMosaicSize = GetMosaicSize(Model.SizeField, _deferredArea);
-            var currentMosaicSize = Model.MosaicSize;
+    /** Zoom maximum */
+    private void zoomMax() {
+        double maxArea = calcMaxArea();
+        getModel().setArea(maxArea);
+    }
 
-            if (_zoomStartInfo != null) {
-                var p = _zoomStartInfo._devicePosition;
-                _scaleTransform.CenterX = p.X;
-                _scaleTransform.CenterY = p.Y;
-            }
-
-            _scaleTransform.ScaleX = deferredMosaicSize.Width / currentMosaicSize.Width;
-            _scaleTransform.ScaleY = deferredMosaicSize.Height / currentMosaicSize.Height;
-
-            NeedAreaChanging(this, null); // fire event
-        }
-
-        private void OnDeferredAreaChanging(object sender, NeedAreaChangingEventArgs ev) {
-            Model.Area = _deferredArea;
-            AfterZoom();
-
-            // restore
-            _scaleTransform.CenterX = _scaleTransform.CenterY = 0;
-            _scaleTransform.ScaleX = _scaleTransform.ScaleY = 1;
-            Control.RenderTransform = _originalTransform;
-        }
-
-        /// <summary> Zoom minimum </summary>
-        private void ZoomMin() {
-            Model.Area = MosaicInitData.AREA_MINIMUM;
-        }
-
-        /// <summary> Zoom maximum </summary>
-        private void ZoomMax() {
-            var maxArea = CalcMaxArea();
-            Model.Area = maxArea;
-        }
-*/
     @Override
     protected void onModelPropertyChanged(PropertyChangeEvent ev) {
         super.onModelPropertyChanged(ev);
@@ -434,7 +445,7 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
             onModelSizeChanged(ev);
             break;
         case MosaicDrawModel.PROPERTY_AREA:
-//            onAreaChanged(ev as PropertyChangedExEventArgs<double>);
+            onModelAreaChanged(ev);
             break;
         }
     }
@@ -460,15 +471,13 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
         lp.height = (int)newSize.height;
     }
 
-    /*
-    private void OnAreaChanged(PropertyChangedExEventArgs<double> ev) {
-        if (!ExtendedManipulation)
+    private void onModelAreaChanged(PropertyChangeEvent ev) {
+        if (!extendedManipulation)
             return;
-        using (var tracer = CreateTracer(GetCallerName(), string.Format("newArea={0:0.00}, oldValue={1:0.00}", ev.NewValue, ev.OldValue))) {
-            Offset = Offset; // implicit call RecheckOffset
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onModelAreaChanged", String.format("newArea=%.2f, oldValue=%.2f", ev.getNewValue(), ev.getOldValue()))) {
+            setOffset(getOffset()); // implicit call RecheckOffset
         }
     }
-    */
 
 //    #region control handlers
 
@@ -554,6 +563,7 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
     }
 
     private boolean onTouch(MotionEvent ev) {
+        latestOnTouchEv = ev;
         boolean[] handled = { false };
         try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onTouch", "ev=" + motionEventToString(ev), () -> "handled="+handled[0] + "\n-----------------------------")) {
             handled[0] = scaleGestureDetector.onTouchEvent(ev);
@@ -567,6 +577,13 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
         }
 
         return true; // !! always return true
+    }
+
+    private boolean onKey(int keyCode, KeyEvent ev) {
+        boolean[] handled = { false };
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onKey", "keyCode=" + keyCode + "; ev=" + ev)) {
+            return handled[0];
+        }
     }
 
     ///////////////// begin Gesture
@@ -729,20 +746,35 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
     /// interface OnScaleGestureListener
     private boolean onGestureScaleBegin() {
         boolean[] handled = { false };
-        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGesturScaleBegin", () -> "handled="+handled[0])) {
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureScaleBegin", () -> "handled="+handled[0])) {
             return handled[0] = true;
         }
     }
 
     private boolean onGestureScale() {
         boolean[] handled = { false };
-        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGesturScale", () -> "handled="+handled[0])) {
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureScale", () -> "handled="+handled[0])) {
+//            assert (latestOnTouchEv.getPointerCount() >= 2);
+            if (latestOnTouchEv.getPointerCount() == 2) {
+
+                MotionEvent ev = latestOnTouchEv;
+                PointDouble evPosition = new PointDouble((ev.getX(0) + ev.getX(1)) / 2,
+                                                         (ev.getY(0) + ev.getY(1)) / 2);
+
+                double deltaScale = scaleGestureDetector.getScaleFactor();
+                tracer.put("scaleFactor={0}; evPosition={1}", deltaScale, evPosition);
+
+                if (deltaScale > 0)
+                    zoomInc(deltaScale, evPosition);
+                else
+                    zoomDec(2 + deltaScale, evPosition);
+            }
             return handled[0] = true;
         }
     }
 
     private void onGestureScaleEnd() {
-        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGesturScaleEnd")) {
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureScaleEnd")) {
             return;
         }
     }
