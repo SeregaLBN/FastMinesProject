@@ -283,7 +283,6 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
 
     private SizeDouble recheckOffset(SizeDouble offset) {
         SizeDouble size = getModel().getSize();
-        Logger.info("MosaicViewController::recheckOffset: Model.size=" + size);
         SizeDouble mosaicSize = getModel().getMosaicSize();
         if ((offset.width + mosaicSize.width) < minIndent) { // правый край мозаики пересёк левую сторону контрола?
             offset.width = minIndent - mosaicSize.width; // привязываю к левой стороне контрола

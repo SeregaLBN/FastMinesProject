@@ -90,7 +90,7 @@ sourceSets {
 
 
 dependencies {
-    compile project(':FastMines_core')
+    implementation project(':FastMines_core')
 
     // !! do not use external dependencies to minimize assembly size
 
@@ -122,7 +122,7 @@ task fastMinesSwingFatJar(type: Jar) {
     }
     archiveBaseName = 'FastMines_swing-fat'
     from {
-        configurations.compile.collect {
+        configurations.implementation.collect {
             it.isDirectory()
                 ? it
                 : zipTree(it).matching{exclude{

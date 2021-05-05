@@ -41,8 +41,8 @@ android {
             buildConfigField 'boolean', 'DEBUG_OUTPUT'  , 'true'
         }
     }
-    dataBinding {
-        enabled = true
+    buildFeatures {
+        dataBinding = true
     }
 
     flavorDimensions 'runMode'
