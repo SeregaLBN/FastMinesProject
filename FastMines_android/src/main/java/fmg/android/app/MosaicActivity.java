@@ -48,10 +48,10 @@ public class MosaicActivity extends AppCompatActivity {
         // init mosaic controller
         MosaicInitData initData = getInitData();
         MosaicViewController controller = getMosaicController();
-        controller.setMinesCount(initData.getMinesCount());
         MosaicGameModel model = controller.getModel();
         model.setMosaicType(initData.getMosaicType());
         model.setSizeField(initData.getSizeField());
+        controller.setMinesCount(initData.getMinesCount());
     }
 
     /** Mosaic controller */

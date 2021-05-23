@@ -21,12 +21,22 @@ using IMosaicController = Fmg.Core.Mosaic.IMosaicController<
                 object,
                 Fmg.Core.Mosaic.IMosaicDrawModel<object>>,
         Fmg.Core.Mosaic.IMosaicDrawModel<object>>;
+using MosaicControllerType = Fmg.Core.Mosaic.MosaicController<
+        Windows.UI.Xaml.FrameworkElement,
+        object,
+        Fmg.Core.Mosaic.IMosaicView<
+                Windows.UI.Xaml.FrameworkElement,
+                object,
+                Fmg.Core.Mosaic.IMosaicDrawModel<object>>,
+        Fmg.Core.Mosaic.IMosaicDrawModel<object>>;
 
 namespace Fmg {
 
-    public sealed partial class MosaicPage : Page {
+    public sealed partial class MosaicPage : Page, INotifyPropertyChanged {
 
         private IMosaicController _mosaicController;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary> Mosaic controller </summary>
         public IMosaicController MosaicController {
@@ -94,6 +104,11 @@ namespace Fmg {
         }
 
         private void OnMosaicControllerPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            switch (ev.PropertyName) {
+            case nameof(MosaicControllerType.CountMinesLeft):
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MinesLeft)));
+                break;
+            }
         }
 
         private void GoBack() {
@@ -210,6 +225,21 @@ namespace Fmg {
             if (typeName != thisName)
                 typeName += "(" + thisName + ")";
             return new Tracer(typeName + "." + callerName, ctorMessage, disposeMessage);
+        }
+
+        private int MinesLeft {
+            get {
+                if (_mosaicController is MosaicCanvasSwapChainPanelController a)
+                    return a.CountMinesLeft;
+
+                if (_mosaicController is MosaicCanvasVirtualControlController b)
+                    return b.CountMinesLeft;
+
+                if (_mosaicController is MosaicXamlController c)
+                    return c.CountMinesLeft;
+
+                return -1;
+            }
         }
 
     }

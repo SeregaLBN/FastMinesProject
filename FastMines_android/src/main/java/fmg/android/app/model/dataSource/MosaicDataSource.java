@@ -24,7 +24,7 @@ import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
 
 public class MosaicDataSource extends BaseDataSource<
-        LogoDataItem  ,    Void,           LogoModel      , Logo.BitmapView, Logo.BitmapController,
+          LogoDataItem,    Void,           LogoModel      ,      Logo.BitmapView,      Logo.BitmapController,
         MosaicDataItem, EMosaic, MosaicAnimatedModel<Void>, MosaicImg.BitmapView, MosaicImg.BitmapController>
 {
 

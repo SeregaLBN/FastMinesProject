@@ -86,8 +86,14 @@ public abstract class MosaicController<TImage, TImageInner,
     /** количество мин */
     @Override
     public void setMinesCount(int newMinesCount) {
-        int oldVal = getMinesCount();
         int newVal = Math.max((getGameStatus() == EGameStatus.eGSCreateGame) ? 0 : 1, Math.min(newMinesCount, getMaxMines(getSizeField())));
+        int oldVal = getMinesCount();
+        if ((oldVal != newMinesCount) &&
+            (newVal != newMinesCount))
+        {
+            Logger.warn("Can`t set mines count to {0}; reset to {1}. Try set size field first?", newMinesCount, newVal);
+        }
+
         if (oldVal == newVal)
             return;
 
@@ -468,6 +474,8 @@ public abstract class MosaicController<TImage, TImageInner,
 
         setGameStatus(EGameStatus.eGSReady);
         setPlayInfo(EPlayInfo.ePlayerUnknown); // пока не знаю кто будет играть
+
+        _notifier.firePropertyChanged(PROPERTY_COUNT_MINES_LEFT);
 
         invalidateView(this.getMatrix());
 

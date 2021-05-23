@@ -69,8 +69,14 @@ namespace Fmg.Core.Mosaic {
             get { return _minesCount; }
             set {
                 var max = GetMaxMines(SizeField);
-                int oldVal = MinesCount;
                 var newVal = Math.Max((GameStatus == EGameStatus.eGSCreateGame) ? 0 : 1, Math.Min(value, max));
+                int oldVal = MinesCount;
+                if ((oldVal != value) &&
+                    (newVal != value))
+                {
+                    Logger.Warn("Can`t set mines count to {0}; reset to {1}. Try set size field first?", value, newVal);
+                }
+
                 if (oldVal == newVal)
                     return;
 
@@ -434,6 +440,8 @@ namespace Fmg.Core.Mosaic {
 
             GameStatus = EGameStatus.eGSReady;
             PlayInfo = EPlayInfo.ePlayerUnknown; // пока не знаю кто будет играть
+
+            _notifier.FirePropertyChanged(nameof(this.CountMinesLeft));
 
             InvalidateView(this.Matrix);
 

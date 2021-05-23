@@ -405,9 +405,9 @@ namespace Fmg.Core.Mosaic.Cells {
                 goto case 0;
             case 0:
                 if ((state.Status == EState._Open) && (state.Open == EOpen._Mine) && state.Down)
-                    return Color.Red.Brighter(0.05); // game ower: игра завершена - клик на мине
+                    return Color.Red.Brighter(0.05); // game over: игра завершена - клик на мине
                 if ((state.Status == EState._Open) && (state.Open != EOpen._Mine) && (state.Close == EClose._Flag))
-                    return Color.Magenta.Brighter(0.3); // game ower: игра завершена - не верно проставлен флаг (на ячейке с цифрой)
+                    return Color.Magenta.Brighter(0.3); // game over: игра завершена - не верно проставлен флаг (на ячейке с цифрой)
 
                 // для Down и Нажатого состояний делаю фон чуть и чуть-чуть темнее...
                 if (state.Down)

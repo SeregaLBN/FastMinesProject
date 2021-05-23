@@ -14,9 +14,27 @@
     <Grid x:Name="_contentRoot" BorderBrush="Black" BorderThickness="3" Margin="12" Padding="7" >
     -->
     <Grid>
-        <canvas:CanvasVirtualControl x:Name="_canvasVirtualControl" Visibility="Collapsed" />
-        <canvas:CanvasSwapChainPanel x:Name="_canvasSwapChainPanel" Visibility="Visible" />
-        <Canvas                      x:Name="_canvasControl"        Visibility="Collapsed" />
+        <Grid>
+            <canvas:CanvasVirtualControl x:Name="_canvasVirtualControl" Visibility="Collapsed" />
+            <canvas:CanvasSwapChainPanel x:Name="_canvasSwapChainPanel" Visibility="Visible" />
+            <Canvas                      x:Name="_canvasControl"        Visibility="Collapsed" />
+        </Grid>
+
+        <!-- top panel elements -->
+        <Grid Margin="7,2,7,0">
+            <TextBlock x:Name="txtMinesLeft"
+                       FontSize="25"
+                       VerticalAlignment="Top"
+                       HorizontalAlignment="Left"
+                       Text="{x:Bind MinesLeft, Mode=OneWay}"
+                       ToolTipService.ToolTip="Mines left" />
+            <TextBlock x:Name="txtTimeLeft"
+                       FontSize="25"
+                       VerticalAlignment="Top"
+                       HorizontalAlignment="Right"
+                       Text="0" ToolTipService.ToolTip="Time left" />
+        </Grid>
+
     </Grid>
 
 
