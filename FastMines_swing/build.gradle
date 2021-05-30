@@ -116,6 +116,7 @@ task runTestDialogs(type: JavaExec) {
 }
 
 
+configurations.implementation.setCanBeResolved(true)
 task fastMinesSwingFatJar(type: Jar) {
     manifest {
         attributes jar.manifest.attributes
