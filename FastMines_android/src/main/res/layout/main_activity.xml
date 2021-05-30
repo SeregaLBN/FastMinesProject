@@ -94,7 +94,7 @@
                     android:layout_margin="0dp">
                     <!--https://stackoverflow.com/questions/27083091/recyclerview-inside-scrollview-is-not-working-->
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rvMenuMosaicGroupItems"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -168,7 +168,7 @@
                     android:layout_margin="0dp">
                     <!--https://stackoverflow.com/questions/27083091/recyclerview-inside-scrollview-is-not-working-->
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rvMenuMosaicSkillItems"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

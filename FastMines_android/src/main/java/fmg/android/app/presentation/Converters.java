@@ -1,11 +1,12 @@
 package fmg.android.app.presentation;
 
-import android.databinding.BindingAdapter;
 import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import androidx.databinding.BindingAdapter;
 
 import fmg.android.utils.Cast;
 import fmg.common.geom.SizeDouble;

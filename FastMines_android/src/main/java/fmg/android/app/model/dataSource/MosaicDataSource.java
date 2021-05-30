@@ -1,6 +1,6 @@
 package fmg.android.app.model.dataSource;
 
-import android.databinding.Bindable;
+import androidx.databinding.Bindable;
 
 import java.beans.PropertyChangeEvent;
 import java.util.List;

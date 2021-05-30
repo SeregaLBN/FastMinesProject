@@ -1,8 +1,9 @@
 package fmg.android.app.model.dataSource;
 
-import android.databinding.BaseObservable;
-import android.databinding.Bindable;
 import android.graphics.Bitmap;
+
+import androidx.databinding.BaseObservable;
+import androidx.databinding.Bindable;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

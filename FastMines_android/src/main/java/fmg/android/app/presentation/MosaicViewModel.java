@@ -1,12 +1,11 @@
 package fmg.android.app.presentation;
 
-import android.arch.lifecycle.ViewModel;
-import android.databinding.BaseObservable;
-import android.databinding.Bindable;
+import androidx.databinding.BaseObservable;
+import androidx.databinding.Bindable;
+import androidx.lifecycle.ViewModel;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import fmg.android.app.BR;

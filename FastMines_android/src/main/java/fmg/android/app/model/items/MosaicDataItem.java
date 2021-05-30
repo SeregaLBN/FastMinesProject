@@ -1,9 +1,8 @@
 package fmg.android.app.model.items;
 
-import android.databinding.Bindable;
+import androidx.databinding.Bindable;
 
 import java.beans.PropertyChangeEvent;
-import java.util.Locale;
 
 import fmg.android.app.BR;
 import fmg.android.img.MosaicImg;

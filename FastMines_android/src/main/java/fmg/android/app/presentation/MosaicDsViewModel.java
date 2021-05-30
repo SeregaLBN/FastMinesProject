@@ -1,13 +1,11 @@
 package fmg.android.app.presentation;
 
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModel;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import fmg.android.app.model.dataSource.MosaicDataSource;
-import fmg.android.app.model.dataSource.MosaicGroupDataSource;
-import fmg.android.app.model.dataSource.MosaicSkillDataSource;
 import fmg.common.geom.SizeDouble;
 
 /** ViewModel for {@link fmg.android.app.SelectMosaicFragment} */
