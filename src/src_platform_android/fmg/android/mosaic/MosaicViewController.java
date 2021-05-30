@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Size;
 import android.view.DragEvent;
 import android.view.GestureDetector;
@@ -45,7 +47,7 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
     public static final String PROPERTY_EXTENDED_MANIPULATION = "ExtendedManipulation";
 
     private Context context;
-    private final ClickInfo clickInfo = new ClickInfo();
+    private final LastClickInfo clickInfo = new LastClickInfo();
     /** <li>true : bind Control.SizeProperty to Model.Size
      *  <li>false: bind Model.Size to Control.SizeProperty */
     private boolean bindSizeDirection = true;
@@ -74,6 +76,8 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
 
     private GestureDetector gestureDetector;
     private ScaleGestureDetector scaleGestureDetector;
+
+    private Vibrator vibrator;
 
     private final ScaleGestureDetector.OnScaleGestureListener scaleGestureListener = new ScaleGestureDetector.SimpleOnScaleGestureListener() {
 
@@ -522,18 +526,11 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
     }
 
     boolean clickHandler(ClickResult clickResult) {
-        if (clickResult == null)
-            return false;
-        clickInfo.cellDown = clickResult.getCellDown();
-        clickInfo.isLeft = clickResult.isLeft();
-        boolean handled = clickResult.isAnyChanges();
-        if (clickResult.isDown())
-            clickInfo.downHandled = handled;
-        else
-            clickInfo.upHandled = handled;
-        clickInfo.released = !clickResult.isDown();
-        //Logger.info(">>>>>>> clickInfo=" + clickInfo + "\n" + Arrays.asList(Thread.currentThread().getStackTrace()).stream().map(x -> x.toString()).filter(x -> x.startsWith("fmg.")).collect(Collectors.joining("\n")));
-        return handled;
+        if (clickResult.isDown && !clickResult.isLeft && clickResult.isAnyChanges())
+            vibrate(); // vibrate if set flag
+
+        clickInfo.clickResult = clickResult;
+        return clickInfo.isHandled();
     }
 
     boolean onClickLost() {
@@ -569,7 +566,7 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
             if (ev.getPointerCount() == 1)
                 handled[0] = gestureDetector.onTouchEvent(ev) || handled[0];
 
-            if ((ev.getAction() == MotionEvent.ACTION_UP) && !clickInfo.released)
+            if ((ev.getAction() == MotionEvent.ACTION_UP) && !clickInfo.isReleased())
                 handled[0] = onClickCommon(ev, true, false);
 
             //return handled[0];
@@ -627,7 +624,7 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
     private void onGestureLongPress(MotionEvent ev) {
         try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onGestureLongPress", "ev=" + motionEventToString(ev)))
         {
-            if ((clickInfo.cellDown != null) && (clickInfo.cellDown.getState().getStatus() == EState._Close)) {
+            if ((clickInfo.getCellDown() != null) && (clickInfo.getCellDown().getState().getStatus() == EState._Close)) {
                 // imitate right mouse click - to (un)set flag
                 mouseReleased(null, true);
                 onClickCommon(ev, false, true);
@@ -798,11 +795,11 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
                 SizeDouble offset = getOffset();
                 SizeDouble size = getModel().getSize();
                 // #region check possibility dragging
-                if (clickInfo.cellDown != null) {
+                if (clickInfo.getCellDown() != null) {
                     PointDouble startPoint = evCurrPosition;
                     //var inCellRegion = _tmpClickedCell.PointInRegion(startPoint.ToFmRect());
                     //this._contentRoot.Background = new SolidColorBrush(inCellRegion ? Colors.Aquamarine : Colors.DeepPink);
-                    RectDouble rcOuter = clickInfo.cellDown.getRcOuter().moveXY(offset);
+                    RectDouble rcOuter = clickInfo.getCellDown().getRcOuter().moveXY(offset);
                     float min = Cast.dpToPx(25);
                     rcOuter = rcOuter.moveXY(-min, -min);
                     rcOuter.width  += min * 2;
@@ -972,6 +969,14 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
         return selectedNo[0];
     }
 
+    private void vibrate() {
+        if (vibrator == null)
+            vibrator = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
+
+        if (vibrator.hasVibrator())
+            vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE));
+    }
+
     @Override
     public void close() {
         dtInertiaStarting = 0;
@@ -980,21 +985,19 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
         getView().close();
     }
 
-
-    class ClickInfo {
+    class LastClickInfo {
+        ClickResult clickResult;
         boolean isDoubleTap;
-        public BaseCell cellDown;
-        public boolean isLeft;
+
+        public BaseCell getCellDown()  { return (clickResult == null) ? null : clickResult.cellDown; }
         /** pressed or released */
-        public boolean released;
-        public boolean downHandled;
-        public boolean upHandled;
+        public boolean isReleased()    { return (clickResult == null) ? false : !clickResult.isDown; }
+        public boolean isHandled()     { return (clickResult != null) && clickResult.isAnyChanges(); }
 
         @Override
         public String toString() {
-            return "{ isLeft=" + isLeft
-                + ", released=" + released
-                + ", cellDown=" + cellDown
+            return "{ clickResult=" + clickResult
+                + ", isDoubleTap=" + isDoubleTap
                 + " }";
         }
     }

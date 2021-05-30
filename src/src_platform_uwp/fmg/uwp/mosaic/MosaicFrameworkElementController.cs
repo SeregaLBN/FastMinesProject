@@ -29,7 +29,7 @@ namespace Fmg.Uwp.Mosaic {
         where TMosaicView : IMosaicView<TImageAsFrameworkElement, TImageInner, IMosaicDrawModel<TImageInner>>
     {
 
-        private readonly ClickInfo _clickInfo = new ClickInfo();
+        private readonly LastClickInfo _clickInfo = new LastClickInfo();
         /// <summary>
         /// true : bind Control.SizeProperty to Model.Size
         /// false: bind Model.Size to Control.SizeProperty
@@ -345,18 +345,11 @@ namespace Fmg.Uwp.Mosaic {
         }
 
         bool ClickHandler(ClickResult clickResult) {
-            if (clickResult == null)
-                return false;
-            _clickInfo.CellDown = clickResult.CellDown;
-            _clickInfo.IsLeft = clickResult.IsLeft;
-            var handled = clickResult.IsAnyChanges;
-            if (clickResult.IsDown)
-                _clickInfo.DownHandled = handled;
-            else
-                _clickInfo.UpHandled = handled;
-            _clickInfo.Released = !clickResult.IsDown;
-            //Logger.Info(">>>>>> _clickInfo= " + _clickInfo + "\n" + System.Environment.StackTrace);
-            return handled;
+            if ((_clickInfo.deviceType != PointerDeviceType.Mouse) && clickResult.IsDown && !clickResult.IsLeft && clickResult.IsAnyChanges)
+                Vibrate(); // vibrate if set flag
+
+            _clickInfo.clickResult = clickResult;
+            return _clickInfo.Handled;
         }
 
         void OnFocusLost(object sender, RoutedEventArgs ev) {
@@ -431,7 +424,7 @@ namespace Fmg.Uwp.Mosaic {
             //using (new Fmg.Common.Tracer(GetCallerName(), () => "handled=" + ev.Handled))
             {
                 if (ev.PointerDeviceType == PointerDeviceType.Mouse) {
-                    ev.Handled = _clickInfo.DownHandled || _clickInfo.UpHandled; // TODO: для избежания появления appBar'ов при установке '?'
+                    ev.Handled = _clickInfo.Handled; // TODO: для избежания появления appBar'ов при установке '?'
                 } else if (!_manipulationStarted) {
 
                     // 1. release left click in invalid coord
@@ -448,6 +441,7 @@ namespace Fmg.Uwp.Mosaic {
         }
 
         protected void OnPointerPressed(object sender, PointerRoutedEventArgs ev) {
+            _clickInfo.deviceType = ev.Pointer.PointerDeviceType;
             var imgControl = Control;
             var currPoint = ev.GetCurrentPoint(imgControl);
             //using (CreateTracer(GetCallerName(), "pointerId=" + currPoint.PointerId, () => "ev.Handled = " + ev.Handled))
@@ -463,8 +457,6 @@ namespace Fmg.Uwp.Mosaic {
 
                 if (!ev.Handled)
                     ev.Handled = OnClick(currPoint.Position, props.IsLeftButtonPressed, true);
-
-                _clickInfo.DownHandled = ev.Handled;
             }
         }
 
@@ -489,8 +481,6 @@ namespace Fmg.Uwp.Mosaic {
                         }
                     }, CoreDispatcherPriority.High);
                 }
-
-                _clickInfo.UpHandled = ev.Handled;
             }
         }
 
@@ -792,6 +782,10 @@ namespace Fmg.Uwp.Mosaic {
             return false;
         }
 
+        private void Vibrate() {
+            // TODO
+        }
+
         protected override void Disposing() {
             UnsubscribeToControl();
 
@@ -802,21 +796,17 @@ namespace Fmg.Uwp.Mosaic {
         }
 
 
-        class ClickInfo {
-            public BaseCell CellDown { get; set; }
-            public bool IsLeft { get; set; }
+        class LastClickInfo {
+            public PointerDeviceType deviceType;
+            public ClickResult clickResult;
+            public BaseCell CellDown => (clickResult == null) ? null : clickResult.CellDown;
             /// <summary> pressed or released </summary>
-            public bool Released { get; set; }
-            public bool DownHandled { get; set; }
-            public bool UpHandled { get; set; }
-            //public PointerDeviceType PointerDevice { get; set; }
+            public bool Released     => (clickResult == null) ? false : !clickResult.IsDown;
+            public bool Handled      => (clickResult != null) && clickResult.IsAnyChanges;
             public override string ToString() {
-                return "{ IsLeft=" + IsLeft
-                    + ", Released=" + Released
-                    + ", CellDown=" + (CellDown == null ? "null" : CellDown.ToString())
-                    + " }";
+                return "{ deviceType=" + deviceType
+                     + ", clickResult=" + clickResult + "}";
             }
-
         }
 
         private Tracer CreateTracer([System.Runtime.CompilerServices.CallerMemberName] string callerName = null, string ctorMessage = null, Func<string> disposeMessage = null) {

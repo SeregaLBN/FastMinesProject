@@ -4,21 +4,22 @@ import fmg.core.mosaic.cells.BaseCell;
 
 public class ClickResult extends ClickCellResult {
 
-    private final BaseCell cellDown;
-    private final boolean left, down;
+    public final BaseCell cellDown;
+    public final boolean isLeft;
+    public final boolean isDown;
 
     public ClickResult(BaseCell cellDown, boolean left, boolean down) {
         this.cellDown = cellDown;
-        this.left = left;
-        this.down = down;
+        this.isLeft = left;
+        this.isDown = down;
     }
 
-    public BaseCell getCellDown() { return cellDown; }
-
-    /** its left click */
-    public boolean isLeft() { return left; }
-
-    /** its down click */
-    public boolean isDown() { return down; }
+    @Override
+    protected String toStringInternal() {
+        return "cellDown=" + cellDown
+             + ", isLeft=" + isLeft
+             + ", isDown=" + isDown
+             + ", "  + super.toStringInternal();
+    }
 
 }

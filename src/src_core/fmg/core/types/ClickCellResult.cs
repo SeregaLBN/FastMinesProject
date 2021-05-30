@@ -48,6 +48,14 @@ namespace Fmg.Core.Types {
            .Where(x => x.State.Status == EState._Close)
            .Count(x => x.State.Close == EClose._Unknown);
 
+        public override string ToString() {
+            return "{ " + ToStringInternal() + " }";
+        }
+
+        protected virtual string ToStringInternal() {
+            return "Modified=" + (Modified == null ? "no" : "yes");
+        }
+
     }
 
 }

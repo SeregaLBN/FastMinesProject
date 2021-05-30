@@ -19,6 +19,13 @@ namespace Fmg.Core.Types {
         /// <summary> its down click </summary>
         public bool IsDown { get; }
 
+        protected override string ToStringInternal() {
+            return "CellDown=" + CellDown
+                 + ", IsLeft=" + IsLeft
+                 + ", IsDown=" + IsDown
+                 + ", " + base.ToStringInternal();
+        }
+
     }
 
 }

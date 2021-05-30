@@ -9,4 +9,6 @@
     <string name="mosaics">Mosaics</string>
     <string name="mosaic_groups">Groups</string>
     <string name="mosaic_skills">Skills</string>
+    <string name="mines_left">Mines left</string>
+    <string name="time_left">Time left</string>
 </resources>

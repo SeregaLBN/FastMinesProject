@@ -60,4 +60,13 @@ public class ClickCellResult {
             .count();
     }
 
+    @Override
+    public String toString() {
+        return "{ " + toStringInternal() + " }";
+    }
+
+    protected String toStringInternal() {
+        return "modified=" + (modified==null ? "no" : "yes" );
+    }
+
 }

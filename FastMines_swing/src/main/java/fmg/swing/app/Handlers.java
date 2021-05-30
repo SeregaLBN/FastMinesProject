@@ -183,9 +183,9 @@ public class Handlers {
         if (mosaicClickHandler == null)
             mosaicClickHandler = (clickResult) -> {
                 //Logger.info("OnMosaicClick: down=" + clickResult.isDown() + "; leftClick=" + clickResult.isLeft());
-                if (clickResult.isLeft() && (app.getMosaicController().getGameStatus() == EGameStatus.eGSPlay)) {
+                if (clickResult.isLeft && (app.getMosaicController().getGameStatus() == EGameStatus.eGSPlay)) {
                     Icon img = app.getToolbar().getSmileIco(
-                            clickResult.isDown() ?
+                            clickResult.isDown ?
                                 EBtnNewGameState.eNormalMosaic :
                                 EBtnNewGameState.eNormal);
                     if (img != null)
