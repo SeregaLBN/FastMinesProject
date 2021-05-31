@@ -2,10 +2,11 @@ package fmg.android.app;
 
 import android.content.Context;
 import android.os.Looper;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.filters.SmallTest;
-import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.SmallTest;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +32,7 @@ public class ExampleInstrumentedTest {
     @Test
     public void useAppContext() {
         // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getTargetContext();
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         Logger.info(">>>>>>>>>>>>>> appContext.PackageName={0}", appContext.getPackageName());
         assertTrue(appContext.getPackageName().startsWith("fmg.android.app"));
     }
@@ -48,7 +49,7 @@ public class ExampleInstrumentedTest {
 
         try (Timer t = new Timer()) {
             t.setInterval(100);
-            t.setCallback(() -> {
+            t.setCallback_(tmr -> {
                 ++fireCount[0];
                 Log.d(logTag, "  timer callback: fireCount=" + fireCount[0]);
                 assertTrue("Must be main UI thread!", Looper.getMainLooper().isCurrentThread());
