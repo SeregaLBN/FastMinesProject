@@ -93,7 +93,8 @@ namespace Fmg.Core.Mosaic {
                     throw new ArgumentException("Area must be positive");
                 if (value < MosaicInitData.AREA_MINIMUM)
                     Logger.Warn("The area is very small = " + value);
-                CellAttr.Area = Math.Max(MosaicInitData.AREA_MINIMUM, value);
+              //CellAttr.Area = Math.Max(MosaicInitData.AREA_MINIMUM, value);
+                CellAttr.Area = value;
             }
         }
 

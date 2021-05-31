@@ -95,7 +95,8 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
             throw new IllegalArgumentException("Area must be positive");
         if (area < MosaicInitData.AREA_MINIMUM)
             Logger.warn("The area is very small = " + area);
-        getCellAttr().setArea(Math.max(MosaicInitData.AREA_MINIMUM, area));
+      //getCellAttr().setArea(Math.max(MosaicInitData.AREA_MINIMUM, area));
+        getCellAttr().setArea(area);
     }
 
     @Override

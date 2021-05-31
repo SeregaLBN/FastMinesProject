@@ -179,10 +179,10 @@ namespace Fmg.Common.Notifier {
 
 #if DEBUG
         private static void makeError(string errorMesage, PropertyChangedEventHandler propertyChangedEventHandler) {
-            //if (!propertyChangedEventHandler.Target.ToString().Contains("Page_obj")) // etc.. Fmg.SelectMosaicPage+SelectMosaicPage_obj1_Bindings+SelectMosaicPage_obj1_BindingsTracking
-            if (!Regex.IsMatch(propertyChangedEventHandler.Target.ToString(), "^.+Page_obj\\d+_BindingsTracking$"))
+            var t = propertyChangedEventHandler.Target;
+            if ((t == null) || !Regex.IsMatch(t.ToString(), "^.+Page_obj\\d+_BindingsTracking$")) // etc.. Fmg.SelectMosaicPage+SelectMosaicPage_obj1_Bindings+SelectMosaicPage_obj1_BindingsTracking
                 throw new InvalidOperationException(errorMesage);
-            Logger.Info(errorMesage);
+            Logger.Warn(errorMesage);
         }
 #endif
 
