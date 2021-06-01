@@ -16,36 +16,38 @@ public class Animator implements IAnimator, AutoCloseable {
         public long    startTime = new Date().getTime(); // start time of subscribe
         public Consumer<Long /* time from the beginning of the subscription */> callback;
     }
-    private final ITimer _timer;
-    private final Map<Object /* subscriber */, SubscribeInfo> _subscribers;
+    /** one timer to all subscribers */
+    private final ITimer timer;
+    private final Map<Object /* subscriber */, SubscribeInfo> subscribers;
 
-    private static Animator _singleton;
+    private static Animator singleton;
     public static Animator getSingleton() { // not synchronized. since should work only in the thread of the UI.
-        if (_singleton == null)
-            _singleton = new Animator();
-        return _singleton;
+        if (singleton == null)
+            singleton = new Animator();
+        return singleton;
     }
 
     private Animator() {
-        _subscribers = new HashMap<>();
-        _timer = new Timer();
-        _timer.setInterval(1000/60); // The number of frames per second
-        _timer.setCallback(() -> {
+        subscribers = new HashMap<>();
+        timer = new Timer();
+        timer.setInterval(1000/60); // The number of frames per second
+        timer.setCallback(t -> {
             long currentTime = new Date().getTime();
-            _subscribers.forEach((k,v) -> {
+            subscribers.forEach((k, v) -> {
                 if (v.active)
                     v.callback.accept(currentTime - v.startTime);
             });
         });
+        timer.start();
     }
 
     @Override
-    public void subscribe(Object subscriber, Consumer<Long /* time from start subscribe */> subscriberCallbackMethod) {
-        SubscribeInfo info = _subscribers.get(subscriber);
+    public void subscribe(Object subscriber, Consumer<Long /* time from start subscribe */> subscriberCallback) {
+        SubscribeInfo info = subscribers.get(subscriber);
         if (info == null) {
             info = new SubscribeInfo();
-            info.callback = subscriberCallbackMethod;
-            _subscribers.put(subscriber, info);
+            info.callback = subscriberCallback;
+            subscribers.put(subscriber, info);
         } else {
             info.active = true;
             info.startTime = new Date().getTime() - info.startTime; // apply of pause delta time
@@ -54,7 +56,7 @@ public class Animator implements IAnimator, AutoCloseable {
 
     @Override
     public void pause(Object subscriber) {
-        SubscribeInfo info = _subscribers.get(subscriber);
+        SubscribeInfo info = subscribers.get(subscriber);
         if (info == null)
             return;
         info.active = false;
@@ -63,14 +65,13 @@ public class Animator implements IAnimator, AutoCloseable {
 
     @Override
     public void unsubscribe(Object subscriber) {
-        _subscribers.remove(subscriber);
+        subscribers.remove(subscriber);
     }
 
     @Override
     public void close() {
-        _timer.setCallback(null);
-        _timer.close();
-        _subscribers.clear();
+        timer.close();
+        subscribers.clear();
     }
 
 }

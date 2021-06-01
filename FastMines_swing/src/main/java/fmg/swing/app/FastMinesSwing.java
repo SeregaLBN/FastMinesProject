@@ -14,7 +14,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 import javax.swing.*;
-import javax.swing.Timer;
 
 import fmg.common.Color;
 import fmg.common.Pair;
@@ -46,6 +45,7 @@ import fmg.swing.mosaic.MosaicJPanelController;
 import fmg.swing.utils.Cast;
 import fmg.swing.utils.ProjSettings;
 import fmg.swing.utils.ScreenResolutionHelper;
+import fmg.swing.utils.Timer;
 
 /** Main window (Главное окно программы)
  * <p>run from command line
@@ -531,12 +531,12 @@ public class FastMinesSwing {
         getToolbar().getBtnPause().getButton().setSelected(!paused);
         getPausePanel().animateLogo(!paused);
         if (paused) {
-            getTimerGame().restart();
+            getGameTimer().start();
 
             getMosaicPanel().setVisible(true);
             getMosaicPanel().requestFocusInWindow();
         } else {
-            getTimerGame().stop();
+            getGameTimer().pause();
 
             getMosaicPanel().setVisible(false);
             frame.getRootPane().requestFocusInWindow(); // ! иначе на компонентах нат фокуса, и mouse wheel не пашет...
@@ -608,6 +608,7 @@ public class FastMinesSwing {
         logo.removeListener(onLogoMainIconPropertyChangedListener);
         logo.close();
 
+        getGameTimer().close();
 
         frame.removeWindowListener     (this.getHandlers().getWindowListener());
         frame.removeWindowStateListener(this.getHandlers().getWindowStateListener());
@@ -1013,9 +1014,12 @@ public class FastMinesSwing {
         return src instanceof JMenuItem;
     }
 
-    Timer getTimerGame() {
-        if (timerGame == null)
-            timerGame = new Timer(1000, getHandlers().getTimePlayAction());
+    private Timer getGameTimer() {
+        if (timerGame == null) {
+            timerGame = new Timer();
+            timerGame.setInterval(1000);
+            timerGame.setCallback(getHandlers().getTimePlayAction());
+        }
         return timerGame;
     }
 
@@ -1166,7 +1170,8 @@ public class FastMinesSwing {
                 case eGSCreateGame:
                 case eGSReady:
                     {
-                        getTimerGame().stop();
+                        getGameTimer().restart();
+                        getGameTimer().pause();
                         getToolbar().getEdtTimePlay().setText("0");
                         Icon img = getToolbar().getSmileIco(EBtnNewGameState.eNormal);
                         if (img != null)
@@ -1175,12 +1180,12 @@ public class FastMinesSwing {
                     break;
                 case eGSPlay:
                     {
-                        getTimerGame().restart();
+                        getGameTimer().restart();
                     }
                     break;
                 case eGSEnd:
                     {
-                        getTimerGame().stop();
+                        getGameTimer().pause();
                         Icon img = getToolbar().getSmileIco(
                             getMosaicController().isVictory() ?
                                 EBtnNewGameState.eNormalWin :

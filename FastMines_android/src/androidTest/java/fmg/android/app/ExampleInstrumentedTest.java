@@ -49,11 +49,12 @@ public class ExampleInstrumentedTest {
 
         try (Timer t = new Timer()) {
             t.setInterval(100);
-            t.setCallback_(tmr -> {
+            t.setCallback(tmr -> {
                 ++fireCount[0];
                 Log.d(logTag, "  timer callback: fireCount=" + fireCount[0]);
                 assertTrue("Must be main UI thread!", Looper.getMainLooper().isCurrentThread());
             });
+            t.start();
 
             new CountDownLatch(1).await(1, TimeUnit.SECONDS);
         }

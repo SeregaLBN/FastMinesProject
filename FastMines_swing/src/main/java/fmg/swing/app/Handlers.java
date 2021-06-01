@@ -12,6 +12,7 @@ import javax.swing.SwingUtilities;
 
 import fmg.common.Logger;
 import fmg.common.geom.Matrisize;
+import fmg.common.ui.ITimer;
 import fmg.core.types.ClickResult;
 import fmg.core.types.EGameStatus;
 import fmg.core.types.EMosaicGroup;
@@ -388,19 +389,15 @@ public class Handlers {
         return usePauseAction;
     }
 
-    private Action timePlayAction;
-    public Action getTimePlayAction() {
+    private Consumer<ITimer> timePlayAction;
+    public Consumer<ITimer> getTimePlayAction() {
         if (timePlayAction == null)
-            timePlayAction = new AbstractAction() {
-                private static final long serialVersionUID = 1L;
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    try {
-                        int val = Integer.parseInt(app.getToolbar().getEdtTimePlay().getText());
-                        app.getToolbar().getEdtTimePlay().setText(Integer.toString(++val));
-                    } catch (Exception ex) {
-                        Logger.error("Handlers::getTimePlayAction", ex);
-                    }
+            timePlayAction = timer -> {
+                try {
+                    long timeInSeconds = timer.getTime() / 1000;
+                    app.getToolbar().getEdtTimePlay().setText(Long.toString(timeInSeconds));
+                } catch (Exception ex) {
+                    Logger.error("Handlers::getTimePlayAction", ex);
                 }
             };
 
