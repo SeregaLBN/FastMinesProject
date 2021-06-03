@@ -27,7 +27,7 @@ namespace Fmg.Uwp.Img {
             _subscribers = new Dictionary<object, SubscribeInfo>();
             _timer = new Timer {
                 Interval = (1000 / 60), // The number of frames per second
-                Callback = () => {
+                Callback = t => {
                     var currentTime = DateTime.Now;
                     foreach (var kv in _subscribers) {
                         if (kv.Value.active)
@@ -35,6 +35,7 @@ namespace Fmg.Uwp.Img {
                     }
                 }
             };
+            _timer.Start();
         }
 
         public void Subscribe(object subscriber, Action<TimeSpan /* time from start subscribe */> subscriberCallbackMethod) {

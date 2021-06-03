@@ -8,8 +8,18 @@ namespace Fmg.Common.UI {
         /// <summary> in miliseconds </summary>
         long Interval { get; set; }
 
-        /// <summary> set null - stop timer; otherwise - started </summary>
-        Action Callback { set; }
+        /// <summary> set timer callback </summary>
+        Action<ITimer> Callback { set; }
+
+        /// <summary> start / continue timer </summary>
+        void Start();
+        /// <summary> stop timer, without reset </summary>
+        void Pause();
+        /// <summary> reset timer </summary>
+        void Restart();
+
+        /// <summary> total time in milliseconds  after first start / restart </summary>
+        long Time { get; }
 
     }
 

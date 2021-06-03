@@ -8,7 +8,10 @@ namespace Fmg.Uwp.Utils {
 
         private DispatcherTimer _timer;
         private long _interval = 200;
-        private Action _callback;
+        private Action<ITimer> _callback;
+        private bool _paused = true;
+        /// <summary> if played: it`s start time; if paused: time offset </summary>
+        private long _started;
 
         /// <summary> in miliseconds </summary>
         public long Interval {
@@ -20,24 +23,47 @@ namespace Fmg.Uwp.Utils {
             }
         }
 
-        private void OnTick(object sender, object e) {
-            _callback?.Invoke();
+        private void OnTick(object sender, object ev) {
+            _callback?.Invoke(this);
         }
 
-        /// <summary> set null - stop timer; otherwise - started </summary>
-        public Action Callback {
-            set {
-                if (ReferenceEquals(value, _callback))
-                    return;
+        public Action<ITimer> Callback { set { _callback = value; } }
 
-                Clean();
-                if (value == null)
-                    return;
+        public void Start() {
+            if (!_paused)
+                return;
 
-                _callback = value;
+            _paused = false;
+            _started = DateTimeOffset.Now.ToUnixTimeMilliseconds() - _started; // apply of pause delta time
+
+            if (_timer == null) {
                 _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(Interval) };
                 _timer.Tick += OnTick;
-                _timer.Start();
+            }
+            _timer.Start();
+        }
+
+        public void Pause() {
+            if (_paused)
+                return;
+
+            _paused = true;
+            _started = DateTimeOffset.Now.ToUnixTimeMilliseconds() - _started; // set of pause delta time
+            if (_timer != null)
+                _timer.Stop();
+        }
+
+        public void Restart() {
+            Pause();
+            _started = 0;
+            Start();
+        }
+
+        public long Time {
+            get {
+                if (_paused)
+                    return _started;
+                return DateTimeOffset.Now.ToUnixTimeMilliseconds() - _started;
             }
         }
 
