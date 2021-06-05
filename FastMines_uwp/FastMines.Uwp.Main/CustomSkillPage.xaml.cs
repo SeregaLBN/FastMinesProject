@@ -60,7 +60,7 @@ namespace Fmg {
 
             SliderWidth .Value = InitData.SizeField.m;
             SliderHeight.Value = InitData.SizeField.n;
-            SliderMines .Value = InitData.MinesCount;
+            SliderMines .Value = InitData.CountMines;
             CheckSkillSizeRadioButtons();
             CheckSkillMinesRadioButtons();
         }
@@ -108,7 +108,7 @@ namespace Fmg {
                 CalcSliderMinesMax();
                 CheckSkillMinesRadioButtons();
                 break;
-            case nameof(InitData.MinesCount):
+            case nameof(InitData.CountMines):
                 CheckSkillMinesRadioButtons();
                 break;
             }
@@ -158,7 +158,7 @@ namespace Fmg {
             System.Diagnostics.Debug.Assert(sender is RadioButton);
             var rb = (RadioButton)sender;
             var skillLevel = ESkillLevelEx.FromOrdinal(Convert.ToInt32(rb.Tag.ToString()));
-            InitData.MinesCount = skillLevel.GetNumberMines(InitData.MosaicType, InitData.SizeField);
+            InitData.CountMines = skillLevel.GetNumberMines(InitData.MosaicType, InitData.SizeField);
         }
 
         private void OnRadioButtonSkillSizeChecked(object sender, RoutedEventArgs ev) {
@@ -177,7 +177,7 @@ namespace Fmg {
         }
 
         private void CheckSkillMinesRadioButtons() {
-            var mines = InitData.MinesCount;
+            var mines = InitData.CountMines;
             var type  = InitData.MosaicType;
             var size  = InitData.SizeField;
             rbMinesBeginner    .IsChecked = (mines == ESkillLevel.eBeginner.GetNumberMines(type, size));

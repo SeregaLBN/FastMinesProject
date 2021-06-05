@@ -262,7 +262,7 @@ public class CustomSkillDlg implements AutoCloseable {
     }
 
     private void recalcModelValueMines() {
-        int minesCurr = (app == null) ? 15 : app.getMosaicController().getMinesCount();
+        int minesCurr = (app == null) ? 15 : app.getMosaicController().getCountMines();
         int minesMin = 1;
         int minesMax = (Integer)spinX.getValue() * (Integer)spinY.getValue() - getNeighborNumber();
 //        // recheck

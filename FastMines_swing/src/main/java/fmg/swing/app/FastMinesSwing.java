@@ -276,7 +276,7 @@ public class FastMinesSwing {
             mosaicCtrllr = getMosaicController();
             mosaicCtrllr.setSizeField(spm.getSizeField());
             mosaicCtrllr.setMosaicType(spm.getMosaicType());
-            mosaicCtrllr.setMinesCount(spm.getMinesCount());
+            mosaicCtrllr.setCountMines(spm.getCountMines());
             mosaicCtrllr.getModel().setSize(spm.getSizeMosaic());
 
             setActiveUserId(spm.getActiveUserId());
@@ -413,7 +413,7 @@ public class FastMinesSwing {
     public ESkillLevel getSkillLevel() {
         EMosaic eMosaic = getMosaicController().getMosaicType();
         Matrisize sizeFld = getMosaicController().getSizeField();
-        int numberMines = getMosaicController().getMinesCount();
+        int numberMines = getMosaicController().getCountMines();
 
         if (sizeFld.equals(ESkillLevel.eBeginner.getDefaultSize()) && (numberMines == ESkillLevel.eBeginner.getNumberMines(eMosaic)))
             return ESkillLevel.eBeginner;
@@ -568,7 +568,7 @@ public class FastMinesSwing {
 
             spm.setSizeField(getMosaicController().getSizeField());
             spm.setMosaicType(getMosaicController().getMosaicType());
-            spm.setMinesCount(getMosaicController().getMinesCount());
+            spm.setCountMines(getMosaicController().getCountMines());
             spm.setSizeMosaic(getMosaicController().getSize());
 
             spm.setActiveUserId(getActiveUserId());
@@ -638,7 +638,7 @@ public class FastMinesSwing {
         ESkillLevel skill = getSkillLevel();
         changeGame(newSize,
                     (skill == ESkillLevel.eCustom)
-                        ? getMosaicController().getMinesCount()
+                        ? getMosaicController().getCountMines()
                         : skill.getNumberMines(getMosaicController().getMosaicType()));
     }
 
@@ -651,7 +651,7 @@ public class FastMinesSwing {
         getMosaicController().setMosaicType(mosaicType);
         if (skill != ESkillLevel.eCustom) {
             int numberMines = skill.getNumberMines(mosaicType);
-            getMosaicController().setMinesCount(numberMines);
+            getMosaicController().setCountMines(numberMines);
         }
     }
 
@@ -670,7 +670,7 @@ public class FastMinesSwing {
             changePause();
 
         getMosaicController().setSizeField(newSize);
-        getMosaicController().setMinesCount(numberMines);
+        getMosaicController().setCountMines(numberMines);
     }
 
     /** Поменять игру на новый уровень сложности */
@@ -690,7 +690,7 @@ public class FastMinesSwing {
         double oldArea = ctrlr.getModel().getArea();
 
         ctrlr.setSizeField(sizeFld);
-        ctrlr.setMinesCount(numberMines);
+        ctrlr.setCountMines(numberMines);
 
         SizeDouble newSize = MosaicHelper.getSize(ctrlr.getMosaicType(), oldArea, sizeFld);
         setMosaicSize(newSize);
@@ -1090,7 +1090,7 @@ public class FastMinesSwing {
             return;
 
         final EMosaic eMosaic = mosaicCtrllr.getMosaicType();
-        final long realCountOpen = mosaicCtrllr.isVictory() ? mosaicCtrllr.getMinesCount() : mosaicCtrllr.getCountOpen();
+        final long realCountOpen = mosaicCtrllr.isVictory() ? mosaicCtrllr.getCountMines() : mosaicCtrllr.getCountOpen();
         final long playTime = Long.parseLong(getToolbar().getEdtTimePlay().getText());
         final long clickCount = mosaicCtrllr.getCountClick();
 
@@ -1158,7 +1158,7 @@ public class FastMinesSwing {
 //        Logger.info("Main::propertyChange: eventName=" + ev.getSource().getClass().getSimpleName() + "." + ev.getPropertyName());
 //        MosaicControllerSwing source = (MosaicControllerSwing)ev.getSource();
         switch (ev.getPropertyName()) {
-        case MosaicController.PROPERTY_MINES_COUNT:
+        case MosaicController.PROPERTY_COUNT_MINES:
             getMenu().getMosaics().recheckSelectedMosaicType();
             getMenu().getGame().recheckSelectedSkillLevel();
             break;
@@ -1170,8 +1170,7 @@ public class FastMinesSwing {
                 case eGSCreateGame:
                 case eGSReady:
                     {
-                        getGameTimer().restart();
-                        getGameTimer().pause();
+                        getGameTimer().reset();
                         getToolbar().getEdtTimePlay().setText("0");
                         Icon img = getToolbar().getSmileIco(EBtnNewGameState.eNormal);
                         if (img != null)
@@ -1180,7 +1179,7 @@ public class FastMinesSwing {
                     break;
                 case eGSPlay:
                     {
-                        getGameTimer().restart();
+                        getGameTimer().start();
                     }
                     break;
                 case eGSEnd:

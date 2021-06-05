@@ -7,7 +7,9 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 using Microsoft.Graphics.Canvas;
 using Fmg.Common;
+using Fmg.Common.UI;
 using Fmg.Common.Geom;
+using Fmg.Common.Notifier;
 using Fmg.Core.Types;
 using Fmg.Core.Mosaic;
 using Fmg.Uwp.Utils;
@@ -35,6 +37,7 @@ namespace Fmg {
     public sealed partial class MosaicPage : Page, INotifyPropertyChanged {
 
         private IMosaicController _mosaicController;
+        private ITimer GameTimer { get; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -74,6 +77,11 @@ namespace Fmg {
         public MosaicPage() {
             this.InitializeComponent();
 
+            GameTimer = new Timer() {
+                Interval = 1000,
+                Callback = OnTimerCallback
+            };
+
             this.Loaded += OnPageLoaded;
             this.Unloaded += OnPageUnloaded;
             this.SizeChanged += OnPageSizeChanged;
@@ -88,7 +96,7 @@ namespace Fmg {
                 AsyncRunner.InvokeFromUiLater(() => {
                     MosaicController.SizeField = new Matrisize(10, 10);
                     MosaicController.MosaicType = EMosaic.eMosaicRhombus1;
-                    MosaicController.MinesCount = 3;
+                    MosaicController.CountMines = 3;
                 }, CoreDispatcherPriority.High);
             }
         }
@@ -100,11 +108,27 @@ namespace Fmg {
             var initParam = ev.Parameter as MosaicInitData;
             MosaicController.SizeField  = initParam.SizeField;
             MosaicController.MosaicType = initParam.MosaicType;
-            MosaicController.MinesCount = initParam.MinesCount;
+            MosaicController.CountMines = initParam.CountMines;
         }
 
         private void OnMosaicControllerPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             switch (ev.PropertyName) {
+            case nameof(MosaicControllerType.GameStatus):
+                var timer = GameTimer;
+                switch (((PropertyChangedExEventArgs<EGameStatus>)ev).NewValue) {
+                case EGameStatus.eGSCreateGame:
+                case EGameStatus.eGSReady:
+                    timer.Reset();
+                    break;
+                case EGameStatus.eGSPlay:
+                    timer.Start();
+                    break;
+                case EGameStatus.eGSEnd:
+                    timer.Pause();
+                    break;
+                }
+                OnTimerCallback(timer); // reload UI
+                break;
             case nameof(MosaicControllerType.CountMinesLeft):
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MinesLeft)));
                 break;
@@ -136,6 +160,7 @@ namespace Fmg {
             _canvasSwapChainPanel = null;
 
             //Bindings.StopTracking();
+            GameTimer.Dispose();
         }
 
         protected override void OnPointerPressed(PointerRoutedEventArgs ev) {
@@ -200,7 +225,7 @@ namespace Fmg {
 
             var model = MosaicController.Model;
             model.SizeField = skill.GetDefaultSize();
-            MosaicController.MinesCount = skill.GetNumberMines(model.MosaicType);
+            MosaicController.CountMines = skill.GetNumberMines(model.MosaicType);
         }
 
         private void OnClickBttnSkillBeginner(object sender, RoutedEventArgs ev) {
@@ -215,6 +240,9 @@ namespace Fmg {
         private void OnClickBttnSkillCrazy(object sender, RoutedEventArgs ev) {
             ChangeGame(ESkillLevel.eCrazy);
         }
+        private void OnTimerCallback(ITimer timer) {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimeLeft)));
+        }
 
         private string GetCallerName([System.Runtime.CompilerServices.CallerMemberName] string callerName = null) {
             return callerName;
@@ -227,18 +255,14 @@ namespace Fmg {
             return new Tracer(typeName + "." + callerName, ctorMessage, disposeMessage);
         }
 
-        private int MinesLeft {
+        private int MinesLeft => _mosaicController.CountMinesLeft;
+
+        private string TimeLeft {
             get {
-                if (_mosaicController is MosaicCanvasSwapChainPanelController a)
-                    return a.CountMinesLeft;
+                if (_mosaicController.GameStatus == EGameStatus.eGSEnd)
+                    return (GameTimer.Time / 1000.0).ToString(); // show time as float (with milliseconds)
 
-                if (_mosaicController is MosaicCanvasVirtualControlController b)
-                    return b.CountMinesLeft;
-
-                if (_mosaicController is MosaicXamlController c)
-                    return c.CountMinesLeft;
-
-                return -1;
+                return (GameTimer.Time / 1000).ToString();       // show time as int (only seconds)
             }
         }
 

@@ -14,18 +14,26 @@ import fmg.android.app.databinding.MosaicActivityBinding;
 import fmg.android.app.model.SharedData;
 import fmg.android.app.presentation.MosaicViewModel;
 import fmg.android.mosaic.MosaicViewController;
+import fmg.android.utils.Timer;
 import fmg.common.Logger;
+import fmg.core.mosaic.MosaicController;
 import fmg.core.mosaic.MosaicGameModel;
 import fmg.core.mosaic.MosaicInitData;
+import fmg.core.types.EGameStatus;
 
 /** Game field activity of the project */
 public class MosaicActivity extends AppCompatActivity {
 
     private MosaicActivityBinding binding;
     private MosaicViewModel viewModel;
+    private Timer timer;
     private final PropertyChangeListener onMosaicControllerPropertyChangedListener = this::onMosaicControllerPropertyChanged;
 
     public MosaicInitData getInitData() { return SharedData.getMosaicInitData(); }
+
+    public MosaicActivity() {
+        Logger.info("MosaicActivity.ctor: this.hash={0}", this.hashCode());
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +47,12 @@ public class MosaicActivity extends AppCompatActivity {
         viewModel = ViewModelProviders
                 .of(this)
                 .get(MosaicViewModel.class);
+
+        timer = new Timer();
+        timer.setOffset(viewModel.getTime());
+        timer.setInterval(1000);
+        timer.setCallback(viewModel::onTimerCallback);
+
         MosaicViewController ctrl = viewModel.getMosaicController();
         ctrl.setBindSizeDirection(false);
         ctrl.setExtendedManipulation(true);
@@ -52,7 +66,7 @@ public class MosaicActivity extends AppCompatActivity {
         MosaicGameModel model = controller.getModel();
         model.setMosaicType(initData.getMosaicType());
         model.setSizeField(initData.getSizeField());
-        controller.setMinesCount(initData.getMinesCount());
+        controller.setCountMines(initData.getCountMines());
     }
 
     /** Mosaic controller */
@@ -85,6 +99,9 @@ public class MosaicActivity extends AppCompatActivity {
         super.onResume();
         getMosaicController().setViewControl(binding.mosaicView);
         getMosaicController().addListener(onMosaicControllerPropertyChangedListener);
+        viewModel.onTimerCallback(timer);
+        if (getMosaicController().getGameStatus() == EGameStatus.eGSPlay)
+            timer.start();
     }
 
     @Override
@@ -93,6 +110,7 @@ public class MosaicActivity extends AppCompatActivity {
         super.onPause();
         getMosaicController().removeListener(onMosaicControllerPropertyChangedListener);
         getMosaicController().setViewControl(null);
+        timer.pause();
     }
 
     @Override
@@ -106,9 +124,27 @@ public class MosaicActivity extends AppCompatActivity {
         Logger.info("MosaicActivity.onDestroy: this.hash={0}", this.hashCode());
         super.onDestroy();
         //getMosaicController().close();
+        timer.close();
     }
 
     private void onMosaicControllerPropertyChanged(PropertyChangeEvent ev) {
+        switch (ev.getPropertyName()) {
+        case MosaicController.PROPERTY_GAME_STATUS:
+            switch ((EGameStatus)ev.getNewValue()) {
+            case eGSCreateGame:
+            case eGSReady:
+                timer.reset();
+                break;
+            case eGSPlay:
+                timer.start();
+                break;
+            case eGSEnd:
+                timer.pause();
+                break;
+            }
+            viewModel.onTimerCallback(timer); // reload UI
+            break;
+        }
     }
 
 }

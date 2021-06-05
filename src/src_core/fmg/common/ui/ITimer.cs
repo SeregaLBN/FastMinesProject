@@ -16,9 +16,9 @@ namespace Fmg.Common.UI {
         /// <summary> stop timer, without reset </summary>
         void Pause();
         /// <summary> reset timer </summary>
-        void Restart();
+        void Reset();
 
-        /// <summary> total time in milliseconds  after first start / restart </summary>
+        /// <summary> total time in milliseconds after first start / restart </summary>
         long Time { get; }
 
     }

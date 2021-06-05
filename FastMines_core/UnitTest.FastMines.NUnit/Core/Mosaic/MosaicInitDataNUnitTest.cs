@@ -44,8 +44,8 @@ namespace Fmg.Core.Mosaic {
         }
 
         [Test]
-        public override async Task CheckIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest() {
-            await base.CheckIfMosaicTypeIsChangedThenMinesCountWillAlsoBeChangedTest();
+        public override async Task CheckIfMosaicTypeIsChangedThenCountMinesWillAlsoBeChangedTest() {
+            await base.CheckIfMosaicTypeIsChangedThenCountMinesWillAlsoBeChangedTest();
         }
 
         [Test]

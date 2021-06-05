@@ -10,7 +10,11 @@ import java.text.SimpleDateFormat;
 
 import fmg.android.app.BR;
 import fmg.android.mosaic.MosaicViewController;
+import fmg.android.utils.Timer;
+import fmg.common.Logger;
+import fmg.common.ui.ITimer;
 import fmg.core.mosaic.MosaicController;
+import fmg.core.types.EGameStatus;
 
 /** ViewModel for {@link fmg.android.app.MosaicActivity} */
 public class MosaicViewModel extends ViewModel {
@@ -20,7 +24,8 @@ public class MosaicViewModel extends ViewModel {
 
     private final MosaicViewController mosaicController;
     private final TopPanel topPanel;
-    private final PropertyChangeListener onMosaicControllerPropertyChangedListener = this::onMosaicControllerPropertyChanged;
+    private final transient PropertyChangeListener onMosaicControllerPropertyChangedListener = this::onMosaicControllerPropertyChanged;
+    private long time;
 
     public MosaicViewModel() {
         mosaicController = new MosaicViewController(null);
@@ -38,6 +43,7 @@ public class MosaicViewModel extends ViewModel {
 
     @Override
     protected void onCleared() {
+        Logger.info("MosaicViewModel::onCleared");
         //mosaicController.close();
         mosaicController.removeListener(onMosaicControllerPropertyChangedListener);
     }
@@ -51,6 +57,17 @@ public class MosaicViewModel extends ViewModel {
         }
     }
 
+    public long getTime() {
+        return time;
+    }
+
+    public void onTimerCallback(ITimer timer) {
+        // save
+        this.time = timer.getTime();
+        // reload UI
+        topPanel.notifyPropertyChanged(BR.timeLeft);
+    }
+
     public class TopPanel extends BaseObservable {
 
         @Bindable
@@ -60,7 +77,10 @@ public class MosaicViewModel extends ViewModel {
 
         @Bindable
         public String getTimeLeft() {
-            return "???";//String.valueOf(minesLeft);
+            if (mosaicController.getGameStatus() == EGameStatus.eGSEnd)
+                return String.valueOf(time / 1000.0); // show time as float (with milliseconds)
+
+            return String.valueOf(time / 1000);       // show time as int (only seconds)
         }
     }
 

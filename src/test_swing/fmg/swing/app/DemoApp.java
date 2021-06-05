@@ -63,7 +63,7 @@ public class DemoApp  {
 
                 mosaicController.setMosaicType(mosaicType);
                 mosaicController.setSizeField(skill.getDefaultSize());
-                mosaicController.setMinesCount(skill.getNumberMines(mosaicType));
+                mosaicController.setCountMines(skill.getNumberMines(mosaicType));
                 mosaicController.gameNew();
             }
             return Stream.of(mosaicController);

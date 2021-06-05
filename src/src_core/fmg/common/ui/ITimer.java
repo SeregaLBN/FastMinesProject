@@ -18,9 +18,9 @@ public interface ITimer extends AutoCloseable {
     /** stop timer, without reset */
     void pause();
     /** reset timer */
-    void restart();
+    void reset();
 
-    /** total time in milliseconds  after first start / restart */
+    /** total time in milliseconds after first start / restart */
     long getTime();
 
     @Override

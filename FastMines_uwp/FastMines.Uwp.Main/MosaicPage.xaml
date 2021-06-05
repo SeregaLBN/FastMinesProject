@@ -32,7 +32,8 @@
                        FontSize="25"
                        VerticalAlignment="Top"
                        HorizontalAlignment="Right"
-                       Text="0" ToolTipService.ToolTip="Time left" />
+                       Text="{x:Bind TimeLeft, Mode=OneWay}"
+                       ToolTipService.ToolTip="Time left" />
         </Grid>
 
     </Grid>

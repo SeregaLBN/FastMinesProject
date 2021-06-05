@@ -23,7 +23,7 @@ public final class SharedData {
     private static final String KEY__MOSAIC_INIT_DATA__SIZE_FIELD_M = "MosaicInitData.sizeField.M";
     private static final String KEY__MOSAIC_INIT_DATA__SIZE_FIELD_N = "MosaicInitData.sizeField.N";
     private static final String KEY__MOSAIC_INIT_DATA__MOSAIC_TYPE  = "MosaicInitData.mosaicType";
-    private static final String KEY__MOSAIC_INIT_DATA__MINES_COUNT  = "MosaicInitData.minesCount";
+    private static final String KEY__MOSAIC_INIT_DATA__COUNT_MINES  = "MosaicInitData.countMines";
     private static final String KEY__MENU_SETTINGS__SPLIT_PANE_OPEN = "MenuSettings.splitPaneOpen";
 
     public static MosaicInitData loadMosaicInitData(Bundle from) {
@@ -32,7 +32,7 @@ public final class SharedData {
             newData.setSizeField(new Matrisize(       from.getInt(KEY__MOSAIC_INIT_DATA__SIZE_FIELD_M),
                                                       from.getInt(KEY__MOSAIC_INIT_DATA__SIZE_FIELD_N)));
             newData.setMosaicType(EMosaic.fromOrdinal(from.getInt(KEY__MOSAIC_INIT_DATA__MOSAIC_TYPE)));
-            newData.setMinesCount(                    from.getInt(KEY__MOSAIC_INIT_DATA__MINES_COUNT));
+            newData.setCountMines(                    from.getInt(KEY__MOSAIC_INIT_DATA__COUNT_MINES));
         } catch(Exception ex) {
             newData = new MosaicInitData(); // reset
             Log.e("fmg", "Can not read mosaic init data from Bundle", ex);
@@ -43,8 +43,8 @@ public final class SharedData {
     public static void save(Bundle to, MosaicInitData initData) {
         to.putInt(KEY__MOSAIC_INIT_DATA__SIZE_FIELD_M, initData.getSizeField().m);
         to.putInt(KEY__MOSAIC_INIT_DATA__SIZE_FIELD_N, initData.getSizeField().n);
-        to.putInt(KEY__MOSAIC_INIT_DATA__MOSAIC_TYPE, initData.getMosaicType().ordinal());
-        to.putInt(KEY__MOSAIC_INIT_DATA__MINES_COUNT, initData.getMinesCount());
+        to.putInt(KEY__MOSAIC_INIT_DATA__MOSAIC_TYPE , initData.getMosaicType().ordinal());
+        to.putInt(KEY__MOSAIC_INIT_DATA__COUNT_MINES , initData.getCountMines());
     }
 
 
@@ -53,8 +53,8 @@ public final class SharedData {
         if (from != null) try {
             newData.setSizeField(new Matrisize(       from.getInt(KEY__MOSAIC_INIT_DATA__SIZE_FIELD_M, MosaicInitData.DEFAULT_SIZE_FIELD_M),
                                                       from.getInt(KEY__MOSAIC_INIT_DATA__SIZE_FIELD_N, MosaicInitData.DEFAULT_SIZE_FIELD_M)));
-            newData.setMosaicType(EMosaic.fromOrdinal(from.getInt(KEY__MOSAIC_INIT_DATA__MOSAIC_TYPE, MosaicInitData.DEFAULT_MOSAIC_TYPE.ordinal())));
-            newData.setMinesCount(                    from.getInt(KEY__MOSAIC_INIT_DATA__MINES_COUNT, MosaicInitData.DEFAULT_MINES_COUNT));
+            newData.setMosaicType(EMosaic.fromOrdinal(from.getInt(KEY__MOSAIC_INIT_DATA__MOSAIC_TYPE , MosaicInitData.DEFAULT_MOSAIC_TYPE.ordinal())));
+            newData.setCountMines(                    from.getInt(KEY__MOSAIC_INIT_DATA__COUNT_MINES , MosaicInitData.DEFAULT_COUNT_MINES));
         } catch(Exception ex) {
             newData = new MosaicInitData(); // reset
             Log.e("fmg", "Can not read mosaic init data from SharedPreferences", ex);
@@ -67,7 +67,7 @@ public final class SharedData {
         editor.putInt(KEY__MOSAIC_INIT_DATA__SIZE_FIELD_M, mosaicInitData.getSizeField().m);
         editor.putInt(KEY__MOSAIC_INIT_DATA__SIZE_FIELD_N, mosaicInitData.getSizeField().n);
         editor.putInt(KEY__MOSAIC_INIT_DATA__MOSAIC_TYPE , mosaicInitData.getMosaicType().ordinal());
-        editor.putInt(KEY__MOSAIC_INIT_DATA__MINES_COUNT , mosaicInitData.getMinesCount());
+        editor.putInt(KEY__MOSAIC_INIT_DATA__COUNT_MINES , mosaicInitData.getCountMines());
         editor.commit();
     }
 

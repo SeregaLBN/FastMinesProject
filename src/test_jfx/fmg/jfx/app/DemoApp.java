@@ -79,7 +79,7 @@ public final class DemoApp extends Application {
 
                 ctrllr.setMosaicType(mosaicType);
                 ctrllr.setSizeField(skill.getDefaultSize());
-                ctrllr.setMinesCount(skill.getNumberMines(mosaicType));
+                ctrllr.setCountMines(skill.getNumberMines(mosaicType));
                 ctrllr.gameNew();
             }
             return Stream.of(ctrllr);

@@ -151,8 +151,8 @@ public class SerializeProjData implements Externalizable {
     public EMosaic getMosaicType() { return mosaicData.getMosaicType(); }
     public void setMosaicType(EMosaic mosaicType) { mosaicData.setMosaicType(mosaicType); }
 
-    public int getMinesCount() { return mosaicData.getMinesCount(); }
-    public void setMinesCount(int minesCount) { mosaicData.setMinesCount(minesCount); }
+    public int getCountMines() { return mosaicData.getCountMines(); }
+    public void setCountMines(int countMines) { mosaicData.setCountMines(countMines); }
 
     public SizeDouble getSizeMosaic() { return new SizeDouble(sizeMosaicWidth, sizeMosaicHeight); }
     public void setSizeMosaic(SizeDouble size) {

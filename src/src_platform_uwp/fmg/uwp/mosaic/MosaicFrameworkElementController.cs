@@ -742,7 +742,7 @@ namespace Fmg.Uwp.Mosaic {
 
             void setSkillLevel(ESkillLevel skill) {
                 Model.SizeField = skill.GetDefaultSize();
-                MinesCount = skill.GetNumberMines(Model.MosaicType);
+                CountMines = skill.GetNumberMines(Model.MosaicType);
             }
 
             switch (ev.Key) {

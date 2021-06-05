@@ -20,7 +20,7 @@ public class SerializeMosaicData extends MosaicInitData implements Externalizabl
         out.writeInt(getMosaicType().getIndex());
         out.writeInt(getSizeField().m);
         out.writeInt(getSizeField().n);
-        out.writeInt(getMinesCount());
+        out.writeInt(getCountMines());
     }
 
     @Override
@@ -31,12 +31,12 @@ public class SerializeMosaicData extends MosaicInitData implements Externalizabl
             in.readLong(); // old area value
             setMosaicType(EMosaic.fromIndex(in.readInt()));
             setSizeField(new Matrisize(in.readInt(), in.readInt()));
-            setMinesCount(in.readInt());
+            setCountMines(in.readInt());
             break;
         case (int)VERSION:
             setMosaicType(EMosaic.fromIndex(in.readInt()));
             setSizeField(new Matrisize(in.readInt(), in.readInt()));
-            setMinesCount(in.readInt());
+            setCountMines(in.readInt());
             break;
         default:
             throw new IllegalArgumentException("Unknown version #" + ver);

@@ -19,7 +19,7 @@ namespace Fmg.Uwp.App.Model {
         private static readonly string KEY__MOSAIC_INIT_DATA__SIZE_FIELD_M = nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.m);
         private static readonly string KEY__MOSAIC_INIT_DATA__SIZE_FIELD_N = nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.n);
         private const           string KEY__MOSAIC_INIT_DATA__MOSAIC_TYPE  = nameof(MosaicInitData.MosaicType);
-        private const           string KEY__MOSAIC_INIT_DATA__MINES_COUNT  = nameof(MosaicInitData.MinesCount);
+        private const           string KEY__MOSAIC_INIT_DATA__COUNT_MINES = nameof(MosaicInitData.CountMines);
         private static readonly string KEY__MENU_SETTINGS__SECTION         = nameof(MenuSettings);
         private static readonly string KEY__MENU_SETTINGS__SPLIT_PANE_OPEN = nameof(MenuSettings) + '.' + nameof(MenuSettings.SplitPaneOpen);
 
@@ -30,12 +30,12 @@ namespace Fmg.Uwp.App.Model {
                     int mosaicTypeOrdinal = (int)compositeMosaic[KEY__MOSAIC_INIT_DATA__MOSAIC_TYPE];
                     int sizeFieldM        = (int)compositeMosaic[KEY__MOSAIC_INIT_DATA__SIZE_FIELD_M];
                     int sizeFieldN        = (int)compositeMosaic[KEY__MOSAIC_INIT_DATA__SIZE_FIELD_N];
-                    int minesCount        = (int)compositeMosaic[KEY__MOSAIC_INIT_DATA__MINES_COUNT];
+                    int countMines        = (int)compositeMosaic[KEY__MOSAIC_INIT_DATA__COUNT_MINES];
 
                     var loadData = new MosaicInitData {
                         MosaicType = EMosaicEx.FromOrdinal(mosaicTypeOrdinal),
                         SizeField  = new Matrisize(sizeFieldM, sizeFieldN),
-                        MinesCount = minesCount
+                        CountMines = countMines
                     };
                     return loadData;
                 } catch(Exception ex) {
@@ -50,7 +50,7 @@ namespace Fmg.Uwp.App.Model {
                 [KEY__MOSAIC_INIT_DATA__MOSAIC_TYPE ] = initData.MosaicType.Ordinal(),
                 [KEY__MOSAIC_INIT_DATA__SIZE_FIELD_M] = initData.SizeField.m,
                 [KEY__MOSAIC_INIT_DATA__SIZE_FIELD_N] = initData.SizeField.n,
-                [KEY__MOSAIC_INIT_DATA__MINES_COUNT ] = initData.MinesCount,
+                [KEY__MOSAIC_INIT_DATA__COUNT_MINES ] = initData.CountMines,
             };
         }
 

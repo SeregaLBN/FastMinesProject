@@ -54,10 +54,9 @@ namespace Fmg.Ava.Utils {
                 _timer.Stop();
         }
 
-        public void Restart() {
+        public void Reset() {
             Pause();
             _started = 0;
-            Start();
         }
 
         public long Time {

@@ -25,9 +25,9 @@ namespace Fmg.Core.Mosaic {
     {
 
         /// <summary> кол-во мин на поле </summary>
-        protected int _minesCount = 10;
+        protected int _countMines = 10;
         /// <summary> кол-во мин на поле до создания игры. Используется когда игра была создана, но ни одной мины не проставлено </summary>
-        protected int _oldMinesCount = 1;
+        protected int _oldCountMines = 1;
 
         private EGameStatus _gameStatus = EGameStatus.eGSReady;
         private EPlayInfo _playInfo = EPlayInfo.ePlayerUnknown;
@@ -65,12 +65,12 @@ namespace Fmg.Core.Mosaic {
         }
 
         /// <summary> количество мин </summary>
-        public int MinesCount {
-            get { return _minesCount; }
+        public int CountMines {
+            get { return _countMines; }
             set {
                 var max = GetMaxMines(SizeField);
                 var newVal = Math.Max((GameStatus == EGameStatus.eGSCreateGame) ? 0 : 1, Math.Min(value, max));
-                int oldVal = MinesCount;
+                int oldVal = CountMines;
                 if ((oldVal != value) &&
                     (newVal != value))
                 {
@@ -81,18 +81,18 @@ namespace Fmg.Core.Mosaic {
                     return;
 
                 if (newVal == 0) // TODO  ?? to create field mode - EGameStatus.eGSCreateGame
-                    this._oldMinesCount = this._minesCount; // save
+                    this._oldCountMines = this._countMines; // save
 
-                _minesCount = newVal;
-                _notifier.FirePropertyChanged(oldVal, _minesCount, nameof(this.MinesCount));
-                _notifier.FirePropertyChanged( -1   , _minesCount, nameof(this.CountMinesLeft));
+                _countMines = newVal;
+                _notifier.FirePropertyChanged(oldVal, _countMines, nameof(this.CountMines));
+                _notifier.FirePropertyChanged( -1   , _countMines, nameof(this.CountMinesLeft));
 
                 GameNew();
             }
         }
 
-        private void RecheckMinesCount() {
-            MinesCount = MinesCount; //  implicitly call this setter
+        private void RecheckCountMines() {
+            CountMines = CountMines; //  implicitly call this setter
         }
 
         /// <summary> arrange Mines </summary>
@@ -109,8 +109,8 @@ namespace Fmg.Core.Mosaic {
 
         /// <summary> arrange Mines - set random mines </summary>
         public void SetMines_Random(BaseCell firstClickCell) {
-            if (_minesCount == 0)
-                _minesCount = _oldMinesCount;
+            if (_countMines == 0)
+                _countMines = _oldCountMines;
 
             var mosaic = Model;
             var matrixClone = new List<BaseCell>(Matrix);
@@ -126,7 +126,7 @@ namespace Fmg.Core.Mosaic {
                 var len = matrixClone.Count;
                 if (len == 0) {
                     System.Diagnostics.Debug.Assert(false, "ээээ..... лажа......\r\nЗахотели установить больше мин чем возможно");
-                    _minesCount = count;
+                    _countMines = count;
                     break;
                 }
                 var i = rand.Next(len);
@@ -136,7 +136,7 @@ namespace Fmg.Core.Mosaic {
                     matrixClone.Remove(cellToSetMines);
                 } else
                     System.Diagnostics.Debug.Assert(false, "Мины должны всегда устанавливаться...");
-            } while (count < _minesCount);
+            } while (count < _countMines);
 
             // set other CellOpen and set all Caption
             foreach (var cell in Matrix)
@@ -148,7 +148,7 @@ namespace Fmg.Core.Mosaic {
         public int CountUnknown { get { return Matrix.Count(x => (x.State.Status == EState._Close) && (x.State.Close == EClose._Unknown)); } }
 
         /// <summary>сколько ещё осталось открыть мин</summary>
-        public int CountMinesLeft { get { return MinesCount - CountFlag; } }
+        public int CountMinesLeft { get { return CountMines - CountFlag; } }
         public int CountClick {
             get { return _countClick; }
             private set { _notifier.SetProperty(ref _countClick, value); }
@@ -209,7 +209,7 @@ namespace Fmg.Core.Mosaic {
         }
 
         /// <summary> Завершить игру </summary>
-        private IEnumerable<BaseCell> GameEnd(bool victory) {
+        public IEnumerable<BaseCell> GameEnd(bool victory) {
             if (GameStatus == EGameStatus.eGSEnd)
                 return Enumerable.Empty<BaseCell>();
 
@@ -245,14 +245,14 @@ namespace Fmg.Core.Mosaic {
 
         private IEnumerable<BaseCell> VerifyFlag() {
             if (GameStatus == EGameStatus.eGSEnd) return Enumerable.Empty<BaseCell>();
-            if (MinesCount == CountFlag) {
+            if (CountMines == CountFlag) {
                 foreach (var cell in Matrix)
                     if ((cell.State.Close == EClose._Flag) &&
                         (cell.State.Open != EOpen._Mine))
                         return Enumerable.Empty<BaseCell>(); // неверно проставленный флажок - на выход
                 return GameEnd(true);
             } else {
-                if (MinesCount == (CountFlag + CountUnknown)) {
+                if (CountMines == (CountFlag + CountUnknown)) {
                     foreach (var cell in Matrix)
                         if (((cell.State.Close == EClose._Unknown) ||
                              (cell.State.Close == EClose._Flag)) &&
@@ -279,11 +279,11 @@ namespace Fmg.Core.Mosaic {
                     if (cellLeftDown.State.Open != EOpen._Mine) {
                         cellLeftDown.State.Status = EState._Open;
                         cellLeftDown.State.SetMine();
-                        MinesCount++;
+                        CountMines++;
                         RepositoryMines.Add(cellLeftDown.GetCoord());
                     } else {
                         cellLeftDown.Reset();
-                        MinesCount = MinesCount - 1;
+                        CountMines = CountMines - 1;
                         RepositoryMines.Remove(cellLeftDown.GetCoord());
                     }
                     result.Modified.Add(cellLeftDown);
@@ -339,7 +339,7 @@ namespace Fmg.Core.Mosaic {
                         modified = GameEnd(false);
                     } else {
                         var sizeField = SizeField;
-                        if ((CountOpen + MinesCount) == sizeField.m * sizeField.n)
+                        if ((CountOpen + CountMines) == sizeField.m * sizeField.n)
                             modified = GameEnd(true);
                         else
                             modified = VerifyFlag();
@@ -452,7 +452,7 @@ namespace Fmg.Core.Mosaic {
         public void GameCreate() {
             GameNew();
             if (!RepositoryMines.Any()) {
-                MinesCount = 0;
+                CountMines = 0;
                 GameStatus = EGameStatus.eGSCreateGame;
             }
         }
@@ -498,11 +498,11 @@ namespace Fmg.Core.Mosaic {
             switch (ev.PropertyName) {
             case nameof(Model.SizeField):
                 CellDown = null; // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
-                RecheckMinesCount();
+                RecheckCountMines();
                 GameNew();
                 break;
             case nameof(Model.MosaicType):
-                RecheckMinesCount();
+                RecheckCountMines();
                 GameNew();
                 break;
             //case nameof(Model.Area): // TODO при изменении модели итак все перерисовывается...

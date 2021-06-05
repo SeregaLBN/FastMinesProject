@@ -20,11 +20,11 @@ namespace Fmg.Core.Mosaic {
         public const ESkillLevel   DEFAULT_SKILL_LEVEL  = ESkillLevel.eBeginner;
         public static readonly int DEFAULT_SIZE_FIELD_M = DEFAULT_SKILL_LEVEL.GetDefaultSize().m;
         public static readonly int DEFAULT_SIZE_FIELD_N = DEFAULT_SKILL_LEVEL.GetDefaultSize().n;
-        public static readonly int DEFAULT_MINES_COUNT  = DEFAULT_SKILL_LEVEL.GetNumberMines(DEFAULT_MOSAIC_TYPE);
+        public static readonly int DEFAULT_COUNT_MINES  = DEFAULT_SKILL_LEVEL.GetNumberMines(DEFAULT_MOSAIC_TYPE);
 
         private EMosaic   _mosaicType = DEFAULT_MOSAIC_TYPE;
         private Matrisize _sizeField  = new Matrisize(DEFAULT_SIZE_FIELD_M, DEFAULT_SIZE_FIELD_N);
-        private int       _minesCount = DEFAULT_MINES_COUNT;
+        private int       _countMines = DEFAULT_COUNT_MINES;
 
         private bool lockChanging = false;
 
@@ -53,7 +53,7 @@ namespace Fmg.Core.Mosaic {
                 return;
             this.MosaicType = from.MosaicType;
             this.SizeField  = from.SizeField;
-            this.MinesCount = from.MinesCount;
+            this.CountMines = from.CountMines;
         }
 
         public EMosaic MosaicType {
@@ -87,14 +87,14 @@ namespace Fmg.Core.Mosaic {
             }
         }
 
-        public int MinesCount {
-            get { return _minesCount; }
-            set { _notifier.SetProperty(ref _minesCount, value); }
+        public int CountMines {
+            get { return _countMines; }
+            set { _notifier.SetProperty(ref _countMines, value); }
         }
 
         public ESkillLevel SkillLevel {
             get {
-                return ESkillLevelEx.CalcSkillLevel(MosaicType, SizeField, MinesCount);
+                return ESkillLevelEx.CalcSkillLevel(MosaicType, SizeField, CountMines);
             }
             set {
                 if (value == ESkillLevel.eCustom)
@@ -108,7 +108,7 @@ namespace Fmg.Core.Mosaic {
 
                 lockChanging = true;
                 try {
-                    MinesCount = value.GetNumberMines(MosaicType);
+                    CountMines = value.GetNumberMines(MosaicType);
                     SizeField = value.GetDefaultSize();
                 } finally {
                     lockChanging = false;
@@ -136,26 +136,26 @@ namespace Fmg.Core.Mosaic {
                         if (old.GetGroup() != MosaicType.GetGroup())
                             _notifier.FirePropertyChanged(old.GetGroup(), MosaicType.GetGroup(), nameof(this.MosaicGroup));
 
-                        var skillOld = ESkillLevelEx.CalcSkillLevel(old, SizeField, MinesCount);
+                        var skillOld = ESkillLevelEx.CalcSkillLevel(old, SizeField, CountMines);
                         if (skillOld == ESkillLevel.eCustom) {
                             var skillNew = SkillLevel;
                             if (skillNew != skillOld)
                                 _notifier.FirePropertyChanged(skillOld, skillNew, nameof(this.SkillLevel));
                         } else {
                             // restore mines count for new mosaic type
-                            MinesCount = skillOld.GetNumberMines(MosaicType);
+                            CountMines = skillOld.GetNumberMines(MosaicType);
                         }
                     }
                     break;
                 case nameof(this.SizeField):
                     {
-                        var skillOld = ESkillLevelEx.CalcSkillLevel(MosaicType, (ev as PropertyChangedExEventArgs<Matrisize>).OldValue, MinesCount);
+                        var skillOld = ESkillLevelEx.CalcSkillLevel(MosaicType, (ev as PropertyChangedExEventArgs<Matrisize>).OldValue, CountMines);
                         var skillNew = SkillLevel;
                         if (skillNew != skillOld)
                             _notifier.FirePropertyChanged(skillOld, skillNew, nameof(this.SkillLevel));
                     }
                     break;
-                case nameof(this.MinesCount):
+                case nameof(this.CountMines):
                     {
                         var skillOld = ESkillLevelEx.CalcSkillLevel(MosaicType, SizeField, (ev as PropertyChangedExEventArgs<int>).OldValue);
                         var skillNew = SkillLevel;
@@ -173,7 +173,7 @@ namespace Fmg.Core.Mosaic {
             return nameof(MosaicInitData)
                 + "{MosaicType:" + _mosaicType
                 + ", SizeField:" + _sizeField
-                + ", MinesCount:" + _minesCount
+                + ", CountMines:" + _countMines
                 + ", SkillLevel:" + SkillLevel
                 + "}";
         }

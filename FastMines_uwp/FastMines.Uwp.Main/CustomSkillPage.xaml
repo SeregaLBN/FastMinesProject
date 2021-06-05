@@ -99,7 +99,7 @@
                         <TextBlock>):</TextBlock>
                     </StackPanel>
                     <Slider Grid.Row="2" Grid.Column="1" Margin="7,0,0,0"
-                            x:Name="SliderMines" Value="{x:Bind InitData.MinesCount, Mode=TwoWay, Converter={StaticResource IntToDoubleConverter}}"
+                            x:Name="SliderMines" Value="{x:Bind InitData.CountMines, Mode=TwoWay, Converter={StaticResource IntToDoubleConverter}}"
                             TickFrequency="100" TickPlacement="Outside" Minimum="0" Maximum="3000" />
                     <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource OutputTextBlockStyle}" Text="{x:Bind SliderMines.Minimum, Converter={StaticResource ValueToStringConverter}, Mode=OneWay}"/>
                     <TextBlock Grid.Row="2" Grid.Column="2" Style="{StaticResource OutputTextBlockStyle}" Text="{x:Bind SliderMines.Maximum, Converter={StaticResource ValueToStringConverter}, Mode=OneWay}"/>

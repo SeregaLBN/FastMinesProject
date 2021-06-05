@@ -69,10 +69,9 @@ public class Timer implements ITimer {
     }
 
     @Override
-    public void restart() {
+    public void reset() {
         pause();
         started = 0;
-        start();
     }
 
     @Override

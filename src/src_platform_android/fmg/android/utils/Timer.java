@@ -31,6 +31,13 @@ public class Timer implements ITimer {
         }
     }
 
+    public void setOffset(long offset) {
+        if (paused)
+            this.started = offset;
+        else
+            this.started -= offset;
+    }
+
     private void myCallback() {
         if (callback != null)
             callback.accept(this);
@@ -70,10 +77,9 @@ public class Timer implements ITimer {
     }
 
     @Override
-    public void restart() {
+    public void reset() {
         pause();
         started = 0;
-        start();
     }
 
     @Override

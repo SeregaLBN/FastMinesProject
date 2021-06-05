@@ -27,9 +27,9 @@ public abstract class MosaicController<TImage, TImageInner,
 {
 
     /** кол-во мин на поле */
-    protected int _minesCount = 10;
+    protected int _countMines = 10;
     /** кол-во мин на поле до создания игры. Используется когда игра была создана, но ни одной мины не проставлено. */
-    protected int _oldMinesCount = 1;
+    protected int _oldCountMines = 1;
 
     private EGameStatus _gameStatus = EGameStatus.eGSReady;
     private EPlayInfo _playInfo = EPlayInfo.ePlayerUnknown;
@@ -45,7 +45,7 @@ public abstract class MosaicController<TImage, TImageInner,
 
     private final PropertyChangeListener onModelPropertyChangedListener = this::onModelPropertyChanged;
 
-    public static final String PROPERTY_MINES_COUNT       = "MinesCount";
+    public static final String PROPERTY_COUNT_MINES       = "CountMines";
     public static final String PROPERTY_COUNT_MINES_LEFT  = "CountMinesLeft";
     public static final String PROPERTY_COUNT_UNKNOWN     = "CountUnknown";
     public static final String PROPERTY_COUNT_CLICK       = "CountClick";
@@ -82,33 +82,33 @@ public abstract class MosaicController<TImage, TImageInner,
 
     /** количество мин */
     @Override
-    public int getMinesCount() { return _minesCount; }
+    public int getCountMines() { return _countMines; }
     /** количество мин */
     @Override
-    public void setMinesCount(int newMinesCount) {
-        int newVal = Math.max((getGameStatus() == EGameStatus.eGSCreateGame) ? 0 : 1, Math.min(newMinesCount, getMaxMines(getSizeField())));
-        int oldVal = getMinesCount();
-        if ((oldVal != newMinesCount) &&
-            (newVal != newMinesCount))
+    public void setCountMines(int newCountMines) {
+        int newVal = Math.max((getGameStatus() == EGameStatus.eGSCreateGame) ? 0 : 1, Math.min(newCountMines, getMaxMines(getSizeField())));
+        int oldVal = getCountMines();
+        if ((oldVal != newCountMines) &&
+            (newVal != newCountMines))
         {
-            Logger.warn("Can`t set mines count to {0}; reset to {1}. Try set size field first?", newMinesCount, newVal);
+            Logger.warn("Can`t set mines count to {0}; reset to {1}. Try set size field first?", newCountMines, newVal);
         }
 
         if (oldVal == newVal)
             return;
 
         if (newVal == 0) // TODO  ?? to create field mode - EGameStatus.eGSCreateGame
-            this._oldMinesCount = this._minesCount; // save
+            this._oldCountMines = this._countMines; // save
 
-        _minesCount = newVal;
-        _notifier.firePropertyChanged(oldVal, _minesCount, PROPERTY_MINES_COUNT);
-        _notifier.firePropertyChanged(null, _minesCount, PROPERTY_COUNT_MINES_LEFT);
+        _countMines = newVal;
+        _notifier.firePropertyChanged(oldVal, _countMines, PROPERTY_COUNT_MINES);
+        _notifier.firePropertyChanged(null, _countMines, PROPERTY_COUNT_MINES_LEFT);
 
         gameNew();
     }
 
-    private void recheckMinesCount() {
-        setMinesCount(getMinesCount());
+    private void recheckCountMines() {
+        setCountMines(getCountMines());
     }
 
     /** arrange Mines */
@@ -124,8 +124,8 @@ public abstract class MosaicController<TImage, TImageInner,
 
     /** arrange Mines - set random mines */
     public void setMines_random(BaseCell firstClickCell) {
-        if (_minesCount == 0)
-            _minesCount = _oldMinesCount;
+        if (_countMines == 0)
+            _countMines = _oldCountMines;
 
         IMosaicDrawModel<TImageInner> mosaic = getModel();
         List<BaseCell> matrixClone = new ArrayList<>(getMatrix());
@@ -140,7 +140,7 @@ public abstract class MosaicController<TImage, TImageInner,
             int len = matrixClone.size();
             if (len == 0) {
                 Logger.error("ээээ..... лажа......\r\nЗахотели установить больше мин чем возможно");
-                _minesCount = count;
+                _countMines = count;
                 break;
             }
             int i = rand.nextInt(len);
@@ -148,24 +148,27 @@ public abstract class MosaicController<TImage, TImageInner,
             cellToSetMines.setMine();
             count++;
             matrixClone.remove(cellToSetMines);
-        } while (count < _minesCount);
+        } while (count < _countMines);
 
         // set other CellOpen and set all Caption
         for (BaseCell cell : getMatrix())
             cell.calcOpenState(mosaic);
     }
 
+    @Override
     public int getCountOpen() {
         return (int)getMatrix().stream()
             .filter(c -> c.getState().getStatus() == EState._Open)
             .count();
     }
+    @Override
     public int getCountFlag() {
         return (int)getMatrix().stream()
             .filter(c -> c.getState().getStatus() == EState._Close)
             .filter(c -> c.getState().getClose() == EClose._Flag)
             .count();
     }
+    @Override
     public int getCountUnknown() {
         return (int)getMatrix().stream()
             .filter(c -> c.getState().getStatus() == EState._Close)
@@ -174,7 +177,8 @@ public abstract class MosaicController<TImage, TImageInner,
     }
 
     /** сколько ещё осталось открыть мин */
-    public int getCountMinesLeft() { return getMinesCount() - getCountFlag(); }
+    @Override
+    public int getCountMinesLeft() { return getCountMines() - getCountFlag(); }
     public int getCountClick()  { return _countClick; }
     public void setCountClick(int clickCount) {
         _notifier.setProperty(_countClick, clickCount, PROPERTY_COUNT_CLICK);
@@ -201,6 +205,7 @@ public abstract class MosaicController<TImage, TImageInner,
      *<br>     Так сделал только лишь потому, чтобы первый клик выполнялся не на мине. Естественно
      *<br>     это не относится к случаю, когда игра была создана пользователем или считана из файла.
      */
+    @Override
     public EGameStatus getGameStatus() {
         if (_gameStatus == null)
             _gameStatus = EGameStatus.eGSEnd;
@@ -237,6 +242,7 @@ public abstract class MosaicController<TImage, TImageInner,
     }
 
     /** Начать игру, т.к. произошёл первый клик на поле */
+    @Override
     public void gameBegin(BaseCell firstClickCell) {
         getModel().getBackgroundFill().setMode(0);
         setGameStatus(EGameStatus.eGSPlay);
@@ -251,7 +257,8 @@ public abstract class MosaicController<TImage, TImageInner,
     }
 
     /** Завершить игру */
-    private Collection<BaseCell> gameEnd(boolean victory) {
+    @Override
+    public Collection<BaseCell> gameEnd(boolean victory) {
         if (getGameStatus() == EGameStatus.eGSEnd)
             return Collections.emptySet();
 
@@ -287,14 +294,14 @@ public abstract class MosaicController<TImage, TImageInner,
 
     private Collection<BaseCell> verifyFlag() {
         if (getGameStatus() == EGameStatus.eGSEnd) return Collections.emptySet();
-        if (getMinesCount() == getCountFlag()) {
+        if (getCountMines() == getCountFlag()) {
             for (BaseCell cell: getMatrix())
                 if ((cell.getState().getClose() == EClose._Flag) &&
                     (cell.getState().getOpen() != EOpen._Mine))
                     return Collections.emptySet(); // неверно проставленный флажок - на выход
             return gameEnd(true);
         } else {
-            if (getMinesCount() == (getCountFlag() + getCountUnknown())) {
+            if (getCountMines() == (getCountFlag() + getCountUnknown())) {
                 for (BaseCell cell: getMatrix())
                     if (((cell.getState().getClose() == EClose._Unknown) ||
                         ( cell.getState().getClose() == EClose._Flag)) &&
@@ -319,11 +326,11 @@ public abstract class MosaicController<TImage, TImageInner,
             if (cellLeftDown.getState().getOpen() != EOpen._Mine) {
                 cellLeftDown.getState().setStatus(EState._Open);
                 cellLeftDown.setMine();
-                setMinesCount(getMinesCount()+1);
+                setCountMines(getCountMines()+1);
                 getRepositoryMines().add(cellLeftDown.getCoord());
             } else {
                 cellLeftDown.reset();
-                setMinesCount(getMinesCount()-1);
+                setCountMines(getCountMines()-1);
                 getRepositoryMines().remove(cellLeftDown.getCoord());
             }
             result.modified.add(cellLeftDown);
@@ -376,7 +383,7 @@ public abstract class MosaicController<TImage, TImageInner,
                 modified = gameEnd(false);
             } else {
                 Matrisize sizeField = getSizeField();
-                if ((getCountOpen() + getMinesCount()) == sizeField.m*sizeField.n) {
+                if ((getCountOpen() + getCountMines()) == sizeField.m*sizeField.n) {
                     modified = gameEnd(true);
                 } else {
                     modified = verifyFlag();
@@ -486,7 +493,7 @@ public abstract class MosaicController<TImage, TImageInner,
     public void gameCreate() {
         gameNew();
         if (getRepositoryMines().isEmpty()) {
-            setMinesCount(0);
+            setCountMines(0);
             setGameStatus(EGameStatus.eGSCreateGame);
         }
     }
@@ -530,11 +537,11 @@ public abstract class MosaicController<TImage, TImageInner,
         switch (ev.getPropertyName()) {
         case MosaicGameModel.PROPERTY_SIZE_FIELD:
             setCellDown(null); // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
-            recheckMinesCount();
+            recheckCountMines();
             gameNew();
             break;
         case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
-            recheckMinesCount();
+            recheckCountMines();
             gameNew();
             break;
       //case MosaicGameModel.PROPERTY_AREA: // TODO при изменении модели итак все перерисовывается...

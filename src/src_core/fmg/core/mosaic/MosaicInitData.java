@@ -24,11 +24,11 @@ public class MosaicInitData implements INotifyPropertyChanged, AutoCloseable {
     public static final ESkillLevel DEFAULT_SKILL_LEVEL  = ESkillLevel.eBeginner;
     public static final int         DEFAULT_SIZE_FIELD_M = DEFAULT_SKILL_LEVEL.getDefaultSize().m;
     public static final int         DEFAULT_SIZE_FIELD_N = DEFAULT_SKILL_LEVEL.getDefaultSize().n;
-    public static final int         DEFAULT_MINES_COUNT  = DEFAULT_SKILL_LEVEL.getNumberMines(DEFAULT_MOSAIC_TYPE);
+    public static final int         DEFAULT_COUNT_MINES  = DEFAULT_SKILL_LEVEL.getNumberMines(DEFAULT_MOSAIC_TYPE);
 
     private EMosaic mosaicType;
     private Matrisize sizeField;
-    private int minesCount;
+    private int countMines;
 
     private boolean lockChanging = false;
 
@@ -39,13 +39,13 @@ public class MosaicInitData implements INotifyPropertyChanged, AutoCloseable {
     public static final String PROPERTY_MOSAIC_TYPE  = "MosaicType";
     public static final String PROPERTY_MOSAIC_GROUP = "MosaicGroup";
     public static final String PROPERTY_SIZE_FIELD   = "SizeField";
-    public static final String PROPERTY_MINES_COUNT  = "MinesCount";
+    public static final String PROPERTY_COUNT_MINES  = "CountMines";
     public static final String PROPERTY_SKILL_LEVEL  = "SkillLevel";
 
     public MosaicInitData() {
         mosaicType = DEFAULT_MOSAIC_TYPE;
         sizeField  = new Matrisize(DEFAULT_SIZE_FIELD_M, DEFAULT_SIZE_FIELD_N);
-        minesCount = DEFAULT_MINES_COUNT;
+        countMines = DEFAULT_COUNT_MINES;
         _notifier.addListener(onPropertyChangedListener);
     }
 
@@ -54,7 +54,7 @@ public class MosaicInitData implements INotifyPropertyChanged, AutoCloseable {
             return;
         setMosaicType(from.getMosaicType());
         setSizeField( from.getSizeField());
-        setMinesCount(from.getMinesCount());
+        setCountMines(from.getCountMines());
     }
 
     public EMosaic getMosaicType() { return mosaicType; }
@@ -91,16 +91,16 @@ public class MosaicInitData implements INotifyPropertyChanged, AutoCloseable {
         _notifier.setProperty(this.sizeField, new Matrisize(sizeField.m, sizeField.n), PROPERTY_SIZE_FIELD);
     }
 
-    public int getMinesCount() { return minesCount; }
-    public void setMinesCount(int minesCount) {
-        if (minesCount <= 0)
+    public int getCountMines() { return countMines; }
+    public void setCountMines(int countMines) {
+        if (countMines <= 0)
             throw new IllegalArgumentException("Mines count must be positive");
 
-        _notifier.setProperty(this.minesCount, minesCount, PROPERTY_MINES_COUNT);
+        _notifier.setProperty(this.countMines, countMines, PROPERTY_COUNT_MINES);
     }
 
     public ESkillLevel getSkillLevel() {
-        return ESkillLevel.calcSkillLevel(mosaicType, sizeField, minesCount);
+        return ESkillLevel.calcSkillLevel(mosaicType, sizeField, countMines);
     }
 
     public void setSkillLevel(ESkillLevel skill) {
@@ -115,7 +115,7 @@ public class MosaicInitData implements INotifyPropertyChanged, AutoCloseable {
 
         lockChanging = true;
         try {
-            setMinesCount(skill.getNumberMines(getMosaicType()));
+            setCountMines(skill.getNumberMines(getMosaicType()));
             setSizeField(skill.getDefaultSize());
         } finally {
             lockChanging = false;
@@ -142,26 +142,26 @@ public class MosaicInitData implements INotifyPropertyChanged, AutoCloseable {
                     if (old.getGroup() != getMosaicType().getGroup())
                         _notifier.firePropertyChanged(old.getGroup(), getMosaicType().getGroup(), PROPERTY_MOSAIC_GROUP);
 
-                    ESkillLevel skillOld = ESkillLevel.calcSkillLevel(old, sizeField, minesCount);
+                    ESkillLevel skillOld = ESkillLevel.calcSkillLevel(old, sizeField, countMines);
                     if (skillOld == ESkillLevel.eCustom) {
                         ESkillLevel skillNew = getSkillLevel();
                         if (skillNew != skillOld)
                             _notifier.firePropertyChanged(skillOld, skillNew, PROPERTY_SKILL_LEVEL);
                     } else {
                         // restore mines count for new mosaic type
-                        setMinesCount(skillOld.getNumberMines(getMosaicType()));
+                        setCountMines(skillOld.getNumberMines(getMosaicType()));
                     }
                 }
                 break;
             case PROPERTY_SIZE_FIELD:
                 {
-                    ESkillLevel skillOld = ESkillLevel.calcSkillLevel(mosaicType, (Matrisize)ev.getOldValue(), minesCount);
+                    ESkillLevel skillOld = ESkillLevel.calcSkillLevel(mosaicType, (Matrisize)ev.getOldValue(), countMines);
                     ESkillLevel skillNew = getSkillLevel();
                     if (skillNew != skillOld)
                         _notifier.firePropertyChanged(skillOld, skillNew, PROPERTY_SKILL_LEVEL);
                 }
                 break;
-            case PROPERTY_MINES_COUNT:
+            case PROPERTY_COUNT_MINES:
                 {
                     ESkillLevel skillOld = ESkillLevel.calcSkillLevel(mosaicType, sizeField, (int)ev.getOldValue());
                     ESkillLevel skillNew = getSkillLevel();

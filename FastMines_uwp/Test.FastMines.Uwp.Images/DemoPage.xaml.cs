@@ -137,7 +137,7 @@ namespace Test.FastMines.Uwp.Images {
 
                 mosaicController.MosaicType = mosaicType;
                 mosaicController.SizeField = skill.GetDefaultSize();
-                mosaicController.MinesCount = skill.GetNumberMines(mosaicType);
+                mosaicController.CountMines = skill.GetNumberMines(mosaicType);
                 mosaicController.GameNew();
             }
             return mosaicController;
