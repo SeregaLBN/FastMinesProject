@@ -1,6 +1,7 @@
 package fmg.android.app;
 
 import android.os.Bundle;
+import android.view.View;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,9 +14,12 @@ import java.beans.PropertyChangeListener;
 import fmg.android.app.databinding.MosaicActivityBinding;
 import fmg.android.app.model.SharedData;
 import fmg.android.app.presentation.MosaicViewModel;
+import fmg.android.img.Smile;
 import fmg.android.mosaic.MosaicViewController;
 import fmg.android.utils.Timer;
 import fmg.common.Logger;
+import fmg.common.geom.SizeDouble;
+import fmg.core.img.SmileModel;
 import fmg.core.mosaic.MosaicController;
 import fmg.core.mosaic.MosaicGameModel;
 import fmg.core.mosaic.MosaicInitData;
@@ -59,6 +63,7 @@ public class MosaicActivity extends AppCompatActivity {
         ctrl.getModel().setAutoFit(false);
         binding.setViewModel(viewModel);
         binding.executePendingBindings();
+        binding.btnNew.setOnClickListener(this::onBtnNewClick);
 
         // init mosaic controller
         MosaicInitData initData = getInitData();
@@ -134,17 +139,29 @@ public class MosaicActivity extends AppCompatActivity {
             case eGSCreateGame:
             case eGSReady:
                 timer.reset();
+                viewModel.setBtnNewFaceType(SmileModel.EFaceType.Face_WhiteSmiling);
                 break;
             case eGSPlay:
                 timer.start();
                 break;
             case eGSEnd:
                 timer.pause();
+                viewModel.setBtnNewFaceType(getMosaicController().isVictory()
+                                ? SmileModel.EFaceType.Face_SmilingWithSunglasses
+                                : SmileModel.EFaceType.Face_Disappointed);
                 break;
             }
             viewModel.onTimerCallback(timer); // reload UI
             break;
+        case MosaicController.PROPERTY_COUNT_MINES_LEFT:
+            // refire as android data binding event
+            viewModel.getTopPanel().notifyPropertyChanged(BR.minesLeft);
+            break;
         }
+    }
+
+    private void onBtnNewClick(View view) {
+        viewModel.getMosaicController().gameNew();
     }
 
 }

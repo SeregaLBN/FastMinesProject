@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout">
 
     <data>
@@ -30,31 +31,66 @@
         </LinearLayout>
 
         <!-- top panel elements -->
-        <TextView
-            android:id="@+id/minesLeft"
-            android:textSize="20sp"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/layoutTopPanel"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{viewModel.topPanel.minesLeft}"
-            android:hint="@string/mines_left"
-            android:layout_marginStart="7dp"
-            android:layout_marginTop="2dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:background="@color/topPanelColor"
+            tools:ignore="MissingConstraints">
 
-        <TextView
-            android:id="@+id/timeLeft"
-            android:textSize="20sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{viewModel.topPanel.timeLeft}"
-            android:hint="@string/time_left"
-            android:gravity="end"
-            android:textAlignment="gravity"
-            android:layout_marginEnd="7dp"
-            android:layout_marginTop="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/minesLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="7dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                android:hint="@string/mines_left"
+                android:text="@{viewModel.topPanel.minesLeft}"
+                android:textSize="20sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+<!--            android:background="@drawable/border"-->
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+
+            <ImageButton
+                android:id="@+id/btnNew"
+                android:layout_width="37dp"
+                android:layout_height="39dp"
+                android:scaleType="center"
+                android:imageBitmap="@{viewModel.topPanel.btnNewImg}"/>
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/timeLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                android:layout_marginEnd="7dp"
+                android:hint="@string/time_left"
+                android:text="@{viewModel.topPanel.timeLeft}"
+                android:gravity="end"
+                android:textAlignment="gravity"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible" />
+<!--            android:background="@drawable/border"-->
+
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
