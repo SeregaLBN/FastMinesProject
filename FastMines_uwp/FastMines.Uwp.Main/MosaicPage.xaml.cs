@@ -6,13 +6,16 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.UI.Xaml;
 using Fmg.Common;
 using Fmg.Common.UI;
 using Fmg.Common.Geom;
 using Fmg.Common.Notifier;
+using Fmg.Core.Img;
 using Fmg.Core.Types;
 using Fmg.Core.Mosaic;
 using Fmg.Uwp.Utils;
+using Fmg.Uwp.Img.Win2d;
 using Fmg.Uwp.Mosaic.Win2d;
 using Fmg.Uwp.Mosaic.Xaml;
 using IMosaicController = Fmg.Core.Mosaic.IMosaicController<
@@ -37,7 +40,9 @@ namespace Fmg {
     public sealed partial class MosaicPage : Page, INotifyPropertyChanged {
 
         private IMosaicController _mosaicController;
+        private Smile.CanvasImgSrcController btnNewGameImage;
         private ITimer GameTimer { get; }
+        private Func<bool> IsVictory;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -46,15 +51,24 @@ namespace Fmg {
             get {
                 if (_mosaicController == null) {
                     IMosaicController ctrl;
-                    if (_canvasVirtualControl.Visibility == Visibility.Visible)
-                        ctrl = new MosaicCanvasVirtualControlController(CanvasDevice.GetSharedDevice(), _canvasVirtualControl) { BindSizeDirection = false, ExtendedManipulation = true };
-                    else
-                    if (_canvasSwapChainPanel.Visibility == Visibility.Visible)
-                        ctrl = new MosaicCanvasSwapChainPanelController(CanvasDevice.GetSharedDevice(), _canvasSwapChainPanel) { BindSizeDirection = false, ExtendedManipulation = true };
-                    else
-                    if (_canvasControl.Visibility == Visibility.Visible)
-                        ctrl = new MosaicXamlController(_canvasControl)                                                        { BindSizeDirection = false, ExtendedManipulation = true };
-                    else
+                    if (_canvasVirtualControl.Visibility == Visibility.Visible) {
+                        var c = new MosaicCanvasVirtualControlController(CanvasDevice.GetSharedDevice(), _canvasVirtualControl) { BindSizeDirection = false, ExtendedManipulation = true };
+                        IsVictory = () => c.IsVictory;
+                        c.SetOnClickEvent(OnMosaicClickHandler);
+                        ctrl = c;
+                    } else
+                    if (_canvasSwapChainPanel.Visibility == Visibility.Visible) {
+                        var c = new MosaicCanvasSwapChainPanelController(CanvasDevice.GetSharedDevice(), _canvasSwapChainPanel) { BindSizeDirection = false, ExtendedManipulation = true };
+                        IsVictory = () => c.IsVictory;
+                        c.SetOnClickEvent(OnMosaicClickHandler);
+                        ctrl = c;
+                    } else
+                    if (_canvasControl.Visibility == Visibility.Visible) {
+                        var c = new MosaicXamlController(_canvasControl)                                                        { BindSizeDirection = false, ExtendedManipulation = true };
+                        IsVictory = () => c.IsVictory;
+                        c.SetOnClickEvent(OnMosaicClickHandler);
+                        ctrl = c;
+                    } else
                         throw new Exception("Illegal usage...");
 
                     ctrl.Model.AutoFit = false;
@@ -99,6 +113,8 @@ namespace Fmg {
                     MosaicController.CountMines = 3;
                 }, CoreDispatcherPriority.High);
             }
+
+            btnNewGameImage = new Smile.CanvasImgSrcController(SmileModel.EFaceType.Face_WhiteSmiling, CanvasDevice.GetSharedDevice());
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs ev) {
@@ -119,12 +135,16 @@ namespace Fmg {
                 case EGameStatus.eGSCreateGame:
                 case EGameStatus.eGSReady:
                     timer.Reset();
+                    SetBtnNewGameFaceType(SmileModel.EFaceType.Face_WhiteSmiling);
                     break;
                 case EGameStatus.eGSPlay:
                     timer.Start();
                     break;
                 case EGameStatus.eGSEnd:
                     timer.Pause();
+                    SetBtnNewGameFaceType(IsVictory()
+                                ? SmileModel.EFaceType.Face_SmilingWithSunglasses
+                                : SmileModel.EFaceType.Face_Disappointed);
                     break;
                 }
                 OnTimerCallback(timer); // reload UI
@@ -151,6 +171,10 @@ namespace Fmg {
         private void OnPageUnloaded(object sender, RoutedEventArgs ev) {
             Window.Current.CoreWindow.KeyUp -= OnKeyUp_CoreWindow;
 
+            //MosaicController.SetOnClickEvent(null); // TODO
+            (MosaicController as MosaicCanvasVirtualControlController)?.SetOnClickEvent(null);
+            (MosaicController as MosaicCanvasSwapChainPanelController)?.SetOnClickEvent(null);
+            (MosaicController as MosaicXamlController                )?.SetOnClickEvent(null);
             MosaicController = null; // call explicit setter
 
             // Explicitly remove references to allow the Win2D controls to get garbage collected
@@ -255,15 +279,44 @@ namespace Fmg {
             return new Tracer(typeName + "." + callerName, ctorMessage, disposeMessage);
         }
 
-        private int MinesLeft => _mosaicController.CountMinesLeft;
+        private int MinesLeft => MosaicController.CountMinesLeft;
 
         private string TimeLeft {
             get {
-                if (_mosaicController.GameStatus == EGameStatus.eGSEnd)
+                if (MosaicController.GameStatus == EGameStatus.eGSEnd)
                     return (GameTimer.Time / 1000.0).ToString(); // show time as float (with milliseconds)
 
                 return (GameTimer.Time / 1000).ToString();       // show time as int (only seconds)
             }
+        }
+
+        private CanvasImageSource BtnNewGameImg => btnNewGameImage.Image;
+
+        private void OnBtnNewClick(object sender, RoutedEventArgs ev) {
+            MosaicController.GameNew();
+        }
+
+        private void OnBtnNewPointerPressed(object sender, PointerRoutedEventArgs ev) {
+            SetBtnNewGameFaceType(SmileModel.EFaceType.Face_SavouringDeliciousFood);
+        }
+
+        private void OnBtnNewPointerReleased(object sender, PointerRoutedEventArgs ev) {
+            SetBtnNewGameFaceType(SmileModel.EFaceType.Face_WhiteSmiling);
+        }
+
+        public void OnMosaicClickHandler(ClickResult clickResult) {
+            //Logger.info("OnMosaicClick: down=" + clickResult.isDown() + "; leftClick=" + clickResult.isLeft());
+            if (clickResult.IsLeft && (MosaicController.GameStatus == EGameStatus.eGSPlay)) {
+                SetBtnNewGameFaceType(clickResult.IsDown
+                        ? SmileModel.EFaceType.Face_Grinning
+                        : SmileModel.EFaceType.Face_WhiteSmiling);
+            }
+        }
+
+
+        private void SetBtnNewGameFaceType(SmileModel.EFaceType btnNewFaceType) {
+            btnNewGameImage.Model.FaceType = btnNewFaceType;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BtnNewGameImg)));
         }
 
     }

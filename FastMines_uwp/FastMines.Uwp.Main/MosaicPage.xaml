@@ -21,13 +21,28 @@
         </Grid>
 
         <!-- top panel elements -->
-        <Grid Margin="7,2,7,0">
+        <Grid Padding="7,2,7,2"
+              Background="#171F1F1F"
+              VerticalAlignment="Top">
             <TextBlock x:Name="txtMinesLeft"
                        FontSize="25"
                        VerticalAlignment="Top"
                        HorizontalAlignment="Left"
                        Text="{x:Bind MinesLeft, Mode=OneWay}"
                        ToolTipService.ToolTip="Mines left" />
+            <Button x:Name="btnNewGame"
+                       Width="37"
+                       Height="39"
+                       VerticalAlignment="Top"
+                       HorizontalAlignment="Center"
+                       ToolTipService.ToolTip="New Game"
+                       Padding="1"
+                       IsTabStop="False"
+                       Click="OnBtnNewClick"
+                       PointerPressed="OnBtnNewPointerPressed"
+                       PointerReleased="OnBtnNewPointerReleased" >
+                <Image Source="{x:Bind BtnNewGameImg, Mode=OneWay}" />
+            </Button>
             <TextBlock x:Name="txtTimeLeft"
                        FontSize="25"
                        VerticalAlignment="Top"

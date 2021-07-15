@@ -179,7 +179,7 @@ public class Handlers {
         return themeSystemAction;
     }
 
-    public void getMosaicClickHandler(ClickResult clickResult) {
+    public void onMosaicClickHandler(ClickResult clickResult) {
         //Logger.info("OnMosaicClick: down=" + clickResult.isDown() + "; leftClick=" + clickResult.isLeft());
         if (clickResult.isLeft && (app.getMosaicController().getGameStatus() == EGameStatus.eGSPlay)) {
             Icon img = app.getToolbar().getSmileIco(

@@ -342,7 +342,7 @@ public class FastMinesSwing {
         getToolbar().getEdtMinesLeft().setText(Integer.toString(mosaicCtrllr.getCountMinesLeft()));
         getToolbar().getEdtTimePlay().setText("0");
 
-        mosaicCtrllr.setOnClickEvent(this.getHandlers()::getMosaicClickHandler);
+        mosaicCtrllr.setOnClickEvent(this.getHandlers()::onMosaicClickHandler);
         //setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.addWindowListener(     this.getHandlers().getWindowListener());
         frame.addWindowStateListener(this.getHandlers().getWindowStateListener());

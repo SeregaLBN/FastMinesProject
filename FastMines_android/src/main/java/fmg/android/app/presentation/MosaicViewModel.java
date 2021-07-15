@@ -22,14 +22,14 @@ public class MosaicViewModel extends ViewModel {
     private final MosaicViewController mosaicController;
     private final TopPanel topPanel;
     private long time;
-    private Smile.BitmapController btnNewImage;
+    private Smile.BitmapController btnNewGameImage;
 
     public MosaicViewModel() {
         mosaicController = new MosaicViewController(null);
         topPanel = new TopPanel();
-        btnNewImage = new Smile.BitmapController(SmileModel.EFaceType.Face_WhiteSmiling);
+        btnNewGameImage = new Smile.BitmapController(SmileModel.EFaceType.Face_WhiteSmiling);
         float size = Cast.dpToPx(25);
-        btnNewImage.getModel().setSize(new SizeDouble(size, size));
+        btnNewGameImage.getModel().setSize(new SizeDouble(size, size));
     }
 
     public MosaicViewController getMosaicController() {
@@ -43,7 +43,7 @@ public class MosaicViewModel extends ViewModel {
     protected void onCleared() {
         Logger.info("MosaicViewModel::onCleared");
         mosaicController.close();
-        btnNewImage.close();
+        btnNewGameImage.close();
     }
 
     public long getTime() {
@@ -57,10 +57,10 @@ public class MosaicViewModel extends ViewModel {
         topPanel.notifyPropertyChanged(BR.timeLeft);
     }
 
-    public void setBtnNewFaceType(SmileModel.EFaceType btnNewFaceType) {
-        btnNewImage.getModel().setFaceType(btnNewFaceType);
+    public void setBtnNewGameFaceType(SmileModel.EFaceType faceType) {
+        btnNewGameImage.getModel().setFaceType(faceType);
         // reload UI
-        topPanel.notifyPropertyChanged(BR.btnNewImg);
+        topPanel.notifyPropertyChanged(BR.btnNewGameImg);
     }
 
     public class TopPanel extends BaseObservable {
@@ -79,8 +79,8 @@ public class MosaicViewModel extends ViewModel {
         }
 
         @Bindable
-        public Bitmap getBtnNewImg() {
-            return btnNewImage.getImage();
+        public Bitmap getBtnNewGameImg() {
+            return btnNewGameImage.getImage();
         }
 
     }

@@ -32,7 +32,6 @@ public class MosaicActivity extends AppCompatActivity {
     private MosaicViewModel viewModel;
     private Timer timer;
     private final PropertyChangeListener onMosaicControllerPropertyChangedListener = this::onMosaicControllerPropertyChanged;
-    private View btnNewView;
 
     public MosaicInitData getInitData() { return SharedData.getMosaicInitData(); }
 
@@ -62,11 +61,11 @@ public class MosaicActivity extends AppCompatActivity {
         ctrl.setBindSizeDirection(false);
         ctrl.setExtendedManipulation(true);
         ctrl.getModel().setAutoFit(false);
-        ctrl.setOnClickEvent(this::getMosaicClickHandler);
+        ctrl.setOnClickEvent(this::onMosaicClickHandler);
         binding.setViewModel(viewModel);
         binding.executePendingBindings();
-        binding.btnNew.setOnClickListener(this::onBtnNewClick);
-        binding.btnNew.setOnTouchListener(this::onBtnNewTouch);
+        binding.btnNewGame.setOnClickListener(this::onBtnNewClick);
+        binding.btnNewGame.setOnTouchListener(this::onBtnNewTouch);
 
         // init mosaic controller
         MosaicInitData initData = getInitData();
@@ -132,6 +131,7 @@ public class MosaicActivity extends AppCompatActivity {
         Logger.info("MosaicActivity.onDestroy: this.hash={0}", this.hashCode());
         super.onDestroy();
         timer.close();
+        getMosaicController().setOnClickEvent(null);
     }
 
     private void onMosaicControllerPropertyChanged(PropertyChangeEvent ev) {
@@ -141,14 +141,14 @@ public class MosaicActivity extends AppCompatActivity {
             case eGSCreateGame:
             case eGSReady:
                 timer.reset();
-                viewModel.setBtnNewFaceType(SmileModel.EFaceType.Face_WhiteSmiling);
+                viewModel.setBtnNewGameFaceType(SmileModel.EFaceType.Face_WhiteSmiling);
                 break;
             case eGSPlay:
                 timer.start();
                 break;
             case eGSEnd:
                 timer.pause();
-                viewModel.setBtnNewFaceType(getMosaicController().isVictory()
+                viewModel.setBtnNewGameFaceType(getMosaicController().isVictory()
                                 ? SmileModel.EFaceType.Face_SmilingWithSunglasses
                                 : SmileModel.EFaceType.Face_Disappointed);
                 break;
@@ -163,26 +163,24 @@ public class MosaicActivity extends AppCompatActivity {
     }
 
     private void onBtnNewClick(View view) {
-        this.btnNewView = view;
         viewModel.getMosaicController().gameNew();
     }
 
     private boolean onBtnNewTouch(View view, MotionEvent event) {
-        this.btnNewView = view;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             // Pressed
-            viewModel.setBtnNewFaceType(SmileModel.EFaceType.Face_SavouringDeliciousFood);
+            viewModel.setBtnNewGameFaceType(SmileModel.EFaceType.Face_SavouringDeliciousFood);
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
             // Released
-            viewModel.setBtnNewFaceType(SmileModel.EFaceType.Face_WhiteSmiling);
+            viewModel.setBtnNewGameFaceType(SmileModel.EFaceType.Face_WhiteSmiling);
         }
         return false;
     }
 
-    public void getMosaicClickHandler(ClickResult clickResult) {
+    public void onMosaicClickHandler(ClickResult clickResult) {
         //Logger.info("OnMosaicClick: down=" + clickResult.isDown() + "; leftClick=" + clickResult.isLeft());
         if (clickResult.isLeft && (getMosaicController().getGameStatus() == EGameStatus.eGSPlay)) {
-            viewModel.setBtnNewFaceType(clickResult.isDown
+            viewModel.setBtnNewGameFaceType(clickResult.isDown
                     ? SmileModel.EFaceType.Face_Grinning
                     : SmileModel.EFaceType.Face_WhiteSmiling);
         }
