@@ -1,6 +1,7 @@
 package fmg.android.app;
 
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -14,15 +15,14 @@ import java.beans.PropertyChangeListener;
 import fmg.android.app.databinding.MosaicActivityBinding;
 import fmg.android.app.model.SharedData;
 import fmg.android.app.presentation.MosaicViewModel;
-import fmg.android.img.Smile;
 import fmg.android.mosaic.MosaicViewController;
 import fmg.android.utils.Timer;
 import fmg.common.Logger;
-import fmg.common.geom.SizeDouble;
 import fmg.core.img.SmileModel;
 import fmg.core.mosaic.MosaicController;
 import fmg.core.mosaic.MosaicGameModel;
 import fmg.core.mosaic.MosaicInitData;
+import fmg.core.types.ClickResult;
 import fmg.core.types.EGameStatus;
 
 /** Game field activity of the project */
@@ -32,6 +32,7 @@ public class MosaicActivity extends AppCompatActivity {
     private MosaicViewModel viewModel;
     private Timer timer;
     private final PropertyChangeListener onMosaicControllerPropertyChangedListener = this::onMosaicControllerPropertyChanged;
+    private View btnNewView;
 
     public MosaicInitData getInitData() { return SharedData.getMosaicInitData(); }
 
@@ -61,9 +62,11 @@ public class MosaicActivity extends AppCompatActivity {
         ctrl.setBindSizeDirection(false);
         ctrl.setExtendedManipulation(true);
         ctrl.getModel().setAutoFit(false);
+        ctrl.setOnClickEvent(this::getMosaicClickHandler);
         binding.setViewModel(viewModel);
         binding.executePendingBindings();
         binding.btnNew.setOnClickListener(this::onBtnNewClick);
+        binding.btnNew.setOnTouchListener(this::onBtnNewTouch);
 
         // init mosaic controller
         MosaicInitData initData = getInitData();
@@ -128,7 +131,6 @@ public class MosaicActivity extends AppCompatActivity {
     protected void onDestroy() {
         Logger.info("MosaicActivity.onDestroy: this.hash={0}", this.hashCode());
         super.onDestroy();
-        //getMosaicController().close();
         timer.close();
     }
 
@@ -161,7 +163,29 @@ public class MosaicActivity extends AppCompatActivity {
     }
 
     private void onBtnNewClick(View view) {
+        this.btnNewView = view;
         viewModel.getMosaicController().gameNew();
+    }
+
+    private boolean onBtnNewTouch(View view, MotionEvent event) {
+        this.btnNewView = view;
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            // Pressed
+            viewModel.setBtnNewFaceType(SmileModel.EFaceType.Face_SavouringDeliciousFood);
+        } else if (event.getAction() == MotionEvent.ACTION_UP) {
+            // Released
+            viewModel.setBtnNewFaceType(SmileModel.EFaceType.Face_WhiteSmiling);
+        }
+        return false;
+    }
+
+    public void getMosaicClickHandler(ClickResult clickResult) {
+        //Logger.info("OnMosaicClick: down=" + clickResult.isDown() + "; leftClick=" + clickResult.isLeft());
+        if (clickResult.isLeft && (getMosaicController().getGameStatus() == EGameStatus.eGSPlay)) {
+            viewModel.setBtnNewFaceType(clickResult.isDown
+                    ? SmileModel.EFaceType.Face_Grinning
+                    : SmileModel.EFaceType.Face_WhiteSmiling);
+        }
     }
 
 }

@@ -42,7 +42,8 @@ public class MosaicViewModel extends ViewModel {
     @Override
     protected void onCleared() {
         Logger.info("MosaicViewModel::onCleared");
-        //mosaicController.close();
+        mosaicController.close();
+        btnNewImage.close();
     }
 
     public long getTime() {

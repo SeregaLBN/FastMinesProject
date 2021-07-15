@@ -342,7 +342,7 @@ public class FastMinesSwing {
         getToolbar().getEdtMinesLeft().setText(Integer.toString(mosaicCtrllr.getCountMinesLeft()));
         getToolbar().getEdtTimePlay().setText("0");
 
-        mosaicCtrllr.setOnClickEvent(this.getHandlers().getMosaicClickHandler());
+        mosaicCtrllr.setOnClickEvent(this.getHandlers()::getMosaicClickHandler);
         //setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.addWindowListener(     this.getHandlers().getWindowListener());
         frame.addWindowStateListener(this.getHandlers().getWindowStateListener());
@@ -552,6 +552,9 @@ public class FastMinesSwing {
     }
 
     void onClose() {
+        MosaicJPanelController mosaicCtrllr = getMosaicController();
+        mosaicCtrllr.setOnClickEvent(null);
+
         try {
             getPlayers().Save();
         } catch (Exception ex) {
@@ -566,10 +569,10 @@ public class FastMinesSwing {
         try {
             SerializeProjData spm = new SerializeProjData();
 
-            spm.setSizeField(getMosaicController().getSizeField());
-            spm.setMosaicType(getMosaicController().getMosaicType());
-            spm.setCountMines(getMosaicController().getCountMines());
-            spm.setSizeMosaic(getMosaicController().getSize());
+            spm.setSizeField(mosaicCtrllr.getSizeField());
+            spm.setMosaicType(mosaicCtrllr.getMosaicType());
+            spm.setCountMines(mosaicCtrllr.getCountMines());
+            spm.setSizeMosaic(mosaicCtrllr.getSize());
 
             spm.setActiveUserId(getActiveUserId());
             spm.setDoNotAskStartup(getPlayerManageDlg().isDoNotAskStartupChecked());

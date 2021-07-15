@@ -179,22 +179,16 @@ public class Handlers {
         return themeSystemAction;
     }
 
-    private Consumer<ClickResult> mosaicClickHandler;
-    public Consumer<ClickResult> getMosaicClickHandler() {
-        if (mosaicClickHandler == null)
-            mosaicClickHandler = (clickResult) -> {
-                //Logger.info("OnMosaicClick: down=" + clickResult.isDown() + "; leftClick=" + clickResult.isLeft());
-                if (clickResult.isLeft && (app.getMosaicController().getGameStatus() == EGameStatus.eGSPlay)) {
-                    Icon img = app.getToolbar().getSmileIco(
-                            clickResult.isDown ?
-                                EBtnNewGameState.eNormalMosaic :
-                                EBtnNewGameState.eNormal);
-                    if (img != null)
-                        app.getToolbar().getBtnNew().getButton().setIcon(img);
-                }
-            };
-
-        return mosaicClickHandler;
+    public void getMosaicClickHandler(ClickResult clickResult) {
+        //Logger.info("OnMosaicClick: down=" + clickResult.isDown() + "; leftClick=" + clickResult.isLeft());
+        if (clickResult.isLeft && (app.getMosaicController().getGameStatus() == EGameStatus.eGSPlay)) {
+            Icon img = app.getToolbar().getSmileIco(
+                    clickResult.isDown ?
+                        EBtnNewGameState.eNormalMosaic :
+                        EBtnNewGameState.eNormal);
+            if (img != null)
+                app.getToolbar().getBtnNew().getButton().setIcon(img);
+        }
     }
 
     private MouseListener pausePanelMouseListener;
