@@ -41,7 +41,7 @@ public class ToolBar {
             getBtnPause().getButton().setMinimumSize(dimBtn);
             getBtnPause().getButton().setMaximumSize(dimBtn);
 
-            Dimension dimEdt = new Dimension(40, 21);
+            Dimension dimEdt = new Dimension(60, 21);
             getEdtTimePlay().setPreferredSize(dimEdt);
 //                getEdtTimePlay().setMinimumSize(dimEdt);
             getEdtTimePlay().setMaximumSize(dimEdt);
@@ -125,6 +125,7 @@ public class ToolBar {
             edtTimePlay.setFocusable(false);
             edtTimePlay.setEditable(false);
             edtTimePlay.setToolTipText("time...");
+            edtTimePlay.setHorizontalAlignment(SwingConstants.RIGHT);
         }
         return edtTimePlay;
     }

@@ -305,8 +305,9 @@ namespace Fmg {
         }
 
         public void OnMosaicClickHandler(ClickResult clickResult) {
-            //Logger.info("OnMosaicClick: down=" + clickResult.isDown() + "; leftClick=" + clickResult.isLeft());
-            if (clickResult.IsLeft && (MosaicController.GameStatus == EGameStatus.eGSPlay)) {
+            var gs = MosaicController.GameStatus;
+            //Logger.Info("OnMosaicClick: down=" + clickResult.IsDown + "; leftClick=" + clickResult.IsLeft + "; gameStatus=" + gs);
+            if (clickResult.IsLeft && ((gs == EGameStatus.eGSPlay) || (gs == EGameStatus.eGSReady))) {
                 SetBtnNewGameFaceType(clickResult.IsDown
                         ? SmileModel.EFaceType.Face_Grinning
                         : SmileModel.EFaceType.Face_WhiteSmiling);

@@ -178,8 +178,9 @@ public class MosaicActivity extends AppCompatActivity {
     }
 
     public void onMosaicClickHandler(ClickResult clickResult) {
-        //Logger.info("OnMosaicClick: down=" + clickResult.isDown() + "; leftClick=" + clickResult.isLeft());
-        if (clickResult.isLeft && (getMosaicController().getGameStatus() == EGameStatus.eGSPlay)) {
+        EGameStatus gs = getMosaicController().getGameStatus();
+        //Logger.info("OnMosaicClick: down=" + clickResult.isDown + "; leftClick=" + clickResult.isLeft + "; gameStatus=" + gs);
+        if (clickResult.isLeft && ((gs == EGameStatus.eGSPlay) || (gs == EGameStatus.eGSReady))) {
             viewModel.setBtnNewGameFaceType(clickResult.isDown
                     ? SmileModel.EFaceType.Face_Grinning
                     : SmileModel.EFaceType.Face_WhiteSmiling);

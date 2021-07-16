@@ -21,6 +21,7 @@ import fmg.common.geom.BoundDouble;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.Rect;
 import fmg.common.geom.SizeDouble;
+import fmg.common.ui.ITimer;
 import fmg.core.img.IImageController;
 import fmg.core.img.LogoModel;
 import fmg.core.mosaic.*;
@@ -1021,9 +1022,19 @@ public class FastMinesSwing {
         if (timerGame == null) {
             timerGame = new Timer();
             timerGame.setInterval(1000);
-            timerGame.setCallback(getHandlers().getTimePlayAction());
+            timerGame.setCallback(this::onTimePlayAction);
         }
         return timerGame;
+    }
+
+    private void onTimePlayAction(ITimer timer) {
+        long time = timer.getTime();
+        String strTime;
+        if (getMosaicController().getGameStatus() == EGameStatus.eGSEnd)
+            strTime = String.valueOf(time / 1000.0); // show time as float (with milliseconds)
+        else
+            strTime = String.valueOf(time / 1000);   // show time as int (only seconds)
+        getToolbar().getEdtTimePlay().setText(strTime);
     }
 
 //    private static String getProperties() {
@@ -1174,7 +1185,8 @@ public class FastMinesSwing {
                 case eGSReady:
                     {
                         getGameTimer().reset();
-                        getToolbar().getEdtTimePlay().setText("0");
+                        onTimePlayAction(getGameTimer()); // getToolbar().getEdtTimePlay().setText("0");
+
                         Icon img = getToolbar().getSmileIco(EBtnNewGameState.eNormal);
                         if (img != null)
                             getToolbar().getBtnNew().getButton().setIcon(img);
@@ -1188,6 +1200,8 @@ public class FastMinesSwing {
                 case eGSEnd:
                     {
                         getGameTimer().pause();
+                        onTimePlayAction(getGameTimer()); // show in toolbar finish time
+
                         Icon img = getToolbar().getSmileIco(
                             getMosaicController().isVictory() ?
                                 EBtnNewGameState.eNormalWin :

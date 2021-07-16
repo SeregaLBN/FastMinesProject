@@ -3,16 +3,13 @@ package fmg.swing.app;
 import java.awt.event.*;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.SwingUtilities;
 
-import fmg.common.Logger;
 import fmg.common.geom.Matrisize;
-import fmg.common.ui.ITimer;
 import fmg.core.types.ClickResult;
 import fmg.core.types.EGameStatus;
 import fmg.core.types.EMosaicGroup;
@@ -180,8 +177,9 @@ public class Handlers {
     }
 
     public void onMosaicClickHandler(ClickResult clickResult) {
-        //Logger.info("OnMosaicClick: down=" + clickResult.isDown() + "; leftClick=" + clickResult.isLeft());
-        if (clickResult.isLeft && (app.getMosaicController().getGameStatus() == EGameStatus.eGSPlay)) {
+        EGameStatus gs = app.getMosaicController().getGameStatus();
+        //Logger.info("OnMosaicClick: down=" + clickResult.isDown + "; leftClick=" + clickResult.isLeft + "; gameStatus=" + gs);
+        if (clickResult.isLeft && ((gs == EGameStatus.eGSPlay) || (gs == EGameStatus.eGSReady))) {
             Icon img = app.getToolbar().getSmileIco(
                     clickResult.isDown ?
                         EBtnNewGameState.eNormalMosaic :
@@ -381,21 +379,6 @@ public class Handlers {
             };
 
         return usePauseAction;
-    }
-
-    private Consumer<ITimer> timePlayAction;
-    public Consumer<ITimer> getTimePlayAction() {
-        if (timePlayAction == null)
-            timePlayAction = timer -> {
-                try {
-                    long timeInSeconds = timer.getTime() / 1000;
-                    app.getToolbar().getEdtTimePlay().setText(Long.toString(timeInSeconds));
-                } catch (Exception ex) {
-                    Logger.error("Handlers::getTimePlayAction", ex);
-                }
-            };
-
-        return timePlayAction;
     }
 
     private Action mosaicSizeIncX, mosaicSizeDecX, mosaicSizeIncY, mosaicSizeDecY;
