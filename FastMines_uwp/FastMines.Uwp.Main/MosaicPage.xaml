@@ -21,9 +21,12 @@
         </Grid>
 
         <!-- top panel elements -->
-        <Grid Padding="7,2,7,2"
-              Background="#171F1F1F"
-              VerticalAlignment="Top">
+        <Grid VerticalAlignment="Top"
+                  Padding="7, 2, 7, 2" >      <!-- clickable panel (bk is transparent) -->
+            <Grid Margin="-7,-2,-7,-2"
+                  IsHitTestVisible="False"
+                  Background="#171F1F1F" /> <!-- do not clickable panel (bk is gray) -->
+
             <TextBlock x:Name="txtMinesLeft"
                        FontSize="25"
                        VerticalAlignment="Top"
@@ -40,8 +43,8 @@
                        IsTabStop="False"
                        Click="OnBtnNewClick"
                        PointerPressed="OnBtnNewPointerPressed"
-                       PointerReleased="OnBtnNewPointerReleased" >
-                <Image Source="{x:Bind BtnNewGameImg, Mode=OneWay}" />
+                       PointerReleased="OnBtnNewPointerReleased" > <!-- TODO  don`t handled OnBtnNewPointer* -->
+                    <Image Source="{x:Bind BtnNewGameImg, Mode=OneWay}" />
             </Button>
             <TextBlock x:Name="txtTimeLeft"
                        FontSize="25"
