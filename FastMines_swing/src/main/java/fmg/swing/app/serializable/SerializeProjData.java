@@ -3,6 +3,7 @@ package fmg.swing.app.serializable;
 import java.io.*;
 import java.util.UUID;
 
+import fmg.common.AProjSettings;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.Point;
 import fmg.common.geom.SizeDouble;
@@ -142,7 +143,7 @@ public class SerializeProjData implements Externalizable {
     }
 
     public static File getIniFile() {
-        return new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "Mines.dat");
+        return new File(AProjSettings.getSettingsFileName());
     }
 
     public Matrisize getSizeField() { return mosaicData.getSizeField(); }

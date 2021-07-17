@@ -30,6 +30,9 @@
     <Compile Include="..\..\src\src_core\fmg\common\HSV.cs">
       <Link>src_fmg.common\HSV.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\src_core\fmg\common\AProjSettings.cs">
+      <Link>src_fmg.common\AProjSettings.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\src_core\fmg\common\ThreadLocalRandom.cs">
       <Link>src_fmg.common\ThreadLocalRandom.cs</Link>
     </Compile>
@@ -323,9 +326,6 @@
     </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\types\viewmodel\serializable\StatisticCounts.cs">
       <Link>src_fmg.core\types\viewmodel\serializable\StatisticCounts.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\types\viewmodel\event\ActionToUser.cs">
-      <Link>src_fmg.core\types\viewmodel\event\ActionToUser.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\types\viewmodel\event\ChampionModelEvent.cs">
       <Link>src_fmg.core\types\viewmodel\event\ChampionModelEvent.cs</Link>

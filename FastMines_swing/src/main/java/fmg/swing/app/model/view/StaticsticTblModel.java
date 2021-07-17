@@ -1,7 +1,9 @@
 package fmg.swing.app.model.view;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.util.Locale;
 
 import javax.swing.event.TableModelEvent;
 
@@ -45,13 +47,13 @@ public class StaticsticTblModel extends ReportTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         User user = players.getUser(rowIndex);
         StatisticCounts sc = players.getInfo(user.getGuid(), eMosaic, eSkill);
-        NumberFormat formatter = new DecimalFormat("0.000");
+        NumberFormat formatter = new DecimalFormat("0.000", new DecimalFormatSymbols(Locale.US));
         switch (columnIndex) {
         case 0: return user.getName();
         case 1: return Long.toString(sc.gameNumber);
         case 2: return sc.gameWin + " / " + formatter.format(sc.gameWin*100./Math.max(1, sc.gameNumber)) + '%';
         case 3: return formatter.format(sc.openField*100./Math.max(1, sc.gameNumber) / (eSkill.getDefaultSize().m*eSkill.getDefaultSize().n)) + '%';
-        case 4: return (sc.playTime == 0) ? "???" : (formatter.format((double)sc.playTime / Math.max(1, sc.gameWin)) + " sec.");
+        case 4: return (sc.playTime  == 0) ? "???" : (formatter.format((sc.playTime/1000.0) / Math.max(1, sc.gameWin)) + " sec.");
         case 5: return (sc.clickCount ==0) ? "???" : formatter.format((double)sc.clickCount / Math.max(1, sc.gameWin));
         }
         return null;

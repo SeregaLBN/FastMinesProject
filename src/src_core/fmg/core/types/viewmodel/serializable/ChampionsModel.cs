@@ -17,7 +17,7 @@ namespace Fmg.Core.Types.Viewmodel.Serializable {
 
         class Record : IExternalizable, IComparable<Record> {
             public Guid userId;
-            public String userName;
+            public string userName;
             public long playTime = long.MaxValue;
 
             public Record() {}
@@ -27,18 +27,18 @@ namespace Fmg.Core.Types.Viewmodel.Serializable {
                 this.playTime  = playTime;
             }
 
-            public void readExternal(BinaryReader input) {
+            public void ReadExternal(BinaryReader input) {
                 userId = new Guid(input.ReadString());
                 userName = input.ReadString();
                 playTime = input.ReadInt64();
             }
-            public void writeExternal(BinaryWriter output) {
+            public void WriteExternal(BinaryWriter output) {
                 output.Write(userId.ToString());
                 output.Write(userName);
                 output.Write((Int64)playTime);
             }
 
-            public override String ToString() {
+            public override string ToString() {
                 return userName;
             }
 
@@ -56,7 +56,7 @@ namespace Fmg.Core.Types.Viewmodel.Serializable {
                 // если был UPDATE, то это, возможно что, было переименование пользователя...
                 // в этом случае переименовываю его имя и в чемпионах
                 PlayersModel players = sender as PlayersModel;
-                User user = players.getUser(e.Pos);
+                User user = players.GetUser(e.Pos);
                 foreach (var mosaic in EMosaicEx.GetValues())
                     foreach (var eSkill in ESkillLevelEx.GetValues())
                         if (eSkill != ESkillLevel.eCustom) {
@@ -68,7 +68,7 @@ namespace Fmg.Core.Types.Viewmodel.Serializable {
                                     isChanged = true;
                                 }
                             if (isChanged)
-                                fireChanged(new ChampionModelEventArgs(mosaic, eSkill, ChampionModelEventArgs.POS_ALL, ChampionModelEventArgs.UPDATE));
+                                FireChanged(new ChampionModelEventArgs(mosaic, eSkill, ChampionModelEventArgs.POS_ALL, ChampionModelEventArgs.UPDATE));
                         }
             }
         }
@@ -83,7 +83,7 @@ namespace Fmg.Core.Types.Viewmodel.Serializable {
                         champions[mosaic.Ordinal(), eSkill.Ordinal()] = new List<ChampionsModel.Record>(MAX_SIZE);
         }
 
-        public int add(User user, long playTime, EMosaic mosaic, ESkillLevel eSkill) {
+        public int Add(User user, long playTime, EMosaic mosaic, ESkillLevel eSkill) {
             if (eSkill == ESkillLevel.eCustom)
                 return -1;
 
@@ -100,27 +100,27 @@ namespace Fmg.Core.Types.Viewmodel.Serializable {
             if (list.Count > MAX_SIZE)
                 list = list.Take(MAX_SIZE).ToList();
 
-            fireChanged(new ChampionModelEventArgs(mosaic, eSkill, ChampionModelEventArgs.POS_ALL, ChampionModelEventArgs.UPDATE));
+            FireChanged(new ChampionModelEventArgs(mosaic, eSkill, ChampionModelEventArgs.POS_ALL, ChampionModelEventArgs.UPDATE));
             if (pos < MAX_SIZE) {
-                fireChanged(new ChampionModelEventArgs(mosaic, eSkill, pos, ChampionModelEventArgs.INSERT));
+                FireChanged(new ChampionModelEventArgs(mosaic, eSkill, pos, ChampionModelEventArgs.INSERT));
                 return pos;
             }
             return -1;
         }
 
-        public void writeExternal(BinaryWriter output) {
+        public void WriteExternal(BinaryWriter output) {
             foreach (var mosaic in EMosaicEx.GetValues())
                 foreach (var eSkill in ESkillLevelEx.GetValues())
                     if (eSkill != ESkillLevel.eCustom) {
                         IList<ChampionsModel.Record> list = champions[mosaic.Ordinal(), eSkill.Ordinal()];
                         output.Write(list.Count);
                         foreach (Record record in list)
-                            record.writeExternal(output);
+                            record.WriteExternal(output);
                     }
         }
 
-        public void readExternal(BinaryReader input) {
-            setDefaults();
+        public void ReadExternal(BinaryReader input) {
+            SetDefaults();
             foreach (var mosaic in EMosaicEx.GetValues())
                 foreach (var eSkill in ESkillLevelEx.GetValues())
                     if (eSkill != ESkillLevel.eCustom) {
@@ -128,20 +128,20 @@ namespace Fmg.Core.Types.Viewmodel.Serializable {
                         int size = input.ReadInt32();
                         for (int i=0; i<size; i++) {
                             Record record = new Record();
-                            record.readExternal(input);
+                            record.ReadExternal(input);
                             list.Add(record);
                         }
-                        fireChanged(new ChampionModelEventArgs(mosaic, eSkill, ChampionModelEventArgs.POS_ALL, ChampionModelEventArgs.INSERT));
+                        FireChanged(new ChampionModelEventArgs(mosaic, eSkill, ChampionModelEventArgs.POS_ALL, ChampionModelEventArgs.INSERT));
                     }
         }
 
-        private void setDefaults() {
+        private void SetDefaults() {
             foreach (var mosaic in EMosaicEx.GetValues())
                 foreach (var eSkill in ESkillLevelEx.GetValues())
                     if (eSkill != ESkillLevel.eCustom) {
                         IList<ChampionsModel.Record> list = champions[mosaic.Ordinal(), eSkill.Ordinal()];
                         list.Clear();
-                        fireChanged(new ChampionModelEventArgs(mosaic, eSkill, ChampionModelEventArgs.POS_ALL, ChampionModelEventArgs.DELETE));
+                        FireChanged(new ChampionModelEventArgs(mosaic, eSkill, ChampionModelEventArgs.POS_ALL, ChampionModelEventArgs.DELETE));
                     }
         }
 
@@ -152,7 +152,7 @@ namespace Fmg.Core.Types.Viewmodel.Serializable {
             var files = await Windows.Storage.ApplicationData.Current.LocalFolder.GetFilesAsync(Windows.Storage.Search.CommonFileQuery.OrderByName);
             var file = files.FirstOrDefault(x => x.Name == ChampFile);
             if (file == null) {
-                setDefaults();
+                SetDefaults();
                 return false;
             }
 
@@ -190,14 +190,14 @@ namespace Fmg.Core.Types.Viewmodel.Serializable {
                 using (Stream stream = new MemoryStream()) {
                     stream.Write(data, 0, data.Length);
                     using (BinaryReader input = new BinaryReader(stream)) {
-                        this.readExternal(input);
+                        this.ReadExternal(input);
                     }
                 }
 
                 return true;
             } catch (Exception ex) {
                 System.Diagnostics.Debug.WriteLine(ex.Message);
-                setDefaults();
+                SetDefaults();
                 return false;
             }
         }
@@ -206,7 +206,7 @@ namespace Fmg.Core.Types.Viewmodel.Serializable {
             // 1. serializable object
             using (Stream stream = new MemoryStream()) {
                 using (BinaryWriter output = new BinaryWriter(stream, Encoding.UTF8)) {
-                    this.writeExternal(output);
+                    this.WriteExternal(output);
                 }
 
                 // 2. crypt data
@@ -234,7 +234,7 @@ namespace Fmg.Core.Types.Viewmodel.Serializable {
                 }
             }
         }
-    #elif WINDOWS_FORMS
+#elif WINDOWS_FORMS
         ///**
         // * Load BST data from file
         // * @return <b>true</b> - successful read; <b>false</b> - not exist or fail read, and set to defaults
@@ -309,36 +309,36 @@ namespace Fmg.Core.Types.Viewmodel.Serializable {
         //    out.flush();
         //    out.close();
         //}
-    #else
+#else
          public abstract bool Load();
          public abstract void Save();
-    #endif
+#endif
 
-        public static string ChampFile { get { return "Mines.bst"; } }
+        public static string ChampFile => AProjSettings.ChampionsFileName;
 
         public event ChampionModelChangedHandler OnChampionChanged = delegate {};
-        private void fireChanged(ChampionModelEventArgs e) {
+        private void FireChanged(ChampionModelEventArgs e) {
             OnChampionChanged(this, e);
         }
 
-        public String getUserName(int index, EMosaic mosaic, ESkillLevel eSkill) {
+        public string GetUserName(int index, EMosaic mosaic, ESkillLevel eSkill) {
             if (eSkill == ESkillLevel.eCustom)
                 throw new ArgumentException("Invalid input data - " + eSkill);
             return champions[mosaic.Ordinal(), eSkill.Ordinal()][index].userName;
         }
-        public long getUserPlayTime(int index, EMosaic mosaic, ESkillLevel eSkill) {
+        public long GetUserPlayTime(int index, EMosaic mosaic, ESkillLevel eSkill) {
             if (eSkill == ESkillLevel.eCustom)
                 throw new ArgumentException("Invalid input data - " + eSkill);
             return champions[mosaic.Ordinal(), eSkill.Ordinal()][index].playTime;
         }
-        public int getUsersCount(EMosaic mosaic, ESkillLevel eSkill) {
+        public int GetUsersCount(EMosaic mosaic, ESkillLevel eSkill) {
             if (eSkill == ESkillLevel.eCustom)
                 throw new ArgumentException("Invalid input data - " + eSkill);
             return champions[mosaic.Ordinal(), eSkill.Ordinal()].Count;
         }
 
-        /** Найдёт позицию лучшего результата указанного пользователя */
-        public int getPos(Guid userId, EMosaic mosaic, ESkillLevel eSkill) {
+        /// <summary>Найдёт позицию лучшего результата указанного пользователя</summary>
+        public int GetPos(Guid userId, EMosaic mosaic, ESkillLevel eSkill) {
             if (userId == null)
                 return -1;
             if (eSkill == ESkillLevel.eCustom)

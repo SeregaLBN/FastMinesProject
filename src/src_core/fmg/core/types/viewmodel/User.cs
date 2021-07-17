@@ -33,7 +33,7 @@ namespace Fmg.Core.Types.Viewmodel {
 
         /** load from file */
         public User(BinaryReader input) {
-            readExternal(input);
+            ReadExternal(input);
         }
 
         public Guid Guid { get { return guid; } }
@@ -52,7 +52,7 @@ namespace Fmg.Core.Types.Viewmodel {
             return name + "; passw " + (string.IsNullOrEmpty(password) ? "not exist" : "is exist");
         }
 
-        public void readExternal(BinaryReader input) {
+        public void ReadExternal(BinaryReader input) {
             guid = new Guid(input.ReadString());
             name = input.ReadString();
 
@@ -65,7 +65,7 @@ namespace Fmg.Core.Types.Viewmodel {
                 imgAvatar = input.ReadString();
         }
 
-        public void writeExternal(BinaryWriter output) {
+        public void WriteExternal(BinaryWriter output) {
             output.Write(guid.ToString());
             output.Write(name);
 

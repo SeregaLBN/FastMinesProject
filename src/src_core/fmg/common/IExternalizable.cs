@@ -4,8 +4,8 @@ namespace Fmg.Common {
 
     //[Obsolete]
     public interface IExternalizable : ISerializable {
-        void writeExternal(BinaryWriter output);
-        void readExternal(BinaryReader input);
+        void WriteExternal(BinaryWriter output);
+        void ReadExternal(BinaryReader input);
     }
 
 }

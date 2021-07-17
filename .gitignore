@@ -21,9 +21,9 @@ FastMines_uwp/*FastMines*/res
 FastMines_uwp/FastMines*/src_*
 FastMines_uwp/packages/*
 *proj.user
-Mines*.bst
-Mines*.dat
-Mines*.stc
+FastMines.best
+FastMines.settings
+FastMines.statistics
 *project.lock.json
 **/*FastMines.*.nuget.targets
 **/*FastMines.*.nuget.props

@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using Fmg.Common;
 
@@ -5,14 +6,24 @@ namespace Fmg.Core.Types.Viewmodel.Serializable {
 
     public class StatisticCounts : IExternalizable {
 
-        public long
-           gameNumber, // количество сыгранных игр
-           gameWin,    // количество выиграных игр
-           openField,  // суммарное число открытых ячеек - вывожу средний процент открытия поля
-           playTime,   // суммарное время игр - вывожу сколько всреднем игрок провёл времени за данной игрой
-           clickCount; // суммарное число кликов - вывожу среднее число кликов в данной игре
+        private const long VERSION = 1;
 
-        public void readExternal(BinaryReader input) {
+        /// <summary>количество сыгранных игр</summary>
+        public long gameNumber;
+        /// <summary>количество выиграных игр</summary>
+        public long gameWin;
+        /// <summary>суммарное число открытых ячеек - вывожу средний процент открытия поля</summary>
+        public long openField;
+        /// <summary>суммарное время игр (milliseconds) - вывожу сколько всреднем игрок провёл времени за данной игрой</summary>
+        public long playTime;
+        /// <summary>суммарное число кликов - вывожу среднее число кликов в данной игре</summary>
+        public long clickCount;
+
+        public void ReadExternal(BinaryReader input) {
+            var version = input.ReadInt64();
+            if (version != VERSION)
+                throw new Exception("Unsupported " + nameof(StatisticCounts) + " version " + version);
+
             gameNumber = input.ReadInt64();
             gameWin = input.ReadInt64();
             openField = input.ReadInt64();
@@ -20,7 +31,8 @@ namespace Fmg.Core.Types.Viewmodel.Serializable {
             clickCount = input.ReadInt64();
         }
 
-        public void writeExternal(BinaryWriter output) {
+        public void WriteExternal(BinaryWriter output) {
+            output.Write(VERSION);
             output.Write(gameNumber);
             output.Write(gameWin);
             output.Write(openField);
@@ -28,7 +40,7 @@ namespace Fmg.Core.Types.Viewmodel.Serializable {
             output.Write(clickCount);
         }
 
-        public StatisticCounts clone() {
+        public StatisticCounts Clone() {
             return (StatisticCounts)this.MemberwiseClone();
             //StatisticCounts clone = new StatisticCounts();
             //clone.gameNumber = this.gameNumber;

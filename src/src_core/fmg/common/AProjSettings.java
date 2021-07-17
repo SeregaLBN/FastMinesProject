@@ -4,6 +4,13 @@ public abstract class AProjSettings {
 
     protected AProjSettings() { }
 
+    public static final String PROJECT_NAME = "FastMines";
+
+    protected static String   settingsFile = PROJECT_NAME + ".settings";
+    protected static String statisticsFile = PROJECT_NAME + ".statistics";
+    protected static String  championsFile = PROJECT_NAME + ".best";
+
+
     private static boolean IsDebug;
     public static boolean isDebug() { return IsDebug; }
     protected static void setDebug(boolean isDebug) { AProjSettings.IsDebug = isDebug; }
@@ -25,6 +32,19 @@ public abstract class AProjSettings {
             if (!(ex instanceof NoClassDefFoundError) || !ex.getMessage().contains("ManagementFactory"))
                 Logger.error("AProjSettings", ex);
         }
+
+    }
+
+    public static String getSettingsFileName() {
+        return settingsFile;
+    }
+
+    public static String getStatisticsFileName() {
+        return statisticsFile;
+    }
+
+    public static String getChampionsFileName() {
+        return championsFile;
     }
 
 }

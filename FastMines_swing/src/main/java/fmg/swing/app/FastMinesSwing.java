@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import javax.swing.*;
@@ -32,7 +33,6 @@ import fmg.core.types.ESkillLevel;
 import fmg.core.types.draw.EShowElement;
 import fmg.core.types.draw.EZoomInterface;
 import fmg.core.types.viewmodel.User;
-import fmg.core.types.viewmodel.event.ActionToUser;
 import fmg.core.types.viewmodel.serializable.ChampionsModel;
 import fmg.core.types.viewmodel.serializable.PlayersModel;
 import fmg.swing.app.dialog.*;
@@ -1078,12 +1078,12 @@ public class FastMinesSwing {
         return null;
     }
     /** Единоразовые callback методы, вызывамые после выбора и установки текущего юзера */
-    private List<ActionToUser> oneTimeSelectActiveUserActions = new ArrayList<>();
+    private List<Consumer<UUID>> oneTimeSelectActiveUserActions = new ArrayList<>();
     public void setActiveUserId(UUID userId) {
         if (getPlayers().isExist(userId)) {
             this.activeUserId = userId;
-            for (ActionToUser action: oneTimeSelectActiveUserActions)
-                action.applyToUser(userId);
+            for (Consumer<UUID> action: oneTimeSelectActiveUserActions)
+                action.accept(userId);
         }
         oneTimeSelectActiveUserActions.clear();
     }
@@ -1105,11 +1105,11 @@ public class FastMinesSwing {
 
         final EMosaic eMosaic = mosaicCtrllr.getMosaicType();
         final long realCountOpen = mosaicCtrllr.isVictory() ? mosaicCtrllr.getCountMines() : mosaicCtrllr.getCountOpen();
-        final long playTime = Long.parseLong(getToolbar().getEdtTimePlay().getText());
+        final long playTime = timerGame.getTime(); // Double.parseLong(getToolbar().getEdtTimePlay().getText());
         final long clickCount = mosaicCtrllr.getCountClick();
 
         // логика сохранения...
-        ActionToUser onActionToUser = userId -> {
+        Consumer<UUID> onActionToUser = userId -> {
             if (userId != null) {
                 // ...статистики
                 getPlayers().setStatistic(userId, eMosaic, eSkill, victory, realCountOpen, playTime, clickCount);
@@ -1130,7 +1130,7 @@ public class FastMinesSwing {
         // вызываю логику:
         if (getActiveUserId() != null) {
             // 1. явно
-            onActionToUser.applyToUser(getActiveUserId());
+            onActionToUser.accept(getActiveUserId());
         } else {
             // 2. или неявно, после дожидания выбора текущего пользователя
             oneTimeSelectActiveUserActions.add(onActionToUser);

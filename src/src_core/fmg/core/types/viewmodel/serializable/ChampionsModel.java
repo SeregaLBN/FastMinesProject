@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import fmg.common.AProjSettings;
 import fmg.common.crypt.Simple3DES;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
@@ -240,7 +241,7 @@ public class ChampionsModel implements Externalizable {
     }
 
     public static File getChampFile() {
-        return new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "Mines.bst");
+        return new File(AProjSettings.getChampionsFileName());
     }
 
     public void addChampionListener(ChampionModelListener l) {

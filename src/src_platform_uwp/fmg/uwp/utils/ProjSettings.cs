@@ -8,7 +8,7 @@ using Fmg.Uwp.Img;
 
 namespace Fmg.Uwp.Utils {
 
-    public static class ProjSettings {
+    public class ProjSettings : Fmg.Common.AProjSettings {
 
         /// <summary> Mobile (true) or Desktop (false) </summary>
         public static bool IsMobile { get; }

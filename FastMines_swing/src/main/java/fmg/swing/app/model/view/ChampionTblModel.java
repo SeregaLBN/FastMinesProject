@@ -4,7 +4,6 @@ import javax.swing.event.TableModelEvent;
 
 import fmg.core.types.EMosaic;
 import fmg.core.types.viewmodel.event.ChampionModelEvent;
-import fmg.core.types.viewmodel.event.ChampionModelListener;
 import fmg.core.types.viewmodel.serializable.ChampionsModel;
 
 public class ChampionTblModel extends ReportTableModel {
@@ -15,34 +14,31 @@ public class ChampionTblModel extends ReportTableModel {
         super(eMosaic);
         this.champions = champions;
 
-        champions.addChampionListener(new ChampionModelListener() {
-            @Override
-            public void championChanged(ChampionModelEvent e) {
-                if ((e.getMosaic() == ChampionTblModel.this.eMosaic) &&
-                    (e.getSkill() == ChampionTblModel.this.eSkill))
-                {
-                    int size = ChampionTblModel.this.champions.getUsersCount(ChampionTblModel.this.eMosaic, ChampionTblModel.this.eSkill);
-                    int pos = e.getPos();
-                    switch (e.getType()) {
-                    case ChampionModelEvent.DELETE:
-                        if (pos == ChampionModelEvent.POS_ALL)
-                            fireTableChanged(new TableModelEvent(ChampionTblModel.this, 0, size-1, TableModelEvent.ALL_COLUMNS, TableModelEvent.DELETE));
-                        else
-                            fireTableChanged(new TableModelEvent(ChampionTblModel.this, pos, pos, TableModelEvent.ALL_COLUMNS, TableModelEvent.DELETE));
-                        break;
-                    case ChampionModelEvent.INSERT:
-                        if (pos == ChampionModelEvent.POS_ALL)
-                            fireTableChanged(new TableModelEvent(ChampionTblModel.this, 0, size-1, TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT));
-                        else
-                            fireTableChanged(new TableModelEvent(ChampionTblModel.this, pos, pos, TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT));
-                        break;
-                    case ChampionModelEvent.UPDATE:
-                        if (pos == ChampionModelEvent.POS_ALL)
-                            fireTableChanged(new TableModelEvent(ChampionTblModel.this, 0, size-1, TableModelEvent.ALL_COLUMNS, TableModelEvent.UPDATE));
-                        else
-                            fireTableChanged(new TableModelEvent(ChampionTblModel.this, pos, pos, TableModelEvent.ALL_COLUMNS, TableModelEvent.UPDATE));
-                        break;
-                    }
+        champions.addChampionListener(e -> {
+            if ((e.getMosaic() == ChampionTblModel.this.eMosaic) &&
+                (e.getSkill() == ChampionTblModel.this.eSkill))
+            {
+                int size = ChampionTblModel.this.champions.getUsersCount(ChampionTblModel.this.eMosaic, ChampionTblModel.this.eSkill);
+                int pos = e.getPos();
+                switch (e.getType()) {
+                case ChampionModelEvent.DELETE:
+                    if (pos == ChampionModelEvent.POS_ALL)
+                        fireTableChanged(new TableModelEvent(ChampionTblModel.this, 0, size-1, TableModelEvent.ALL_COLUMNS, TableModelEvent.DELETE));
+                    else
+                        fireTableChanged(new TableModelEvent(ChampionTblModel.this, pos, pos, TableModelEvent.ALL_COLUMNS, TableModelEvent.DELETE));
+                    break;
+                case ChampionModelEvent.INSERT:
+                    if (pos == ChampionModelEvent.POS_ALL)
+                        fireTableChanged(new TableModelEvent(ChampionTblModel.this, 0, size-1, TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT));
+                    else
+                        fireTableChanged(new TableModelEvent(ChampionTblModel.this, pos, pos, TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT));
+                    break;
+                case ChampionModelEvent.UPDATE:
+                    if (pos == ChampionModelEvent.POS_ALL)
+                        fireTableChanged(new TableModelEvent(ChampionTblModel.this, 0, size-1, TableModelEvent.ALL_COLUMNS, TableModelEvent.UPDATE));
+                    else
+                        fireTableChanged(new TableModelEvent(ChampionTblModel.this, pos, pos, TableModelEvent.ALL_COLUMNS, TableModelEvent.UPDATE));
+                    break;
                 }
             }
         });
@@ -57,7 +53,7 @@ public class ChampionTblModel extends ReportTableModel {
         if (columnIndex == 0)
             return champions.getUserName(rowIndex, eMosaic, eSkill);
         else
-            return champions.getUserPlayTime(rowIndex, eMosaic, eSkill);
+            return champions.getUserPlayTime(rowIndex, eMosaic, eSkill) / 1000.0;
     }
     @Override
     public int getRowCount() { return champions.getUsersCount(eMosaic, eSkill); }

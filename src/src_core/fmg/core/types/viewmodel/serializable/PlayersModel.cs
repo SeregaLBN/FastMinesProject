@@ -37,39 +37,39 @@ namespace Fmg.Core.Types.Viewmodel.Serializable {
                             continue;
                         else
                             statistics[mosaic.Ordinal(), skill.Ordinal()] = new StatisticCounts();
-                readExternal(input);
+                ReadExternal(input);
             }
 
-            public void readExternal(BinaryReader input) {
+            public void ReadExternal(BinaryReader input) {
                 user = new User(input);
                 foreach (StatisticCounts record in statistics)
-                    record.readExternal(input);
+                    record.ReadExternal(input);
             }
-            public void writeExternal(BinaryWriter output) {
-                user.writeExternal(output);
+            public void WriteExternal(BinaryWriter output) {
+                user.WriteExternal(output);
                 foreach (StatisticCounts record in statistics)
-                    record.writeExternal(output);
+                    record.WriteExternal(output);
             }
 
-            public override String ToString() {
+            public override string ToString() {
                 return user.Name;
             }
         }
 
         private IList<PlayersModel.Record> players = new List<PlayersModel.Record>();
 
-        public void removePlayer(Guid userId) {
-            Record rec = find(userId);
+        public void RemovePlayer(Guid userId) {
+            Record rec = Find(userId);
             if (rec == null)
                 throw new ArgumentException("User " + userId + " not exist");
             int pos = players.IndexOf(rec);
             players.Remove(rec);
 
-            fireChanged(new PlayerModelEventArgs(pos, PlayerModelEventArgs.DELETE));
+            FireChanged(new PlayerModelEventArgs(pos, PlayerModelEventArgs.DELETE));
         }
-        public bool isExist(Guid userId) { return find(userId) != null; }
+        public bool IsExist(Guid userId) { return Find(userId) != null; }
         public int Size { get { return players.Count; } }
-        public Guid addNewPlayer(String name, String pass) {
+        public Guid AddNewPlayer(String name, String pass) {
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentException("Invalid player name. Need not empty.");
             foreach (Record rec in players)
@@ -78,10 +78,10 @@ namespace Fmg.Core.Types.Viewmodel.Serializable {
 
             User user = new User(name, pass, null);
             players.Add(new PlayersModel.Record(user));
-            fireChanged(new PlayerModelEventArgs(players.Count-1, PlayerModelEventArgs.INSERT));
+            FireChanged(new PlayerModelEventArgs(players.Count-1, PlayerModelEventArgs.INSERT));
             return user.Guid;
         }
-        public int indexOf(User user) {
+        public int IndexOf(User user) {
             Record recFind = null;
                 foreach (Record rec in players)
                 if (rec.user.Guid.Equals(user.Guid)) {
@@ -101,10 +101,10 @@ namespace Fmg.Core.Types.Viewmodel.Serializable {
         /// <param name="countOpenField">кол-во открытых ячеек</param>
         /// <param name="playTime">время игры</param>
         /// <param name="clickCount">кол-во кликов</param>
-        public void setStatistic(Guid userId, EMosaic mosaic, ESkillLevel skill, bool victory, long countOpenField, long playTime, long clickCount) {
+        public void SetStatistic(Guid userId, EMosaic mosaic, ESkillLevel skill, bool victory, long countOpenField, long playTime, long clickCount) {
             if (skill == ESkillLevel.eCustom)
                 return;
-            Record rec = find(userId);
+            Record rec = Find(userId);
             if (rec == null)
                 throw new ArgumentException("User " + userId + " not exist");
 
@@ -118,65 +118,65 @@ namespace Fmg.Core.Types.Viewmodel.Serializable {
             }
 
             int pos = players.IndexOf(rec);
-            fireChanged(new PlayerModelEventArgs(pos, PlayerModelEventArgs.CHANGE_STATISTICS, mosaic, skill));
+            FireChanged(new PlayerModelEventArgs(pos, PlayerModelEventArgs.CHANGE_STATISTICS, mosaic, skill));
         }
-        private Record find(Guid userId) {
+        private Record Find(Guid userId) {
             if (userId != null)
                 foreach (Record rec in players)
                     if (rec.user.Guid.Equals(userId))
                         return rec;
             return null;
         }
-        public User getUser(int pos) {
+        public User GetUser(int pos) {
             if ((pos < 0) || (pos>=players.Count))
                 throw new ArgumentException("Invalid position " + pos);
                 //return null;
             return players[pos].user;
         }
-        public User getUser(Guid userId) {
-            Record rec = find(userId);
+        public User GetUser(Guid userId) {
+            Record rec = Find(userId);
             if (rec == null)
                 throw new ArgumentException("User " + userId + " not exist");
             return rec.user;
         }
-        public StatisticCounts getInfo(Guid userId, EMosaic mosaic, ESkillLevel skillLevel) {
-            Record rec = find(userId);
+        public StatisticCounts GetInfo(Guid userId, EMosaic mosaic, ESkillLevel skillLevel) {
+            Record rec = Find(userId);
             if (rec == null)
                 throw new ArgumentException("User " + userId + " not exist");
 
-            return rec.statistics[mosaic.Ordinal(), skillLevel.Ordinal()].clone();
+            return rec.statistics[mosaic.Ordinal(), skillLevel.Ordinal()].Clone();
         }
-        public int getPos(Guid userId) {
+        public int GetPos(Guid userId) {
             if (userId == null)
                 return -1;
-            Record rec = find(userId);
+            Record rec = Find(userId);
             if (rec == null)
                 return -1;
             return players.IndexOf(rec);
         }
 
-        public void writeExternal(BinaryWriter output) {
+        public void WriteExternal(BinaryWriter output) {
             output.Write(version);
             output.Write(players.Count);
             foreach (PlayersModel.Record rec in players)
-                rec.writeExternal(output);
+                rec.WriteExternal(output);
         }
 
-        public void readExternal(BinaryReader input) {
-            setDefaults();
+        public void ReadExternal(BinaryReader input) {
+            SetDefaults();
             if (version != input.ReadInt64())
                 throw new Exception("Unknown version");
             int size = input.ReadInt32();
             for (int i=0; i<size; i++)
                 players.Add(new PlayersModel.Record(input));
 
-            fireChanged(new PlayerModelEventArgs(players.Count-1, PlayerModelEventArgs.INSERT_ALL));
+            FireChanged(new PlayerModelEventArgs(players.Count-1, PlayerModelEventArgs.INSERT_ALL));
         }
 
-        private void setDefaults() {
+        private void SetDefaults() {
             int len = players.Count;
             players.Clear();
-            fireChanged(new PlayerModelEventArgs(len-1, PlayerModelEventArgs.DELETE_ALL));
+            FireChanged(new PlayerModelEventArgs(len-1, PlayerModelEventArgs.DELETE_ALL));
         }
 
     #if WINDOWS_RT || WINDOWS_UWP
@@ -186,7 +186,7 @@ namespace Fmg.Core.Types.Viewmodel.Serializable {
             var files = await Windows.Storage.ApplicationData.Current.LocalFolder.GetFilesAsync(Windows.Storage.Search.CommonFileQuery.OrderByName);
             var file = files.FirstOrDefault(x => x.Name == StcFile);
             if (file == null) {
-                setDefaults();
+                SetDefaults();
                 return false;
             }
 
@@ -219,14 +219,14 @@ namespace Fmg.Core.Types.Viewmodel.Serializable {
                 using (Stream stream = new MemoryStream()) {
                     stream.Write(data, 0, data.Length);
                     using (BinaryReader input = new BinaryReader(stream)) {
-                        this.readExternal(input);
+                        this.ReadExternal(input);
                     }
                 }
 
                 return true;
             } catch (Exception ex) {
                 System.Diagnostics.Debug.WriteLine(ex.Message);
-                setDefaults();
+                SetDefaults();
                 return false;
             }
         }
@@ -235,7 +235,7 @@ namespace Fmg.Core.Types.Viewmodel.Serializable {
             // 1. serializable object
             using (Stream stream = new MemoryStream()) {
                 using (BinaryWriter output = new BinaryWriter(stream, Encoding.UTF8)) {
-                    this.writeExternal(output);
+                    this.WriteExternal(output);
                 }
 
                 // 2. crypt data
@@ -259,7 +259,7 @@ namespace Fmg.Core.Types.Viewmodel.Serializable {
                 }
             }
         }
-    #elif WINDOWS_FORMS
+#elif WINDOWS_FORMS
         /// <summary>Load STC data from file</summary>
         /// <returns><b>true</b> - successful read; <b>false</b> - not exist or fail read, and set to defaults</returns>
         public bool Load() {
@@ -337,22 +337,22 @@ namespace Fmg.Core.Types.Viewmodel.Serializable {
                 }
             }
         }
-    #else
+#else
         public abstract bool Load();
         public abstract void Save();
-    #endif
+#endif
 
         /// <summary>STatistiCs file name</summary>
-        public static string StcFile { get {return "Mines.stc"; } }
+        public static string StcFile => AProjSettings.StatisticsFileName;
 
         public event PlayerModelChangedHandler OnPlayerChanged = delegate { };
-        private void fireChanged(PlayerModelEventArgs e) {
+        private void FireChanged(PlayerModelEventArgs e) {
             OnPlayerChanged(this, e);
         }
-        public void setUserName(int pos, String name) {
-            User user = getUser(pos);
+        public void SetUserName(int pos, String name) {
+            User user = GetUser(pos);
             user.Name = name;
-            fireChanged(new PlayerModelEventArgs(pos, PlayerModelEventArgs.UPDATE));
+            FireChanged(new PlayerModelEventArgs(pos, PlayerModelEventArgs.UPDATE));
         }
 
     }

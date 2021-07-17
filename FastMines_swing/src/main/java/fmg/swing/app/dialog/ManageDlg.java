@@ -26,7 +26,6 @@ public class ManageDlg {
     private final JDialog dialog;
     private JButton btnOk;
     private JTable table;
-    private FastMinesSwing parent;
     private PlayersModel players;
     private JCheckBox doNotAskStartup;
 
@@ -75,8 +74,8 @@ public class ManageDlg {
             User user = players.getUser(rowIndex);
             UUID activeUserId = user.getGuid();
 //            Logger.info("Active user is: "+user);
-            if (parent != null)
-                parent.setActiveUserId(activeUserId);
+            if (app != null)
+                app.setActiveUserId(activeUserId);
         }
         onClose();
     }
@@ -280,7 +279,7 @@ public class ManageDlg {
         if (b) {
             dialog.setTitle(DEFAULT_CAPTION);
 
-            UUID activeUserId = (parent==null) ? null : parent.getActiveUserId();
+            UUID activeUserId = (app==null) ? null : app.getActiveUserId();
             if ((activeUserId!=null) && players.isExist(activeUserId)) {
                 int pos = players.getPos(activeUserId);
                 table.getSelectionModel().setSelectionInterval(pos, pos);

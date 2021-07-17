@@ -27,6 +27,11 @@ public final class ProjSettings extends AProjSettings {
         } catch (Throwable ex) {
             Logger.error("ProjSettings", ex);
         }
+
+        String prefix = System.getProperty("user.dir") + System.getProperty("file.separator");
+        settingsFile   = prefix + settingsFile;
+        statisticsFile = prefix + statisticsFile;
+        championsFile  = prefix + championsFile;
     }
 
     public static void init() {

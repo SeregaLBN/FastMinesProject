@@ -7,23 +7,35 @@ import java.io.ObjectOutput;
 
 public class StatisticCounts implements Externalizable {
 
-    public long
-        gameNumber, // количество сыгранных игр
-        gameWin,    // количество выиграных игр
-        openField,  // суммарное число открытых ячеек - вывожу средний процент открытия поля
-        playTime,   // суммарное время игр - вывожу сколько всреднем игрок провёл времени за данной игрой
-        clickCount; // суммарное число кликов - вывожу среднее число кликов в данной игре
+    private static final long VERSION = 1;
+
+    /** количество сыгранных игр */
+    public long gameNumber;
+    /** количество выиграных игр */
+    public long gameWin;
+    /** суммарное число открытых ячеек - вывожу средний процент открытия поля */
+    public long openField;
+    /** суммарное время игр (milliseconds) - вывожу сколько всреднем игрок провёл времени за данной игрой */
+    public long playTime;
+    /** суммарное число кликов - вывожу среднее число кликов в данной игре */
+    public long clickCount;
 
     @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+    public void readExternal(ObjectInput in) throws IOException {
+        long version = in.readLong();
+        if (version != VERSION)
+            throw new RuntimeException("Unsupported " + StatisticCounts.class.getSimpleName() + " version " + version);
+
         gameNumber = in.readLong();
         gameWin    = in.readLong();
         openField  = in.readLong();
         playTime   = in.readLong();
         clickCount = in.readLong();
     }
+
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeLong(VERSION);
         out.writeLong(gameNumber);
         out.writeLong(gameWin);
         out.writeLong(openField);

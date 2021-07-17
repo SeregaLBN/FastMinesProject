@@ -19,6 +19,8 @@ if (org.gradle.internal.os.OperatingSystem.current().isWindows())
     exec {
         // Using UTF-8 Encoding (CHCP 65001) in Command Prompt / Windows Powershell
         commandLine 'cmd', '/c', 'chcp 65001'
+        // used for logo draw in console
+        // TODO: don`t help for me - see logo.gradle file
     }
 
 apply from: 'logo.gradle'

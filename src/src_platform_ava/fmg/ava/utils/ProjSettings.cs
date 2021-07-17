@@ -1,10 +1,11 @@
 ﻿using Avalonia.Threading;
+using Fmg.Common;
 using Fmg.Common.UI;
 using Fmg.Ava.Img;
 
 namespace Fmg.Ava.Utils {
 
-    static class ProjSettings {
+    class ProjSettings : AProjSettings {
 
         static ProjSettings() {
             UiInvoker.Deferred = doRun => Dispatcher.UIThread.InvokeAsync(() => doRun(), DispatcherPriority.Normal);
