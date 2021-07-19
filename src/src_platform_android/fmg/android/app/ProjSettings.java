@@ -1,15 +1,15 @@
-package fmg.android.utils;
+package fmg.android.app;
 
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import fmg.android.app.BuildConfig;
 import fmg.android.img.Animator;
-import fmg.common.AProjSettings;
+import fmg.android.utils.Timer;
 import fmg.common.Color;
 import fmg.common.Logger;
 import fmg.common.ui.UiInvoker;
+import fmg.core.app.AProjSettings;
 import fmg.core.mosaic.MosaicDrawModel;
 
 public final class ProjSettings extends AProjSettings {

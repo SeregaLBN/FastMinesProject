@@ -4,7 +4,7 @@ import org.junit.BeforeClass;
 
 import fmg.common.Logger;
 import fmg.core.mosaic.MosaicModelTest;
-import fmg.swing.utils.ProjSettings;
+import fmg.swing.app.ProjSettings;
 import io.reactivex.Flowable;
 
 public class MosaicModelSwingTest extends MosaicModelTest {

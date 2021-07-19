@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using Fmg.Common;
 using Fmg.Common.Crypt;
+using Fmg.Core.App;
 using Fmg.Core.Types.Viewmodel.Event;
 
 namespace Fmg.Core.Types.Viewmodel.Serializable {

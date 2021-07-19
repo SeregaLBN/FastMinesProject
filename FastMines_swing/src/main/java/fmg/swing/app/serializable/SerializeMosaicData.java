@@ -24,7 +24,7 @@ public class SerializeMosaicData extends MosaicInitData implements Externalizabl
     }
 
     @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+    public void readExternal(ObjectInput in) throws IOException {
         long ver = in.readLong();
         switch ((int)ver) {
         case 1:

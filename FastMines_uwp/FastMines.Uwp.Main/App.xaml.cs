@@ -13,9 +13,10 @@ using Windows.UI.Xaml.Controls;
 using Fmg.Common;
 using Fmg.Core.Mosaic;
 using Fmg.Core.Img;
-using Fmg.Uwp.Utils;
+using Fmg.Uwp.App;
 using Fmg.Uwp.App.Model;
 using Fmg.Uwp.App.Presentation;
+using Fmg.Uwp.Utils;
 
 namespace Fmg {
 

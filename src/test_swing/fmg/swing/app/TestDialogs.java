@@ -20,7 +20,6 @@ import fmg.core.types.viewmodel.serializable.PlayersModel;
 import fmg.swing.app.dialog.*;
 import fmg.swing.img.Animator;
 import fmg.swing.mosaic.MosaicJPanelController;
-import fmg.swing.utils.ProjSettings;
 
 /** dialogs test
  * <p>run from command line

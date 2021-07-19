@@ -44,7 +44,6 @@ import fmg.swing.img.Animator;
 import fmg.swing.img.Logo;
 import fmg.swing.mosaic.MosaicJPanelController;
 import fmg.swing.utils.Cast;
-import fmg.swing.utils.ProjSettings;
 import fmg.swing.utils.ScreenResolutionHelper;
 import fmg.swing.utils.Timer;
 
@@ -1089,8 +1088,8 @@ public class FastMinesSwing {
     }
 
     /** Сохранить чемпиона && Установить статистику */
-    public void setStatisticAndChampion(PropertyChangeEvent ev) {
-        MosaicJPanelController mosaicCtrllr = (MosaicJPanelController)ev.getSource();
+    public void saveStatisticAndChampion() {
+        MosaicJPanelController mosaicCtrllr = getMosaicController();
         if (mosaicCtrllr.getGameStatus() != EGameStatus.eGSEnd)
             throw new IllegalArgumentException("Invalid method state call");
 
@@ -1105,7 +1104,7 @@ public class FastMinesSwing {
 
         final EMosaic eMosaic = mosaicCtrllr.getMosaicType();
         final long realCountOpen = mosaicCtrllr.isVictory() ? mosaicCtrllr.getCountMines() : mosaicCtrllr.getCountOpen();
-        final long playTime = timerGame.getTime(); // Double.parseLong(getToolbar().getEdtTimePlay().getText());
+        final long playTime = getGameTimer().getTime();
         final long clickCount = mosaicCtrllr.getCountClick();
 
         // логика сохранения...
@@ -1113,9 +1112,12 @@ public class FastMinesSwing {
             if (userId != null) {
                 // ...статистики
                 getPlayers().setStatistic(userId, eMosaic, eSkill, victory, realCountOpen, playTime, clickCount);
-                if (getStatisticDialog().getDialog().isVisible())
-                    // если окно открыто - сфокусируюсь на нужной закладке/скилле и пользователе
-                    getStatisticDialog().showData(eSkill, eMosaic);
+                if (isStatisticDialogExist()) {
+                    StatisticDlg sd = getStatisticDialog();
+                    if (sd.getDialog().isVisible())
+                        // если окно открыто - сфокусируюсь на нужной закладке/скилле и пользователе
+                        sd.showData(eSkill, eMosaic);
+                }
 
                 // ...чемпиона
                 if (victory) {
@@ -1211,7 +1213,7 @@ public class FastMinesSwing {
 
                         if (getSkillLevel() != ESkillLevel.eCustom)
                             // сохраняю статистику и чемпиона
-                            setStatisticAndChampion(ev);
+                            saveStatisticAndChampion();
                     }
                     break;
                 }

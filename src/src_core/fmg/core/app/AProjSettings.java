@@ -1,4 +1,6 @@
-package fmg.common;
+package fmg.core.app;
+
+import fmg.common.Logger;
 
 public abstract class AProjSettings {
 

@@ -22,8 +22,8 @@ import fmg.core.img.BurgerMenuModel;
 import fmg.core.img.MosaicGroupModel;
 import fmg.core.img.MosaicSkillModel;
 import fmg.core.img.WithBurgerMenuView;
+import fmg.android.app.ProjSettings;
 import fmg.android.utils.Cast;
-import fmg.android.utils.ProjSettings;
 
 /**
  * MVC: view. Abstract Android representable {@link fmg.core.types.ESkillLevel} or {@link fmg.core.types.EMosaicGroup} as image

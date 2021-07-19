@@ -19,7 +19,7 @@ namespace Fmg.Uwp.App.Model {
         private static readonly string KEY__MOSAIC_INIT_DATA__SIZE_FIELD_M = nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.m);
         private static readonly string KEY__MOSAIC_INIT_DATA__SIZE_FIELD_N = nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.n);
         private const           string KEY__MOSAIC_INIT_DATA__MOSAIC_TYPE  = nameof(MosaicInitData.MosaicType);
-        private const           string KEY__MOSAIC_INIT_DATA__COUNT_MINES = nameof(MosaicInitData.CountMines);
+        private const           string KEY__MOSAIC_INIT_DATA__COUNT_MINES  = nameof(MosaicInitData.CountMines);
         private static readonly string KEY__MENU_SETTINGS__SECTION         = nameof(MenuSettings);
         private static readonly string KEY__MENU_SETTINGS__SPLIT_PANE_OPEN = nameof(MenuSettings) + '.' + nameof(MenuSettings.SplitPaneOpen);
 

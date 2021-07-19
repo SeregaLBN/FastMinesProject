@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import fmg.common.AProjSettings;
 import fmg.common.crypt.Simple3DES;
+import fmg.core.app.AProjSettings;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
 import fmg.core.types.viewmodel.User;

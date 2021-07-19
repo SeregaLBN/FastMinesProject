@@ -7,7 +7,6 @@ import javafx.stage.Stage;
 
 import fmg.core.mosaic.MosaicView;
 import fmg.jfx.mosaic.MosaicCanvasController;
-import fmg.jfx.utils.ProjSettings;
 
 /** Simple app
  * <p>run from command line

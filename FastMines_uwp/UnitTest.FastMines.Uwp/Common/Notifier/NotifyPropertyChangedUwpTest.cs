@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Fmg.Uwp.Utils;
+using Fmg.Uwp.App;
 
 namespace Fmg.Common.Notifier {
 

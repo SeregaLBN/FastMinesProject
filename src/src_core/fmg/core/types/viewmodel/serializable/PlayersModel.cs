@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Collections.Generic;
 using Fmg.Common;
+using Fmg.Core.App;
 using Fmg.Core.Types.Viewmodel.Event;
 
 namespace Fmg.Core.Types.Viewmodel.Serializable {

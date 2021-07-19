@@ -18,6 +18,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.concurrent.TimeUnit;
 
+import fmg.android.app.ProjSettings;
 import fmg.android.app.databinding.SelectMosaicFragmentBinding;
 import fmg.android.app.model.SharedData;
 import fmg.android.app.model.dataSource.MosaicDataSource;
@@ -28,7 +29,6 @@ import fmg.android.app.recyclerView.RecyclerItemDoubleClickListener;
 import fmg.android.img.Logo;
 import fmg.android.utils.AsyncRunner;
 import fmg.android.utils.Cast;
-import fmg.android.utils.ProjSettings;
 import fmg.common.Color;
 import fmg.common.HSV;
 import fmg.common.Logger;

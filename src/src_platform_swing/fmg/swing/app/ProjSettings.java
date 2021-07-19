@@ -1,13 +1,15 @@
-package fmg.swing.utils;
+package fmg.swing.app;
 
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 
-import fmg.common.AProjSettings;
 import fmg.common.Logger;
 import fmg.common.ui.UiInvoker;
+import fmg.core.app.AProjSettings;
 import fmg.core.mosaic.MosaicDrawModel;
 import fmg.swing.img.Animator;
+import fmg.swing.utils.Cast;
+import fmg.swing.utils.Timer;
 
 public final class ProjSettings extends AProjSettings {
 

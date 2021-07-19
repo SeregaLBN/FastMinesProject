@@ -4,7 +4,7 @@ import org.junit.BeforeClass;
 
 import fmg.common.Logger;
 import fmg.core.mosaic.MosaicViewTest;
-import fmg.jfx.utils.ProjSettings;
+import fmg.jfx.app.ProjSettings;
 import io.reactivex.Flowable;
 
 public class MosaicViewJfxTest extends MosaicViewTest {

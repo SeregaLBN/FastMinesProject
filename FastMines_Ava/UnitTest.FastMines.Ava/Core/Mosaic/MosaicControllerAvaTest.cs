@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
-using Fmg.Ava.Utils;
+using Fmg.Ava.App;
 
 namespace Fmg.Core.Mosaic {
 

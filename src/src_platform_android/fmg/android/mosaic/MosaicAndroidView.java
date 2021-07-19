@@ -26,8 +26,8 @@ import fmg.core.types.EOpen;
 import fmg.core.types.EState;
 import fmg.core.types.draw.FontInfo;
 import fmg.core.types.draw.PenBorder;
+import fmg.android.app.ProjSettings;
 import fmg.android.utils.Cast;
-import fmg.android.utils.ProjSettings;
 
 /** MVC: view. Abstract android implementation
  * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel

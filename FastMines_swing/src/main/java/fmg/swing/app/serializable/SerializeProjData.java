@@ -3,10 +3,10 @@ package fmg.swing.app.serializable;
 import java.io.*;
 import java.util.UUID;
 
-import fmg.common.AProjSettings;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.Point;
 import fmg.common.geom.SizeDouble;
+import fmg.core.app.AProjSettings;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.MosaicInitData;
 import fmg.core.types.EMosaic;
@@ -86,7 +86,7 @@ public class SerializeProjData implements Externalizable {
     }
 
     @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+    public void readExternal(ObjectInput in) throws IOException {
         long ver = in.readLong();
         if (VERSION != ver)
             throw new IllegalArgumentException("Unknown version!");

@@ -18,8 +18,8 @@ import fmg.common.geom.PointDouble;
 import fmg.core.img.ImageView;
 import fmg.core.img.LogoController;
 import fmg.core.img.LogoModel;
+import fmg.android.app.ProjSettings;
 import fmg.android.utils.Cast;
-import fmg.android.utils.ProjSettings;
 
 /** Main logos image */
 public final class Logo {

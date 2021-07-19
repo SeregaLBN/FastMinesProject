@@ -2,6 +2,7 @@ package fmg.core.types.viewmodel.serializable;
 
 import java.io.*;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -9,8 +10,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import fmg.common.AProjSettings;
 import fmg.common.crypt.Simple3DES;
+import fmg.core.app.AProjSettings;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
 import fmg.core.types.viewmodel.User;
@@ -21,7 +22,7 @@ import fmg.core.types.viewmodel.event.PlayerModelEvent;
 /** хранилище чемпионов */
 public class ChampionsModel implements Externalizable {
 
-    private static final long version = 2;
+    private static final long VERSION = 2;
 
     private static final int MAX_SIZE = 10;
 
@@ -174,8 +175,9 @@ public class ChampionsModel implements Externalizable {
         try {
             // 1. read from file
             ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
-            if (in.readLong() != version)
-                throw new RuntimeException("Invalid file data - unknown version");
+            long version = in.readLong();
+            if (version != VERSION)
+                throw new RuntimeException("Invalid file data - unknown version " + version);
             byte[] data = new byte[in.readInt()];
             int read = 0;
             do {
@@ -210,11 +212,11 @@ public class ChampionsModel implements Externalizable {
     }
 
     private static String getSerializeKey() throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        byte[] digest = MessageDigest.getInstance("MD5").digest(Long.toString(version).getBytes("UTF-8"));
+        byte[] digest = MessageDigest.getInstance("MD5").digest(Long.toString(VERSION).getBytes(StandardCharsets.UTF_8));
         return String.format("%032X", new BigInteger(1, digest));
     }
 
-    public void Save() throws FileNotFoundException, IOException {
+    public void Save() throws IOException {
         // 1. serializable object
         ByteArrayOutputStream byteRaw = new ByteArrayOutputStream();
         ObjectOutputStream out = new ObjectOutputStream(byteRaw);
@@ -231,7 +233,7 @@ public class ChampionsModel implements Externalizable {
 
         // 3. write to file
         out = new ObjectOutputStream(new FileOutputStream(getChampFile()));
-        out.writeLong(version); // save version and decrypt key
+        out.writeLong(VERSION); // save version and decrypt key
         int len = cryptData.length;
         out.writeInt(len);
         out.write(cryptData);

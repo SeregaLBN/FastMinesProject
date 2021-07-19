@@ -4,7 +4,7 @@ using System.Reactive.Linq;
 using Windows.UI.Core;
 using Windows.ApplicationModel.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Fmg.Uwp.Utils;
+using Fmg.Uwp.App;
 
 namespace Fmg.Core.Mosaic {
 

@@ -1,4 +1,4 @@
-namespace Fmg.Common {
+namespace Fmg.Core.App {
 
     public abstract class AProjSettings {
 

@@ -45,7 +45,6 @@ import fmg.core.types.ESkillLevel;
 import fmg.jfx.img.*;
 import fmg.jfx.mosaic.MosaicCanvasController;
 import fmg.jfx.utils.Cast;
-import fmg.jfx.utils.ProjSettings;
 
 /** live UI test application
  * <p>run from command line

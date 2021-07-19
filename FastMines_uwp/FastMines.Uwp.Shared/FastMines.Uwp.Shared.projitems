@@ -42,8 +42,8 @@
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\img\Animator.cs">
       <Link>src_fmg.uwp\img\Animator.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\ProjSettings.cs">
-      <Link>src_fmg.uwp\utils\ProjSettings.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\app\ProjSettings.cs">
+      <Link>src_fmg.uwp\app\ProjSettings.cs</Link>
     </Compile>
   </ItemGroup>
 </Project>

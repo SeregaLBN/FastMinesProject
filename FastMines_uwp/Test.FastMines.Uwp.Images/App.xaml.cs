@@ -19,6 +19,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Fmg.Common;
+using Fmg.Uwp.App;
 using Fmg.Uwp.Utils;
 using Fmg.Uwp.Mosaic.Wbmp;
 

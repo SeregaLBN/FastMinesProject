@@ -1,9 +1,10 @@
 ﻿using Avalonia.Threading;
-using Fmg.Common;
 using Fmg.Common.UI;
+using Fmg.Core.App;
+using Fmg.Ava.Utils;
 using Fmg.Ava.Img;
 
-namespace Fmg.Ava.Utils {
+namespace Fmg.Ava.App {
 
     class ProjSettings : AProjSettings {
 

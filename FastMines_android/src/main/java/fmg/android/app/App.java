@@ -15,7 +15,6 @@ import fmg.android.app.presentation.MenuSettings;
 import fmg.common.Logger;
 import fmg.core.mosaic.MosaicInitData;
 import fmg.android.app.model.SharedData;
-import fmg.android.utils.ProjSettings;
 
 /** FastMines application */
 public class App extends Application implements LifecycleObserver {

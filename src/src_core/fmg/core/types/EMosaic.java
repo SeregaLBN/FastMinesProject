@@ -6,9 +6,7 @@ import java.util.List;
 import fmg.common.Logger;
 import fmg.common.geom.Matrisize;
 
-/* Перечень мозаик */
-
-/** тип мозаики */
+/** Mosaic type */
 public enum EMosaic {
 
     // ============== Triangles ==============

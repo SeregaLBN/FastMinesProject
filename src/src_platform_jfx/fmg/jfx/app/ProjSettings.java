@@ -1,8 +1,9 @@
-package fmg.jfx.utils;
+package fmg.jfx.app;
 
-import fmg.common.AProjSettings;
 import fmg.common.ui.UiInvoker;
+import fmg.core.app.AProjSettings;
 import fmg.jfx.img.Animator;
+import fmg.jfx.utils.Timer;
 
 public final class ProjSettings extends AProjSettings {
 

@@ -5,10 +5,11 @@ using Windows.UI.ViewManagement;
 using Fmg.Common.UI;
 using Fmg.Core.Mosaic;
 using Fmg.Uwp.Img;
+using Fmg.Uwp.Utils;
 
-namespace Fmg.Uwp.Utils {
+namespace Fmg.Uwp.App {
 
-    public class ProjSettings : Fmg.Common.AProjSettings {
+    public class ProjSettings : Fmg.Core.App.AProjSettings {
 
         /// <summary> Mobile (true) or Desktop (false) </summary>
         public static bool IsMobile { get; }

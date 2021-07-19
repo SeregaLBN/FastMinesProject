@@ -30,8 +30,8 @@
     <Compile Include="..\..\src\src_core\fmg\common\HSV.cs">
       <Link>src_fmg.common\HSV.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\common\AProjSettings.cs">
-      <Link>src_fmg.common\AProjSettings.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\app\AProjSettings.cs">
+      <Link>src_fmg.core\app\AProjSettings.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_core\fmg\common\ThreadLocalRandom.cs">
       <Link>src_fmg.common\ThreadLocalRandom.cs</Link>

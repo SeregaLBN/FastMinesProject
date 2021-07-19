@@ -5,9 +5,7 @@ using Fmg.Common.Geom;
 
 namespace Fmg.Core.Types {
 
-    /* Перечень мозаик */
-
-    /// <summary> тип мозаики </summary>
+    /// <summary> Mosaic type </summary>
     public enum EMosaic {
         // ============== Triangles ==============
         /// <summary> Triangle 60°-60°-60° </summary>

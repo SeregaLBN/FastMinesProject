@@ -14,6 +14,7 @@ using Fmg.Common.Geom;
 using Fmg.Core.Types;
 using Fmg.Core.Mosaic;
 using Fmg.Core.Img;
+using Fmg.Uwp.App;
 using Fmg.Uwp.Utils;
 using Fmg.DataModel.Items;
 using Fmg.Uwp.App.Model;
