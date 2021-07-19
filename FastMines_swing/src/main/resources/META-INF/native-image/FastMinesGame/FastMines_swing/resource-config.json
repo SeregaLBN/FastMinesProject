@@ -1,9 +1,10 @@
 {
-  "resources":[
-    {"pattern":"javax/crypto/Cipher.class"}, 
-    {"pattern":"javax/swing/text/html/default.css"}, 
-    {"pattern":"javax/swing/text/html/parser/html32.bdtd"}, 
-    {"pattern":"sun/text/resources/ubidi.icu"}, 
-    {"pattern":"sun/text/resources/uprops.icu"}
+  "resources":{
+  "includes":[]},
+  "bundles":[
+    {"name":"com.sun.java.swing.plaf.windows.resources.windows"}, 
+    {"name":"com.sun.swing.internal.plaf.basic.resources.basic"}, 
+    {"name":"com.sun.swing.internal.plaf.metal.resources.metal"}, 
+    {"name":"sun.awt.resources.awt"}
   ]
 }

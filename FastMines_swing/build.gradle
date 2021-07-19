@@ -155,23 +155,40 @@ task fastMinesSwingGraalNative(dependsOn: fastMinesSwingFatJar) { task ->
         }
 
         // TODO: if isWin exec from command line etc "p:\ProgramFiles\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+        //if (isWin)
+        //    exec {
+        //        commandLine 'cmd', '/c', 'p:\\ProgramFiles\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat'
+        //}
+
+        def execLine = System.env.GRAALVM_HOME + '/bin/native-image' +
+            ' -jar ' + project(':FastMines_swing').buildDir.absolutePath + '/libs/FastMines_swing-fat-' + version + '.jar' +
+            ' -H:Name=FastMines_swing' +
+            ' -H:-CheckToolchain' +
+            ' -H:+ReportExceptionStackTraces' +
+            //(isWin ? ' -H:NativeLinkerOption=prefs.lib' : '') +
+            //' --no-server' +
+            //' --no-fallback'
+            ' --no-server' +
+            ' --no-fallback' +
+            ' --allow-incomplete-classpath' +
+            ' --report-unsupported-elements-at-runtime'
+
+        println '> ' + execLine
+
         exec {
             // HINT: see            META-INF/native-image/${groupId}/${artifactId}/native-image.properties
             // ./src/main/resources/META-INF/native-image/FastMinesGame/FastMines_swing/native-image.properties
+
             commandLine isWin ? 'cmd' : 'sh',
                         isWin ? '/c' : '-c',
-                        System.env.GRAALVM_HOME + '/bin/native-image' +
-                        ' -jar ' + project(':FastMines_swing').buildDir.absolutePath + '/libs/FastMines_swing-fat-' + version + '.jar' +
-                        ' -H:Name=FastMines_swing' +
-                        (isWin ? ' -H:NativeLinkerOption=prefs.lib' : '') +
-                        ' --no-server' +
-                        ' --no-fallback'
+                        execLine
 
             // exec > ./FastMines_swing/FastMines_swing(.exe) 
-            // > Exception in thread "main" java.lang.IllegalArgumentException: AWT is currently not supported on Substrate VM
+            // > java.lang.Error: java.home property not set
+            //       at sun.awt.FontConfiguration.findFontConfigFile(FontConfiguration.java:182)
             // ;(
             // try in graalvm-ce-java8-19.3.0 (Ubuntu 18.04):
-            // try in graalvm-ce-java11-20.1.0 (Win 10)
+            // try in graalvm-ce-java11-21.1.0 (Win 11)
         }
     }
 }

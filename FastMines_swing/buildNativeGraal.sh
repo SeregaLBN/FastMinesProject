@@ -19,8 +19,7 @@ gradle clean
 
 # Step 1
 gradle :FastMines_swing:build
-java -agentlib:native-image-agent=config-output-dir=./src/META-INF/native-image/FastMinesGame/FastMines_swing/ \
-     -jar ./build/libs/FastMines_swing-fat-2.1.1.jar
+java -agentlib:native-image-agent=config-output-dir=./src/main/resources/META-INF/native-image/FastMinesGame/FastMines_swing/ -jar ./build/libs/FastMines_swing-fat-2.1.1.jar
 
 # Step 2
 # see ./src/main/resources/META-INF/native-image/FastMinesGame/FastMines_swing/native-image.properties
