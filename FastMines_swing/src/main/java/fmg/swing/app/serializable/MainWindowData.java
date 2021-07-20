@@ -1,23 +1,19 @@
 package fmg.swing.app.serializable;
 
-import java.io.*;
 import java.util.UUID;
 
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.Point;
 import fmg.common.geom.SizeDouble;
-import fmg.core.app.AProjSettings;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.MosaicInitData;
 import fmg.core.types.EMosaic;
 import fmg.core.types.draw.EShowElement;
 
-/** Данные проекта, записываемые/считываемые в/из файл(а) */
-public class SerializeProjData implements Externalizable {
+/** Data model of the main window to save/restore */
+public class MainWindowData {
 
-    private static final long VERSION = 3;
-
-    private SerializeMosaicData mosaicData;
+    private MosaicInitData mosaicData;
 
     private UUID activeUserId;
     private boolean doNotAskStartup; // manage dialog
@@ -31,10 +27,12 @@ public class SerializeProjData implements Externalizable {
     private double sizeMosaicHeight;
     private boolean systemTheme;
 
-    public SerializeProjData() { setDefaults(); }
+    public MainWindowData() {
+        setDefaults();
+    }
 
-    private void setDefaults() {
-        mosaicData = new SerializeMosaicData();
+    public void setDefaults() {
+        mosaicData = new MosaicInitData();
 
         SizeDouble size = MosaicHelper.getSize(mosaicData.getMosaicType(), MosaicInitData.AREA_MINIMUM, mosaicData.getSizeField());
         sizeMosaicWidth  = size.width;
@@ -60,91 +58,6 @@ public class SerializeProjData implements Externalizable {
         systemTheme = true;
     }
 
-    @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeLong(VERSION);
-
-        mosaicData.writeExternal(out);
-
-        out.writeBoolean(activeUserId != null);
-        if (activeUserId != null)
-            out.writeUTF(activeUserId.toString());
-        out.writeBoolean(doNotAskStartup);
-
-        out.writeBoolean(systemTheme);
-        for (boolean eShowElement : eShowElements)
-            out.writeBoolean(eShowElement);
-        out.writeBoolean(zoomAlwaysMax);
-        out.writeBoolean(useUnknown);
-        out.writeBoolean(usePause);
-        out.writeInt(location.x);
-        out.writeInt(location.y);
-        out.writeDouble(sizeMosaicWidth);
-        out.writeDouble(sizeMosaicHeight);
-
-//        Logger.info("Write: location={0}, sizeMosaic=[{1}, {2}]", location, sizeMosaicWidth, sizeMosaicHeight);
-    }
-
-    @Override
-    public void readExternal(ObjectInput in) throws IOException {
-        long ver = in.readLong();
-        if (VERSION != ver)
-            throw new IllegalArgumentException("Unknown version!");
-
-        mosaicData.readExternal(in);
-
-        if (in.readBoolean())
-            activeUserId = UUID.fromString(in.readUTF());
-        doNotAskStartup = in.readBoolean();
-
-        systemTheme = in.readBoolean();
-        for (int i=0; i<eShowElements.length; i++)
-            eShowElements[i] = in.readBoolean();
-        zoomAlwaysMax = in.readBoolean();
-        useUnknown = in.readBoolean();
-        usePause = in.readBoolean();
-        location.x = in.readInt();
-        location.y = in.readInt();
-        sizeMosaicWidth  = in.readDouble();
-        sizeMosaicHeight = in.readDouble();
-
-//        Logger.info("Read: location={0}, sizeMosaic=[{1}, {2}]", location, sizeMosaicWidth, sizeMosaicHeight);
-    }
-
-    /**
-     * Load ini data from file
-     * @return <b>true</b> - successful read; <b>false</b> - not exist or fail read, and set to defaults
-     */
-    public boolean load() {
-        File file = getIniFile();
-        if (!file.exists()) {
-            setDefaults();
-            return false;
-        }
-
-        try (InputStream is = new FileInputStream(file);
-            ObjectInputStream in = new ObjectInputStream(is))
-        {
-            this.readExternal(in);
-            return true;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            setDefaults();
-            return false;
-        }
-    }
-
-    public void save() throws IOException {
-        try (OutputStream os = new FileOutputStream(getIniFile());
-             ObjectOutputStream out = new ObjectOutputStream(os))
-        {
-            this.writeExternal(out);
-        }
-    }
-
-    public static File getIniFile() {
-        return new File(AProjSettings.getSettingsFileName());
-    }
 
     public Matrisize getSizeField() { return mosaicData.getSizeField(); }
     public void setSizeField(Matrisize sizeField) { mosaicData.setSizeField(sizeField); }

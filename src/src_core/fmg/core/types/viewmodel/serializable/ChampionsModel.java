@@ -39,7 +39,7 @@ public class ChampionsModel implements Externalizable {
         }
 
         @Override
-        public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        public void readExternal(ObjectInput in) throws IOException {
             userId = UUID.fromString(in.readUTF());
             userName = in.readUTF();
             playTime = in.readLong();
@@ -135,7 +135,7 @@ public class ChampionsModel implements Externalizable {
     }
 
     @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+    public void readExternal(ObjectInput in) throws IOException {
        setDefaults();
         for (EMosaic mosaic : EMosaic.values())
             for (ESkillLevel eSkill : ESkillLevel.values())

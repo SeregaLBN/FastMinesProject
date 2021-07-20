@@ -10,7 +10,7 @@ import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
 
-/** Mosaic data */
+/** Mosaic model (data for save/load) */
 public class MosaicInitData implements INotifyPropertyChanged, AutoCloseable {
 
     public static final double AREA_MINIMUM = 230;

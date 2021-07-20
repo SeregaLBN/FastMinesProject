@@ -37,7 +37,8 @@ import fmg.core.types.viewmodel.serializable.ChampionsModel;
 import fmg.core.types.viewmodel.serializable.PlayersModel;
 import fmg.swing.app.dialog.*;
 import fmg.swing.app.menu.MainMenu;
-import fmg.swing.app.serializable.SerializeProjData;
+import fmg.swing.app.serializable.MainWindowData;
+import fmg.swing.app.serializable.MainWindowSerializator;
 import fmg.swing.app.toolbar.EBtnNewGameState;
 import fmg.swing.app.toolbar.ToolBar;
 import fmg.swing.img.Animator;
@@ -255,11 +256,11 @@ public class FastMinesSwing {
         boolean defaultData;
         boolean doNotAskStartup;
         MosaicJPanelController mosaicCtrllr;
-        { // aplly data from SerializeProjModel
-            final SerializeProjData spm = new SerializeProjData();
-            defaultData = !spm.load();
+        { // load settings and apply
+            MainWindowData mwd = new MainWindowData();
+            defaultData = !new MainWindowSerializator().load(mwd);
 
-            if (spm.isSystemTheme())
+            if (mwd.isSystemTheme())
                 try {
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); // OptionsThemeSystem();
                 } catch (Exception ex) {
@@ -271,40 +272,40 @@ public class FastMinesSwing {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-            frame.setUndecorated(!spm.getShowElement(EShowElement.eCaption));
+            frame.setUndecorated(!mwd.getShowElement(EShowElement.eCaption));
 
             mosaicCtrllr = getMosaicController();
-            mosaicCtrllr.setSizeField(spm.getSizeField());
-            mosaicCtrllr.setMosaicType(spm.getMosaicType());
-            mosaicCtrllr.setCountMines(spm.getCountMines());
-            mosaicCtrllr.getModel().setSize(spm.getSizeMosaic());
+            mosaicCtrllr.setSizeField(mwd.getSizeField());
+            mosaicCtrllr.setMosaicType(mwd.getMosaicType());
+            mosaicCtrllr.setCountMines(mwd.getCountMines());
+            mosaicCtrllr.getModel().setSize(mwd.getSizeMosaic());
 
-            setActiveUserId(spm.getActiveUserId());
-            getPlayerManageDlg().setDoNotAskStartupChecked(spm.isDoNotAskStartup());
-            doNotAskStartup = spm.isDoNotAskStartup();
+            setActiveUserId(mwd.getActiveUserId());
+            getPlayerManageDlg().setDoNotAskStartupChecked(mwd.isDoNotAskStartup());
+            doNotAskStartup = mwd.isDoNotAskStartup();
 
-            getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).setSelected(spm.isZoomAlwaysMax());
-            isZoomAlwaysMax = spm.isZoomAlwaysMax();
+            getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).setSelected(mwd.isZoomAlwaysMax());
+            isZoomAlwaysMax = mwd.isZoomAlwaysMax();
 
-            if (spm.isSystemTheme())
+            if (mwd.isSystemTheme())
                 getMenu().getOptions().getThemeSystem().setSelected(true);
             else
                 getMenu().getOptions().getThemeDefault().setSelected(true);
-            getMenu().getOptions().getUsePause()  .setSelected(spm.isUsePause());
-            getMenu().getOptions().getUseUnknown().setSelected(spm.isUseUnknown());
-            getToolbar().getBtnPause().getButton().setVisible( spm.isUsePause());
-            mosaicCtrllr.setUseUnknown(                        spm.isUseUnknown());
+            getMenu().getOptions().getUsePause()  .setSelected(mwd.isUsePause());
+            getMenu().getOptions().getUseUnknown().setSelected(mwd.isUseUnknown());
+            getToolbar().getBtnPause().getButton().setVisible( mwd.isUsePause());
+            mosaicCtrllr.setUseUnknown(                        mwd.isUseUnknown());
 
             for (EShowElement key: EShowElement.values()) {
-                getMenu().getOptions().getShowElement(key).setSelected(spm.getShowElement(key));
+                getMenu().getOptions().getShowElement(key).setSelected(mwd.getShowElement(key));
             }
-            getMenu().getMenuBar()   .setVisible(spm.getShowElement(EShowElement.eMenu));
-            applyInputActionMenuMap             (spm.getShowElement(EShowElement.eMenu));
-            getToolbar().getPanel()  .setVisible(spm.getShowElement(EShowElement.eToolbar));
-            getStatusBar().getLabel().setVisible(spm.getShowElement(EShowElement.eStatusbar));
+            getMenu().getMenuBar()   .setVisible(mwd.getShowElement(EShowElement.eMenu));
+            applyInputActionMenuMap             (mwd.getShowElement(EShowElement.eMenu));
+            getToolbar().getPanel()  .setVisible(mwd.getShowElement(EShowElement.eToolbar));
+            getStatusBar().getLabel().setVisible(mwd.getShowElement(EShowElement.eStatusbar));
 
-            startLocation.x = spm.getLocation().x;
-            startLocation.y = spm.getLocation().y;
+            startLocation.x = mwd.getLocation().x;
+            startLocation.y = mwd.getLocation().y;
         }
 
         frame.setContentPane(getContentPane());
@@ -566,8 +567,8 @@ public class FastMinesSwing {
             ex.printStackTrace();
         }
 
-        try {
-            SerializeProjData spm = new SerializeProjData();
+        { // csabe settings
+            MainWindowData spm = new MainWindowData();
 
             spm.setSizeField(mosaicCtrllr.getSizeField());
             spm.setMosaicType(mosaicCtrllr.getMosaicType());
@@ -587,9 +588,7 @@ public class FastMinesSwing {
             spm.setUsePause(getMenu().getOptions().getUsePause().isSelected());
             spm.setLocation(Cast.toPoint(frame.getLocation()));
 
-            spm.save();
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            new MainWindowSerializator().save(spm);
         }
 
         getPausePanel().close();

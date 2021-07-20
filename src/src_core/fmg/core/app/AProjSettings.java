@@ -1,7 +1,5 @@
 package fmg.core.app;
 
-import fmg.common.Logger;
-
 public abstract class AProjSettings {
 
     protected AProjSettings() { }
@@ -18,6 +16,7 @@ public abstract class AProjSettings {
     protected static void setDebug(boolean isDebug) { AProjSettings.IsDebug = isDebug; }
 
     static {
+        /** /
         try {
             // is very vendor specific
             boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().contains("-agentlib:jdwp");
@@ -27,14 +26,14 @@ public abstract class AProjSettings {
 
             AProjSettings.IsDebug = isDebug || debugMode;
             if (AProjSettings.IsDebug)
-                Logger.DEBUG_WRITER = System.out::println;
+                fmg.common.Logger.DEBUG_WRITER = System.out::println;
 
         } catch(Error ex) {
             // android: java.lang.NoClassDefFoundError: Failed resolution of: Ljava/lang/management/ManagementFactory;
             if (!(ex instanceof NoClassDefFoundError) || !ex.getMessage().contains("ManagementFactory"))
-                Logger.error("AProjSettings", ex);
+                fmg.common.Logger.error("AProjSettings", ex);
         }
-
+        /**/
     }
 
     public static String getSettingsFileName() {
