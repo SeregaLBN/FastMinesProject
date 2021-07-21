@@ -33,6 +33,7 @@ import fmg.common.notifier.INotifyPropertyChanged;
 import fmg.common.notifier.NotifyPropertyChanged;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EMosaic;
+import fmg.core.types.model.MosaicInitData;
 
 /** MVC: game model of mosaic field. Default implementation. */
 public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoCloseable {

@@ -1,4 +1,4 @@
-package fmg.swing.app.serializable;
+package fmg.swing.app.model;
 
 import java.util.UUID;
 
@@ -6,9 +6,9 @@ import fmg.common.geom.Matrisize;
 import fmg.common.geom.Point;
 import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicHelper;
-import fmg.core.mosaic.MosaicInitData;
 import fmg.core.types.EMosaic;
 import fmg.core.types.draw.EShowElement;
+import fmg.core.types.model.MosaicInitData;
 
 /** Data model of the main window to save/restore */
 public class MainWindowData {

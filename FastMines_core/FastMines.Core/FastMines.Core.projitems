@@ -111,8 +111,8 @@
     <Compile Include="..\..\src\src_core\fmg\core\mosaic\MosaicDrawModel.cs">
       <Link>src_fmg.core\mosaic\MosaicDrawModel.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\mosaic\MosaicInitData.cs">
-      <Link>src_fmg.core\mosaic\MosaicInitData.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\types\model\MosaicInitData.cs">
+      <Link>src_fmg.core\types\model\MosaicInitData.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\img\IAnimator.cs">
       <Link>src_fmg.core\img\IAnimator.cs</Link>
@@ -318,23 +318,23 @@
     <Compile Include="..\..\src\src_core\fmg\core\types\ESkillLevel.cs">
       <Link>src_fmg.core\types\ESkillLevel.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\types\viewmodel\serializable\ChampionsModel.cs">
-      <Link>src_fmg.core\types\viewmodel\serializable\ChampionsModel.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\types\model\ChampionsModel.cs">
+      <Link>src_fmg.core\types\model\ChampionsModel.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\types\viewmodel\serializable\PlayersModel.cs">
-      <Link>src_fmg.core\types\viewmodel\serializable\PlayersModel.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\types\model\PlayersModel.cs">
+      <Link>src_fmg.core\types\model\PlayersModel.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\types\viewmodel\serializable\StatisticCounts.cs">
-      <Link>src_fmg.core\types\viewmodel\serializable\StatisticCounts.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\types\model\StatisticCounts.cs">
+      <Link>src_fmg.core\types\model\StatisticCounts.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\types\viewmodel\event\ChampionModelEvent.cs">
-      <Link>src_fmg.core\types\viewmodel\event\ChampionModelEvent.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\types\model\event\ChampionModelEvent.cs">
+      <Link>src_fmg.core\types\model\event\ChampionModelEvent.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\types\viewmodel\event\PlayerModelEvent.cs">
-      <Link>src_fmg.core\types\viewmodel\event\PlayerModelEvent.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\types\model\event\PlayerModelEvent.cs">
+      <Link>src_fmg.core\types\model\event\PlayerModelEvent.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\types\viewmodel\User.cs">
-      <Link>src_fmg.core\types\viewmodel\User.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\types\model\User.cs">
+      <Link>src_fmg.core\types\model\User.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\types\draw\EShowElement.cs">
       <Link>src_fmg.core\types\draw\EShowElement.cs</Link>

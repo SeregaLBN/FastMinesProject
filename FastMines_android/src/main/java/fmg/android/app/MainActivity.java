@@ -34,9 +34,9 @@ import fmg.common.Logger;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
-import fmg.core.mosaic.MosaicInitData;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
+import fmg.core.types.model.MosaicInitData;
 
 /** Main window activity */
 public class MainActivity extends AppCompatActivity {

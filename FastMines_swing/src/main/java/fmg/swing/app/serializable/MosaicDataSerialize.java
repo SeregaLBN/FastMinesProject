@@ -6,8 +6,8 @@ import java.io.ObjectOutput;
 
 import fmg.common.geom.Matrisize;
 import fmg.core.app.ISerializator;
-import fmg.core.mosaic.MosaicInitData;
 import fmg.core.types.EMosaic;
+import fmg.core.types.model.MosaicInitData;
 
 /** Mosaic data (de)serializator. For save/restore {@link MosaicInitData} */
 public class MosaicDataSerialize implements ISerializator {
@@ -25,7 +25,7 @@ public class MosaicDataSerialize implements ISerializator {
     public MosaicInitData read(ObjectInput in) throws IOException {
         long ver = in.readLong();
         if (ver != VERSION)
-            throw new IllegalArgumentException("Unsupported version #" + ver);
+            throw new IllegalArgumentException(MosaicDataSerialize.class.getSimpleName() + ": Unsupported version #" + ver);
 
         MosaicInitData data = new MosaicInitData();
 

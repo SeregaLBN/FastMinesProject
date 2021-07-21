@@ -3,7 +3,7 @@ using Windows.Foundation.Collections;
 using Fmg.Common;
 using Fmg.Common.Geom;
 using Fmg.Core.Types;
-using Fmg.Core.Mosaic;
+using Fmg.Core.Types.Model;
 using Fmg.Uwp.App.Presentation;
 
 namespace Fmg.Uwp.App.Model {

@@ -22,11 +22,12 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Fmg.Common;
 using Fmg.Common.Geom;
 using Fmg.Common.Notifier;
 using Fmg.Core.Types;
+using Fmg.Core.Types.Model;
 using Fmg.Core.Mosaic.Cells;
-using Fmg.Common;
 
 namespace Fmg.Core.Mosaic {
 

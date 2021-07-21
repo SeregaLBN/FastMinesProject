@@ -7,8 +7,8 @@ import javax.swing.SwingConstants;
 
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
-import fmg.core.types.viewmodel.User;
-import fmg.core.types.viewmodel.serializable.PlayersModel;
+import fmg.core.types.model.PlayersModel;
+import fmg.core.types.model.User;
 import fmg.swing.app.FastMinesSwing;
 import fmg.swing.app.model.view.ReportTableModel;
 import fmg.swing.app.model.view.StaticsticTblModel;

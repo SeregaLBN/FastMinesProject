@@ -1,4 +1,4 @@
-package fmg.core.mosaic;
+package fmg.core.types.model;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

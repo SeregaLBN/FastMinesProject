@@ -11,8 +11,9 @@ using Windows.UI.Xaml.Media;
 using Fmg.Common;
 using Fmg.Common.Geom;
 using Fmg.Common.Notifier;
-using Fmg.Core.Mosaic;
 using Fmg.Core.Types;
+using Fmg.Core.Types.Model;
+using Fmg.Core.Mosaic;
 using Fmg.Core.Mosaic.Cells;
 using Fmg.Uwp.Utils;
 

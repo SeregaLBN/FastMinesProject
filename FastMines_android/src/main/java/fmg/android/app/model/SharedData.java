@@ -6,8 +6,8 @@ import android.util.Log;
 
 import fmg.android.app.presentation.MenuSettings;
 import fmg.common.geom.Matrisize;
-import fmg.core.mosaic.MosaicInitData;
 import fmg.core.types.EMosaic;
+import fmg.core.types.model.MosaicInitData;
 
 public final class SharedData {
     private SharedData() {}

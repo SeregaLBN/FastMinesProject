@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Fmg.Common;
 using Fmg.Common.Notifier;
 using Fmg.Core.Types;
+using Fmg.Core.Types.Model;
 
 namespace Fmg.Core.Mosaic {
 

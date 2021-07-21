@@ -11,8 +11,8 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellRenderer;
 
-import fmg.core.types.viewmodel.User;
-import fmg.core.types.viewmodel.serializable.PlayersModel;
+import fmg.core.types.model.PlayersModel;
+import fmg.core.types.model.User;
 import fmg.swing.app.FastMinesSwing;
 import fmg.swing.app.model.view.ManageTblModel;
 import fmg.swing.utils.GuiTools;

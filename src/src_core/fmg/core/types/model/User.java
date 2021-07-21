@@ -1,4 +1,4 @@
-package fmg.core.types.viewmodel;
+package fmg.core.types.model;
 
 import java.io.Externalizable;
 import java.io.IOException;

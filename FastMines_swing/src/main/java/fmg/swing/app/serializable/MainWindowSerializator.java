@@ -9,8 +9,9 @@ import fmg.common.geom.Point;
 import fmg.common.geom.SizeDouble;
 import fmg.core.app.AProjSettings;
 import fmg.core.app.ISerializator;
-import fmg.core.mosaic.MosaicInitData;
 import fmg.core.types.draw.EShowElement;
+import fmg.core.types.model.MosaicInitData;
+import fmg.swing.app.model.MainWindowData;
 
 /** Main window data (de)serializator. For save / restore {@link MainWindowData} */
 public class MainWindowSerializator implements ISerializator {
@@ -46,7 +47,7 @@ public class MainWindowSerializator implements ISerializator {
     private void read(MainWindowData data, ObjectInput in) throws IOException {
         long ver = in.readLong();
         if (VERSION != ver)
-            throw new IllegalArgumentException("Unsupported version " + ver);
+            throw new IllegalArgumentException(MainWindowSerializator.class.getSimpleName() + ": Unsupported version " + ver);
 
         MosaicInitData mid = new MosaicDataSerialize().read(in);
         data.setCountMines(mid.getCountMines());

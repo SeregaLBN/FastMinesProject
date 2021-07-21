@@ -11,10 +11,10 @@ import android.content.SharedPreferences;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import fmg.android.app.presentation.MenuSettings;
 import fmg.common.Logger;
-import fmg.core.mosaic.MosaicInitData;
+import fmg.core.types.model.MosaicInitData;
 import fmg.android.app.model.SharedData;
+import fmg.android.app.presentation.MenuSettings;
 
 /** FastMines application */
 public class App extends Application implements LifecycleObserver {

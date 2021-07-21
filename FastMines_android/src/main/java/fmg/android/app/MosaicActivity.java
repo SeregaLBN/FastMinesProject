@@ -21,9 +21,9 @@ import fmg.common.Logger;
 import fmg.core.img.SmileModel;
 import fmg.core.mosaic.MosaicController;
 import fmg.core.mosaic.MosaicGameModel;
-import fmg.core.mosaic.MosaicInitData;
 import fmg.core.types.ClickResult;
 import fmg.core.types.EGameStatus;
+import fmg.core.types.model.MosaicInitData;
 
 /** Game field activity of the project */
 public class MosaicActivity extends AppCompatActivity {

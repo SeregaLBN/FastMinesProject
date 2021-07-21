@@ -7,9 +7,9 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
-import fmg.core.types.viewmodel.event.PlayerModelEvent;
-import fmg.core.types.viewmodel.event.PlayerModelListener;
-import fmg.core.types.viewmodel.serializable.PlayersModel;
+import fmg.core.types.model.PlayersModel;
+import fmg.core.types.model.event.PlayerModelEvent;
+import fmg.core.types.model.event.PlayerModelListener;
 
 public class ManageTblModel implements TableModel {
 

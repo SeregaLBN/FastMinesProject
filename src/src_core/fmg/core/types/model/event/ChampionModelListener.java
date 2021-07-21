@@ -1,4 +1,4 @@
-package fmg.core.types.viewmodel.event;
+package fmg.core.types.model.event;
 
 import java.util.EventListener;
 

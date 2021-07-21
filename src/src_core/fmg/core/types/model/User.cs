@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using Fmg.Common;
 
-namespace Fmg.Core.Types.Viewmodel {
+namespace Fmg.Core.Types.Model {
 
     public class User : IExternalizable {
 

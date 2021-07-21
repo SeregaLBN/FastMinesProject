@@ -1,4 +1,4 @@
-namespace Fmg.Core.Types.Viewmodel.Event {
+namespace Fmg.Core.Types.Model.Event {
 
     public delegate void ChampionModelChangedHandler(object sender, ChampionModelEventArgs e);
 

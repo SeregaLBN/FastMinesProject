@@ -1,10 +1,10 @@
-package fmg.core.types.viewmodel.event;
+package fmg.core.types.model.event;
 
 import java.util.EventObject;
 
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
-import fmg.core.types.viewmodel.serializable.PlayersModel;
+import fmg.core.types.model.PlayersModel;
 
 public class PlayerModelEvent extends EventObject {
 

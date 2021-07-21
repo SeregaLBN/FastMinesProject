@@ -8,10 +8,10 @@ import java.util.Locale;
 import javax.swing.event.TableModelEvent;
 
 import fmg.core.types.EMosaic;
-import fmg.core.types.viewmodel.User;
-import fmg.core.types.viewmodel.event.PlayerModelEvent;
-import fmg.core.types.viewmodel.serializable.PlayersModel;
-import fmg.core.types.viewmodel.serializable.StatisticCounts;
+import fmg.core.types.model.PlayersModel;
+import fmg.core.types.model.StatisticCounts;
+import fmg.core.types.model.User;
+import fmg.core.types.model.event.PlayerModelEvent;
 
 public class StaticsticTblModel extends ReportTableModel {
 

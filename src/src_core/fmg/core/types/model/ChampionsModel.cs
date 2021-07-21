@@ -6,9 +6,9 @@ using System.IO;
 using Fmg.Common;
 using Fmg.Common.Crypt;
 using Fmg.Core.App;
-using Fmg.Core.Types.Viewmodel.Event;
+using Fmg.Core.Types.Model.Event;
 
-namespace Fmg.Core.Types.Viewmodel.Serializable {
+namespace Fmg.Core.Types.Model {
 
     /// <summary>хранилище чемпионов</summary>
     public abstract class ChampionsModel : IExternalizable {

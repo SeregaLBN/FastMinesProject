@@ -12,7 +12,7 @@ using Microsoft.Graphics.Canvas.UI.Xaml;
 using Fmg.Common;
 using Fmg.Common.Geom;
 using Fmg.Core.Types;
-using Fmg.Core.Mosaic;
+using Fmg.Core.Types.Model;
 using Fmg.Core.Img;
 using Fmg.Uwp.App;
 using Fmg.Uwp.Utils;

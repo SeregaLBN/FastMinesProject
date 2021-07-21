@@ -2,11 +2,10 @@ using System;
 using System.ComponentModel;
 using Fmg.Common.Geom;
 using Fmg.Common.Notifier;
-using Fmg.Core.Types;
 
-namespace Fmg.Core.Mosaic {
+namespace Fmg.Core.Types.Model {
 
-    /// <summary> Mosaic data </summary>
+    /// <summary> Mosaic model (data for save/load) </summary>
     public class MosaicInitData : INotifyPropertyChanged, IDisposable {
 
         public const double AREA_MINIMUM = 230;

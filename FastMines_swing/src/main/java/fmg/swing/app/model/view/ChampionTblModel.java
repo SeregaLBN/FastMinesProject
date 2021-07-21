@@ -3,8 +3,8 @@ package fmg.swing.app.model.view;
 import javax.swing.event.TableModelEvent;
 
 import fmg.core.types.EMosaic;
-import fmg.core.types.viewmodel.event.ChampionModelEvent;
-import fmg.core.types.viewmodel.serializable.ChampionsModel;
+import fmg.core.types.model.ChampionsModel;
+import fmg.core.types.model.event.ChampionModelEvent;
 
 public class ChampionTblModel extends ReportTableModel {
 

@@ -1,4 +1,4 @@
-package fmg.core.types.viewmodel.serializable;
+package fmg.core.types.model;
 
 import java.io.*;
 import java.math.BigInteger;
@@ -13,9 +13,8 @@ import fmg.common.crypt.Simple3DES;
 import fmg.core.app.AProjSettings;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
-import fmg.core.types.viewmodel.User;
-import fmg.core.types.viewmodel.event.PlayerModelEvent;
-import fmg.core.types.viewmodel.event.PlayerModelListener;
+import fmg.core.types.model.event.PlayerModelEvent;
+import fmg.core.types.model.event.PlayerModelListener;
 
 /** хранилище пользователей и их игровой статистики */
 public class PlayersModel implements Externalizable {
