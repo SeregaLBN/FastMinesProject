@@ -15,7 +15,7 @@ import fmg.jfx.mosaic.MosaicCanvasController;
   gradle :FastMines_jfx:run
 
  */
-public class Main extends Application {
+public class FastMinesApp extends Application {
 
     @Override
     public void start(Stage stage) {

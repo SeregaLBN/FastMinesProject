@@ -26,7 +26,7 @@ import fmg.core.img.IImageController;
 import fmg.core.img.MosaicAnimatedModel;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
-import fmg.swing.app.FastMinesSwing;
+import fmg.swing.app.FastMinesApp;
 import fmg.swing.app.model.view.ReportTableModel;
 import fmg.swing.img.MosaicImg;
 import fmg.swing.utils.ImgUtils;
@@ -38,7 +38,7 @@ public abstract class ReportDlg implements AutoCloseable {
     private static final Color bkTabBkColor = fmg.common.Color.Transparent(); // Cast.toColor(UIManager.getColor("TabbedPane.light")); // Cast.toColor(getContentPane().getBackground());
     private static final Color bkTabBkColorSelected = fmg.common.Color.Aquamarine().brighter();//Cast.toColor(UIManager.getColor("TabbedPane.shadow")); // "TabbedPane.darkShadow"
 
-    protected final FastMinesSwing app;
+    protected final FastMinesApp app;
     protected final JDialog dialog;
     protected JTabbedPane tabPanel;
     protected JToggleButton[] btns = new JToggleButton[ESkillLevel.values().length-1];
@@ -47,7 +47,7 @@ public abstract class ReportDlg implements AutoCloseable {
     protected ButtonGroup radioGroup;
     private final PropertyChangeListener onImagePropertyChangedListener = this::onImagePropertyChanged;
 
-    public ReportDlg(FastMinesSwing app, boolean modal) {
+    public ReportDlg(FastMinesApp app, boolean modal) {
         this.app = app;
         dialog = new JDialog((app == null) ? null : app.getFrame(), "report window...", modal);
         initialize();

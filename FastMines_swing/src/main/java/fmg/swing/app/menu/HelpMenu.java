@@ -5,17 +5,17 @@ import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 
 import fmg.swing.app.KeyCombo;
-import fmg.swing.app.FastMinesSwing;
+import fmg.swing.app.FastMinesApp;
 
 public class HelpMenu {
 
-    private final FastMinesSwing app;
+    private final FastMinesApp app;
     private final JMenu menu = new JMenu("Help");
     private JMenuItem champions;
     private JMenuItem statistics;
     private JMenuItem about;
 
-    public HelpMenu(FastMinesSwing app) {
+    public HelpMenu(FastMinesApp app) {
         this.app = app;
         initialize();
     }

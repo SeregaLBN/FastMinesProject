@@ -1,4 +1,4 @@
-package fmg.swing.app.serializable;
+package fmg.swing.app.serializers;
 
 import java.io.*;
 import java.util.Objects;
@@ -8,24 +8,24 @@ import fmg.common.Logger;
 import fmg.common.geom.Point;
 import fmg.common.geom.SizeDouble;
 import fmg.core.app.AProjSettings;
-import fmg.core.app.ISerializator;
+import fmg.core.app.ISerializer;
 import fmg.core.types.draw.EShowElement;
 import fmg.core.types.model.MosaicInitData;
-import fmg.swing.app.model.MainWindowData;
+import fmg.swing.app.model.AppData;
 
-/** Main window data (de)serializator. For save / restore {@link MainWindowData} */
-public class MainWindowSerializator implements ISerializator {
+/** Application data (de)serializer. For save / restore {@link AppData} */
+public class AppDataSerializer implements ISerializer {
 
     private static final long VERSION = 1;
 
-    private void write(MainWindowData data, ObjectOutput out) throws IOException {
+    private void write(AppData data, ObjectOutput out) throws IOException {
         out.writeLong(VERSION);
 
         MosaicInitData mid = new MosaicInitData();
         mid.setCountMines(data.getCountMines());
         mid.setMosaicType(data.getMosaicType());
         mid.setSizeField(data.getSizeField());
-        new MosaicDataSerialize().write(mid, out);
+        new MosaicInitDataSerializer().write(mid, out);
 
         out.writeBoolean(data.getActiveUserId() != null);
         if (data.getActiveUserId() != null)
@@ -44,12 +44,12 @@ public class MainWindowSerializator implements ISerializator {
         out.writeDouble(data.getSizeMosaic().height);
     }
 
-    private void read(MainWindowData data, ObjectInput in) throws IOException {
+    private void read(AppData data, ObjectInput in) throws IOException {
         long ver = in.readLong();
         if (VERSION != ver)
-            throw new IllegalArgumentException(MainWindowSerializator.class.getSimpleName() + ": Unsupported version " + ver);
+            throw new IllegalArgumentException(AppDataSerializer.class.getSimpleName() + ": Unsupported version " + ver);
 
-        MosaicInitData mid = new MosaicDataSerialize().read(in);
+        MosaicInitData mid = new MosaicInitDataSerializer().read(in);
         data.setCountMines(mid.getCountMines());
         data.setMosaicType(mid.getMosaicType());
         data.setSizeField(mid.getSizeField());
@@ -76,7 +76,7 @@ public class MainWindowSerializator implements ISerializator {
 
     /** Load ini data from file
      * @return <b>true</b> - successful read; <b>false</b> - not exist or fail read, and set to defaults */
-    public boolean load(MainWindowData data) {
+    public boolean load(AppData data) {
         Objects.requireNonNull(data);
 
         File file = getIniFile();
@@ -91,19 +91,19 @@ public class MainWindowSerializator implements ISerializator {
             read(data, in);
             return true;
         } catch (Exception ex) {
-            Logger.error("Can`t load " + MainWindowData.class.getSimpleName(), ex);
+            Logger.error("Can`t load " + AppData.class.getSimpleName(), ex);
             data.setDefaults();
             return false;
         }
     }
 
-    public void save(MainWindowData data) {
+    public void save(AppData data) {
         try (OutputStream os = new FileOutputStream(getIniFile());
              ObjectOutputStream out = new ObjectOutputStream(os))
         {
             write(data, out);
         } catch (Exception ex) {
-            Logger.error("Can`t save " + MainWindowData.class.getSimpleName(), ex);
+            Logger.error("Can`t save " + AppData.class.getSimpleName(), ex);
         }
     }
 

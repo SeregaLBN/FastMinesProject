@@ -38,8 +38,8 @@ import fmg.core.types.model.PlayersModel;
 import fmg.core.types.model.User;
 import fmg.swing.app.dialog.*;
 import fmg.swing.app.menu.MainMenu;
-import fmg.swing.app.model.MainWindowData;
-import fmg.swing.app.serializable.MainWindowSerializator;
+import fmg.swing.app.model.AppData;
+import fmg.swing.app.serializers.AppDataSerializer;
 import fmg.swing.app.toolbar.EBtnNewGameState;
 import fmg.swing.app.toolbar.ToolBar;
 import fmg.swing.img.Animator;
@@ -56,7 +56,7 @@ import fmg.swing.utils.Timer;
   gradle :FastMines_swing:run
 
  */
-public class FastMinesSwing {
+public class FastMinesApp {
 
     private final JFrame frame = new JFrame();
     private int windowState;
@@ -91,7 +91,7 @@ public class FastMinesSwing {
     private final PropertyChangeListener onMosaicControllerPropertyChangedListener = this::onMosaicControllerPropertyChanged;
     private final PropertyChangeListener     onLogoMainIconPropertyChangedListener = this::onLogoMainIconPropertyChanged;
 
-    public FastMinesSwing() {
+    public FastMinesApp() {
         super();
         initialize();
     }
@@ -258,8 +258,8 @@ public class FastMinesSwing {
         boolean doNotAskStartup;
         MosaicJPanelController mosaicCtrllr;
         { // load settings and apply
-            MainWindowData mwd = new MainWindowData();
-            defaultData = !new MainWindowSerializator().load(mwd);
+            AppData mwd = new AppData();
+            defaultData = !new AppDataSerializer().load(mwd);
 
             if (mwd.isSystemTheme())
                 try {
@@ -405,10 +405,10 @@ public class FastMinesSwing {
 //        Logger.info("Main::initialize: after setLocation");
 
         if (isZoomAlwaysMax)
-            SwingUtilities.invokeLater(() -> sizeAlwaysMax(new ActionEvent(FastMinesSwing.this, 0, null)));
+            SwingUtilities.invokeLater(() -> sizeAlwaysMax(new ActionEvent(FastMinesApp.this, 0, null)));
         if (!doNotAskStartup)
             SwingUtilities.invokeLater(() ->
-                getHandlers().getPlayerManageAction().actionPerformed(new ActionEvent(FastMinesSwing.this, 0, "Main::initialize"))
+                getHandlers().getPlayerManageAction().actionPerformed(new ActionEvent(FastMinesApp.this, 0, "Main::initialize"))
             );
     }
 
@@ -569,7 +569,7 @@ public class FastMinesSwing {
         }
 
         { // csabe settings
-            MainWindowData spm = new MainWindowData();
+            AppData spm = new AppData();
 
             spm.setSizeField(mosaicCtrllr.getSizeField());
             spm.setMosaicType(mosaicCtrllr.getMosaicType());
@@ -589,7 +589,7 @@ public class FastMinesSwing {
             spm.setUsePause(getMenu().getOptions().getUsePause().isSelected());
             spm.setLocation(Cast.toPoint(frame.getLocation()));
 
-            new MainWindowSerializator().save(spm);
+            new AppDataSerializer().save(spm);
         }
 
         getPausePanel().close();
@@ -1291,7 +1291,7 @@ public class FastMinesSwing {
         //setSysOut();
         //printSystemProperties();
         SwingUtilities.invokeLater(() ->
-            new FastMinesSwing().getFrame().setVisible(true)
+            new FastMinesApp().getFrame().setVisible(true)
         );
     }
 

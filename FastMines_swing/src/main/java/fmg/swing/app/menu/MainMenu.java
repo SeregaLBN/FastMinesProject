@@ -6,7 +6,7 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.*;
 
-import fmg.swing.app.FastMinesSwing;
+import fmg.swing.app.FastMinesApp;
 import fmg.swing.utils.ImgUtils;
 
 public class MainMenu implements AutoCloseable {
@@ -14,7 +14,7 @@ public class MainMenu implements AutoCloseable {
     public static final int MENU_HEIGHT_WITH_ICON = 32;
     public static final int ZOOM_QUALITY_FACTOR = 2; // 1 - as is
 
-    private final FastMinesSwing app;
+    private final FastMinesApp app;
     private final JMenuBar menuBar = new JMenuBar() {
 
         private static final long serialVersionUID = 1L;
@@ -69,7 +69,7 @@ public class MainMenu implements AutoCloseable {
         return help;
     }
 
-    public MainMenu(FastMinesSwing app) {
+    public MainMenu(FastMinesApp app) {
         super();
         this.app = app;
         initialise();

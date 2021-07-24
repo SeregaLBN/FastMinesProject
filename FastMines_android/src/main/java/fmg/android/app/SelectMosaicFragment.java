@@ -18,9 +18,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.concurrent.TimeUnit;
 
-import fmg.android.app.ProjSettings;
 import fmg.android.app.databinding.SelectMosaicFragmentBinding;
-import fmg.android.app.model.SharedData;
 import fmg.android.app.model.dataSource.MosaicDataSource;
 import fmg.android.app.model.items.MosaicDataItem;
 import fmg.android.app.presentation.MosaicDsViewModel;
@@ -60,7 +58,7 @@ public class SelectMosaicFragment extends Fragment {
     private static final double TileMaxSize = Cast.dpToPx(90);
     private final PropertyChangeListener onMosaicDsPropertyChangedListener = this::onMosaicDsPropertyChanged;
 
-    public MosaicInitData getInitData() { return SharedData.getMosaicInitData(); }
+    public MosaicInitData getInitData() { return FastMinesApp.get().getMosaicInitData(); }
     //public void setInitData(MosaicInitData initData) { MosaicInitDataExt.getSharedData().copyFrom(initData); }
 
     @Override

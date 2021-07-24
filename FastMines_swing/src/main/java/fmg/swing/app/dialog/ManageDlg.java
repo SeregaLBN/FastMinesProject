@@ -13,7 +13,7 @@ import javax.swing.table.TableCellRenderer;
 
 import fmg.core.types.model.PlayersModel;
 import fmg.core.types.model.User;
-import fmg.swing.app.FastMinesSwing;
+import fmg.swing.app.FastMinesApp;
 import fmg.swing.app.model.view.ManageTblModel;
 import fmg.swing.utils.GuiTools;
 
@@ -22,14 +22,14 @@ public class ManageDlg {
 
     private static final String DEFAULT_CAPTION = "Users manage";
 
-    private final FastMinesSwing app;
+    private final FastMinesApp app;
     private final JDialog dialog;
     private JButton btnOk;
     private JTable table;
     private PlayersModel players;
     private JCheckBox doNotAskStartup;
 
-    public ManageDlg(FastMinesSwing app, boolean modal, PlayersModel players) {
+    public ManageDlg(FastMinesApp app, boolean modal, PlayersModel players) {
         this.app = app;
         dialog = new JDialog((app == null) ? null : app.getFrame(), DEFAULT_CAPTION, modal);
         this.players = players;
@@ -115,7 +115,7 @@ public class ManageDlg {
 //        Logger.info("OnDeleteRow");
         int rowIndex = table.getSelectedRow();
         if (rowIndex == -1)
-            FastMinesSwing.beep();
+            FastMinesApp.beep();
         else
             players.removePlayer(players.getUser(rowIndex).getGuid());
     }

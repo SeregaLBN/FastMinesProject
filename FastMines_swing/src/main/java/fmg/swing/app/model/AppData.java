@@ -10,8 +10,8 @@ import fmg.core.types.EMosaic;
 import fmg.core.types.draw.EShowElement;
 import fmg.core.types.model.MosaicInitData;
 
-/** Data model of the main window to save/restore */
-public class MainWindowData {
+/** Data model of the application to save/restore */
+public final class AppData {
 
     private MosaicInitData mosaicData;
 
@@ -27,7 +27,7 @@ public class MainWindowData {
     private double sizeMosaicHeight;
     private boolean systemTheme;
 
-    public MainWindowData() {
+    public AppData() {
         setDefaults();
     }
 

@@ -5,7 +5,7 @@ import java.beans.PropertyChangeListener;
 import fmg.common.notifier.INotifyPropertyChanged;
 import fmg.common.notifier.NotifyPropertyChanged;
 
-/** Main menu save data */
+/** Main menu model */
 public class MenuSettings implements INotifyPropertyChanged, AutoCloseable {
 
     public static final boolean DEFAULT_SPLIT_PANE_OPEN = true;
@@ -17,6 +17,8 @@ public class MenuSettings implements INotifyPropertyChanged, AutoCloseable {
     public static final String PROPERTY_SPLIT_PANE_OPEN = "SplitPaneOpen";
 
     public void copyFrom(MenuSettings from) {
+        if (from == this)
+            return;
         setSplitPaneOpen(from.isSplitPaneOpen());
     }
 

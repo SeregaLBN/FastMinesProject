@@ -14,8 +14,9 @@ compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
 
 group = 'FastMinesGame' // fmg
-mainClassName = 'fmg.jfx.app.Main'
 version = '0.0.1'
+mainClassName     = 'fmg.jfx.app.FastMinesApp'
+def demoClassName = 'fmg.jfx.app.DemoApp'
 
 jar {
     manifest {
@@ -111,14 +112,14 @@ if (JavaVersion.current().isJava11Compatible()) {
             '--module-path', sourceSets.test.runtimeClasspath.asPath,
             '--add-modules', 'javafx.controls',
             '-classpath', sourceSets.test.runtimeClasspath.asPath,
-            'fmg.jfx.app.DemoApp'
+            demoClassName
     }
 } else {
     task runDemoApp(type: JavaExec) {
         group = 'Execution'
         description = 'Run the demo javafx (animation test)'
         classpath = sourceSets.test.runtimeClasspath
-        main = 'fmg.jfx.app.DemoApp'
+        main = demoClassName
     }
 }
 

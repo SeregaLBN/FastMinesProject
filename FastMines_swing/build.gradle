@@ -39,8 +39,9 @@ compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = "UTF-8"
 
 group = 'FastMinesGame' // fmg
-mainClassName = "fmg.swing.app.FastMinesSwing"
 version = '2.1.1'
+mainClassName     = 'fmg.swing.app.FastMinesApp'
+def demoClassName = 'fmg.swing.app.DemoApp'
 
 jar {
     excludes = [ 'fmApplet.html', 'runNativeImageAgent.sh' ]

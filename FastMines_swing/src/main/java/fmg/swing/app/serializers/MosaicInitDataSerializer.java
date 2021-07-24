@@ -1,20 +1,20 @@
-package fmg.swing.app.serializable;
+package fmg.swing.app.serializers;
 
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 import fmg.common.geom.Matrisize;
-import fmg.core.app.ISerializator;
+import fmg.core.app.ISerializer;
 import fmg.core.types.EMosaic;
 import fmg.core.types.model.MosaicInitData;
 
-/** Mosaic data (de)serializator. For save/restore {@link MosaicInitData} */
-public class MosaicDataSerialize implements ISerializator {
+/** Mosaic data (de)serializer. For save/restore {@link MosaicInitData} */
+public class MosaicInitDataSerializer implements ISerializer {
 
     private static final long VERSION = 1;
 
-    public void write(MosaicInitData data, ObjectOutput out) throws IOException {
+    void write(MosaicInitData data, ObjectOutput out) throws IOException {
         out.writeLong(VERSION);
         out.writeInt(data.getMosaicType().getIndex());
         out.writeInt(data.getSizeField().m);
@@ -22,10 +22,10 @@ public class MosaicDataSerialize implements ISerializator {
         out.writeInt(data.getCountMines());
     }
 
-    public MosaicInitData read(ObjectInput in) throws IOException {
+    MosaicInitData read(ObjectInput in) throws IOException {
         long ver = in.readLong();
         if (ver != VERSION)
-            throw new IllegalArgumentException(MosaicDataSerialize.class.getSimpleName() + ": Unsupported version #" + ver);
+            throw new IllegalArgumentException(MosaicInitDataSerializer.class.getSimpleName() + ": Unsupported version #" + ver);
 
         MosaicInitData data = new MosaicInitData();
 

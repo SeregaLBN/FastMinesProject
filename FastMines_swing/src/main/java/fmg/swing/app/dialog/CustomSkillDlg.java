@@ -18,12 +18,12 @@ import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.ESkillLevel;
 import fmg.core.types.model.MosaicInitData;
-import fmg.swing.app.FastMinesSwing;
+import fmg.swing.app.FastMinesApp;
 import fmg.swing.utils.GuiTools;
 
 public class CustomSkillDlg implements AutoCloseable {
 
-    private final FastMinesSwing app;
+    private final FastMinesApp app;
     private final JDialog dialog;
     private JSpinner spinX;
     private JSpinner spinY;
@@ -37,7 +37,7 @@ public class CustomSkillDlg implements AutoCloseable {
     private JPopupMenu popupMenu;
     private final PropertyChangeListener onMosaicModelPropertyChangedListener = this::onMosaicModelPropertyChanged;
 
-    public CustomSkillDlg(FastMinesSwing app, boolean modal) {
+    public CustomSkillDlg(FastMinesApp app, boolean modal) {
         this.app = app;
         dialog = new JDialog((app == null) ? null : app.getFrame(), "Select skill", modal);
         initialize();

@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -18,7 +17,6 @@ import java.beans.PropertyChangeListener;
 import java.util.function.Supplier;
 
 import fmg.android.app.databinding.MainActivityBinding;
-import fmg.android.app.model.SharedData;
 import fmg.android.app.model.dataSource.MosaicGroupDataSource;
 import fmg.android.app.model.dataSource.MosaicSkillDataSource;
 import fmg.android.app.model.items.MosaicGroupDataItem;
@@ -54,9 +52,8 @@ public class MainActivity extends AppCompatActivity {
     private final PropertyChangeListener onMosaicGroupDsPropertyChangedListener = this::onMosaicGroupDsPropertyChanged;
     private final PropertyChangeListener onMosaicSkillDsPropertyChangedListener = this::onMosaicSkillDsPropertyChanged;
 
-    /** Model (a common model between all the pages in the application) */
-    public MosaicInitData   getInitData() { return SharedData.getMosaicInitData(); }
-    public MenuSettings getMenuSettings() { return SharedData.getMenuSettings(); }
+    public MosaicInitData getInitData()     { return FastMinesApp.get().getMosaicInitData(); }
+    public MenuSettings   getMenuSettings() { return FastMinesApp.get().getMenuSettings(); }
 
     enum EActivityStatus {
         eLaunched,
@@ -137,9 +134,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         Logger.info("MainActivity.onSaveInstanceState: this.hash={0}", this.hashCode());
-        SharedData.save(savedInstanceState, getInitData());
+        // TODO save...  new AppDataSerializer().save(savedInstanceState);
         super.onSaveInstanceState(savedInstanceState);
     }
+
 
     @Override
     public void onResume() {

@@ -5,6 +5,7 @@ public abstract class AProjSettings {
     protected AProjSettings() { }
 
     public static final String PROJECT_NAME = "FastMines";
+    public static final String CORE_VERSION = "2.2.2";
 
     protected static String   settingsFile = PROJECT_NAME + ".settings";
     protected static String statisticsFile = PROJECT_NAME + ".statistics";

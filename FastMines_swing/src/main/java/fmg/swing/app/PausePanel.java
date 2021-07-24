@@ -15,12 +15,12 @@ import fmg.swing.img.Logo;
 
 class PausePanel {
 
-    private final FastMinesSwing app;
+    private final FastMinesApp app;
     private final JPanel panel;
     private Logo.IconController logo;
     private final PropertyChangeListener onLogoPausePropertyChangedListener = this::onLogoPausePropertyChanged;
 
-    public PausePanel(FastMinesSwing app) {
+    public PausePanel(FastMinesApp app) {
         this.app = app;
         panel = new JPanel() {
 

@@ -13,7 +13,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import fmg.android.app.databinding.MosaicActivityBinding;
-import fmg.android.app.model.SharedData;
 import fmg.android.app.presentation.MosaicViewModel;
 import fmg.android.mosaic.MosaicViewController;
 import fmg.android.utils.Timer;
@@ -33,7 +32,7 @@ public class MosaicActivity extends AppCompatActivity {
     private Timer timer;
     private final PropertyChangeListener onMosaicControllerPropertyChangedListener = this::onMosaicControllerPropertyChanged;
 
-    public MosaicInitData getInitData() { return SharedData.getMosaicInitData(); }
+    public MosaicInitData getInitData() { return FastMinesApp.get().getMosaicInitData(); }
 
     public MosaicActivity() {
         Logger.info("MosaicActivity.ctor: this.hash={0}", this.hashCode());
