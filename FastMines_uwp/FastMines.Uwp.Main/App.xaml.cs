@@ -122,7 +122,6 @@ namespace Fmg {
             // Ensure the current window is active
             Window.Current.Activate();
 
-           AsyncRunner.InvokeLater(x => TileHelper.RegisterBackgroundTask(), Windows.System.Threading.WorkItemPriority.Low);
         }
 
         private void OnForegrounded(object sender, LeavingBackgroundEventArgs ev) {

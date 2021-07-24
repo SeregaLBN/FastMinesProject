@@ -293,7 +293,7 @@ BOOL SaveBitmap(HDC hDC, HBITMAP hBmp, LPCTSTR szBmpFile, BOOL bReplaceFile) {
                     if (!bRes)
                         dwErrCode = ::GetLastError();
                 }
-                delete(pData); pData = NULL;
+                delete [] pData; pData = NULL;
             }
         }
         ::CloseHandle(hFile);
@@ -366,6 +366,11 @@ BOOL GetEncoderClsid(LPCWSTR format, OUT CLSID& clsid) {
 }
 
 BOOL SavePng(LPCTSTR szBmpFile, LPCTSTR szPngFile) {
+    Gdiplus::Bitmap bmp(szBmpFile, TRUE);
+    CLSID pngClsid;
+    if (!::GetEncoderClsid(L"image/png", pngClsid))
+        return FALSE;
+
     Gdiplus::GdiplusStartupInput gdiplusStartupInput;
     ULONG_PTR gdiplusToken;
     Gdiplus::Status res = Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
@@ -374,19 +379,14 @@ BOOL SavePng(LPCTSTR szBmpFile, LPCTSTR szPngFile) {
         return FALSE;
     }
 
-    {
-        Gdiplus::Bitmap bmp(szBmpFile, TRUE);
-        CLSID pngClsid;
-        if (!::GetEncoderClsid(L"image/png", pngClsid))
-            return FALSE;
-        res = bmp.Save(szPngFile, &pngClsid, NULL);
-        if (res != Gdiplus::/*Status.*/Ok) {
-            ::SetLastError(E_FAIL);
-            return FALSE;
-        }
-    }
+    res = bmp.Save(szPngFile, &pngClsid, NULL);
 
     Gdiplus::GdiplusShutdown(gdiplusToken);
+
+    if (res != Gdiplus::/*Status.*/Ok) {
+        ::SetLastError(E_FAIL);
+        return FALSE;
+    }
 
     return TRUE;
 }

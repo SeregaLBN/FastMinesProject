@@ -128,7 +128,6 @@
     <Compile Include="CustomSkillPage.xaml.cs">
       <DependentUpon>CustomSkillPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Common\TileHelper.cs" />
     <Compile Include="Presentation\Command.cs" />
     <Compile Include="Presentation\MainMenuViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -582,12 +581,6 @@
     <PackageReference Include="Win2D.uwp">
       <Version>1.25.0</Version>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\FastMines.Uwp.BackgroundTasks\FastMines.Uwp.BackgroundTasks.csproj">
-      <Project>{4f75c36e-7157-449f-9686-dea20f83bbdb}</Project>
-      <Name>FastMines.Uwp.BackgroundTasks</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <SDKReference Include="WindowsMobile, Version=10.0.18362.0">
