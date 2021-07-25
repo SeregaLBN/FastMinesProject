@@ -1,32 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'application'
 
-/** /
-// see https://plugins.gradle.org/plugin/com.palantir.graal
-buildscript {
-    repositories {
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
-    dependencies {
-        classpath "gradle.plugin.com.palantir.graal:gradle-graal:0.3.0-37-g77aa98f"
-    }
-}
-apply plugin: 'com.palantir.graal'
-
-graal {
-//    //mainClass 'com.palantir.test.Main'
-//    //outputName 'hello-world'
-//    //graalVersion '1.0.0-rc5'
-    graalVersion '1.0.0-rc16'
-    downloadBaseUrl 'https://github.com/oracle/graal/releases/download/'
-//    //graalVersion '19.0.0'
-//    //option '-H:EnableURLProtocols=http'
-//    //option '-H:Name=foo'
-}
-/**/
-
 if (JavaVersion.current().isJava11Compatible()) {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
@@ -65,7 +39,6 @@ jar {
 sourceSets {
     main {
         java {
-            srcDir '../src/src_platform_swing'
             srcDir 'src/main/java'
             include '**/*.java'
         }
@@ -83,7 +56,6 @@ sourceSets {
     test {
         java {
             srcDir 'src/test/java'
-            srcDir '../src/test_swing'
             include '**/*.java'
         }
     }
