@@ -5,7 +5,6 @@ import androidx.databinding.Bindable;
 import java.beans.PropertyChangeEvent;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import fmg.android.app.BR;
 import fmg.android.app.model.items.LogoDataItem;

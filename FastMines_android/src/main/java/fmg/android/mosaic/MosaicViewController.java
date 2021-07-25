@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.graphics.Point;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Size;

@@ -2,7 +2,6 @@ package fmg.android.app;
 
 import android.content.Context;
 import android.os.Looper;
-import android.util.Log;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;
