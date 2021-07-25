@@ -22,9 +22,6 @@ android {
     }
     sourceSets {
         androidTest.java.srcDirs += '../src/test_core'
-        androidTest.java.srcDirs += '../src/test_android'
-
-        //include '**/*.java'
     }
     buildTypes {
         release {
