@@ -9,18 +9,6 @@
     <Import_RootNamespace>FastMines.Uwp.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\BooleanNullableConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\BooleanToVisibilityConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\FmColorToBrushConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\FmColorToWinColorConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\ImageSizeFontSizeConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\ImageSizeHeightWithMarginConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\ImageSizeWidthWithMarginConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\IntToDoubleConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\SelectedItemToBoolConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\SizeToHeightConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\SizeToWidthConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\ValueToStringConverter.cs" />
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\Timer.cs">
       <Link>src_fmg.uwp\utils\Timer.cs</Link>
     </Compile>
