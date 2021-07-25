@@ -27,10 +27,10 @@
     <script type="text/JavaScript" src="../../src/src_core/fmg/core/img/RotateLogoTransformer.js"></script>
     <script type="text/JavaScript" src="../../src/src_core/fmg/core/img/PolarLightLogoTransformer.js"></script>
 
-    <script type="text/JavaScript" src="../../src/src_js/fmg/js/img/svg/svgCommon.js"></script>
-    <script type="text/JavaScript" src="../../src/src_js/fmg/js/img/svg/Logo.js"></script>
+    <script type="text/JavaScript" src="../src/fmg/js/img/svg/svgCommon.js"></script>
+    <script type="text/JavaScript" src="../src/fmg/js/img/svg/Logo.js"></script>
 
-    <script type="text/JavaScript" src="../Settings.js"></script>
+    <script type="text/JavaScript" src="../src/fmg/js/app/ProjSettings.js"></script>
 
     <title>FastMines project: XSL Logo image transformer to android xml vector</title>
 </head>
@@ -92,29 +92,29 @@ function initSvg(evt) {
 }
 
 function work(svg, svgDoc) {
-    svg.setAttributeNS(null, 'viewBox', '0 0 ' + Settings.width + ' ' + Settings.height);
-    svg.setAttributeNS(null, 'width'  , Settings.width);
-    svg.setAttributeNS(null, 'height' , Settings.height);
+    svg.setAttributeNS(null, 'viewBox', '0 0 ' + ProjSettings.width + ' ' + ProjSettings.height);
+    svg.setAttributeNS(null, 'width'  , ProjSettings.width);
+    svg.setAttributeNS(null, 'height' , ProjSettings.height);
 
 
     var cntrllr = new LogoControllerSvg(svg, svgDoc);
-    Settings.currentImageController = cntrllr;
+    ProjSettings.currentImageController = cntrllr;
 
-    cntrllr.useRotateTransforming(Settings.useRotateTransforming);
-    cntrllr.usePolarLightFgTransforming(Settings.usePolarLightFgTransforming);
+    cntrllr.useRotateTransforming(ProjSettings.useRotateTransforming);
+    cntrllr.usePolarLightFgTransforming(ProjSettings.usePolarLightFgTransforming);
 
     // 1. configure image from settings
     var model = cntrllr.Model;
-    model.size.width  = Settings.width;
-    model.size.height = Settings.height;
-    model.padding = Settings.pad;
+    model.size.width  = ProjSettings.width;
+    model.size.height = ProjSettings.height;
+    model.padding = ProjSettings.pad;
     if (model instanceof AnimatedImageModel) {
-        model.borderWidth       = Settings.borderWidth;
-        model.backgroundColor   = Settings.backgroundColor;
-        model.foregroundColor.a = Settings.foregroundAlpha;
+        model.borderWidth       = ProjSettings.borderWidth;
+        model.backgroundColor   = ProjSettings.backgroundColor;
+        model.foregroundColor.a = ProjSettings.foregroundAlpha;
 
         if (model instanceof LogoModel) {
-            model.useGradient = Settings.useGradientFill;
+            model.useGradient = ProjSettings.useGradientFill;
         }
     } else {
         throw new Error('implement me...');
@@ -168,8 +168,8 @@ function makeSnapshot() {
     var canvas = document.createElement('canvas');
     svg.parentNode.appendChild(canvas);
     var context = canvas.getContext('2d');
-    canvas.setAttribute('width' , Settings.width);
-    canvas.setAttribute('height', Settings.height);
+    canvas.setAttribute('width' , ProjSettings.width);
+    canvas.setAttribute('height', ProjSettings.height);
 
     var image = new Image();
     image.src = imgsrc;
@@ -179,9 +179,9 @@ function makeSnapshot() {
 
         var a = document.getElementById('savePng');
         a.href = canvasdata;
-        a.download = !Settings.currentImageController
+        a.download = !ProjSettings.currentImageController
                           ? 'export_' + Date.now()                        + '.png'
-                          : Settings.currentImageController.getFileName() + '.png';
+                          : ProjSettings.currentImageController.getFileName() + '.png';
         a.hidden = false;
         //canvas.parentNode.removeChild(canvas);
      };

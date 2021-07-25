@@ -32,12 +32,12 @@
     <script type="text/JavaScript" src="../src/src_core/fmg/core/img/RotateLogoTransformer.js"></script>
     <script type="text/JavaScript" src="../src/src_core/fmg/core/img/PolarLightLogoTransformer.js"></script>
 
-    <script type="text/JavaScript" src="../src/src_js/fmg/js/img/svg/svgCommon.js"></script>
-    <script type="text/JavaScript" src="../src/src_js/fmg/js/img/svg/Logo.js"></script>
-    <script type="text/JavaScript" src="../src/src_js/fmg/js/img/svg/MosaicSkillOrGroupView.js"></script>
-    <script type="text/JavaScript" src="../src/src_js/fmg/js/img/svg/MosaicSkillImg.js"></script>
+    <script type="text/JavaScript" src="./src/fmg/js/img/svg/svgCommon.js"></script>
+    <script type="text/JavaScript" src="./src/fmg/js/img/svg/Logo.js"></script>
+    <script type="text/JavaScript" src="./src/fmg/js/img/svg/MosaicSkillOrGroupView.js"></script>
+    <script type="text/JavaScript" src="./src/fmg/js/img/svg/MosaicSkillImg.js"></script>
 
-    <script type="text/JavaScript" src="./Settings.js"></script>
+    <script type="text/JavaScript" src="./src/fmg/js/app/ProjSettings.js"></script>
 
     <title>FastMines project: images demo</title>
 </head>
@@ -67,8 +67,8 @@ function initSvg(evt) {
 }
 
 function work(svg, svgDoc) {
-    Settings.useRandom = true;
-    Settings.modify();
+    ProjSettings.useRandom = true;
+    ProjSettings.modify();
 
     /** /
     {
@@ -82,44 +82,44 @@ function work(svg, svgDoc) {
     }
     /**/
 
-    svg.setAttributeNS(null, 'viewBox', '0 0 ' + Settings.width + ' ' + Settings.height);
-    svg.setAttributeNS(null, 'width'  , Settings.width);
-    svg.setAttributeNS(null, 'height' , Settings.height);
+    svg.setAttributeNS(null, 'viewBox', '0 0 ' + ProjSettings.width + ' ' + ProjSettings.height);
+    svg.setAttributeNS(null, 'width'  , ProjSettings.width);
+    svg.setAttributeNS(null, 'height' , ProjSettings.height);
 
 
     var cntrllr;
-    switch (Settings.testedImageType) {
+    switch (ProjSettings.testedImageType) {
     case 0:
         cntrllr = new LogoControllerSvg(svg, svgDoc);
         break;
     case 1:
-        cntrllr = new MosaicSkillImgControllerSvg(Settings.mosaicSkill, svg, svgDoc);
+        cntrllr = new MosaicSkillImgControllerSvg(ProjSettings.mosaicSkill, svg, svgDoc);
         break;
     }
-    Settings.currentImageController = cntrllr;
+    ProjSettings.currentImageController = cntrllr;
 
-    cntrllr.useRotateTransforming(Settings.useRotateTransforming);
-    cntrllr.usePolarLightFgTransforming(Settings.usePolarLightFgTransforming);
+    cntrllr.useRotateTransforming(ProjSettings.useRotateTransforming);
+    cntrllr.usePolarLightFgTransforming(ProjSettings.usePolarLightFgTransforming);
 
     // 1. configure image from settings
     var model = cntrllr.Model;
-    model.size.width  = Settings.width;
-    model.size.height = Settings.height;
-    model.padding = Settings.pad;
+    model.size.width  = ProjSettings.width;
+    model.size.height = ProjSettings.height;
+    model.padding = ProjSettings.pad;
     if (model instanceof AnimatedImageModel) {
-        model.mosaicSkill       = Settings.mosaicSkill;
-        model.borderWidth       = Settings.borderWidth;
-        model.backgroundColor   = Settings.backgroundColor;
-        model.foregroundColor.a = Settings.foregroundAlpha;
-        model.animated          = Settings.animated;
-        model.animeDirection    = Settings.animeDirection;
-        model.animatePeriod     = Settings.animatePeriod;
-        model.totalFrames       = Settings.totalFrames;
+        model.mosaicSkill       = ProjSettings.mosaicSkill;
+        model.borderWidth       = ProjSettings.borderWidth;
+        model.backgroundColor   = ProjSettings.backgroundColor;
+        model.foregroundColor.a = ProjSettings.foregroundAlpha;
+        model.animated          = ProjSettings.animated;
+        model.animeDirection    = ProjSettings.animeDirection;
+        model.animatePeriod     = ProjSettings.animatePeriod;
+        model.totalFrames       = ProjSettings.totalFrames;
         // if (cntrllr.View instanceof WithBurgerMenuView) {
-        //    cntrllr.View.burgerMenuModel.show = Settings.showBurgerMenu;
+        //    cntrllr.View.burgerMenuModel.show = ProjSettings.showBurgerMenu;
         // }
         if (model instanceof LogoModel) {
-            model.useGradient = Settings.useGradientFill;
+            model.useGradient = ProjSettings.useGradientFill;
         }
     } else {
         throw new Error('implement me...');

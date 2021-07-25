@@ -1,5 +1,5 @@
 /** common settings this SVG */
-var Settings = {
+var ProjSettings = {
     width: 108,  // view width
     height: 108, // view height
     pad: 108*10/2020, // padding
@@ -29,18 +29,18 @@ var Settings = {
     useRandom: !true,
 
     modify: function() {
-        if (!Settings.useRandom)
+        if (!ProjSettings.useRandom)
             return;
 
         var b = function() { return (Math.random() < 0.5); }; // random boolean
 
-        Settings.width = Settings.height = 100 + random(100);
-        Settings.pad = 5 + random(10);
-        Settings.borderWidth = !random(3) ? 0: (0.3 + 2 * Math.random()),
-        Settings.backgroundColor = !random(5) ? Color.Transparent : Color.RandomColor.brighter(0.4),
-        Settings.foregroundAlpha = 150 + random(255-150), // 200  // 0..255 - foreground alpha-chanel color
-        Settings.testedImageType = random(2);
-        Settings.mosaicSkill = (function() {
+        ProjSettings.width = ProjSettings.height = 100 + random(100);
+        ProjSettings.pad = 5 + random(10);
+        ProjSettings.borderWidth = !random(3) ? 0: (0.3 + 2 * Math.random()),
+        ProjSettings.backgroundColor = !random(5) ? Color.Transparent : Color.RandomColor.brighter(0.4),
+        ProjSettings.foregroundAlpha = 150 + random(255-150), // 200  // 0..255 - foreground alpha-chanel color
+        ProjSettings.testedImageType = random(2);
+        ProjSettings.mosaicSkill = (function() {
                 switch (random(6)) {
                 case 0: return ESkillLevel.eBeginner;
                 case 1: return ESkillLevel.eAmateur ;
@@ -51,24 +51,24 @@ var Settings = {
                 default: throw new Error('Bad value');
                 }
             })();
-        Settings.showBurgerMenu = b();
-        Settings.useGradientFill = b();
+        ProjSettings.showBurgerMenu = b();
+        ProjSettings.useGradientFill = b();
 
-        Settings.animated = b();
-        if (Settings.animated) {
-            Settings.animeDirection = b();
-            Settings.animatePeriod = 1500 + random(2500);
-            if (Settings.testedImageType == 1) {
-                Settings.totalFrames = (Settings.mosaicSkill==null)
+        ProjSettings.animated = b();
+        if (ProjSettings.animated) {
+            ProjSettings.animeDirection = b();
+            ProjSettings.animatePeriod = 1500 + random(2500);
+            if (ProjSettings.testedImageType == 1) {
+                ProjSettings.totalFrames = (ProjSettings.mosaicSkill==null)
                     ? 120 // что бы при calcMode='discrete' не 'дёргалось'
                     : 30;
             }
 
-            Settings.useRotateTransforming = b();
-            if (!Settings.useRotateTransforming)
-                Settings.usePolarLightFgTransforming = true; // при анимації мусить бути хоча б один трансформер, інакше не буде анімації
+            ProjSettings.useRotateTransforming = b();
+            if (!ProjSettings.useRotateTransforming)
+                ProjSettings.usePolarLightFgTransforming = true; // при анимації мусить бути хоча б один трансформер, інакше не буде анімації
             else
-                Settings.usePolarLightFgTransforming = b();
+                ProjSettings.usePolarLightFgTransforming = b();
         }
     }
 
