@@ -5,8 +5,6 @@ import java.util.Map;
 
 import javax.swing.*;
 
-import fmg.core.types.draw.EShowElement;
-import fmg.core.types.draw.EZoomInterface;
 import fmg.swing.app.KeyCombo;
 import fmg.swing.app.FastMinesApp;
 

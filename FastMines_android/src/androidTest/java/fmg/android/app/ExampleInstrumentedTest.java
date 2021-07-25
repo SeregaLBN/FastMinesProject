@@ -41,7 +41,7 @@ public class ExampleInstrumentedTest {
     @Test
     public void uiTimerTest() throws InterruptedException {
         String logTag = "uiTimerTest";
-        Log.d(logTag, "> begin...");
+        Logger.debug(logTag + " > begin...");
 
         int[] fireCount = { 0 };
 
@@ -51,7 +51,7 @@ public class ExampleInstrumentedTest {
             t.setInterval(100);
             t.setCallback(tmr -> {
                 ++fireCount[0];
-                Log.d(logTag, "  timer callback: fireCount=" + fireCount[0]);
+                Logger.debug(logTag + "   timer callback: fireCount=" + fireCount[0]);
                 assertTrue("Must be main UI thread!", Looper.getMainLooper().isCurrentThread());
             });
             t.start();
@@ -61,9 +61,9 @@ public class ExampleInstrumentedTest {
 
         boolean succ = fireCount[0] > 0;
         if (succ)
-            Log.d(logTag, "< end...");
+            Logger.debug(logTag + " < end...");
         else
-            Log.e(logTag, "< end...");
+            Logger.error(logTag + " < end...");
 
         assertTrue(succ);
     }
@@ -72,7 +72,7 @@ public class ExampleInstrumentedTest {
     @Test
     public void animatorTest() throws InterruptedException {
         String logTag = "animatorTest";
-        Log.d(logTag, "> begin...");
+        Logger.debug(logTag + " > begin...");
 
         int[] fireCount = { 0 };
 
@@ -81,16 +81,16 @@ public class ExampleInstrumentedTest {
         Animator a = Animator.getSingleton();
         a.subscribe(this, delta -> {
             ++fireCount[0];
-            Log.d(logTag, "  subscriber: fireCount=" + fireCount[0]);
+            Logger.debug(logTag + "   subscriber: fireCount=" + fireCount[0]);
             assertTrue("Must be main UI thread!", Looper.getMainLooper().isCurrentThread());
         });
         new CountDownLatch(1).await(300, TimeUnit.MILLISECONDS);
 
         boolean succ = fireCount[0] > 0;
         if (succ)
-            Log.d(logTag, "< end...");
+            Logger.debug(logTag + " < end...");
         else
-            Log.e(logTag, "< end...");
+            Logger.error(logTag + " < end...");
 
         assertTrue(succ);
     }

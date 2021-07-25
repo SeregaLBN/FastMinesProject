@@ -1,4 +1,4 @@
-package fmg.core.types.draw;
+package fmg.swing.app.menu;
 
 public enum EShowElement {
 

@@ -10,6 +10,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import fmg.android.app.BR;
+import fmg.common.Logger;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.notifier.INotifyPropertyChanged;
@@ -86,7 +87,7 @@ public abstract class BaseDataItem<T,
     @Bindable
     public Bitmap getImage() {
         if (isDisposed()) {
-            Log.e("fmg", "Object already disposed! Return faked image...");
+            Logger.error("Object already disposed! Return faked image...");
             return android.graphics.Bitmap.createBitmap(1, 1, android.graphics.Bitmap.Config.RGB_565);
         }
         return getEntity().getImage();

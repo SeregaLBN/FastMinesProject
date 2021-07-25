@@ -1,6 +1,5 @@
 package fmg.android.app;
 
-import android.app.Activity;
 import android.app.Application;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
@@ -8,7 +7,6 @@ import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Environment;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -34,6 +32,7 @@ public class FastMinesApp extends Application implements LifecycleObserver {
 
     private static FastMinesApp self;
 
+    /** get single instance of application (singleton) */
     public static FastMinesApp get(/*Activity activity*/) {
         //return (FastMinesApp)activity.getApplicationContext();
         return self;

@@ -8,8 +8,8 @@ import javax.swing.KeyStroke;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
-import fmg.core.types.draw.EShowElement;
-import fmg.core.types.draw.EZoomInterface;
+import fmg.swing.app.menu.EShowElement;
+import fmg.swing.app.menu.EZoomInterface;
 
 /** App key combinations */
 public final class KeyCombo {

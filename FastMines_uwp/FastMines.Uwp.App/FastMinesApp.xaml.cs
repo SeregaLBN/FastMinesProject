@@ -13,9 +13,9 @@ using Windows.UI.Xaml.Controls;
 using Fmg.Common;
 using Fmg.Core.Img;
 using Fmg.Core.Types.Model;
-using Fmg.Uwp.App;
 using Fmg.Uwp.App.Model;
 using Fmg.Uwp.App.Presentation;
+using Fmg.Uwp.App.Serializers;
 using Fmg.Uwp.Utils;
 
 namespace Fmg.Uwp.App {
@@ -26,14 +26,17 @@ namespace Fmg.Uwp.App {
     sealed partial class FastMinesApp : Application {
 
         /// <summary> Model (a common model between all the pages in the application) </summary>
-        public MosaicInitData   InitData => SharedData.MosaicInitData;
-        public MenuSettings MenuSettings => SharedData.MenuSettings;
+        public MosaicInitData InitData { get; private set; }
+        public MenuSettings MenuSettings { get; private set; }
+
+        private static FastMinesApp self;
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         public FastMinesApp() {
+            self = this;
             ProjSettings.Init();
             this.InitializeComponent();
             this.Suspending += OnSuspending;
@@ -45,6 +48,9 @@ namespace Fmg.Uwp.App {
             Logger.Info("FastMinesApp::OnActivated");
             base.OnActivated(args);
         }
+
+        /// <summary> get single instance of application (singleton) </summary>
+        public static FastMinesApp Get => self;
 
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
@@ -228,11 +234,19 @@ namespace Fmg.Uwp.App {
         }
 
         private void SaveAppData() {
-            SharedData.Save(Windows.Storage.ApplicationData.Current.LocalSettings.Values);
+            var appData = new AppData {
+                MosaicInitData = this.InitData,
+                SplitPaneOpen = this.MenuSettings.SplitPaneOpen
+            };
+            new AppDataSerializer().Save(appData, Windows.Storage.ApplicationData.Current.LocalSettings.Values);
         }
 
         private void LoadAppData() {
-            SharedData.Load(Windows.Storage.ApplicationData.Current.LocalSettings.Values);
+            var appData = new AppDataSerializer().Load(Windows.Storage.ApplicationData.Current.LocalSettings.Values);
+            this.InitData = appData.MosaicInitData;
+            this.MenuSettings = new MenuSettings() {
+                SplitPaneOpen = appData.SplitPaneOpen
+            };
         }
 
         private void UpdateBackButtonVisibility() {

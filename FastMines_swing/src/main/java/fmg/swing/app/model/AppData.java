@@ -7,8 +7,8 @@ import fmg.common.geom.Point;
 import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.types.EMosaic;
-import fmg.core.types.draw.EShowElement;
 import fmg.core.types.model.MosaicInitData;
+import fmg.swing.app.menu.EShowElement;
 
 /** Data model of the application to save/restore */
 public final class AppData {

@@ -9,8 +9,8 @@ import fmg.common.geom.Point;
 import fmg.common.geom.SizeDouble;
 import fmg.core.app.AProjSettings;
 import fmg.core.app.ISerializer;
-import fmg.core.types.draw.EShowElement;
 import fmg.core.types.model.MosaicInitData;
+import fmg.swing.app.menu.EShowElement;
 import fmg.swing.app.model.AppData;
 
 /** Application data (de)serializer. For save / restore {@link AppData} */

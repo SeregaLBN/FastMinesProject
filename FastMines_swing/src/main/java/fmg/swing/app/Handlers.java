@@ -14,8 +14,8 @@ import fmg.core.types.ClickResult;
 import fmg.core.types.EGameStatus;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
-import fmg.core.types.draw.EShowElement;
-import fmg.core.types.draw.EZoomInterface;
+import fmg.swing.app.menu.EShowElement;
+import fmg.swing.app.menu.EZoomInterface;
 import fmg.swing.app.toolbar.EBtnNewGameState;
 
 /** MainApp action handlers */

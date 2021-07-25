@@ -29,8 +29,8 @@ namespace Fmg.Uwp.App {
         internal const string ARGUMENTS_KEY__HEADER_SIZE_HEIGHT = "headerSizeHeight";
 
         /// <summary> Model (a common model between all the pages in the application) </summary>
-        public MosaicInitData InitData   => SharedData.MosaicInitData;
-        public MenuSettings MenuSettings => SharedData.MenuSettings;
+        public MosaicInitData InitData   => FastMinesApp.Get.InitData;
+        public MenuSettings MenuSettings => FastMinesApp.Get.MenuSettings;
 
         /// <summary> View-Model </summary>
         public MainMenuViewModel ViewModel { get; } = new MainMenuViewModel();

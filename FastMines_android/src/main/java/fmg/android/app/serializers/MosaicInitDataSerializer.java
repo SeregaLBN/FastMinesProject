@@ -1,9 +1,6 @@
 package fmg.android.app.serializers;
 
 import android.content.SharedPreferences;
-import android.os.Bundle;
-
-import java.util.function.Supplier;
 
 import fmg.common.Logger;
 import fmg.common.geom.Matrisize;
@@ -20,6 +17,7 @@ public class MosaicInitDataSerializer implements ISerializer {
     private static final String KEY__MOSAIC_INIT_DATA__MOSAIC_TYPE  = KEY__MOSAIC_INIT_DATA + ".mosaicType";
     private static final String KEY__MOSAIC_INIT_DATA__COUNT_MINES  = KEY__MOSAIC_INIT_DATA + ".countMines";
 
+    /*
     boolean load(Bundle from, MosaicInitData to) {
         if (from == null)
             return false;
@@ -46,7 +44,7 @@ public class MosaicInitDataSerializer implements ISerializer {
         to.putInt(KEY__MOSAIC_INIT_DATA__MOSAIC_TYPE , data.getMosaicType().ordinal());
         to.putInt(KEY__MOSAIC_INIT_DATA__COUNT_MINES , data.getCountMines());
     }
-
+    /**/
 
     MosaicInitData load(SharedPreferences from) {
         MosaicInitData data = new MosaicInitData();
