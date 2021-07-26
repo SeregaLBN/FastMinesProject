@@ -9,22 +9,22 @@
     <Import_RootNamespace>FastMines.Ava.Draw</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\src\src_platform_ava\fmg\ava\img\Animator.cs">
+    <Compile Include="..\src\fmg\ava\img\Animator.cs">
       <Link>src_fmg.ava\img\Animator.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_ava\fmg\ava\img\MosaicSkillOrGroupView.cs">
+    <Compile Include="..\src\fmg\ava\img\MosaicSkillOrGroupView.cs">
       <Link>src_fmg.ava\img\MosaicSkillOrGroupView.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_ava\fmg\ava\img\MosaicGroupImg.cs">
+    <Compile Include="..\src\fmg\ava\img\MosaicGroupImg.cs">
       <Link>src_fmg.ava\img\MosaicGroupImg.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_ava\fmg\ava\app\ProjSettings.cs">
+    <Compile Include="..\src\fmg\ava\app\ProjSettings.cs">
       <Link>src_fmg.ava\app\ProjSettings.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_ava\fmg\ava\utils\Cast.cs">
+    <Compile Include="..\src\fmg\ava\utils\Cast.cs">
       <Link>src_fmg.ava\utils\Cast.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_ava\fmg\ava\utils\Timer.cs">
+    <Compile Include="..\src\fmg\ava\utils\Timer.cs">
       <Link>src_fmg.ava\utils\Timer.cs</Link>
     </Compile>
   </ItemGroup>

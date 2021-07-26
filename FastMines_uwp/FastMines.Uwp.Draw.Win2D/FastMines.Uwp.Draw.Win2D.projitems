@@ -9,58 +9,58 @@
     <Import_RootNamespace>FastMines.Uwp.Draw.Win2D</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\win2d\CanvasExt.cs">
+    <Compile Include="..\src\fmg\uwp\mosaic\win2d\CanvasExt.cs">
       <Link>src_fmg.uwp\mosaic\win2d\CanvasExt.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\win2d\MosaicWin2DView.cs">
+    <Compile Include="..\src\fmg\uwp\mosaic\win2d\MosaicWin2DView.cs">
       <Link>src_fmg.uwp\mosaic\win2d\MosaicWin2DView.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\win2d\MosaicCanvasSwapChainPanelController.cs">
+    <Compile Include="..\src\fmg\uwp\mosaic\win2d\MosaicCanvasSwapChainPanelController.cs">
       <Link>src_fmg.uwp\mosaic\win2d\MosaicCanvasSwapChainPanelController.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\win2d\MosaicFrameworkElementView.cs">
+    <Compile Include="..\src\fmg\uwp\mosaic\win2d\MosaicFrameworkElementView.cs">
       <Link>src_fmg.uwp\mosaic\win2d\MosaicFrameworkElementView.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\win2d\MosaicCanvasVirtualControlView.cs">
+    <Compile Include="..\src\fmg\uwp\mosaic\win2d\MosaicCanvasVirtualControlView.cs">
       <Link>src_fmg.uwp\mosaic\win2d\MosaicCanvasVirtualControlView.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\win2d\MosaicCanvasSwapChainPanelView.cs">
+    <Compile Include="..\src\fmg\uwp\mosaic\win2d\MosaicCanvasSwapChainPanelView.cs">
       <Link>src_fmg.uwp\mosaic\win2d\MosaicCanvasSwapChainPanelView.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\win2d\MosaicCanvasVirtualControlController.cs">
+    <Compile Include="..\src\fmg\uwp\mosaic\win2d\MosaicCanvasVirtualControlController.cs">
       <Link>src_fmg.uwp\mosaic\win2d\MosaicCanvasVirtualControlController.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\img\win2d\Smile.cs">
+    <Compile Include="..\src\fmg\uwp\img\win2d\Smile.cs">
       <Link>src_fmg.uwp\img\win2d\Smile.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\img\win2d\Logo.cs">
+    <Compile Include="..\src\fmg\uwp\img\win2d\Logo.cs">
       <Link>src_fmg.uwp\img\win2d\Logo.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\img\win2d\Flag.cs">
+    <Compile Include="..\src\fmg\uwp\img\win2d\Flag.cs">
       <Link>src_fmg.uwp\img\win2d\Flag.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\img\win2d\Mine.cs">
+    <Compile Include="..\src\fmg\uwp\img\win2d\Mine.cs">
       <Link>src_fmg.uwp\img\win2d\Mine.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\img\win2d\MosaicGroupImg.cs">
+    <Compile Include="..\src\fmg\uwp\img\win2d\MosaicGroupImg.cs">
       <Link>src_fmg.uwp\img\win2d\MosaicGroupImg.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\img\win2d\MosaicSkillOrGroupView.cs">
+    <Compile Include="..\src\fmg\uwp\img\win2d\MosaicSkillOrGroupView.cs">
       <Link>src_fmg.uwp\img\win2d\MosaicSkillOrGroupView.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\img\win2d\MosaicImg.cs">
+    <Compile Include="..\src\fmg\uwp\img\win2d\MosaicImg.cs">
       <Link>src_fmg.uwp\img\win2d\MosaicImg.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\img\win2d\MosaicSkillImg.cs">
+    <Compile Include="..\src\fmg\uwp\img\win2d\MosaicSkillImg.cs">
       <Link>src_fmg.uwp\img\win2d\MosaicSkillImg.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\win2d\Vector2Ext.cs">
+    <Compile Include="..\src\fmg\uwp\utils\win2d\Vector2Ext.cs">
       <Link>src_fmg.uwp\utils\win2d\Vector2Ext.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\win2d\Resources.cs">
+    <Compile Include="..\src\fmg\uwp\utils\win2d\Resources.cs">
       <Link>src_fmg.uwp\utils\win2d\Resources.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\win2d\ImgUtils.cs">
+    <Compile Include="..\src\fmg\uwp\utils\win2d\ImgUtils.cs">
       <Link>src_fmg.uwp\utils\win2d\ImgUtils.cs</Link>
     </Compile>
   </ItemGroup>

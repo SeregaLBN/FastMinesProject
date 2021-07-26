@@ -9,28 +9,28 @@
     <Import_RootNamespace>FastMines.Uwp.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\Timer.cs">
+    <Compile Include="..\src\fmg\uwp\utils\Timer.cs">
       <Link>src_fmg.uwp\utils\Timer.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\Cast.cs">
+    <Compile Include="..\src\fmg\uwp\utils\Cast.cs">
       <Link>src_fmg.uwp\utils\Cast.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\AsyncRunner.cs">
+    <Compile Include="..\src\fmg\uwp\utils\AsyncRunner.cs">
       <Link>src_fmg.uwp\utils\AsyncRunner.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\ScreenResolutionHelper.cs">
+    <Compile Include="..\src\fmg\uwp\utils\ScreenResolutionHelper.cs">
       <Link>src_fmg.uwp\utils\ScreenResolutionHelper.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\MosaicFrameworkElementController.cs">
+    <Compile Include="..\src\fmg\uwp\mosaic\MosaicFrameworkElementController.cs">
       <Link>src_fmg.uwp\mosaic\MosaicFrameworkElementController.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\img\MosaicSkillCharImg.cs">
+    <Compile Include="..\src\fmg\uwp\img\MosaicSkillCharImg.cs">
       <Link>src_fmg.uwp\img\MosaicSkillCharImg.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\img\Animator.cs">
+    <Compile Include="..\src\fmg\uwp\img\Animator.cs">
       <Link>src_fmg.uwp\img\Animator.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\app\ProjSettings.cs">
+    <Compile Include="..\src\fmg\uwp\app\ProjSettings.cs">
       <Link>src_fmg.uwp\app\ProjSettings.cs</Link>
     </Compile>
   </ItemGroup>
