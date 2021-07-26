@@ -153,22 +153,22 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Properties\UnitTestApp.rd.xml" />
-    <Content Include="..\..\res\Logo\SplashScreen\Logo.scale-200.png">
+    <Content Include="$(SolutionDir)\res\Logo\SplashScreen\Logo.scale-200.png">
       <Link>res\Logo\SplashScreen\Logo.scale-200.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\StoreTile\Logo.scale-100.png">
+    <Content Include="$(SolutionDir)\res\Logo\StoreTile\Logo.scale-100.png">
       <Link>res\Logo\StoreTile\Logo.scale-100.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\TileSq150\Logo.scale-200.png">
+    <Content Include="$(SolutionDir)\res\Logo\TileSq150\Logo.scale-200.png">
       <Link>res\Logo\TileSq150\Logo.scale-200.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\TileSq44\Logo.scale-200.png">
+    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.scale-200.png">
       <Link>res\Logo\TileSq44\Logo.scale-200.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\TileSq44\Logo.targetsize-24_altform-unplated.png">
+    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.targetsize-24_altform-unplated.png">
       <Link>res\Logo\TileSq44\Logo.targetsize-24_altform-unplated.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\WideTile\Logo.scale-200.png">
+    <Content Include="$(SolutionDir)\res\Logo\WideTile\Logo.scale-200.png">
       <Link>res\Logo\WideTile\Logo.scale-200.png</Link>
     </Content>
   </ItemGroup>
@@ -201,8 +201,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>rd /s /q $(ProjectDir)res
-mklink /j $(ProjectDir)res $(SolutionDir)res</PreBuildEvent>
+    <PreBuildEvent></PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
