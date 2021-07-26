@@ -29,13 +29,13 @@ jar {
 sourceSets {
     main {
         java {
-            srcDir '../src/src_core'
+            srcDir './src'
             include '**/*.java'
         }
     }
     test {
         java {
-            srcDir '../src/test_core'
+            srcDir './src_test'
             include '**/*.java'
         }
     }

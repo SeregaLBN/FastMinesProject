@@ -26,6 +26,11 @@
                 ./Test.FastMines.Ava.Images                 - Template for future visual check drawing demo-program
                 ./UnitTest.FastMines.Ava                    - unit test for Avalonia over xUnit
 
+Agreements:
+ * basic package/namespace name - fmg.* / Fmg.*   -  FastMinesGame
+ * using 4 space   for  tab size
+ * subdirectories corresponds to the package name/namespace
+
 ./src - common code base
 ./res - shared resources files
 

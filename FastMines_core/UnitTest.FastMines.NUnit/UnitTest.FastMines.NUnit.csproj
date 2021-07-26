@@ -17,7 +17,7 @@
    <Import Project="..\UnitTest.FastMines.Core\UnitTest.FastMines.Core.projitems" Label="Shared" />
 
     <ItemGroup>
-        <Compile Include="..\..\src\test_core\fmg\common\SimpleUiThreadLoop.cs ">
+        <Compile Include="..\src_test\fmg\common\SimpleUiThreadLoop.cs ">
             <Link>test_fmg.common\SimpleUiThreadLoop.cs </Link>
         </Compile>
   </ItemGroup>
