@@ -18,7 +18,6 @@
                 ./FastMines.Uwp.Draw.Win2D                  - shared library (used https://github.com/Microsoft/Win2D)
                 ./FastMines.Uwp.Draw.Xaml                   - shared library (uses a composite mosaic of XAML elements; left as an example)  (obsolete; left as an example)
                 ./FastMines.Uwp.Draw.WBmp                   - shared library (used WritableBitmap extension https://github.com/reneschulte/WriteableBitmapEx) (obsolete because brakes; left as an example)
-                ./FastMines.Uwp.BackgroundTasks             - service for main program
                 ./UnitTest.FastMines.Uwp                    - unit test for UWP over MSTest
             ./FastMines_Logo                    - C++   - Main logo (canonical)
             ./FastMines_Ava                     - C#    - Avalonia framework (can be opened and run in VS Code)

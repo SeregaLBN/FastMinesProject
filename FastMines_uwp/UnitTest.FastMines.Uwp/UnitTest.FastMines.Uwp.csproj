@@ -193,7 +193,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup />
-  <Import Project="..\..\FastMines_core\FastMines.Core\FastMines.Core.projitems" Label="Shared" />
+  <Import Project="..\..\FastMines_core\FastMines.Core.projitems" Label="Shared" />
   <Import Project="..\FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems" Label="Shared" />
   <Import Project="..\..\FastMines_core\UnitTest.FastMines.Core\UnitTest.FastMines.Core.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
