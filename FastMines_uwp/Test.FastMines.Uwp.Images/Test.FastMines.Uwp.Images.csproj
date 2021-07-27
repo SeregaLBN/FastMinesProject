@@ -115,30 +115,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Properties\Default.rd.xml" />
-    <Content Include="$(SolutionDir)\res\Font\NirmalaUI_30.xml">
-      <Link>res\Font\NirmalaUI_30.xml</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Font\NirmalaUI_30.png">
-      <Link>res\Font\NirmalaUI_30.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\SplashScreen\Logo.scale-200.png">
-      <Link>res\Logo\SplashScreen\Logo.scale-200.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\StoreTile\Logo.scale-100.png">
-      <Link>res\Logo\StoreTile\Logo.scale-100.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq150\Logo.scale-200.png">
-      <Link>res\Logo\TileSq150\Logo.scale-200.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.scale-200.png">
-      <Link>res\Logo\TileSq44\Logo.scale-200.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.targetsize-24_altform-unplated.png">
-      <Link>res\Logo\TileSq44\Logo.targetsize-24_altform-unplated.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\WideTile\Logo.scale-200.png">
-      <Link>res\Logo\WideTile\Logo.scale-200.png</Link>
-    </Content>
+    <Content Include="$(SolutionDir)\res\Font\NirmalaUI_30.xml"                                 Link="res\Font\NirmalaUI_30.xml" />
+    <Content Include="$(SolutionDir)\res\Font\NirmalaUI_30.png"                                 Link="res\Font\NirmalaUI_30.png" />
+    <Content Include="$(SolutionDir)\res\Logo\SplashScreen\Logo.scale-200.png"                  Link="res\Logo\SplashScreen\Logo.scale-200.png" />
+    <Content Include="$(SolutionDir)\res\Logo\StoreTile\Logo.scale-100.png"                     Link="res\Logo\StoreTile\Logo.scale-100.png" />
+    <Content Include="$(SolutionDir)\res\Logo\TileSq150\Logo.scale-200.png"                     Link="res\Logo\TileSq150\Logo.scale-200.png" />
+    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.scale-200.png"                      Link="res\Logo\TileSq44\Logo.scale-200.png" />
+    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.targetsize-24_altform-unplated.png" Link="res\Logo\TileSq44\Logo.targetsize-24_altform-unplated.png" />
+    <Content Include="$(SolutionDir)\res\Logo\WideTile\Logo.scale-200.png"                      Link="res\Logo\WideTile\Logo.scale-200.png" />
+
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

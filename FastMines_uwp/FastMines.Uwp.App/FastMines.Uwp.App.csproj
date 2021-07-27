@@ -98,53 +98,55 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\src\fmg\uwp\app\Model\DataSources\BaseDataSource.cs"                              Link="fmg.uwp.app\Model\DataSources\BaseDataSource.cs"                             />
+    <Compile Include="..\src\fmg\uwp\app\Model\DataSources\MosaicDataSource.cs"                            Link="fmg.uwp.app\Model\DataSources\MosaicDataSource.cs"                           />
+    <Compile Include="..\src\fmg\uwp\app\Model\DataSources\MosaicSkillDataSource.cs"                       Link="fmg.uwp.app\Model\DataSources\MosaicSkillDataSource.cs"                      />
+    <Compile Include="..\src\fmg\uwp\app\Model\DataSources\MosaicGroupDataSource.cs"                       Link="fmg.uwp.app\Model\DataSources\MosaicGroupDataSource.cs"                      />
+    <Compile Include="..\src\fmg\uwp\app\Model\Items\BaseDataItem.cs"                                      Link="fmg.uwp.app\Model\Items\BaseDataItem.cs"                                     />
+    <Compile Include="..\src\fmg\uwp\app\Model\Items\LogoDataItem.cs"                                      Link="fmg.uwp.app\Model\Items\LogoDataItem.cs"                                     />
+    <Compile Include="..\src\fmg\uwp\app\Model\Items\MosaicDataItem.cs"                                    Link="fmg.uwp.app\Model\Items\MosaicDataItem.cs"                                   />
+    <Compile Include="..\src\fmg\uwp\app\Model\Items\MosaicSkillDataItem.cs"                               Link="fmg.uwp.app\Model\Items\MosaicSkillDataItem.cs"                              />
+    <Compile Include="..\src\fmg\uwp\app\Model\Items\MosaicGroupDataItem.cs"                               Link="fmg.uwp.app\Model\Items\MosaicGroupDataItem.cs"                              />
+    <Compile Include="..\src\fmg\uwp\app\Model\AppData.cs"                                                 Link="fmg.uwp.app\Model\AppData.cs"                                                />
+
+    <Compile Include="..\src\fmg\uwp\app\Presentation\Converters\DipWrapper.cs"                            Link="fmg.uwp.app\Presentation\Converters\DipWrapper.cs"                           />
+    <Compile Include="..\src\fmg\uwp\app\Presentation\Converters\ImageSizeWidthOpenPaneConverter.cs"       Link="fmg.uwp.app\Presentation\Converters\ImageSizeWidthOpenPaneConverter.cs"      />
+    <Compile Include="..\src\fmg\uwp\app\Presentation\Converters\ObjectToMosaicDataItemConverter.cs"       Link="fmg.uwp.app\Presentation\Converters\ObjectToMosaicDataItemConverter.cs"      />
+    <Compile Include="..\src\fmg\uwp\app\Presentation\Converters\ObjectToMosaicGroupDataItemConverter.cs"  Link="fmg.uwp.app\Presentation\Converters\ObjectToMosaicGroupDataItemConverter.cs" />
+    <Compile Include="..\src\fmg\uwp\app\Presentation\Converters\ObjectToMosaicSkillDataItemConverter.cs"  Link="fmg.uwp.app\Presentation\Converters\ObjectToMosaicSkillDataItemConverter.cs" />
+    <Compile Include="..\src\fmg\uwp\app\Presentation\Converters\BooleanNullableConverter.cs"              Link="fmg.uwp.app\Presentation\Converters\BooleanNullableConverter.cs"             />
+    <Compile Include="..\src\fmg\uwp\app\Presentation\Converters\BooleanToVisibilityConverter.cs"          Link="fmg.uwp.app\Presentation\Converters\BooleanToVisibilityConverter.cs"         />
+    <Compile Include="..\src\fmg\uwp\app\Presentation\Converters\FmColorToBrushConverter.cs"               Link="fmg.uwp.app\Presentation\Converters\FmColorToBrushConverter.cs"              />
+    <Compile Include="..\src\fmg\uwp\app\Presentation\Converters\FmColorToWinColorConverter.cs"            Link="fmg.uwp.app\Presentation\Converters\FmColorToWinColorConverter.cs"           />
+    <Compile Include="..\src\fmg\uwp\app\Presentation\Converters\ImageSizeFontSizeConverter.cs"            Link="fmg.uwp.app\Presentation\Converters\ImageSizeFontSizeConverter.cs"           />
+    <Compile Include="..\src\fmg\uwp\app\Presentation\Converters\ImageSizeHeightWithMarginConverter.cs"    Link="fmg.uwp.app\Presentation\Converters\ImageSizeHeightWithMarginConverter.cs"   />
+    <Compile Include="..\src\fmg\uwp\app\Presentation\Converters\ImageSizeWidthWithMarginConverter.cs"     Link="fmg.uwp.app\Presentation\Converters\ImageSizeWidthWithMarginConverter.cs"    />
+    <Compile Include="..\src\fmg\uwp\app\Presentation\Converters\IntToDoubleConverter.cs"                  Link="fmg.uwp.app\Presentation\Converters\IntToDoubleConverter.cs"                 />
+    <Compile Include="..\src\fmg\uwp\app\Presentation\Converters\SelectedItemToBoolConverter.cs"           Link="fmg.uwp.app\Presentation\Converters\SelectedItemToBoolConverter.cs"          />
+    <Compile Include="..\src\fmg\uwp\app\Presentation\Converters\SizeToHeightConverter.cs"                 Link="fmg.uwp.app\Presentation\Converters\SizeToHeightConverter.cs"                />
+    <Compile Include="..\src\fmg\uwp\app\Presentation\Converters\SizeToWidthConverter.cs"                  Link="fmg.uwp.app\Presentation\Converters\SizeToWidthConverter.cs"                 />
+    <Compile Include="..\src\fmg\uwp\app\Presentation\Converters\ValueToStringConverter.cs"                Link="fmg.uwp.app\Presentation\Converters\ValueToStringConverter.cs"               />
+    <Compile Include="..\src\fmg\uwp\app\Presentation\MosaicDsViewModel.cs"                                Link="fmg.uwp.app\Presentation\MosaicDsViewModel.cs"                               />
+    <Compile Include="..\src\fmg\uwp\app\Presentation\MenuSettings.cs"                                     Link="fmg.uwp.app\Presentation\MenuSettings.cs"                                    />
+    <Compile Include="..\src\fmg\uwp\app\Presentation\SmoothHelper.cs"                                     Link="fmg.uwp.app\Presentation\SmoothHelper.cs"                                    />
+    <Compile Include="..\src\fmg\uwp\app\Presentation\Command.cs"                                          Link="fmg.uwp.app\Presentation\Command.cs"                                         />
+    <Compile Include="..\src\fmg\uwp\app\Presentation\MainMenuViewModel.cs"                                Link="fmg.uwp.app\Presentation\MainMenuViewModel.cs"                               />
+    <Compile Include="..\src\fmg\uwp\app\Serializers\AppDataSerializer.cs"                                 Link="fmg.uwp.app\Serializers\AppDataSerializer.cs"                                />
+    <Compile Include="..\src\fmg\uwp\app\Serializers\MosaicInitDataSerializer.cs"                          Link="fmg.uwp.app\Serializers\MosaicInitDataSerializer.cs"                         />
+
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FastMinesApp.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Model\DataSources\BaseDataSource.cs" />
-    <Compile Include="Model\DataSources\MosaicDataSource.cs" />
-    <Compile Include="Model\DataSources\MosaicSkillDataSource.cs" />
-    <Compile Include="Model\DataSources\MosaicGroupDataSource.cs" />
-    <Compile Include="Model\Items\BaseDataItem.cs" />
-    <Compile Include="Model\Items\LogoDataItem.cs" />
-    <Compile Include="Model\Items\MosaicDataItem.cs" />
-    <Compile Include="Model\Items\MosaicSkillDataItem.cs" />
-    <Compile Include="Model\Items\MosaicGroupDataItem.cs" />
-    <Compile Include="Model\AppData.cs" />
     <Compile Include="MosaicPage.xaml.cs">
       <DependentUpon>MosaicPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Presentation\Converters\DipWrapper.cs" />
-    <Compile Include="Presentation\Converters\ImageSizeWidthOpenPaneConverter.cs" />
-    <Compile Include="Presentation\Converters\ObjectToMosaicDataItemConverter.cs" />
-    <Compile Include="Presentation\Converters\ObjectToMosaicGroupDataItemConverter.cs" />
-    <Compile Include="Presentation\Converters\ObjectToMosaicSkillDataItemConverter.cs" />
-    <Compile Include="Presentation\Converters\BooleanNullableConverter.cs" />
-    <Compile Include="Presentation\Converters\BooleanToVisibilityConverter.cs" />
-    <Compile Include="Presentation\Converters\FmColorToBrushConverter.cs" />
-    <Compile Include="Presentation\Converters\FmColorToWinColorConverter.cs" />
-    <Compile Include="Presentation\Converters\ImageSizeFontSizeConverter.cs" />
-    <Compile Include="Presentation\Converters\ImageSizeHeightWithMarginConverter.cs" />
-    <Compile Include="Presentation\Converters\ImageSizeWidthWithMarginConverter.cs" />
-    <Compile Include="Presentation\Converters\IntToDoubleConverter.cs" />
-    <Compile Include="Presentation\Converters\SelectedItemToBoolConverter.cs" />
-    <Compile Include="Presentation\Converters\SizeToHeightConverter.cs" />
-    <Compile Include="Presentation\Converters\SizeToWidthConverter.cs" />
-    <Compile Include="Presentation\Converters\ValueToStringConverter.cs" />
-    <Compile Include="Presentation\MosaicDsViewModel.cs" />
-    <Compile Include="Presentation\MenuSettings.cs" />
-    <Compile Include="Presentation\SmoothHelper.cs" />
-    <Compile Include="Serializers\AppDataSerializer.cs" />
-    <Compile Include="Serializers\MosaicInitDataSerializer.cs" />
     <Compile Include="SelectMosaicPage.xaml.cs">
       <DependentUpon>SelectMosaicPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="CustomSkillPage.xaml.cs">
       <DependentUpon>CustomSkillPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Presentation\Command.cs" />
-    <Compile Include="Presentation\MainMenuViewModel.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -154,407 +156,64 @@
       <SubType>Designer</SubType>
     </AppxManifest>
     <None Include="FastMines.Uwp.App_TemporaryKey.pfx" />
-    <None Include="{SolutionDir}\res\Background\Face~.vsd">
-      <Link>res\Background\Face~.vsd</Link>
-    </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="$(SolutionDir)\res\Logo\Badge\Logo.scale-125.png">
-      <Link>res\Logo\Badge\Logo.scale-125.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\Badge\Logo.scale-150.png">
-      <Link>res\Logo\Badge\Logo.scale-150.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\Badge\Logo.scale-200.png">
-      <Link>res\Logo\Badge\Logo.scale-200.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\Badge\Logo.scale-400.png">
-      <Link>res\Logo\Badge\Logo.scale-400.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\SplashScreen\Logo.scale-125.png">
-      <Link>res\Logo\SplashScreen\Logo.scale-125.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\SplashScreen\Logo.scale-150.png">
-      <Link>res\Logo\SplashScreen\Logo.scale-150.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\SplashScreen\Logo.scale-200.png">
-      <Link>res\Logo\SplashScreen\Logo.scale-200.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\SplashScreen\Logo.scale-400.png">
-      <Link>res\Logo\SplashScreen\Logo.scale-400.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\StoreTile\Logo.scale-125.png">
-      <Link>res\Logo\StoreTile\Logo.scale-125.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\StoreTile\Logo.scale-150.png">
-      <Link>res\Logo\StoreTile\Logo.scale-150.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\StoreTile\Logo.scale-200.png">
-      <Link>res\Logo\StoreTile\Logo.scale-200.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\StoreTile\Logo.scale-400.png">
-      <Link>res\Logo\StoreTile\Logo.scale-400.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq150\Logo.scale-100.png">
-      <Link>res\Logo\TileSq150\Logo.scale-100.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq150\Logo.scale-125.png">
-      <Link>res\Logo\TileSq150\Logo.scale-125.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq150\Logo.scale-150.png">
-      <Link>res\Logo\TileSq150\Logo.scale-150.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq150\Logo.scale-200.png">
-      <Link>res\Logo\TileSq150\Logo.scale-200.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq150\Logo.scale-400.png">
-      <Link>res\Logo\TileSq150\Logo.scale-400.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq310\Logo.scale-125.png">
-      <Link>res\Logo\TileSq310\Logo.scale-125.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq310\Logo.scale-150.png">
-      <Link>res\Logo\TileSq310\Logo.scale-150.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq310\Logo.scale-200.png">
-      <Link>res\Logo\TileSq310\Logo.scale-200.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq310\Logo.scale-400.png">
-      <Link>res\Logo\TileSq310\Logo.scale-400.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.scale-100.png">
-      <Link>res\Logo\TileSq44\Logo.scale-100.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.scale-125.png">
-      <Link>res\Logo\TileSq44\Logo.scale-125.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.scale-150.png">
-      <Link>res\Logo\TileSq44\Logo.scale-150.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.scale-200.png">
-      <Link>res\Logo\TileSq44\Logo.scale-200.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.scale-400.png">
-      <Link>res\Logo\TileSq44\Logo.scale-400.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.targetsize-16_altform-unplated.png">
-      <Link>res\Logo\TileSq44\Logo.targetsize-16_altform-unplated.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.targetsize-24_altform-unplated.png">
-      <Link>res\Logo\TileSq44\Logo.targetsize-24_altform-unplated.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.targetsize-256_altform-unplated.png">
-      <Link>res\Logo\TileSq44\Logo.targetsize-256_altform-unplated.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.targetsize-48_altform-unplated.png">
-      <Link>res\Logo\TileSq44\Logo.targetsize-48_altform-unplated.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.targetsize-16.png">
-      <Link>res\Logo\TileSq44\Logo.targetsize-16.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.targetsize-24.png">
-      <Link>res\Logo\TileSq44\Logo.targetsize-24.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.targetsize-256.png">
-      <Link>res\Logo\TileSq44\Logo.targetsize-256.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.targetsize-48.png">
-      <Link>res\Logo\TileSq44\Logo.targetsize-48.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq71\Logo.scale-100.png">
-      <Link>res\Logo\TileSq71\Logo.scale-100.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq71\Logo.scale-125.png">
-      <Link>res\Logo\TileSq71\Logo.scale-125.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq71\Logo.scale-150.png">
-      <Link>res\Logo\TileSq71\Logo.scale-150.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq71\Logo.scale-200.png">
-      <Link>res\Logo\TileSq71\Logo.scale-200.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq71\Logo.scale-400.png">
-      <Link>res\Logo\TileSq71\Logo.scale-400.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\WideTile\Logo.scale-125.png">
-      <Link>res\Logo\WideTile\Logo.scale-125.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\WideTile\Logo.scale-150.png">
-      <Link>res\Logo\WideTile\Logo.scale-150.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\WideTile\Logo.scale-200.png">
-      <Link>res\Logo\WideTile\Logo.scale-200.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\WideTile\Logo.scale-400.png">
-      <Link>res\Logo\WideTile\Logo.scale-400.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Smiles\Eyes_ClosedDisabled.png">
-      <Link>res\Smiles\Eyes_ClosedDisabled.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Smiles\Eyes_OpenDisabled.png">
-      <Link>res\Smiles\Eyes_OpenDisabled.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Smiles\Face_Assistant.png">
-      <Link>res\Smiles\Face_Assistant.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Smiles\Face_Disappointed.png">
-      <Link>res\Smiles\Face_Disappointed.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Smiles\Face_EyesClosed.png">
-      <Link>res\Smiles\Face_EyesClosed.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Smiles\Face_EyesOpen.png">
-      <Link>res\Smiles\Face_EyesOpen.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Smiles\Face_Grinning.png">
-      <Link>res\Smiles\Face_Grinning.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Smiles\Face_SavouringDeliciousFood.png">
-      <Link>res\Smiles\Face_SavouringDeliciousFood.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Smiles\Face_SmilingWithSunglasses.png">
-      <Link>res\Smiles\Face_SmilingWithSunglasses.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Smiles\Face_WhiteSmiling.png">
-      <Link>res\Smiles\Face_WhiteSmiling.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Smiles\Face_WinkingEyeLeft.png">
-      <Link>res\Smiles\Face_WinkingEyeLeft.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Smiles\Face_WinkingEyeRight.png">
-      <Link>res\Smiles\Face_WinkingEyeRight.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Lang\English.png">
-      <Link>res\Lang\English.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Lang\Russian.png">
-      <Link>res\Lang\Russian.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Lang\Ukrainian.png">
-      <Link>res\Lang\Ukrainian.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Background\~Pause.png">
-      <Link>res\Background\~Pause.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Background\DarkGray.png">
-      <Link>res\Background\DarkGray.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Font\NirmalaUI_30.png">
-      <Link>res\Font\NirmalaUI_30.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Background\LightGray.png">
-      <Link>res\Background\LightGray.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Background\MediumGray.png">
-      <Link>res\Background\MediumGray.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\CellState\~Flag.png">
-      <Link>res\CellState\~Flag.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\CellState\~Mine.png">
-      <Link>res\CellState\~Mine.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\32x32\PenrousePeriodic1.ico">
-      <Link>res\Mosaic\32x32\PenrousePeriodic1.ico</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\32x32\Hexagon1.png">
-      <Link>res\Mosaic\32x32\Hexagon1.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\32x32\Null.png">
-      <Link>res\Mosaic\32x32\Null.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\32x32\Parquet1.png">
-      <Link>res\Mosaic\32x32\Parquet1.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\32x32\Parquet2.png">
-      <Link>res\Mosaic\32x32\Parquet2.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\32x32\PenrousePeriodic1.png">
-      <Link>res\Mosaic\32x32\PenrousePeriodic1.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\32x32\PentagonT5.png">
-      <Link>res\Mosaic\32x32\PentagonT5.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\32x32\PentagonT10.png">
-      <Link>res\Mosaic\32x32\PentagonT10.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\32x32\PentagonT24.png">
-      <Link>res\Mosaic\32x32\PentagonT24.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\32x32\Quadrangle1.png">
-      <Link>res\Mosaic\32x32\Quadrangle1.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\32x32\Rhombus1.png">
-      <Link>res\Mosaic\32x32\Rhombus1.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\32x32\SqTrHex.png">
-      <Link>res\Mosaic\32x32\SqTrHex.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\32x32\Square1.png">
-      <Link>res\Mosaic\32x32\Square1.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\32x32\Square2.png">
-      <Link>res\Mosaic\32x32\Square2.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\32x32\Trapezoid1.png">
-      <Link>res\Mosaic\32x32\Trapezoid1.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\32x32\Trapezoid2.png">
-      <Link>res\Mosaic\32x32\Trapezoid2.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\32x32\Trapezoid3.png">
-      <Link>res\Mosaic\32x32\Trapezoid3.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\32x32\Triangle1.png">
-      <Link>res\Mosaic\32x32\Triangle1.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\32x32\Triangle2.png">
-      <Link>res\Mosaic\32x32\Triangle2.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\32x32\Triangle3.png">
-      <Link>res\Mosaic\32x32\Triangle3.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\32x32\Triangle4.png">
-      <Link>res\Mosaic\32x32\Triangle4.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\32x32\TrSq1.png">
-      <Link>res\Mosaic\32x32\TrSq1.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\32x32\TrSq2.png">
-      <Link>res\Mosaic\32x32\TrSq2.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\48x32\PenrousePeriodic1.ico">
-      <Link>res\Mosaic\48x32\PenrousePeriodic1.ico</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\48x32\Hexagon1.png">
-      <Link>res\Mosaic\48x32\Hexagon1.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\48x32\Null.png">
-      <Link>res\Mosaic\48x32\Null.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\48x32\Parquet1.png">
-      <Link>res\Mosaic\48x32\Parquet1.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\48x32\Parquet2.png">
-      <Link>res\Mosaic\48x32\Parquet2.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\48x32\PenrousePeriodic1.png">
-      <Link>res\Mosaic\48x32\PenrousePeriodic1.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\48x32\PentagonT5.png">
-      <Link>res\Mosaic\48x32\PentagonT5.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\48x32\PentagonT10.png">
-      <Link>res\Mosaic\48x32\PentagonT10.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\48x32\PentagonT24.png">
-      <Link>res\Mosaic\48x32\PentagonT24.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\48x32\Quadrangle1.png">
-      <Link>res\Mosaic\48x32\Quadrangle1.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\48x32\Rhombus1.png">
-      <Link>res\Mosaic\48x32\Rhombus1.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\48x32\SqTrHex.png">
-      <Link>res\Mosaic\48x32\SqTrHex.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\48x32\Square1.png">
-      <Link>res\Mosaic\48x32\Square1.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\48x32\Square2.png">
-      <Link>res\Mosaic\48x32\Square2.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\48x32\Trapezoid1.png">
-      <Link>res\Mosaic\48x32\Trapezoid1.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\48x32\Trapezoid2.png">
-      <Link>res\Mosaic\48x32\Trapezoid2.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\48x32\Trapezoid3.png">
-      <Link>res\Mosaic\48x32\Trapezoid3.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\48x32\Triangle1.png">
-      <Link>res\Mosaic\48x32\Triangle1.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\48x32\Triangle2.png">
-      <Link>res\Mosaic\48x32\Triangle2.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\48x32\Triangle3.png">
-      <Link>res\Mosaic\48x32\Triangle3.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\48x32\Triangle4.png">
-      <Link>res\Mosaic\48x32\Triangle4.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\48x32\TrSq1.png">
-      <Link>res\Mosaic\48x32\TrSq1.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Mosaic\48x32\TrSq2.png">
-      <Link>res\Mosaic\48x32\TrSq2.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\MosaicGroup\Hexagons.png">
-      <Link>res\MosaicGroup\Hexagons.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\MosaicGroup\Others.png">
-      <Link>res\MosaicGroup\Others.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\MosaicGroup\Pentagons.png">
-      <Link>res\MosaicGroup\Pentagons.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\MosaicGroup\Quadrangles.png">
-      <Link>res\MosaicGroup\Quadrangles.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\MosaicGroup\Triangles.png">
-      <Link>res\MosaicGroup\Triangles.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\MosaicGroup\Hexagons.ico">
-      <Link>res\MosaicGroup\Hexagons.ico</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\MosaicGroup\Others.ico">
-      <Link>res\MosaicGroup\Others.ico</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\MosaicGroup\Pentagons.ico">
-      <Link>res\MosaicGroup\Pentagons.ico</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\MosaicGroup\Quadrangles.ico">
-      <Link>res\MosaicGroup\Quadrangles.ico</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\MosaicGroup\Triangles.ico">
-      <Link>res\MosaicGroup\Triangles.ico</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Font\NirmalaUI_30.xml">
-      <Link>res\Font\NirmalaUI_30.xml</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Skill\skillWhite.ico">
-      <Link>res\Skill\skillWhite.ico</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Skill\skillWhite1.png">
-      <Link>res\Skill\skillWhite1.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Skill\skillWhite2.png">
-      <Link>res\Skill\skillWhite2.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Skill\skillWhite3.png">
-      <Link>res\Skill\skillWhite3.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Skill\skillWhite4.png">
-      <Link>res\Skill\skillWhite4.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\Badge\Logo.scale-100.png">
-      <Link>res\Logo\Badge\Logo.scale-100.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\WideTile\Logo.scale-100.png">
-      <Link>res\Logo\WideTile\Logo.scale-100.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\SplashScreen\Logo.scale-100.png">
-      <Link>res\Logo\SplashScreen\Logo.scale-100.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\StoreTile\Logo.scale-100.png">
-      <Link>res\Logo\StoreTile\Logo.scale-100.png</Link>
-    </Content>
-    <Content Include="$(SolutionDir)\res\Logo\TileSq310\Logo.scale-100.png">
-      <Link>res\Logo\TileSq310\Logo.scale-100.png</Link>
-    </Content>
+    <Content Include="$(SolutionDir)\res\Logo\Badge\Logo.scale-100.png"                          Link="res\Logo\Badge\Logo.scale-100.png" />
+    <Content Include="$(SolutionDir)\res\Logo\Badge\Logo.scale-125.png"                          Link="res\Logo\Badge\Logo.scale-125.png" />
+    <Content Include="$(SolutionDir)\res\Logo\Badge\Logo.scale-150.png"                          Link="res\Logo\Badge\Logo.scale-150.png" />
+    <Content Include="$(SolutionDir)\res\Logo\Badge\Logo.scale-200.png"                          Link="res\Logo\Badge\Logo.scale-200.png" />
+    <Content Include="$(SolutionDir)\res\Logo\Badge\Logo.scale-400.png"                          Link="res\Logo\Badge\Logo.scale-400.png" />
+
+    <Content Include="$(SolutionDir)\res\Logo\SplashScreen\Logo.scale-100.png"                   Link="res\Logo\SplashScreen\Logo.scale-100.png" />
+    <Content Include="$(SolutionDir)\res\Logo\SplashScreen\Logo.scale-125.png"                   Link="res\Logo\SplashScreen\Logo.scale-125.png" />
+    <Content Include="$(SolutionDir)\res\Logo\SplashScreen\Logo.scale-150.png"                   Link="res\Logo\SplashScreen\Logo.scale-150.png" />
+    <Content Include="$(SolutionDir)\res\Logo\SplashScreen\Logo.scale-200.png"                   Link="res\Logo\SplashScreen\Logo.scale-200.png" />
+    <Content Include="$(SolutionDir)\res\Logo\SplashScreen\Logo.scale-400.png"                   Link="res\Logo\SplashScreen\Logo.scale-400.png" />
+
+    <Content Include="$(SolutionDir)\res\Logo\StoreTile\Logo.scale-100.png"                      Link="res\Logo\StoreTile\Logo.scale-100.png" />
+    <Content Include="$(SolutionDir)\res\Logo\StoreTile\Logo.scale-125.png"                      Link="res\Logo\StoreTile\Logo.scale-125.png" />
+    <Content Include="$(SolutionDir)\res\Logo\StoreTile\Logo.scale-150.png"                      Link="res\Logo\StoreTile\Logo.scale-150.png" />
+    <Content Include="$(SolutionDir)\res\Logo\StoreTile\Logo.scale-200.png"                      Link="res\Logo\StoreTile\Logo.scale-200.png" />
+    <Content Include="$(SolutionDir)\res\Logo\StoreTile\Logo.scale-400.png"                      Link="res\Logo\StoreTile\Logo.scale-400.png" />
+
+    <Content Include="$(SolutionDir)\res\Logo\TileSq150\Logo.scale-100.png"                      Link="res\Logo\TileSq150\Logo.scale-100.png" />
+    <Content Include="$(SolutionDir)\res\Logo\TileSq150\Logo.scale-125.png"                      Link="res\Logo\TileSq150\Logo.scale-125.png" />
+    <Content Include="$(SolutionDir)\res\Logo\TileSq150\Logo.scale-150.png"                      Link="res\Logo\TileSq150\Logo.scale-150.png" />
+    <Content Include="$(SolutionDir)\res\Logo\TileSq150\Logo.scale-200.png"                      Link="res\Logo\TileSq150\Logo.scale-200.png" />
+    <Content Include="$(SolutionDir)\res\Logo\TileSq150\Logo.scale-400.png"                      Link="res\Logo\TileSq150\Logo.scale-400.png" />
+
+    <Content Include="$(SolutionDir)\res\Logo\TileSq310\Logo.scale-100.png"                      Link="res\Logo\TileSq310\Logo.scale-100.png" />
+    <Content Include="$(SolutionDir)\res\Logo\TileSq310\Logo.scale-125.png"                      Link="res\Logo\TileSq310\Logo.scale-125.png" />
+    <Content Include="$(SolutionDir)\res\Logo\TileSq310\Logo.scale-150.png"                      Link="res\Logo\TileSq310\Logo.scale-150.png" />
+    <Content Include="$(SolutionDir)\res\Logo\TileSq310\Logo.scale-200.png"                      Link="res\Logo\TileSq310\Logo.scale-200.png" />
+    <Content Include="$(SolutionDir)\res\Logo\TileSq310\Logo.scale-400.png"                      Link="res\Logo\TileSq310\Logo.scale-400.png" />
+
+    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.scale-100.png"                       Link="res\Logo\TileSq44\Logo.scale-100.png" />
+    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.scale-125.png"                       Link="res\Logo\TileSq44\Logo.scale-125.png" />
+    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.scale-150.png"                       Link="res\Logo\TileSq44\Logo.scale-150.png" />
+    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.scale-200.png"                       Link="res\Logo\TileSq44\Logo.scale-200.png" />
+    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.scale-400.png"                       Link="res\Logo\TileSq44\Logo.scale-400.png" />
+    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.targetsize-16_altform-unplated.png"  Link="res\Logo\TileSq44\Logo.targetsize-16_altform-unplated.png" />
+    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.targetsize-24_altform-unplated.png"  Link="res\Logo\TileSq44\Logo.targetsize-24_altform-unplated.png" />
+    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.targetsize-256_altform-unplated.png" Link="res\Logo\TileSq44\Logo.targetsize-256_altform-unplated.png" />
+    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.targetsize-48_altform-unplated.png"  Link="res\Logo\TileSq44\Logo.targetsize-48_altform-unplated.png" />
+    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.targetsize-16.png"                   Link="res\Logo\TileSq44\Logo.targetsize-16.png" />
+    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.targetsize-24.png"                   Link="res\Logo\TileSq44\Logo.targetsize-24.png" />
+    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.targetsize-256.png"                  Link="res\Logo\TileSq44\Logo.targetsize-256.png" />
+    <Content Include="$(SolutionDir)\res\Logo\TileSq44\Logo.targetsize-48.png"                   Link="res\Logo\TileSq44\Logo.targetsize-48.png" />
+
+    <Content Include="$(SolutionDir)\res\Logo\TileSq71\Logo.scale-100.png"                       Link="res\Logo\TileSq71\Logo.scale-100.png" />
+    <Content Include="$(SolutionDir)\res\Logo\TileSq71\Logo.scale-125.png"                       Link="res\Logo\TileSq71\Logo.scale-125.png" />
+    <Content Include="$(SolutionDir)\res\Logo\TileSq71\Logo.scale-150.png"                       Link="res\Logo\TileSq71\Logo.scale-150.png" />
+    <Content Include="$(SolutionDir)\res\Logo\TileSq71\Logo.scale-200.png"                       Link="res\Logo\TileSq71\Logo.scale-200.png" />
+    <Content Include="$(SolutionDir)\res\Logo\TileSq71\Logo.scale-400.png"                       Link="res\Logo\TileSq71\Logo.scale-400.png" />
+
+    <Content Include="$(SolutionDir)\res\Logo\WideTile\Logo.scale-125.png"                       Link="res\Logo\WideTile\Logo.scale-125.png" />
+    <Content Include="$(SolutionDir)\res\Logo\WideTile\Logo.scale-150.png"                       Link="res\Logo\WideTile\Logo.scale-150.png" />
+    <Content Include="$(SolutionDir)\res\Logo\WideTile\Logo.scale-200.png"                       Link="res\Logo\WideTile\Logo.scale-200.png" />
+    <Content Include="$(SolutionDir)\res\Logo\WideTile\Logo.scale-400.png"                       Link="res\Logo\WideTile\Logo.scale-400.png" />
+    <Content Include="$(SolutionDir)\res\Logo\WideTile\Logo.scale-100.png"                       Link="res\Logo\WideTile\Logo.scale-100.png" />
+
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
