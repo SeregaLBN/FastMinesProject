@@ -9,32 +9,14 @@
     <Import_RootNamespace>UnitTest.FastMines.Core</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-        <Compile Include="$(SolutionDir)\FastMines_core\src_test\fmg\common\notifier\NotifyPropertyChangedTest.cs">
-            <Link>test_fmg.common\notifier\NotifyPropertyChangedTest.cs</Link>
-        </Compile>
-        <Compile Include="$(SolutionDir)\FastMines_core\src_test\fmg\common\notifier\PropertyChangeExecutor.cs">
-            <Link>test_fmg.common\notifier\PropertyChangeExecutor.cs</Link>
-        </Compile>
-        <Compile Include="$(SolutionDir)\FastMines_core\src_test\fmg\common\notifier\PropertyChangeExecutorTest.cs">
-            <Link>test_fmg.common\notifier\PropertyChangeExecutorTest.cs</Link>
-        </Compile>
-        <Compile Include="$(SolutionDir)\FastMines_core\src_test\fmg\common\notifier\Signal.cs">
-            <Link>test_fmg.common\notifier\Signal.cs</Link>
-        </Compile>
-        <Compile Include="$(SolutionDir)\FastMines_core\src_test\fmg\core\mosaic\MosaicControllerTest.cs">
-            <Link>test_fmg.core\mosaic\MosaicControllerTest.cs</Link>
-        </Compile>
-        <Compile Include="$(SolutionDir)\FastMines_core\src_test\fmg\core\mosaic\MosaicHelperTest.cs">
-            <Link>test_fmg.core\mosaic\MosaicHelperTest.cs</Link>
-        </Compile>
-        <Compile Include="$(SolutionDir)\FastMines_core\src_test\fmg\core\mosaic\MosaicModelTest.cs">
-            <Link>test_fmg.core\mosaic\MosaicModelTest.cs</Link>
-        </Compile>
-        <Compile Include="$(SolutionDir)\FastMines_core\src_test\fmg\core\mosaic\MosaicViewTest.cs">
-            <Link>test_fmg.core\mosaic\MosaicViewTest.cs</Link>
-        </Compile>
-        <Compile Include="$(SolutionDir)\FastMines_core\src_test\fmg\core\mosaic\MosaicInitDataTest.cs">
-            <Link>test_fmg.core\mosaic\MosaicInitDataTest.cs</Link>
-        </Compile>
+        <Compile Include="$(SolutionDir)\FastMines_core\src_test\fmg\common\notifier\NotifyPropertyChangedTest.cs"  Link="fmg.common\notifier\NotifyPropertyChangedTest.cs" />
+        <Compile Include="$(SolutionDir)\FastMines_core\src_test\fmg\common\notifier\PropertyChangeExecutor.cs"     Link="fmg.common\notifier\PropertyChangeExecutor.cs" />
+        <Compile Include="$(SolutionDir)\FastMines_core\src_test\fmg\common\notifier\PropertyChangeExecutorTest.cs" Link="fmg.common\notifier\PropertyChangeExecutorTest.cs" />
+        <Compile Include="$(SolutionDir)\FastMines_core\src_test\fmg\common\notifier\Signal.cs"                     Link="fmg.common\notifier\Signal.cs" />
+        <Compile Include="$(SolutionDir)\FastMines_core\src_test\fmg\core\mosaic\MosaicControllerTest.cs"           Link="fmg.core\mosaic\MosaicControllerTest.cs" />
+        <Compile Include="$(SolutionDir)\FastMines_core\src_test\fmg\core\mosaic\MosaicHelperTest.cs"               Link="fmg.core\mosaic\MosaicHelperTest.cs" />
+        <Compile Include="$(SolutionDir)\FastMines_core\src_test\fmg\core\mosaic\MosaicModelTest.cs"                Link="fmg.core\mosaic\MosaicModelTest.cs" />
+        <Compile Include="$(SolutionDir)\FastMines_core\src_test\fmg\core\mosaic\MosaicViewTest.cs"                 Link="fmg.core\mosaic\MosaicViewTest.cs" />
+        <Compile Include="$(SolutionDir)\FastMines_core\src_test\fmg\core\mosaic\MosaicInitDataTest.cs"             Link="fmg.core\mosaic\MosaicInitDataTest.cs" />
   </ItemGroup>
 </Project>

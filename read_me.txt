@@ -8,7 +8,6 @@
    ./FastMines.sln  - solutions for Visual Studio
          subprojects in subdirectories:
             ./FastMines_core                    - C#    - Core of FastMines project
-                ./FastMines.Core                            - shared library - common utils  &  core business logic
                 ./UnitTest.FastMines.Core                   - shared library for Unit Tests
                 ./UnitTest.FastMines.NUnit                  - unit test for FastMines.Core over NUnit
             ./FastMines_uwp                     - C#    - Universal Windows Platform
@@ -25,15 +24,7 @@
                 ./Test.FastMines.Ava.Images                 - Template for future visual check drawing demo-program
                 ./UnitTest.FastMines.Ava                    - unit test for Avalonia over xUnit
 
-Agreements:
- * basic package/namespace name - fmg.* / Fmg.*   -  FastMinesGame
- * using 4 space   for  tab size
- * subdirectories corresponds to the package name/namespace
-
-./src - common code base
-./res - shared resources files
-
-
+----------------------------------
 FastMines_xxx - projects of a specific language implementation, for a specific UI platform:
    FastMines_core     - shared project libraries (common utils;  core business logic;  unit tests)
    FastMines_android  - (  demo  ) - Java Android tablet/mobile application                          (open from Android Studio)
@@ -48,6 +39,14 @@ FastMines_xxx - projects of a specific language implementation, for a specific U
    FastMines_Ava      - (try demo) - C# desktop Avalonia project (multiplatform - .NET Core)         (open in VS code / VS)
    ...
 
+----------------------------------
+Agreements:
+ * basic package/namespace name - fmg.* / Fmg.*   -  FastMinesGame
+ * using 4 space   for  tab size
+ * subdirectories corresponds to the package name/namespace
+
+*/src - source files
+./res - shared resources files
 
 ----------------------------------
 Requirements:
