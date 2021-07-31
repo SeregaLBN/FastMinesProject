@@ -1,51 +1,50 @@
 package fmg.swing.app.model.view;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
-import fmg.core.types.model.PlayersModel;
-import fmg.core.types.model.event.PlayerModelEvent;
-import fmg.core.types.model.event.PlayerModelListener;
+import fmg.core.types.model.Players;
+import fmg.core.types.model.User;
 
-public class ManageTblModel implements TableModel {
+public class ManageTblModel implements TableModel, AutoCloseable {
 
-    private final PlayersModel players;
-    private List<TableModelListener> arrTableModelListener = new ArrayList<TableModelListener>();
+    private final Players players;
+    private final PropertyChangeListener onPlayersPropertyChangedListener = this::onPlayersPropertyChanged;
+    private final List<TableModelListener> arrTableModelListener = new ArrayList<>();
 
-    public ManageTblModel(PlayersModel players) {
-        this.players = players;
-        this.players.addPlayerListener(new PlayerModelListener() {
-            @Override
-            public void playerChanged(PlayerModelEvent e) {
-                switch (e.getType()) {
-                case PlayerModelEvent.INSERT    : fireTableChanged(new TableModelEvent(ManageTblModel.this, e.getPos(), e.getPos(), 0, TableModelEvent.INSERT)); break;
-                case PlayerModelEvent.DELETE    : fireTableChanged(new TableModelEvent(ManageTblModel.this, e.getPos(), e.getPos(), 0, TableModelEvent.DELETE)); break;
-                case PlayerModelEvent.UPDATE    : fireTableChanged(new TableModelEvent(ManageTblModel.this, e.getPos(), e.getPos(), 0, TableModelEvent.UPDATE)); break;
-                case PlayerModelEvent.INSERT_ALL: fireTableChanged(new TableModelEvent(ManageTblModel.this,          0, e.getPos(), 0, TableModelEvent.INSERT)); break;
-                case PlayerModelEvent.DELETE_ALL: fireTableChanged(new TableModelEvent(ManageTblModel.this,          0, e.getPos(), 0, TableModelEvent.DELETE)); break;
-                case PlayerModelEvent.UPDATE_ALL: fireTableChanged(new TableModelEvent(ManageTblModel.this,          0, e.getPos(), 0, TableModelEvent.UPDATE)); break;
-                case PlayerModelEvent.CHANGE_STATISTICS:
-                    break;
-                }
-            }
-        });
+    public ManageTblModel(Players players) {
+        this.players = Objects.requireNonNull(players);
+        players.addListener(onPlayersPropertyChangedListener);
+    }
+
+    @Override
+    public void close() {
+        players.removeListener(onPlayersPropertyChangedListener);
     }
 
     //=================================== Table model =========================================//
     @Override
     public int getRowCount() { return players.size(); }
+
     @Override
     public int getColumnCount() { return 1; }
+
     @Override
     public String getColumnName(int columnIndex) { return "Players"; }
+
     @Override
     public Class<?> getColumnClass(int columnIndex) { return String.class; }
+
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) { return !true; }
+
     @Override
     public String getValueAt(int rowIndex, int columnIndex) {
         if (columnIndex != 0)
@@ -55,6 +54,7 @@ public class ManageTblModel implements TableModel {
             //return null;
         return players.getUser(rowIndex).getName();
     }
+
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         if (columnIndex != 0)
@@ -79,10 +79,12 @@ public class ManageTblModel implements TableModel {
         players.setUserName(rowIndex, name);
         fireTableChanged(new TableModelEvent(this, rowIndex, rowIndex, columnIndex, TableModelEvent.UPDATE));
     }
+
     @Override
     public void addTableModelListener(TableModelListener l) {
         arrTableModelListener.add(l);
     }
+
     @Override
     public void removeTableModelListener(TableModelListener l) {
         arrTableModelListener.remove(l);
@@ -91,6 +93,29 @@ public class ManageTblModel implements TableModel {
     private void fireTableChanged(TableModelEvent e) {
         for (TableModelListener listener: arrTableModelListener)
             listener.tableChanged(e);
+    }
+
+    private void onPlayersPropertyChanged(PropertyChangeEvent ev) {
+        User user;
+        int pos;
+        switch (ev.getPropertyName()) {
+        case Players.USER_ADDED:
+            user = (User)ev.getNewValue();
+            pos = players.getPos(user.getGuid());
+            fireTableChanged(new TableModelEvent(this, pos, pos, 0, TableModelEvent.INSERT));
+            break;
+        case Players.USER_DELETED:
+            pos = (Integer)ev.getOldValue();
+            fireTableChanged(new TableModelEvent(this, pos, pos, 0, TableModelEvent.DELETE));
+            break;
+        case Players.USER_NAME_UPDATED:
+            user = (User)ev.getNewValue();
+            pos = players.getPos(user.getGuid());
+            fireTableChanged(new TableModelEvent(this, pos, pos, 0, TableModelEvent.UPDATE));
+            break;
+        default:
+            // none
+        }
     }
 
 }

@@ -74,6 +74,16 @@ public class AppDataSerializer implements ISerializer {
 //        Logger.info("Read: location={0}, sizeMosaic=[{1}, {2}]", location, sizeMosaicWidth, sizeMosaicHeight);
     }
 
+    public void save(AppData data) {
+        try (OutputStream os = new FileOutputStream(getIniFile());
+             ObjectOutputStream out = new ObjectOutputStream(os))
+        {
+            write(data, out);
+        } catch (Exception ex) {
+            Logger.error("Can`t save " + AppData.class.getSimpleName(), ex);
+        }
+    }
+
     /** Load ini data from file
      * @return <b>true</b> - successful read; <b>false</b> - not exist or fail read, and set to defaults */
     public boolean load(AppData data) {
@@ -94,16 +104,6 @@ public class AppDataSerializer implements ISerializer {
             Logger.error("Can`t load " + AppData.class.getSimpleName(), ex);
             data.setDefaults();
             return false;
-        }
-    }
-
-    public void save(AppData data) {
-        try (OutputStream os = new FileOutputStream(getIniFile());
-             ObjectOutputStream out = new ObjectOutputStream(os))
-        {
-            write(data, out);
-        } catch (Exception ex) {
-            Logger.error("Can`t save " + AppData.class.getSimpleName(), ex);
         }
     }
 

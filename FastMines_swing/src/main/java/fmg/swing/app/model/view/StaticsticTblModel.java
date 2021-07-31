@@ -1,5 +1,7 @@
 package fmg.swing.app.model.view;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -8,45 +10,39 @@ import java.util.Locale;
 import javax.swing.event.TableModelEvent;
 
 import fmg.core.types.EMosaic;
-import fmg.core.types.model.PlayersModel;
-import fmg.core.types.model.StatisticCounts;
+import fmg.core.types.model.Players;
+import fmg.core.types.model.Players.UserStatisticChanged;
+import fmg.core.types.model.Statistic;
 import fmg.core.types.model.User;
-import fmg.core.types.model.event.PlayerModelEvent;
 
-public class StaticsticTblModel extends ReportTableModel {
+public class StaticsticTblModel extends ReportTableModel implements AutoCloseable {
 
-    private final PlayersModel players;
+    private final Players players;
+    private final PropertyChangeListener onPlayersPropertyChangedListener = this::onPlayersPropertyChanged;
 
-    public StaticsticTblModel(PlayersModel players, EMosaic eMosaic) {
+    public StaticsticTblModel(Players players, EMosaic eMosaic) {
         super(eMosaic);
         this.players = players;
-
-        players.addPlayerListener(e -> {
-            int pos = e.getPos();
-            switch (e.getType()) {
-            case PlayerModelEvent.CHANGE_STATISTICS:
-                if ((e.getMosaic() == StaticsticTblModel.this.eMosaic) &&
-                    (e.getSkill() == StaticsticTblModel.this.eSkill))
-                {
-                    StaticsticTblModel.this.fireTableChanged(
-                        new TableModelEvent(StaticsticTblModel.this, pos, pos, TableModelEvent.ALL_COLUMNS, TableModelEvent.UPDATE));
-                }
-                break;
-            default:
-                StaticsticTblModel.this.fireTableChanged(new TableModelEvent(StaticsticTblModel.this));
-                break;
-            }
-        });
+        players.addListener(onPlayersPropertyChangedListener);
     }
 
     @Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {}
+    public void close() {
+        players.removeListener(onPlayersPropertyChangedListener);
+    }
+
+    @Override
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        throw new UnsupportedOperationException();
+    }
+
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) { return false; }
+
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         User user = players.getUser(rowIndex);
-        StatisticCounts sc = players.getInfo(user.getGuid(), eMosaic, eSkill);
+        Statistic sc = players.getInfo(user.getGuid(), eMosaic, eSkill);
         NumberFormat formatter = new DecimalFormat("0.000", new DecimalFormatSymbols(Locale.US));
         switch (columnIndex) {
         case 0: return user.getName();
@@ -58,8 +54,10 @@ public class StaticsticTblModel extends ReportTableModel {
         }
         return null;
     }
+
     @Override
     public int getRowCount() { return players.size(); }
+
     @Override
     public String getColumnName(int columnIndex) {
         switch (columnIndex) {
@@ -76,9 +74,21 @@ public class StaticsticTblModel extends ReportTableModel {
         }
         return null;
     }
+
     @Override
     public int getColumnCount() { return 6; }
+
     @Override
     public Class<?> getColumnClass(int columnIndex) { return String.class; }
+
+    private void onPlayersPropertyChanged(PropertyChangeEvent ev) {
+        if (ev.getPropertyName().equals(Players.USER_STATISTIC_CHANGED)) {
+            UserStatisticChanged usc = (UserStatisticChanged)ev.getNewValue();
+            int pos = players.getPos(usc.userId);
+            fireTableChanged(new TableModelEvent(this, pos, pos, TableModelEvent.ALL_COLUMNS, TableModelEvent.UPDATE));
+        } else {
+            fireTableChanged(new TableModelEvent(this));
+        }
+    }
 
 }

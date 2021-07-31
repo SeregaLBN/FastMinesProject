@@ -1,53 +1,36 @@
 package fmg.swing.app.model.view;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import javax.swing.event.TableModelEvent;
 
 import fmg.core.types.EMosaic;
-import fmg.core.types.model.ChampionsModel;
-import fmg.core.types.model.event.ChampionModelEvent;
+import fmg.core.types.model.Champions;
+import fmg.core.types.model.Champions.ChampionAdded;
 
-public class ChampionTblModel extends ReportTableModel {
+public class ChampionTblModel extends ReportTableModel implements AutoCloseable {
 
-    private final ChampionsModel champions;
+    private final Champions champions;
+    private final PropertyChangeListener onPlayersPropertyChangedListener = this::onChampionsPropertyChanged;
 
-    public ChampionTblModel(ChampionsModel champions, EMosaic eMosaic) {
+    public ChampionTblModel(Champions champions, EMosaic eMosaic) {
         super(eMosaic);
         this.champions = champions;
+        champions.addListener(onPlayersPropertyChangedListener);
+    }
 
-        champions.addChampionListener(e -> {
-            if ((e.getMosaic() == ChampionTblModel.this.eMosaic) &&
-                (e.getSkill() == ChampionTblModel.this.eSkill))
-            {
-                int size = ChampionTblModel.this.champions.getUsersCount(ChampionTblModel.this.eMosaic, ChampionTblModel.this.eSkill);
-                int pos = e.getPos();
-                switch (e.getType()) {
-                case ChampionModelEvent.DELETE:
-                    if (pos == ChampionModelEvent.POS_ALL)
-                        fireTableChanged(new TableModelEvent(ChampionTblModel.this, 0, size-1, TableModelEvent.ALL_COLUMNS, TableModelEvent.DELETE));
-                    else
-                        fireTableChanged(new TableModelEvent(ChampionTblModel.this, pos, pos, TableModelEvent.ALL_COLUMNS, TableModelEvent.DELETE));
-                    break;
-                case ChampionModelEvent.INSERT:
-                    if (pos == ChampionModelEvent.POS_ALL)
-                        fireTableChanged(new TableModelEvent(ChampionTblModel.this, 0, size-1, TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT));
-                    else
-                        fireTableChanged(new TableModelEvent(ChampionTblModel.this, pos, pos, TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT));
-                    break;
-                case ChampionModelEvent.UPDATE:
-                    if (pos == ChampionModelEvent.POS_ALL)
-                        fireTableChanged(new TableModelEvent(ChampionTblModel.this, 0, size-1, TableModelEvent.ALL_COLUMNS, TableModelEvent.UPDATE));
-                    else
-                        fireTableChanged(new TableModelEvent(ChampionTblModel.this, pos, pos, TableModelEvent.ALL_COLUMNS, TableModelEvent.UPDATE));
-                    break;
-                }
-            }
-        });
+    @Override
+    public void close() {
+        champions.removeListener(onPlayersPropertyChangedListener);
     }
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {}
+
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) { return false; }
+
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         if (columnIndex == 0)
@@ -55,8 +38,10 @@ public class ChampionTblModel extends ReportTableModel {
         else
             return champions.getUserPlayTime(rowIndex, eMosaic, eSkill) / 1000.0;
     }
+
     @Override
     public int getRowCount() { return champions.getUsersCount(eMosaic, eSkill); }
+
     @Override
     public String getColumnName(int columnIndex) {
         switch (columnIndex) {
@@ -65,9 +50,23 @@ public class ChampionTblModel extends ReportTableModel {
         }
         return null;
     }
+
     @Override
     public int getColumnCount() { return 2; }
+
     @Override
     public Class<?> getColumnClass(int columnIndex) { return (columnIndex==0) ? String.class : Integer.class; }
+
+    private void onChampionsPropertyChanged(PropertyChangeEvent ev) {
+        if (ev.getPropertyName().equals(Champions.CHAMPION_ADDED)) {
+            ChampionAdded val = (ChampionAdded)ev.getNewValue();
+            if ((eMosaic == val.mosaic) && (eSkill  == val.skill))
+                fireTableChanged(new TableModelEvent(ChampionTblModel.this, val.pos, val.pos, TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT));
+        } else
+        if (ev.getPropertyName().equals(Champions.CHAMPION_RENAMED)) {
+            int size = champions.getUsersCount(eMosaic, eSkill);
+            fireTableChanged(new TableModelEvent(ChampionTblModel.this, 0, size-1, TableModelEvent.ALL_COLUMNS, TableModelEvent.UPDATE));
+        }
+    }
 
 }

@@ -11,14 +11,15 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellRenderer;
 
-import fmg.core.types.model.PlayersModel;
+import fmg.common.ui.UiInvoker;
+import fmg.core.types.model.Players;
 import fmg.core.types.model.User;
 import fmg.swing.app.FastMinesApp;
 import fmg.swing.app.model.view.ManageTblModel;
 import fmg.swing.utils.GuiTools;
 
 /** Диалог управления пользователями */
-public class ManageDlg {
+public class ManageDlg implements AutoCloseable {
 
     private static final String DEFAULT_CAPTION = "Users manage";
 
@@ -26,10 +27,11 @@ public class ManageDlg {
     private final JDialog dialog;
     private JButton btnOk;
     private JTable table;
-    private PlayersModel players;
+    private Players players;
     private JCheckBox doNotAskStartup;
+    private ManageTblModel tableModel;
 
-    public ManageDlg(FastMinesApp app, boolean modal, PlayersModel players) {
+    public ManageDlg(FastMinesApp app, boolean modal, Players players) {
         this.app = app;
         dialog = new JDialog((app == null) ? null : app.getFrame(), DEFAULT_CAPTION, modal);
         this.players = players;
@@ -46,12 +48,12 @@ public class ManageDlg {
         dialog.getRootPane().getActionMap().put(keyBind, new AbstractAction() {
             private static final long serialVersionUID = 1L;
             @Override
-            public void actionPerformed(ActionEvent e) { ManageDlg.this.onCancel(); }
+            public void actionPerformed(ActionEvent e) { onCancel(); }
         });
 
         dialog.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(WindowEvent we) { ManageDlg.this.onCancel(); }
+            public void windowClosing(WindowEvent we) { onCancel(); }
         });
 
         dialog.setResizable(!false);
@@ -65,25 +67,33 @@ public class ManageDlg {
     private void onOk() {
 //        Logger.info("OnOk");
         int rowIndex = table.getSelectedRow();
-        if (rowIndex == -1) {
-//            if (parent != null)
-//                Logger.info("User not changet. Active user id is " + parent.getActiveUserId());
-//            else
-//                Logger.info("User not selected");
-        } else {
+        if ((rowIndex >= 0) &&
+            (rowIndex < players.getUserCount()))
+        {
             User user = players.getUser(rowIndex);
             UUID activeUserId = user.getGuid();
-//            Logger.info("Active user is: "+user);
+//            Logger.info("Active user is: " + user);
             if (app != null)
                 app.setActiveUserId(activeUserId);
         }
         onClose();
     }
+
     private void onCancel() {
 //        Logger.info("OnCancel");
         onClose();
     }
+
     private void onClose() {
+        if (dialog.isModal())
+            dialog.dispose();
+        else
+            setVisible(false);
+    }
+
+    @Override
+    public void close() {
+        tableModel.close();
         dialog.dispose();
     }
 
@@ -100,9 +110,9 @@ public class ManageDlg {
                     SwingUtilities.invokeLater(anew);
                 else
                     try {
-                        ManageDlg.this.players.addNewPlayer(name, loginDialog.getPass());
-                        int maxPos = ManageDlg.this.players.size()-1; // new user added to end list
-                        ManageDlg.this.table.getSelectionModel().setSelectionInterval(maxPos, maxPos);
+                        players.addNewPlayer(name, loginDialog.getPass());
+                        int maxPos = players.size()-1; // new user added to end list
+                        UiInvoker.DEFERRED.accept(() -> table.getSelectionModel().setSelectionInterval(maxPos, maxPos));
                     } catch (Exception ex) {
                         GuiTools.alert(dialog, ex.getMessage());
                         SwingUtilities.invokeLater(anew);
@@ -129,7 +139,8 @@ public class ManageDlg {
             // использую пустую рамку
             boxCenter.setBorder(BorderFactory.createEmptyBorder(12,12,12,12));
 
-            table = new JTable(new ManageTblModel(players)) {
+            tableModel = new ManageTblModel(players);
+            table = new JTable(tableModel) {
                 private static final long serialVersionUID = 1L;
                 @Override
                 public TableCellRenderer getCellRenderer(int row, int column) {
@@ -202,7 +213,7 @@ public class ManageDlg {
                         break;
                     case 2:
 //                        Logger.info(" double click" );
-                        ManageDlg.this.onOk();
+                        onOk();
                         break;
                     }
                 }
@@ -241,7 +252,7 @@ public class ManageDlg {
             panelLeft.setBorder(BorderFactory.createEmptyBorder(12,0,12,12));
 
             JButton btnNp = new JButton("New Player");
-            btnNp.addActionListener(e -> ManageDlg.this.onNewPlayer());
+            btnNp.addActionListener(e -> onNewPlayer());
             panelLeft.add(btnNp);
 
 //            btn = new JButton("Change password");
@@ -256,10 +267,10 @@ public class ManageDlg {
             panelLeft.add(Box.createVerticalGlue());
 
             JButton btnCancel = new JButton("Cancel");
-            btnCancel.addActionListener(e -> ManageDlg.this.onClose());
+            btnCancel.addActionListener(e -> onClose());
 
             btnOk = new JButton("Ok");
-            btnOk.addActionListener(e -> ManageDlg.this.onOk());
+            btnOk.addActionListener(e -> onOk());
 
             panelLeft.add(btnOk);
             panelLeft.add(Box.createVerticalStrut(5));
@@ -289,7 +300,7 @@ public class ManageDlg {
             }
 
             if (players.size() == 0)
-                SwingUtilities.invokeLater(() -> ManageDlg.this.onNewPlayer());
+                SwingUtilities.invokeLater(this::onNewPlayer);
         }
         dialog.setVisible(b);
     }
@@ -297,6 +308,7 @@ public class ManageDlg {
     public boolean isDoNotAskStartupChecked() {
         return doNotAskStartup.isSelected();
     }
+
     public void setDoNotAskStartupChecked(boolean checked) {
         doNotAskStartup.setSelected(checked);
     }

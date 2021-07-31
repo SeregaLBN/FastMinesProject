@@ -15,9 +15,11 @@ import fmg.common.Logger;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
-import fmg.core.types.model.ChampionsModel;
-import fmg.core.types.model.PlayersModel;
+import fmg.core.types.model.Champions;
+import fmg.core.types.model.Players;
 import fmg.swing.app.dialog.*;
+import fmg.swing.app.serializers.ChampionsSerializer;
+import fmg.swing.app.serializers.PlayersSerializer;
 import fmg.swing.img.Animator;
 import fmg.swing.mosaic.MosaicJPanelController;
 
@@ -55,8 +57,7 @@ public class TestDialogs {
     }
 
     private static void testChampionsModel() {
-        ChampionsModel champions = new ChampionsModel(null);
-        champions.Load();
+        Champions champions = new ChampionsSerializer().load();
         try (ChampionDlg dlg = new ChampionDlg(null, true, champions)) {
             dlg.showData(ESkillLevel.eBeginner, EMosaic.eMosaicSquare1);
         }
@@ -75,11 +76,11 @@ public class TestDialogs {
 
     private static void testManageDlg() {
         try {
-            PlayersModel players = new PlayersModel();
-            players.Load();
-            ManageDlg manage = new ManageDlg(null, true, players);
-            manage.setVisible(true);
-            players.Save();
+            Players players = new PlayersSerializer().load();
+            try (ManageDlg manage = new ManageDlg(null, true, players)) {
+                manage.setVisible(true);
+            }
+            new PlayersSerializer().save(players);
         } catch (Exception ex) {
             Logger.error("testManageDlg", ex);
         }
@@ -100,8 +101,7 @@ public class TestDialogs {
     }
 
     private static void testStatisticDlg() {
-        PlayersModel players = new PlayersModel();
-        players.Load();
+        Players players = new PlayersSerializer().load();
         try (StatisticDlg dlg = new StatisticDlg(null, true, players)) {
             dlg.showData(ESkillLevel.eAmateur, EMosaic.eMosaicTriangle3);
         }

@@ -25,14 +25,17 @@ import fmg.common.geom.SizeDouble;
 import fmg.common.ui.ITimer;
 import fmg.core.img.IImageController;
 import fmg.core.img.LogoModel;
-import fmg.core.mosaic.*;
+import fmg.core.mosaic.MosaicController;
+import fmg.core.mosaic.MosaicDrawModel;
+import fmg.core.mosaic.MosaicGameModel;
+import fmg.core.mosaic.MosaicHelper;
 import fmg.core.types.EGameStatus;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
-import fmg.core.types.model.ChampionsModel;
+import fmg.core.types.model.Champions;
 import fmg.core.types.model.MosaicInitData;
-import fmg.core.types.model.PlayersModel;
+import fmg.core.types.model.Players;
 import fmg.core.types.model.User;
 import fmg.swing.app.dialog.*;
 import fmg.swing.app.menu.EShowElement;
@@ -40,6 +43,8 @@ import fmg.swing.app.menu.EZoomInterface;
 import fmg.swing.app.menu.MainMenu;
 import fmg.swing.app.model.AppData;
 import fmg.swing.app.serializers.AppDataSerializer;
+import fmg.swing.app.serializers.ChampionsSerializer;
+import fmg.swing.app.serializers.PlayersSerializer;
 import fmg.swing.app.toolbar.EBtnNewGameState;
 import fmg.swing.app.toolbar.ToolBar;
 import fmg.swing.img.Animator;
@@ -69,9 +74,9 @@ public class FastMinesApp {
     private StatusBar  statusBar;
 
     private Logo.ImageAwtController logo;
-    private PlayersModel players;
+    private Players players;
     private UUID activeUserId; // current user
-    private ChampionsModel champions;
+    private Champions champions;
 
     private ManageDlg       playerManageDialog;
     private StatisticDlg    statisticDialog;
@@ -100,6 +105,7 @@ public class FastMinesApp {
         return frame;
     }
 
+    private boolean isPlayerManageDialogExist() { return playerManageDialog != null; }
     public ManageDlg getPlayerManageDlg() {
         if (playerManageDialog == null)
             playerManageDialog = new ManageDlg(this, false, getPlayers());
@@ -557,16 +563,8 @@ public class FastMinesApp {
         MosaicJPanelController mosaicCtrllr = getMosaicController();
         mosaicCtrllr.setOnClickEvent(null);
 
-        try {
-            getPlayers().Save();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        try {
-            getChampions().Save();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        new PlayersSerializer().save(getPlayers());
+        new ChampionsSerializer().save(getChampions());
 
         { // csabe settings
             AppData spm = new AppData();
@@ -604,6 +602,13 @@ public class FastMinesApp {
             getAboutDialog().close();
         if (isCustomSkillDialogExist())
             getCustomSkillDialog().close();
+        if (isPlayerManageDialogExist())
+            getPlayerManageDlg().close();
+
+        if (champions != null)
+            champions.close();
+        if (players != null)
+            players.close();
 
 //      frame.setVisible(false);
         setMosaicController(null);
@@ -1056,17 +1061,15 @@ public class FastMinesApp {
         return handlers;
     }
 
-    public PlayersModel getPlayers() {
-        if (players == null) {
-            players = new PlayersModel();
-            players.Load();
-        }
+    public Players getPlayers() {
+        if (players == null)
+            players = new PlayersSerializer().load();
         return players;
     }
-    public ChampionsModel getChampions() {
+    public Champions getChampions() {
         if (champions == null) {
-            champions = new ChampionsModel(getPlayers());
-            champions.Load();
+            champions = new ChampionsSerializer().load();
+            champions.subscribeTo(getPlayers());
         }
         return champions;
     }
@@ -1111,7 +1114,7 @@ public class FastMinesApp {
         Consumer<UUID> onActionToUser = userId -> {
             if (userId != null) {
                 // ...статистики
-                getPlayers().setStatistic(userId, eMosaic, eSkill, victory, realCountOpen, playTime, clickCount);
+                getPlayers().updateStatistic(userId, eMosaic, eSkill, victory, realCountOpen, playTime, clickCount);
                 if (isStatisticDialogExist()) {
                     StatisticDlg sd = getStatisticDialog();
                     if (sd.getDialog().isVisible())

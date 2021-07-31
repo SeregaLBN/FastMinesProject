@@ -14,7 +14,7 @@ public abstract class ReportTableModel implements TableModel {
 
     protected ESkillLevel eSkill;
     protected final EMosaic eMosaic;
-    private List<TableModelListener> arrTableModelListener = new ArrayList<TableModelListener>();
+    private final List<TableModelListener> arrTableModelListener = new ArrayList<TableModelListener>();
 
     public ReportTableModel(EMosaic eMosaic) {
         this.eMosaic = eMosaic;
@@ -27,8 +27,10 @@ public abstract class ReportTableModel implements TableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {}
+
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) { return false; }
+
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         if (rowIndex == 0)
@@ -42,18 +44,24 @@ public abstract class ReportTableModel implements TableModel {
             else
                 return eMosaic.getDescription(false);
     }
+
     @Override
     public int getRowCount() { return 2; }
+
     @Override
     public String getColumnName(int columnIndex) { return (columnIndex == 0) ? "Key" : "Value"; }
+
     @Override
     public int getColumnCount() { return 2; }
+
     @Override
     public Class<?> getColumnClass(int columnIndex) { return String.class; }
+
     @Override
     public void addTableModelListener(TableModelListener l) {
         arrTableModelListener.add(l);
     }
+
     @Override
     public void removeTableModelListener(TableModelListener l) {
         arrTableModelListener.remove(l);

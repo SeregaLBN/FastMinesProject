@@ -6,7 +6,7 @@ import javax.swing.SwingConstants;
 
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
-import fmg.core.types.model.ChampionsModel;
+import fmg.core.types.model.Champions;
 import fmg.swing.app.FastMinesApp;
 import fmg.swing.app.model.view.ChampionTblModel;
 import fmg.swing.app.model.view.ReportTableModel;
@@ -14,9 +14,10 @@ import fmg.swing.app.model.view.ReportTableModel;
 /** Диалог отображения чемпионов */
 public class ChampionDlg extends ReportDlg {
 
-    private final ChampionsModel champions;
+    private final Champions champions;
+    private ChampionTblModel tableModel;
 
-    public ChampionDlg(FastMinesApp app, boolean modal, ChampionsModel champions) {
+    public ChampionDlg(FastMinesApp app, boolean modal, Champions champions) {
         super(app, modal);
         this.champions = champions;
     }
@@ -29,7 +30,8 @@ public class ChampionDlg extends ReportDlg {
 
     @Override
     protected ReportTableModel createTableModel(EMosaic mosaic) {
-        return new ChampionTblModel(champions, mosaic);
+        tableModel = new ChampionTblModel(champions, mosaic);
+        return tableModel;
     }
 
     @Override
@@ -52,6 +54,12 @@ public class ChampionDlg extends ReportDlg {
         int pos = champions.getPos((app == null) ? null : app.getActiveUserId(), eMosaic, eSkill);
         // ...на этой позиции и фокусируюсь
         super.showData(eSkill, eMosaic, pos);
+    }
+
+    @Override
+    public void close() {
+        tableModel.close();
+        super.close();
     }
 
 }

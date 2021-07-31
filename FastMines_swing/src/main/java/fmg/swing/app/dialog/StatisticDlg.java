@@ -7,7 +7,7 @@ import javax.swing.SwingConstants;
 
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
-import fmg.core.types.model.PlayersModel;
+import fmg.core.types.model.Players;
 import fmg.core.types.model.User;
 import fmg.swing.app.FastMinesApp;
 import fmg.swing.app.model.view.ReportTableModel;
@@ -16,9 +16,10 @@ import fmg.swing.app.model.view.StaticsticTblModel;
 /** Диалог отображения статистики пользователя */
 public class StatisticDlg extends ReportDlg {
 
-    private PlayersModel players;
+    private Players players;
+    private StaticsticTblModel tableModel;
 
-    public StatisticDlg(FastMinesApp app, boolean modal, PlayersModel players) {
+    public StatisticDlg(FastMinesApp app, boolean modal, Players players) {
         super(app, modal);
         this.players = players;
     }
@@ -43,7 +44,8 @@ public class StatisticDlg extends ReportDlg {
 
     @Override
     protected ReportTableModel createTableModel(EMosaic mosaic) {
-        return new StaticsticTblModel(players, mosaic);
+        tableModel = new StaticsticTblModel(players, mosaic);
+        return tableModel;
     }
 
     @Override
@@ -64,6 +66,12 @@ public class StatisticDlg extends ReportDlg {
     public void showData(ESkillLevel eSkill, EMosaic eMosaic) {
         int pos = players.getPos((app == null) ? null : app.getActiveUserId());
         super.showData(eSkill, eMosaic, pos);
+    }
+
+    @Override
+    public void close() {
+        tableModel.close();
+        super.close();
     }
 
 }

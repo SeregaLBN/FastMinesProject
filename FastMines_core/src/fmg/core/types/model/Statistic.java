@@ -1,13 +1,6 @@
 package fmg.core.types.model;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-
-public class StatisticCounts implements Externalizable {
-
-    private static final long VERSION = 1;
+public class Statistic {
 
     /** количество сыгранных игр */
     public long gameNumber;
@@ -20,38 +13,15 @@ public class StatisticCounts implements Externalizable {
     /** суммарное число кликов - вывожу среднее число кликов в данной игре */
     public long clickCount;
 
-    @Override
-    public void readExternal(ObjectInput in) throws IOException {
-        long version = in.readLong();
-        if (version != VERSION)
-            throw new RuntimeException("Unsupported " + StatisticCounts.class.getSimpleName() + " version " + version);
-
-        gameNumber = in.readLong();
-        gameWin    = in.readLong();
-        openField  = in.readLong();
-        playTime   = in.readLong();
-        clickCount = in.readLong();
-    }
-
-    @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeLong(VERSION);
-        out.writeLong(gameNumber);
-        out.writeLong(gameWin);
-        out.writeLong(openField);
-        out.writeLong(playTime);
-        out.writeLong(clickCount);
-    }
-
-    @Override
-    protected StatisticCounts clone() throws CloneNotSupportedException {
-        StatisticCounts clone = new StatisticCounts();
-        clone.gameNumber = this.gameNumber;
-        clone.gameWin    = this.gameWin;
-        clone.openField  = this.openField;
-        clone.playTime   = this.playTime;
-        clone.clickCount = this.clickCount;
-        return clone;
+    /** clone */
+    public Statistic getCopy() {
+        Statistic res = new Statistic();
+        res.gameNumber = this.gameNumber;
+        res.gameWin    = this.gameWin;
+        res.openField  = this.openField;
+        res.playTime   = this.playTime;
+        res.clickCount = this.clickCount;
+        return res;
     }
 
 }
