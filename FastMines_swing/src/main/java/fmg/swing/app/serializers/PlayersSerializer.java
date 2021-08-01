@@ -13,7 +13,7 @@ import fmg.core.app.AProjSettings;
 import fmg.core.app.ISerializer;
 import fmg.core.types.model.Players;
 import fmg.core.types.model.Players.Record;
-import fmg.core.types.model.Statistic;
+import fmg.core.types.model.Statistics;
 import fmg.core.types.model.User;
 
 /** хранилище пользователей и их игровой статистики */
@@ -25,18 +25,18 @@ public class PlayersSerializer implements ISerializer {
 
         void write(Players.Record rec, ObjectOutput to) throws IOException {
             new UserSerializer().write(rec.user, to);
-            StatisticSerializer ss = new StatisticSerializer();
-            for (Statistic[] record: rec.statistics)
-                for (Statistic subRecord: record)
+            StatisticsSerializer ss = new StatisticsSerializer();
+            for (Statistics[] record: rec.statistics)
+                for (Statistics subRecord: record)
                     ss.write(subRecord, to);
         }
 
         Players.Record read(ObjectInput from) throws IOException {
             User user = new UserSerializer().read(from);
             Players.Record res = new Players.Record(user);
-            StatisticSerializer ss = new StatisticSerializer();
-            for (Statistic[] record: res.statistics)
-                for (Statistic subRecord: record)
+            StatisticsSerializer ss = new StatisticsSerializer();
+            for (Statistics[] record: res.statistics)
+                for (Statistics subRecord: record)
                     ss.read(subRecord, from);
             return res;
         }

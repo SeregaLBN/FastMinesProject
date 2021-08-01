@@ -24,7 +24,7 @@ public class Players implements INotifyPropertyChanged, AutoCloseable {
 
     public static class Record {
         public final User user;
-        public final Statistic statistics[][] = new Statistic[EMosaic.values().length][ESkillLevel.values().length-1];
+        public final Statistics statistics[][] = new Statistics[EMosaic.values().length][ESkillLevel.values().length-1];
 
         /** new User */
         public Record(User user) {
@@ -32,7 +32,7 @@ public class Players implements INotifyPropertyChanged, AutoCloseable {
             for (EMosaic mosaic : EMosaic.values())
                 for (ESkillLevel skill : ESkillLevel.values())
                     if (skill != ESkillLevel.eCustom)
-                        statistics[mosaic.ordinal()][skill.ordinal()] = new Statistic();
+                        statistics[mosaic.ordinal()][skill.ordinal()] = new Statistics();
         }
 
         @Override
@@ -117,7 +117,7 @@ public class Players implements INotifyPropertyChanged, AutoCloseable {
         if (rec == null)
             throw new IllegalArgumentException("User with id=" + userId + " not exist");
 
-        Statistic subRec = rec.statistics[mosaic.ordinal()][skill.ordinal()];
+        Statistics subRec = rec.statistics[mosaic.ordinal()][skill.ordinal()];
         subRec.gameNumber++;
         subRec.gameWin    += victory ? 1:0;
         subRec.openField  += countOpenField;
@@ -155,7 +155,7 @@ public class Players implements INotifyPropertyChanged, AutoCloseable {
         return rec.user;
     }
 
-    public Statistic getInfo(UUID userId, EMosaic mosaic, ESkillLevel skillLevel) {
+    public Statistics getInfo(UUID userId, EMosaic mosaic, ESkillLevel skillLevel) {
         Record rec = find(userId);
         if (rec == null)
             throw new IllegalArgumentException("User with id=" + userId + " not exist");

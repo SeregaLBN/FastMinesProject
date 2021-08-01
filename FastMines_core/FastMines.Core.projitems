@@ -118,13 +118,10 @@
     <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\types\draw\ColorText.cs"                   Link="fmg.core\types\draw\ColorText.cs" />
     <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\types\draw\FontInfo.cs"                    Link="fmg.core\types\draw\FontInfo.cs" />
 
-    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\types\model\event\ChampionModelEvent.cs"   Link="fmg.core\types\model\event\ChampionModelEvent.cs" />
-    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\types\model\event\PlayerModelEvent.cs"     Link="fmg.core\types\model\event\PlayerModelEvent.cs" />
-
     <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\types\model\MosaicInitData.cs"             Link="fmg.core\types\model\MosaicInitData.cs" />
-    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\types\model\ChampionsModel.cs"             Link="fmg.core\types\model\ChampionsModel.cs" />
-    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\types\model\PlayersModel.cs"               Link="fmg.core\types\model\PlayersModel.cs" />
-    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\types\model\StatisticCounts.cs"            Link="fmg.core\types\model\StatisticCounts.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\types\model\Champions.cs"                  Link="fmg.core\types\model\Champions.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\types\model\Players.cs"                    Link="fmg.core\types\model\Players.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\types\model\Statistics.cs"                 Link="fmg.core\types\model\Statistics.cs" />
     <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\types\model\User.cs"                       Link="fmg.core\types\model\User.cs" />
 
     <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\types\EGameStatus.cs"                      Link="fmg.core\types\EGameStatus.cs" />

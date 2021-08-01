@@ -5,13 +5,13 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 import fmg.core.app.ISerializer;
-import fmg.core.types.model.Statistic;
+import fmg.core.types.model.Statistics;
 
-public class StatisticSerializer implements ISerializer {
+public class StatisticsSerializer implements ISerializer {
 
     private static final long VERSION = 1;
 
-    public void write(Statistic data, ObjectOutput to) throws IOException {
+    public void write(Statistics data, ObjectOutput to) throws IOException {
         to.writeLong(VERSION);
         to.writeLong(data.gameNumber);
         to.writeLong(data.gameWin);
@@ -20,10 +20,10 @@ public class StatisticSerializer implements ISerializer {
         to.writeLong(data.clickCount);
     }
 
-    public void read(Statistic to, ObjectInput from) throws IOException {
+    public void read(Statistics to, ObjectInput from) throws IOException {
         long version = from.readLong();
         if (version != VERSION)
-            throw new RuntimeException("Unsupported " + Statistic.class.getSimpleName() + " version " + version);
+            throw new RuntimeException("Unsupported " + Statistics.class.getSimpleName() + " version " + version);
 
         to.gameNumber = from.readLong();
         to.gameWin    = from.readLong();

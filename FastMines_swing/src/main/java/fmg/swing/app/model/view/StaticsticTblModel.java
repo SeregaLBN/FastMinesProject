@@ -12,7 +12,7 @@ import javax.swing.event.TableModelEvent;
 import fmg.core.types.EMosaic;
 import fmg.core.types.model.Players;
 import fmg.core.types.model.Players.UserStatisticChanged;
-import fmg.core.types.model.Statistic;
+import fmg.core.types.model.Statistics;
 import fmg.core.types.model.User;
 
 public class StaticsticTblModel extends ReportTableModel implements AutoCloseable {
@@ -42,7 +42,7 @@ public class StaticsticTblModel extends ReportTableModel implements AutoCloseabl
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         User user = players.getUser(rowIndex);
-        Statistic sc = players.getInfo(user.getGuid(), eMosaic, eSkill);
+        Statistics sc = players.getInfo(user.getGuid(), eMosaic, eSkill);
         NumberFormat formatter = new DecimalFormat("0.000", new DecimalFormatSymbols(Locale.US));
         switch (columnIndex) {
         case 0: return user.getName();

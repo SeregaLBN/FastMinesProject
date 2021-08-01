@@ -1,6 +1,6 @@
 package fmg.core.types.model;
 
-public class Statistic {
+public class Statistics {
 
     /** количество сыгранных игр */
     public long gameNumber;
@@ -14,8 +14,8 @@ public class Statistic {
     public long clickCount;
 
     /** clone */
-    public Statistic getCopy() {
-        Statistic res = new Statistic();
+    public Statistics getCopy() {
+        Statistics res = new Statistics();
         res.gameNumber = this.gameNumber;
         res.gameWin    = this.gameWin;
         res.openField  = this.openField;
