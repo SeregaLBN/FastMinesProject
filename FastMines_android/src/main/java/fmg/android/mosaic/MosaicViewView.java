@@ -31,6 +31,7 @@ public class MosaicViewView extends MosaicAndroidView<DrawableView, Bitmap, Mosa
     private Flag.BitmapController _imgFlag = new Flag.BitmapController();
     private Mine.BitmapController _imgMine = new Mine.BitmapController();
     private final Collection<BaseCell> _modifiedCells = new HashSet<>();
+    private final Rect clipBounds = new Rect();
 
     public MosaicViewView(Context context) {
         super(new MosaicDrawModel<>());
@@ -45,7 +46,7 @@ public class MosaicViewView extends MosaicAndroidView<DrawableView, Bitmap, Mosa
     }
 
     private void onDraw(Canvas canvas) {
-        Rect clipBounds = canvas.getClipBounds();
+        canvas.getClipBounds(clipBounds);
 
         drawAndroid(canvas,
                 (clipBounds==null)
@@ -72,7 +73,7 @@ public class MosaicViewView extends MosaicAndroidView<DrawableView, Bitmap, Mosa
         this.control = view;
 
         if (this.control != null)
-            this.control.drawMethod = canvas -> onDraw(canvas);
+            this.control.drawMethod = this::onDraw;
     }
 
     @Override

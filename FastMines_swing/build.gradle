@@ -1,21 +1,17 @@
 apply plugin: 'java'
 apply plugin: 'application'
 
-if (JavaVersion.current().isJava11Compatible()) {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-} else {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = "UTF-8"
 
 group = 'FastMinesGame' // fmg
 version = '2.1.1'
-mainClassName     = 'fmg.swing.app.FastMinesApp'
-def demoClassName = 'fmg.swing.app.DemoApp'
+mainClassName            = 'fmg.swing.app.FastMinesApp'
+def demoAppClassName     = 'fmg.swing.app.DemoApp'
+def demoDialogsClassName = 'fmg.swing.app.TestDialogs'
 
 jar {
     excludes = [ 'fmApplet.html', 'runNativeImageAgent.sh' ]
@@ -67,25 +63,32 @@ dependencies {
 
     // !! do not use external dependencies to minimize assembly size
 
-    testImplementation 'io.reactivex.rxjava2:rxjava:2.2.19'
+    testImplementation 'io.reactivex.rxjava2:rxjava:2.2.21'
     testImplementation project(':FastMines_core').sourceSets.test.output
-    testImplementation 'junit:junit:4.13'
+    testImplementation 'junit:junit:4.13.2'
 }
 
 test.dependsOn(":FastMines_core:test")
+
+gradle.taskGraph.beforeTask { Task task ->
+    if ((task.getProject().getName() == 'FastMines_swing') && (task.getName() == 'processResources')) {
+        //println ">>>>>>> taskNames = " + project.gradle.startParameter.taskNames
+        task.duplicatesStrategy = 'include'
+    }
+}
 
 task runDemoApp(type: JavaExec) {
     group = 'Execution'
     description = 'Run the demo swing (animation test)'
     classpath = sourceSets.test.runtimeClasspath
-    main = 'fmg.swing.app.DemoApp'
+    mainClass = demoAppClassName
 }
 
 task runTestDialogs(type: JavaExec) {
     group = 'Execution'
     description = 'Run the demo swing (dailogs test)'
     classpath = sourceSets.test.runtimeClasspath
-    main = 'fmg.swing.app.TestDialogs'
+    mainClass = demoDialogsClassName
 }
 
 
@@ -162,38 +165,6 @@ task fastMinesSwingGraalNative(dependsOn: fastMinesSwingFatJar) { task ->
             // ;(
             // try in graalvm-ce-java8-19.3.0 (Ubuntu 18.04):
             // try in graalvm-ce-java11-21.1.0 (Win 11)
-        }
-    }
-}
-
-task fastMinesSwingJPackNative(dependsOn: fastMinesSwingFatJar) { task ->
-    doLast {
-        // tested in Open/Oracle JDK 8
-
-        if (!JavaVersion.current().isJava8())
-            // can`t build
-            throw new RuntimeException(task.name + ': Unsupported JDK. Can usage JDK 8')
-
-        if (org.gradle.internal.jvm.Jvm.current().toString().contains("GraalVM"))
-            // can`t build
-            throw new RuntimeException(task.name + ': Unsupported JDK. Can usage Open/Oracle JDK 8')
-
-        def isWin = org.gradle.internal.os.OperatingSystem.current().isWindows()
-        exec {
-            commandLine isWin ? 'cmd' : 'sh',
-                        isWin ? '/c' : '-c',
-                        'javapackager -deploy -native image' +
-                        ' -BsystemWide=true' +
-                        ' -BjvmOptions=-Xmx128m' +
-                        ' -BjvmOptions=-Xms128m' +
-                        ' -outdir ' + project(':FastMines_swing').buildDir.toPath().resolve('distributionsJPack').toFile().absolutePath +
-                        ' -outfile FastMines_swing_' + version +
-                        ' -srcdir ' + project(':FastMines_swing').buildDir.absolutePath + '/libs/' +
-                        ' -srcfiles FastMines_swing-fat-' + version + '.jar' +
-                        ' -appclass ' + mainClassName +
-                        ' -description "FastMines game - Java SWING desktop application"' +
-                        ' -name FastMines' +
-                        ' -title "FastMines"'
         }
     }
 }

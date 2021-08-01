@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 
 import java.beans.PropertyChangeEvent;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import fmg.android.app.DrawableView;
@@ -476,7 +477,7 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
     private void onModelAreaChanged(PropertyChangeEvent ev) {
         if (!extendedManipulation)
             return;
-        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onModelAreaChanged", String.format("newArea=%.2f, oldValue=%.2f", ev.getNewValue(), ev.getOldValue()))) {
+        try (Logger.Tracer tracer = new Logger.Tracer("Mosaic.onModelAreaChanged", String.format(Locale.US, "newArea=%.2f, oldValue=%.2f",ev.getNewValue(), ev.getOldValue()))) {
             setOffset(getOffset()); // implicit call RecheckOffset
         }
     }

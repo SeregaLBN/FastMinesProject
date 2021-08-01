@@ -50,10 +50,10 @@ Agreements:
 
 ----------------------------------
 Requirements:
- * Java v8 or v11
+ * Java 11
     https://jdk.java.net
 
- * Gradle v6
+ * Gradle 7
     https://gradle.org/releases/
 
  * Microsoft Visual Studio Community 2019  ( to build UWP application )

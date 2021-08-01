@@ -49,7 +49,7 @@ public class AppDataSerializer implements ISerializer {
         SharedPreferences.Editor editor = to.edit();
         new MosaicInitDataSerializer().save(data.getMosaicInitData(), editor);
         editor.putBoolean(KEY__MENU_SETTINGS__SPLIT_PANE_OPEN, data.isSplitPaneOpen());
-        editor.commit();
+        editor.apply();
     }
 
 }

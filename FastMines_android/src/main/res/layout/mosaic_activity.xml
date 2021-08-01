@@ -61,6 +61,7 @@
 
 
             <ImageButton
+                android:contentDescription="@string/new_game"
                 android:id="@+id/btnNewGame"
                 android:layout_width="37dp"
                 android:layout_height="39dp"

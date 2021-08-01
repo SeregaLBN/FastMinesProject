@@ -1,12 +1,7 @@
 apply plugin: 'java-library'
 
-if (JavaVersion.current().isJava11Compatible()) {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-} else {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = "UTF-8"
@@ -45,6 +40,6 @@ dependencies {
     //implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // Use JUnit test framework
-    testImplementation 'junit:junit:4.13'
-    testImplementation 'io.reactivex.rxjava2:rxjava:2.2.19'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'io.reactivex.rxjava2:rxjava:2.2.21'
 }

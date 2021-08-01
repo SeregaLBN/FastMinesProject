@@ -2,13 +2,8 @@ apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'eclipse'
 
-if (JavaVersion.current().isJava11Compatible()) {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-} else {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
@@ -29,16 +24,14 @@ jar {
 }
 
 repositories {
-    if (JavaVersion.current().isJava11Compatible()) {
-        flatDir {
-            // 1. download https://gluonhq.com/products/javafx/
-            // 2. define system environment variable: example JAVAFX_HOME = youPath/Java/javafx-sdk-11.0.2
-            dirs System.getenv('JAVAFX_HOME') + '/lib'
-            // to run fmg.jfx.app.DemoApp from Eclipse:
-            //   1. open 'Run Configurations'
-            //   2. in tab 'Arguments' in block 'VM arguments' add next
-            //      --module-path "${env_var:JAVAFX_HOME}\lib" --add-modules=javafx.controls
-        }
+    flatDir {
+        // 1. download https://gluonhq.com/products/javafx/
+        // 2. define system environment variable: example JAVAFX_HOME = youPath/Java/javafx-sdk-11.0.2
+        dirs System.getenv('JAVAFX_HOME') + '/lib'
+        // to run fmg.jfx.app.DemoApp from Eclipse:
+        //   1. open 'Run Configurations'
+        //   2. in tab 'Arguments' in block 'VM arguments' add next
+        //      --module-path "${env_var:JAVAFX_HOME}\lib" --add-modules=javafx.controls
     }
 }
 
@@ -71,86 +64,43 @@ if (currentOS.isWindows()) {
 dependencies {
     implementation project(':FastMines_core')
 
-    if (JavaVersion.current().isJava11Compatible()) {
-        implementation name: 'javafx.base'
-        implementation name: 'javafx.controls'
-        implementation name: 'javafx.graphics'
+    implementation name: 'javafx.base'
+    implementation name: 'javafx.controls'
+    implementation name: 'javafx.graphics'
 
-        implementation     'org.openjfx:javafx-base' +':11.0.2:' + platform
-        implementation     'org.openjfx:javafx-graphics:11.0.2:' + platform
-        implementation     'org.openjfx:javafx-controls:11.0.2:' + platform
-        testImplementation 'org.openjfx:javafx-swing'+':11.0.2:' + platform
+    implementation     'org.openjfx:javafx-base' +':11.0.2:' + platform
+    implementation     'org.openjfx:javafx-graphics:11.0.2:' + platform
+    implementation     'org.openjfx:javafx-controls:11.0.2:' + platform
+    testImplementation 'org.openjfx:javafx-swing'+':11.0.2:' + platform
 
-        testImplementation name : 'javafx.swing' // used in unit test
-    }
+    testImplementation name : 'javafx.swing' // used in unit test
 
     testImplementation project(':FastMines_core').sourceSets.test.output
 
     // Use JUnit test framework
-    testImplementation 'junit:junit:4.13'
-    testImplementation 'io.reactivex.rxjava2:rxjava:2.2.19'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'io.reactivex.rxjava2:rxjava:2.2.21'
 }
 
-if (JavaVersion.current().isJava11Compatible()) {
-    run {
-        doFirst {
-            jvmArgs = [
-                    '--module-path', classpath.asPath,
-                    '--add-modules', 'javafx.controls'
-            ]
-        }
+run {
+    doFirst {
+        jvmArgs = [
+                '--module-path', classpath.asPath,
+                '--add-modules', 'javafx.controls'
+        ]
     }
 }
 
-if (JavaVersion.current().isJava11Compatible()) {
-    task runDemoApp(type: Exec) {
-        dependsOn build
-        group = 'Execution'
-        description = 'Run the demo javafx (animation test)'
-        commandLine 'java', 
-            '--module-path', sourceSets.test.runtimeClasspath.asPath,
-            '--add-modules', 'javafx.controls',
-            '-classpath', sourceSets.test.runtimeClasspath.asPath,
-            demoClassName
-    }
-} else {
-    task runDemoApp(type: JavaExec) {
-        group = 'Execution'
-        description = 'Run the demo javafx (animation test)'
-        classpath = sourceSets.test.runtimeClasspath
-        main = demoClassName
-    }
+task runDemoApp(type: Exec) {
+    dependsOn build
+    group = 'Execution'
+    description = 'Run the demo javafx (animation test)'
+    commandLine 'java', 
+        '--module-path', sourceSets.test.runtimeClasspath.asPath,
+        '--add-modules', 'javafx.controls',
+        '-classpath', sourceSets.test.runtimeClasspath.asPath,
+        demoClassName
 }
-
-task checkJfxrtJarExist(type: DefaultTask) {
-    doLast {
-        if (!JavaVersion.current().isJava8())
-            return
-
-        def jfxrtJarExist = java.nio.file.Paths.get(org.gradle.internal.jvm.Jvm.current().javaHome.path, 'jre', 'lib', 'ext', 'jfxrt.jar').toFile().exists()
-        if (jfxrtJarExist)
-            return
-
-        if (org.gradle.internal.jvm.Jvm.current().toString().contains("GraalVM"))
-            // can`t build
-            throw new RuntimeException("GraalVM 8 don`t support JFX. If you want successfully build the FastMines_jfx\n\
- * upgrade JDK to GraalVM 11\n\
- * or use another JDK 8 - Open/Oracle JVM")
-
-        if (org.gradle.internal.jvm.Jvm.current().toString().contains("JetBrains"))
-            // can`t build
-            throw new RuntimeException("If you want successfully build the FastMines_jfx from AndroidStudio IDE / IDEA\n\
- * change internal JDK to external\n\
-   Menu 'File' -> Project Structure... -> SDK Location -> JDK location -> unselect embedded " + org.gradle.internal.jvm.Jvm.current().javaHome + " -> select path to you JDK8/JDK11 -> Ok\n\
- * or manualy copy file Java8 jfxrt.jar\n\
-   from external JDK\n\
-      %JAVA_HOME_8%\\jre\\lib\\ext\\\n\
-   to\n\
-      " + org.gradle.internal.jvm.Jvm.current().javaHome + "\\jre\\lib\\ext\\")
-    }
-}
-project(':FastMines_jfx').tasks.build.dependsOn project(':FastMines_jfx').tasks.checkJfxrtJarExist
-
 
 eclipse.classpath {
     file.whenMerged {
