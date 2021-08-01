@@ -57,7 +57,7 @@ namespace Test.FastMines.Ava.Images {
 
         public DemoWindow() {
             InitializeComponent();
-            this.AttachDevTools();
+            //this.AttachDevTools();
 
             DataContext = _viewModel;
 

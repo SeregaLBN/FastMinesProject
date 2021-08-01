@@ -14,10 +14,8 @@ using Fmg.Common.Geom;
 using Fmg.Core.Types;
 using Fmg.Core.Types.Model;
 using Fmg.Core.Img;
-using Fmg.Uwp.App;
 using Fmg.Uwp.Utils;
 using Fmg.Uwp.App.Model.Items;
-using Fmg.Uwp.App.Model;
 using MosaicsCanvasCtrllr = Fmg.Uwp.Img.Win2d.MosaicImg.CanvasBmpController;
 using    LogoCanvasCtrllr = Fmg.Uwp.Img.Win2d.Logo     .CanvasBmpController;
 using Fmg.Uwp.App.Presentation;
@@ -35,7 +33,6 @@ namespace Fmg.Uwp.App {
         private bool _rotateBkColorOfGameBttn;
         private IDisposable _sizeChangedObservable;
         IDictionary<CanvasControl, MosaicsCanvasCtrllr> mapBindingControlToController = new Dictionary<CanvasControl, MosaicsCanvasCtrllr>();
-        private bool _unloaded = false;
 
         public SelectMosaicPage() {
             this.InitializeComponent();
@@ -100,7 +97,6 @@ namespace Fmg.Uwp.App {
         }
 
         private void OnPageUnloaded(object sender, RoutedEventArgs ev) {
-            _unloaded = true;
             this.Unloaded -= OnPageUnloaded;
             _rotateBkColorOfGameBttn = true;
             ViewModel.MosaicDS.DataSource.CollectionChanged -= OnMosaicDsCollectionChanged;
