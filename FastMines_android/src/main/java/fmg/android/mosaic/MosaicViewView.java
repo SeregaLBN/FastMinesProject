@@ -30,7 +30,6 @@ public class MosaicViewView extends MosaicAndroidView<DrawableView, Bitmap, Mosa
     private DrawableView control;
     private Flag.BitmapController _imgFlag = new Flag.BitmapController();
     private Mine.BitmapController _imgMine = new Mine.BitmapController();
-    private final Collection<BaseCell> _modifiedCells = new HashSet<>();
     private final Rect clipBounds = new Rect();
 
     public MosaicViewView(Context context) {
@@ -52,8 +51,7 @@ public class MosaicViewView extends MosaicAndroidView<DrawableView, Bitmap, Mosa
                 (clipBounds==null)
                         ? null
                         : toDrawCells(Cast.toRectDouble(clipBounds)),
-                true/*_modifiedCells.isEmpty() || (_modifiedCells.size() == getModel().getMatrix().size())*/);
-        _modifiedCells.clear();
+                true);
     }
 
     public DrawableView getControl() {
@@ -84,38 +82,7 @@ public class MosaicViewView extends MosaicAndroidView<DrawableView, Bitmap, Mosa
 
         assert !_alreadyPainted;
 
-        if ((modifiedCells == null) || // mark NULL if all mosaic is changed
-            (android.os.Build.VERSION.SDK_INT >= 21))
-        {
-            _modifiedCells.clear();
-            control.invalidate();
-        } else {
-            _modifiedCells.addAll(modifiedCells);
-
-            double minX=0, minY=0, maxX=0, maxY=0;
-            boolean first = true;
-            for (BaseCell cell : modifiedCells) {
-                RectDouble rc = cell.getRcOuter();
-                if (first) {
-                    first = false;
-                    minX = rc.x;
-                    minY = rc.y;
-                    maxX = rc.right();
-                    maxY = rc.bottom();
-                } else {
-                    minX = Math.min(minX, rc.x);
-                    minY = Math.min(minY, rc.y);
-                    maxX = Math.max(maxX, rc.right());
-                    maxY = Math.max(maxY, rc.bottom());
-                }
-            }
-            if (_DEBUG_DRAW_FLOW)
-                Logger.info("MosaicViewAndroid.draw: repaint={" + (int)minX +","+ (int)minY +","+ (int)(maxX-minX) +","+ (int)(maxY-minY) + "}");
-
-            MosaicDrawModel<?> model = getModel();
-            SizeDouble offset = model.getMosaicOffset();
-            control.invalidate((int)(minX + offset.width), (int)(minY + offset.height), (int)(maxX-minX), (int)(maxY-minY));
-        }
+        control.invalidate();
     }
 
     @Override
