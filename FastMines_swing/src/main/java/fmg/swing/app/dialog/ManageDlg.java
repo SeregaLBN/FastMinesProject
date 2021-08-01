@@ -71,7 +71,7 @@ public class ManageDlg implements AutoCloseable {
             (rowIndex < players.getUserCount()))
         {
             User user = players.getUser(rowIndex);
-            UUID activeUserId = user.getGuid();
+            UUID activeUserId = user.getId();
 //            Logger.info("Active user is: " + user);
             if (app != null)
                 app.setActiveUserId(activeUserId);
@@ -127,7 +127,7 @@ public class ManageDlg implements AutoCloseable {
         if (rowIndex == -1)
             FastMinesApp.beep();
         else
-            players.removePlayer(players.getUser(rowIndex).getGuid());
+            players.removePlayer(players.getUser(rowIndex).getId());
     }
 
     /** создаю панели с нужным расположением */

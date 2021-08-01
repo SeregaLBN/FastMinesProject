@@ -101,7 +101,7 @@ public class ManageTblModel implements TableModel, AutoCloseable {
         switch (ev.getPropertyName()) {
         case Players.USER_ADDED:
             user = (User)ev.getNewValue();
-            pos = players.getPos(user.getGuid());
+            pos = players.getPos(user.getId());
             fireTableChanged(new TableModelEvent(this, pos, pos, 0, TableModelEvent.INSERT));
             break;
         case Players.USER_DELETED:
@@ -110,7 +110,7 @@ public class ManageTblModel implements TableModel, AutoCloseable {
             break;
         case Players.USER_NAME_UPDATED:
             user = (User)ev.getNewValue();
-            pos = players.getPos(user.getGuid());
+            pos = players.getPos(user.getId());
             fireTableChanged(new TableModelEvent(this, pos, pos, 0, TableModelEvent.UPDATE));
             break;
         default:

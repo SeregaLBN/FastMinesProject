@@ -14,7 +14,7 @@ public class UserSerializer implements ISerializer {
 
     public void write(User user, ObjectOutput out) throws IOException {
         out.writeLong(VERSION);
-        out.writeUTF(user.getGuid().toString());
+        out.writeUTF(user.getId().toString());
         out.writeUTF(user.getName());
 
         String pass = user.getPassword();
@@ -35,7 +35,7 @@ public class UserSerializer implements ISerializer {
             throw new IllegalArgumentException(UserSerializer.class.getSimpleName() + ": Unsupported version #" + ver);
 
         User user = new User();
-        user.setGuid(UUID.fromString(in.readUTF()));
+        user.setId(UUID.fromString(in.readUTF()));
         user.setName(in.readUTF());
 
         boolean exist = in.readBoolean();

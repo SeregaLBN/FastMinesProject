@@ -42,7 +42,7 @@ public class StaticsticTblModel extends ReportTableModel implements AutoCloseabl
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         User user = players.getUser(rowIndex);
-        Statistics sc = players.getInfo(user.getGuid(), eMosaic, eSkill);
+        Statistics sc = players.getInfo(user.getId(), eMosaic, eSkill);
         NumberFormat formatter = new DecimalFormat("0.000", new DecimalFormatSymbols(Locale.US));
         switch (columnIndex) {
         case 0: return user.getName();

@@ -19,7 +19,6 @@ public class Players implements INotifyPropertyChanged, AutoCloseable {
     public static final String USER_STATISTIC_CHANGED = UserStatisticChanged.class.getSimpleName();
 
     private List<Record> records = new ArrayList<>();
-
     private NotifyPropertyChanged notifier = new NotifyPropertyChanged(this, true);
 
     public static class Record {
@@ -42,6 +41,7 @@ public class Players implements INotifyPropertyChanged, AutoCloseable {
 
     }
 
+    /** for event */
     public static class UserStatisticChanged {
         public final UUID userId;
         public final EMosaic mosaic;
@@ -80,18 +80,18 @@ public class Players implements INotifyPropertyChanged, AutoCloseable {
                 throw new IllegalArgumentException("Please enter a unique name");
 
         User user = new User();
-        user.setGuid(UUID.randomUUID());
+        user.setId(UUID.randomUUID());
         user.setName(name);
         user.setPassword(pass);
         records.add(new Record(user));
         notifier.firePropertyChanged(null, user, USER_ADDED);
-        return user.getGuid();
+        return user.getId();
     }
 
     public int indexOf(User user) {
         Record recFind = null;
         for (Record rec: records)
-            if (rec.user.getGuid().equals(user.getGuid())) {
+            if (rec.user.getId().equals(user.getId())) {
                 recFind = rec;
                 break;
             }
@@ -132,7 +132,7 @@ public class Players implements INotifyPropertyChanged, AutoCloseable {
     private Record find(UUID userId) {
         if (userId != null)
             for (Record rec: records)
-                if (rec.user.getGuid().equals(userId))
+                if (rec.user.getId().equals(userId))
                     return rec;
         return null;
     }
@@ -152,6 +152,7 @@ public class Players implements INotifyPropertyChanged, AutoCloseable {
         Record rec = find(userId);
         if (rec == null)
             throw new IllegalArgumentException("User with id=" + userId + " not exist");
+
         return rec.user;
     }
 
@@ -166,9 +167,11 @@ public class Players implements INotifyPropertyChanged, AutoCloseable {
     public int getPos(UUID userId) {
         if (userId == null)
             return -1;
+
         Record rec = find(userId);
         if (rec == null)
             return -1;
+
         return records.indexOf(rec);
     }
 

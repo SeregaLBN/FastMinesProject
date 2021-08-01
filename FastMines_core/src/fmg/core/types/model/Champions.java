@@ -31,7 +31,7 @@ public class Champions implements INotifyPropertyChanged, AutoCloseable {
 
         public Record() {}
         public Record(User user, long playTime) {
-            this.userId = user.getGuid();
+            this.userId = user.getId();
             this.userName = user.getName();
             this.playTime  = playTime;
         }
@@ -67,6 +67,7 @@ public class Champions implements INotifyPropertyChanged, AutoCloseable {
 
     }
 
+    /** for event */
     public static class ChampionAdded {
         public final UUID userId;
         public final EMosaic mosaic;
@@ -122,7 +123,7 @@ public class Champions implements INotifyPropertyChanged, AutoCloseable {
             list.subList(MAX_SIZE, list.size()).clear();
 
         if (pos < MAX_SIZE) {
-            notifier.firePropertyChanged(null, new ChampionAdded(user.getGuid(), mosaic, eSkill, pos), CHAMPION_ADDED);
+            notifier.firePropertyChanged(null, new ChampionAdded(user.getId(), mosaic, eSkill, pos), CHAMPION_ADDED);
             return pos;
         }
 
@@ -139,12 +140,14 @@ public class Champions implements INotifyPropertyChanged, AutoCloseable {
     public long getUserPlayTime(int index, EMosaic mosaic, ESkillLevel eSkill) {
         if (eSkill == ESkillLevel.eCustom)
             throw new IllegalArgumentException("Invalid input data - " + eSkill);
+
         return records[mosaic.ordinal()][eSkill.ordinal()].get(index).playTime;
     }
 
     public int getUsersCount(EMosaic mosaic, ESkillLevel eSkill) {
         if (eSkill == ESkillLevel.eCustom)
             throw new IllegalArgumentException("Invalid input data - " + eSkill);
+
         return records[mosaic.ordinal()][eSkill.ordinal()].size();
     }
 
@@ -179,12 +182,12 @@ public class Champions implements INotifyPropertyChanged, AutoCloseable {
                     List<Record> list = records[mosaic.ordinal()][eSkill.ordinal()];
                     boolean isChanged = false;
                     for (Record record : list)
-                        if ((user.getGuid() == record.userId) && !user.getName().equals(record.userName)) {
+                        if ((user.getId() == record.userId) && !user.getName().equals(record.userName)) {
                             record.userName = user.getName();
                             isChanged = true;
                         }
                     if (isChanged)
-                        notifier.firePropertyChanged(null, user.getGuid(), CHAMPION_RENAMED);
+                        notifier.firePropertyChanged(null, user.getId(), CHAMPION_RENAMED);
                 }
     }
 

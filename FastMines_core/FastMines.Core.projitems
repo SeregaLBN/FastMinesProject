@@ -36,8 +36,6 @@
     <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\HSV.cs"                                  Link="fmg.common\HSV.cs" />
     <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\ThreadLocalRandom.cs"                    Link="fmg.common\ThreadLocalRandom.cs" />
     <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\Color.cs"                                Link="fmg.common\Color.cs" />
-    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\IExternalizable.cs"                      Link="fmg.common\IExternalizable.cs" />
-    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\ISerializable.cs"                        Link="fmg.common\ISerializable.cs" />
     <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\Nothing.cs"                              Link="fmg.common\Nothing.cs" />
     <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\PlainFree.cs"                            Link="fmg.common\PlainFree.cs" />
     <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\Logger.cs"                               Link="fmg.common\Logger.cs" />

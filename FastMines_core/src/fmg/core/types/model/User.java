@@ -7,7 +7,7 @@ import java.util.UUID;
 public class User {
 
     /** Unique user ID. const */
-    private UUID guid;
+    private UUID id;
     /** User name. May be changed */
     private String name;
     /** User password */
@@ -16,12 +16,17 @@ public class User {
     public String imgAvatar;
 
 
-    public UUID getGuid() { return guid; }
-    public void setGuid(UUID guid) { this.guid = Objects.requireNonNull(guid, "Unique ID must be exist"); }
+    public UUID getId() { return id; }
+    public void setId(UUID newId) {
+        if (this.id != null)
+            throw new UnsupportedOperationException("Illegal usage - con not change existed id");
+
+        this.id = Objects.requireNonNull(newId, "Unique ID must be exist");
+    }
 
     public String getName() { return name; }
     public void setName(String name) {
-        if ((name == null) || (name.isEmpty()))
+        if ((name == null) || name.isEmpty())
             throw new IllegalArgumentException("Invalid player name. Need not empty.");
 
         this.name = name;

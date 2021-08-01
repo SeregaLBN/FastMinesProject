@@ -1,83 +1,51 @@
 using System;
-using System.IO;
-using Fmg.Common;
 
 namespace Fmg.Core.Types.Model {
 
-    public class User : IExternalizable {
+    /// <summary> User model </summary>
+    public class User {
 
-        /** неизменный id пользователя */
-        private Guid guid;
-        /** юзер может менять и имя ... */
-        private string name;
-        /** ... и пароль */
-        private string password;
-        public string imgAvatar;
-
-        /** new User */
-        public User(string name, string password, string imgAvatar) {
-            this.guid = Guid.NewGuid();
-
-            if (string.IsNullOrEmpty(name))
-                throw new Exception("Invalid player name. Need not empty.");
-            this.name = name;
-
-            if ((password != null) && string.IsNullOrEmpty(password))
-                password = null;
-            this.password = password;
-
-            if ((imgAvatar != null) && string.IsNullOrEmpty(imgAvatar))
-                imgAvatar = null;
-            this.imgAvatar = imgAvatar;
-        }
-
-        /** load from file */
-        public User(BinaryReader input) {
-            ReadExternal(input);
-        }
-
-        public Guid Guid { get { return guid; } }
-        public String Name {
-            get { return name; }
+        /// <summary> Unique user ID. const <summary>
+        public Guid Id {
+            get => Id;
             set {
-                if (string.IsNullOrEmpty(value))
-                    throw new ArgumentException("Invalid player name. Need not empty.");
+                if (value == Guid.Empty)
+                    throw new ArgumentNullException("Unique ID must be exist");
 
-                this.name = value;
+                if (Id != Guid.Empty)
+                    throw new InvalidOperationException("Illegal usage - con not change existed id");
+
+                Id = value;
             }
         }
 
+        /// <summary> User name. May be changed <summary>
+        public string Name {
+            get => Name;
+            set {
+                if ((value == null) || (value.Length==0))
+                    throw new ArgumentNullException("Invalid player name. Need not empty.");
+
+                Name = value;
+            }
+        }
+
+        /// <summary> User password <summary>
+        public string Password {
+            get => Password;
+            set {
+                if ((value != null) && (value.Length == 0))
+                    value = null;
+
+                Password = value;
+            }
+        }
+
+        /// <summary> link to image <summary>
+        public string ImgAvatar { get; set; }
+
         public override string ToString() {
-            //      return super.toString();
-            return name + "; passw " + (string.IsNullOrEmpty(password) ? "not exist" : "is exist");
-        }
-
-        public void ReadExternal(BinaryReader input) {
-            guid = new Guid(input.ReadString());
-            name = input.ReadString();
-
-            bool exist = input.ReadBoolean();
-            if (exist)
-                password = input.ReadString();
-
-            exist = input.ReadBoolean();
-            if (exist)
-                imgAvatar = input.ReadString();
-        }
-
-        public void WriteExternal(BinaryWriter output) {
-            output.Write(guid.ToString());
-            output.Write(name);
-
-            bool exist = !string.IsNullOrEmpty(password);
-            output.Write(exist);
-            if (exist)
-                output.Write(password);
-
-            exist = !string.IsNullOrEmpty(imgAvatar);
-            output.Write(exist);
-            if (exist)
-                output.Write(imgAvatar);
+            return Name + "; passw " + (string.IsNullOrEmpty(Password) ? "not exist" : "is exist");
         }
 
     }
