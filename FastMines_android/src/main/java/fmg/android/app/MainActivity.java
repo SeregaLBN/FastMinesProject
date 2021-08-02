@@ -34,7 +34,7 @@ import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
-import fmg.core.types.model.MosaicInitData;
+import fmg.core.app.model.MosaicInitData;
 
 /** Main window activity */
 public class MainActivity extends AppCompatActivity {

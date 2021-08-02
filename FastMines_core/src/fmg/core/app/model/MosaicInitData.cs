@@ -2,8 +2,9 @@ using System;
 using System.ComponentModel;
 using Fmg.Common.Geom;
 using Fmg.Common.Notifier;
+using Fmg.Core.Types;
 
-namespace Fmg.Core.Types.Model {
+namespace Fmg.Core.App.Model {
 
     /// <summary> Mosaic model (data for save/load) </summary>
     public class MosaicInitData : INotifyPropertyChanged, IDisposable {

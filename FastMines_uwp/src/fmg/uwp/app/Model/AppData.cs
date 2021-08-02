@@ -1,4 +1,4 @@
-﻿using Fmg.Core.Types.Model;
+﻿using Fmg.Core.App.Model;
 using Fmg.Uwp.App.Presentation;
 
 namespace Fmg.Uwp.App.Model {

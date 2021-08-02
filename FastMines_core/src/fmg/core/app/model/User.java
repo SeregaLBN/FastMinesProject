@@ -1,4 +1,4 @@
-package fmg.core.types.model;
+package fmg.core.app.model;
 
 import java.util.Objects;
 import java.util.UUID;

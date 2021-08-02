@@ -1,4 +1,4 @@
-namespace Fmg.Core.Types.Model {
+namespace Fmg.Core.App.Model {
 
     public class Statistics {
 

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Fmg.Common;
 using Fmg.Common.Notifier;
 using Fmg.Core.Types;
-using Fmg.Core.Types.Model;
+using Fmg.Core.App.Model;
 
 namespace Fmg.Core.Mosaic {
 

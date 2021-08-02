@@ -3,7 +3,7 @@ package fmg.android.app.serializers;
 import android.content.SharedPreferences;
 
 import fmg.common.Logger;
-import fmg.core.app.ISerializer;
+import fmg.core.app.serializers.ISerializer;
 import fmg.android.app.model.AppData;
 import fmg.android.app.presentation.MenuSettings;
 

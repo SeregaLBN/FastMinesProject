@@ -10,8 +10,8 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
-import fmg.core.types.model.Players;
-import fmg.core.types.model.User;
+import fmg.core.app.model.Players;
+import fmg.core.app.model.User;
 
 public class ManageTblModel implements TableModel, AutoCloseable {
 

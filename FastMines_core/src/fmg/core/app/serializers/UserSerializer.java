@@ -1,13 +1,13 @@
-package fmg.swing.app.serializers;
+package fmg.core.app.serializers;
 
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.UUID;
 
-import fmg.core.app.ISerializer;
-import fmg.core.types.model.User;
+import fmg.core.app.model.User;
 
+/** User (de)serializer */
 public class UserSerializer implements ISerializer {
 
     private static final long VERSION = 1;

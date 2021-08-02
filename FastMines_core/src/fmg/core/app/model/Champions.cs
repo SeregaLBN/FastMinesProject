@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Fmg.Common.Notifier;
+using Fmg.Core.Types;
 
-namespace Fmg.Core.Types.Model {
+namespace Fmg.Core.App.Model {
 
     /// <summary>Champions data model</summary>
     public abstract class Champions : INotifyPropertyChanged, IDisposable {

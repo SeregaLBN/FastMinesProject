@@ -1,12 +1,12 @@
-package fmg.swing.app.serializers;
+package fmg.core.app.serializers;
 
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-import fmg.core.app.ISerializer;
-import fmg.core.types.model.Statistics;
+import fmg.core.app.model.Statistics;
 
+/** Statistics (de)serializer */
 public class StatisticsSerializer implements ISerializer {
 
     private static final long VERSION = 1;

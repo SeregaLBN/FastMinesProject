@@ -36,7 +36,7 @@ import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.ClickResult;
 import fmg.core.types.EGameStatus;
 import fmg.core.types.EState;
-import fmg.core.types.model.MosaicInitData;
+import fmg.core.app.model.MosaicInitData;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;

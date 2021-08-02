@@ -9,11 +9,11 @@ import java.util.Locale;
 
 import javax.swing.event.TableModelEvent;
 
+import fmg.core.app.model.Players;
+import fmg.core.app.model.Statistics;
+import fmg.core.app.model.User;
+import fmg.core.app.model.Players.UserStatisticChanged;
 import fmg.core.types.EMosaic;
-import fmg.core.types.model.Players;
-import fmg.core.types.model.Players.UserStatisticChanged;
-import fmg.core.types.model.Statistics;
-import fmg.core.types.model.User;
 
 public class StaticsticTblModel extends ReportTableModel implements AutoCloseable {
 

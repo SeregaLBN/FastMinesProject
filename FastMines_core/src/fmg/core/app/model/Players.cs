@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Fmg.Common.Notifier;
+using Fmg.Core.Types;
 
-namespace Fmg.Core.Types.Model {
+namespace Fmg.Core.App.Model {
 
     /// <summary>Players data model == all users and their statistics</summary>
     public class Players : INotifyPropertyChanged, IDisposable {

@@ -13,11 +13,11 @@ import javax.swing.*;
 import javax.swing.event.ChangeListener;
 
 import fmg.common.geom.Matrisize;
+import fmg.core.app.model.MosaicInitData;
 import fmg.core.mosaic.MosaicGameModel;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.ESkillLevel;
-import fmg.core.types.model.MosaicInitData;
 import fmg.swing.app.FastMinesApp;
 import fmg.swing.utils.GuiTools;
 

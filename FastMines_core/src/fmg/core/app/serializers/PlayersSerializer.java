@@ -1,25 +1,18 @@
-package fmg.swing.app.serializers;
+package fmg.core.app.serializers;
 
 import java.io.*;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import fmg.common.Logger;
-import fmg.common.crypt.Simple3DES;
-import fmg.core.app.AProjSettings;
-import fmg.core.app.ISerializer;
-import fmg.core.types.model.Players;
-import fmg.core.types.model.Players.Record;
-import fmg.core.types.model.Statistics;
-import fmg.core.types.model.User;
+import fmg.core.app.model.Players;
+import fmg.core.app.model.Players.Record;
+import fmg.core.app.model.Statistics;
+import fmg.core.app.model.User;
 
-/** хранилище пользователей и их игровой статистики */
-public class PlayersSerializer implements ISerializer {
+/** Players base (de)serializer */
+public abstract class PlayersSerializer implements ISerializer {
 
-    private static final long VERSION = 1;
+    protected static final long VERSION = 1;
 
     private static class RecordSerializer implements ISerializer {
 
@@ -66,106 +59,111 @@ public class PlayersSerializer implements ISerializer {
         return res;
     }
 
-    public void save(Players players) {
-        byte[] data;
-        // 1. serialize
+    /** serialize to bytes */
+    private byte[] asBytes(Players players) throws IOException {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
              ObjectOutputStream oos = new ObjectOutputStream(baos))
         {
             write(players, oos);
             oos.flush();
 
-            data = baos.toByteArray();
-
-        } catch (Exception ex) {
-            Logger.error("Can`t serialize data " + Players.class.getSimpleName(), ex);
-            return;
+            return baos.toByteArray();
         }
+    }
 
-        // 2. crypt data
-        byte[] cryptedData;
-        // 1. serializable object
-        try  {
-            cryptedData = new Simple3DES(getSerializeKey()).encrypt(data);
-
-        } catch (Exception ex) {
-            Logger.error("Can`t crypt data " + Players.class.getSimpleName(), ex);
-            return;
+    /** deserilize from bytes */
+    protected Players fromBytes(byte[] data) throws IOException {
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(data);
+             ObjectInputStream ois = new ObjectInputStream(bais))
+        {
+            return read(ois);
         }
+    }
 
-        // 3. write to file
-        try (OutputStream fos = new FileOutputStream(getStcFile());
+    /** write to file */
+    private void write(byte[] data, File file) throws IOException {
+        try (OutputStream fos = new FileOutputStream(file);
              ObjectOutputStream oot = new ObjectOutputStream(fos))
         {
             oot.writeLong(VERSION); // save version and decrypt key
-            int len = cryptedData.length;
+            int len = data.length;
             oot.writeInt(len);
-            oot.write(cryptedData);
-        } catch (Exception ex) {
-            Logger.error("Can`t save " + Players.class.getSimpleName(), ex);
+            oot.write(data);
         }
-
     }
 
-    public Players load() {
-        File file = getStcFile();
-        if (!file.exists())
-            return new Players();
-
-        // 1. read from file
-        byte[] cryptedData;
+    /** read from file */
+    private byte[] read(File file) throws IOException {
         try (InputStream fis = new FileInputStream(file);
              ObjectInputStream oin = new ObjectInputStream(fis))
         {
             long version = oin.readLong();
             if (version != VERSION)
-                throw new RuntimeException("Invalid file data. Unsupported " + Players.class.getSimpleName() + " version " + version);
+                throw new IOException("Invalid file data. Unsupported " + Players.class.getSimpleName() + " version " + version);
 
-            cryptedData = new byte[oin.readInt()];
+            byte[] data = new byte[oin.readInt()];
             int read = 0;
             do {
-                int curr = oin.read(cryptedData, read, cryptedData.length-read);
+                int curr = oin.read(data, read, data.length-read);
                 if (curr < 0)
                     break;
                 read += curr;
-            } while(read < cryptedData.length);
-            if (read != cryptedData.length)
-                throw new IOException("Invalid data length. Required " + cryptedData.length + " bytes; read " + read + " bytes.");
+            } while(read < data.length);
+
+            if (read != data.length)
+                throw new IOException("Invalid data length. Required " + data.length + " bytes; read " + read + " bytes.");
+
+            return data;
+        }
+    }
+
+    protected byte[] writeTransform(byte[] data) throws IOException {
+        // defaut none
+        return data;
+    }
+
+    protected byte[] readTransform(byte[] data) throws IOException {
+        // defaut none
+        return data;
+    }
+
+    public void save(Players players) {
+        try {
+            // 1. serialize
+            byte[] data = asBytes(players);
+
+            // 2. transform data
+            data = writeTransform(data);
+
+            // 3. write to file
+            write(data, getStatisticsFile());
+
+        } catch (Exception ex) {
+            Logger.error("Can`t save " + Players.class.getSimpleName(), ex);
+        }
+    }
+
+    public Players load() {
+        File file = getStatisticsFile();
+        if (!file.exists())
+            return new Players();
+
+        try {
+            // 1. read from file
+            byte[] data = read(file);
+
+            // 2. transform data
+            data = readTransform(data);
+
+            // 3. deserialize
+            return fromBytes(data);
 
         } catch (Exception ex) {
             Logger.error("Can`t load " + Players.class.getSimpleName(), ex);
             return new Players();
         }
-
-        // 2. decrypt data
-        byte[] data;
-        try {
-            data = new Simple3DES(getSerializeKey()).decrypt(cryptedData);
-        } catch (Exception ex) {
-            Logger.error("Can`t decrypt " + Players.class.getSimpleName(), ex);
-            return new Players();
-        }
-
-        // 3. deserialize
-        try (ByteArrayInputStream bais = new ByteArrayInputStream(data);
-             ObjectInputStream ois = new ObjectInputStream(bais))
-        {
-            return read(ois);
-        } catch (Exception ex) {
-            Logger.error("Can`t deserialize data " + Players.class.getSimpleName(), ex);
-            return new Players();
-        }
     }
 
-    private static String getSerializeKey() throws NoSuchAlgorithmException {
-        byte[] digest = MessageDigest.getInstance("MD5")
-                                     .digest(Long.toString(VERSION)
-                                                 .getBytes(StandardCharsets.UTF_8));
-        return String.format("%032X", new BigInteger(1, digest));
-    }
-
-    private static File getStcFile() {
-        return new File(AProjSettings.getStatisticsFileName());
-    }
+    protected abstract File getStatisticsFile();
 
 }

@@ -8,8 +8,8 @@ import fmg.common.Logger;
 import fmg.common.geom.Point;
 import fmg.common.geom.SizeDouble;
 import fmg.core.app.AProjSettings;
-import fmg.core.app.ISerializer;
-import fmg.core.types.model.MosaicInitData;
+import fmg.core.app.model.MosaicInitData;
+import fmg.core.app.serializers.ISerializer;
 import fmg.swing.app.menu.EShowElement;
 import fmg.swing.app.model.AppData;
 

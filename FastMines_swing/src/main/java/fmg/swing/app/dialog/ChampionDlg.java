@@ -4,9 +4,9 @@ import java.awt.Dimension;
 
 import javax.swing.SwingConstants;
 
+import fmg.core.app.model.Champions;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
-import fmg.core.types.model.Champions;
 import fmg.swing.app.FastMinesApp;
 import fmg.swing.app.model.view.ChampionTblModel;
 import fmg.swing.app.model.view.ReportTableModel;

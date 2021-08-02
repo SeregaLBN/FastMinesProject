@@ -5,9 +5,9 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 import fmg.common.geom.Matrisize;
-import fmg.core.app.ISerializer;
+import fmg.core.app.model.MosaicInitData;
+import fmg.core.app.serializers.ISerializer;
 import fmg.core.types.EMosaic;
-import fmg.core.types.model.MosaicInitData;
 
 /** Mosaic data (de)serializer. For save/restore {@link MosaicInitData} */
 public class MosaicInitDataSerializer implements ISerializer {

@@ -5,9 +5,9 @@ import java.beans.PropertyChangeListener;
 
 import javax.swing.event.TableModelEvent;
 
+import fmg.core.app.model.Champions;
+import fmg.core.app.model.Champions.ChampionAdded;
 import fmg.core.types.EMosaic;
-import fmg.core.types.model.Champions;
-import fmg.core.types.model.Champions.ChampionAdded;
 
 public class ChampionTblModel extends ReportTableModel implements AutoCloseable {
 

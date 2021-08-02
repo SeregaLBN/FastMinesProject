@@ -23,6 +23,10 @@ import fmg.common.geom.Matrisize;
 import fmg.common.geom.Rect;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.ITimer;
+import fmg.core.app.model.Champions;
+import fmg.core.app.model.MosaicInitData;
+import fmg.core.app.model.Players;
+import fmg.core.app.model.User;
 import fmg.core.img.IImageController;
 import fmg.core.img.LogoModel;
 import fmg.core.mosaic.MosaicController;
@@ -33,18 +37,14 @@ import fmg.core.types.EGameStatus;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
-import fmg.core.types.model.Champions;
-import fmg.core.types.model.MosaicInitData;
-import fmg.core.types.model.Players;
-import fmg.core.types.model.User;
 import fmg.swing.app.dialog.*;
 import fmg.swing.app.menu.EShowElement;
 import fmg.swing.app.menu.EZoomInterface;
 import fmg.swing.app.menu.MainMenu;
 import fmg.swing.app.model.AppData;
 import fmg.swing.app.serializers.AppDataSerializer;
-import fmg.swing.app.serializers.ChampionsSerializer;
-import fmg.swing.app.serializers.PlayersSerializer;
+import fmg.swing.app.serializers.ChampionsSwingSerializer;
+import fmg.swing.app.serializers.PlayersSwingSerializer;
 import fmg.swing.app.toolbar.EBtnNewGameState;
 import fmg.swing.app.toolbar.ToolBar;
 import fmg.swing.img.Animator;
@@ -419,19 +419,11 @@ public class FastMinesApp {
     }
 
     public ESkillLevel getSkillLevel() {
-        EMosaic eMosaic = getMosaicController().getMosaicType();
-        Matrisize sizeFld = getMosaicController().getSizeField();
-        int numberMines = getMosaicController().getCountMines();
-
-        if (sizeFld.equals(ESkillLevel.eBeginner.getDefaultSize()) && (numberMines == ESkillLevel.eBeginner.getNumberMines(eMosaic)))
-            return ESkillLevel.eBeginner;
-        if (sizeFld.equals(ESkillLevel.eAmateur.getDefaultSize()) && (numberMines == ESkillLevel.eAmateur.getNumberMines(eMosaic)))
-            return ESkillLevel.eAmateur;
-        if (sizeFld.equals(ESkillLevel.eProfi.getDefaultSize()) && (numberMines == ESkillLevel.eProfi.getNumberMines(eMosaic)))
-            return ESkillLevel.eProfi;
-        if (sizeFld.equals(ESkillLevel.eCrazy.getDefaultSize()) && (numberMines == ESkillLevel.eCrazy.getNumberMines(eMosaic)))
-            return ESkillLevel.eCrazy;
-        return ESkillLevel.eCustom;
+        var mc = getMosaicController();
+        EMosaic eMosaic   = mc.getMosaicType();
+        Matrisize sizeFld = mc.getSizeField();
+        int numberMines   = mc.getCountMines();
+        return ESkillLevel.calcSkillLevel(eMosaic, sizeFld, numberMines);
     }
 
     /** прочие комбинации клавиш (не из меню) */
@@ -563,8 +555,8 @@ public class FastMinesApp {
         MosaicJPanelController mosaicCtrllr = getMosaicController();
         mosaicCtrllr.setOnClickEvent(null);
 
-        new PlayersSerializer().save(getPlayers());
-        new ChampionsSerializer().save(getChampions());
+        new PlayersSwingSerializer().save(getPlayers());
+        new ChampionsSwingSerializer().save(getChampions());
 
         { // csabe settings
             AppData spm = new AppData();
@@ -1063,12 +1055,12 @@ public class FastMinesApp {
 
     public Players getPlayers() {
         if (players == null)
-            players = new PlayersSerializer().load();
+            players = new PlayersSwingSerializer().load();
         return players;
     }
     public Champions getChampions() {
         if (champions == null) {
-            champions = new ChampionsSerializer().load();
+            champions = new ChampionsSwingSerializer().load();
             champions.subscribeTo(getPlayers());
         }
         return champions;
@@ -1091,7 +1083,7 @@ public class FastMinesApp {
     }
 
     /** Сохранить чемпиона && Установить статистику */
-    public void saveStatisticAndChampion() {
+    private void saveStatisticAndChampion() {
         MosaicJPanelController mosaicCtrllr = getMosaicController();
         if (mosaicCtrllr.getGameStatus() != EGameStatus.eGSEnd)
             throw new IllegalArgumentException("Invalid method state call");
@@ -1106,7 +1098,7 @@ public class FastMinesApp {
             return;
 
         final EMosaic eMosaic = mosaicCtrllr.getMosaicType();
-        final long realCountOpen = mosaicCtrllr.isVictory() ? mosaicCtrllr.getCountMines() : mosaicCtrllr.getCountOpen();
+        final long realCountOpen = victory ? mosaicCtrllr.getCountMines() : mosaicCtrllr.getCountOpen();
         final long playTime = getGameTimer().getTime();
         final long clickCount = mosaicCtrllr.getCountClick();
 
@@ -1114,7 +1106,8 @@ public class FastMinesApp {
         Consumer<UUID> onActionToUser = userId -> {
             if (userId != null) {
                 // ...статистики
-                getPlayers().updateStatistic(userId, eMosaic, eSkill, victory, realCountOpen, playTime, clickCount);
+                Players p = getPlayers();
+                p.updateStatistic(userId, eMosaic, eSkill, victory, realCountOpen, playTime, clickCount);
                 if (isStatisticDialogExist()) {
                     StatisticDlg sd = getStatisticDialog();
                     if (sd.getDialog().isVisible())
@@ -1124,7 +1117,7 @@ public class FastMinesApp {
 
                 // ...чемпиона
                 if (victory) {
-                    User user = getPlayers().getUser(userId);
+                    User user = p.getUser(userId);
                     int pos = getChampions().add(user, playTime, eMosaic, eSkill);
                     if (pos != -1)
                         getChampionDialog().showData(eSkill, eMosaic, pos);

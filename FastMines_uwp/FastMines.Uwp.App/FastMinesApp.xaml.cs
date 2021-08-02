@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Controls;
 using Fmg.Common;
 using Fmg.Core.Img;
-using Fmg.Core.Types.Model;
+using Fmg.Core.App.Model;
 using Fmg.Uwp.App.Model;
 using Fmg.Uwp.App.Presentation;
 using Fmg.Uwp.App.Serializers;

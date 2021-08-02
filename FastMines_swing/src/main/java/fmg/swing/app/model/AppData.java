@@ -5,9 +5,9 @@ import java.util.UUID;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.Point;
 import fmg.common.geom.SizeDouble;
+import fmg.core.app.model.MosaicInitData;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.types.EMosaic;
-import fmg.core.types.model.MosaicInitData;
 import fmg.swing.app.menu.EShowElement;
 
 /** Data model of the application to save/restore */

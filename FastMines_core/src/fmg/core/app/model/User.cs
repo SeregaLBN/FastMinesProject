@@ -1,6 +1,6 @@
 using System;
 
-namespace Fmg.Core.Types.Model {
+namespace Fmg.Core.App.Model {
 
     /// <summary> User model </summary>
     public class User {

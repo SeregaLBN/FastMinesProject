@@ -26,7 +26,7 @@ using Fmg.Common;
 using Fmg.Common.Geom;
 using Fmg.Common.Notifier;
 using Fmg.Core.Types;
-using Fmg.Core.Types.Model;
+using Fmg.Core.App.Model;
 using Fmg.Core.Mosaic.Cells;
 
 namespace Fmg.Core.Mosaic {
@@ -47,12 +47,12 @@ namespace Fmg.Core.Mosaic {
 
         protected bool Disposed { get; private set; }
         private event PropertyChangedEventHandler PropertyChangedSync {
-            add    { _notifier/*Sync*/.PropertyChanged += value;  }
-            remove { _notifier/*Sync*/.PropertyChanged -= value;  }
+            add    { _notifier/*Sync*/.PropertyChanged += value; }
+            remove { _notifier/*Sync*/.PropertyChanged -= value; }
         }
         public event PropertyChangedEventHandler PropertyChanged/*Async*/ {
-            add    { _notifierAsync.PropertyChanged += value;  }
-            remove { _notifierAsync.PropertyChanged -= value;  }
+            add    { _notifierAsync.PropertyChanged += value; }
+            remove { _notifierAsync.PropertyChanged -= value; }
         }
         protected readonly NotifyPropertyChanged _notifier/*Sync*/;
         private   readonly NotifyPropertyChanged _notifierAsync;

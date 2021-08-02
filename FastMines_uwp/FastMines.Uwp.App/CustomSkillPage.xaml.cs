@@ -6,11 +6,10 @@ using Windows.UI.Xaml.Media;
 using Fmg.Common;
 using Fmg.Common.Geom;
 using Fmg.Core.Types;
-using Fmg.Core.Types.Model;
+using Fmg.Core.App.Model;
 using Fmg.Core.Mosaic;
 using Fmg.Core.Img;
 using Fmg.Uwp.Utils;
-using Fmg.Uwp.App.Model;
 
 namespace Fmg.Uwp.App {
 

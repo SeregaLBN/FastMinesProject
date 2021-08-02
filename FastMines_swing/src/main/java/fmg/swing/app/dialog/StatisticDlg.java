@@ -5,10 +5,10 @@ import java.awt.Dimension;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 
+import fmg.core.app.model.Players;
+import fmg.core.app.model.User;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
-import fmg.core.types.model.Players;
-import fmg.core.types.model.User;
 import fmg.swing.app.FastMinesApp;
 import fmg.swing.app.model.view.ReportTableModel;
 import fmg.swing.app.model.view.StaticsticTblModel;

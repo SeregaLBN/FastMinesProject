@@ -1,4 +1,4 @@
-namespace Fmg.Core.App {
+namespace Fmg.Core.App.Serializers {
 
 
     /// <summary> Save / restrore project settings / champions / statistics / etc

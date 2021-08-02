@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -17,12 +18,16 @@ import fmg.android.app.presentation.MosaicViewModel;
 import fmg.android.mosaic.MosaicViewController;
 import fmg.android.utils.Timer;
 import fmg.common.Logger;
+import fmg.core.app.model.Players;
+import fmg.core.app.model.User;
 import fmg.core.img.SmileModel;
 import fmg.core.mosaic.MosaicController;
 import fmg.core.mosaic.MosaicGameModel;
 import fmg.core.types.ClickResult;
 import fmg.core.types.EGameStatus;
-import fmg.core.types.model.MosaicInitData;
+import fmg.core.app.model.MosaicInitData;
+import fmg.core.types.EMosaic;
+import fmg.core.types.ESkillLevel;
 
 /** Game field activity of the project */
 public class MosaicActivity extends AppCompatActivity {
@@ -150,6 +155,11 @@ public class MosaicActivity extends AppCompatActivity {
                 viewModel.setBtnNewGameFaceType(getMosaicController().isVictory()
                                 ? SmileModel.EFaceType.Face_SmilingWithSunglasses
                                 : SmileModel.EFaceType.Face_Disappointed);
+
+                if (getSkillLevel() != ESkillLevel.eCustom)
+                    // сохраняю статистику и чемпиона
+                    saveStatisticAndChampion();
+
                 break;
             }
             viewModel.onTimerCallback(timer); // reload UI
@@ -184,6 +194,39 @@ public class MosaicActivity extends AppCompatActivity {
                     ? SmileModel.EFaceType.Face_Grinning
                     : SmileModel.EFaceType.Face_WhiteSmiling);
         }
+    }
+
+    public ESkillLevel getSkillLevel() {
+        var mc = getMosaicController();
+        var mosaicType = mc.getMosaicType();
+        var sizeFld = mc.getSizeField();
+        var numberMines = mc.getCountMines();
+        return ESkillLevel.calcSkillLevel(mosaicType, sizeFld, numberMines);
+    }
+
+    /** Сохранить чемпиона && Установить статистику */
+    private void saveStatisticAndChampion() {
+        MosaicController mc = getMosaicController();
+        if (mc.getGameStatus() != EGameStatus.eGSEnd)
+            throw new IllegalArgumentException("Invalid method state call");
+
+        // сохраняю все нужные данные
+        boolean victory = mc.isVictory();
+        ESkillLevel eSkill = getSkillLevel();
+        if (eSkill == ESkillLevel.eCustom)
+            return;
+
+        final EMosaic eMosaic = mc.getMosaicType();
+        final long realCountOpen = victory ? mc.getCountMines() : mc.getCountOpen();
+        final long playTime = timer.getTime();
+        final long clickCount = mc.getCountClick();
+
+        int pos = FastMinesApp.get().updateStatistic(eMosaic, eSkill, victory, realCountOpen, playTime, clickCount);
+        if (pos >= 0)
+            Toast.makeText(this.getApplicationContext(),
+                           "Your best result is position #" + (pos + 1),
+                           Toast.LENGTH_LONG)
+                 .show();
     }
 
 }

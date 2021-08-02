@@ -13,7 +13,7 @@ using Fmg.Common.Geom;
 using Fmg.Common.Notifier;
 using Fmg.Core.Img;
 using Fmg.Core.Types;
-using Fmg.Core.Types.Model;
+using Fmg.Core.App.Model;
 using Fmg.Uwp.Utils;
 using Fmg.Uwp.Img.Win2d;
 using Fmg.Uwp.Mosaic.Win2d;

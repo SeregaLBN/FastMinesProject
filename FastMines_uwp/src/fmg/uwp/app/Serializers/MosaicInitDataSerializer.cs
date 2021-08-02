@@ -2,9 +2,9 @@ using System;
 using Windows.Foundation.Collections;
 using Fmg.Common;
 using Fmg.Common.Geom;
-using Fmg.Core.App;
+using Fmg.Core.App.Model;
+using Fmg.Core.App.Serializers;
 using Fmg.Core.Types;
-using Fmg.Core.Types.Model;
 
 namespace Fmg.Uwp.App.Serializers {
 

@@ -1,22 +1,32 @@
 package fmg.android.app;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.widget.Toast;
+
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
-import android.content.Context;
-import android.content.SharedPreferences;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.UUID;
 
-import fmg.android.app.model.AppData;
-import fmg.android.app.serializers.AppDataSerializer;
+import fmg.android.app.serializers.ChampionsAndroidSerializer;
+import fmg.android.app.serializers.PlayersAndroidSerializer;
 import fmg.common.Logger;
 import fmg.core.app.AProjSettings;
-import fmg.core.types.model.MosaicInitData;
+import fmg.core.app.model.Champions;
+import fmg.core.app.model.MosaicInitData;
+import fmg.core.app.model.Players;
+import fmg.android.app.model.AppData;
 import fmg.android.app.presentation.MenuSettings;
+import fmg.android.app.serializers.AppDataSerializer;
+import fmg.core.app.model.User;
+import fmg.core.types.EMosaic;
+import fmg.core.types.ESkillLevel;
 
 /** FastMines application */
 public class FastMinesApp extends Application implements LifecycleObserver {
@@ -24,8 +34,12 @@ public class FastMinesApp extends Application implements LifecycleObserver {
     private final PropertyChangeListener   onMenuSettingsPropertyChangedListener = this::onMenuSettingsPropertyChanged;
     private final PropertyChangeListener onMosaicInitDataPropertyChangedListener = this::onMosaicInitDataPropertyChanged;
 
+
+    private Context context;
     private MenuSettings menuSettings;
     private MosaicInitData mosaicInitData;
+    private Players players;
+    private Champions champions;
 
     public MosaicInitData getMosaicInitData() { return mosaicInitData; }
     public MenuSettings   getMenuSettings()   { return menuSettings; }
@@ -42,10 +56,14 @@ public class FastMinesApp extends Application implements LifecycleObserver {
         self = this;
     }
 
+    public Context getAppContext() {
+        return context;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
+        context = getApplicationContext();
         ProjSettings.init();
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         load();
@@ -68,6 +86,15 @@ public class FastMinesApp extends Application implements LifecycleObserver {
         getMosaicInitData().removeListener(onMosaicInitDataPropertyChangedListener);
     }
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    private void onClosed() {
+        Logger.info("FastMinesApp::onClosed");
+        champions.close();
+        players.close();
+        menuSettings.close();
+        mosaicInitData.close();
+    }
+
     private void save() {
         AppData data = new AppData();
         data.setSplitPaneOpen(menuSettings.isSplitPaneOpen());
@@ -84,6 +111,14 @@ public class FastMinesApp extends Application implements LifecycleObserver {
         menuSettings = new MenuSettings();
         menuSettings.setSplitPaneOpen(data.isSplitPaneOpen());
         mosaicInitData = data.getMosaicInitData();
+
+        players = new PlayersAndroidSerializer().load();
+        if (players.getRecords().isEmpty())
+            // create default user for android
+            players.addNewPlayer("You", null);
+
+        champions = new ChampionsAndroidSerializer().load();
+        champions.subscribeTo(players);
     }
 
     private SharedPreferences getAppPreferences() {
@@ -96,6 +131,25 @@ public class FastMinesApp extends Application implements LifecycleObserver {
 
     private void onMosaicInitDataPropertyChanged(PropertyChangeEvent ev) {
         Logger.info("FastMinesApp::onMosaicInitDataPropertyChanged: ev={0}", ev);
+    }
+
+    /** Сохранить чемпиона && Установить статистику */
+    public int updateStatistic(EMosaic mosaic, ESkillLevel skill, boolean victory, long countOpenField, long playTime, long clickCount) {
+        // логика сохранения...
+        UUID userId = players.getRecords()
+                             .get(0) // first user - default user
+                             .user
+                             .getId();
+        // ...статистики
+        players.updateStatistic(userId, mosaic, skill, victory, countOpenField, playTime, clickCount);
+
+        // ...чемпиона
+        if (victory) {
+            User user = players.getUser(userId);
+            return champions.add(user, playTime, mosaic, skill);
+        }
+
+        return -1;
     }
 
 }

@@ -12,13 +12,13 @@ using Microsoft.Graphics.Canvas.UI.Xaml;
 using Fmg.Common;
 using Fmg.Common.Geom;
 using Fmg.Core.Types;
-using Fmg.Core.Types.Model;
+using Fmg.Core.App.Model;
 using Fmg.Core.Img;
 using Fmg.Uwp.Utils;
 using Fmg.Uwp.App.Model.Items;
+using Fmg.Uwp.App.Presentation;
 using MosaicsCanvasCtrllr = Fmg.Uwp.Img.Win2d.MosaicImg.CanvasBmpController;
 using    LogoCanvasCtrllr = Fmg.Uwp.Img.Win2d.Logo     .CanvasBmpController;
-using Fmg.Uwp.App.Presentation;
 
 namespace Fmg.Uwp.App {
 

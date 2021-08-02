@@ -1,6 +1,6 @@
 package fmg.android.app.model;
 
-import fmg.core.types.model.MosaicInitData;
+import fmg.core.app.model.MosaicInitData;
 import fmg.android.app.presentation.MenuSettings;
 
 /** Data model of the application to save/restore */
