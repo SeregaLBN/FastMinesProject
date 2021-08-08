@@ -133,6 +133,8 @@
     <Compile Include="..\src\fmg\uwp\app\Presentation\MainMenuViewModel.cs"                                Link="fmg.uwp.app\Presentation\MainMenuViewModel.cs"                               />
     <Compile Include="..\src\fmg\uwp\app\Serializers\AppDataSerializer.cs"                                 Link="fmg.uwp.app\Serializers\AppDataSerializer.cs"                                />
     <Compile Include="..\src\fmg\uwp\app\Serializers\MosaicInitDataSerializer.cs"                          Link="fmg.uwp.app\Serializers\MosaicInitDataSerializer.cs"                         />
+    <Compile Include="..\src\fmg\uwp\app\Serializers\ChampionsUwpSerializer.cs"                            Link="fmg.uwp.app\Serializers\ChampionsUwpSerializer.cs"                           />
+    <Compile Include="..\src\fmg\uwp\app\Serializers\PlayersUwpSerializer.cs"                              Link="fmg.uwp.app\Serializers\PlayersUwpSerializer.cs"                             />
 
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FastMinesApp.xaml.cs">

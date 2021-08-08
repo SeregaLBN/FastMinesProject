@@ -19,6 +19,7 @@ public class ChampionsSwingSerializer extends ChampionsSerializer {
         // crypt data
         try  {
             return new Simple3DES(getSerializeKey()).encrypt(data);
+
         } catch (Exception ex) {
             throw new IOException(ex);
         }

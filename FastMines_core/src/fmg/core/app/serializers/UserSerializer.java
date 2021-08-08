@@ -32,7 +32,7 @@ public class UserSerializer implements ISerializer {
     public User read(ObjectInput in) throws IOException {
         long ver = in.readLong();
         if (ver != VERSION)
-            throw new IllegalArgumentException(UserSerializer.class.getSimpleName() + ": Unsupported version #" + ver);
+            throw new IOException(UserSerializer.class.getSimpleName() + ": Unsupported version #" + ver);
 
         User user = new User();
         user.setId(UUID.fromString(in.readUTF()));

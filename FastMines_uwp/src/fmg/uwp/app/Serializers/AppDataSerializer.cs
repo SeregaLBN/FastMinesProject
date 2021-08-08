@@ -1,7 +1,6 @@
 using System;
 using Windows.Foundation.Collections;
 using Fmg.Common;
-using Fmg.Core.App;
 using Fmg.Core.App.Model;
 using Fmg.Core.App.Serializers;
 using Fmg.Uwp.App.Model;

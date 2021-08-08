@@ -47,7 +47,7 @@ public abstract class PlayersSerializer implements ISerializer {
     private Players read(ObjectInput from) throws IOException {
         long version = from.readLong();
         if (version != VERSION)
-            throw new RuntimeException("Unsupported " + Players.class.getSimpleName() + " version " + version);
+            throw new IOException("Unsupported " + Players.class.getSimpleName() + " version " + version);
 
         int size = from.readInt();
         RecordSerializer rs = new RecordSerializer();
@@ -72,7 +72,7 @@ public abstract class PlayersSerializer implements ISerializer {
     }
 
     /** deserilize from bytes */
-    protected Players fromBytes(byte[] data) throws IOException {
+    private Players fromBytes(byte[] data) throws IOException {
         try (ByteArrayInputStream bais = new ByteArrayInputStream(data);
              ObjectInputStream ois = new ObjectInputStream(bais))
         {

@@ -23,7 +23,7 @@ public class StatisticsSerializer implements ISerializer {
     public void read(Statistics to, ObjectInput from) throws IOException {
         long version = from.readLong();
         if (version != VERSION)
-            throw new RuntimeException("Unsupported " + Statistics.class.getSimpleName() + " version " + version);
+            throw new IOException("Unsupported " + Statistics.class.getSimpleName() + " version " + version);
 
         to.gameNumber = from.readLong();
         to.gameWin    = from.readLong();

@@ -54,7 +54,7 @@ public abstract class ChampionsSerializer implements ISerializer {
     private Champions read(ObjectInput from) throws IOException {
         long version = from.readLong();
         if (version != VERSION)
-            throw new RuntimeException("Unsupported " + Champions.class.getSimpleName() + " version " + version);
+            throw new IOException("Unsupported " + Champions.class.getSimpleName() + " version " + version);
 
         Champions res = new Champions();
         List<Record>[][] all = res.getRecords();
@@ -85,7 +85,7 @@ public abstract class ChampionsSerializer implements ISerializer {
     }
 
     /** deserilize from bytes */
-    protected Champions fromBytes(byte[] data) throws IOException {
+    private Champions fromBytes(byte[] data) throws IOException {
         try (ByteArrayInputStream bais = new ByteArrayInputStream(data);
              ObjectInputStream ois = new ObjectInputStream(bais))
         {
@@ -98,7 +98,7 @@ public abstract class ChampionsSerializer implements ISerializer {
         try (OutputStream fos = new FileOutputStream(file);
              ObjectOutputStream oot = new ObjectOutputStream(fos))
         {
-            oot.writeLong(VERSION); // save version and decrypt key
+            oot.writeLong(VERSION);
             int len = data.length;
             oot.writeInt(len);
             oot.write(data);

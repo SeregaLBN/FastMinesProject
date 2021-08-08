@@ -7,13 +7,13 @@ using Fmg.Core.Types;
 namespace Fmg.Core.App.Model {
 
     /// <summary>Champions data model</summary>
-    public abstract class Champions : INotifyPropertyChanged, IDisposable {
+    public class Champions : INotifyPropertyChanged, IDisposable {
 
         private const int MAX_SIZE = 10;
         public const string CHAMPION_ADDED = nameof(ChampionAdded);
         public const string CHAMPION_RENAMED = "ChampionRenamed";
 
-        private List<Record>[,] Records { get; } = new List<Record>[EMosaicEx.GetValues().Length, ESkillLevelEx.GetValues().Length - 1];
+        public List<Record>[,] Records { get; } = new List<Record>[EMosaicEx.GetValues().Length, ESkillLevelEx.GetValues().Length - 1];
         private Action unsubscriber;
 
         public event PropertyChangedEventHandler PropertyChanged {
