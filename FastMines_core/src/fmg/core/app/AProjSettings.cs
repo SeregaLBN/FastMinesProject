@@ -5,6 +5,7 @@ namespace Fmg.Core.App {
         protected AProjSettings() { }
 
         public const string PROJECT_NAME = "FastMines";
+        public const string CORE_VERSION = "2.2.2";
 
         protected static string   SettingsFile = PROJECT_NAME + ".settings";
         protected static string StatisticsFile = PROJECT_NAME + ".statistics";

@@ -1,6 +1,8 @@
 package fmg.swing.app.dialog;
 
 import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
@@ -17,7 +19,7 @@ import fmg.swing.app.model.view.StaticsticTblModel;
 public class StatisticDlg extends ReportDlg {
 
     private Players players;
-    private StaticsticTblModel tableModel;
+    private List<StaticsticTblModel> tableModels = new ArrayList<>();
 
     public StatisticDlg(FastMinesApp app, boolean modal, Players players) {
         super(app, modal);
@@ -44,7 +46,8 @@ public class StatisticDlg extends ReportDlg {
 
     @Override
     protected ReportTableModel createTableModel(EMosaic mosaic) {
-        tableModel = new StaticsticTblModel(players, mosaic);
+        StaticsticTblModel tableModel = new StaticsticTblModel(players, mosaic);
+        tableModels.add(tableModel);
         return tableModel;
     }
 
@@ -70,7 +73,7 @@ public class StatisticDlg extends ReportDlg {
 
     @Override
     public void close() {
-        tableModel.close();
+        tableModels.forEach(StaticsticTblModel::close);
         super.close();
     }
 

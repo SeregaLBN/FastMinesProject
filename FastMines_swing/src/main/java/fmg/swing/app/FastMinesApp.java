@@ -23,6 +23,7 @@ import fmg.common.geom.Matrisize;
 import fmg.common.geom.Rect;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.ITimer;
+import fmg.common.ui.UiInvoker;
 import fmg.core.app.model.Champions;
 import fmg.core.app.model.MosaicInitData;
 import fmg.core.app.model.Players;
@@ -1100,7 +1101,7 @@ public class FastMinesApp {
         final EMosaic eMosaic = mosaicCtrllr.getMosaicType();
         final long realCountOpen = victory ? mosaicCtrllr.getCountMines() : mosaicCtrllr.getCountOpen();
         final long playTime = getGameTimer().getTime();
-        final long clickCount = mosaicCtrllr.getCountClick();
+        final int clickCount = mosaicCtrllr.getCountClick();
 
         // логика сохранения...
         Consumer<UUID> onActionToUser = userId -> {
@@ -1118,9 +1119,9 @@ public class FastMinesApp {
                 // ...чемпиона
                 if (victory) {
                     User user = p.getUser(userId);
-                    int pos = getChampions().add(user, playTime, eMosaic, eSkill);
-                    if (pos != -1)
-                        getChampionDialog().showData(eSkill, eMosaic, pos);
+                    int pos = getChampions().add(user, playTime, eMosaic, eSkill, clickCount);
+                    if (pos >= 0)
+                        UiInvoker.DEFERRED.accept(() -> getChampionDialog().showData(eSkill, eMosaic, pos));
                 }
             }
         };

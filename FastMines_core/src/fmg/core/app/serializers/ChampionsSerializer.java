@@ -1,6 +1,7 @@
 package fmg.core.app.serializers;
 
 import java.io.*;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,6 +22,8 @@ public abstract class ChampionsSerializer implements ISerializer {
             to.writeUTF(rec.userId.toString());
             to.writeUTF(rec.userName);
             to.writeLong(rec.playTime);
+            to.writeInt(rec.clicks);
+            to.writeLong(rec.date.getTime());
         }
 
         Champions.Record read(ObjectInput from) throws IOException {
@@ -28,6 +31,8 @@ public abstract class ChampionsSerializer implements ISerializer {
             res.userId = UUID.fromString(from.readUTF());
             res.userName = from.readUTF();
             res.playTime = from.readLong();
+            res.clicks   = from.readInt();
+            res.date = new Date(from.readLong());
             return res;
         }
     }

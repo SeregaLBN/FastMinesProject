@@ -1,6 +1,8 @@
 package fmg.swing.app.dialog;
 
 import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.SwingConstants;
 
@@ -15,7 +17,7 @@ import fmg.swing.app.model.view.ReportTableModel;
 public class ChampionDlg extends ReportDlg {
 
     private final Champions champions;
-    private ChampionTblModel tableModel;
+    private List<ChampionTblModel> tableModels = new ArrayList<>();
 
     public ChampionDlg(FastMinesApp app, boolean modal, Champions champions) {
         super(app, modal);
@@ -30,7 +32,8 @@ public class ChampionDlg extends ReportDlg {
 
     @Override
     protected ReportTableModel createTableModel(EMosaic mosaic) {
-        tableModel = new ChampionTblModel(champions, mosaic);
+        ChampionTblModel tableModel = new ChampionTblModel(champions, mosaic);
+        tableModels.add(tableModel);
         return tableModel;
     }
 
@@ -58,7 +61,7 @@ public class ChampionDlg extends ReportDlg {
 
     @Override
     public void close() {
-        tableModel.close();
+        tableModels.forEach(ChampionTblModel::close);
         super.close();
     }
 

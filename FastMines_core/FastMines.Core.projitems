@@ -44,11 +44,11 @@
 
     <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\serializers\ISerializer.cs"            Link="fmg.core\app\serializers\ISerializer.cs" />
 
-    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\model\MosaicInitData.cs"               Link="fmg.core\types\app\MosaicInitData.cs" />
-    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\model\Champions.cs"                    Link="fmg.core\types\app\Champions.cs" />
-    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\model\Players.cs"                      Link="fmg.core\types\app\Players.cs" />
-    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\model\Statistics.cs"                   Link="fmg.core\types\app\Statistics.cs" />
-    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\model\User.cs"                         Link="fmg.core\types\app\User.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\model\MosaicInitData.cs"               Link="fmg.core\app\model\MosaicInitData.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\model\Champions.cs"                    Link="fmg.core\app\model\Champions.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\model\Players.cs"                      Link="fmg.core\app\model\Players.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\model\Statistics.cs"                   Link="fmg.core\app\model\Statistics.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\model\User.cs"                         Link="fmg.core\app\model\User.cs" />
 
 
     <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\IAnimator.cs"                          Link="fmg.core\img\IAnimator.cs" />

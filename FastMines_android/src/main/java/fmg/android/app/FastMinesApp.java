@@ -134,7 +134,7 @@ public class FastMinesApp extends Application implements LifecycleObserver {
     }
 
     /** Сохранить чемпиона && Установить статистику */
-    public int updateStatistic(EMosaic mosaic, ESkillLevel skill, boolean victory, long countOpenField, long playTime, long clickCount) {
+    public int updateStatistic(EMosaic mosaic, ESkillLevel skill, boolean victory, long countOpenField, long playTime, int clickCount) {
         // логика сохранения...
         UUID userId = players.getRecords()
                              .get(0) // first user - default user
@@ -146,7 +146,7 @@ public class FastMinesApp extends Application implements LifecycleObserver {
         // ...чемпиона
         if (victory) {
             User user = players.getUser(userId);
-            return champions.add(user, playTime, mosaic, skill);
+            return champions.add(user, playTime, mosaic, skill, clickCount);
         }
 
         return -1;

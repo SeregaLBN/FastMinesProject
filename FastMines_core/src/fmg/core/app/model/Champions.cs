@@ -28,12 +28,16 @@ namespace Fmg.Core.App.Model {
             public Guid userId;
             public string userName;
             public long playTime = long.MaxValue;
+            public int clicks;
+            public DateTime date;
 
             public Record() {}
-            public Record(User user, long playTime) {
+            public Record(User user, long playTime, int clicks) {
                 this.userId = user.Id;
                 this.userName = user.Name;
                 this.playTime  = playTime;
+                this.clicks = clicks;
+                this.date = new DateTime();
             }
 
             public override string ToString() {
@@ -41,9 +45,10 @@ namespace Fmg.Core.App.Model {
             }
 
             public int CompareTo(Record o) {
-                long thisVal = this.playTime;
-                long anotherVal = o.playTime;
-                return (thisVal<anotherVal ? -1 : (thisVal==anotherVal ? 0 : 1));
+                int res = this.playTime.CompareTo(o.playTime);
+                if (res == 0)
+                    res = this.clicks.CompareTo(o.clicks);
+                return res;
             }
         }
 
@@ -81,12 +86,12 @@ namespace Fmg.Core.App.Model {
             }
         }
 
-        public int Add(User user, long playTime, EMosaic mosaic, ESkillLevel eSkill) {
+        public int Add(User user, long playTime, EMosaic mosaic, ESkillLevel eSkill, int clickCount) {
             if (eSkill == ESkillLevel.eCustom)
                 return -1;
 
             List<Record> list = Records[mosaic.Ordinal(), eSkill.Ordinal()];
-            Record newRecord = new Record(user, playTime);
+            Record newRecord = new Record(user, playTime, clickCount);
             list.Add(newRecord);
 
             list.Sort();
@@ -105,18 +110,11 @@ namespace Fmg.Core.App.Model {
             return -1;
         }
 
-        public string GetUserName(int index, EMosaic mosaic, ESkillLevel eSkill) {
+        public Record GetUserRecord(int index, EMosaic mosaic, ESkillLevel eSkill) {
             if (eSkill == ESkillLevel.eCustom)
                 throw new ArgumentException("Invalid input data - " + eSkill);
 
-            return Records[mosaic.Ordinal(), eSkill.Ordinal()][index].userName;
-        }
-
-        public long GetUserPlayTime(int index, EMosaic mosaic, ESkillLevel eSkill) {
-            if (eSkill == ESkillLevel.eCustom)
-                throw new ArgumentException("Invalid input data - " + eSkill);
-
-            return Records[mosaic.Ordinal(), eSkill.Ordinal()][index].playTime;
+            return Records[mosaic.Ordinal(), eSkill.Ordinal()][index];
         }
 
         public int GetUsersCount(EMosaic mosaic, ESkillLevel eSkill) {

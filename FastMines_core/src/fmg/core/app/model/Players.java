@@ -110,7 +110,7 @@ public class Players implements INotifyPropertyChanged, AutoCloseable {
      * @param playTime - время игры
      * @param clickCount - кол-во кликов
      */
-    public void updateStatistic(UUID userId, EMosaic mosaic, ESkillLevel skill, boolean victory, long countOpenField, long playTime, long clickCount) {
+    public void updateStatistic(UUID userId, EMosaic mosaic, ESkillLevel skill, boolean victory, long countOpenField, long playTime, int clickCount) {
         if (skill == ESkillLevel.eCustom)
             return;
         Record rec = find(userId);

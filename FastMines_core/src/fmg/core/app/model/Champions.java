@@ -17,23 +17,27 @@ public class Champions implements INotifyPropertyChanged, AutoCloseable {
     public static final String CHAMPION_RENAMED = "ChampionRenamed";
 
     @SuppressWarnings("unchecked")
-    private List<Record>[][] records = new List[EMosaic.values().length][ESkillLevel.values().length-1];
+    private List<Record>[][] records = new List[EMosaic.values().length][ESkillLevel.values().length - 1];
 
     private NotifyPropertyChanged notifier = new NotifyPropertyChanged(this, true);
     private final PropertyChangeListener onPlayersPropertyChangedListener = this::onPlayersPropertyChanged;
     private Runnable unsubscriber;
 
-
     public static class Record implements Comparable<Record> {
         public UUID userId;
         public String userName;
         public long playTime = Long.MAX_VALUE;
+        public int clicks;
+        public Date date;
 
         public Record() {}
-        public Record(User user, long playTime) {
+
+        public Record(User user, long playTime, int clicks) {
             this.userId = user.getId();
             this.userName = user.getName();
-            this.playTime  = playTime;
+            this.playTime = playTime;
+            this.clicks = clicks;
+            this.date = new Date();
         }
 
         @Override
@@ -43,12 +47,15 @@ public class Champions implements INotifyPropertyChanged, AutoCloseable {
 
         @Override
         public int compareTo(Record o) {
-            return Long.compare(this.playTime, o.playTime);
+            int res = Long.compare(this.playTime, o.playTime);
+            if (res == 0)
+                res = Integer.compare(this.clicks, o.clicks);
+            return res;
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(playTime, userId, userName);
+            return Objects.hash(clicks, date, playTime, userId, userName);
         }
 
         @Override
@@ -60,7 +67,9 @@ public class Champions implements INotifyPropertyChanged, AutoCloseable {
             if (getClass() != obj.getClass())
                 return false;
             Record other = (Record)obj;
-            return (playTime == other.playTime)
+            return (clicks == other.clicks)
+                && Objects.equals(date, other.date)
+                && (playTime == other.playTime)
                 && Objects.equals(userId, other.userId)
                 && Objects.equals(userName, other.userName);
         }
@@ -73,6 +82,7 @@ public class Champions implements INotifyPropertyChanged, AutoCloseable {
         public final EMosaic mosaic;
         public final ESkillLevel skill;
         public final int pos;
+
         public ChampionAdded(UUID userId, EMosaic mosaic, ESkillLevel skill, int pos) {
             this.userId = userId;
             this.mosaic = mosaic;
@@ -104,12 +114,12 @@ public class Champions implements INotifyPropertyChanged, AutoCloseable {
         return records;
     }
 
-    public int add(User user, long playTime, EMosaic mosaic, ESkillLevel eSkill) {
+    public int add(User user, long playTime, EMosaic mosaic, ESkillLevel eSkill, int clickCount) {
         if (eSkill == ESkillLevel.eCustom)
             return -1;
 
         List<Record> list = records[mosaic.ordinal()][eSkill.ordinal()];
-        Record newRecord = new Record(user, playTime);
+        Record newRecord = new Record(user, playTime, clickCount);
         list.add(newRecord);
 
         Collections.sort(list);
@@ -130,18 +140,11 @@ public class Champions implements INotifyPropertyChanged, AutoCloseable {
         return -1;
     }
 
-    public String getUserName(int index, EMosaic mosaic, ESkillLevel eSkill) {
+    public Record getUserRecord(int index, EMosaic mosaic, ESkillLevel eSkill) {
         if (eSkill == ESkillLevel.eCustom)
             throw new IllegalArgumentException("Invalid input data - " + eSkill);
 
-        return records[mosaic.ordinal()][eSkill.ordinal()].get(index).userName;
-    }
-
-    public long getUserPlayTime(int index, EMosaic mosaic, ESkillLevel eSkill) {
-        if (eSkill == ESkillLevel.eCustom)
-            throw new IllegalArgumentException("Invalid input data - " + eSkill);
-
-        return records[mosaic.ordinal()][eSkill.ordinal()].get(index).playTime;
+        return records[mosaic.ordinal()][eSkill.ordinal()].get(index);
     }
 
     public int getUsersCount(EMosaic mosaic, ESkillLevel eSkill) {
@@ -190,7 +193,6 @@ public class Champions implements INotifyPropertyChanged, AutoCloseable {
                         notifier.firePropertyChanged(null, user.getId(), CHAMPION_RENAMED);
                 }
     }
-
 
     @Override
     public void close() {

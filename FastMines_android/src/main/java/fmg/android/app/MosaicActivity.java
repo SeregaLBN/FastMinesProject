@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
@@ -18,8 +19,6 @@ import fmg.android.app.presentation.MosaicViewModel;
 import fmg.android.mosaic.MosaicViewController;
 import fmg.android.utils.Timer;
 import fmg.common.Logger;
-import fmg.core.app.model.Players;
-import fmg.core.app.model.User;
 import fmg.core.img.SmileModel;
 import fmg.core.mosaic.MosaicController;
 import fmg.core.mosaic.MosaicGameModel;
@@ -98,7 +97,7 @@ public class MosaicActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
+    public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         Logger.info("MosaicActivity.onSaveInstanceState: this.hash={0}", this.hashCode());
         //SharedData.save(savedInstanceState, getSomeData());
         super.onSaveInstanceState(savedInstanceState);
@@ -206,7 +205,7 @@ public class MosaicActivity extends AppCompatActivity {
 
     /** Сохранить чемпиона && Установить статистику */
     private void saveStatisticAndChampion() {
-        MosaicController mc = getMosaicController();
+        MosaicController<?,?,?,?> mc = getMosaicController();
         if (mc.getGameStatus() != EGameStatus.eGSEnd)
             throw new IllegalArgumentException("Invalid method state call");
 
@@ -219,7 +218,7 @@ public class MosaicActivity extends AppCompatActivity {
         final EMosaic eMosaic = mc.getMosaicType();
         final long realCountOpen = victory ? mc.getCountMines() : mc.getCountOpen();
         final long playTime = timer.getTime();
-        final long clickCount = mc.getCountClick();
+        final int clickCount = mc.getCountClick();
 
         int pos = FastMinesApp.get().updateStatistic(eMosaic, eSkill, victory, realCountOpen, playTime, clickCount);
         if (pos >= 0)
