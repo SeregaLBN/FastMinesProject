@@ -98,10 +98,10 @@ namespace Fmg.Core.App.Serializers {
         }
 
         /// <summary> write to file </summary>
-        protected abstract void Write(byte[] data, string file);
+        protected abstract Task Write(byte[] data, string file);
 
         /// <summary> read from file </summary>
-        protected abstract byte[] Read(string file);
+        protected abstract Task<byte[]> Read(string file);
 
         protected virtual byte[] WriteTransform(byte[] data) {
             // defaut none
@@ -122,7 +122,7 @@ namespace Fmg.Core.App.Serializers {
                 data = WriteTransform(data);
 
                 // 3. write to file
-                Write(data, GetChampionsFile());
+                await Write(data, GetChampionsFile());
 
             } catch (Exception ex) {
                 Logger.Error("Can`t save " + nameof(Champions), ex);
@@ -136,7 +136,7 @@ namespace Fmg.Core.App.Serializers {
 
             try {
                 // 1. read from file
-                byte[] data = Read(file);
+                byte[] data = await Read(file);
 
                 // 2. transform data
                 data = ReadTransform(data);

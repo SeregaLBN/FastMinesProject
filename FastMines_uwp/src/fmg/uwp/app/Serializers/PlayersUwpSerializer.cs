@@ -15,8 +15,8 @@ namespace Fmg.Uwp.App.Serializers {
 
 
         /// <summary> write to file </summary>
-        protected override void Write(byte[] data, string file) {
-            WriteAsync(data, file).Wait();
+        protected override Task Write(byte[] data, string file) {
+            return WriteAsync(data, file);
         }
 
         private async Task WriteAsync(byte[] data, string file) {
@@ -25,8 +25,8 @@ namespace Fmg.Uwp.App.Serializers {
         }
 
         /// <summary> read from file </summary>
-        protected override byte[] Read(string file) {
-            return ReadAsync(file).Result;
+        protected override Task<byte[]> Read(string file) {
+            return ReadAsync(file);
         }
 
         private async Task<byte[]> ReadAsync(string file) {
