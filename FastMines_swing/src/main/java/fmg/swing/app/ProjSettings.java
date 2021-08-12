@@ -26,14 +26,14 @@ public final class ProjSettings extends AProjSettings {
             java.awt.Color clr = uiDef.getColor("TabbedPane.highlight"); // TabbedPane.highlight    Button.background    Label.background    Panel.background
             if (clr != null)
                 MosaicDrawModel.DefaultBkColor = Cast.toColor(clr);
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             Logger.error("ProjSettings", ex);
         }
 
         String prefix = System.getProperty("user.dir") + System.getProperty("file.separator");
-        settingsFile   = prefix + settingsFile;
-        statisticsFile = prefix + statisticsFile;
-        championsFile  = prefix + championsFile;
+        settingsFile  = prefix +  settingsFile;
+        playersFile   = prefix +   playersFile;
+        championsFile = prefix + championsFile;
     }
 
     public static void init() {

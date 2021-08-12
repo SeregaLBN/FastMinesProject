@@ -7,9 +7,9 @@ public abstract class AProjSettings {
     public static final String PROJECT_NAME = "FastMines";
     public static final String CORE_VERSION = "2.2.2";
 
-    protected static String   settingsFile = PROJECT_NAME + ".settings";
-    protected static String statisticsFile = PROJECT_NAME + ".statistics";
-    protected static String  championsFile = PROJECT_NAME + ".best";
+    protected static String  settingsFile = PROJECT_NAME + ".settings";
+    protected static String   playersFile = PROJECT_NAME + ".players";
+    protected static String championsFile = PROJECT_NAME + ".best";
 
 
     private static boolean IsDebug;
@@ -17,22 +17,25 @@ public abstract class AProjSettings {
     protected static void setDebug(boolean isDebug) { AProjSettings.IsDebug = isDebug; }
 
     static {
-        /** /
+        /**/
+        boolean isDebug = false;
         try {
-            // is very vendor specific
-            boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().contains("-agentlib:jdwp");
-
             // this is highly system depending
-            boolean debugMode = System.getProperty("java.vm.info", "").contains("sharing");
+            isDebug = System.getProperty("java.vm.info", "").contains("sharing");
 
-            AProjSettings.IsDebug = isDebug || debugMode;
-            if (AProjSettings.IsDebug)
-                fmg.common.Logger.DEBUG_WRITER = System.out::println;
+            if (!isDebug)
+                // is very vendor specific
+                isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().contains("-agentlib:jdwp");
 
         } catch(Error ex) {
             // android: java.lang.NoClassDefFoundError: Failed resolution of: Ljava/lang/management/ManagementFactory;
             if (!(ex instanceof NoClassDefFoundError) || !ex.getMessage().contains("ManagementFactory"))
                 fmg.common.Logger.error("AProjSettings", ex);
+        } finally {
+            AProjSettings.IsDebug = isDebug;
+            if (AProjSettings.IsDebug)
+                fmg.common.Logger.DEBUG_WRITER = System.out::println;
+
         }
         /**/
     }
@@ -41,8 +44,8 @@ public abstract class AProjSettings {
         return settingsFile;
     }
 
-    public static String getStatisticsFileName() {
-        return statisticsFile;
+    public static String getPlayersFileName() {
+        return playersFile;
     }
 
     public static String getChampionsFileName() {

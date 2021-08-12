@@ -5,39 +5,43 @@ namespace Fmg.Core.App.Model {
     /// <summary> User model </summary>
     public class User {
 
+        private Guid id;
+        private string name;
+        private string password;
+
         /// <summary> Unique user ID. const <summary>
         public Guid Id {
-            get => Id;
+            get => id;
             set {
                 if (value == Guid.Empty)
                     throw new ArgumentNullException("Unique ID must be exist");
 
-                if (Id != Guid.Empty)
+                if (id != Guid.Empty)
                     throw new InvalidOperationException("Illegal usage - con not change existed id");
 
-                Id = value;
+                id = value;
             }
         }
 
         /// <summary> User name. May be changed <summary>
         public string Name {
-            get => Name;
+            get => name;
             set {
-                if ((value == null) || (value.Length==0))
+                if (string.IsNullOrEmpty(value))
                     throw new ArgumentNullException("Invalid player name. Need not empty.");
 
-                Name = value;
+                name = value;
             }
         }
 
         /// <summary> User password <summary>
         public string Password {
-            get => Password;
+            get => password;
             set {
-                if ((value != null) && (value.Length == 0))
+                if (string.IsNullOrEmpty(value))
                     value = null;
 
-                Password = value;
+                password = value;
             }
         }
 
@@ -45,7 +49,7 @@ namespace Fmg.Core.App.Model {
         public string ImgAvatar { get; set; }
 
         public override string ToString() {
-            return Name + "; passw " + (string.IsNullOrEmpty(Password) ? "not exist" : "is exist");
+            return name + "; passw " + (string.IsNullOrEmpty(password) ? "not exist" : "is exist");
         }
 
     }

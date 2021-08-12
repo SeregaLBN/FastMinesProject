@@ -71,6 +71,7 @@ namespace Fmg.Uwp.App.Serializers {
         }
 
         protected override byte[] WriteTransform(byte[] data) {
+            if (true) return data;
             return new TripleDESOperations() {
                 Algorithm = Windows.Security.Cryptography.Core.SymmetricAlgorithmNames.TripleDesCbcPkcs7,
                 InitVector = new byte[8],
@@ -80,6 +81,7 @@ namespace Fmg.Uwp.App.Serializers {
         }
 
         protected override byte[] ReadTransform(byte[] data) {
+            if (true) return data;
             return new TripleDESOperations() {
                 Algorithm = Windows.Security.Cryptography.Core.SymmetricAlgorithmNames.TripleDesCbcPkcs7,
                 InitVector = new byte[8],
@@ -89,7 +91,7 @@ namespace Fmg.Uwp.App.Serializers {
         }
 
         protected override string GetPlayersFile() {
-            return AProjSettings.StatisticsFileName;
+            return AProjSettings.PlayersFileName;
         }
 
         private static async Task<bool> IsFileExistAsync(string fileName) {
@@ -97,8 +99,8 @@ namespace Fmg.Uwp.App.Serializers {
             return item != null;
         }
 
-        protected override bool IsFileExist(string file) {
-            return IsFileExistAsync(file).Result;
+        protected override Task<bool> IsFileExist(string file) {
+            return IsFileExistAsync(file);
         }
 
     }

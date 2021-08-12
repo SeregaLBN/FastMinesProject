@@ -59,9 +59,10 @@ namespace Fmg.Core.App.Serializers {
         /// <summary> serialize to bytes </summary>
         private async Task<byte[]> AsBytes(Players players) {
             using (Stream stream = new MemoryStream()) {
-                using (BinaryWriter output = new BinaryWriter(stream, Encoding.UTF8)) {
-                    Write(players, output);
-                }
+            using (BinaryWriter output = new BinaryWriter(stream, Encoding.UTF8))
+            {
+                Write(players, output);
+                output.Flush();
 
                 byte[] data = new byte[stream.Length];
                 stream.Position = 0;
@@ -69,13 +70,14 @@ namespace Fmg.Core.App.Serializers {
                 if (readed != data.Length)
                     throw new Exception("Not readed saved data: requred " + data.Length + " bytes; read " + readed + " bytes");
                 return data;
-            }
+            }}
         }
 
         /// <summary> deserilize from bytes </summary>
         private async Task<Players> FromBytes(byte[] data) {
             using (Stream stream = new MemoryStream()) {
                 await stream.WriteAsync(data, 0, data.Length);
+                stream.Position = 0;
                 using (BinaryReader input = new BinaryReader(stream)) {
                     return Read(input);
                 }
@@ -99,7 +101,9 @@ namespace Fmg.Core.App.Serializers {
         }
 
         public async Task Save(Players players) {
-            try {
+            Logger.Debug("> PlayersSerializer::Save");
+            try
+            {
                 // 1. serialize
                 byte[] data = await AsBytes(players);
 
@@ -111,15 +115,18 @@ namespace Fmg.Core.App.Serializers {
 
             } catch (Exception ex) {
                 Logger.Error("Can`t save " + nameof(Players), ex);
+            } finally {
+                Logger.Debug("< PlayersSerializer::Save");
             }
         }
 
         public async Task<Players> Load() {
-            string file = GetPlayersFile();
-            if (!IsFileExist(file))
-                return new Players();
-
+            Logger.Debug("> PlayersSerializer::Load");
             try {
+                string file = GetPlayersFile();
+                if (!await IsFileExist(file))
+                    return new Players();
+
                 // 1. read from file
                 byte[] data = await Read(file);
 
@@ -132,11 +139,13 @@ namespace Fmg.Core.App.Serializers {
             } catch (Exception ex) {
                 Logger.Error("Can`t load " + nameof(Players), ex);
                 return new Players();
+            } finally {
+                Logger.Debug("< PlayersSerializer::Load");
             }
         }
 
         protected abstract string GetPlayersFile();
-        protected abstract bool IsFileExist(string file);
+        protected abstract Task<bool> IsFileExist(string file);
 
     }
 

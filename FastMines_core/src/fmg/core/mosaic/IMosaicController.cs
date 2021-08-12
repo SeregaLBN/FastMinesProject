@@ -30,11 +30,15 @@ namespace Fmg.Core.Mosaic
         BaseCell CellDown { get; set; }
 
 
+        /// <summary> действительно лишь когда gameStatus == gsEnd </summary>
+        bool IsVictory { get; }
+
         /// <summary> количество мин </summary>
         int CountMines { get; set; }
 
         /// <summary>сколько ещё осталось открыть мин</summary>
         int CountMinesLeft { get; } // => CountMines - CountFlag
+        int CountClick { get; }
 
         int CountOpen { get; }
         int CountFlag { get; }

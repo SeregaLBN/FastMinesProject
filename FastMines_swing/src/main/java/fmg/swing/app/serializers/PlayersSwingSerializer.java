@@ -43,8 +43,8 @@ public class PlayersSwingSerializer extends PlayersSerializer {
     }
 
     @Override
-    protected File getStatisticsFile() {
-        return new File(AProjSettings.getStatisticsFileName());
+    protected File getPlayersFile() {
+        return new File(AProjSettings.getPlayersFileName());
     }
 
 }

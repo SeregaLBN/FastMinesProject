@@ -78,6 +78,8 @@ public class FastMinesApp {
     private Players players;
     private UUID activeUserId; // current user
     private Champions champions;
+    private boolean playersChanged;
+    private boolean championsChanged;
 
     private ManageDlg       playerManageDialog;
     private StatisticDlg    statisticDialog;
@@ -96,6 +98,8 @@ public class FastMinesApp {
     private final PropertyChangeListener      onMosaicModelPropertyChangedListener = this::onMosaicModelPropertyChanged;
     private final PropertyChangeListener onMosaicControllerPropertyChangedListener = this::onMosaicControllerPropertyChanged;
     private final PropertyChangeListener     onLogoMainIconPropertyChangedListener = this::onLogoMainIconPropertyChanged;
+    private final PropertyChangeListener          onPlayersPropertyChangedListener = this::onPlayersPropertyChanged;
+    private final PropertyChangeListener        onChampionsPropertyChangedListener = this::onChampionsPropertyChanged;
 
     public FastMinesApp() {
         super();
@@ -556,8 +560,10 @@ public class FastMinesApp {
         MosaicJPanelController mosaicCtrllr = getMosaicController();
         mosaicCtrllr.setOnClickEvent(null);
 
-        new PlayersSwingSerializer().save(getPlayers());
-        new ChampionsSwingSerializer().save(getChampions());
+        if (playersChanged)
+            new PlayersSwingSerializer().save(getPlayers());
+        if (championsChanged)
+            new ChampionsSwingSerializer().save(getChampions());
 
         { // csabe settings
             AppData spm = new AppData();
@@ -598,10 +604,14 @@ public class FastMinesApp {
         if (isPlayerManageDialogExist())
             getPlayerManageDlg().close();
 
-        if (champions != null)
+        if (champions != null) {
+            champions.removeListener(onChampionsPropertyChangedListener);
             champions.close();
-        if (players != null)
+        }
+        if (players != null) {
+            players.removeListener(onPlayersPropertyChangedListener);
             players.close();
+        }
 
 //      frame.setVisible(false);
         setMosaicController(null);
@@ -1055,14 +1065,17 @@ public class FastMinesApp {
     }
 
     public Players getPlayers() {
-        if (players == null)
+        if (players == null) {
             players = new PlayersSwingSerializer().load();
+            players.addListener(onPlayersPropertyChangedListener);
+        }
         return players;
     }
     public Champions getChampions() {
         if (champions == null) {
             champions = new ChampionsSwingSerializer().load();
             champions.subscribeTo(getPlayers());
+            champions.addListener(onChampionsPropertyChangedListener);
         }
         return champions;
     }
@@ -1231,6 +1244,14 @@ public class FastMinesApp {
         }
     }
 
+
+    private void onPlayersPropertyChanged(PropertyChangeEvent ev) {
+        playersChanged = true;
+    }
+
+    private void onChampionsPropertyChanged(PropertyChangeEvent ev) {
+        championsChanged = true;
+    }
 
     /** /
     static void printSystemProperties() {

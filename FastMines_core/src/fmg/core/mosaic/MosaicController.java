@@ -179,6 +179,7 @@ public abstract class MosaicController<TImage, TImageInner,
     /** сколько ещё осталось открыть мин */
     @Override
     public int getCountMinesLeft() { return getCountMines() - getCountFlag(); }
+    @Override
     public int getCountClick()  { return _countClick; }
     public void setCountClick(int clickCount) {
         _notifier.setProperty(_countClick, clickCount, PROPERTY_COUNT_CLICK);
@@ -529,6 +530,7 @@ public abstract class MosaicController<TImage, TImageInner,
     }
 
     /** действительно лишь когда gameStatus == gsEnd */
+    @Override
     public boolean isVictory() {
         return (getGameStatus() == EGameStatus.eGSEnd) && (0 == getCountMinesLeft());
     }

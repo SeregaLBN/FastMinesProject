@@ -16,7 +16,7 @@ namespace Fmg.Uwp.App {
     public sealed partial class CustomSkillPage : Page {
 
         /// <summary> Model (a common model between all the pages in the application) </summary>
-        public MosaicInitData InitData => FastMinesApp.Get.InitData;
+        public MosaicInitData InitData => FastMinesApp.Get.MosaicInitData;
 
         public SolidColorBrush BorderColorStartBttn;
         private bool _closed;

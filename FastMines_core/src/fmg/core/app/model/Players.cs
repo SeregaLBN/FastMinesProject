@@ -111,7 +111,7 @@ namespace Fmg.Core.App.Model {
         /// <param name="countOpenField">кол-во открытых ячеек</param>
         /// <param name="playTime">время игры</param>
         /// <param name="clickCount">кол-во кликов</param>
-        public void SetStatistic(Guid userId, EMosaic mosaic, ESkillLevel skill, bool victory, long countOpenField, long playTime, int clickCount) {
+        public void UpdateStatistic(Guid userId, EMosaic mosaic, ESkillLevel skill, bool victory, long countOpenField, long playTime, int clickCount) {
             if (skill == ESkillLevel.eCustom)
                 return;
             Record rec = Find(userId);

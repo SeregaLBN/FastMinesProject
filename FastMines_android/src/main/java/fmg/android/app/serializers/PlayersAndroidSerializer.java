@@ -12,9 +12,9 @@ import fmg.core.app.serializers.PlayersSerializer;
 public class PlayersAndroidSerializer extends PlayersSerializer {
 
     @Override
-    protected File getStatisticsFile() {
+    protected File getPlayersFile() {
         Context context = FastMinesApp.get().getAppContext();
-        return new File(context.getFilesDir(), AProjSettings.getStatisticsFileName());
+        return new File(context.getFilesDir(), AProjSettings.getPlayersFileName());
     }
 
 }

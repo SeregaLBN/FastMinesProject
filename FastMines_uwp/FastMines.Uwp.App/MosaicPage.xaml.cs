@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using Windows.UI.Core;
+using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -145,6 +146,11 @@ namespace Fmg.Uwp.App {
                     SetBtnNewGameFaceType(IsVictory()
                                 ? SmileModel.EFaceType.Face_SmilingWithSunglasses
                                 : SmileModel.EFaceType.Face_Disappointed);
+
+                if (GetSkillLevel() != ESkillLevel.eCustom)
+                    // сохраняю статистику и чемпиона
+                    SaveStatisticAndChampion();
+
                     break;
                 }
                 OnTimerCallback(timer); // reload UI
@@ -318,6 +324,54 @@ namespace Fmg.Uwp.App {
         private void SetBtnNewGameFaceType(SmileModel.EFaceType btnNewFaceType) {
             btnNewGameImage.Model.FaceType = btnNewFaceType;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BtnNewGameImg)));
+        }
+
+        public ESkillLevel GetSkillLevel() {
+            var mc = MosaicController;
+            var mosaicType = mc.MosaicType;
+            var sizeFld = mc.SizeField;
+            var numberMines = mc.CountMines;
+            return ESkillLevelEx.CalcSkillLevel(mosaicType, sizeFld, numberMines);
+        }
+
+        /** Сохранить чемпиона && Установить статистику */
+        private void SaveStatisticAndChampion() {
+            var mc = MosaicController;
+            if (mc.GameStatus != EGameStatus.eGSEnd)
+                throw new ArgumentException("Invalid method state call");
+
+            // сохраняю все нужные данные
+            bool victory = mc.IsVictory;
+            ESkillLevel eSkill = GetSkillLevel();
+            if (eSkill == ESkillLevel.eCustom)
+                return;
+
+            var eMosaic = mc.MosaicType;
+            var realCountOpen = victory ? mc.CountMines : mc.CountOpen;
+            var playTime = GameTimer.Time;
+            var clickCount = mc.CountClick;
+
+            int pos = FastMinesApp.Get.UpdateStatistic(eMosaic, eSkill, victory, realCountOpen, playTime, clickCount);
+            if (pos >= 0)
+                ShowToastNotification("Victory", "Your best result is position #" + (pos + 1));
+        }
+
+        public static void ShowToastNotification(string title, string stringContent) {
+            try {
+                var toastNotifier = ToastNotificationManager.CreateToastNotifier();
+                var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
+                var toastNodeList = toastXml.GetElementsByTagName("text");
+                toastNodeList.Item(0).AppendChild(toastXml.CreateTextNode(title));
+                toastNodeList.Item(1).AppendChild(toastXml.CreateTextNode(stringContent));
+                var audio = toastXml.CreateElement("audio");
+                audio.SetAttribute("src", "ms-winsoundevent:Notification.SMS");
+
+                var toast = new ToastNotification(toastXml);
+                toast.ExpirationTime = DateTime.Now.AddSeconds(4);
+                toastNotifier.Show(toast);
+            } catch (Exception ex) {
+                Logger.Error("ShowToastNotification", ex);
+            }
         }
 
     }

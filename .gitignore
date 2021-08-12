@@ -23,7 +23,7 @@ FastMines_uwp/packages/*
 *proj.user
 FastMines.best
 FastMines.settings
-FastMines.statistics
+FastMines.players
 *project.lock.json
 **/*FastMines.*.nuget.targets
 **/*FastMines.*.nuget.props

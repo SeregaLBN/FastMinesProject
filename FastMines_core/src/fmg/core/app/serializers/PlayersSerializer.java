@@ -128,6 +128,7 @@ public abstract class PlayersSerializer implements ISerializer {
     }
 
     public void save(Players players) {
+        Logger.debug("> PlayersSerializer::Save");
         try {
             // 1. serialize
             byte[] data = asBytes(players);
@@ -136,19 +137,22 @@ public abstract class PlayersSerializer implements ISerializer {
             data = writeTransform(data);
 
             // 3. write to file
-            write(data, getStatisticsFile());
+            write(data, getPlayersFile());
 
         } catch (Exception ex) {
             Logger.error("Can`t save " + Players.class.getSimpleName(), ex);
+        } finally {
+            Logger.debug("< PlayersSerializer::Save");
         }
     }
 
     public Players load() {
-        File file = getStatisticsFile();
-        if (!file.exists())
-            return new Players();
-
+        Logger.debug("> PlayersSerializer::Load");
         try {
+            File file = getPlayersFile();
+            if (!file.exists())
+                return new Players();
+
             // 1. read from file
             byte[] data = read(file);
 
@@ -161,9 +165,11 @@ public abstract class PlayersSerializer implements ISerializer {
         } catch (Exception ex) {
             Logger.error("Can`t load " + Players.class.getSimpleName(), ex);
             return new Players();
+        } finally {
+            Logger.debug("< PlayersSerializer::Load");
         }
     }
 
-    protected abstract File getStatisticsFile();
+    protected abstract File getPlayersFile();
 
 }

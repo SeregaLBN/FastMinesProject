@@ -26,7 +26,7 @@ namespace Fmg.Uwp.App {
     public sealed partial class SelectMosaicPage : Page {
 
         /// <summary> Model (a common model between all the pages in the application) </summary>
-        public MosaicInitData InitData => FastMinesApp.Get.InitData;
+        public MosaicInitData InitData => FastMinesApp.Get.MosaicInitData;
         /// <summary> View-Model </summary>
         public MosaicsViewModel ViewModel { get; private set; }
         private SolidColorBrush BorderColorStartBttn;

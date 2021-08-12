@@ -36,13 +36,17 @@ public interface IMosaicController<TImage, TImageInner,
     /** ячейка на которой было нажато (но не обязательно что отпущено) */
     void setCellDown(BaseCell cellDown);
 
-    /** количество мин */
+    /** действительно лишь когда gameStatus == gsEnd */
+    boolean isVictory();
+
+        /** количество мин */
     int getCountMines();
     /** количество мин */
     void setCountMines(int newCountMines);
 
     /** сколько ещё осталось открыть мин */
     int getCountMinesLeft(); // return getCountMines() - getCountFlag();
+    int getCountClick();
 
     int getCountOpen();
     int getCountFlag();

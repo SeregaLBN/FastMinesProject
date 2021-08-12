@@ -3,7 +3,6 @@ package fmg.android.app;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.widget.Toast;
 
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
@@ -40,6 +39,10 @@ public class FastMinesApp extends Application implements LifecycleObserver {
     private MosaicInitData mosaicInitData;
     private Players players;
     private Champions champions;
+    private boolean playersChanged;
+    private boolean championsChanged;
+    private final PropertyChangeListener   onPlayersPropertyChangedListener = this::onPlayersPropertyChanged;
+    private final PropertyChangeListener onChampionsPropertyChangedListener = this::onChampionsPropertyChanged;
 
     public MosaicInitData getMosaicInitData() { return mosaicInitData; }
     public MenuSettings   getMenuSettings()   { return menuSettings; }
@@ -89,6 +92,8 @@ public class FastMinesApp extends Application implements LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     private void onClosed() {
         Logger.info("FastMinesApp::onClosed");
+        champions.removeListener(onChampionsPropertyChangedListener);
+        players.removeListener(onPlayersPropertyChangedListener);
         champions.close();
         players.close();
         menuSettings.close();
@@ -96,6 +101,15 @@ public class FastMinesApp extends Application implements LifecycleObserver {
     }
 
     private void save() {
+        if (championsChanged) {
+            championsChanged = false;
+            new ChampionsAndroidSerializer().save(champions);
+        }
+        if (playersChanged) {
+            playersChanged = false;
+            new PlayersAndroidSerializer().save(players);
+        }
+
         AppData data = new AppData();
         data.setSplitPaneOpen(menuSettings.isSplitPaneOpen());
         data.setMosaicInitData(mosaicInitData);
@@ -113,12 +127,14 @@ public class FastMinesApp extends Application implements LifecycleObserver {
         mosaicInitData = data.getMosaicInitData();
 
         players = new PlayersAndroidSerializer().load();
+        players.addListener(onPlayersPropertyChangedListener);
         if (players.getRecords().isEmpty())
             // create default user for android
             players.addNewPlayer("You", null);
 
         champions = new ChampionsAndroidSerializer().load();
-        champions.subscribeTo(players);
+        //champions.subscribeTo(players);
+        champions.addListener(onChampionsPropertyChangedListener);
     }
 
     private SharedPreferences getAppPreferences() {
@@ -150,6 +166,14 @@ public class FastMinesApp extends Application implements LifecycleObserver {
         }
 
         return -1;
+    }
+
+    private void onPlayersPropertyChanged(PropertyChangeEvent ev) {
+        playersChanged = true;
+    }
+
+    private void onChampionsPropertyChanged(PropertyChangeEvent ev) {
+        championsChanged = true;
     }
 
 }

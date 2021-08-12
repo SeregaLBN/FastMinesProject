@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using System.ComponentModel;
 using Windows.UI.ViewManagement;
 using Windows.System;
@@ -12,6 +14,7 @@ using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Controls;
 using Fmg.Common;
 using Fmg.Core.Img;
+using Fmg.Core.Types;
 using Fmg.Core.App.Model;
 using Fmg.Uwp.App.Model;
 using Fmg.Uwp.App.Presentation;
@@ -26,8 +29,12 @@ namespace Fmg.Uwp.App {
     sealed partial class FastMinesApp : Application {
 
         /// <summary> Model (a common model between all the pages in the application) </summary>
-        public MosaicInitData InitData { get; private set; }
+        public MosaicInitData MosaicInitData { get; private set; }
         public MenuSettings MenuSettings { get; private set; }
+        public Players Players { get; private set; }
+        public Champions Champions { get; private set; }
+        private bool playersChanged;
+        private bool championsChanged;
 
         private static FastMinesApp self;
 
@@ -57,7 +64,7 @@ namespace Fmg.Uwp.App {
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs ev) {
+        protected override async void OnLaunched(LaunchActivatedEventArgs ev) {
             Logger.Info("FastMinesApp::OnLaunched");
 #if  DEBUG
             if (System.Diagnostics.Debugger.IsAttached) {
@@ -118,9 +125,9 @@ namespace Fmg.Uwp.App {
 
             if (rootFrame.Content == null) {
                 // create a common model between all the pages in the application
-                LoadAppData();
+                await LoadAppData();
 
-                if (!rootFrame.Navigate(typeof(MainPage), this.InitData)) {
+                if (!rootFrame.Navigate(typeof(MainPage), this.MosaicInitData)) {
                     throw new Exception("Failed to create initial page ;(");
                 }
             }
@@ -133,19 +140,18 @@ namespace Fmg.Uwp.App {
         private void OnForegrounded(object sender, LeavingBackgroundEventArgs ev) {
             Logger.Info("FastMinesApp::OnForegrounded");
 
-            MenuSettings.PropertyChanged += OnMenuSettingsPropertyChanged;
-            InitData    .PropertyChanged += OnInitDataPropertyChanged;
+            MenuSettings  .PropertyChanged += OnMenuSettingsPropertyChanged;
+            MosaicInitData.PropertyChanged += OnMosaicInitDataPropertyChanged;
         }
 
         private void OnBackgrounded(object sender, EnteredBackgroundEventArgs ev) {
             Logger.Info("FastMinesApp::OnBackgrounded");
 
             var deferral = ev.GetDeferral();
-            SaveAppData();
             deferral.Complete();
 
-            MenuSettings.PropertyChanged -= OnMenuSettingsPropertyChanged;
-            InitData    .PropertyChanged -= OnInitDataPropertyChanged;
+            MenuSettings  .PropertyChanged -= OnMenuSettingsPropertyChanged;
+            MosaicInitData.PropertyChanged -= OnMosaicInitDataPropertyChanged;
         }
 
         /// <summary>
@@ -155,7 +161,7 @@ namespace Fmg.Uwp.App {
         /// </summary>
         /// <param name="sender">The source of the suspend request.</param>
         /// <param name="e">Details about the suspend request.</param>
-        private void OnSuspending(object sender, SuspendingEventArgs e) {
+        private async void OnSuspending(object sender, SuspendingEventArgs e) {
             Logger.Info("FastMinesApp::OnSuspending");
             var deferral = e.SuspendingOperation.GetDeferral();
 
@@ -170,7 +176,14 @@ namespace Fmg.Uwp.App {
 
             deferral.Complete();
 
-            InitData.Dispose();
+            await SaveAppData();
+
+            Players.PropertyChanged   -= OnPlayersPropertyChanged;
+            Champions.PropertyChanged -= OnChampionsPropertyChanged;
+
+            Champions.Dispose();
+            Players.Dispose();
+            MosaicInitData.Dispose();
             MenuSettings.Dispose();
         }
 
@@ -233,20 +246,33 @@ namespace Fmg.Uwp.App {
             throw new Exception("Failed to load Page " + ev.SourcePageType.FullName);
         }
 
-        private void SaveAppData() {
+        private async Task SaveAppData() {
+            await new ChampionsUwpSerializer().Save(Champions);
+            await new PlayersUwpSerializer().Save(Players);
+
             var appData = new AppData {
-                MosaicInitData = this.InitData,
+                MosaicInitData = this.MosaicInitData,
                 SplitPaneOpen = this.MenuSettings.SplitPaneOpen
             };
             new AppDataSerializer().Save(appData, Windows.Storage.ApplicationData.Current.LocalSettings.Values);
         }
 
-        private void LoadAppData() {
+        private async Task LoadAppData() {
             var appData = new AppDataSerializer().Load(Windows.Storage.ApplicationData.Current.LocalSettings.Values);
-            this.InitData = appData.MosaicInitData;
+            this.MosaicInitData = appData.MosaicInitData;
             this.MenuSettings = new MenuSettings() {
                 SplitPaneOpen = appData.SplitPaneOpen
             };
+
+            Players = await new PlayersUwpSerializer().Load();
+            if (!Players.Records.Any())
+                // create default user for UWP
+                Players.AddNewPlayer("You", null);
+            Players.PropertyChanged += OnPlayersPropertyChanged;
+
+            Champions = await new ChampionsUwpSerializer().Load();
+            //Champions.SubscribeTo(Players);
+            Champions.PropertyChanged += OnChampionsPropertyChanged;
         }
 
         private void UpdateBackButtonVisibility() {
@@ -259,12 +285,42 @@ namespace Fmg.Uwp.App {
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = visibility;
         }
 
-        private void OnMenuSettingsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+        private void OnMenuSettingsPropertyChanged(object sender, PropertyChangedEventArgs ev)
+        {
             Logger.Info("FastMinesApp::OnMenuSettingsPropertyChanged: ev={0}", ev);
         }
 
-        private void OnInitDataPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+        private void OnMosaicInitDataPropertyChanged(object sender, PropertyChangedEventArgs ev)
+        {
             Logger.Info("FastMinesApp::OnInitDataPropertyChanged: ev={0}", ev);
+        }
+
+        /// <summary> Сохранить чемпиона && Установить статистику </summary>
+        public int UpdateStatistic(EMosaic mosaic, ESkillLevel skill, bool victory, long countOpenField, long playTime, int clickCount) {
+            // логика сохранения...
+            Guid userId = Players.Records
+                                 [0] // first user - default user
+                                 .user
+                                 .Id;
+            // ...статистики
+            Players.UpdateStatistic(userId, mosaic, skill, victory, countOpenField, playTime, clickCount);
+
+            // ...чемпиона
+            if (victory) {
+                var user = Players.GetUser(userId);
+                return Champions.Add(user, playTime, mosaic, skill, clickCount);
+            }
+
+            return -1;
+        }
+
+
+        private void OnPlayersPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            playersChanged = true;
+        }
+
+        private void OnChampionsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            championsChanged = true;
         }
 
     }

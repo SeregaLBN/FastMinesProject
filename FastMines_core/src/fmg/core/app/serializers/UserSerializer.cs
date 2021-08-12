@@ -15,12 +15,12 @@ namespace Fmg.Core.App.Serializers {
             output.Write(user.Name);
 
             string pass = user.Password;
-            bool exist = string.IsNullOrEmpty(pass);
+            bool exist = !string.IsNullOrEmpty(pass);
             output.Write(exist);
             if (exist)
                 output.Write(pass);
 
-            exist = string.IsNullOrEmpty(user.ImgAvatar);
+            exist = !string.IsNullOrEmpty(user.ImgAvatar);
             output.Write(exist);
             if (exist)
                 output.Write(user.ImgAvatar);

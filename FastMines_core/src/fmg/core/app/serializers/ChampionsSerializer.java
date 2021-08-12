@@ -141,6 +141,7 @@ public abstract class ChampionsSerializer implements ISerializer {
     }
 
     public void save(Champions champions) {
+        Logger.debug("> ChampionsSerializer::Save");
         try {
             // 1. serialize
             byte[] data = asBytes(champions);
@@ -153,15 +154,18 @@ public abstract class ChampionsSerializer implements ISerializer {
 
         } catch (Exception ex) {
             Logger.error("Can`t save " + Champions.class.getSimpleName(), ex);
+        } finally {
+            Logger.debug("< ChampionsSerializer::Save");
         }
     }
 
     public Champions load() {
-        File file = getChampionsFile();
-        if (!file.exists())
-            return new Champions();
-
+        Logger.debug("> ChampionsSerializer::Load");
         try {
+            File file = getChampionsFile();
+            if (!file.exists())
+                return new Champions();
+
             // 1. read from file
             byte[] data = read(file);
 
@@ -174,6 +178,8 @@ public abstract class ChampionsSerializer implements ISerializer {
         } catch (Exception ex) {
             Logger.error("Can`t load " + Champions.class.getSimpleName(), ex);
             return new Champions();
+        } finally {
+            Logger.debug("< ChampionsSerializer::Load");
         }
     }
 
