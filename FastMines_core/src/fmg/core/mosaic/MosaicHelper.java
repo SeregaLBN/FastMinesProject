@@ -1,14 +1,12 @@
 package fmg.core.mosaic;
 
-import java.lang.reflect.Constructor;
 import java.security.InvalidParameterException;
 
-import fmg.common.Logger;
 import fmg.common.geom.Coord;
 import fmg.common.geom.DoubleExt;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.SizeDouble;
-import fmg.core.mosaic.cells.BaseCell;
+import fmg.core.mosaic.cells.*;
 import fmg.core.types.EMosaic;
 
 public final class MosaicHelper {
@@ -17,101 +15,61 @@ public final class MosaicHelper {
 
     public static final double AREA_PRECISION = 0.001;
 
-    private static final String getPackageName() {
-        Package pkg = MosaicHelper.class.getPackage();
-        if (pkg != null)
-            return pkg.getName();
-        String[] arr = MosaicHelper.class.getName().split("\\.");
-        String name = "";
-        for (int i=0; i<arr.length-1; i++) {
-            if (!name.isEmpty())
-                name += '.';
-            name += arr[i];
-        }
-        return name;
-    }
-
     /** Создать экземпляр атрибута для конкретного типа мозаики */
     public static final BaseCell.BaseAttribute createAttributeInstance(EMosaic mosaicType) {
-//        switch (mosaicType) {
-//        case eMosaicTriangle1        : return new Triangle1        .AttrTriangle1        (area);
-//        case eMosaicTriangle2        : return new Triangle2        .AttrTriangle2        (area);
-//        case eMosaicTriangle3        : return new Triangle3        .AttrTriangle3        (area);
-//        case eMosaicTriangle4        : return new Triangle4        .AttrTriangle4        (area);
-//        case eMosaicSquare1          : return new Square1          .AttrSquare1          (area);
-//        case eMosaicSquare2          : return new Square2          .AttrSquare2          (area);
-//        case eMosaicParquet1         : return new Parquet1         .AttrParquet1         (area);
-//        case eMosaicParquet2         : return new Parquet2         .AttrParquet2         (area);
-//        case eMosaicTrapezoid1       : return new Trapezoid1       .AttrTrapezoid1       (area);
-//        case eMosaicTrapezoid2       : return new Trapezoid2       .AttrTrapezoid2       (area);
-//        case eMosaicTrapezoid3       : return new Trapezoid3       .AttrTrapezoid3       (area);
-//        case eMosaicRhombus1         : return new Rhombus1         .AttrRhombus1         (area);
-//        case eMosaicQuadrangle1      : return new Quadrangle1      .AttrQuadrangle1      (area);
-//        case eMosaicPenrousePeriodic1: return new PenrousePeriodic1.AttrPenrousePeriodic1(area);
-//        case eMosaicPentagonT24      : return new PentagonT24      .AttrPentagonT24      (area);
-//        case eMosaicPentagonT5       : return new PentagonT5       .AttrPentagonT5       (area);
-//        case eMosaicPentagonT10      : return new PentagonT10      .AttrPentagonT10      (area);
-//        case eMosaicHexagon1         : return new Hexagon1         .AttrHexagon1         (area);
-//        case eMosaicTrSq1            : return new TrSq1            .AttrTrSq1            (area);
-//        case eMosaicTrSq2            : return new TrSq2            .AttrTrSq2            (area);
-//        case eMosaicSqTrHex          : return new SqTrHex          .AttrSqTrHex          (area);
-//        default:
-//            throw new RuntimeException("Unknown type "+mosaicType);
-//        }
-
-        try {
-            String className = getPackageName() + ".cells." + mosaicType.getMosaicClassName() + "$Attr"+mosaicType.getMosaicClassName();
-            @SuppressWarnings("unchecked")
-            Class<? extends BaseCell.BaseAttribute> cellAttrClass = (Class<? extends BaseCell.BaseAttribute>)Class.forName(className);
-            Constructor<? extends BaseCell.BaseAttribute> constructor = cellAttrClass.getConstructor(); //(Constructor<? extends BaseAttribute>) cellClass.getConstructors()[0]; //
-            BaseCell.BaseAttribute attr = constructor.newInstance();
-            return attr;
-        } catch (Exception ex) {
-            Logger.error("createAttributeInstance", ex);
-            throw new RuntimeException("Unknown type " + mosaicType, ex);
+        switch (mosaicType) {
+        case eMosaicTriangle1        : return new Triangle1        .AttrTriangle1        ();
+        case eMosaicTriangle2        : return new Triangle2        .AttrTriangle2        ();
+        case eMosaicTriangle3        : return new Triangle3        .AttrTriangle3        ();
+        case eMosaicTriangle4        : return new Triangle4        .AttrTriangle4        ();
+        case eMosaicSquare1          : return new Square1          .AttrSquare1          ();
+        case eMosaicSquare2          : return new Square2          .AttrSquare2          ();
+        case eMosaicParquet1         : return new Parquet1         .AttrParquet1         ();
+        case eMosaicParquet2         : return new Parquet2         .AttrParquet2         ();
+        case eMosaicTrapezoid1       : return new Trapezoid1       .AttrTrapezoid1       ();
+        case eMosaicTrapezoid2       : return new Trapezoid2       .AttrTrapezoid2       ();
+        case eMosaicTrapezoid3       : return new Trapezoid3       .AttrTrapezoid3       ();
+        case eMosaicRhombus1         : return new Rhombus1         .AttrRhombus1         ();
+        case eMosaicQuadrangle1      : return new Quadrangle1      .AttrQuadrangle1      ();
+        case eMosaicPenrousePeriodic1: return new PenrousePeriodic1.AttrPenrousePeriodic1();
+        case eMosaicPentagonT24      : return new PentagonT24      .AttrPentagonT24      ();
+        case eMosaicPentagonT5       : return new PentagonT5       .AttrPentagonT5       ();
+        case eMosaicPentagonT10      : return new PentagonT10      .AttrPentagonT10      ();
+        case eMosaicHexagon1         : return new Hexagon1         .AttrHexagon1         ();
+        case eMosaicTrSq1            : return new TrSq1            .AttrTrSq1            ();
+        case eMosaicTrSq2            : return new TrSq2            .AttrTrSq2            ();
+        case eMosaicSqTrHex          : return new SqTrHex          .AttrSqTrHex          ();
+        default:
+            throw new RuntimeException("Unknown type " + mosaicType);
         }
     }
 
     /** Создать экземпляр ячейки для конкретного типа мозаики */
     public static final BaseCell createCellInstance(BaseCell.BaseAttribute attr, EMosaic mosaicType, Coord coord) {
-//        switch (mosaicType) {
-//        case eMosaicTriangle1        : return new Triangle1        ((Triangle1        .AttrTriangle1        ) attr, coord);
-//        case eMosaicTriangle2        : return new Triangle2        ((Triangle2        .AttrTriangle2        ) attr, coord);
-//        case eMosaicTriangle3        : return new Triangle3        ((Triangle3        .AttrTriangle3        ) attr, coord);
-//        case eMosaicTriangle4        : return new Triangle4        ((Triangle4        .AttrTriangle4        ) attr, coord);
-//        case eMosaicSquare1          : return new Square1          ((Square1          .AttrSquare1          ) attr, coord);
-//        case eMosaicSquare2          : return new Square2          ((Square2          .AttrSquare2          ) attr, coord);
-//        case eMosaicParquet1         : return new Parquet1         ((Parquet1         .AttrParquet1         ) attr, coord);
-//        case eMosaicParquet2         : return new Parquet2         ((Parquet2         .AttrParquet2         ) attr, coord);
-//        case eMosaicTrapezoid1       : return new Trapezoid1       ((Trapezoid1       .AttrTrapezoid1       ) attr, coord);
-//        case eMosaicTrapezoid2       : return new Trapezoid2       ((Trapezoid2       .AttrTrapezoid2       ) attr, coord);
-//        case eMosaicTrapezoid3       : return new Trapezoid3       ((Trapezoid3       .AttrTrapezoid3       ) attr, coord);
-//        case eMosaicRhombus1         : return new Rhombus1         ((Rhombus1         .AttrRhombus1         ) attr, coord);
-//        case eMosaicQuadrangle1      : return new Quadrangle1      ((Quadrangle1      .AttrQuadrangle1      ) attr, coord);
-//        case eMosaicPenrousePeriodic1: return new PenrousePeriodic1((PenrousePeriodic1.AttrPenrousePeriodic1) attr, coord);
-//        case eMosaicPentagonT24      : return new PentagonT24      ((PentagonT24      .AttrPentagonT24      ) attr, coord);
-//        case eMosaicPentagonT5       : return new PentagonT5       ((PentagonT5       .AttrPentagonT5       ) attr, coord);
-//        case eMosaicPentagonT10      : return new PentagonT10      ((PentagonT10      .AttrPentagonT10      ) attr, coord);
-//        case eMosaicHexagon1         : return new Hexagon1         ((Hexagon1         .AttrHexagon1         ) attr, coord);
-//        case eMosaicTrSq1            : return new TrSq1            ((TrSq1            .AttrTrSq1            ) attr, coord);
-//        case eMosaicTrSq2            : return new TrSq2            ((TrSq2            .AttrTrSq2            ) attr, coord);
-//        case eMosaicSqTrHex          : return new SqTrHex          ((SqTrHex          .AttrSqTrHex          ) attr, coord);
-//        default:
-//            throw new RuntimeException("Unknown type "+mosaicType);
-//        }
-
-        try {
-            String className = getPackageName() + ".cells." + mosaicType.getMosaicClassName();
-            @SuppressWarnings("unchecked")
-            Class<? extends BaseCell> cellClass = (Class<? extends BaseCell>)Class.forName(className);
-
-            Constructor<? extends BaseCell> constructor = cellClass.getConstructor(attr.getClass(), coord.getClass()); // cellClass.getConstructors()[0];
-            BaseCell cell = constructor.newInstance(attr, coord);
-            cell.init();
-            return cell;
-        } catch (Exception ex) {
-            Logger.error("createCellInstance", ex);
-            throw new RuntimeException("Unknown type " + mosaicType, ex);
+        switch (mosaicType) {
+        case eMosaicTriangle1        : return new Triangle1        ((Triangle1        .AttrTriangle1        ) attr, coord);
+        case eMosaicTriangle2        : return new Triangle2        ((Triangle2        .AttrTriangle2        ) attr, coord);
+        case eMosaicTriangle3        : return new Triangle3        ((Triangle3        .AttrTriangle3        ) attr, coord);
+        case eMosaicTriangle4        : return new Triangle4        ((Triangle4        .AttrTriangle4        ) attr, coord);
+        case eMosaicSquare1          : return new Square1          ((Square1          .AttrSquare1          ) attr, coord);
+        case eMosaicSquare2          : return new Square2          ((Square2          .AttrSquare2          ) attr, coord);
+        case eMosaicParquet1         : return new Parquet1         ((Parquet1         .AttrParquet1         ) attr, coord);
+        case eMosaicParquet2         : return new Parquet2         ((Parquet2         .AttrParquet2         ) attr, coord);
+        case eMosaicTrapezoid1       : return new Trapezoid1       ((Trapezoid1       .AttrTrapezoid1       ) attr, coord);
+        case eMosaicTrapezoid2       : return new Trapezoid2       ((Trapezoid2       .AttrTrapezoid2       ) attr, coord);
+        case eMosaicTrapezoid3       : return new Trapezoid3       ((Trapezoid3       .AttrTrapezoid3       ) attr, coord);
+        case eMosaicRhombus1         : return new Rhombus1         ((Rhombus1         .AttrRhombus1         ) attr, coord);
+        case eMosaicQuadrangle1      : return new Quadrangle1      ((Quadrangle1      .AttrQuadrangle1      ) attr, coord);
+        case eMosaicPenrousePeriodic1: return new PenrousePeriodic1((PenrousePeriodic1.AttrPenrousePeriodic1) attr, coord);
+        case eMosaicPentagonT24      : return new PentagonT24      ((PentagonT24      .AttrPentagonT24      ) attr, coord);
+        case eMosaicPentagonT5       : return new PentagonT5       ((PentagonT5       .AttrPentagonT5       ) attr, coord);
+        case eMosaicPentagonT10      : return new PentagonT10      ((PentagonT10      .AttrPentagonT10      ) attr, coord);
+        case eMosaicHexagon1         : return new Hexagon1         ((Hexagon1         .AttrHexagon1         ) attr, coord);
+        case eMosaicTrSq1            : return new TrSq1            ((TrSq1            .AttrTrSq1            ) attr, coord);
+        case eMosaicTrSq2            : return new TrSq2            ((TrSq2            .AttrTrSq2            ) attr, coord);
+        case eMosaicSqTrHex          : return new SqTrHex          ((SqTrHex          .AttrSqTrHex          ) attr, coord);
+        default:
+            throw new RuntimeException("Unknown type " + mosaicType);
         }
     }
 
@@ -121,7 +79,7 @@ public final class MosaicHelper {
      * @param func - ф-ция сравнения
      * @return что найдено
      */
-    static int FinderI(int baseDelta, Comparable<Integer> func) {
+    static int finderI(int baseDelta, Comparable<Integer> func) {
         double res = baseDelta;
         double d = baseDelta;
         boolean deltaUp = true;
@@ -161,7 +119,7 @@ public final class MosaicHelper {
      * @param func - ф-ция сравнения
      * @return что найдено
      */
-    static double FinderD(double baseDelta, Comparable<Double> func) {
+    static double finderD(double baseDelta, Comparable<Double> func) {
         double res = baseDelta;
         double d = baseDelta;
         boolean deltaUp = true;
@@ -202,7 +160,7 @@ public final class MosaicHelper {
 
         final SizeDouble sizeIter = new SizeDouble();
         int[] iterations = { 0 };
-        double res = FinderD(2000, (Comparable<Double>)area -> {
+        double res = finderD(2000, (Comparable<Double>)area -> {
             assert(++iterations[0] < 100);
             cellAttr.setArea(area);
             SizeDouble tmp = cellAttr.getSize(mosaicSizeField);
@@ -244,7 +202,7 @@ public final class MosaicHelper {
         BaseCell.BaseAttribute cellAttr = createAttributeInstance(mosaicType);
         cellAttr.setArea(area);
         final Matrisize result = new Matrisize();
-        FinderI(2000, (Comparable<Integer>)newWidth -> {
+        finderI(2000, (Comparable<Integer>)newWidth -> {
             result.m = newWidth;
             SizeDouble sizeWnd = cellAttr.getSize(result);
             if (DoubleExt.hasMinDiff(sizeWnd.width, sizeClient.width))
@@ -253,7 +211,7 @@ public final class MosaicHelper {
                 return -1;
             return +1;
         });
-        FinderI(2000, (Comparable<Integer>)newHeight -> {
+        finderI(2000, (Comparable<Integer>)newHeight -> {
             result.n = newHeight;
             SizeDouble sizeWnd = cellAttr.getSize(result);
             if (DoubleExt.hasMinDiff(sizeWnd.height, sizeClient.height))

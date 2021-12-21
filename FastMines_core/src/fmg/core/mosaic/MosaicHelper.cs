@@ -9,49 +9,61 @@ namespace Fmg.Core.Mosaic {
 
         public const double AreaPrecision = 0.001;
 
-        private static string GetPackageName() { return typeof(MosaicHelper).Namespace; }
-
         /// <summary>Создать экземпляр атрибута для конкретного типа мозаики</summary>
         public static BaseCell.BaseAttribute CreateAttributeInstance(EMosaic mosaicType) {
-            //switch (mosaicType) {
-            //case eMosaicTriangle1: return new Triangle1.AttrTriangle1(area);
-            //   // ...
-            //case eMosaicSquare1: return new Square1.AttrSquare1(area);
-            //   // ...
-            //}
-            //throw new Exception("Unknown type " + mosaicType);
-
-            try {
-                var className = GetPackageName() + ".Cells." + mosaicType.GetMosaicClassName() + "+Attr" + mosaicType.GetMosaicClassName();
-                var cellAttrClass = Type.GetType(className);
-                var attr = (BaseCell.BaseAttribute)Activator.CreateInstance(cellAttrClass, null);
-                return attr;
-            } catch (Exception ex) {
-                System.Diagnostics.Debug.Assert(false, ex.Message);
-                throw new Exception("Unknown type " + mosaicType + ": " + ex.Message, ex);
+            switch (mosaicType) {
+            case EMosaic.eMosaicTriangle1        : return new Triangle1        .AttrTriangle1        ();
+            case EMosaic.eMosaicTriangle2        : return new Triangle2        .AttrTriangle2        ();
+            case EMosaic.eMosaicTriangle3        : return new Triangle3        .AttrTriangle3        ();
+            case EMosaic.eMosaicTriangle4        : return new Triangle4        .AttrTriangle4        ();
+            case EMosaic.eMosaicSquare1          : return new Square1          .AttrSquare1          ();
+            case EMosaic.eMosaicSquare2          : return new Square2          .AttrSquare2          ();
+            case EMosaic.eMosaicParquet1         : return new Parquet1         .AttrParquet1         ();
+            case EMosaic.eMosaicParquet2         : return new Parquet2         .AttrParquet2         ();
+            case EMosaic.eMosaicTrapezoid1       : return new Trapezoid1       .AttrTrapezoid1       ();
+            case EMosaic.eMosaicTrapezoid2       : return new Trapezoid2       .AttrTrapezoid2       ();
+            case EMosaic.eMosaicTrapezoid3       : return new Trapezoid3       .AttrTrapezoid3       ();
+            case EMosaic.eMosaicRhombus1         : return new Rhombus1         .AttrRhombus1         ();
+            case EMosaic.eMosaicQuadrangle1      : return new Quadrangle1      .AttrQuadrangle1      ();
+            case EMosaic.eMosaicPenrousePeriodic1: return new PenrousePeriodic1.AttrPenrousePeriodic1();
+            case EMosaic.eMosaicPentagonT24      : return new PentagonT24      .AttrPentagonT24      ();
+            case EMosaic.eMosaicPentagonT5       : return new PentagonT5       .AttrPentagonT5       ();
+            case EMosaic.eMosaicPentagonT10      : return new PentagonT10      .AttrPentagonT10      ();
+            case EMosaic.eMosaicHexagon1         : return new Hexagon1         .AttrHexagon1         ();
+            case EMosaic.eMosaicTrSq1            : return new TrSq1            .AttrTrSq1            ();
+            case EMosaic.eMosaicTrSq2            : return new TrSq2            .AttrTrSq2            ();
+            case EMosaic.eMosaicSqTrHex          : return new SqTrHex          .AttrSqTrHex          ();
+            default:
+                throw new Exception("Unknown type " + mosaicType);
             }
         }
 
         /// <summary>Создать экземпляр ячейки для конкретного типа мозаики</summary>
         public static BaseCell CreateCellInstance(BaseCell.BaseAttribute attr, EMosaic mosaicType, Coord coord) {
-            //switch (mosaicType) {
-            //case eMosaicTriangle1  : return new Triangle1((Triangle1.AttrTriangle1) attr, coord);
-            //   // ...
-            //case eMosaicSquare1    : return new Square1((Square1.AttrSquare1) attr, coord);
-            //   // ...
-            //}
-            //throw new RuntimeException("Unknown type "+mosaicType);
-
-            try {
-                var className = GetPackageName() + ".Cells." + mosaicType.GetMosaicClassName();
-                var cellClass = Type.GetType(className);
-                object[] args = { attr, coord };
-                var cell = (BaseCell)Activator.CreateInstance(cellClass, args);
-                cell.Init();
-                return cell;
-            } catch (Exception ex) {
-                System.Diagnostics.Debug.Assert(false, ex.Message);
-                throw new Exception("Unknown type " + mosaicType + ": " + ex.Message, ex);
+            switch (mosaicType) {
+            case EMosaic.eMosaicTriangle1        : return new Triangle1        ((Triangle1        .AttrTriangle1        ) attr, coord);
+            case EMosaic.eMosaicTriangle2        : return new Triangle2        ((Triangle2        .AttrTriangle2        ) attr, coord);
+            case EMosaic.eMosaicTriangle3        : return new Triangle3        ((Triangle3        .AttrTriangle3        ) attr, coord);
+            case EMosaic.eMosaicTriangle4        : return new Triangle4        ((Triangle4        .AttrTriangle4        ) attr, coord);
+            case EMosaic.eMosaicSquare1          : return new Square1          ((Square1          .AttrSquare1          ) attr, coord);
+            case EMosaic.eMosaicSquare2          : return new Square2          ((Square2          .AttrSquare2          ) attr, coord);
+            case EMosaic.eMosaicParquet1         : return new Parquet1         ((Parquet1         .AttrParquet1         ) attr, coord);
+            case EMosaic.eMosaicParquet2         : return new Parquet2         ((Parquet2         .AttrParquet2         ) attr, coord);
+            case EMosaic.eMosaicTrapezoid1       : return new Trapezoid1       ((Trapezoid1       .AttrTrapezoid1       ) attr, coord);
+            case EMosaic.eMosaicTrapezoid2       : return new Trapezoid2       ((Trapezoid2       .AttrTrapezoid2       ) attr, coord);
+            case EMosaic.eMosaicTrapezoid3       : return new Trapezoid3       ((Trapezoid3       .AttrTrapezoid3       ) attr, coord);
+            case EMosaic.eMosaicRhombus1         : return new Rhombus1         ((Rhombus1         .AttrRhombus1         ) attr, coord);
+            case EMosaic.eMosaicQuadrangle1      : return new Quadrangle1      ((Quadrangle1      .AttrQuadrangle1      ) attr, coord);
+            case EMosaic.eMosaicPenrousePeriodic1: return new PenrousePeriodic1((PenrousePeriodic1.AttrPenrousePeriodic1) attr, coord);
+            case EMosaic.eMosaicPentagonT24      : return new PentagonT24      ((PentagonT24      .AttrPentagonT24      ) attr, coord);
+            case EMosaic.eMosaicPentagonT5       : return new PentagonT5       ((PentagonT5       .AttrPentagonT5       ) attr, coord);
+            case EMosaic.eMosaicPentagonT10      : return new PentagonT10      ((PentagonT10      .AttrPentagonT10      ) attr, coord);
+            case EMosaic.eMosaicHexagon1         : return new Hexagon1         ((Hexagon1         .AttrHexagon1         ) attr, coord);
+            case EMosaic.eMosaicTrSq1            : return new TrSq1            ((TrSq1            .AttrTrSq1            ) attr, coord);
+            case EMosaic.eMosaicTrSq2            : return new TrSq2            ((TrSq2            .AttrTrSq2            ) attr, coord);
+            case EMosaic.eMosaicSqTrHex          : return new SqTrHex          ((SqTrHex          .AttrSqTrHex          ) attr, coord);
+            default:
+                throw new Exception("Unknown type " + mosaicType);
             }
         }
 
