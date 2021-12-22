@@ -27,10 +27,10 @@ import fmg.swing.utils.ImgUtils;
 /** MVC: view. SWING implementation over control {@link JPanel} */
 public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawModel<Icon>> {
 
-    private JPanel _control;
-    private Flag.IconController _imgFlag = new Flag.IconController();
-    private Mine.IconController _imgMine = new Mine.IconController();
-    private final Collection<BaseCell> _modifiedCells = new HashSet<>();
+    private JPanel control;
+    private Flag.IconController imgFlag = new Flag.IconController();
+    private Mine.IconController imgMine = new Mine.IconController();
+    private final Collection<BaseCell> modifiedCells = new HashSet<>();
 
     boolean zoomFocusToMosaicField = false; // experimental
     boolean forceSimpleDraw = false;
@@ -84,8 +84,8 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
     }
 
     public JPanel getControl() {
-        if (_control == null)
-            _control = new JPanel() {
+        if (control == null)
+            control = new JPanel() {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -127,20 +127,20 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
                 }
 
             };
-        return _control;
+        return control;
     }
 
     @Override
     protected void drawModified(Collection<BaseCell> modifiedCells) {
         JPanel control = getControl();
 
-        assert !_alreadyPainted;
+        assert !alreadyPainted;
 
         if (modifiedCells == null) { // mark NULL if all mosaic is changed
-            _modifiedCells.clear();
+            this.modifiedCells.clear();
             control.repaint();
         } else {
-            _modifiedCells.addAll(modifiedCells);
+            this.modifiedCells.addAll(modifiedCells);
 
             double minX=0, minY=0, maxX=0, maxY=0;
             boolean first = true;
@@ -159,7 +159,7 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
                     maxY = Math.max(maxY, rc.bottom());
                 }
             }
-            if (_DEBUG_DRAW_FLOW)
+            if (DEBUG_DRAW_FLOW)
                 Logger.info("MosaicViewSwing.draw: repaint={" + (int)minX +","+ (int)minY +","+ (int)(maxX-minX) +","+ (int)(maxY-minY) + "}");
 
             MosaicDrawModel<?> model = getModel();
@@ -178,7 +178,7 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
                                                 ? null
                                                 : toDrawCells(Cast.toRectDouble(clipBounds)),
                                             true/*_modifiedCells.isEmpty() || (_modifiedCells.size() == model.getMatrix().size())*/);
-            _modifiedCells.clear();
+            modifiedCells.clear();
         };
 
         Graphics2D g2d = (Graphics2D)g;
@@ -322,18 +322,18 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
 
         final int max = 30;
         if (sq > max) {
-            _imgFlag.getModel().setSize(new SizeDouble(sq, sq));
-            _imgMine.getModel().setSize(new SizeDouble(sq, sq));
-            model.setImgFlag(_imgFlag.getImage());
-            model.setImgMine(_imgMine.getImage());
+            imgFlag.getModel().setSize(new SizeDouble(sq, sq));
+            imgMine.getModel().setSize(new SizeDouble(sq, sq));
+            model.setImgFlag(imgFlag.getImage());
+            model.setImgMine(imgMine.getImage());
         } else {
-            _imgFlag.getModel().setSize(new SizeDouble(max, max));
-            _imgMine.getModel().setSize(new SizeDouble(max, max));
+            imgFlag.getModel().setSize(new SizeDouble(max, max));
+            imgMine.getModel().setSize(new SizeDouble(max, max));
             int iSq = (int)sq;
             if (iSq < 1)
                 return;
-            model.setImgFlag(ImgUtils.zoom(_imgFlag.getImage(), iSq, iSq));
-            model.setImgMine(ImgUtils.zoom(_imgMine.getImage(), iSq, iSq));
+            model.setImgFlag(ImgUtils.zoom(imgFlag.getImage(), iSq, iSq));
+            model.setImgMine(ImgUtils.zoom(imgMine.getImage(), iSq, iSq));
         }
     }
 
@@ -343,9 +343,9 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
             timerDebunceSize.stop();
         super.close();
         getModel().close();
-        _control = null;
-        _imgFlag.close();
-        _imgMine.close();
+        control = null;
+        imgFlag.close();
+        imgMine.close();
     }
 
 }

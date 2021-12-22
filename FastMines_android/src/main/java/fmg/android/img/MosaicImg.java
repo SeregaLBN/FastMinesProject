@@ -23,7 +23,7 @@ public final class MosaicImg {
                    extends MosaicAndroidView<TImage, Void, MosaicAnimatedModel<Void>>
     {
 
-        protected boolean _useBackgroundColor = true;
+        protected boolean useBackgroundColor = true;
 
         protected AndroidView() {
             super(new MosaicAnimatedModel<Void>());
@@ -35,7 +35,7 @@ public final class MosaicImg {
 
             MosaicAnimatedModel<Void> model = getModel();
 
-            _useBackgroundColor = true;
+            useBackgroundColor = true;
             switch (model.getRotateMode()) {
             case fullMatrix:
                 drawModified(model.getMatrix());
@@ -45,7 +45,7 @@ public final class MosaicImg {
                 drawModified(model.getNotRotatedCells());
 
                 // draw rotated part
-                _useBackgroundColor = false;
+                useBackgroundColor = false;
                 model.getRotatedCells(rotatedCells -> drawModified(rotatedCells));
                 break;
             }
@@ -75,7 +75,7 @@ public final class MosaicImg {
 
         @Override
         protected void drawModified(Collection<BaseCell> modifiedCells) {
-            drawAndroid(wrap.getCanvas(), modifiedCells, _useBackgroundColor);
+            drawAndroid(wrap.getCanvas(), modifiedCells, useBackgroundColor);
         }
 
         @Override

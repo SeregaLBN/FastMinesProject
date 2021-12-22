@@ -109,8 +109,8 @@ public abstract class MosaicController<TImage, TImageInner,
             this.oldCountMines = this.countMines; // save
 
         countMines = newVal;
-        _notifier.firePropertyChanged(oldVal, countMines, PROPERTY_COUNT_MINES);
-        _notifier.firePropertyChanged(null, countMines, PROPERTY_COUNT_MINES_LEFT);
+        notifier.firePropertyChanged(oldVal, countMines, PROPERTY_COUNT_MINES);
+        notifier.firePropertyChanged(null, countMines, PROPERTY_COUNT_MINES_LEFT);
 
         gameNew();
     }
@@ -190,7 +190,7 @@ public abstract class MosaicController<TImage, TImageInner,
     @Override
     public int getCountClick()  { return countClick; }
     public void setCountClick(int clickCount) {
-        _notifier.setProperty(countClick, clickCount, PROPERTY_COUNT_CLICK);
+        notifier.setProperty(countClick, clickCount, PROPERTY_COUNT_CLICK);
     }
 
     /** ячейка на которой было нажато (но не обязательно что отпущено) */
@@ -221,7 +221,7 @@ public abstract class MosaicController<TImage, TImageInner,
         return gameStatus;
     }
     public void setGameStatus(EGameStatus newStatus) {
-        _notifier.setProperty(gameStatus, newStatus, PROPERTY_GAME_STATUS);
+        notifier.setProperty(gameStatus, newStatus, PROPERTY_GAME_STATUS);
     }
 
     public EPlayInfo getPlayInfo() {
@@ -230,7 +230,7 @@ public abstract class MosaicController<TImage, TImageInner,
         return playInfo;
     }
     public void setPlayInfo(EPlayInfo newVal) {
-        _notifier.setProperty(playInfo, EPlayInfo.setPlayInfo(playInfo, newVal), PROPERTY_PLAY_INFO);
+        notifier.setProperty(playInfo, EPlayInfo.setPlayInfo(playInfo, newVal), PROPERTY_PLAY_INFO);
     }
 
     public List<Coord> getRepositoryMines() {
@@ -245,7 +245,7 @@ public abstract class MosaicController<TImage, TImageInner,
             if ((newMines != null) && !newMines.isEmpty())
                 current.addAll(newMines);
         }
-        _notifier.firePropertyChanged(PROPERTY_REPOSITORY_MINES);
+        notifier.firePropertyChanged(PROPERTY_REPOSITORY_MINES);
         //setGameStatus(EGameStatus.eGSEnd);
         gameNew();
     }
@@ -294,9 +294,9 @@ public abstract class MosaicController<TImage, TImageInner,
             }
 
         setGameStatus(EGameStatus.eGSEnd);
-        _notifier.firePropertyChanged(PROPERTY_COUNT_MINES_LEFT);
-        _notifier.firePropertyChanged(PROPERTY_COUNT_FLAG);
-        _notifier.firePropertyChanged(PROPERTY_COUNT_OPEN);
+        notifier.firePropertyChanged(PROPERTY_COUNT_MINES_LEFT);
+        notifier.firePropertyChanged(PROPERTY_COUNT_FLAG);
+        notifier.firePropertyChanged(PROPERTY_COUNT_OPEN);
 
         return toRepaint;
     }
@@ -379,11 +379,11 @@ public abstract class MosaicController<TImage, TImageInner,
                 setCountClick(getCountClick()+1);
                 setPlayInfo(EPlayInfo.ePlayerUser);  // юзер играл
                 if (countOpen > 0)
-                    _notifier.firePropertyChanged(PROPERTY_COUNT_OPEN);
+                    notifier.firePropertyChanged(PROPERTY_COUNT_OPEN);
                 if ((countFlag > 0) || (countUnknown > 0)) {
-                    _notifier.firePropertyChanged(PROPERTY_COUNT_FLAG);
-                    _notifier.firePropertyChanged(PROPERTY_COUNT_MINES_LEFT);
-                    _notifier.firePropertyChanged(PROPERTY_COUNT_UNKNOWN);
+                    notifier.firePropertyChanged(PROPERTY_COUNT_FLAG);
+                    notifier.firePropertyChanged(PROPERTY_COUNT_MINES_LEFT);
+                    notifier.firePropertyChanged(PROPERTY_COUNT_UNKNOWN);
                 }
             }
 
@@ -433,9 +433,9 @@ public abstract class MosaicController<TImage, TImageInner,
         if (any) {
             setCountClick(getCountClick()+1);
             setPlayInfo(EPlayInfo.ePlayerUser); // то считаю что юзер играл
-            _notifier.firePropertyChanged(PROPERTY_COUNT_FLAG);
-            _notifier.firePropertyChanged(PROPERTY_COUNT_MINES_LEFT);
-            _notifier.firePropertyChanged(PROPERTY_COUNT_UNKNOWN);
+            notifier.firePropertyChanged(PROPERTY_COUNT_FLAG);
+            notifier.firePropertyChanged(PROPERTY_COUNT_MINES_LEFT);
+            notifier.firePropertyChanged(PROPERTY_COUNT_UNKNOWN);
         }
 
         result.modified.addAll(verifyFlag());
@@ -491,7 +491,7 @@ public abstract class MosaicController<TImage, TImageInner,
         setGameStatus(EGameStatus.eGSReady);
         setPlayInfo(EPlayInfo.ePlayerUnknown); // пока не знаю кто будет играть
 
-        _notifier.firePropertyChanged(PROPERTY_COUNT_MINES_LEFT);
+        notifier.firePropertyChanged(PROPERTY_COUNT_MINES_LEFT);
 
         invalidateView(this.getMatrix());
 

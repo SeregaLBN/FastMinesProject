@@ -21,16 +21,16 @@ public abstract class ImageController<TImage,
 {
 
     /** MVC: view */
-    private final TImageView _imageView;
-    protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this, true);
+    private final TImageView imageView;
+    protected NotifyPropertyChanged notifier = new NotifyPropertyChanged(this, true);
     private final PropertyChangeListener onViewPropertyChangedListener = this::onViewPropertyChanged;
 
     protected ImageController(TImageView imageView) {
-        _imageView = imageView;
-        _imageView.addListener(onViewPropertyChangedListener);
+        this.imageView = imageView;
+        this.imageView.addListener(onViewPropertyChangedListener);
     }
 
-    protected TImageView  getView()  { return _imageView; }
+    protected TImageView  getView()  { return imageView; }
     @Override
     public    TImageModel getModel() { return getView().getModel(); }
     @Override
@@ -41,13 +41,13 @@ public abstract class ImageController<TImage,
     protected void onViewPropertyChanged(PropertyChangeEvent ev) {
         switch (ev.getPropertyName()) {
         case IImageView.PROPERTY_MODEL:
-            _notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_MODEL);
+            notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_MODEL);
             break;
         case IImageView.PROPERTY_IMAGE:
-            _notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_IMAGE);
+            notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_IMAGE);
             break;
         case IImageView.PROPERTY_SIZE:
-            _notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_SIZE);
+            notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_SIZE);
             break;
         default:
             break;
@@ -56,17 +56,17 @@ public abstract class ImageController<TImage,
 
     @Override
     public void addListener(PropertyChangeListener listener) {
-        _notifier.addListener(listener);
+        notifier.addListener(listener);
     }
     @Override
     public void removeListener(PropertyChangeListener listener) {
-        _notifier.removeListener(listener);
+        notifier.removeListener(listener);
     }
 
     @Override
     public void close() {
-        _imageView.removeListener(onViewPropertyChangedListener);
-        _notifier.close();
+        imageView.removeListener(onViewPropertyChangedListener);
+        notifier.close();
     }
 
 }

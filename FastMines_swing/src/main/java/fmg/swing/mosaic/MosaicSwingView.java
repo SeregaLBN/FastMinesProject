@@ -37,19 +37,19 @@ public abstract class MosaicSwingView<TImage,
                                       TMosaicModel extends MosaicDrawModel<TImageInner>>
               extends MosaicView<TImage, TImageInner, TMosaicModel>
 {
-    private Font _font;
-    private static final FontRenderContext _frc = new FontRenderContext(null, true, true);
+    private Font font;
+    private static final FontRenderContext frc = new FontRenderContext(null, true, true);
     /** cached TextLayout for quick drawing */
-    private final Map<String /* text */, TextLayout> _mapTextLayout = new HashMap<>();
-    protected boolean _alreadyPainted = false;
+    private final Map<String /* text */, TextLayout> mapTextLayout = new HashMap<>();
+    protected boolean alreadyPainted = false;
 
     protected MosaicSwingView(TMosaicModel mosaicModel) {
         super(mosaicModel);
     }
 
     protected void drawSwing(Graphics2D g, Collection<BaseCell> toDrawCells, boolean drawBk) {
-        assert !_alreadyPainted;
-        _alreadyPainted = true;
+        assert !alreadyPainted;
+        alreadyPainted = true;
 
         TMosaicModel model = getModel();
         SizeDouble size = model.getSize();
@@ -97,7 +97,7 @@ public abstract class MosaicSwingView<TImage,
         }
         /**/
 
-        if (_DEBUG_DRAW_FLOW)
+        if (DEBUG_DRAW_FLOW)
             Logger.info("MosaicSwingView.drawSwing: " + ((toDrawCells==null) ? "all" : ("cnt=" + toDrawCells.size()))
                                                              + "; drawBk=" + drawBk);
         if (toDrawCells == null)
@@ -241,7 +241,7 @@ public abstract class MosaicSwingView<TImage,
         }
         /**/
 
-        if (_DEBUG_DRAW_FLOW)
+        if (DEBUG_DRAW_FLOW)
             Logger.info("-------------------------------");
 
         // restore
@@ -250,11 +250,11 @@ public abstract class MosaicSwingView<TImage,
         g.setColor(oldColor);
         g.setClip(oldShape);
 
-        _alreadyPainted = false;
+        alreadyPainted = false;
     }
 
     private Rectangle2D getStringBounds(String text) {
-        TextLayout tl = _mapTextLayout.computeIfAbsent(text, k -> new TextLayout(text, getFont(), _frc));
+        TextLayout tl = mapTextLayout.computeIfAbsent(text, k -> new TextLayout(text, getFont(), frc));
         return tl.getBounds();
 //        return font.getStringBounds(text, new FontRenderContext(null, true, true));
     }
@@ -275,25 +275,25 @@ public abstract class MosaicSwingView<TImage,
     }
 
     protected Font getFont() {
-        if (_font == null) {
+        if (font == null) {
             FontInfo fi = getModel().getFontInfo();
-            _font = new Font(fi.getName(), fi.isBold() ? Font.BOLD : Font.PLAIN, (int)fi.getSize());
+            font = new Font(fi.getName(), fi.isBold() ? Font.BOLD : Font.PLAIN, (int)fi.getSize());
         }
-        return _font;
+        return font;
     }
 
     @Override
     protected void onModelPropertyChanged(PropertyChangeEvent ev) {
         super.onModelPropertyChanged(ev);
         if (MosaicDrawModel.PROPERTY_FONT_INFO.equals(ev.getPropertyName())) {
-            _font = null;
-            _mapTextLayout.clear();
+            font = null;
+            mapTextLayout.clear();
         }
     }
 
     @Override
     public void close() {
-        _mapTextLayout.clear();
+        mapTextLayout.clear();
         super.close();
     }
 

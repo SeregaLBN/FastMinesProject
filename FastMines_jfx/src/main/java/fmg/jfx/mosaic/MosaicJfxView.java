@@ -39,18 +39,18 @@ public abstract class MosaicJfxView<TImage,
                  extends MosaicView<TImage, TImageInner, TMosaicModel>
 {
 
-    private Font _font;
+    private Font font;
     /** cached Text for quick drawing */
-    private final Map<String /* text */, Text> _mapText = new HashMap<>();
-    protected boolean _alreadyPainted = false;
+    private final Map<String /* text */, Text> mapText = new HashMap<>();
+    protected boolean alreadyPainted = false;
 
     protected MosaicJfxView(TMosaicModel mosaicModel) {
         super(mosaicModel);
     }
 
     protected void drawJfx(GraphicsContext g, Collection<BaseCell> toDrawCells, boolean drawBk) {
-        assert !_alreadyPainted;
-        _alreadyPainted = true;
+        assert !alreadyPainted;
+        alreadyPainted = true;
 
         TMosaicModel model = getModel();
         SizeDouble size = model.getSize();
@@ -79,7 +79,7 @@ public abstract class MosaicJfxView<TImage,
         boolean isSimpleDraw = pen.getColorLight().equals(pen.getColorShadow());
         BackgroundFill bkFill = model.getBackgroundFill();
 
-        if (_DEBUG_DRAW_FLOW)
+        if (DEBUG_DRAW_FLOW)
             Logger.info("MosaicJfxView.drawJfx: " + ((toDrawCells==null) ? "all" : ("cnt=" + toDrawCells.size()))
                                                          + "; drawBk=" + drawBk);
 
@@ -256,7 +256,7 @@ public abstract class MosaicJfxView<TImage,
         }
         /**/
 
-        if (_DEBUG_DRAW_FLOW)
+        if (DEBUG_DRAW_FLOW)
             Logger.info("-------------------------------");
 
         // restore
@@ -264,17 +264,17 @@ public abstract class MosaicJfxView<TImage,
         g.setStroke(oldStroke);
         g.setFill(oldFill);
 
-        _alreadyPainted = false;
+        alreadyPainted = false;
     }
 
     private Bounds getStringBounds(String text) {
-        Text t = _mapText.get(text);
+        Text t = mapText.get(text);
         if (t == null) {
             t = new Text(text);
             t.setFont(getFont());
           //t.setTextAlignment(TextAlignment.CENTER);
           //t.setTextOrigin(VPos.CENTER);
-            _mapText.put(text, t);
+            mapText.put(text, t);
         }
         return t.getLayoutBounds();
     }
@@ -300,25 +300,25 @@ public abstract class MosaicJfxView<TImage,
     }
 
     protected Font getFont() {
-        if (_font == null) {
+        if (font == null) {
             FontInfo fi = getModel().getFontInfo();
-            _font = new Font(fi.getName(), /*fi.isBold() ? Font.BOLD : Font.PLAIN, */fi.getSize());
+            font = new Font(fi.getName(), /*fi.isBold() ? Font.BOLD : Font.PLAIN, */fi.getSize());
         }
-        return _font;
+        return font;
     }
 
     @Override
     protected void onModelPropertyChanged(PropertyChangeEvent ev) {
         super.onModelPropertyChanged(ev);
         if (MosaicDrawModel.PROPERTY_FONT_INFO.equals(ev.getPropertyName())) {
-            _font = null;
-            _mapText.clear();
+            font = null;
+            mapText.clear();
         }
     }
 
     @Override
     public void close() {
-        _mapText.clear();
+        mapText.clear();
         super.close();
     }
 

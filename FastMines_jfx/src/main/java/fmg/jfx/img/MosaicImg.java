@@ -21,7 +21,7 @@ public final class MosaicImg {
     public abstract static class JfxView<TImage>
               extends MosaicJfxView<TImage, Void, MosaicAnimatedModel<Void>>
     {
-        protected boolean _useBackgroundColor = true;
+        protected boolean useBackgroundColor = true;
 
         protected JfxView() {
             super(new MosaicAnimatedModel<Void>());
@@ -33,7 +33,7 @@ public final class MosaicImg {
 
             MosaicAnimatedModel<Void> model = getModel();
 
-            _useBackgroundColor = true;
+            useBackgroundColor = true;
             switch (model.getRotateMode()) {
             case fullMatrix:
                 drawModified(model.getMatrix());
@@ -43,7 +43,7 @@ public final class MosaicImg {
                 drawModified(model.getNotRotatedCells());
 
                 // draw rotated part
-                _useBackgroundColor = false;
+                useBackgroundColor = false;
                 model.getRotatedCells(rotatedCells -> drawModified(rotatedCells));
                 break;
             }
@@ -73,7 +73,7 @@ public final class MosaicImg {
 
         @Override
         protected void drawModified(Collection<BaseCell> modifiedCells) {
-            drawJfx(canvas.getGraphics(), modifiedCells, _useBackgroundColor);
+            drawJfx(canvas.getGraphics(), modifiedCells, useBackgroundColor);
         }
 
     }
@@ -91,7 +91,7 @@ public final class MosaicImg {
 
         @Override
         protected void drawModified(Collection<BaseCell> modifiedCells) {
-            drawJfx(img.getGraphics(), modifiedCells, _useBackgroundColor);
+            drawJfx(img.getGraphics(), modifiedCells, useBackgroundColor);
             setImage(img.createImage()); // real image
         }
 

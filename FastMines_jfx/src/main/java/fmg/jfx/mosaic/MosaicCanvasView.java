@@ -21,9 +21,9 @@ import fmg.jfx.utils.ImgUtils;
 /** MVC: view. JavaFX implementation over node-control {@link Canvas} */
 public class MosaicCanvasView extends MosaicJfxView<Canvas, Image, MosaicDrawModel<Image>> {
 
-    private CanvasJfx _canvas = new CanvasJfx(this);
-    private Flag.ImageJfxController _imgFlag = new Flag.ImageJfxController();
-    private Mine.ImageJfxController _imgMine = new Mine.ImageJfxController();
+    private CanvasJfx canvas = new CanvasJfx(this);
+    private Flag.ImageJfxController imgFlag = new Flag.ImageJfxController();
+    private Mine.ImageJfxController imgMine = new Mine.ImageJfxController();
 
     public MosaicCanvasView() {
         super(new MosaicDrawModel<Image>());
@@ -31,16 +31,16 @@ public class MosaicCanvasView extends MosaicJfxView<Canvas, Image, MosaicDrawMod
     }
 
     @Override
-    protected Canvas createImage() { return _canvas.create(); }
+    protected Canvas createImage() { return canvas.create(); }
 
     @Override
     protected void drawModified(Collection<BaseCell> modifiedCells) {
         if (modifiedCells == null) {
-            drawJfx(_canvas.getGraphics(), getModel().getMatrix(), true);
+            drawJfx(canvas.getGraphics(), getModel().getMatrix(), true);
             return;
         }
         if (modifiedCells.iterator().next() instanceof Square1) { // optimize
-            drawJfx(_canvas.getGraphics(), modifiedCells, false);
+            drawJfx(canvas.getGraphics(), modifiedCells, false);
             return;
         }
         double minX=0, minY=0, maxX=0, maxY=0;
@@ -65,7 +65,7 @@ public class MosaicCanvasView extends MosaicJfxView<Canvas, Image, MosaicDrawMod
         RectDouble rcClip = new RectDouble(minX + offset.width, minY + offset.height, maxX-minX, maxY-minY);
 //        if (_DEBUG_DRAW_FLOW)
 //            Logger.info("MosaicViewJfx.draw: repaint=" + rcClip);
-        drawJfx(_canvas.getGraphics(), toDrawCells(rcClip), false);
+        drawJfx(canvas.getGraphics(), toDrawCells(rcClip), false);
     }
 
     @Override
@@ -99,15 +99,15 @@ public class MosaicCanvasView extends MosaicJfxView<Canvas, Image, MosaicDrawMod
 
         final int max = 30;
         if (sq > max) {
-            _imgFlag.getModel().setSize(new SizeDouble(sq, sq));
-            _imgMine.getModel().setSize(new SizeDouble(sq, sq));
-            model.setImgFlag(_imgFlag.getImage());
-            model.setImgMine(_imgMine.getImage());
+            imgFlag.getModel().setSize(new SizeDouble(sq, sq));
+            imgMine.getModel().setSize(new SizeDouble(sq, sq));
+            model.setImgFlag(imgFlag.getImage());
+            model.setImgMine(imgMine.getImage());
         } else {
-            _imgFlag.getModel().setSize(new SizeDouble(max, max));
-            _imgMine.getModel().setSize(new SizeDouble(max, max));
-            model.setImgFlag(ImgUtils.zoom(_imgFlag.getImage(), sq, sq));
-            model.setImgMine(ImgUtils.zoom(_imgMine.getImage(), sq, sq));
+            imgFlag.getModel().setSize(new SizeDouble(max, max));
+            imgMine.getModel().setSize(new SizeDouble(max, max));
+            model.setImgFlag(ImgUtils.zoom(imgFlag.getImage(), sq, sq));
+            model.setImgMine(ImgUtils.zoom(imgMine.getImage(), sq, sq));
         }
     }
 
@@ -115,9 +115,9 @@ public class MosaicCanvasView extends MosaicJfxView<Canvas, Image, MosaicDrawMod
     public void close() {
         super.close();
         getModel().close();
-        _canvas = null;
-        _imgFlag.close();
-        _imgMine.close();
+        canvas = null;
+        imgFlag.close();
+        imgMine.close();
     }
 
 }

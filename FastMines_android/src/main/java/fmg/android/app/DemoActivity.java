@@ -47,19 +47,19 @@ public class DemoActivity extends AppCompatActivity {
 
     private static final int MARGIN = 10; // panel margin - padding to inner images
 
-    private TestDrawing _td;
+    private TestDrawing td;
     private DemoActivityBinding activityBinding;
-    private Runnable _onCloseImages;
-    private Runnable[] _onCreateImages; // images factory
+    private Runnable onCloseImages;
+    private Runnable[] onCreateImages; // images factory
     public static class DemoViewModel extends ViewModel {
-        private List<IImageController<?,?,?>> _images;
-        private int _nextCreateImagesIndex;
+        private List<IImageController<?,?,?>> images;
+        private int nextCreateImagesIndex;
     }
 
 
     // #region images Fabrica
     public void testMosaicControl () {
-        MosaicView._DEBUG_DRAW_FLOW = true;
+        MosaicView.DEBUG_DRAW_FLOW = true;
         testApp(() -> {
             MosaicViewController mosaicController = new MosaicViewController(this);
 
@@ -119,9 +119,9 @@ public class DemoActivity extends AppCompatActivity {
         activityBinding.setViewModel(viewModel);
         activityBinding.executePendingBindings();
 
-        _td = new TestDrawing("Android");
+        td = new TestDrawing("Android");
 
-        _onCreateImages = new Runnable[] {
+        onCreateImages = new Runnable[] {
             this::testMosaicControl,
             this::testMosaicImg,
             this::testMosaicSkillImg,
@@ -140,7 +140,7 @@ public class DemoActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        _onCloseImages.run();
+        onCloseImages.run();
         super.onDestroy();
     }
 
@@ -150,8 +150,8 @@ public class DemoActivity extends AppCompatActivity {
     }
 
     void testApp(Supplier<Stream<IImageController<?,?,?>>> funcGetImages) {
-        List<IImageController<?,?,?>> images = activityBinding.getViewModel()._images = funcGetImages.get().collect(Collectors.toList());
-        setTitle(_td.getTitle(images));
+        List<IImageController<?,?,?>> images = activityBinding.getViewModel().images = funcGetImages.get().collect(Collectors.toList());
+        setTitle(td.getTitle(images));
         FrameLayout innerLayout = activityBinding.innerLayout;
         innerLayout.removeAllViews();
 
@@ -166,15 +166,15 @@ public class DemoActivity extends AppCompatActivity {
             resized = resized || applySettings;
 
             if (applySettings) {
-                testTransparent[0] = _td.bl();
-                images.forEach(img -> _td.applySettings(img, testTransparent[0]));
+                testTransparent[0] = td.bl();
+                images.forEach(img -> td.applySettings(img, testTransparent[0]));
             }
 
             double sizeW = innerLayout.getWidth();  // innerLayout.getMeasuredWidth();
             double sizeH = innerLayout.getHeight(); // innerLayout.getMeasuredHeight();
             RectDouble rc = new RectDouble(MARGIN, MARGIN, sizeW - MARGIN * 2, sizeH - MARGIN * 2); // inner rect where drawing images as tiles
 
-            TestDrawing.CellTilingResult ctr = _td.cellTiling(rc, images, testTransparent[0]);
+            TestDrawing.CellTilingResult ctr = td.cellTiling(rc, images, testTransparent[0]);
             SizeDouble imgSize = ctr.imageSize;
             if (imgSize.width <= 0 || imgSize.height <= 0)
                 return;
@@ -254,7 +254,7 @@ public class DemoActivity extends AppCompatActivity {
         else
             innerLayout.setOnTouchListener(onTouch);
 
-        _onCloseImages = () -> {
+        onCloseImages = () -> {
 //            innerLayout.getViewTreeObserver().removeOnGlobalLayoutListener(onSizeChanged);
             if (isMosaicGameController)
                 innerLayout.setOnClickListener(null);
@@ -272,20 +272,20 @@ public class DemoActivity extends AppCompatActivity {
     }
 
     void onNextImages(Boolean isNext) {
-        if (_onCloseImages != null)
-            _onCloseImages.run();
+        if (onCloseImages != null)
+            onCloseImages.run();
 
         DemoViewModel viewModel = activityBinding.getViewModel();
         if (isNext != null)
             if (isNext) {
-                if (++viewModel._nextCreateImagesIndex >= _onCreateImages.length)
-                    viewModel._nextCreateImagesIndex = 0;
+                if (++viewModel.nextCreateImagesIndex >= onCreateImages.length)
+                    viewModel.nextCreateImagesIndex = 0;
             } else {
-                if (--viewModel._nextCreateImagesIndex < 0)
-                    viewModel._nextCreateImagesIndex = _onCreateImages.length - 1;
+                if (--viewModel.nextCreateImagesIndex < 0)
+                    viewModel.nextCreateImagesIndex = onCreateImages.length - 1;
             }
 
-        _onCreateImages[viewModel._nextCreateImagesIndex].run();
+        onCreateImages[viewModel.nextCreateImagesIndex].run();
     }
 
 }

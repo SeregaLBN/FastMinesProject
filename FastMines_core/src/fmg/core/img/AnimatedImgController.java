@@ -12,20 +12,20 @@ public abstract class AnimatedImgController<TImage,
              extends        ImageController<TImage, TImageView, TImageModel>
              implements IAnimatedController<TImage, TImageView, TImageModel>
 {
-    private final AnimatedInnerController<TImage, TImageView, TImageModel> _innerController;
+    private final AnimatedInnerController<TImage, TImageView, TImageModel> innerController;
 
     protected AnimatedImgController(TImageView imageView) {
         super(imageView);
-        _innerController = new AnimatedInnerController<>(getModel());
+        innerController = new AnimatedInnerController<>(getModel());
     }
 
     @Override
     public void addModelTransformer(IModelTransformer transformer) {
-        _innerController.addModelTransformer(transformer);
+        innerController.addModelTransformer(transformer);
     }
     @Override
     public void removeModelTransformer(Class<? extends IModelTransformer> transformerClass) {
-        _innerController.removeModelTransformer(transformerClass);
+        innerController.removeModelTransformer(transformerClass);
     }
 
     @Override
@@ -46,7 +46,7 @@ public abstract class AnimatedImgController<TImage,
 
     @Override
     public void close() {
-        _innerController.close();
+        innerController.close();
         super.close();
     }
 

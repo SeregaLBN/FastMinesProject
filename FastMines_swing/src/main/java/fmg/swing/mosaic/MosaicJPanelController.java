@@ -19,7 +19,7 @@ import fmg.swing.utils.Cast;
 /** MVC: controller. SWING implementation */
 public class MosaicJPanelController extends MosaicController<JPanel, Icon, MosaicJPanelView, MosaicDrawModel<Icon>> {
 
-    private MosaicMouseListener _mosaicMouseListener;
+    private MosaicMouseListener mosaicMouseListener;
 
     public MosaicJPanelController() {
         super(new MosaicJPanelView());
@@ -82,9 +82,9 @@ public class MosaicJPanelController extends MosaicController<JPanel, Icon, Mosai
     }
 
     public MosaicMouseListener getMosaicMouseListener() {
-        if (_mosaicMouseListener == null)
-            _mosaicMouseListener = new MosaicMouseListener();
-        return _mosaicMouseListener;
+        if (mosaicMouseListener == null)
+            mosaicMouseListener = new MosaicMouseListener();
+        return mosaicMouseListener;
     }
 
     @Override

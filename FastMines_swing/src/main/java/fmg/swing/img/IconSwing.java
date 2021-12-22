@@ -13,10 +13,10 @@ import fmg.core.img.IImageView;
 /** Internal wrapper-image implementation over javax.swing.Icon */
 class IconSwing implements AutoCloseable {
 
-    private IImageView<javax.swing.Icon, ? extends IImageModel> _imageView;
+    private IImageView<javax.swing.Icon, ? extends IImageModel> imageView;
 
     IconSwing(IImageView<javax.swing.Icon, ? extends IImageModel> imageView) {
-        this._imageView = imageView;
+        this.imageView = imageView;
     }
 
     private BufferedImage buffImg;
@@ -25,7 +25,7 @@ class IconSwing implements AutoCloseable {
         if (gBuffImg != null)
             gBuffImg.dispose();
 
-        SizeDouble s = _imageView.getSize();
+        SizeDouble s = imageView.getSize();
         buffImg = new BufferedImage((int)s.width, (int)s.height, BufferedImage.TYPE_INT_ARGB);
         gBuffImg = buffImg.createGraphics();
         gBuffImg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -34,9 +34,9 @@ class IconSwing implements AutoCloseable {
 
         return new javax.swing.Icon() {
             @Override
-            public int getIconWidth() { return (int)_imageView.getSize().width; }
+            public int getIconWidth() { return (int)imageView.getSize().width; }
             @Override
-            public int getIconHeight() { return (int)_imageView.getSize().height; }
+            public int getIconHeight() { return (int)imageView.getSize().height; }
             @Override
             public void paintIcon(Component c, Graphics g, int x, int y) {
                 g.drawImage(buffImg, x,y, c);

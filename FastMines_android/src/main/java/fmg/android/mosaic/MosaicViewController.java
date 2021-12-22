@@ -212,7 +212,7 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
         return extendedManipulation;
     }
     public void setExtendedManipulation(boolean value) {
-        if (_notifier.setProperty(extendedManipulation, value, PROPERTY_EXTENDED_MANIPULATION)) {
+        if (notifier.setProperty(extendedManipulation, value, PROPERTY_EXTENDED_MANIPULATION)) {
             unsubscribeToViewControl();
             subscribeToViewControl();
         }

@@ -12,27 +12,27 @@ import fmg.jfx.utils.ImgUtils;
 /** Internal wrapper-image implementation over javafx.scene.image.Image */
 class ImageJfx {
 
-    private IImageView<Image, ? extends IImageModel> _imageView;
-    private Canvas _canvas;
+    private IImageView<Image, ? extends IImageModel> imageView;
+    private Canvas canvas;
 
     ImageJfx(IImageView<Image, ? extends IImageModel> imageView) {
-        this._imageView = imageView;
+        this.imageView = imageView;
     }
 
     public void createCanvas() {
-        SizeDouble s = _imageView.getSize();
-        if (_canvas == null)
-            _canvas = new Canvas(s.width, s.height);
+        SizeDouble s = imageView.getSize();
+        if (canvas == null)
+            canvas = new Canvas(s.width, s.height);
         else {
-            _canvas. setWidth(s.width);
-            _canvas.setHeight(s.height);
+            canvas. setWidth(s.width);
+            canvas.setHeight(s.height);
         }
     }
 
     public Image createImage() {
-        return ImgUtils.toImage(_canvas);
+        return ImgUtils.toImage(canvas);
     }
 
-    public GraphicsContext getGraphics() { return _canvas.getGraphicsContext2D(); }
+    public GraphicsContext getGraphics() { return canvas.getGraphicsContext2D(); }
 
 }

@@ -125,7 +125,7 @@ public class MosaicAnimatedModel<TImageInner>
 
     /** ///////////// ================= PART {@link EMosaicRotateMode#someCells} ======================= ///////////// */
 
-    private boolean _rotateCellAlterantive;
+    private boolean rotateCellAlterantive;
 
     public static final class RotatedCellContext {
         public RotatedCellContext(int index, double angleOffset, double area) {
@@ -174,7 +174,7 @@ public class MosaicAnimatedModel<TImageInner>
                 cell.init();
                 PointDouble centerNew = cell.getCenter();
                 PointDouble delta = new PointDouble(center.x - centerNew.x, center.y - centerNew.y);
-                FigureHelper.moveCollection(FigureHelper.rotateCollection(cell.getRegion().getPoints(), (((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, _rotateCellAlterantive ? center : centerNew), delta);
+                FigureHelper.moveCollection(FigureHelper.rotateCollection(cell.getRegion().getPoints(), (((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, rotateCellAlterantive ? center : centerNew), delta);
 
                 // restore
                 attr.setArea(area);
@@ -316,7 +316,7 @@ public class MosaicAnimatedModel<TImageInner>
                                 matrix.get(cntxt.index).init(); // restore original region coords
                                 rotatedElements.remove(cntxt);
                                 if (rotatedElements.isEmpty())
-                                _rotateCellAlterantive = !_rotateCellAlterantive;
+                                rotateCellAlterantive = !rotateCellAlterantive;
                                 addRandomToPrepareList(false);
                             });
             notifier.firePropertyChanged(PROPERTY_ROTATED_ELEMENTS);

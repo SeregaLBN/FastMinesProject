@@ -40,18 +40,18 @@ public abstract class MosaicAndroidView<TImage,
                      extends MosaicView<TImage, TImageInner, TMosaicModel>
 {
 
-    private final Paint _textPaint;
-    protected boolean _alreadyPainted = false;
+    private final Paint textPaint;
+    protected boolean alreadyPainted = false;
 
     protected MosaicAndroidView(TMosaicModel mosaicModel) {
         super(mosaicModel);
-        _textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        _textPaint.setStyle(Paint.Style.FILL);
+        textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        textPaint.setStyle(Paint.Style.FILL);
     }
 
     protected void drawAndroid(Canvas g, Collection<BaseCell> toDrawCells, boolean drawBk) {
-        assert !_alreadyPainted;
-        _alreadyPainted = true;
+        assert !alreadyPainted;
+        alreadyPainted = true;
 
         TMosaicModel model = getModel();
         SizeDouble size = model.getSize();
@@ -93,7 +93,7 @@ public abstract class MosaicAndroidView<TImage,
         boolean isSimpleDraw = pen.getColorLight().equals(pen.getColorShadow());
         BackgroundFill bkFill = model.getBackgroundFill();
 
-        if (_DEBUG_DRAW_FLOW)
+        if (DEBUG_DRAW_FLOW)
             Logger.info("MosaicAndroidView.drawAndroid: " + ((toDrawCells==null) ? "all" : ("cnt=" + toDrawCells.size()))
                                                                  + "; drawBk=" + drawBk);
         if (toDrawCells == null)
@@ -150,12 +150,12 @@ public abstract class MosaicAndroidView<TImage,
                 {
                     String szCaption;
                     if (cell.getState().getStatus() == EState._Close) {
-                        _textPaint.setColor(Cast.toColor(model.getColorText().getColorClose(cell.getState().getClose().ordinal())));
+                        textPaint.setColor(Cast.toColor(model.getColorText().getColorClose(cell.getState().getClose().ordinal())));
                         szCaption = cell.getState().getClose().toCaption();
                       //szCaption = cell.getCoord().x + ";" + cell.getCoord().y; // debug
                       //szCaption = ""+cell.getDirection(); // debug
                     } else {
-                        _textPaint.setColor(Cast.toColor(model.getColorText().getColorOpen(cell.getState().getOpen().ordinal())));
+                        textPaint.setColor(Cast.toColor(model.getColorText().getColorOpen(cell.getState().getOpen().ordinal())));
                         szCaption = cell.getState().getOpen().toCaption();
                     }
                     if ((szCaption != null) && (szCaption.length() > 0) && (model.getFontInfo().getSize() >= 1)) {
@@ -237,23 +237,23 @@ public abstract class MosaicAndroidView<TImage,
         }
         /**/
 
-        if (_DEBUG_DRAW_FLOW)
+        if (DEBUG_DRAW_FLOW)
             Logger.info("-------------------------------");
 
         // restore
         g.restore();
 
-        _alreadyPainted = false;
+        alreadyPainted = false;
     }
 
     private RectDouble getStringBounds(String text) {
        RectDouble r;
        if (true) {
           Rect r2 = new Rect();
-          _textPaint.getTextBounds(text, 0, text.length(), r2);
+          textPaint.getTextBounds(text, 0, text.length(), r2);
           r = new RectDouble(r2.left, r2.top, r2.width(), r2.height());
        } else {
-          float textWidth = _textPaint.measureText(text);
+          float textWidth = textPaint.measureText(text);
           r = new RectDouble(textWidth, getModel().getFontInfo().getSize());
        }
        return r;
@@ -270,7 +270,7 @@ public abstract class MosaicAndroidView<TImage,
 //            g.setColor(clrOld);
 //        }
         g.drawText(text, (float)(rc.x       +(rc.width -bnd.width )/2.),
-                         (float)(rc.bottom()-(rc.height-bnd.height)/2.), _textPaint);
+                         (float)(rc.bottom()-(rc.height-bnd.height)/2.), textPaint);
     }
 
     @Override
@@ -285,8 +285,8 @@ public abstract class MosaicAndroidView<TImage,
                 Logger.error("MosaicAndroidView::onModelPropertyChanged", ex);
                 tf = Typeface.create(Typeface.DEFAULT, fi.isBold() ? Typeface.BOLD : Typeface.NORMAL);
             }
-            _textPaint.setTypeface(tf);
-            _textPaint.setTextSize((float)fi.getSize());
+            textPaint.setTypeface(tf);
+            textPaint.setTextSize((float)fi.getSize());
         }
     }
 

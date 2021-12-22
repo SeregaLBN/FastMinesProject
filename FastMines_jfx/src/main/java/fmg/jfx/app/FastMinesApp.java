@@ -19,7 +19,7 @@ public class FastMinesApp extends Application {
 
     @Override
     public void start(Stage stage) {
-        MosaicView._DEBUG_DRAW_FLOW = true;
+        MosaicView.DEBUG_DRAW_FLOW = true;
         MosaicCanvasController ctrllr = new MosaicCanvasController();
 
         stage.setScene(new Scene(new Group(ctrllr.getViewCanvas())));

@@ -41,16 +41,16 @@ public class DemoApp  {
 
     private static final int MARGIN = 10; // panel margin - padding to inner images
 
-    private TestDrawing _td;
-    private JFrame _frame;
-    private JPanel _jPanel;
-    private Runnable _onCloseImages;
-    private Runnable[] _onCreateImages; // images factory
-    private int _nextCreateImagesIndex;
+    private TestDrawing td;
+    private JFrame frame;
+    private JPanel jPanel;
+    private Runnable onCloseImages;
+    private Runnable[] onCreateImages; // images factory
+    private int nextCreateImagesIndex;
 
     // #region images Fabrica
     public void testMosaicControl () {
-        MosaicView._DEBUG_DRAW_FLOW = true;
+        MosaicView.DEBUG_DRAW_FLOW = true;
         testApp(() -> {
             MosaicJPanelController mosaicController = new MosaicJPanelController();
 
@@ -131,9 +131,9 @@ public class DemoApp  {
     // #endregion
 
     public void runApp() {
-        _td = new TestDrawing("Swing");
+        td = new TestDrawing("Swing");
 
-        _onCreateImages = new Runnable[] {
+        onCreateImages = new Runnable[] {
             this::testMosaicControl,
             this::testMosaicImg,
             this::testMosaicSkillImg,
@@ -144,8 +144,8 @@ public class DemoApp  {
             this::testFlag
         };
 
-        _frame = new JFrame();
-        Container pane = _frame.getContentPane();
+        frame = new JFrame();
+        Container pane = frame.getContentPane();
         { // top
             GridLayout grLay = new GridLayout(0, 3);
             JPanel box2 = new JPanel(grLay);
@@ -164,29 +164,29 @@ public class DemoApp  {
             SwingUtilities.invokeLater(nextImagesBtn::requestFocus);
         }
         { // center
-            _jPanel = new JPanel();
-            _jPanel.setLayout(null);
-    //        _jPanel.setBorder(new LineBorder(Color.BLACK));
-            pane.add(_jPanel, BorderLayout.CENTER);
+            jPanel = new JPanel();
+            jPanel.setLayout(null);
+    //        jPanel.setBorder(new LineBorder(Color.BLACK));
+            pane.add(jPanel, BorderLayout.CENTER);
         }
 
         //setDefaultCloseOperation(EXIT_ON_CLOSE);
-        _frame.addWindowListener(new WindowAdapter() {
+        frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) {
                 onDestroy();
             }
         });
 
-        _frame.setPreferredSize(new Dimension(300, 300));
-        _frame.setLocationRelativeTo(null);
-        _frame.pack();
-        _frame.setVisible(true);
+        frame.setPreferredSize(new Dimension(300, 300));
+        frame.setLocationRelativeTo(null);
+        frame.pack();
+        frame.setVisible(true);
     }
 
     protected void onDestroy() {
-        _onCloseImages.run();
-        _frame.dispose();
+        onCloseImages.run();
+        frame.dispose();
         Animator.getSingleton().close();
     }
 
@@ -197,8 +197,8 @@ public class DemoApp  {
 
     void testApp(Supplier<Stream<IImageController<?,?,?>>> funcGetImages) {
         List<IImageController<?,?,?>> images = funcGetImages.get().collect(Collectors.toList());
-        _frame.setTitle(_td.getTitle(images));
-        _jPanel.removeAll();
+        frame.setTitle(td.getTitle(images));
+        jPanel.removeAll();
 
         List<Component> imgControls = new ArrayList<>(images.size());
         boolean[] testTransparent = { false };
@@ -211,15 +211,15 @@ public class DemoApp  {
             resized = resized || applySettings;
 
             if (applySettings) {
-                testTransparent[0] = _td.bl();
-                images.forEach(img -> _td.applySettings(img, testTransparent[0]));
+                testTransparent[0] = td.bl();
+                images.forEach(img -> td.applySettings(img, testTransparent[0]));
             }
 
-            double sizeW = _jPanel.getWidth();
-            double sizeH = _jPanel.getHeight();
+            double sizeW = jPanel.getWidth();
+            double sizeH = jPanel.getHeight();
             RectDouble rc = new RectDouble(MARGIN, MARGIN, sizeW - MARGIN * 2, sizeH - MARGIN * 2); // inner rect where drawing images as tiles
 
-            TestDrawing.CellTilingResult ctr = _td.cellTiling(rc, images, testTransparent[0]);
+            TestDrawing.CellTilingResult ctr = td.cellTiling(rc, images, testTransparent[0]);
             SizeDouble imgSize = ctr.imageSize;
             if (imgSize.width <= 0 || imgSize.height <= 0)
                 return;
@@ -267,7 +267,7 @@ public class DemoApp  {
                         Component imgControl2 = imgControl;
                         PropertyChangeListener onChangeImage = ev -> {
                             if (ev.getPropertyName().equals(IImageController.PROPERTY_IMAGE)) {
-                                _jPanel.repaint();
+                                jPanel.repaint();
                                 imgControl2.repaint();
                             }
                         };
@@ -277,7 +277,7 @@ public class DemoApp  {
                         throw new IllegalArgumentException("Unsupported image type: " + img.getClass().getName());
                     }
 
-                    _jPanel.add(imgControl);
+                    jPanel.add(imgControl);
 //                    ((JPanel)imgControl).setBorder(new LineBorder(Color.RED));
                     imgControls.add(ctr.tableSize.width * cti.j + cti.i, imgControl);
                 }
@@ -304,7 +304,7 @@ public class DemoApp  {
                 onCellTilingHandler.apply(false, false, true);
             }
         };
-        _jPanel.addComponentListener(onSizeChanged);
+        jPanel.addComponentListener(onSizeChanged);
 
         MouseListener onMousePressed = new MouseAdapter() {
             @Override
@@ -312,11 +312,11 @@ public class DemoApp  {
                 onCellTilingHandler.apply(true, false, false);
             }
         };
-        _jPanel.addMouseListener(onMousePressed);
+        jPanel.addMouseListener(onMousePressed);
 
-        _onCloseImages = () -> {
-            _jPanel.removeComponentListener(onSizeChanged);
-            _jPanel.removeMouseListener(onMousePressed);
+        onCloseImages = () -> {
+            jPanel.removeComponentListener(onSizeChanged);
+            jPanel.removeMouseListener(onMousePressed);
             images.forEach(imgObj -> {
                 if (binding.containsKey(imgObj))
                     imgObj.removeListener(binding.get(imgObj));
@@ -328,19 +328,19 @@ public class DemoApp  {
     }
 
     void onNextImages(Boolean isNext) {
-        if (_onCloseImages != null)
-            _onCloseImages.run();
+        if (onCloseImages != null)
+            onCloseImages.run();
 
         if (isNext != null)
             if (isNext) {
-                if (++_nextCreateImagesIndex >= _onCreateImages.length)
-                    _nextCreateImagesIndex = 0;
+                if (++nextCreateImagesIndex >= onCreateImages.length)
+                    nextCreateImagesIndex = 0;
             } else {
-                if (--_nextCreateImagesIndex < 0)
-                    _nextCreateImagesIndex = _onCreateImages.length - 1;
+                if (--nextCreateImagesIndex < 0)
+                    nextCreateImagesIndex = onCreateImages.length - 1;
             }
 
-        _onCreateImages[_nextCreateImagesIndex].run();
+        onCreateImages[nextCreateImagesIndex].run();
     }
 
     public static void main(String[] args) {

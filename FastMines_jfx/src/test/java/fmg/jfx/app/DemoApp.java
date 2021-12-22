@@ -57,13 +57,13 @@ public final class DemoApp extends Application {
 
     static final int MARGIN = 10;
 
-    private TestDrawing _td;
+    private TestDrawing td;
     private Stage primaryStage;
     private Pane pane;
     private Canvas canvas;
-    private Runnable _onCloseImages;
-    private Runnable[] _onCreateImages; // images factory
-    private int _nextCreateImagesIndex;
+    private Runnable onCloseImages;
+    private Runnable[] onCreateImages; // images factory
+    private int nextCreateImagesIndex;
 
     // #region images Fabrica
     public void testMosaicControl() {
@@ -155,9 +155,9 @@ public final class DemoApp extends Application {
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
 
-        _td = new TestDrawing("JFX");
+        td = new TestDrawing("JFX");
 
-        _onCreateImages = new Runnable[] {
+        onCreateImages = new Runnable[] {
             this::testMosaicControl,
             this::testMosaicImg,
             this::testMosaicSkillImg,
@@ -217,7 +217,7 @@ public final class DemoApp extends Application {
     }
 
     protected void onDestroy() {
-        _onCloseImages.run();
+        onCloseImages.run();
         Animator.getSingleton().close();
     }
 
@@ -228,7 +228,7 @@ public final class DemoApp extends Application {
 
     void testApp(Supplier<Stream<IImageController<?,?,?>>> funcGetImages) {
         List<IImageController<?,?,?>> images = funcGetImages.get().collect(Collectors.toList());
-        primaryStage.setTitle(_td.getTitle(images));
+        primaryStage.setTitle(td.getTitle(images));
         pane.getChildren().remove(1, pane.getChildren().size());
 
         List<Canvas> imgControls = new ArrayList<>(images.size());
@@ -245,15 +245,15 @@ public final class DemoApp extends Application {
             resized = resized || applySettings;
 
             if (applySettings) {
-                testTransparent[0] = _td.bl();
-                images.forEach(img -> _td.applySettings(img, testTransparent[0]));
+                testTransparent[0] = td.bl();
+                images.forEach(img -> td.applySettings(img, testTransparent[0]));
             }
 
             double sizeW = canvas.getWidth();
             double sizeH = canvas.getHeight();
             RectDouble rc = new RectDouble(MARGIN, MARGIN, sizeW - MARGIN * 2, sizeH - MARGIN * 2); // inner rect where drawing images as tiles
 
-            TestDrawing.CellTilingResult ctr = _td.cellTiling(rc, images, testTransparent[0]);
+            TestDrawing.CellTilingResult ctr = td.cellTiling(rc, images, testTransparent[0]);
             SizeDouble imgSize = ctr.imageSize;
             if (imgSize.width <= 0 || imgSize.height <= 0)
                 return;
@@ -367,7 +367,7 @@ public final class DemoApp extends Application {
         };
         canvas.addEventFilter(MouseEvent.MOUSE_PRESSED, mouseHandler);
 
-        _onCloseImages = () -> {
+        onCloseImages = () -> {
             closed[0] = true;
             timer[0].stop();
             pane. widthProperty().removeListener(onSizeWListener);
@@ -384,19 +384,19 @@ public final class DemoApp extends Application {
     }
 
     void onNextImages(Boolean isNext) {
-        if (_onCloseImages != null)
-            _onCloseImages.run();
+        if (onCloseImages != null)
+            onCloseImages.run();
 
         if (isNext != null)
             if (isNext) {
-                if (++_nextCreateImagesIndex >= _onCreateImages.length)
-                    _nextCreateImagesIndex = 0;
+                if (++nextCreateImagesIndex >= onCreateImages.length)
+                    nextCreateImagesIndex = 0;
             } else {
-                if (--_nextCreateImagesIndex < 0)
-                    _nextCreateImagesIndex = _onCreateImages.length - 1;
+                if (--nextCreateImagesIndex < 0)
+                    nextCreateImagesIndex = onCreateImages.length - 1;
             }
 
-        _onCreateImages[_nextCreateImagesIndex].run();
+        onCreateImages[nextCreateImagesIndex].run();
     }
 
     public static void main(String[] args) {

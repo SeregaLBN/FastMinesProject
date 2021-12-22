@@ -12,19 +12,19 @@ import fmg.core.img.IImageView;
 /** Internal wrapper-image implementation over java.awt.Image */
 class ImageAwt {
 
-    private IImageView<java.awt.Image, ? extends IImageModel> _imageView;
+    private IImageView<java.awt.Image, ? extends IImageModel> imageView;
 
     ImageAwt(IImageView<java.awt.Image, ? extends IImageModel> imageView) {
-        this._imageView = imageView;
+        this.imageView = imageView;
     }
 
     public java.awt.Image create() {
-        SizeDouble s = _imageView.getSize();
+        SizeDouble s = imageView.getSize();
         return new BufferedImage((int)s.width, (int)s.height, BufferedImage.TYPE_INT_ARGB);
     }
 
     public void drawWrapper(Consumer<Graphics2D> drawBody) {
-        BufferedImage img = (BufferedImage)_imageView.getImage();
+        BufferedImage img = (BufferedImage)imageView.getImage();
         Graphics2D g = img.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);

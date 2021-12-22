@@ -28,11 +28,11 @@ public abstract class MosaicView<TImage,
         super(mosaicModel);
     }
 
-    public static boolean _DEBUG_DRAW_FLOW = false;
-    private final Collection<BaseCell> _modifiedCells = new HashSet<>();
+    public static boolean DEBUG_DRAW_FLOW = false;
+    private final Collection<BaseCell> modifiedCells = new HashSet<>();
 
     protected Collection<BaseCell> toDrawCells(RectDouble invalidatedRect) {
-        if (_DEBUG_DRAW_FLOW)
+        if (DEBUG_DRAW_FLOW)
             Logger.info("<>MosaicView.toDrawCells: invalidatedRect=" + (invalidatedRect==null ? "null" : invalidatedRect.toString()));
 
         if (invalidatedRect == null)
@@ -55,7 +55,7 @@ public abstract class MosaicView<TImage,
                                .intersection(invalidatedRect)) // ...when the cells and update region intersect
             .collect(Collectors.toList());
 
-        if (_DEBUG_DRAW_FLOW)
+        if (DEBUG_DRAW_FLOW)
             Logger.info("< MosaicView.toDrawCells: cnt=" + toDrawCells.size());
         return toDrawCells;
     }
@@ -63,10 +63,10 @@ public abstract class MosaicView<TImage,
     @Override
     public void invalidate(Collection<BaseCell> modifiedCells) {
         if (modifiedCells == null) // mark NULL if all mosaic is changed
-            _modifiedCells.clear();
+            this.modifiedCells.clear();
         else
-            _modifiedCells.addAll(modifiedCells);
-        if (_DEBUG_DRAW_FLOW)
+            this.modifiedCells.addAll(modifiedCells);
+        if (DEBUG_DRAW_FLOW)
             Logger.info("MosaicView.invalidate: " + ((modifiedCells==null) ? "all" : ("cnt=" + modifiedCells.size()) + ": " + modifiedCells.stream().limit(5).collect(Collectors.toList())));
         invalidate();
     }
@@ -79,10 +79,10 @@ public abstract class MosaicView<TImage,
     /** repaint all */
     @Override
     protected void drawBody() {
-        if (_DEBUG_DRAW_FLOW)
-            Logger.info("MosaicView.drawBody: " + (_modifiedCells.isEmpty() ? "all" : ("cnt=" + _modifiedCells.size()) + ": " + _modifiedCells.stream().limit(5).collect(Collectors.toList())));
-        drawModified(_modifiedCells.isEmpty() ? null : _modifiedCells);
-        _modifiedCells.clear();
+        if (DEBUG_DRAW_FLOW)
+            Logger.info("MosaicView.drawBody: " + (modifiedCells.isEmpty() ? "all" : ("cnt=" + modifiedCells.size()) + ": " + modifiedCells.stream().limit(5).collect(Collectors.toList())));
+        drawModified(modifiedCells.isEmpty() ? null : modifiedCells);
+        modifiedCells.clear();
     }
 
 }

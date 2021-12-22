@@ -10,24 +10,24 @@ import fmg.core.img.IImageView;
 /** Internal wrapper-image implementation over javafx.scene.canvas.Canvas */
 public class CanvasJfx {
 
-    private IImageView<?, ? extends IImageModel> _imageView;
-    private Canvas _canvas;
+    private IImageView<?, ? extends IImageModel> imageView;
+    private Canvas canvas;
 
     public CanvasJfx(IImageView<?, ? extends IImageModel> imageView) {
-        this._imageView = imageView;
+        this.imageView = imageView;
     }
 
     public Canvas create() {
-        SizeDouble s = _imageView.getSize();
-        if (_canvas == null)
-            _canvas = new Canvas(s.width, s.height);
+        SizeDouble s = imageView.getSize();
+        if (canvas == null)
+            canvas = new Canvas(s.width, s.height);
         else {
-            _canvas. setWidth(s.width);
-            _canvas.setHeight(s.height);
+            canvas. setWidth(s.width);
+            canvas.setHeight(s.height);
         }
-        return _canvas;
+        return canvas;
     }
 
-    public GraphicsContext getGraphics() { return _canvas.getGraphicsContext2D(); }
+    public GraphicsContext getGraphics() { return canvas.getGraphicsContext2D(); }
 
 }

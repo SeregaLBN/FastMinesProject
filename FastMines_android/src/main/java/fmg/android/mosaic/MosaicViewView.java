@@ -2,7 +2,6 @@ package fmg.android.mosaic;
 
 import java.beans.PropertyChangeEvent;
 import java.util.Collection;
-import java.util.HashSet;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -13,7 +12,6 @@ import android.view.ViewGroup;
 
 import fmg.android.app.DrawableView;
 import fmg.common.Logger;
-import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.mosaic.MosaicGameModel;
@@ -28,8 +26,8 @@ public class MosaicViewView extends MosaicAndroidView<DrawableView, Bitmap, Mosa
 
     private Context context;
     private DrawableView control;
-    private Flag.BitmapController _imgFlag = new Flag.BitmapController();
-    private Mine.BitmapController _imgMine = new Mine.BitmapController();
+    private Flag.BitmapController imgFlag = new Flag.BitmapController();
+    private Mine.BitmapController imgMine = new Mine.BitmapController();
     private final Rect clipBounds = new Rect();
 
     public MosaicViewView(Context context) {
@@ -80,7 +78,7 @@ public class MosaicViewView extends MosaicAndroidView<DrawableView, Bitmap, Mosa
         if (control == null)
             return;
 
-        assert !_alreadyPainted;
+        assert !alreadyPainted;
 
         control.invalidate();
     }
@@ -127,20 +125,20 @@ public class MosaicViewView extends MosaicAndroidView<DrawableView, Bitmap, Mosa
 
         final int max = 30;
         if (sq > max) {
-            _imgFlag.getModel().setSize(new SizeDouble(sq, sq));
-            _imgMine.getModel().setSize(new SizeDouble(sq, sq));
-            model.setImgFlag(_imgFlag.getImage());
-            model.setImgMine(_imgMine.getImage());
+            imgFlag.getModel().setSize(new SizeDouble(sq, sq));
+            imgMine.getModel().setSize(new SizeDouble(sq, sq));
+            model.setImgFlag(imgFlag.getImage());
+            model.setImgMine(imgMine.getImage());
         } else {
             int imgSize = (int)sq;
             if (imgSize < 1) {
                 Logger.info("bad image size " + sq);
                 imgSize = 1;
             }
-            _imgFlag.getModel().setSize(new SizeDouble(max, max));
-            model.setImgFlag(ImgUtils.zoom(_imgFlag.getImage(), imgSize, imgSize));
-            _imgMine.getModel().setSize(new SizeDouble(max, max));
-            model.setImgMine(ImgUtils.zoom(_imgMine.getImage(), imgSize, imgSize));
+            imgFlag.getModel().setSize(new SizeDouble(max, max));
+            model.setImgFlag(ImgUtils.zoom(imgFlag.getImage(), imgSize, imgSize));
+            imgMine.getModel().setSize(new SizeDouble(max, max));
+            model.setImgMine(ImgUtils.zoom(imgMine.getImage(), imgSize, imgSize));
         }
     }
 
@@ -149,8 +147,8 @@ public class MosaicViewView extends MosaicAndroidView<DrawableView, Bitmap, Mosa
         super.close();
         getModel().close();
         setControl(null);
-        _imgFlag.close();
-        _imgMine.close();
+        imgFlag.close();
+        imgMine.close();
     }
 
 }
