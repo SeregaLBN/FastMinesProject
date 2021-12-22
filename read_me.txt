@@ -91,10 +91,10 @@ Run from command line
         gradle FastMines_android:build
     Main app:
         adb install -t -r ./FastMines_android/build/outputs/apk/app/debug/FastMines_android-app-debug.apk
-        adb shell am start -a android.intent.action.MAIN -n fmg.android.app.debug/fmg.android.app.MainActivity
+        adb shell am start -a android.intent.action.MAIN -n SeregaLBN.FastMinesGame.Android.App.debug/fmg.android.app.MainActivity
     Test demo app:
         adb install -t -r ./FastMines_android/build/outputs/apk/demo/debug/FastMines_android-demo-debug.apk
-        adb shell am start -a android.intent.action.MAIN -n fmg.android.app.demo.debug/fmg.android.app.DemoActivity
+        adb shell am start -a android.intent.action.MAIN -n SeregaLBN.FastMinesGame.Android.App.demo.debug/fmg.android.app.DemoActivity
 
 ----------------------------------
 Android Studio
@@ -113,7 +113,7 @@ How to:
 * Configure workspace:
 1. Verify default encoding (need UFT-8):
    Menu Window -> Preferences -> expand 'General' -> Workspace -> in group 'Text file encoding' select 'Other: UTF-8' -> click 'Apply and Close'
-2. Set 'tab' as 3 spaces:
+2. Set 'tab' as 4 spaces:
    Menu Window -> Preferences -> expand 'General' -> expand 'Editors' -> Text Editors ->
       -> Displayed tab width: 4
       -> Insert spaced for tabs: checked!

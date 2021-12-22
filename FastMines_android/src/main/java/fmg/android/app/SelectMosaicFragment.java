@@ -236,7 +236,7 @@ public class SelectMosaicFragment extends Fragment {
     void onMosaicHeaderClick(View v) { }
 
     void onMosaicItemClick(View v, int position) {
-        Toast.makeText(this.getContext(), "onMosaicItemClick " + position, Toast.LENGTH_LONG).show();
+        //Toast.makeText(this.getContext(), "onMosaicItemClick " + position, Toast.LENGTH_LONG).show();
 
         viewModel.getMosaicDS().setCurrentItemPos(position); // change current item before call listener
 

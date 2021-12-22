@@ -71,7 +71,6 @@ namespace Fmg.Uwp.App.Serializers {
         }
 
         protected override byte[] WriteTransform(byte[] data) {
-            if (true) return data;
             return new TripleDESOperations() {
                 Algorithm = Windows.Security.Cryptography.Core.SymmetricAlgorithmNames.TripleDesCbcPkcs7,
                 InitVector = new byte[8],
@@ -81,7 +80,6 @@ namespace Fmg.Uwp.App.Serializers {
         }
 
         protected override byte[] ReadTransform(byte[] data) {
-            if (true) return data;
             return new TripleDESOperations() {
                 Algorithm = Windows.Security.Cryptography.Core.SymmetricAlgorithmNames.TripleDesCbcPkcs7,
                 InitVector = new byte[8],

@@ -23,6 +23,10 @@ jar {
     }
 }
 
+if (System.getenv('JAVAFX_HOME') == null) {
+    System.err.println('ERROR: The system environment variable JAVAFX_HOME is not defined')
+}
+
 repositories {
     flatDir {
         // 1. download https://gluonhq.com/products/javafx/

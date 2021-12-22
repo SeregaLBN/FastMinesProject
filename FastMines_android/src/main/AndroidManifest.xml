@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="fmg.android.app" >
+    package="fmg.android.app"
+    android:installLocation="auto">
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <application
+        android:process="FastMinesGame.android"
         android:name=".FastMinesApp"
         android:allowBackup="true"
         android:fullBackupOnly="true"

@@ -40,6 +40,7 @@ public class MosaicSkillDataSource extends BaseDataSource<
     public List<MosaicSkillDataItem> getDataSource() {
         if (!isDisposed() && ((dataSource == null) || dataSource.isEmpty())) {
             dataSource = Stream.of(ESkillLevel.values())
+                    .filter(sk -> sk != ESkillLevel.eCustom)
                     .map(MosaicSkillDataItem::new)
                     .peek(item -> {
                         MosaicSkillModel model = item.getEntity().getModel();
