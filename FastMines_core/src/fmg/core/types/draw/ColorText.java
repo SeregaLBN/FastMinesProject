@@ -8,12 +8,22 @@ import fmg.common.notifier.INotifyPropertyChanged;
 import fmg.common.notifier.NotifyPropertyChanged;
 import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
+import fmg.core.types.Property;
 
 public class ColorText implements INotifyPropertyChanged {
 
+    public static final String PROPERTY_COLOR_OPEN    = "ColorOpen";
+    public static final String PROPERTY_COLOR_OPEN_N  = "ColorOpen.#";
+    public static final String PROPERTY_COLOR_CLOSE   = "ColorClose";
+    public static final String PROPERTY_COLOR_CLOSE_N = "ColorClose.#";
+
+    @Property(PROPERTY_COLOR_OPEN)
     private Color[] colorOpen;
+
+    @Property(PROPERTY_COLOR_CLOSE)
     private Color[] colorClose;
-    protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
+
+    protected NotifyPropertyChanged notifier = new NotifyPropertyChanged(this);
 
     public ColorText() {
         colorOpen = new Color[EOpen.values().length];
@@ -56,11 +66,6 @@ public class ColorText implements INotifyPropertyChanged {
             }
     }
 
-    public static final String PROPERTY_COLOR_OPEN    = "ColorOpen";
-    public static final String PROPERTY_COLOR_OPEN_N_ = "ColorOpen.#";
-    public static final String PROPERTY_COLOR_CLOSE   = "ColorClose";
-    public static final String PROPERTY_COLOR_CLOSE_N = "ColorClose.#";
-
     public Color[] getColorOpen() {
         return colorOpen;
     }
@@ -71,14 +76,14 @@ public class ColorText implements INotifyPropertyChanged {
         Color[] old = this.colorOpen;
         if (!Arrays.equals(old, colorOpen)) {
             this.colorOpen = colorOpen;
-            _notifier.firePropertyChanged(old, colorOpen, PROPERTY_COLOR_OPEN);
+            notifier.firePropertyChanged(old, colorOpen, PROPERTY_COLOR_OPEN);
         }
     }
     public void setColorOpen(int i, Color colorOpen) {
         Color old = this.colorOpen[i];
         if (!old.equals(colorOpen)) {
             this.colorOpen[i] = colorOpen;
-            _notifier.firePropertyChanged(old, colorOpen, PROPERTY_COLOR_OPEN_N_ + i);
+            notifier.firePropertyChanged(old, colorOpen, PROPERTY_COLOR_OPEN_N + i);
         }
     }
 
@@ -92,14 +97,14 @@ public class ColorText implements INotifyPropertyChanged {
         Color[] old = this.colorClose;
         if (!Arrays.equals(old, colorClose)) {
             this.colorClose = colorClose;
-            _notifier.firePropertyChanged(old, colorClose, PROPERTY_COLOR_CLOSE);
+            notifier.firePropertyChanged(old, colorClose, PROPERTY_COLOR_CLOSE);
         }
     }
     public void setColorClose(int i, Color colorClose) {
         Color old = this.colorClose[i];
         if (!old.equals(colorClose)) {
             this.colorClose[i] = colorClose;
-            _notifier.firePropertyChanged(old, colorClose, PROPERTY_COLOR_CLOSE_N + i);
+            notifier.firePropertyChanged(old, colorClose, PROPERTY_COLOR_CLOSE_N + i);
         }
     }
 
@@ -120,11 +125,11 @@ public class ColorText implements INotifyPropertyChanged {
 
     @Override
     public void addListener(PropertyChangeListener listener) {
-        _notifier.addListener(listener);
+        notifier.addListener(listener);
     }
     @Override
     public void removeListener(PropertyChangeListener listener) {
-        _notifier.removeListener(listener);
+        notifier.removeListener(listener);
     }
 
 }

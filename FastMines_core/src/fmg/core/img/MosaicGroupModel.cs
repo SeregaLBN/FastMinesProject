@@ -12,7 +12,7 @@ namespace Fmg.Core.Img {
     public class MosaicGroupModel : AnimatedImageModel {
 
         private EMosaicGroup? _mosaicGroup;
-        public static bool varMosaicGroupAsValueOthers1 = !true;
+        public const bool varMosaicGroupAsValueOthers1 = !true;
         /// <summary> triangle -> quadrangle -> hexagon -> anew triangle -> ... </summary>
         private readonly int[] _nmArray = { 3, 4, 6 };
         private int _nmIndex1 = 0, _nmIndex2 = 1;

@@ -13,6 +13,7 @@ import fmg.core.img.MosaicAnimatedModel;
 import fmg.core.mosaic.MosaicGameModel;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
+import fmg.core.types.Property;
 
 /** Mosaic item for data model */
 public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicAnimatedModel<Void>, MosaicImg.BitmapView, MosaicImg.BitmapController> {
@@ -20,6 +21,7 @@ public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicAnimatedModel<Vo
     public static final String PROPERTY_MOSAIC_TYPE = MosaicGameModel.PROPERTY_MOSAIC_TYPE;
     public static final String PROPERTY_SKILL_LEVEL = "SkillLevel";
 
+    @Property(PROPERTY_SKILL_LEVEL)
     private ESkillLevel skillLevel;
 
     public MosaicDataItem(EMosaic mosaicType) {

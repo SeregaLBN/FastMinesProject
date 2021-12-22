@@ -31,10 +31,7 @@ import fmg.common.Logger;
 import fmg.common.geom.*;
 import fmg.common.notifier.INotifyPropertyChanged;
 import fmg.common.notifier.NotifyPropertyChanged;
-import fmg.core.types.ClickCellResult;
-import fmg.core.types.EClose;
-import fmg.core.types.EOpen;
-import fmg.core.types.EState;
+import fmg.core.types.*;
 
 /** Базовый класс фигуры-ячейки */
 public abstract class BaseCell {
@@ -66,8 +63,10 @@ public abstract class BaseCell {
         public static final String PROPERTY_AREA = "Area";
 
         /** площадь ячейки/фигуры */
+        @Property(PROPERTY_AREA)
         private double area = 500;
-        protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
+
+        protected NotifyPropertyChanged notifier = new NotifyPropertyChanged(this);
 
         /** площадь ячейки/фигуры */
         public void setArea(double area) {
@@ -75,7 +74,7 @@ public abstract class BaseCell {
             double old = this.area;
             if (!DoubleExt.hasMinDiff(old, area)) {
                 this.area = area;
-                _notifier.firePropertyChanged(old, area, PROPERTY_AREA);
+                notifier.firePropertyChanged(old, area, PROPERTY_AREA);
             }
         }
         /** площадь ячейки/фигуры */
@@ -115,16 +114,16 @@ public abstract class BaseCell {
 
         @Override
         public void addListener(PropertyChangeListener listener) {
-            _notifier.addListener(listener);
+            notifier.addListener(listener);
         }
         @Override
         public void removeListener(PropertyChangeListener listener) {
-            _notifier.removeListener(listener);
+            notifier.removeListener(listener);
         }
 
         @Override
         public void close() {
-            _notifier.close();
+            notifier.close();
         }
 
     }

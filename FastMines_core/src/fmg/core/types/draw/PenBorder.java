@@ -6,13 +6,25 @@ import fmg.common.Color;
 import fmg.common.geom.DoubleExt;
 import fmg.common.notifier.INotifyPropertyChanged;
 import fmg.common.notifier.NotifyPropertyChanged;
+import fmg.core.types.Property;
 
 /** Характеристики кисти у рамки ячейки */
 public class PenBorder implements INotifyPropertyChanged {
 
-    private Color _colorShadow, _colorLight;
-    private double _width;
-    protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
+    public static final String PROPERTY_COLOR_SHADOW = "ColorShadow";
+    public static final String PROPERTY_COLOR_LIGHT  = "ColorLight";
+    public static final String PROPERTY_WIDTH        = "Width";
+
+    @Property(PROPERTY_COLOR_SHADOW)
+    private Color colorShadow;
+
+    @Property(PROPERTY_COLOR_LIGHT)
+    private Color colorLight;
+
+    @Property(PROPERTY_WIDTH)
+    private double width;
+
+    protected NotifyPropertyChanged notifier = new NotifyPropertyChanged(this);
 
     public PenBorder() {
         this(Color.Black(), Color.White(), 3);
@@ -24,48 +36,44 @@ public class PenBorder implements INotifyPropertyChanged {
         Color colorLight,
         int iWidth)
     {
-        _colorShadow = colorShadow;
-        _colorLight  = colorLight;
-        _width = iWidth;
+        this.colorShadow = colorShadow;
+        this.colorLight  = colorLight;
+        this.width = iWidth;
     }
 
-    public static final String PROPERTY_COLOR_SHADOW = "ColorShadow";
-    public static final String PROPERTY_COLOR_LIGHT  = "ColorLight";
-    public static final String PROPERTY_WIDTH        = "Width";
-
     public Color getColorShadow() {
-        return _colorShadow;
+        return colorShadow;
     }
 
     public void setColorShadow(Color colorShadow) {
-        _notifier.setProperty(_colorShadow, colorShadow, PROPERTY_COLOR_SHADOW);
+        notifier.setProperty(this.colorShadow, colorShadow, PROPERTY_COLOR_SHADOW);
     }
 
     public Color getColorLight() {
-        return _colorLight;
+        return colorLight;
     }
 
     public void setColorLight(Color colorLight) {
-        _notifier.setProperty(_colorLight, colorLight, PROPERTY_COLOR_LIGHT);
+        notifier.setProperty(this.colorLight, colorLight, PROPERTY_COLOR_LIGHT);
     }
 
     public double getWidth() {
-        return _width;
+        return width;
     }
 
     public void setWidth(double width) {
-        double old = _width;
+        double old = this.width;
         if (DoubleExt.hasMinDiff(old, width))
             return;
-        _width = width;
-        _notifier.firePropertyChanged(old, width, PROPERTY_WIDTH);
+        this.width = width;
+        notifier.firePropertyChanged(old, width, PROPERTY_WIDTH);
     }
 
     @Override
     public int hashCode() {
-        int result = 31 + _colorLight.hashCode();
-        result = 31 * result + _colorShadow.hashCode();
-        long temp = Double.doubleToLongBits(_width);
+        int result = 31 + colorLight.hashCode();
+        result = 31 * result + colorShadow.hashCode();
+        long temp = Double.doubleToLongBits(width);
         return 31 * result + (int)(temp ^ (temp >>> 32));
     }
 
@@ -74,18 +82,18 @@ public class PenBorder implements INotifyPropertyChanged {
         if (this == obj) return true;
         if (!(obj instanceof PenBorder)) return false;
         PenBorder penObj = (PenBorder) obj;
-        return DoubleExt.hasMinDiff(_width, penObj._width)
-                && _colorShadow.equals(penObj._colorShadow)
-                && _colorLight.equals(penObj._colorLight);
+        return DoubleExt.hasMinDiff(width, penObj.width)
+                && colorShadow.equals(penObj.colorShadow)
+                && colorLight.equals(penObj.colorLight);
     }
 
     @Override
     public void addListener(PropertyChangeListener listener) {
-        _notifier.addListener(listener);
+        notifier.addListener(listener);
     }
     @Override
     public void removeListener(PropertyChangeListener listener) {
-        _notifier.removeListener(listener);
+        notifier.removeListener(listener);
     }
 
 }

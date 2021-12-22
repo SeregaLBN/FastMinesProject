@@ -104,7 +104,7 @@ public class SelectMosaicFragment extends Fragment {
         // subscribe all
         rotateBkColorOfGameBttn = true;
         {
-            HSV hsv = new HSV(AnimatedImageModel.DefaultForegroundColor);
+            HSV hsv = new HSV(AnimatedImageModel.DEFAULT_FOREGROUND_COLOR);
             hsv.s = 80;
             hsv.v = 70;
             hsv.a = 170;

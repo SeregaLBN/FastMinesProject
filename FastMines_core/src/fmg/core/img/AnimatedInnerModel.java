@@ -5,19 +5,27 @@ import java.beans.PropertyChangeListener;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.notifier.NotifyPropertyChanged;
+import fmg.core.types.Property;
 
 /** MVC: inner model. Animated image characteristics. */
 final class AnimatedInnerModel implements IAnimatedModel {
 
     /** Image is animated? */
-    private boolean _animated;
-    /** Overall animation period (in milliseconds) */
-    private long _animatePeriod = 3000;
-    /** Total frames of the animated period */
-    private int _totalFrames = 30;
-    private int _currentFrame = 0;
+    @Property(PROPERTY_ANIMATED)
+    private boolean animated;
 
-    private NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
+    /** Overall animation period (in milliseconds) */
+    @Property(PROPERTY_ANIMATE_PERIOD)
+    private long animatePeriod = 3000;
+
+    /** Total frames of the animated period */
+    @Property(PROPERTY_TOTAL_FRAMES)
+    private int totalFrames = 30;
+
+    @Property(PROPERTY_CURRENT_FRAME)
+    private int currentFrame = 0;
+
+    private NotifyPropertyChanged notifier = new NotifyPropertyChanged(this);
 
     // #region: begin unusable code
     @Override
@@ -29,53 +37,53 @@ final class AnimatedInnerModel implements IAnimatedModel {
     public BoundDouble getPadding()             { throw new UnsupportedOperationException(); }
     @Override
     public void setPadding(BoundDouble padding) { throw new UnsupportedOperationException(); }
-// #region: end unusable code
+    // #region: end unusable code
 
     /** Image is animated? */
     @Override
-    public boolean isAnimated() { return _animated; }
+    public boolean isAnimated() { return animated; }
     @Override
     public void setAnimated(boolean value) {
-        _notifier.setProperty(_animated, value, PROPERTY_ANIMATED);
+        notifier.setProperty(animated, value, PROPERTY_ANIMATED);
     }
 
     /** Overall animation period (in milliseconds) */
     @Override
-    public long getAnimatePeriod() { return _animatePeriod; }
+    public long getAnimatePeriod() { return animatePeriod; }
     /** Overall animation period (in milliseconds) */
     @Override
     public void setAnimatePeriod(long value) {
-        _notifier.setProperty(_animatePeriod, value, PROPERTY_ANIMATE_PERIOD);
+        notifier.setProperty(animatePeriod, value, PROPERTY_ANIMATE_PERIOD);
     }
 
     /** Total frames of the animated period */
     @Override
-    public int getTotalFrames() { return _totalFrames; }
+    public int getTotalFrames() { return totalFrames; }
     @Override
     public void setTotalFrames(int value) {
-        if (_notifier.setProperty(_totalFrames, value, PROPERTY_TOTAL_FRAMES))
+        if (notifier.setProperty(totalFrames, value, PROPERTY_TOTAL_FRAMES))
             setCurrentFrame(0);
     }
 
     @Override
-    public int getCurrentFrame() { return _currentFrame; }
+    public int getCurrentFrame() { return currentFrame; }
     @Override
     public void setCurrentFrame(int value) {
-        _notifier.setProperty(_currentFrame, value, PROPERTY_CURRENT_FRAME);
+        notifier.setProperty(currentFrame, value, PROPERTY_CURRENT_FRAME);
     }
 
     @Override
     public void close() {
-        _notifier.close();
+        notifier.close();
     }
 
     @Override
     public void addListener(PropertyChangeListener listener) {
-        _notifier.addListener(listener);
+        notifier.addListener(listener);
     }
     @Override
     public void removeListener(PropertyChangeListener listener) {
-        _notifier.removeListener(listener);
+        notifier.removeListener(listener);
     }
 
 }

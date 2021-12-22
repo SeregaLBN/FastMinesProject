@@ -19,6 +19,7 @@ import fmg.common.geom.util.FigureHelper;
 import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.cells.BaseCell.BaseAttribute;
+import fmg.core.types.Property;
 import fmg.core.types.draw.PenBorder;
 
 /** Representable {@link fmg.core.types.EMosaic} as animated image */
@@ -27,61 +28,68 @@ public class MosaicAnimatedModel<TImageInner>
  implements IMosaicAnimatedModel<TImageInner>
 {
 
-    private EMosaicRotateMode _rotateMode = EMosaicRotateMode.fullMatrix;
-    /** 0° .. +360° */
-    private double _rotateAngle;
-    /** list of offsets rotation angles prepared for cells */
-    private final List<Double /* angle offset */ > _prepareList = new ArrayList<>();
-    private final List<RotatedCellContext> _rotatedElements = new ArrayList<>();
-    private final AnimatedInnerModel _innerModel = new AnimatedInnerModel();
-    private boolean hackLock = false;
-    private final PropertyChangeListener onInnerModelPropertyChangedListener = this::onInnerModelPropertyChanged;
-
-    public MosaicAnimatedModel() {
-        _innerModel.addListener(onInnerModelPropertyChangedListener);
-    }
-
     public static final String PROPERTY_ROTATE_ANGLE     = "RotateAngle";
     public static final String PROPERTY_ROTATE_MODE      = "RotateMode";
     public static final String PROPERTY_ROTATED_ELEMENTS = "RotatedElements";
 
+    @Property(PROPERTY_ROTATE_MODE)
+    private EMosaicRotateMode rotateMode = EMosaicRotateMode.fullMatrix;
+
+    /** 0° .. +360° */
+    @Property(PROPERTY_ROTATE_ANGLE)
+    private double rotateAngle;
+
+    /** list of offsets rotation angles prepared for cells */
+    private final List<Double /* angle offset */ > prepareList = new ArrayList<>();
+
+    @Property(PROPERTY_ROTATED_ELEMENTS)
+    private final List<RotatedCellContext> rotatedElements = new ArrayList<>();
+
+    private final AnimatedInnerModel innerModel = new AnimatedInnerModel();
+    private boolean hackLock = false;
+    private final PropertyChangeListener onInnerModelPropertyChangedListener = this::onInnerModelPropertyChanged;
+
+    public MosaicAnimatedModel() {
+        innerModel.addListener(onInnerModelPropertyChangedListener);
+    }
+
     @Override
-    public boolean isAnimated() { return _innerModel.isAnimated(); }
+    public boolean isAnimated() { return innerModel.isAnimated(); }
     @Override
-    public void setAnimated(boolean value) { _innerModel.setAnimated(value); }
+    public void setAnimated(boolean value) { innerModel.setAnimated(value); }
 
     /** Overall animation period (in milliseconds) */
     @Override
-    public long getAnimatePeriod() { return _innerModel.getAnimatePeriod(); }
+    public long getAnimatePeriod() { return innerModel.getAnimatePeriod(); }
     /** Overall animation period (in milliseconds) */
     @Override
-    public void setAnimatePeriod(long value) { _innerModel.setAnimatePeriod(value); }
+    public void setAnimatePeriod(long value) { innerModel.setAnimatePeriod(value); }
 
     /** Total frames of the animated period */
     @Override
-    public int getTotalFrames() { return _innerModel.getTotalFrames(); }
+    public int getTotalFrames() { return innerModel.getTotalFrames(); }
     @Override
-    public void setTotalFrames(int value) { _innerModel.setTotalFrames(value); }
+    public void setTotalFrames(int value) { innerModel.setTotalFrames(value); }
 
     @Override
-    public int getCurrentFrame() { return _innerModel.getCurrentFrame(); }
+    public int getCurrentFrame() { return innerModel.getCurrentFrame(); }
     @Override
-    public void setCurrentFrame(int value) { _innerModel.setCurrentFrame(value); }
+    public void setCurrentFrame(int value) { innerModel.setCurrentFrame(value); }
 
     @Override
-    public EMosaicRotateMode getRotateMode() { return _rotateMode; }
+    public EMosaicRotateMode getRotateMode() { return rotateMode; }
     @Override
-    public void setRotateMode(EMosaicRotateMode value) { _notifier.setProperty(_rotateMode, value, PROPERTY_ROTATE_MODE); }
+    public void setRotateMode(EMosaicRotateMode value) { notifier.setProperty(rotateMode, value, PROPERTY_ROTATE_MODE); }
 
     /** 0° .. +360° */
     @Override
-    public double getRotateAngle() { return _rotateAngle; }
+    public double getRotateAngle() { return rotateAngle; }
     @Override
     public void setRotateAngle(double value) {
-        _notifier.setProperty(_rotateAngle, AnimatedImageModel.fixAngle(value), PROPERTY_ROTATE_ANGLE);
+        notifier.setProperty(rotateAngle, AnimatedImageModel.fixAngle(value), PROPERTY_ROTATE_ANGLE);
     }
 
-    public List<RotatedCellContext> getRotatedElements() { return _rotatedElements; }
+    public List<RotatedCellContext> getRotatedElements() { return rotatedElements; }
 
     @Override
     protected void onPropertyChanged(PropertyChangeEvent ev) {
@@ -112,7 +120,7 @@ public class MosaicAnimatedModel<TImageInner>
 
             FigureHelper.rotateCollection(cell.getRegion().getPoints(), rotateAngle, center);
         }
-        _notifier.firePropertyChanged(PROPERTY_MATRIX);
+        notifier.firePropertyChanged(PROPERTY_MATRIX);
     }
 
     /** ///////////// ================= PART {@link EMosaicRotateMode#someCells} ======================= ///////////// */
@@ -137,7 +145,7 @@ public class MosaicAnimatedModel<TImageInner>
         final double area = getArea();
         final double angle = getRotateAngle();
 
-        _rotatedElements.forEach(cntxt -> {
+        rotatedElements.forEach(cntxt -> {
             assert (cntxt.angleOffset >= 0);
             double angle2 = angle - cntxt.angleOffset;
             if (angle2 < 0)
@@ -176,15 +184,15 @@ public class MosaicAnimatedModel<TImageInner>
         });
 
         // Z-ordering
-        Collections.sort(_rotatedElements, (e1, e2) -> Double.compare(e1.area, e2.area));
+        Collections.sort(rotatedElements, (e1, e2) -> Double.compare(e1.area, e2.area));
     }
 
     public List<BaseCell> getNotRotatedCells() {
-        if (_rotatedElements.isEmpty())
+        if (rotatedElements.isEmpty())
             return getMatrix();
 
         List<BaseCell> matrix = getMatrix();
-        List<Integer> indexes = _rotatedElements.stream().map(cntxt -> cntxt.index).collect(Collectors.toList());
+        List<Integer> indexes = rotatedElements.stream().map(cntxt -> cntxt.index).collect(Collectors.toList());
         List<BaseCell> notRotated = new ArrayList<>(matrix.size() - indexes.size());
         int i = 0;
         for (BaseCell cell : matrix) {
@@ -196,7 +204,7 @@ public class MosaicAnimatedModel<TImageInner>
     }
 
     public void getRotatedCells(Consumer<List<BaseCell>> rotatedCellsFunctor) {
-        if (_rotatedElements.isEmpty())
+        if (rotatedElements.isEmpty())
             return;
 
         PenBorder pb = getPenBorder();
@@ -213,8 +221,8 @@ public class MosaicAnimatedModel<TImageInner>
             pb.setColorShadow(colorShadow.darker(0.5));
 
             List<BaseCell> matrix = getMatrix();
-            List<BaseCell> rotatedCells = new ArrayList<>(_rotatedElements.size());
-            for (RotatedCellContext cntxt : _rotatedElements)
+            List<BaseCell> rotatedCells = new ArrayList<>(rotatedElements.size());
+            for (RotatedCellContext cntxt : rotatedElements)
                 rotatedCells.add(matrix.get(cntxt.index));
             rotatedCellsFunctor.accept(rotatedCells);
 
@@ -228,10 +236,10 @@ public class MosaicAnimatedModel<TImageInner>
     }
 
     private void randomRotateElemenIndex() {
-        _prepareList.clear();
-        if (!_rotatedElements.isEmpty()) {
-            _rotatedElements.clear();
-            _notifier.firePropertyChanged(PROPERTY_ROTATED_ELEMENTS);
+        prepareList.clear();
+        if (!rotatedElements.isEmpty()) {
+            rotatedElements.clear();
+            notifier.firePropertyChanged(PROPERTY_ROTATED_ELEMENTS);
         }
 
 //        if (!isAnimated())
@@ -248,16 +256,16 @@ public class MosaicAnimatedModel<TImageInner>
         double offset = (zero ? 0 : ThreadLocalRandom.current().nextInt(360)) + getRotateAngle();
         if (offset > 360)
             offset -= 360;
-        _prepareList.add(offset);
+        prepareList.add(offset);
     }
 
     private int nextRandomIndex() {
         int len = getMatrix().size();
-        assert (_rotatedElements.size() < len);
+        assert (rotatedElements.size() < len);
         Random rand = ThreadLocalRandom.current();
         do {
             int index = rand.nextInt(len);
-            if (_rotatedElements.stream().anyMatch(ctxt -> ctxt.index == index))
+            if (rotatedElements.stream().anyMatch(ctxt -> ctxt.index == index))
                 continue;
             return index;
         } while(true);
@@ -269,8 +277,8 @@ public class MosaicAnimatedModel<TImageInner>
         double rotateDelta = rotateAngleDelta;
         double area = getArea();
 
-        if (!_prepareList.isEmpty()) {
-            List<Double> copyList = new ArrayList<>(_prepareList);
+        if (!prepareList.isEmpty()) {
+            List<Double> copyList = new ArrayList<>(prepareList);
             for (int i = copyList.size()-1; i >= 0; --i) {
                 double angleOffset = copyList.get(i);
                 if ((rotateDelta >= 0)
@@ -281,15 +289,15 @@ public class MosaicAnimatedModel<TImageInner>
                         (angleOld <  angleOffset && angleOffset >  angleNew && angleOld < angleNew) || // example: old=0    offset=355  new=350
                         (angleOld >= angleOffset && angleOffset <= angleNew && angleOld < angleNew)))  // example: old=5    offset=0    new=355
                 {
-                    _prepareList.remove(i);
-                    _rotatedElements.add(new RotatedCellContext(nextRandomIndex(), angleOffset, area));
-                    _notifier.firePropertyChanged(PROPERTY_ROTATED_ELEMENTS);
+                    prepareList.remove(i);
+                    rotatedElements.add(new RotatedCellContext(nextRandomIndex(), angleOffset, area));
+                    notifier.firePropertyChanged(PROPERTY_ROTATED_ELEMENTS);
                 }
             }
         }
 
         List<RotatedCellContext> toRemove = new ArrayList<>();
-        _rotatedElements.forEach(cntxt -> {
+        rotatedElements.forEach(cntxt -> {
             double angle2 = angleNew - cntxt.angleOffset;
             if (angle2 < 0)
                 angle2 += 360;
@@ -306,12 +314,12 @@ public class MosaicAnimatedModel<TImageInner>
             List<BaseCell> matrix = getMatrix();
             toRemove.forEach(cntxt -> {
                                 matrix.get(cntxt.index).init(); // restore original region coords
-                                _rotatedElements.remove(cntxt);
-                                if (_rotatedElements.isEmpty())
+                                rotatedElements.remove(cntxt);
+                                if (rotatedElements.isEmpty())
                                 _rotateCellAlterantive = !_rotateCellAlterantive;
                                 addRandomToPrepareList(false);
                             });
-            _notifier.firePropertyChanged(PROPERTY_ROTATED_ELEMENTS);
+            notifier.firePropertyChanged(PROPERTY_ROTATED_ELEMENTS);
         }
     }
 
@@ -326,7 +334,7 @@ public class MosaicAnimatedModel<TImageInner>
         if (BaseCell.BaseAttribute.PROPERTY_AREA.equals(propName))
             switch (getRotateMode()) {
             case fullMatrix:
-                if (!DoubleExt.hasMinDiff(_rotateAngle, 0))
+                if (!DoubleExt.hasMinDiff(rotateAngle, 0))
                     rotateMatrix(false);
                 break;
             case someCells:
@@ -340,12 +348,12 @@ public class MosaicAnimatedModel<TImageInner>
 
     protected void onInnerModelPropertyChanged(PropertyChangeEvent ev) {
         // refire
-        _notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+        notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
     }
 
     @Override
     public void close() {
-        _innerModel.removeListener(onInnerModelPropertyChangedListener);
+        innerModel.removeListener(onInnerModelPropertyChangedListener);
         super.close();
     }
 

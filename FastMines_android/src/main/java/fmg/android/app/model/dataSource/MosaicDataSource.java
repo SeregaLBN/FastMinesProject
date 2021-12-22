@@ -21,6 +21,7 @@ import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
+import fmg.core.types.Property;
 
 public class MosaicDataSource extends BaseDataSource<
           LogoDataItem,    Void,           LogoModel      ,      Logo.BitmapView,      Logo.BitmapController,
@@ -30,7 +31,10 @@ public class MosaicDataSource extends BaseDataSource<
     public static final String PROPERTY_MOSAIC_GROUP = "MosaicGroup";
     public static final String PROPERTY_SKILL_LEVEL  = "SkillLevel";
 
+    @Property(PROPERTY_MOSAIC_GROUP)
     private EMosaicGroup mosaicGroup;
+    
+    @Property(PROPERTY_SKILL_LEVEL)
     private ESkillLevel skillLevel;
 
     @Override
@@ -141,7 +145,7 @@ public class MosaicDataSource extends BaseDataSource<
         model.setAnimated(selected);
         model.getPenBorder().setColorLight (selected ? Color.White() : Color.Black());
         model.getPenBorder().setColorShadow(selected ? Color.White() : Color.Black());
-        model.setBackgroundColor(selected ? AnimatedImageModel.DefaultBkColor : MosaicDrawModel.DefaultBkColor);
+        model.setBackgroundColor(selected ? AnimatedImageModel.DEFAULT_BK_COLOR : MosaicDrawModel.DefaultBkColor);
         model.setPadding(new BoundDouble(model.getSize().width * (selected ? 10 : 5) /*/(mi.SkillLevel.Ordinal() + 1)*/ / 100));
         model.setRotateAngle(0);
     }

@@ -7,6 +7,7 @@ import fmg.common.Color;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.IImageModel;
+import fmg.core.types.Property;
 import fmg.core.types.draw.ColorText;
 import fmg.core.types.draw.FontInfo;
 import fmg.core.types.draw.PenBorder;
@@ -20,6 +21,16 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IMo
 
     /** Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера. Переопределяется одним из MVC-наследником. */
     public static Color DefaultBkColor = Color.Gray().brighter();
+
+    public static final String PROPERTY_AUTO_FIT         = "AutoFit";
+    public static final String PROPERTY_IMG_MINE         = "ImgMine";
+    public static final String PROPERTY_IMG_FLAG         = "ImgFlag";
+    public static final String PROPERTY_IMG_BCKGRND      = "ImgBckgrnd";
+    public static final String PROPERTY_COLOR_TEXT       = "ColorText";
+    public static final String PROPERTY_PEN_BORDER       = "PenBorder";
+    public static final String PROPERTY_BACKGROUND_FILL  = "BackgroundFill";
+    public static final String PROPERTY_FONT_INFO        = "FontInfo";
+    public static final String PROPERTY_BACKGROUND_COLOR = "BackgroundColor";
 
     /** Fit the area/padding to the size.
      *
@@ -43,17 +54,39 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IMo
      * <li> При изменении Padding перерасчитывается Area, так что бы мозаика вписывалась внутрь нового InnerSize.
      * </ul>
      **/
-    private boolean        _autoFit = true;
-    private SizeDouble     _size;
-    private BoundDouble    _padding = new BoundDouble(0);
-    private TImageInner    _imgMine;
-    private TImageInner    _imgFlag;
-    private TImageInner    _imgBckgrnd;
-    private ColorText      _colorText;
-    private PenBorder      _penBorder;
-    private FontInfo       _fontInfo;
-    private BackgroundFill _backgroundFill;
-    private Color          _backgroundColor;
+    @Property(PROPERTY_AUTO_FIT)
+    private boolean autoFit = true;
+
+    @Property(PROPERTY_SIZE)
+    private SizeDouble size;
+
+    @Property(PROPERTY_PADDING)
+    private BoundDouble padding = new BoundDouble(0);
+
+    @Property(PROPERTY_IMG_MINE)
+    private TImageInner imgMine;
+
+    @Property(PROPERTY_IMG_FLAG)
+    private TImageInner imgFlag;
+
+    @Property(PROPERTY_IMG_BCKGRND)
+    private TImageInner imgBckgrnd;
+
+    @Property(PROPERTY_COLOR_TEXT)
+    private ColorText colorText;
+
+    @Property(PROPERTY_PEN_BORDER)
+    private PenBorder penBorder;
+
+    @Property(PROPERTY_FONT_INFO)
+    private FontInfo fontInfo;
+
+    @Property(PROPERTY_BACKGROUND_FILL)
+    private BackgroundFill backgroundFill;
+
+    @Property(PROPERTY_BACKGROUND_COLOR)
+    private Color backgroundColor;
+
     private boolean lockChanging = false;
 
     private final PropertyChangeListener      onColorTextPropertyChangedListener = this::onColorTextPropertyChanged;
@@ -61,21 +94,11 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IMo
     private final PropertyChangeListener onBackgroundFillPropertyChangedListener = this::onBackgroundFillPropertyChanged;
     private final PropertyChangeListener       onFontInfoPropertyChangedListener = this::onFontInfoPropertyChanged;
 
-    public static final String PROPERTY_AUTO_FIT         = "AutoFit";
-    public static final String PROPERTY_IMG_MINE         = "ImgMine";
-    public static final String PROPERTY_IMG_FLAG         = "ImgFlag";
-    public static final String PROPERTY_IMG_BCKGRND      = "ImgBckgrnd";
-    public static final String PROPERTY_COLOR_TEXT       = "ColorText";
-    public static final String PROPERTY_PEN_BORDER       = "PenBorder";
-    public static final String PROPERTY_BACKGROUND_FILL  = "BackgroundFill";
-    public static final String PROPERTY_FONT_INFO        = "FontInfo";
-    public static final String PROPERTY_BACKGROUND_COLOR = "BackgroundColor";
-
     @Override
-    public boolean getAutoFit() { return _autoFit; }
+    public boolean getAutoFit() { return autoFit; }
     @Override
     public void setAutoFit(boolean autoFit) {
-        _notifier.setProperty(this._autoFit, autoFit, PROPERTY_AUTO_FIT);
+        notifier.setProperty(this.autoFit, autoFit, PROPERTY_AUTO_FIT);
     }
 
     /** get mosaic size in pixels */
@@ -92,9 +115,9 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IMo
     /** common size in pixels */
     @Override
     public SizeDouble getSize() {
-        if ((_size == null) ||
-            (_size.width <= 0) ||
-            (_size.height <= 0))
+        if ((size == null) ||
+            (size.width <= 0) ||
+            (size.height <= 0))
         {
             SizeDouble s = getMosaicSize();
             BoundDouble p = getPadding();
@@ -102,20 +125,20 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IMo
             s.height += p.getTopAndBottom();
             setSize(s);
         }
-        return _size;
+        return size;
     }
     @Override
     public void setSize(SizeDouble size) {
         IImageModel.checkSize(size);
-        _notifier.setProperty(this._size, size, PROPERTY_SIZE);
+        notifier.setProperty(this.size, size, PROPERTY_SIZE);
     }
 
     @Override
-    public BoundDouble getPadding() { return _padding; }
+    public BoundDouble getPadding() { return padding; }
     @Override
     public void setPadding(BoundDouble padding) {
         IImageModel.checkPadding(this, padding);
-        _notifier.setProperty(this._padding, new BoundDouble(padding), PROPERTY_PADDING);
+        notifier.setProperty(this.padding, new BoundDouble(padding), PROPERTY_PADDING);
     }
 
     /** Offset to mosaic.
@@ -157,27 +180,27 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IMo
     }
 
     @Override
-    public TImageInner getImgMine() { return _imgMine; }
+    public TImageInner getImgMine() { return imgMine; }
     public void setImgMine(TImageInner img) {
-        _notifier.setProperty(this._imgMine, img, PROPERTY_IMG_MINE);
+        notifier.setProperty(this.imgMine, img, PROPERTY_IMG_MINE);
     }
 
     @Override
-    public TImageInner getImgFlag() { return _imgFlag; }
+    public TImageInner getImgFlag() { return imgFlag; }
     public void setImgFlag(TImageInner img) {
-        _notifier.setProperty(this._imgFlag, img, PROPERTY_IMG_FLAG);
+        notifier.setProperty(this.imgFlag, img, PROPERTY_IMG_FLAG);
     }
 
     @Override
     public ColorText getColorText() {
-        if (_colorText == null)
+        if (colorText == null)
             setColorText(new ColorText());
-        return _colorText;
+        return colorText;
     }
     @Override
     public void setColorText(ColorText colorText) {
-        ColorText old = this._colorText;
-        if (_notifier.setProperty(old, colorText, PROPERTY_COLOR_TEXT)) {
+        ColorText old = this.colorText;
+        if (notifier.setProperty(old, colorText, PROPERTY_COLOR_TEXT)) {
             if (old != null)
                 old.removeListener(onColorTextPropertyChangedListener);
             if (colorText != null)
@@ -187,14 +210,14 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IMo
 
     @Override
     public PenBorder getPenBorder() {
-        if (_penBorder == null)
+        if (penBorder == null)
             setPenBorder(new PenBorder());
-        return _penBorder;
+        return penBorder;
     }
     @Override
     public void setPenBorder(PenBorder penBorder) {
-        PenBorder old = this._penBorder;
-        if (_notifier.setProperty(old, penBorder, PROPERTY_PEN_BORDER)) {
+        PenBorder old = this.penBorder;
+        if (notifier.setProperty(old, penBorder, PROPERTY_PEN_BORDER)) {
             if (old != null)
                 old.removeListener(onPenBorderPropertyChangedListener);
             if (penBorder != null)
@@ -204,14 +227,14 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IMo
 
     @Override
     public BackgroundFill getBackgroundFill() {
-        if (_backgroundFill == null)
+        if (backgroundFill == null)
             setBackgroundFill(new BackgroundFill());
-        return _backgroundFill;
+        return backgroundFill;
     }
     @Override
     public void setBackgroundFill(BackgroundFill backgroundFill) {
-        BackgroundFill old = this._backgroundFill;
-        if (_notifier.setProperty(old, backgroundFill, PROPERTY_BACKGROUND_FILL)) {
+        BackgroundFill old = this.backgroundFill;
+        if (notifier.setProperty(old, backgroundFill, PROPERTY_BACKGROUND_FILL)) {
             if (old != null) {
                 old.removeListener(onBackgroundFillPropertyChangedListener);
                 old.close();
@@ -223,14 +246,14 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IMo
 
     @Override
     public FontInfo getFontInfo() {
-        if (_fontInfo == null)
+        if (fontInfo == null)
             setFontInfo(new FontInfo());
-        return _fontInfo;
+        return fontInfo;
     }
     @Override
     public void setFontInfo(FontInfo fontInfo) {
-        FontInfo old = this._fontInfo;
-        if (_notifier.setProperty(old, fontInfo, PROPERTY_FONT_INFO)) {
+        FontInfo old = this.fontInfo;
+        if (notifier.setProperty(old, fontInfo, PROPERTY_FONT_INFO)) {
             if (old != null)
                 old.removeListener(onFontInfoPropertyChangedListener);
             if (fontInfo != null)
@@ -240,33 +263,33 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IMo
 
     @Override
     public Color getBackgroundColor() {
-        if (_backgroundColor == null)
+        if (backgroundColor == null)
             setBackgroundColor(DefaultBkColor);
-        return _backgroundColor;
+        return backgroundColor;
     }
 
     @Override
     public void setBackgroundColor(Color color) {
-        _notifier.setProperty(_backgroundColor, color, PROPERTY_BACKGROUND_COLOR);
+        notifier.setProperty(backgroundColor, color, PROPERTY_BACKGROUND_COLOR);
     }
 
     @Override
-    public TImageInner getImgBckgrnd() { return _imgBckgrnd; }
+    public TImageInner getImgBckgrnd() { return imgBckgrnd; }
     public void setImgBckgrnd(TImageInner imgBckgrnd) {
-        _notifier.setProperty(this._imgBckgrnd, imgBckgrnd, PROPERTY_IMG_BCKGRND);
+        notifier.setProperty(this.imgBckgrnd, imgBckgrnd, PROPERTY_IMG_BCKGRND);
     }
 
     private void onFontInfoPropertyChanged(PropertyChangeEvent ev) {
-        _notifier.firePropertyChanged(null, ev.getSource(), PROPERTY_FONT_INFO);
+        notifier.firePropertyChanged(null, ev.getSource(), PROPERTY_FONT_INFO);
     }
     private void onBackgroundFillPropertyChanged(PropertyChangeEvent ev) {
-        _notifier.firePropertyChanged(null, ev.getSource(), PROPERTY_BACKGROUND_FILL);
+        notifier.firePropertyChanged(null, ev.getSource(), PROPERTY_BACKGROUND_FILL);
     }
     private void onColorTextPropertyChanged(PropertyChangeEvent ev) {
-        _notifier.firePropertyChanged(null, ev.getSource(), PROPERTY_COLOR_TEXT);
+        notifier.firePropertyChanged(null, ev.getSource(), PROPERTY_COLOR_TEXT);
     }
     private void onPenBorderPropertyChanged(PropertyChangeEvent ev) {
-        _notifier.firePropertyChanged(null, ev.getSource(), PROPERTY_PEN_BORDER);
+        notifier.firePropertyChanged(null, ev.getSource(), PROPERTY_PEN_BORDER);
     }
 
     @Override

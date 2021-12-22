@@ -34,24 +34,10 @@ import fmg.common.notifier.NotifyPropertyChanged;
 import fmg.core.app.model.MosaicInitData;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EMosaic;
+import fmg.core.types.Property;
 
 /** MVC: game model of mosaic field. Default implementation. */
 public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoCloseable {
-
-    private BaseCell.BaseAttribute _cellAttr;
-    /** Matrix of cells, is represented as a vector {@link List<BaseCell>}.
-      * Матрица ячеек, представленная(развёрнута) в виде вектора */
-    private final List<BaseCell> _matrix = new ArrayList<>();
-    /** Field size in cells */
-    private Matrisize _sizeField = new Matrisize(10, 10);
-    /** из каких фигур состоит мозаика поля */
-    private EMosaic _mosaicType = EMosaic.eMosaicSquare1;
-
-    protected final NotifyPropertyChanged _notifier/*Sync*/ = new NotifyPropertyChanged(this, false);
-    private   final NotifyPropertyChanged _notifierAsync    = new NotifyPropertyChanged(this, true);
-
-    private final PropertyChangeListener              onPropertyChangedListener = this::onPropertyChanged;
-    private final PropertyChangeListener onCellAttributePropertyChangedListener = this::onCellAttributePropertyChanged;
 
     public static final String PROPERTY_AREA        = BaseCell.BaseAttribute.PROPERTY_AREA;
     public static final String PROPERTY_CELL_ATTR   = "CellAttr";
@@ -59,29 +45,51 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
     public static final String PROPERTY_MATRIX      = "Matrix";
     public static final String PROPERTY_MOSAIC_TYPE = "MosaicType";
 
+    @Property(PROPERTY_CELL_ATTR)
+    private BaseCell.BaseAttribute cellAttr;
+
+    /** Matrix of cells, is represented as a vector {@link List<BaseCell>}.
+      * Матрица ячеек, представленная(развёрнута) в виде вектора */
+    @Property(PROPERTY_MATRIX)
+    private final List<BaseCell> matrix = new ArrayList<>();
+
+    /** Field size in cells */
+    @Property(PROPERTY_SIZE_FIELD)
+    private Matrisize sizeField = new Matrisize(10, 10);
+
+    /** из каких фигур состоит мозаика поля */
+    @Property(PROPERTY_MOSAIC_TYPE)
+    private EMosaic mosaicType = EMosaic.eMosaicSquare1;
+
+    protected final NotifyPropertyChanged notifier/*Sync*/ = new NotifyPropertyChanged(this, false);
+    private   final NotifyPropertyChanged notifierAsync    = new NotifyPropertyChanged(this, true);
+
+    private final PropertyChangeListener              onPropertyChangedListener = this::onPropertyChanged;
+    private final PropertyChangeListener onCellAttributePropertyChangedListener = this::onCellAttributePropertyChanged;
+
     public MosaicGameModel() {
-        _notifier.addListener(onPropertyChangedListener);
+        notifier.addListener(onPropertyChangedListener);
     }
 
     @Override
     public BaseCell.BaseAttribute getCellAttr() {
-        if (_cellAttr == null) {
-            _cellAttr = MosaicHelper.createAttributeInstance(getMosaicType());
-            _cellAttr.addListener(onCellAttributePropertyChangedListener);
+        if (cellAttr == null) {
+            cellAttr = MosaicHelper.createAttributeInstance(getMosaicType());
+            cellAttr.addListener(onCellAttributePropertyChangedListener);
         }
-        return _cellAttr;
+        return cellAttr;
     }
     private void setCellAttr(BaseCell.BaseAttribute newValue) {
-        if (_cellAttr == null)
+        if (cellAttr == null)
             return;
         if (newValue != null)
             throw new IllegalArgumentException("Bad argument - support only null value!");
-        _cellAttr.removeListener(onCellAttributePropertyChangedListener);
-        _cellAttr.close();
-        _cellAttr = null;
-        _matrix.clear();
-        _notifier.firePropertyChanged(PROPERTY_CELL_ATTR);
-        _notifier.firePropertyChanged(PROPERTY_MATRIX);
+        cellAttr.removeListener(onCellAttributePropertyChangedListener);
+        cellAttr.close();
+        cellAttr = null;
+        matrix.clear();
+        notifier.firePropertyChanged(PROPERTY_CELL_ATTR);
+        notifier.firePropertyChanged(PROPERTY_MATRIX);
     }
 
     /** площадь ячеек */
@@ -102,7 +110,7 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
 
     @Override
     public List<BaseCell> getMatrix() {
-        if (_matrix.isEmpty()) {
+        if (matrix.isEmpty()) {
             BaseCell.BaseAttribute attr = getCellAttr();
             Matrisize size = getSizeField();
             EMosaic mosaicType = getMosaicType();
@@ -110,54 +118,54 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
             for (int i=0; i < size.m; i++)
                 for (int j=0; j < size.n; j++) {
                     BaseCell cell = MosaicHelper.createCellInstance(attr, mosaicType, new Coord(i, j));
-                    _matrix.add(/* i*_size.n + j, */ cell);
+                    matrix.add(/* i*_size.n + j, */ cell);
                 }
         }
-        return _matrix;
+        return matrix;
     }
 
     /** get mosaic field size in cells */
     @Override
-    public Matrisize getSizeField() { return _sizeField; }
+    public Matrisize getSizeField() { return sizeField; }
     /** set mosaic field size in cells */
     @Override
     public void setSizeField(Matrisize newSizeField) {
-        Matrisize old = this._sizeField;
+        Matrisize old = this.sizeField;
         if (old.equals(newSizeField))
             return;
 
-        _matrix.clear();
-        this._sizeField = newSizeField;
+        matrix.clear();
+        this.sizeField = newSizeField;
 
-        _notifier.firePropertyChanged(old, newSizeField, PROPERTY_SIZE_FIELD);
-        _notifier.firePropertyChanged(PROPERTY_MATRIX);
+        notifier.firePropertyChanged(old, newSizeField, PROPERTY_SIZE_FIELD);
+        notifier.firePropertyChanged(PROPERTY_MATRIX);
     }
 
     /** get mosaic type
       * (из каких фигур состоит мозаика поля) */
     @Override
-    public EMosaic getMosaicType() { return _mosaicType; }
+    public EMosaic getMosaicType() { return mosaicType; }
     /** set mosaic type */
     @Override
     public void setMosaicType(EMosaic newMosaicType) {
-        EMosaic old = this._mosaicType;
+        EMosaic old = this.mosaicType;
         if (old == newMosaicType)
             return;
 
-        this._mosaicType = newMosaicType;
+        this.mosaicType = newMosaicType;
         setCellAttr(null);
-        _notifier.firePropertyChanged(old, newMosaicType, PROPERTY_MOSAIC_TYPE);
+        notifier.firePropertyChanged(old, newMosaicType, PROPERTY_MOSAIC_TYPE);
     }
 
     /** доступ к заданной ячейке */
-    public BaseCell getCell(int x, int y) { return getMatrix().get(x*_sizeField.n + y); }
+    public BaseCell getCell(int x, int y) { return getMatrix().get(x*sizeField.n + y); }
     /** доступ к заданной ячейке */
     @Override
     public BaseCell getCell(Coord coord) { return getCell(coord.x, coord.y); }
 
     protected void onPropertyChanged(PropertyChangeEvent ev) {
         // refire as async event
-        _notifierAsync.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+        notifierAsync.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
     }
 
     protected void onCellAttributePropertyChanged(PropertyChangeEvent ev) {
@@ -165,26 +173,26 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
         if (BaseCell.BaseAttribute.PROPERTY_AREA.equals(propName)) {
             getMatrix().forEach(BaseCell::init);
 
-            _notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_AREA); // ! rethrow event - notify parent class
+            notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_AREA); // ! rethrow event - notify parent class
         }
-        _notifier.firePropertyChanged(PROPERTY_CELL_ATTR);
+        notifier.firePropertyChanged(PROPERTY_CELL_ATTR);
     }
 
     @Override
     public void close() {
-        _notifier.removeListener(onPropertyChangedListener);
-        _notifier.close();
-        _notifierAsync.close();
+        notifier.removeListener(onPropertyChangedListener);
+        notifier.close();
+        notifierAsync.close();
         setCellAttr(null);
     }
 
     @Override
     public void addListener(PropertyChangeListener listener) {
-        _notifierAsync.addListener(listener);
+        notifierAsync.addListener(listener);
     }
     @Override
     public void removeListener(PropertyChangeListener listener) {
-        _notifierAsync.removeListener(listener);
+        notifierAsync.removeListener(listener);
     }
 
 }

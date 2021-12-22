@@ -3,58 +3,59 @@ package fmg.common.notifier;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.stream.Stream;
 
 import fmg.common.Logger;
 import fmg.common.Pair;
 import fmg.common.ui.UiInvoker;
+import fmg.core.types.Property;
 
 /** Notifies owner clients that a owner property value has changed */
 public final class NotifyPropertyChanged implements AutoCloseable, INotifyPropertyChanged
 {
-    private final INotifyPropertyChanged _owner;
-    private final List<PropertyChangeListener> _propertyChanges;
-    private final boolean _deferredNotifications;
-    private final Map<String /* propertyName */, Pair<Object /* old value */, Object /* new value */>> _deferrNotifications = new HashMap<>();
-    private boolean _disposed = false;
+    private final INotifyPropertyChanged owner;
+    private final List<PropertyChangeListener> propertyChanges;
+    private final boolean deferredNotifications;
+    private final Map<String /* propertyName */, Pair<Object /* old value */, Object /* new value */>> deferrNotifications = new HashMap<>();
+    private boolean disposed = false;
+    private Map<String /* propertyName */, Field> cachedFields = new HashMap<>();
 
     public NotifyPropertyChanged(INotifyPropertyChanged owner) { this(owner, false); }
     public NotifyPropertyChanged(INotifyPropertyChanged owner, boolean deferredNotifications) {
-        _owner = owner;
-        _propertyChanges = new ArrayList<>();
-        _deferredNotifications = deferredNotifications;
+        this.owner = owner;
+        this.propertyChanges = new ArrayList<>();
+        this.deferredNotifications = deferredNotifications;
     }
 
     @Override
     public void addListener(PropertyChangeListener listener) {
-        _propertyChanges.add(listener);
+        propertyChanges.add(listener);
 
-        int count = _propertyChanges.size();
+        int count = propertyChanges.size();
         if (count > 4)
             Logger.error("Suspiciously many subscribers! count=" + count);
     }
     @Override
     public void removeListener(PropertyChangeListener listener) {
-        if (!_propertyChanges.contains(listener))
+        if (!propertyChanges.contains(listener))
             throw new IllegalArgumentException("NotifyPropertyChanged.removeListener: Illegal listener=" + listener);
-        _propertyChanges.remove(listener);
+        propertyChanges.remove(listener);
     }
 
 
     /** Set the value to the specified property  and throw event to listeners */
     public <T> boolean setProperty(T oldValue, T newValue, String propertyName) {
-        if (_disposed) {
+        if (disposed) {
             if (newValue != null) {
-                Logger.error("Illegal call property " + _owner.getClass().getCanonicalName() + "."+ propertyName + ": object already disposed!");
+                Logger.error("Illegal call property " + owner.getClass().getCanonicalName() + "."+ propertyName + ": object already disposed!");
                 return false;
             }
         }
 
         try {
             Field fld = findField(propertyName);
-            Object oldValueReal = fld.get(_owner);
+            Object oldValueReal = fld.get(owner);
             if (((oldValueReal == null) && (oldValue != null)) ||
                 ((oldValueReal != null) && !oldValueReal.equals(oldValue)))
             {
@@ -65,7 +66,7 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
                 return false;
             if ((oldValueReal != null) && oldValueReal.equals(newValue))
                 return false;
-            fld.set(_owner, newValue);
+            fld.set(owner, newValue);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -91,16 +92,16 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
     }
 
     public <T> void firePropertyChanged(T oldValue, T newValue, String propertyName) {
-        if (_disposed)
+        if (disposed)
             return;
 
-        if (!_deferredNotifications) {
+        if (!deferredNotifications) {
             //Logger.info("firePropertyChanged: " + propertyName + ": " + newValue);
-            _propertyChanges.forEach(item -> item.propertyChange(new PropertyChangeEvent(_owner, propertyName, oldValue, newValue)));
+            propertyChanges.forEach(item -> item.propertyChange(new PropertyChangeEvent(owner, propertyName, oldValue, newValue)));
         } else {
             boolean shedule;
             {
-                Pair<Object /* old value */, Object /* new value */> event = _deferrNotifications.get(propertyName);
+                Pair<Object /* old value */, Object /* new value */> event = deferrNotifications.get(propertyName);
                 boolean isFirstEvent = (event == null); // this is the first event with this name?
                 if (isFirstEvent) {
                     event = new Pair<>(oldValue, newValue);
@@ -109,13 +110,13 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
                     T realOldValue = (T)event.first; // restore real old value
                     if ((realOldValue != null) && realOldValue.equals(newValue)) {
                         // Nothing to fire. First event OldValue and last event NewValue is same objects.
-                        _deferrNotifications.remove(propertyName); // HINT_1
+                        deferrNotifications.remove(propertyName); // HINT_1
                         return;
                     }
                     event = new Pair<>(realOldValue, newValue);
                 }
                 shedule = isFirstEvent;
-                _deferrNotifications.put(propertyName, event); // Re-save only the last event (with initial old value)
+                deferrNotifications.put(propertyName, event); // Re-save only the last event (with initial old value)
             }
             if (shedule) {
                 /** /
@@ -129,34 +130,36 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
                             .collect(Collectors.joining("\n   ")));
                 /**/
                 UiInvoker.DEFERRED.accept(() -> {
-                    if (_disposed)
+                    if (disposed)
                         return;
 
-                    if (!_deferrNotifications.containsKey(propertyName))
+                    if (!deferrNotifications.containsKey(propertyName))
                         return; // event already deleted (see HINT_1)
-                    Pair<Object /* old value */, Object /* new value */> event = _deferrNotifications.remove(propertyName);
+                    Pair<Object /* old value */, Object /* new value */> event = deferrNotifications.remove(propertyName);
                     if (event == null)
                         Logger.error("hmmm... invalid usage ;(");
                     else
-                        _propertyChanges.forEach(item -> item.propertyChange(new PropertyChangeEvent(_owner, propertyName, event.first, event.second)));
+                        propertyChanges.forEach(item -> item.propertyChange(new PropertyChangeEvent(owner, propertyName, event.first, event.second)));
                 });
             }
         }
     }
 
-    private Map<String /* propertyName */, Field> _cachedFields = new HashMap<>();
     private Field findField(String propertyName) {
-        Field field = _cachedFields.get(propertyName);
+        Field field = cachedFields.get(propertyName);
         if (field == null) {
-            Optional<Field> opt = getPlainFields(_owner)
-                .filter(fld -> fld.getName().equalsIgnoreCase(propertyName) ||
-                        fld.getName().equalsIgnoreCase("_" + propertyName))
+            Optional<Field> opt = getDeclaredFields(owner)
+                .filter(f -> {
+                    Property p = f.getDeclaredAnnotation(Property.class);
+                    if (p == null)
+                        return false;
+                    return p.value().equals(propertyName); })
                 .findAny();
             if (!opt.isPresent())
                 throw new RuntimeException("Property '" + propertyName + "' not found");
             field = opt.get();
             field.setAccessible(true);
-            _cachedFields.put(propertyName, field);
+            cachedFields.put(propertyName, field);
         }
         return field;
     }
@@ -171,29 +174,22 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
         return arr.stream().flatMap(x -> x);
     }
 
-    private static <T> Stream<Field> getPlainFields(T obj) {
-        return getDeclaredFields(obj)
-                .filter(fld -> {
-                    int m = fld.getModifiers();
-                    return !Modifier.isTransient(m) &&
-                           !Modifier.isStatic(m); });
-    }
 
-    public boolean isDisposed() { return _disposed; }
+    public boolean isDisposed() { return disposed; }
 
     @Override
     public void close() {
-        _disposed = true;
-        _cachedFields.clear();
+        disposed = true;
+        cachedFields.clear();
 
-        if (!_deferrNotifications.isEmpty())
-            Logger.debug("Not all deferred notifications handled! Count={0}", _deferrNotifications.size());
-        _deferrNotifications.clear();
+        if (!deferrNotifications.isEmpty())
+            Logger.debug("Not all deferred notifications handled! Count={0}", deferrNotifications.size());
+        deferrNotifications.clear();
 
-        if (!_propertyChanges.isEmpty())
+        if (!propertyChanges.isEmpty())
             // strong unsubscribe
-            throw new IllegalStateException("Illegal usage: Not all listeners were unsubscribed (type " + _owner.getClass().getName() + "): count=" + _propertyChanges.size());
-        _propertyChanges.clear();
+            throw new IllegalStateException("Illegal usage: Not all listeners were unsubscribed (type " + owner.getClass().getName() + "): count=" + propertyChanges.size());
+        propertyChanges.clear();
     }
 
 }

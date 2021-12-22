@@ -25,26 +25,6 @@ public abstract class MosaicController<TImage, TImageInner,
                extends ImageController<TImage, TMosaicView, TMosaicModel>
           implements IMosaicController<TImage, TImageInner, TMosaicView, TMosaicModel>
 {
-
-    /** кол-во мин на поле */
-    protected int _countMines = 10;
-    /** кол-во мин на поле до создания игры. Используется когда игра была создана, но ни одной мины не проставлено. */
-    protected int _oldCountMines = 1;
-
-    private EGameStatus _gameStatus = EGameStatus.eGSReady;
-    private EPlayInfo _playInfo = EPlayInfo.ePlayerUnknown;
-    private int _countClick;
-    /** ячейка на которой было нажато (но не обязательно что отпущено) */
-    private BaseCell _cellDown;
-
-    /** для load'a - координаты ячеек с минами */
-    private List<Coord> _repositoryMines;
-
-    /** использовать ли флажок на поле */
-    private boolean _useUnknown = true;
-
-    private final PropertyChangeListener onModelPropertyChangedListener = this::onModelPropertyChanged;
-
     public static final String PROPERTY_COUNT_MINES       = "CountMines";
     public static final String PROPERTY_COUNT_MINES_LEFT  = "CountMinesLeft";
     public static final String PROPERTY_COUNT_UNKNOWN     = "CountUnknown";
@@ -54,6 +34,34 @@ public abstract class MosaicController<TImage, TImageInner,
     public static final String PROPERTY_PLAY_INFO         = "PlayInfo";
     public static final String PROPERTY_REPOSITORY_MINES  = "RepositoryMines";
     public static final String PROPERTY_GAME_STATUS       = "GameStatus";
+
+    /** кол-во мин на поле */
+    @Property(PROPERTY_COUNT_MINES)
+    protected int countMines = 10;
+
+    /** кол-во мин на поле до создания игры. Используется когда игра была создана, но ни одной мины не проставлено. */
+    protected int oldCountMines = 1;
+
+    @Property(PROPERTY_GAME_STATUS)
+    private EGameStatus gameStatus = EGameStatus.eGSReady;
+
+    @Property(PROPERTY_PLAY_INFO)
+    private EPlayInfo playInfo = EPlayInfo.ePlayerUnknown;
+
+    @Property(PROPERTY_COUNT_CLICK)
+    private int countClick;
+
+    /** ячейка на которой было нажато (но не обязательно что отпущено) */
+    private BaseCell cellDown;
+
+    /** для load'a - координаты ячеек с минами */
+    @Property(PROPERTY_REPOSITORY_MINES)
+    private List<Coord> repositoryMines;
+
+    /** использовать ли флажок на поле */
+    private boolean useUnknown = true;
+
+    private final PropertyChangeListener onModelPropertyChangedListener = this::onModelPropertyChanged;
 
     protected MosaicController(TMosaicView mosaicView) {
         super(mosaicView);
@@ -82,7 +90,7 @@ public abstract class MosaicController<TImage, TImageInner,
 
     /** количество мин */
     @Override
-    public int getCountMines() { return _countMines; }
+    public int getCountMines() { return countMines; }
     /** количество мин */
     @Override
     public void setCountMines(int newCountMines) {
@@ -98,11 +106,11 @@ public abstract class MosaicController<TImage, TImageInner,
             return;
 
         if (newVal == 0) // TODO  ?? to create field mode - EGameStatus.eGSCreateGame
-            this._oldCountMines = this._countMines; // save
+            this.oldCountMines = this.countMines; // save
 
-        _countMines = newVal;
-        _notifier.firePropertyChanged(oldVal, _countMines, PROPERTY_COUNT_MINES);
-        _notifier.firePropertyChanged(null, _countMines, PROPERTY_COUNT_MINES_LEFT);
+        countMines = newVal;
+        _notifier.firePropertyChanged(oldVal, countMines, PROPERTY_COUNT_MINES);
+        _notifier.firePropertyChanged(null, countMines, PROPERTY_COUNT_MINES_LEFT);
 
         gameNew();
     }
@@ -124,8 +132,8 @@ public abstract class MosaicController<TImage, TImageInner,
 
     /** arrange Mines - set random mines */
     public void setMines_random(BaseCell firstClickCell) {
-        if (_countMines == 0)
-            _countMines = _oldCountMines;
+        if (countMines == 0)
+            countMines = oldCountMines;
 
         IMosaicDrawModel<TImageInner> mosaic = getModel();
         List<BaseCell> matrixClone = new ArrayList<>(getMatrix());
@@ -140,7 +148,7 @@ public abstract class MosaicController<TImage, TImageInner,
             int len = matrixClone.size();
             if (len == 0) {
                 Logger.error("ээээ..... лажа......\r\nЗахотели установить больше мин чем возможно");
-                _countMines = count;
+                countMines = count;
                 break;
             }
             int i = rand.nextInt(len);
@@ -148,7 +156,7 @@ public abstract class MosaicController<TImage, TImageInner,
             cellToSetMines.setMine();
             count++;
             matrixClone.remove(cellToSetMines);
-        } while (count < _countMines);
+        } while (count < countMines);
 
         // set other CellOpen and set all Caption
         for (BaseCell cell : getMatrix())
@@ -180,17 +188,17 @@ public abstract class MosaicController<TImage, TImageInner,
     @Override
     public int getCountMinesLeft() { return getCountMines() - getCountFlag(); }
     @Override
-    public int getCountClick()  { return _countClick; }
+    public int getCountClick()  { return countClick; }
     public void setCountClick(int clickCount) {
-        _notifier.setProperty(_countClick, clickCount, PROPERTY_COUNT_CLICK);
+        _notifier.setProperty(countClick, clickCount, PROPERTY_COUNT_CLICK);
     }
 
     /** ячейка на которой было нажато (но не обязательно что отпущено) */
     @Override
-    public BaseCell getCellDown() { return _cellDown; }
+    public BaseCell getCellDown() { return cellDown; }
     /** ячейка на которой было нажато (но не обязательно что отпущено) */
     @Override
-    public void setCellDown(BaseCell cellDown) { _cellDown = cellDown; }
+    public void setCellDown(BaseCell cellDown) { this.cellDown = cellDown; }
 
     /**
      *<br> Этапы игры:
@@ -208,27 +216,27 @@ public abstract class MosaicController<TImage, TImageInner,
      */
     @Override
     public EGameStatus getGameStatus() {
-        if (_gameStatus == null)
-            _gameStatus = EGameStatus.eGSEnd;
-        return _gameStatus;
+        if (gameStatus == null)
+            gameStatus = EGameStatus.eGSEnd;
+        return gameStatus;
     }
     public void setGameStatus(EGameStatus newStatus) {
-        _notifier.setProperty(_gameStatus, newStatus, PROPERTY_GAME_STATUS);
+        _notifier.setProperty(gameStatus, newStatus, PROPERTY_GAME_STATUS);
     }
 
     public EPlayInfo getPlayInfo() {
-        if (_playInfo == null)
-            _playInfo = EPlayInfo.ePlayerUnknown;
-        return _playInfo;
+        if (playInfo == null)
+            playInfo = EPlayInfo.ePlayerUnknown;
+        return playInfo;
     }
     public void setPlayInfo(EPlayInfo newVal) {
-        _notifier.setProperty(_playInfo, EPlayInfo.setPlayInfo(_playInfo, newVal), PROPERTY_PLAY_INFO);
+        _notifier.setProperty(playInfo, EPlayInfo.setPlayInfo(playInfo, newVal), PROPERTY_PLAY_INFO);
     }
 
     public List<Coord> getRepositoryMines() {
-        if (_repositoryMines == null)
-            _repositoryMines = new ArrayList<>(0);
-        return _repositoryMines;
+        if (repositoryMines == null)
+            repositoryMines = new ArrayList<>(0);
+        return repositoryMines;
     }
     public void setRepositoryMines(List<Coord> newMines) {
         List<Coord> current = getRepositoryMines();
@@ -499,8 +507,8 @@ public abstract class MosaicController<TImage, TImageInner,
         }
     }
 
-    public void setUseUnknown(boolean val) { _useUnknown = val; }
-    public boolean getUseUnknown() { return _useUnknown; }
+    public void setUseUnknown(boolean val) { useUnknown = val; }
+    public boolean getUseUnknown() { return useUnknown; }
 
     /** Максимальное кол-во мин при  текущем  размере поля */
     public int getMaxMines() { return getMaxMines(getSizeField()); }

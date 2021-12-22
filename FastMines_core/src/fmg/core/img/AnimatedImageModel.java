@@ -8,38 +8,15 @@ import fmg.common.geom.BoundDouble;
 import fmg.common.geom.DoubleExt;
 import fmg.common.geom.SizeDouble;
 import fmg.common.notifier.NotifyPropertyChanged;
+import fmg.core.types.Property;
 
 /** MVC: model. Common animated image characteristics. */
 public abstract class AnimatedImageModel implements IAnimatedModel {
 
-    public static final Color DefaultBkColor         = Color.DarkOrange(); // Color.Coral(); //
-    public static final Color DefaultForegroundColor = Color.LightSeaGreen(); // Color.Orchid(); //
-    public static final int   DefaultImageSize = 100;
-    public static final int   DefaultPadding = (int)(DefaultImageSize * 0.05); // 5%
-
-
-    /** width and height in pixel */
-    private SizeDouble _size = new SizeDouble(DefaultImageSize, DefaultImageSize);
-    /** inside padding */
-    private BoundDouble _padding = new BoundDouble(DefaultPadding);
-    private Color _foregroundColor = DefaultForegroundColor;
-    /** background fill color */
-    private Color _backgroundColor = DefaultBkColor;
-    private Color _borderColor = Color.Maroon().darker(0.5);
-    private double _borderWidth = 3;
-    /** 0° .. +360° */
-    private double _rotateAngle;
-    /** animation of polar lights */
-    private boolean _polarLights = true;
-    /** animation direction (example: clockwise or counterclockwise for simple rotation) */
-    private boolean _animeDirection = true;
-    private final AnimatedInnerModel _innerModel = new AnimatedInnerModel();
-    protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
-    private final PropertyChangeListener onInnerModelPropertyChangedListener = this::onInnerModelPropertyChanged;
-
-    protected AnimatedImageModel() {
-        _innerModel.addListener(onInnerModelPropertyChangedListener);
-    }
+    public static final Color DEFAULT_BK_COLOR         = Color.DarkOrange(); // Color.Coral(); //
+    public static final Color DEFAULT_FOREGROUND_COLOR = Color.LightSeaGreen(); // Color.Orchid(); //
+    public static final int   DEFAULT_IMAGE_SIZE = 100;
+    public static final int   DEFAULT_PADDING = (int)(DEFAULT_IMAGE_SIZE * 0.05); // 5%
 
     public static final String PROPERTY_BACKGROUND_COLOR = "BackgroundColor";
     public static final String PROPERTY_BORDER_COLOR     = "BorderColor";
@@ -49,55 +26,97 @@ public abstract class AnimatedImageModel implements IAnimatedModel {
     public static final String PROPERTY_POLAR_LIGHTS     = "PolarLights";
     public static final String PROPERTY_ANIME_DIRECTION  = "AnimeDirection";
 
+
+    /** width and height in pixel */
+    @Property(PROPERTY_SIZE)
+    private SizeDouble size = new SizeDouble(DEFAULT_IMAGE_SIZE, DEFAULT_IMAGE_SIZE);
+
+    /** inside padding */
+    @Property(PROPERTY_PADDING)
+    private BoundDouble padding = new BoundDouble(DEFAULT_PADDING);
+
+    @Property(PROPERTY_FOREGROUND_COLOR)
+    private Color foregroundColor = DEFAULT_FOREGROUND_COLOR;
+
+    /** background fill color */
+    @Property(PROPERTY_BACKGROUND_COLOR)
+    private Color backgroundColor = DEFAULT_BK_COLOR;
+
+    @Property(PROPERTY_BORDER_COLOR)
+    private Color borderColor = Color.Maroon().darker(0.5);
+
+    @Property(PROPERTY_BORDER_WIDTH)
+    private double borderWidth = 3;
+
+    /** 0° .. +360° */
+    @Property(PROPERTY_ROTATE_ANGLE)
+    private double rotateAngle;
+
+    /** animation of polar lights */
+    @Property(PROPERTY_POLAR_LIGHTS)
+    private boolean polarLights = true;
+
+    /** animation direction (example: clockwise or counterclockwise for simple rotation) */
+    @Property(PROPERTY_ANIME_DIRECTION)
+    private boolean animeDirection = true;
+
+    private final AnimatedInnerModel innerModel = new AnimatedInnerModel();
+    protected NotifyPropertyChanged notifier = new NotifyPropertyChanged(this);
+    private final PropertyChangeListener onInnerModelPropertyChangedListener = this::onInnerModelPropertyChanged;
+
+    protected AnimatedImageModel() {
+        innerModel.addListener(onInnerModelPropertyChangedListener);
+    }
+
     /** width and height in pixel */
     @Override
-    public SizeDouble getSize() { return _size; }
+    public SizeDouble getSize() { return size; }
     @Override
     public void setSize(SizeDouble size) {
         IImageModel.checkSize(size);
-        SizeDouble old = _size;
-        if (_notifier.setProperty(_size, size, PROPERTY_SIZE))
-            setPadding(IImageModel.recalcPadding(_padding, _size, old));
+        SizeDouble old = this.size;
+        if (notifier.setProperty(this.size, size, PROPERTY_SIZE))
+            setPadding(IImageModel.recalcPadding(padding, this.size, old));
     }
 
     /** inside padding */
     @Override
-    public BoundDouble getPadding() { return _padding; }
+    public BoundDouble getPadding() { return padding; }
     @Override
     public void setPadding(BoundDouble padding) {
         IImageModel.checkPadding(this, padding);
-        _notifier.setProperty(_padding, new BoundDouble(padding), PROPERTY_PADDING);
+        notifier.setProperty(this.padding, new BoundDouble(padding), PROPERTY_PADDING);
     }
 
-    public Color getForegroundColor() { return _foregroundColor; }
+    public Color getForegroundColor() { return foregroundColor; }
     public void setForegroundColor(Color value) {
-        _notifier.setProperty(_foregroundColor, value, PROPERTY_FOREGROUND_COLOR);
+        notifier.setProperty(foregroundColor, value, PROPERTY_FOREGROUND_COLOR);
     }
 
     /** background fill color */
-    public Color getBackgroundColor() { return _backgroundColor; }
+    public Color getBackgroundColor() { return backgroundColor; }
     public void setBackgroundColor(Color value) {
-        _notifier.setProperty(_backgroundColor, value, PROPERTY_BACKGROUND_COLOR);
+        notifier.setProperty(backgroundColor, value, PROPERTY_BACKGROUND_COLOR);
     }
 
-    public Color getBorderColor() { return _borderColor; }
+    public Color getBorderColor() { return borderColor; }
     public void setBorderColor(Color value) {
-        _notifier.setProperty(_borderColor, value, PROPERTY_BORDER_COLOR);
+        notifier.setProperty(borderColor, value, PROPERTY_BORDER_COLOR);
     }
 
-    public double getBorderWidth() { return _borderWidth; }
+    public double getBorderWidth() { return borderWidth; }
     public void setBorderWidth(double value) {
-        if (!DoubleExt.hasMinDiff(_borderWidth, value)) {
-            double old = _borderWidth;
-            _borderWidth = value;
-            _notifier.firePropertyChanged(old, value, PROPERTY_BORDER_WIDTH);
+        if (!DoubleExt.hasMinDiff(borderWidth, value)) {
+            double old = borderWidth;
+            borderWidth = value;
+            notifier.firePropertyChanged(old, value, PROPERTY_BORDER_WIDTH);
         }
     }
 
     /** 0° .. +360° */
-    public double getRotateAngle() { return _rotateAngle; }
+    public double getRotateAngle() { return rotateAngle; }
     public void setRotateAngle(double value) {
-        _notifier.setProperty(_rotateAngle, fixAngle(value), PROPERTY_ROTATE_ANGLE);
+        notifier.setProperty(rotateAngle, fixAngle(value), PROPERTY_ROTATE_ANGLE);
     }
 
     /** to diapason (0° .. +360°] */
@@ -111,9 +130,9 @@ public abstract class AnimatedImageModel implements IAnimatedModel {
 
     /** Image is animated? */
     @Override
-    public boolean isAnimated() { return _innerModel.isAnimated(); }
+    public boolean isAnimated() { return innerModel.isAnimated(); }
     @Override
-    public void setAnimated(boolean value) { _innerModel.setAnimated(value); }
+    public void setAnimated(boolean value) { innerModel.setAnimated(value); }
 
 //    @Deprecated
 //    public void SetRIandRAD(int redrawInterval/* = 100*/, double rotateAngleDelta/* = 1.4*/) {
@@ -125,50 +144,50 @@ public abstract class AnimatedImageModel implements IAnimatedModel {
 
     /** Overall animation period (in milliseconds) */
     @Override
-    public long getAnimatePeriod() { return _innerModel.getAnimatePeriod(); }
+    public long getAnimatePeriod() { return innerModel.getAnimatePeriod(); }
     /** Overall animation period (in milliseconds) */
     @Override
-    public void setAnimatePeriod(long value) { _innerModel.setAnimatePeriod(value); }
+    public void setAnimatePeriod(long value) { innerModel.setAnimatePeriod(value); }
 
     /** Total frames of the animated period */
     @Override
-    public int getTotalFrames() { return _innerModel.getTotalFrames(); }
+    public int getTotalFrames() { return innerModel.getTotalFrames(); }
     @Override
-    public void setTotalFrames(int value) { _innerModel.setTotalFrames(value); }
+    public void setTotalFrames(int value) { innerModel.setTotalFrames(value); }
 
     @Override
-    public int getCurrentFrame() { return _innerModel.getCurrentFrame(); }
+    public int getCurrentFrame() { return innerModel.getCurrentFrame(); }
     @Override
-    public void setCurrentFrame(int value) { _innerModel.setCurrentFrame(value); }
+    public void setCurrentFrame(int value) { innerModel.setCurrentFrame(value); }
 
-    public boolean isPolarLights() { return _polarLights; }
+    public boolean isPolarLights() { return polarLights; }
     public void setPolarLights(boolean polarLights) {
-        _notifier.setProperty(_polarLights, polarLights, PROPERTY_POLAR_LIGHTS);
+        notifier.setProperty(this.polarLights, polarLights, PROPERTY_POLAR_LIGHTS);
     }
 
-    public boolean getAnimeDirection() { return _animeDirection; }
+    public boolean getAnimeDirection() { return animeDirection; }
     public void setAnimeDirection(boolean animeDirection) {
-        _notifier.setProperty(_animeDirection, animeDirection, PROPERTY_ANIME_DIRECTION);
+        notifier.setProperty(this.animeDirection, animeDirection, PROPERTY_ANIME_DIRECTION);
     }
 
     protected void onInnerModelPropertyChanged(PropertyChangeEvent ev) {
         // refire
-        _notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+        notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
     }
 
     @Override
     public void close() {
-        _innerModel.removeListener(onInnerModelPropertyChangedListener);
-        _notifier.close();
+        innerModel.removeListener(onInnerModelPropertyChangedListener);
+        notifier.close();
     }
 
     @Override
     public void addListener(PropertyChangeListener listener) {
-        _notifier.addListener(listener);
+        notifier.addListener(listener);
     }
     @Override
     public void removeListener(PropertyChangeListener listener) {
-        _notifier.removeListener(listener);
+        notifier.removeListener(listener);
     }
 
 }

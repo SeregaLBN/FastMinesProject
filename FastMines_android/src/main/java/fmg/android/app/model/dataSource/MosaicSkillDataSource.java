@@ -66,10 +66,10 @@ public class MosaicSkillDataSource extends BaseDataSource<
         model.setPolarLights(selected);
         model.setAnimated(selected);
         model.setBorderColor(selected ? Color.LawnGreen() : Color.IndianRed());
-        model.setBackgroundColor(selected ? AnimatedImageModel.DefaultBkColor : MosaicDrawModel.DefaultBkColor);
+        model.setBackgroundColor(selected ? AnimatedImageModel.DEFAULT_BK_COLOR : MosaicDrawModel.DefaultBkColor);
         model.setPadding(new BoundDouble(selected ? 5 : 15));
         if (!selected)
-            model.setForegroundColor(AnimatedImageModel.DefaultForegroundColor.brighter());
+            model.setForegroundColor(AnimatedImageModel.DEFAULT_FOREGROUND_COLOR.brighter());
 //        else {
 //            HSV hsv = new HSV(AnimatedImageModel.DefaultForegroundColor);
 //            hsv.s = hsv.v = 100;

@@ -14,18 +14,20 @@ import fmg.common.geom.PointDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.geom.util.FigureHelper;
 import fmg.core.types.ESkillLevel;
+import fmg.core.types.Property;
 
 /** MVC model of {@link ESkillLevel} representable as image */
 public class MosaicSkillModel extends AnimatedImageModel {
 
-    private ESkillLevel _mosaicSkill;
-
-    public MosaicSkillModel(ESkillLevel mosaicSkill) { _mosaicSkill = mosaicSkill; }
-
     public static final String PROPERTY_MOSAIC_SKILL = "MosaicSkill";
 
-    public ESkillLevel getMosaicSkill() { return _mosaicSkill; }
-    public void setMosaicSkill(ESkillLevel value) { _notifier.setProperty(_mosaicSkill, value, PROPERTY_MOSAIC_SKILL); }
+    @Property(PROPERTY_MOSAIC_SKILL)
+    private ESkillLevel mosaicSkill;
+
+    public MosaicSkillModel(ESkillLevel mosaicSkill) { this.mosaicSkill = mosaicSkill; }
+
+    public ESkillLevel getMosaicSkill() { return mosaicSkill; }
+    public void setMosaicSkill(ESkillLevel value) { notifier.setProperty(mosaicSkill, value, PROPERTY_MOSAIC_SKILL); }
 
 
     public Stream<Pair<Color, Stream<PointDouble>>> getCoords() {

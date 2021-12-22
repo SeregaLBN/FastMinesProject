@@ -13,34 +13,38 @@ import fmg.common.geom.BoundDouble;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.util.FigureHelper;
 import fmg.core.types.EMosaicGroup;
+import fmg.core.types.Property;
 
 /** MVC model of {@link EMosaicGroup} representable as image */
 public class MosaicGroupModel extends AnimatedImageModel {
 
-    private EMosaicGroup _mosaicGroup;
-    public static boolean varMosaicGroupAsValueOthers1 = !true;
-    /** triangle -> quadrangle -> hexagon -> anew triangle -> ... */
-    private final int[] _nmArray = { 3, 4, 6 };
-    private int _nmIndex1 = 0, _nmIndex2 = 1;
-    private double _incrementSpeedAngle;
-
-    public MosaicGroupModel(EMosaicGroup mosaicGroup) { _mosaicGroup = mosaicGroup; }
-
     public static final String PROPERTY_MOSAIC_GROUP = "MosaicGroup";
 
-    public EMosaicGroup getMosaicGroup() { return _mosaicGroup; }
-    public void setMosaicGroup(EMosaicGroup value) { _notifier.setProperty(_mosaicGroup, value, PROPERTY_MOSAIC_GROUP); }
+    @Property(PROPERTY_MOSAIC_GROUP)
+    private EMosaicGroup mosaicGroup;
 
-    protected int[] getNmArray() { return _nmArray; }
+    public static final boolean varMosaicGroupAsValueOthers1 = false;
+    /** triangle -> quadrangle -> hexagon -> anew triangle -> ... */
+    private final int[] nmArray = { 3, 4, 6 };
+    private int nmIndex1 = 0;
+    private int nmIndex2 = 1;
+    private double incrementSpeedAngle;
 
-    protected double getIncrementSpeedAngle() { return _incrementSpeedAngle; }
-    protected void setIncrementSpeedAngle(double incrementSpeedAngle) { _incrementSpeedAngle = incrementSpeedAngle; }
+    public MosaicGroupModel(EMosaicGroup mosaicGroup) { this.mosaicGroup = mosaicGroup; }
 
-    protected int getNmIndex1() { return _nmIndex1; }
-    protected void setNmIndex1(int nmIndex1) { _nmIndex1 = nmIndex1; }
+    public EMosaicGroup getMosaicGroup() { return mosaicGroup; }
+    public void setMosaicGroup(EMosaicGroup value) { notifier.setProperty(this.mosaicGroup, value, PROPERTY_MOSAIC_GROUP); }
 
-    protected int getNmIndex2() { return _nmIndex2; }
-    protected void setNmIndex2(int nmIndex2) { _nmIndex2 = nmIndex2; }
+    protected int[] getNmArray() { return nmArray; }
+
+    protected double getIncrementSpeedAngle() { return incrementSpeedAngle; }
+    protected void setIncrementSpeedAngle(double incrementSpeedAngle) { this.incrementSpeedAngle = incrementSpeedAngle; }
+
+    protected int getNmIndex1() { return nmIndex1; }
+    protected void setNmIndex1(int nmIndex1) { this.nmIndex1 = nmIndex1; }
+
+    protected int getNmIndex2() { return nmIndex2; }
+    protected void setNmIndex2(int nmIndex2) { this.nmIndex2 = nmIndex2; }
 
     public Stream<Pair<Color, Stream<PointDouble>>> getCoords() {
         EMosaicGroup mosaicGroup = getMosaicGroup();
@@ -130,9 +134,9 @@ public class MosaicGroupModel extends AnimatedImageModel {
     }
 
     private Pair<Integer, Integer> getNM(int index) {
-        int[] nmArray = getNmArray();
-        int n = nmArray[index];
-        int m = nmArray[(index + 1) % nmArray.length];
+        int[] nmArrayLocal = getNmArray();
+        int n = nmArrayLocal[index];
+        int m = nmArrayLocal[(index + 1) % nmArrayLocal.length];
 
         // Во вторую половину вращения фиксирую значение N равно M.
         // Т.к. в прервую половину, с 0 до 180, N стремится к M - см. описание FigureHelper.getFlowingToTheRightPolygonCoordsByXxx...

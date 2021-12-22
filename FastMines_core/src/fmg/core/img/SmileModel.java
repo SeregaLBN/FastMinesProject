@@ -5,6 +5,7 @@ import java.beans.PropertyChangeListener;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.notifier.NotifyPropertyChanged;
+import fmg.core.types.Property;
 
 /** Model of the smile/face image */
 public class SmileModel implements IImageModel {
@@ -47,23 +48,29 @@ public class SmileModel implements IImageModel {
 
     public static final String PROPERTY_FACE_TYPE = "FaceType";
 
-    private EFaceType _faceType;
-    private SizeDouble _size = new SizeDouble(AnimatedImageModel.DefaultImageSize, AnimatedImageModel.DefaultImageSize);
-    private BoundDouble padding = new BoundDouble(AnimatedImageModel.DefaultPadding);
-    protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
+    @Property(PROPERTY_FACE_TYPE)
+    private EFaceType faceType;
+
+    @Property(PROPERTY_SIZE)
+    private SizeDouble size = new SizeDouble(AnimatedImageModel.DEFAULT_IMAGE_SIZE, AnimatedImageModel.DEFAULT_IMAGE_SIZE);
+
+    @Property(PROPERTY_PADDING)
+    private BoundDouble padding = new BoundDouble(AnimatedImageModel.DEFAULT_PADDING);
+
+    protected NotifyPropertyChanged notifier = new NotifyPropertyChanged(this);
 
     public SmileModel(EFaceType faceType) {
-        _faceType = faceType;
+        this.faceType = faceType;
     }
 
     /** width and height in pixel */
     @Override
-    public SizeDouble getSize() { return _size; }
+    public SizeDouble getSize() { return size; }
     @Override
     public void setSize(SizeDouble size) {
         IImageModel.checkSize(size);
-        SizeDouble oldSize = _size;
-        if (_notifier.setProperty(_size, size, PROPERTY_SIZE))
+        SizeDouble oldSize = this.size;
+        if (notifier.setProperty(this.size, size, PROPERTY_SIZE))
             setPadding(IImageModel.recalcPadding(getPadding(), getSize(), oldSize));
     }
 
@@ -72,28 +79,28 @@ public class SmileModel implements IImageModel {
     @Override
     public void setPadding(BoundDouble padding) {
         IImageModel.checkPadding(this, padding);
-        _notifier.setProperty(this.padding, new BoundDouble(padding), PROPERTY_PADDING);
+        notifier.setProperty(this.padding, new BoundDouble(padding), PROPERTY_PADDING);
     }
 
     public EFaceType getFaceType() {
-        return _faceType;
+        return faceType;
     }
     public void setFaceType(EFaceType faceType) {
-        _notifier.setProperty(_faceType, faceType, PROPERTY_FACE_TYPE);
+        notifier.setProperty(this.faceType, faceType, PROPERTY_FACE_TYPE);
     }
 
     @Override
     public void close() {
-        _notifier.close();
+        notifier.close();
     }
 
     @Override
     public void addListener(PropertyChangeListener listener) {
-        _notifier.addListener(listener);
+        notifier.addListener(listener);
     }
     @Override
     public void removeListener(PropertyChangeListener listener) {
-        _notifier.removeListener(listener);
+        notifier.removeListener(listener);
     }
 
 }

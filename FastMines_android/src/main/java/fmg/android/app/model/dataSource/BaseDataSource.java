@@ -18,6 +18,7 @@ import fmg.common.notifier.NotifyPropertyChanged;
 import fmg.core.img.IAnimatedModel;
 import fmg.core.img.IImageView;
 import fmg.core.img.ImageController;
+import fmg.core.types.Property;
 
 /** Base container for image items */
 public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THeaderModel, THeaderView, THeaderCtrlr>,
@@ -45,8 +46,11 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
     protected THeader header;
     /** Data source - images that describes the elements */
     protected List<TItem> dataSource; // TODO??? MutableLiveData<...>
+    
     /** Current item index in {@link #dataSource} */
+    @Property(PROPERTY_CURRENT_ITEM_POS)
     protected int currentItemPos = NOT_SELECTED_POS;
+    
     private boolean disposed;
 
     private static final int NOT_SELECTED_POS = -1;

@@ -7,12 +7,14 @@ import org.junit.*;
 
 import fmg.common.Logger;
 import fmg.core.mosaic.MosaicModelTest;
+import fmg.core.types.Property;
 import io.reactivex.Flowable;
 
 public class NotifyPropertyChangedTest {
 
     static class SimpleProperty implements INotifyPropertyChanged, AutoCloseable {
         public static final String PROPERTY_FIELD_NAME = "Property";
+        @Property(PROPERTY_FIELD_NAME)
         private Object property;
         private final NotifyPropertyChanged notifier;
         SimpleProperty(Object initValueOfProperty, boolean deferredNotifications) {

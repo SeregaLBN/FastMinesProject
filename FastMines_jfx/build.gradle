@@ -29,9 +29,9 @@ repositories {
         // 2. define system environment variable: example JAVAFX_HOME = youPath/Java/javafx-sdk-11.0.2
         dirs System.getenv('JAVAFX_HOME') + '/lib'
         // to run fmg.jfx.app.DemoApp from Eclipse:
-        //   1. open 'Run Configurations'
+        //   1. open 'Run Configurations...'
         //   2. in tab 'Arguments' in block 'VM arguments' add next
-        //      --module-path "${env_var:JAVAFX_HOME}\lib" --add-modules=javafx.controls
+        //      --module-path "${env_var:JAVAFX_HOME}/lib" --add-modules=javafx.controls
     }
 }
 

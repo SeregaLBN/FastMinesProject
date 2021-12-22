@@ -6,6 +6,7 @@ import java.beans.PropertyChangeListener;
 import fmg.common.Logger;
 import fmg.common.geom.SizeDouble;
 import fmg.common.notifier.NotifyPropertyChanged;
+import fmg.core.types.Property;
 
 /**
  * MVC: view.
@@ -24,25 +25,29 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
     }
 
     /** MVC: model */
-    private final TImageModel _model;
-    private TImage _image;
-    private EInvalidate _invalidate = EInvalidate.needRedraw;
-    protected final NotifyPropertyChanged _notifier/*Sync*/ = new NotifyPropertyChanged(this, false);
-    private   final NotifyPropertyChanged _notifierAsync    = new NotifyPropertyChanged(this, true);
-    protected boolean _isDisposed;
+    @Property(PROPERTY_MODEL)
+    private final TImageModel model;
+
+    @Property(PROPERTY_IMAGE)
+    private TImage image;
+
+    private EInvalidate invalidate = EInvalidate.needRedraw;
+    protected final NotifyPropertyChanged notifier/*Sync*/ = new NotifyPropertyChanged(this, false);
+    private   final NotifyPropertyChanged notifierAsync    = new NotifyPropertyChanged(this, true);
+    protected boolean isDisposed;
 
     private final PropertyChangeListener      onPropertyChangedListener = this::onPropertyChanged;
     private final PropertyChangeListener onModelPropertyChangedListener = this::onModelPropertyChanged;
 
     protected ImageView(TImageModel imageModel) {
-        _model = imageModel;
-        _notifier.addListener(onPropertyChangedListener);
-        _model.addListener(onModelPropertyChangedListener);
+        this.model = imageModel;
+        notifier.addListener(onPropertyChangedListener);
+        this.model.addListener(onModelPropertyChangedListener);
     }
 
     @Override
     public TImageModel getModel() {
-        return _model;
+        return model;
     }
 
     /** width and height in pixel */
@@ -55,17 +60,17 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
     protected abstract TImage createImage();
     @Override
     public TImage getImage() {
-        if (_image == null) {
+        if (image == null) {
             setImage(createImage());
-            _invalidate = EInvalidate.needRedraw;
+            invalidate = EInvalidate.needRedraw;
         }
-        if (_invalidate == EInvalidate.needRedraw)
+        if (invalidate == EInvalidate.needRedraw)
             draw();
-        return _image;
+        return image;
     }
     protected void setImage(TImage value) {
-        TImage old = _image;
-        if (_notifier.setProperty(_image, value, PROPERTY_IMAGE)) {
+        TImage old = image;
+        if (notifier.setProperty(image, value, PROPERTY_IMAGE)) {
             if (old instanceof AutoCloseable)
                 try {
                     ((AutoCloseable)old).close();
@@ -77,21 +82,21 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
 
     @Override
     public void invalidate() {
-        if (_invalidate == EInvalidate.redrawing)
+        if (invalidate == EInvalidate.redrawing)
             return;
         //if (_invalidate == EInvalidate.needRedraw)
         //    return;
-        _invalidate = EInvalidate.needRedraw;
+        invalidate = EInvalidate.needRedraw;
 
         // Уведомляю владельца класса что поменялось изображение.
         // Т.е. что нужно вызвать getImage()
         // при котором и отрисуется новое изображение (через вызов draw)
-        _notifier.firePropertyChanged(PROPERTY_IMAGE);
+        notifier.firePropertyChanged(PROPERTY_IMAGE);
     }
 
     private void draw() {
-        assert !_isDisposed;
-        if (_isDisposed) {
+        assert !isDisposed;
+        if (isDisposed) {
             Logger.error(" Already disposed! " + this.getClass().getSimpleName());
             return;
         }
@@ -100,23 +105,23 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
         drawEnd();
     }
 
-    protected final void drawBegin() { _invalidate = EInvalidate.redrawing; }
+    protected final void drawBegin() { invalidate = EInvalidate.redrawing; }
     protected abstract void drawBody();
-    protected final void drawEnd() { _invalidate = EInvalidate.redrawed; }
+    protected final void drawEnd() { invalidate = EInvalidate.redrawed; }
 
     protected void onPropertyChanged(PropertyChangeEvent ev) {
         // refire as async event
-        _notifierAsync.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+        notifierAsync.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
     }
 
     protected void onModelPropertyChanged(PropertyChangeEvent ev) {
 //        Logger.info("  ImageView::onModelPropertyChanged: ev.name=" + ev.getPropertyName());
-        _notifier.firePropertyChanged(null, getModel(), PROPERTY_MODEL);
+        notifier.firePropertyChanged(null, getModel(), PROPERTY_MODEL);
         if (IImageModel.PROPERTY_SIZE.equals(ev.getPropertyName())) {
             setImage(null);
 //            invalidate();
-            _notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_SIZE);
-            _notifier.firePropertyChanged(PROPERTY_IMAGE);
+            notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_SIZE);
+            notifier.firePropertyChanged(PROPERTY_IMAGE);
         } else {
             invalidate();
         }
@@ -124,24 +129,24 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
 
     @Override
     public void close() {
-        _isDisposed = true;
+        isDisposed = true;
 
-        _notifier.removeListener(onPropertyChangedListener);
-        _model.removeListener(onModelPropertyChangedListener);
+        notifier.removeListener(onPropertyChangedListener);
+        model.removeListener(onModelPropertyChangedListener);
 
-        _notifier.close();
-        _notifierAsync.close();
+        notifier.close();
+        notifierAsync.close();
 
         setImage(null);
     }
 
     @Override
     public void addListener(PropertyChangeListener listener) {
-        _notifierAsync.addListener(listener);
+        notifierAsync.addListener(listener);
     }
     @Override
     public void removeListener(PropertyChangeListener listener) {
-        _notifierAsync.removeListener(listener);
+        notifierAsync.removeListener(listener);
     }
 
 }

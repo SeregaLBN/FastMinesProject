@@ -37,6 +37,7 @@ import fmg.core.types.ClickResult;
 import fmg.core.types.EGameStatus;
 import fmg.core.types.EState;
 import fmg.core.app.model.MosaicInitData;
+import fmg.core.types.Property;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -51,6 +52,8 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
     /** <li>true : bind Control.SizeProperty to Model.Size
      *  <li>false: bind Model.Size to Control.SizeProperty */
     private boolean bindSizeDirection = true;
+    
+    @Property(PROPERTY_EXTENDED_MANIPULATION)
     private boolean extendedManipulation = false;
 
     // #region if ExtendedManipulation

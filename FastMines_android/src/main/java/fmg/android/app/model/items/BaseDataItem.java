@@ -20,6 +20,7 @@ import fmg.core.img.IImageController;
 import fmg.core.img.IImageModel;
 import fmg.core.img.IImageView;
 import fmg.core.img.ImageController;
+import fmg.core.types.Property;
 
 /** Base item class for <see cref="MosaicDataItem"/> and <see cref="MosaicGroupDataItem"/> and <see cref="MosaicSkillDataItem"/> */
 public abstract class BaseDataItem<T,
@@ -37,9 +38,15 @@ public abstract class BaseDataItem<T,
     public static final String PROPERTY_SIZE      = IImageModel.PROPERTY_SIZE;
     public static final String PROPERTY_PADDING   = IImageModel.PROPERTY_PADDING;
 
+    @Property(PROPERTY_UNIQUE_ID)
     private T uniqueId;
+    
+    @Property(PROPERTY_ENTITY)
     protected TImageCtrlr entity;
+    
+    @Property(PROPERTY_TITLE)
     private String title = "";
+    
     protected final NotifyPropertyChanged notifier/*Sync*/ = new NotifyPropertyChanged(this, false);
     private   final NotifyPropertyChanged notifierAsync    = new NotifyPropertyChanged(this, true);
     private final PropertyChangeListener           onPropertyChangedListener = this::onPropertyChanged;

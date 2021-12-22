@@ -7,16 +7,20 @@ import java.util.Map;
 import fmg.common.Color;
 import fmg.common.notifier.INotifyPropertyChanged;
 import fmg.common.notifier.NotifyPropertyChanged;
+import fmg.core.types.Property;
 
 /** all that apply to the background fill of cells */
 public class BackgroundFill implements AutoCloseable, INotifyPropertyChanged {
 
+    public static final String PROPERTY_MODE = "Mode";
+
     /** режим заливки фона ячеек */
-    private int _mode = 0;
+    @Property(PROPERTY_MODE)
+    private int mode = 0;
 
     /** кэшированные цвета фона ячеек
      * <br/> Нет цвета? - создасться с нужной интенсивностью! */
-    private final Map<Integer, Color> _colors = new HashMap<Integer, Color>() {
+    private final Map<Integer, Color> colors = new HashMap<Integer, Color>() {
         private static final long serialVersionUID = 1L;
         @Override
         public Color get(Object key) {
@@ -30,11 +34,10 @@ public class BackgroundFill implements AutoCloseable, INotifyPropertyChanged {
         }
      };
 
-    public static final String PROPERTY_MODE = "Mode";
-    protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
+    protected NotifyPropertyChanged notifier = new NotifyPropertyChanged(this);
 
     /** режим заливки фона ячеек */
-    public int getMode() { return _mode; }
+    public int getMode() { return mode; }
 
     /** режим заливки фона ячеек
      * @param newFillMode
@@ -42,29 +45,29 @@ public class BackgroundFill implements AutoCloseable, INotifyPropertyChanged {
      *  <li> not 0 - радуга %)
      */
     public void setMode(int newFillMode) {
-        if (_notifier.setProperty(_mode, newFillMode, PROPERTY_MODE))
-            _colors.clear();
+        if (notifier.setProperty(mode, newFillMode, PROPERTY_MODE))
+            colors.clear();
     }
 
     /** кэшированные цвета фона ячеек
      * <br/> Нет цвета? - создасться с нужной интенсивностью! */
     public Map<Integer, Color> getColors() {
-        return _colors;
+        return colors;
     }
 
     @Override
     public void close() {
-        _notifier.close();
-        _colors.clear();
+        notifier.close();
+        colors.clear();
     }
 
     @Override
     public void addListener(PropertyChangeListener listener) {
-        _notifier.addListener(listener);
+        notifier.addListener(listener);
     }
     @Override
     public void removeListener(PropertyChangeListener listener) {
-        _notifier.removeListener(listener);
+        notifier.removeListener(listener);
     }
 
 }
