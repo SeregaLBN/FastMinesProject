@@ -16,6 +16,25 @@ public final class ProjSettings extends AProjSettings {
     private ProjSettings() {}
 
     static {
+        boolean isDebug = false;
+        try {
+            // this is highly system depending
+            isDebug = System.getProperty("java.vm.info", "").contains("sharing");
+
+            if (!isDebug)
+                // is very vendor specific
+                isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().contains("-agentlib:jdwp");
+
+        } catch(Error ex) {
+            fmg.common.Logger.error("AProjSettings", ex);
+
+        } finally {
+            setDebug(isDebug);
+            if (isDebug)
+                fmg.common.Logger.DEBUG_WRITER = System.out::println;
+        }
+
+
         UiInvoker.DEFERRED = javax.swing.SwingUtilities::invokeLater;
         UiInvoker.ANIMATOR = Animator::getSingleton;
         UiInvoker.TIMER_CREATOR = Timer::new;
