@@ -1,12 +1,28 @@
 apply plugin: 'com.android.application'
 
+gradle.taskGraph.beforeTask { Task task ->
+    if ((task.project.name == 'FastMines_android') && (task.name == 'preAppReleaseBuild')) {
+        if (System.env.FAST_MINES_ANDROID_KEYSTORE == null)
+            System.err.println('The system environment variable FAST_MINES_ANDROID_KEYSTORE must be defined')
+        if (System.env.FAST_MINES_ANDROID_STORE_PASS == null)
+            System.err.println('The system environment variable FAST_MINES_ANDROID_STORE_PASS must be defined')
+        if (System.env.FAST_MINES_ANDROID_KEY_ALIAS == null)
+            System.err.println('The system environment variable FAST_MINES_ANDROID_KEY_ALIAS must be defined')
+        if (System.env.FAST_MINES_ANDROID_KEY_PASS == null)
+            System.err.println('The system environment variable FAST_MINES_ANDROID_KEY_PASS must be defined')
+    }
+}
+
 android {
     signingConfigs {
+        def keyStore = System.env.FAST_MINES_ANDROID_KEYSTORE
+        if (keyStore == null)
+            keyStore = 'The system environment variable FAST_MINES_ANDROID_KEYSTORE must be defined'
         release {
-            storeFile file(System.getenv("FAST_MINES_ANDROID_KEYSTORE"))
-            storePassword  System.getenv("FAST_MINES_ANDROID_STORE_PASS")
-            keyAlias       System.getenv("FAST_MINES_ANDROID_KEY_ALIAS")
-            keyPassword    System.getenv("FAST_MINES_ANDROID_KEY_PASS")
+            storeFile     file(keyStore)
+            storePassword System.env.FAST_MINES_ANDROID_STORE_PASS
+            keyAlias      System.env.FAST_MINES_ANDROID_KEY_ALIAS
+            keyPassword   System.env.FAST_MINES_ANDROID_KEY_PASS
         }
     }
     compileOptions {
