@@ -22,23 +22,6 @@ jar {
                    'Build-Date': new Date().format("yyyy-MM-dd'T 'HH:mm:ss.SSSZZ")
     }
 }
-
-if (System.getenv('JAVAFX_HOME') == null) {
-    System.err.println('ERROR: The system environment variable JAVAFX_HOME is not defined')
-}
-
-repositories {
-    flatDir {
-        // 1. download https://gluonhq.com/products/javafx/
-        // 2. define system environment variable: example JAVAFX_HOME = youPath/Java/javafx-sdk-11.0.2
-        dirs System.getenv('JAVAFX_HOME') + '/lib'
-        // to run fmg.jfx.app.DemoApp from Eclipse:
-        //   1. open 'Run Configurations...'
-        //   2. in tab 'Arguments' in block 'VM arguments' add next
-        //      --module-path "${env_var:JAVAFX_HOME}/lib" --add-modules=javafx.controls
-    }
-}
-
 sourceSets {
     main {
         java {
@@ -68,16 +51,10 @@ if (currentOS.isWindows()) {
 dependencies {
     implementation project(':FastMines_core')
 
-    implementation name: 'javafx.base'
-    implementation name: 'javafx.controls'
-    implementation name: 'javafx.graphics'
-
     implementation     'org.openjfx:javafx-base' +':11.0.2:' + platform
     implementation     'org.openjfx:javafx-graphics:11.0.2:' + platform
     implementation     'org.openjfx:javafx-controls:11.0.2:' + platform
     testImplementation 'org.openjfx:javafx-swing'+':11.0.2:' + platform
-
-    testImplementation name : 'javafx.swing' // used in unit test
 
     testImplementation project(':FastMines_core').sourceSets.test.output
 
@@ -85,6 +62,16 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'io.reactivex.rxjava2:rxjava:2.2.21'
 }
+
+/*
+   Run in Eclipse (from 'Run Configurations...'):
+     1. download https://gluonhq.com/products/javafx/
+     2. define system environment variable: example JAVAFX_HOME = youPath/Java/javafx-sdk-11.0.2
+     3. in Eclipse open 'Run Configurations...'
+     4. in tab 'Arguments' in block 'VM arguments' add next
+         --module-path "${env_var:JAVAFX_HOME}/lib" --add-modules=javafx.controls
+*/
+
 
 run {
     doFirst {
