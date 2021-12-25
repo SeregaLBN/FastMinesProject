@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import fmg.android.app.BuildConfig;
+import fmg.android.app.ProjSettings;
 import fmg.android.app.model.items.MosaicSkillDataItem;
 import fmg.android.img.MosaicSkillImg;
 import fmg.common.Color;
@@ -40,7 +42,9 @@ public class MosaicSkillDataSource extends BaseDataSource<
     public List<MosaicSkillDataItem> getDataSource() {
         if (!isDisposed() && ((dataSource == null) || dataSource.isEmpty())) {
             dataSource = Stream.of(ESkillLevel.values())
-                    .filter(sk -> sk != ESkillLevel.eCustom)
+                    .filter(sk ->
+                        !ProjSettings.isReleaseMode() || (sk != ESkillLevel.eCustom)
+                    )
                     .map(MosaicSkillDataItem::new)
                     .peek(item -> {
                         MosaicSkillModel model = item.getEntity().getModel();

@@ -26,10 +26,10 @@ public final class ProjSettings extends AProjSettings {
                 isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().contains("-agentlib:jdwp");
 
         } catch(Error ex) {
-            fmg.common.Logger.error("AProjSettings", ex);
+            Logger.error("AProjSettings", ex);
 
         } finally {
-            setDebug(isDebug);
+            setDebugOutput(isDebug);
             if (isDebug)
                 fmg.common.Logger.DEBUG_WRITER = System.out::println;
         }

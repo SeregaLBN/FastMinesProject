@@ -18,8 +18,8 @@ public final class ProjSettings extends AProjSettings {
     /** Mobile (true) or Desktop/Tablet (false) */
     public static final boolean isMobile;
 
-    private static final boolean DrawModeFull;
-    public static boolean isDrawModeFull() { return DrawModeFull; }
+    private static final boolean isDrawModeFullEnabled;
+    public static boolean isDrawModeFull() { return isDrawModeFullEnabled; }
 
     static {
         UiInvoker.DEFERRED = new Handler(Looper.getMainLooper())::post;
@@ -30,17 +30,19 @@ public final class ProjSettings extends AProjSettings {
 
         isMobile = true;
 
-        setDebug(BuildConfig.DEBUG);
-        if (BuildConfig.DEBUG) {
+        setReleaseMode(!BuildConfig.DEBUG);
+        setDebugOutput(BuildConfig.DEBUG_OUTPUT);
+
+        if (!isReleaseMode()) {
             // https://developer.android.com/studio/publish
             // Configuring your application for release... At a minimum you need to remove Log calls...
             Logger.  ERROR_WRITER = message -> Log.e("fmg", message);
             Logger.WARNING_WRITER = message -> Log.w("fmg", message);
             Logger.   INFO_WRITER = message -> Log.i("fmg", message);
-            Logger.  DEBUG_WRITER = (isDebug() || BuildConfig.DEBUG_OUTPUT) ? message -> Log.d("fmg", message) : null;
+            Logger.  DEBUG_WRITER = isDebugOutput() ? message -> Log.d("fmg", message) : null;
         }
         Logger.USE_DATE_PREFIX = false;
-        DrawModeFull = BuildConfig.DRAW_MODE_FULL;
+        isDrawModeFullEnabled = BuildConfig.DRAW_MODE_FULL;
     }
 
     public static void init() {

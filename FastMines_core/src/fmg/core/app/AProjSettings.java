@@ -11,10 +11,23 @@ public abstract class AProjSettings {
     protected static String   playersFile = PROJECT_NAME + ".players";
     protected static String championsFile = PROJECT_NAME + ".best";
 
+    private static boolean isReleaseModeEnabled = true;
+    private static boolean isDebugOutputEnabled;
 
-    private static boolean isDebugEnabled;
-    public static boolean isDebug() { return isDebugEnabled; }
-    protected static void setDebug(boolean isDebug) { isDebugEnabled = isDebug; }
+    public static boolean isDebugOutput() {
+        return isDebugOutputEnabled;
+    }
+
+    protected static void setDebugOutput(boolean debugOutput) {
+        AProjSettings.isDebugOutputEnabled = debugOutput;
+    }
+
+    public static boolean isReleaseMode() {
+        return isReleaseModeEnabled;
+    }
+    protected static void setReleaseMode(boolean isReleaseMode) {
+        AProjSettings.isReleaseModeEnabled = isReleaseMode;
+    }
 
     public static String getSettingsFileName() {
         return settingsFile;
