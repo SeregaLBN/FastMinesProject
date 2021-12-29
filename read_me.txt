@@ -91,10 +91,10 @@ Run from command line
         gradle FastMines_android:build
     Main app:
         adb install -t -r ./FastMines_android/build/outputs/apk/app/debug/FastMines_android-app-debug.apk
-        adb shell am start -a android.intent.action.MAIN -n SeregaLBN.FastMinesGame.Android.App.debug/fmg.android.app.MainActivity
+        adb shell am start -a android.intent.action.MAIN -n seregalbn.fast_mines_game.android.app.debug/fmg.android.app.MainActivity
     Test demo app:
         adb install -t -r ./FastMines_android/build/outputs/apk/demo/debug/FastMines_android-demo-debug.apk
-        adb shell am start -a android.intent.action.MAIN -n SeregaLBN.FastMinesGame.Android.App.demo.debug/fmg.android.app.DemoActivity
+        adb shell am start -a android.intent.action.MAIN -n seregalbn.fast_mines_game.android.app.demo.debug/fmg.android.app.DemoActivity
 
 ----------------------------------
 Android Studio
