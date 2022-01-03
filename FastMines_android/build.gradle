@@ -37,7 +37,7 @@ android {
         applicationId 'seregalbn.fast_mines_game.android.app' // otherwise eq AndroidManifest.xml: <manifest ... package="fmg.android.app" />
         minSdkVersion 26
         targetSdkVersion 30
-        versionCode 1       // Internal version number. Increase with each new release build
+        versionCode 2       // Internal version number. Increase with each new release build
                             //   equals AndroidManifest.xml: <manifest ... android:versionCode=".." />
         versionName '1.0.0' // Version number for users. Doesn't affect anything
                             //   equals AndroidManifest.xml: <manifest ... android:versionName=".." />
