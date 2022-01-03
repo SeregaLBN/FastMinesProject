@@ -46,6 +46,12 @@ public final class MosaicHelper {
 
     /** Создать экземпляр ячейки для конкретного типа мозаики */
     public static final BaseCell createCellInstance(BaseCell.BaseAttribute attr, EMosaic mosaicType, Coord coord) {
+        BaseCell cell = createCell(attr, mosaicType, coord);
+        cell.init();
+        return cell;
+    }
+
+    private static final BaseCell createCell(BaseCell.BaseAttribute attr, EMosaic mosaicType, Coord coord) {
         switch (mosaicType) {
         case eMosaicTriangle1        : return new Triangle1        ((Triangle1        .AttrTriangle1        ) attr, coord);
         case eMosaicTriangle2        : return new Triangle2        ((Triangle2        .AttrTriangle2        ) attr, coord);

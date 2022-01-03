@@ -40,6 +40,12 @@ namespace Fmg.Core.Mosaic {
 
         /// <summary>Создать экземпляр ячейки для конкретного типа мозаики</summary>
         public static BaseCell CreateCellInstance(BaseCell.BaseAttribute attr, EMosaic mosaicType, Coord coord) {
+            BaseCell cell = CreateCell(attr, mosaicType, coord);
+            cell.Init();
+            return cell;
+        }
+
+        private static BaseCell CreateCell(BaseCell.BaseAttribute attr, EMosaic mosaicType, Coord coord) {
             switch (mosaicType) {
             case EMosaic.eMosaicTriangle1        : return new Triangle1        ((Triangle1        .AttrTriangle1        ) attr, coord);
             case EMosaic.eMosaicTriangle2        : return new Triangle2        ((Triangle2        .AttrTriangle2        ) attr, coord);
