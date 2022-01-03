@@ -43,7 +43,6 @@ android {
                             //   equals AndroidManifest.xml: <manifest ... android:versionName=".." />
         buildConfigField 'boolean', 'DRAW_MODE_FULL', 'true'
         buildConfigField 'boolean', 'DEBUG_OUTPUT'  , 'false'
-        buildConfigField 'boolean', 'ITS_RELEASE'   , 'false'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     sourceSets {
@@ -56,7 +55,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             shrinkResources true
             signingConfig signingConfigs.release
-            buildConfigField 'boolean', 'ITS_RELEASE', 'true'
         }
         debug {
             applicationIdSuffix '.debug'
