@@ -55,6 +55,11 @@ public class MosaicSkillDataItem extends BaseDataItem<ESkillLevel, MosaicSkillMo
         getEntity().getBurgerMenuModel().setPadding(zoomPadding(paddingBurgerMenu));
     }
 
+    @Bindable
+    public String getContentDescription() {
+        return "MosaicSkillItem:" + getSkillLevel().getDescription();
+    }
+
     @Override
     protected void onPropertyChanged(PropertyChangeEvent ev) {
         super.onPropertyChanged(ev);

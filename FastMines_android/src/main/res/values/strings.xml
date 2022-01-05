@@ -4,12 +4,11 @@
     <string name="mosaic_group_header">MosaicGroupHeader</string>
     <string name="mosaic_skill_header">MosaicSkillHeader</string>
     <string name="mosaic_item">MosaicItem</string>
-    <string name="mosaic_group_item">MosaicGroupItem</string>
-    <string name="mosaic_skill_item">MosaicSkillItem</string>
     <string name="mosaics">Mosaics</string>
     <string name="mosaic_groups">Groups</string>
     <string name="mosaic_skills">Skills</string>
     <string name="mines_left">Mine left</string>
     <string name="time_left" >Time left</string>
     <string name="new_game" >New game</string>
+    <string name="mosaic_game_field">MosaicGameField</string>
 </resources>

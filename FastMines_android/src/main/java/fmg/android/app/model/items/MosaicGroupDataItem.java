@@ -52,6 +52,11 @@ public class MosaicGroupDataItem extends BaseDataItem<EMosaicGroup, MosaicGroupM
         getEntity().getBurgerMenuModel().setPadding(zoomPadding(paddingBurgerMenu));
     }
 
+    @Bindable
+    public String getContentDescription() {
+        return "MosaicGroupItem:" + getMosaicGroup().getDescription();
+    }
+
     @Override
     protected void onPropertyChanged(PropertyChangeEvent ev) {
         super.onPropertyChanged(ev);

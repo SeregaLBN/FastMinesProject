@@ -21,6 +21,7 @@
 
             <fmg.android.app.DrawableView
                 android:id="@+id/mosaicView"
+                android:contentDescription="@string/mosaic_game_field"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -48,6 +49,7 @@
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="2dp"
                 android:hint="@string/mines_left"
+                android:tooltipText="Mines left"
                 android:text="@{viewModel.topPanel.minesLeft}"
                 android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -62,9 +64,10 @@
 
             <ImageButton
                 android:contentDescription="@string/new_game"
+                android:tooltipText="New game"
                 android:id="@+id/btnNewGame"
-                android:layout_width="37dp"
-                android:layout_height="39dp"
+                android:layout_width="48dp"
+                android:layout_height="50dp"
                 android:scaleType="center"
                 android:imageBitmap="@{viewModel.topPanel.btnNewGameImg}"/>
 
@@ -81,6 +84,7 @@
                 android:layout_marginBottom="2dp"
                 android:layout_marginEnd="7dp"
                 android:hint="@string/time_left"
+                android:tooltipText="Time left"
                 android:text="@{viewModel.topPanel.timeLeft}"
                 android:gravity="end"
                 android:textAlignment="gravity"

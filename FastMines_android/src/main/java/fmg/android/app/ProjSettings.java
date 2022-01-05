@@ -5,6 +5,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import fmg.android.img.Animator;
+import fmg.android.utils.Cast;
 import fmg.android.utils.Timer;
 import fmg.common.Color;
 import fmg.common.Logger;
@@ -16,10 +17,12 @@ public final class ProjSettings extends AProjSettings {
     private ProjSettings() {}
 
     /** Mobile (true) or Desktop/Tablet (false) */
-    public static final boolean isMobile;
+    public static final boolean IS_MOBILE;
+    public static final float MIN_TOUCH_SIZE = Cast.dpToPx(48); // android recommended size
 
     private static final boolean isDrawModeFullEnabled;
     public static boolean isDrawModeFull() { return isDrawModeFullEnabled; }
+
 
     static {
         UiInvoker.DEFERRED = new Handler(Looper.getMainLooper())::post;
@@ -28,7 +31,7 @@ public final class ProjSettings extends AProjSettings {
 
         MosaicDrawModel.DefaultBkColor = new Color(0xFFEEEEEE); // #EEEEEE or #FAFAFA
 
-        isMobile = true;
+        IS_MOBILE = true;
 
         setReleaseMode(!BuildConfig.DEBUG);
         setDebugOutput(BuildConfig.DEBUG_OUTPUT);

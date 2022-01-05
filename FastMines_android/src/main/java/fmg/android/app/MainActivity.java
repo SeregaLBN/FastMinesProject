@@ -398,9 +398,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void onActivitySizeChanged(SizeDouble newSize) {
 //        Logger.info("> MainActivity.onActivitySizeChanged: newSize={0}", newSize);
-        final float minSize       = Cast.dpToPx(45);
+        final float minSize       = ProjSettings.MIN_TOUCH_SIZE; // Cast.dpToPx(45);
         final float maxSize       = Cast.dpToPx(80);
-        final float topElemHeight = Cast.dpToPx(40);
+        final float topElemHeight = ProjSettings.MIN_TOUCH_SIZE; // Cast.dpToPx(40);
         final float pad           = Cast.dpToPx(2);
         assert (topElemHeight <= minSize);
 

@@ -198,7 +198,7 @@ public class SelectMosaicFragment extends Fragment {
 
 
         float minTileWidth = Cast.dpToPx(48);
-        float maxTileWidth = Cast.dpToPx(ProjSettings.isMobile ? 90 : 140);
+        float maxTileWidth = Cast.dpToPx(ProjSettings.IS_MOBILE ? 90 : 140);
         double cardViewItemBorderWidth =
               //2 * Cast.dpToPx(0)  // mosaic_item.xml: <<android.support.v7.widget.CardView <LinearLayout android:layout_margin="0dp"
                 2 * Cast.dpToPx(1); // mosaic_item.xml: <<android.support.v7.widget.CardView <LinearLayout <ImageView android:layout_margin="1dp"
