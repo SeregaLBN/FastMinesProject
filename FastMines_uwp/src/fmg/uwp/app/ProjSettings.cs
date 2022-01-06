@@ -1,0 +1,57 @@
+using System;
+using System.Threading.Tasks;
+using Windows.UI;
+using Windows.UI.Core;
+using Windows.UI.ViewManagement;
+using Fmg.Common.UI;
+using Fmg.Core.Mosaic;
+using Fmg.Uwp.Img;
+using Fmg.Uwp.Utils;
+
+namespace Fmg.Uwp.App {
+
+    public class ProjSettings : Fmg.Core.App.AProjSettings {
+
+        /// <summary> Mobile (true) or Desktop (false) </summary>
+        public static bool IsMobile { get; }
+        public static double MinTouchSize => Cast.DpToPx(48); // android recommended size
+
+        static ProjSettings() {
+            UiInvoker.Deferred = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
+            UiInvoker.Animator = () => Animator.Singleton;
+            UiInvoker.TimerCreator = () => new Timer();
+
+            try {
+                var uiSettings = new UISettings();
+
+                Color clr;
+                try {
+                    // desktop
+                    clr = uiSettings.UIElementColor(UIElementType.ButtonFace);
+                    //clr = uiSettings.UIElementColor(UIElementType.Window);
+                    IsMobile = false;
+                } catch (ArgumentException) {
+                    IsMobile = true;
+                    try {
+                        // mobile
+                        const int magic = 1000;
+                        clr = uiSettings.UIElementColor(magic + UIElementType.ButtonFace);
+                        //clr = uiSettings.UIElementColor(magic + UIElementType.Window);
+                    } catch (Exception) {
+                        clr = Fmg.Common.Color.Gray.ToWinColor(); // wtf??
+                    }
+                }
+                MosaicDrawModelConst.DefaultBkColor = clr.ToFmColor();
+            } catch (Exception ex) {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                System.Diagnostics.Debug.Assert(false, ex.Message);
+            }
+        }
+
+        public static void Init() {
+            // implicit call static block
+        }
+
+    }
+
+}

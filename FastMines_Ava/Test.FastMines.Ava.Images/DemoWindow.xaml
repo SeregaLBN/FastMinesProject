@@ -1,0 +1,9 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'
+        x:Class="Test.FastMines.Ava.Images.DemoWindow"
+        Title="Avalon test paints: "
+        Background="Red" MinWidth="640" MinHeight="480" Width="640" Height="480">
+    <StackPanel Orientation="Vertical" >
+        <Image Source="{Binding Bitmap}" />
+    </StackPanel>
+</Window>

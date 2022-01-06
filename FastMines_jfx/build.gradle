@@ -1,0 +1,110 @@
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'eclipse'
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+
+group = 'FastMinesGame' // fmg
+version = '0.0.1'
+mainClassName     = 'fmg.jfx.app.FastMinesApp'
+def demoClassName = 'fmg.jfx.app.DemoApp'
+
+jar {
+    manifest {
+        attributes 'Main-Class': mainClassName,
+                   'Title'     : 'FastMines game - demo Java FX desktop application',
+                   'Version'   : archiveVersion,
+                   'Vendor'    : 'SeregaLBN',
+                   'Build-Date': new Date().format("yyyy-MM-dd'T 'HH:mm:ss.SSSZZ")
+    }
+}
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+            include '**/*.java'
+        }
+    }
+    test {
+        java {
+            srcDir 'src/test/java'
+            include '**/*.java'
+        }
+    }
+}
+
+def currentOS = org.gradle.internal.os.OperatingSystem.current()
+def platform
+if (currentOS.isWindows()) {
+    platform = 'win'
+} else if (currentOS.isLinux()) {
+    platform = 'linux'
+} else if (currentOS.isMacOsX()) {
+    platform = 'mac'
+}
+//println 'Current platform is ' + platform
+
+dependencies {
+    implementation project(':FastMines_core')
+
+    implementation     'org.openjfx:javafx-base' +':11.0.2:' + platform
+    implementation     'org.openjfx:javafx-graphics:11.0.2:' + platform
+    implementation     'org.openjfx:javafx-controls:11.0.2:' + platform
+    testImplementation 'org.openjfx:javafx-swing'+':11.0.2:' + platform
+
+    testImplementation project(':FastMines_core').sourceSets.test.output
+
+    // Use JUnit test framework
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'io.reactivex.rxjava2:rxjava:2.2.21'
+}
+
+/*
+   Run in Eclipse (from 'Run Configurations...'):
+     1. download https://gluonhq.com/products/javafx/
+     2. define system environment variable: example JAVAFX_HOME = youPath/Java/javafx-sdk-11.0.2
+     3. in Eclipse open 'Run Configurations...'
+     4. in tab 'Arguments' in block 'VM arguments' add next
+         --module-path "${env_var:JAVAFX_HOME}/lib" --add-modules=javafx.controls
+*/
+
+
+run {
+    doFirst {
+        jvmArgs = [
+                '--module-path', classpath.asPath,
+                '--add-modules', 'javafx.controls'
+        ]
+    }
+}
+
+task runDemoApp(type: Exec) {
+    dependsOn build
+    group = 'Execution'
+    description = 'Run the demo javafx (animation test)'
+    commandLine 'java', 
+        '--module-path', sourceSets.test.runtimeClasspath.asPath,
+        '--add-modules', 'javafx.controls',
+        '-classpath', sourceSets.test.runtimeClasspath.asPath,
+        demoClassName
+}
+
+eclipse.classpath {
+    file.whenMerged {
+        entries.each { source ->
+            if (source.kind == 'con' && source.path.startsWith('org.eclipse.jdt.launching.JRE_CONTAINER')) {
+                def resolution = '0'; // Accessible
+                source.accessRules.add(new org.gradle.plugins.ide.eclipse.model.AccessRule(resolution, 'javafx/**'))
+
+                resolution = '1'; // Forbidden
+                source.accessRules.add(new org.gradle.plugins.ide.eclipse.model.AccessRule(resolution, 'fmg/swing/**'))
+                source.accessRules.add(new org.gradle.plugins.ide.eclipse.model.AccessRule(resolution, 'java/awt/**'))
+                source.accessRules.add(new org.gradle.plugins.ide.eclipse.model.AccessRule(resolution, 'javax/swing/**'))
+            }
+        }
+    }
+}

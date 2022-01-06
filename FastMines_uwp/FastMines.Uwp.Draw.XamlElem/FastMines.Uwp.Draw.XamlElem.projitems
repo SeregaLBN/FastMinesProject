@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>9db7237d-bfae-4767-8202-8e54977978a0</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>FastMines.Uwp.Draw.XamlElem</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\src\fmg\uwp\mosaic\xaml\MosaicXamlView.cs"         Link="src_fmg.uwp\mosaic\xaml\MosaicXamlView.cs" />
+    <Compile Include="..\src\fmg\uwp\mosaic\xaml\MosaicXamlController.cs"   Link="src_fmg.uwp\mosaic\xaml\MosaicXamlController.cs" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.view.View"/>
+
+        <variable
+            name="viewModel"
+            type="fmg.android.app.presentation.MainMenuViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:id="@+id/rootLayout"
+        tools:context=".MainActivity"
+        android:baselineAligned="false">
+
+        <!-- left main menu -->
+        <ScrollView
+            android:id="@+id/menuScroller"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            app:layout_mainMenuWidth="@{viewModel.splitViewPane.self}"
+            android:orientation="vertical">
+
+            <!-- menu part of mosaic group -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/menu_group_border"
+                android:padding="@{viewModel.menuGroupPaddingInDip}"
+                android:orientation="vertical">
+
+                <!-- mosaic group header -->
+                <LinearLayout
+                    android:id="@+id/panelMenuMosaicGroupHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_sizeToHeight="@{viewModel.mosaicGroupDS.header.size}"
+                    android:orientation="horizontal"
+                    android:layout_margin="0dp"
+                    android:padding="0dp"
+                    android:background="@color/SystemChromeMediumColorLight"
+                    android:clickable="true"
+                    android:tooltipText="@{viewModel.mosaicGroupDS.unicodeChars}"
+                >
+                    <!--
+                    android:background="@drawable/pressed_layout"
+                    android:onClick="onMosaicGroupHeaderClick"
+                    -->
+
+                    <ImageView
+                        android:id="@+id/bttnMosaicGroupHeader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="0dp"
+                        android:padding="0dp"
+                        android:scaleType="fitCenter"
+                        android:imageBitmap="@{viewModel.mosaicGroupDS.header.image}"
+                        app:layout_sizeToHeight="@{viewModel.mosaicGroupDS.header.size}"
+                        app:layout_sizeToWidth="@{viewModel.mosaicGroupDS.header.size}"
+                        android:layout_gravity="center"
+                        tools:src="@android:drawable/progress_indeterminate_horizontal"
+                        android:contentDescription="@string/mosaic_group_header" />
+
+                    <TextView
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical|center"
+                        android:maxLines="1"
+                        android:textSize="15sp"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginTop="1dp"
+                        android:layout_marginRight="3dp"
+                        android:layout_marginBottom="1dp"
+                        android:padding="0dp"
+                        android:textStyle="bold"
+                        android:text="@string/mosaic_groups" />
+                </LinearLayout>
+
+                <!-- mosaic group items -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="0dp">
+                    <!--https://stackoverflow.com/questions/27083091/recyclerview-inside-scrollview-is-not-working-->
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvMenuMosaicGroupItems"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="0px"
+                        android:padding="0dp"
+                        android:indeterminate="true"
+                        tools:listitem="@layout/mosaic_group_item" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <!-- ___________________________________________________________________________ -->
+
+            <!-- menu part of mosaic skill -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:background="@drawable/menu_group_border"
+                android:padding="@{viewModel.menuGroupPaddingInDip}"
+                android:orientation="vertical">
+
+                <!-- mosaic skill header -->
+                <LinearLayout
+                    android:id="@+id/panelMenuMosaicSkillHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_sizeToHeight="@{viewModel.mosaicSkillDS.header.size}"
+                    android:orientation="horizontal"
+                    android:layout_margin="0dp"
+                    android:padding="0dp"
+                    android:background="@color/SystemChromeMediumColorLight"
+                    android:clickable="true"
+                    android:tooltipText="Difficulty level"
+                    >
+                    <!--android:onClick="onMosaicSkillHeaderClick"-->
+
+                    <ImageView
+                        android:id="@+id/bttnMosaicSkillHeader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="0dp"
+                        android:padding="0dp"
+                        android:scaleType="fitCenter"
+                        android:imageBitmap="@{viewModel.mosaicSkillDS.header.image}"
+                        app:layout_sizeToHeight="@{viewModel.mosaicSkillDS.header.size}"
+                        app:layout_sizeToWidth="@{viewModel.mosaicSkillDS.header.size}"
+                        android:layout_gravity="center"
+                        tools:src="@android:drawable/progress_indeterminate_horizontal"
+                        android:contentDescription="@string/mosaic_skill_header" />
+
+                    <TextView
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical|center"
+                        android:maxLines="1"
+                        android:textSize="15sp"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginTop="1dp"
+                        android:layout_marginRight="3dp"
+                        android:layout_marginBottom="1dp"
+                        android:padding="0dp"
+                        android:textStyle="bold"
+                        android:text="@string/mosaic_skills" />
+                </LinearLayout>
+
+                <!-- mosaic Skill items -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="0dp">
+                    <!--https://stackoverflow.com/questions/27083091/recyclerview-inside-scrollview-is-not-working-->
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvMenuMosaicSkillItems"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="0px"
+                        android:padding="0dp"
+                        android:indeterminate="true"
+                        tools:listitem="@layout/mosaic_skill_item" />
+                </RelativeLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+        </ScrollView>
+
+        <!-- frame for fragment -->
+        <FrameLayout android:id="@+id/rightFrame"
+            android:layout_weight="1"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:background="?android:attr/detailsElementBackground" />
+
+    </LinearLayout>
+
+</layout>

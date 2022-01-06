@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>9DFD73DB-D187-4471-98BA-713996C8A257</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>FastMines.Core</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\crypt\DES.cs"                            Link="fmg.common\crypt\DES.cs" />
+
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\geom\util\FigureHelper.cs"               Link="fmg.common\geom\util\FigureHelper.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\geom\Bound.cs"                           Link="fmg.common\geom\Bound.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\geom\BoundDouble.cs"                     Link="fmg.common\geom\BoundDouble.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\geom\Coord.cs"                           Link="fmg.common\geom\Coord.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\geom\Point.cs"                           Link="fmg.common\geom\Point.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\geom\PointDouble.cs"                     Link="fmg.common\geom\PointDouble.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\geom\DoubleExt.cs"                       Link="fmg.common\geom\DoubleExt.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\geom\Rect.cs"                            Link="fmg.common\geom\Rect.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\geom\RectDouble.cs"                      Link="fmg.common\geom\RectDouble.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\geom\Region.cs"                          Link="fmg.common\geom\Region.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\geom\RegionDouble.cs"                    Link="fmg.common\geom\RegionDouble.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\geom\Size.cs"                            Link="fmg.common\geom\Size.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\geom\Matrisize.cs"                       Link="fmg.common\geom\Matrisize.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\geom\SizeDouble.cs"                      Link="fmg.common\geom\SizeDouble.cs" />
+
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\notifier\NotifyPropertyChanged.cs"       Link="fmg.common\notifier\NotifyPropertyChanged.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\notifier\PropertyChangedExEventArgs.cs"  Link="fmg.common\notifier\PropertyChangedExEventArgs.cs" />
+
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\ui\UiInvoker.cs"                         Link="fmg.common\ui\UiInvoker.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\ui\ITimer.cs"                            Link="fmg.common\ui\ITimer.cs" />
+
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\TaskExec.cs"                             Link="fmg.common\TaskExec.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\HSV.cs"                                  Link="fmg.common\HSV.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\ThreadLocalRandom.cs"                    Link="fmg.common\ThreadLocalRandom.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\Color.cs"                                Link="fmg.common\Color.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\Nothing.cs"                              Link="fmg.common\Nothing.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\PlainFree.cs"                            Link="fmg.common\PlainFree.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\common\Logger.cs"                               Link="fmg.common\Logger.cs" />
+
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\AProjSettings.cs"                      Link="fmg.core\app\AProjSettings.cs" />
+
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\serializers\ISerializer.cs"            Link="fmg.core\app\serializers\ISerializer.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\serializers\ChampionsSerializer.cs"    Link="fmg.core\app\serializers\ChampionsSerializer.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\serializers\PlayersSerializer.cs"      Link="fmg.core\app\serializers\PlayersSerializer.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\serializers\StatisticsSerializer.cs"   Link="fmg.core\app\serializers\StatisticsSerializer.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\serializers\UserSerializer.cs"         Link="fmg.core\app\serializers\UserSerializer.cs" />
+
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\model\MosaicInitData.cs"               Link="fmg.core\app\model\MosaicInitData.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\model\Champions.cs"                    Link="fmg.core\app\model\Champions.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\model\Players.cs"                      Link="fmg.core\app\model\Players.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\model\Statistics.cs"                   Link="fmg.core\app\model\Statistics.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\model\User.cs"                         Link="fmg.core\app\model\User.cs" />
+
+
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\IAnimator.cs"                          Link="fmg.core\img\IAnimator.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\AnimatedImageModel.cs"                 Link="fmg.core\img\AnimatedImageModel.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\AnimatedImgController.cs"              Link="fmg.core\img\AnimatedImgController.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\LogoModel.cs"                          Link="fmg.core\img\LogoModel.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\LogoController.cs"                     Link="fmg.core\img\LogoController.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\FlagModel.cs"                          Link="fmg.core\img\FlagModel.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\MosaicSkillModel.cs"                   Link="fmg.core\img\MosaicSkillModel.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\MosaicGroupTransformer.cs"             Link="fmg.core\img\MosaicGroupTransformer.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\MosaicRotateTransformer.cs"            Link="fmg.core\img\MosaicRotateTransformer.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\MosaicGroupController.cs"              Link="fmg.core\img\MosaicGroupController.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\MosaicSkillController.cs"              Link="fmg.core\img\MosaicSkillController.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\IModelTransformer.cs"                  Link="fmg.core\img\IModelTransformer.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\BurgerMenuModel.cs"                    Link="fmg.core\img\BurgerMenuModel.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\MosaicGroupModel.cs"                   Link="fmg.core\img\MosaicGroupModel.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\IMosaicAnimatedModel.cs"               Link="fmg.core\img\IMosaicAnimatedModel.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\MosaicAnimatedModel.cs"                Link="fmg.core\img\MosaicAnimatedModel.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\PolarLightBkTransformer.cs"            Link="fmg.core\img\PolarLightBkTransformer.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\PolarLightFgTransformer.cs"            Link="fmg.core\img\PolarLightFgTransformer.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\RotateTransformer.cs"                  Link="fmg.core\img\RotateTransformer.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\RotateLogoTransformer.cs"              Link="fmg.core\img\RotateLogoTransformer.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\PolarLightLogoTransformer.cs"          Link="fmg.core\img\PolarLightLogoTransformer.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\SmileModel.cs"                         Link="fmg.core\img\SmileModel.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\IImageModel.cs"                        Link="fmg.core\img\IImageModel.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\IImageView.cs"                         Link="fmg.core\img\IImageView.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\IImageController.cs"                   Link="fmg.core\img\IImageController.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\ImageView.cs"                          Link="fmg.core\img\ImageView.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\ImageController.cs"                    Link="fmg.core\img\ImageController.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\WithBurgerMenuView.cs"                 Link="fmg.core\img\WithBurgerMenuView.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\AnimatedInnerModel.cs"                 Link="fmg.core\img\AnimatedInnerModel.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\AnimatedInnerController.cs"            Link="fmg.core\img\AnimatedInnerController.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\IAnimatedController.cs"                Link="fmg.core\img\IAnimatedController.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\IAnimatedModel.cs"                     Link="fmg.core\img\IAnimatedModel.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\img\TestDrawing.cs"                        Link="fmg.core\img\TestDrawing.cs" />
+
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\cells\Hexagon1.cs"                  Link="fmg.core\mosaic\cells\Hexagon1.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\cells\Parquet1.cs"                  Link="fmg.core\mosaic\cells\Parquet1.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\cells\Parquet2.cs"                  Link="fmg.core\mosaic\cells\Parquet2.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\cells\PenrousePeriodic1.cs"         Link="fmg.core\mosaic\cells\PenrousePeriodic1.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\cells\PentagonT10.cs"               Link="fmg.core\mosaic\cells\PentagonT10.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\cells\PentagonT24.cs"               Link="fmg.core\mosaic\cells\PentagonT24.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\cells\PentagonT5.cs"                Link="fmg.core\mosaic\cells\PentagonT5.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\cells\Quadrangle1.cs"               Link="fmg.core\mosaic\cells\Quadrangle1.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\cells\Rhombus1.cs"                  Link="fmg.core\mosaic\cells\Rhombus1.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\cells\SqTrHex.cs"                   Link="fmg.core\mosaic\cells\SqTrHex.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\cells\Square1.cs"                   Link="fmg.core\mosaic\cells\Square1.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\cells\Square2.cs"                   Link="fmg.core\mosaic\cells\Square2.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\cells\Trapezoid1.cs"                Link="fmg.core\mosaic\cells\Trapezoid1.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\cells\Trapezoid2.cs"                Link="fmg.core\mosaic\cells\Trapezoid2.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\cells\Trapezoid3.cs"                Link="fmg.core\mosaic\cells\Trapezoid3.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\cells\Triangle1.cs"                 Link="fmg.core\mosaic\cells\Triangle1.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\cells\Triangle2.cs"                 Link="fmg.core\mosaic\cells\Triangle2.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\cells\Triangle3.cs"                 Link="fmg.core\mosaic\cells\Triangle3.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\cells\Triangle4.cs"                 Link="fmg.core\mosaic\cells\Triangle4.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\cells\TrSq1.cs"                     Link="fmg.core\mosaic\cells\TrSq1.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\cells\TrSq2.cs"                     Link="fmg.core\mosaic\cells\TrSq2.cs" />
+
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\IMosaic.cs"                         Link="fmg.core\mosaic\IMosaic.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\MosaicGameModel.cs"                 Link="fmg.core\mosaic\MosaicGameModel.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\BackgroundFill.cs"                  Link="fmg.core\mosaic\BackgroundFill.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\IMosaicDrawModel.cs"                Link="fmg.core\mosaic\IMosaicDrawModel.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\MosaicDrawModel.cs"                 Link="fmg.core\mosaic\MosaicDrawModel.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\cells\BaseCell.cs"                  Link="fmg.core\mosaic\cells\BaseCell.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\MosaicHelper.cs"                    Link="fmg.core\mosaic\MosaicHelper.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\MosaicImageController.cs"           Link="fmg.core\mosaic\MosaicImageController.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\IMosaicController.cs"               Link="fmg.core\mosaic\IMosaicController.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\MosaicController.cs"                Link="fmg.core\mosaic\MosaicController.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\MosaicView.cs"                      Link="fmg.core\mosaic\MosaicView.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\IMosaicView.cs"                     Link="fmg.core\mosaic\IMosaicView.cs" />
+
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\types\draw\PenBorder.cs"                   Link="fmg.core\types\draw\PenBorder.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\types\draw\ColorText.cs"                   Link="fmg.core\types\draw\ColorText.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\types\draw\FontInfo.cs"                    Link="fmg.core\types\draw\FontInfo.cs" />
+
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\types\EGameStatus.cs"                      Link="fmg.core\types\EGameStatus.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\types\EPlayInfo.cs"                        Link="fmg.core\types\EPlayInfo.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\types\EClose.cs"                           Link="fmg.core\types\EClose.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\types\EMosaic.cs"                          Link="fmg.core\types\EMosaic.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\types\EMosaicGroup.cs"                     Link="fmg.core\types\EMosaicGroup.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\types\EOpen.cs"                            Link="fmg.core\types\EOpen.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\types\EState.cs"                           Link="fmg.core\types\EState.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\types\ClickCellResult.cs"                  Link="fmg.core\types\ClickCellResult.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\types\ClickResult.cs"                      Link="fmg.core\types\ClickResult.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\types\ESkillLevel.cs"                      Link="fmg.core\types\ESkillLevel.cs" />
+
+  </ItemGroup>
+</Project>

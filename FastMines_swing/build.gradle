@@ -1,0 +1,170 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = "UTF-8"
+
+group = 'FastMinesGame' // fmg
+version = '2.1.1'
+mainClassName            = 'fmg.swing.app.FastMinesApp'
+def demoAppClassName     = 'fmg.swing.app.DemoApp'
+def demoDialogsClassName = 'fmg.swing.app.TestDialogs'
+
+jar {
+    excludes = [ 'fmApplet.html', 'runNativeImageAgent.sh' ]
+    if (!org.gradle.internal.jvm.Jvm.current().toString().contains("GraalVM"))
+        excludes += [ 'META-INF/native-image' ]
+
+    manifest {
+        attributes 'Main-Class': mainClassName,
+                   'Title'     : 'FastMines game - Java SWING desktop application',
+                   'Version'   : archiveVersion,
+                   'Vendor'    : 'SeregaLBN',
+                   'Build-Date': new Date().format("yyyy-MM-dd'T 'HH:mm:ss.SSSZZ")
+    }
+//    into('res') {
+//        from '../res'
+//        exclude '**/*~*'
+//        include '**/*.png'
+//    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+            include '**/*.java'
+        }
+        resources {
+            srcDir 'src/main/resources'
+//          srcDir '../res'
+//          exclude '**/*~*'
+//          include '**/*.gif'
+//          include '**/*.jpeg'
+//          include '**/*.jpg'
+//        //include '**/*.ico'
+//          include '**/*.png'
+        }
+    }
+    test {
+        java {
+            srcDir 'src/test/java'
+            include '**/*.java'
+        }
+    }
+}
+
+
+dependencies {
+    implementation project(':FastMines_core')
+
+    // !! do not use external dependencies to minimize assembly size
+
+    testImplementation 'io.reactivex.rxjava2:rxjava:2.2.21'
+    testImplementation project(':FastMines_core').sourceSets.test.output
+    testImplementation 'junit:junit:4.13.2'
+}
+
+test.dependsOn(":FastMines_core:test")
+
+gradle.taskGraph.beforeTask { Task task ->
+    if ((task.getProject().getName() == 'FastMines_swing') && (task.getName() == 'processResources')) {
+        //println ">>>>>>> taskNames = " + project.gradle.startParameter.taskNames
+        task.duplicatesStrategy = 'include'
+    }
+}
+
+task runDemoApp(type: JavaExec) {
+    group = 'Execution'
+    description = 'Run the demo swing (animation test)'
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = demoAppClassName
+}
+
+task runTestDialogs(type: JavaExec) {
+    group = 'Execution'
+    description = 'Run the demo swing (dailogs test)'
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = demoDialogsClassName
+}
+
+
+configurations.implementation.setCanBeResolved(true)
+task fastMinesSwingFatJar(type: Jar) {
+    manifest {
+        attributes jar.manifest.attributes
+    }
+    archiveBaseName = 'FastMines_swing-fat'
+    from {
+        configurations.implementation.collect {
+            it.isDirectory()
+                ? it
+                : zipTree(it).matching{exclude{
+                    //println it
+                    //it.name == 'META-INF'
+                    it.toString().contains('!META-INF')
+                }}
+        }
+    }
+    with jar
+}
+project(':FastMines_swing').tasks.fastMinesSwingFatJar.dependsOn project(':FastMines_core' ).tasks.build
+project(':FastMines_swing').tasks.build               .dependsOn project(':FastMines_swing').tasks.fastMinesSwingFatJar
+
+task fastMinesSwingGraalNative(dependsOn: fastMinesSwingFatJar) { task ->
+
+    doLast {
+        if (!org.gradle.internal.jvm.Jvm.current().toString().contains("GraalVM"))
+            // can`t build
+            throw new RuntimeException(task.name + ': Unsupported JDK. Can usage GraalVM JDK')
+
+        def isWin = org.gradle.internal.os.OperatingSystem.current().isWindows()
+
+        // pre requirements
+        exec {
+            commandLine isWin ? 'cmd' : 'sh',
+                        isWin ? '/c' : '-c',
+                        System.env.GRAALVM_HOME + '/bin/gu install native-image'
+        }
+
+        // TODO: if isWin exec from command line etc "p:\ProgramFiles\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+        //if (isWin)
+        //    exec {
+        //        commandLine 'cmd', '/c', 'p:\\ProgramFiles\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat'
+        //}
+
+        def execLine = System.env.GRAALVM_HOME + '/bin/native-image' +
+            ' -jar ' + project(':FastMines_swing').buildDir.absolutePath + '/libs/FastMines_swing-fat-' + version + '.jar' +
+            ' -H:Name=FastMines_swing' +
+            ' -H:-CheckToolchain' +
+            ' -H:+ReportExceptionStackTraces' +
+            //(isWin ? ' -H:NativeLinkerOption=prefs.lib' : '') +
+            //' --no-server' +
+            //' --no-fallback'
+            ' --no-server' +
+            ' --no-fallback' +
+            ' --allow-incomplete-classpath' +
+            ' --report-unsupported-elements-at-runtime'
+
+        println '> ' + execLine
+
+        exec {
+            // HINT: see            META-INF/native-image/${groupId}/${artifactId}/native-image.properties
+            // ./src/main/resources/META-INF/native-image/FastMinesGame/FastMines_swing/native-image.properties
+
+            commandLine isWin ? 'cmd' : 'sh',
+                        isWin ? '/c' : '-c',
+                        execLine
+
+            // exec > ./FastMines_swing/FastMines_swing(.exe) 
+            // > java.lang.Error: java.home property not set
+            //       at sun.awt.FontConfiguration.findFontConfigFile(FontConfiguration.java:182)
+            // ;(
+            // try in graalvm-ce-java8-19.3.0 (Ubuntu 18.04):
+            // try in graalvm-ce-java11-21.1.0 (Win 11)
+        }
+    }
+}

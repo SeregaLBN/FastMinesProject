@@ -1,0 +1,165 @@
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using Fmg.Common;
+using Fmg.Common.Geom;
+
+namespace Fmg.Core.Img {
+
+    /// <summary> MVC: model for FastMines logo image </summary>
+    public class LogoModel : AnimatedImageModel {
+
+        public enum ERotateMode {
+            /// <summary> rotate image </summary>
+            Classic,
+            /// <summary> rotate color Palette </summary>
+            Color,
+            /// <summary> color + classic </summary>
+            Combi
+        }
+
+
+        public readonly HSV[] _palette = { new HSV(  0), new HSV( 45), new HSV( 90), new HSV(135),
+                                           new HSV(180), new HSV(225), new HSV(270), new HSV(315) };
+        private bool _useGradient;
+        private ERotateMode _rotateMode = ERotateMode.Combi;
+        /** owner rays points */
+        private readonly IList<PointDouble> _rays = new List<PointDouble>();
+        /** inner octahedron */
+        private readonly IList<PointDouble> _inn = new List<PointDouble>();
+        /** central octahedron */
+        private readonly IList<PointDouble> _oct = new List<PointDouble>();
+
+
+        public LogoModel() {
+            BackgroundColor = Color.Transparent;
+            PropertyChanged += OnPropertyChanged;
+        }
+
+        public BoundDouble InnerPadding {
+            get {
+                var pad = base.Padding;
+                var s = Size;
+                double innerX = s.Width - pad.LeftAndRight;
+                double innerY = s.Height - pad.TopAndBottom;
+                if (innerX != innerY) {
+                    double add = (innerX - innerY) / 2;
+                    if (innerX > innerY) {
+                        pad.Left  += add;
+                        pad.Right += add;
+                    } else {
+                        pad.Top    -= add;
+                        pad.Bottom -= add;
+                    }
+                }
+                return pad;
+            }
+        }
+
+        public HSV[] Palette => _palette;
+
+        public static void ToMineModel(LogoModel m) {
+            m.UseGradient = false;
+            for (var i = 0; i < m.Palette.Length; ++i)
+                //m.Palette[i].v = 75;
+                m.Palette[i].Grayscale();
+        }
+
+        public bool UseGradient {
+            get { return _useGradient; }
+            set { _notifier.SetProperty(ref _useGradient, value); }
+        }
+
+        public ERotateMode RotateMode {
+            get { return _rotateMode; }
+            set { _notifier.SetProperty(ref _rotateMode, value); }
+        }
+
+        public double ZoomX => (Size.Width  - InnerPadding.LeftAndRight) / 200.0;
+        public double ZoomY => (Size.Height - InnerPadding.TopAndBottom) / 200.0;
+
+        public IList<PointDouble> Rays {
+            get {
+                if (!_rays.Any()) {
+                    var pad = InnerPadding;
+                    var pl = pad.Left;
+                    var pt = pad.Top;
+                    var zx = ZoomX;
+                    var zy = ZoomY;
+
+                    _rays.Add(new PointDouble(pl + 100.0000 * zx, pt + 200.0000 * zy));
+                    _rays.Add(new PointDouble(pl + 170.7107 * zx, pt +  29.2893 * zy));
+                    _rays.Add(new PointDouble(pl +   0.0000 * zx, pt + 100.0000 * zy));
+                    _rays.Add(new PointDouble(pl + 170.7107 * zx, pt + 170.7107 * zy));
+                    _rays.Add(new PointDouble(pl + 100.0000 * zx, pt +   0.0000 * zy));
+                    _rays.Add(new PointDouble(pl +  29.2893 * zx, pt + 170.7107 * zy));
+                    _rays.Add(new PointDouble(pl + 200.0000 * zx, pt + 100.0000 * zy));
+                    _rays.Add(new PointDouble(pl +  29.2893 * zx, pt +  29.2893 * zy));
+                }
+                return _rays;
+            }
+        }
+
+        public IList<PointDouble> Inn {
+            get {
+                if (!_inn.Any()) {
+                    var pad = InnerPadding;
+                    var pl = pad.Left;
+                    var pt = pad.Top;
+                    var zx = ZoomX;
+                    var zy = ZoomY;
+
+                    _inn.Add(new PointDouble(pl + 100.0346 * zx, pt + 141.4070 * zy));
+                    _inn.Add(new PointDouble(pl + 129.3408 * zx, pt +  70.7320 * zy));
+                    _inn.Add(new PointDouble(pl +  58.5800 * zx, pt + 100.0000 * zy));
+                    _inn.Add(new PointDouble(pl + 129.2500 * zx, pt + 129.2500 * zy));
+                    _inn.Add(new PointDouble(pl +  99.9011 * zx, pt +  58.5377 * zy));
+                    _inn.Add(new PointDouble(pl +  70.7233 * zx, pt + 129.3198 * zy));
+                    _inn.Add(new PointDouble(pl + 141.4167 * zx, pt + 100.0000 * zy));
+                    _inn.Add(new PointDouble(pl +  70.7500 * zx, pt +  70.7500 * zy));
+                }
+                return _inn;
+            }
+        }
+
+        public IList<PointDouble> Oct {
+            get {
+                if (!_oct.Any()) {
+                    var pad = InnerPadding;
+                    var pl = pad.Left;
+                    var pt = pad.Top;
+                    var zx = ZoomX;
+                    var zy = ZoomY;
+
+                    _oct.Add(new PointDouble(pl + 120.7053 * zx, pt + 149.9897 * zy));
+                    _oct.Add(new PointDouble(pl + 120.7269 * zx, pt +  50.0007 * zy));
+                    _oct.Add(new PointDouble(pl +  50.0034 * zx, pt + 120.7137 * zy));
+                    _oct.Add(new PointDouble(pl + 150.0000 * zx, pt + 120.6950 * zy));
+                    _oct.Add(new PointDouble(pl +  79.3120 * zx, pt +  50.0007 * zy));
+                    _oct.Add(new PointDouble(pl +  79.2624 * zx, pt + 149.9727 * zy));
+                    _oct.Add(new PointDouble(pl + 150.0000 * zx, pt +  79.2737 * zy));
+                    _oct.Add(new PointDouble(pl +  50.0034 * zx, pt +  79.3093 * zy));
+                }
+                return _oct;
+            }
+        }
+
+        protected void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            switch (ev.PropertyName) {
+            case nameof(this.Size):
+            case nameof(this.Padding):
+                _rays.Clear();
+                _inn.Clear();
+                _oct.Clear();
+                break;
+            }
+        }
+
+        protected override void Disposing() {
+            PropertyChanged -= OnPropertyChanged;
+            base.Disposing();
+        }
+
+    }
+
+}

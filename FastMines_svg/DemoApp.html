@@ -1,0 +1,145 @@
+<html>
+<head lang='en'>
+    <meta charset='UTF-8'>
+    <script type="text/JavaScript" src="../FastMines_core/src/fmg/common/Common.js"></script>
+    <script type="text/JavaScript" src="../FastMines_core/src/fmg/common/Color.js"></script>
+    <script type="text/JavaScript" src="../FastMines_core/src/fmg/common/HSV.js"></script>
+    <script type="text/JavaScript" src="../FastMines_core/src/fmg/common/geom/Point.js"></script>
+    <script type="text/JavaScript" src="../FastMines_core/src/fmg/common/geom/Size.js"></script>
+    <script type="text/JavaScript" src="../FastMines_core/src/fmg/common/geom/Rect.js"></script>
+    <script type="text/JavaScript" src="../FastMines_core/src/fmg/common/geom/Bound.js"></script>
+    <script type="text/JavaScript" src="../FastMines_core/src/fmg/common/geom/util/FigureHelper.js"></script>
+    <script type="text/JavaScript" src="../FastMines_core/src/fmg/core/types/ESkillLevel.js"></script>
+
+    <script type="text/JavaScript" src="../FastMines_core/src/fmg/core/img/AnimatedInnerModel.js"></script>
+    <script type="text/JavaScript" src="../FastMines_core/src/fmg/core/img/AnimatedImageModel.js"></script>
+    <script type="text/JavaScript" src="../FastMines_core/src/fmg/core/img/LogoModel.js"></script>
+    <script type="text/JavaScript" src="../FastMines_core/src/fmg/core/img/BurgerMenuModel.js"></script>
+    <script type="text/JavaScript" src="../FastMines_core/src/fmg/core/img/MosaicSkillModel.js"></script>
+
+    <script type="text/JavaScript" src="../FastMines_core/src/fmg/core/img/ImageView.js"></script>
+    <script type="text/JavaScript" src="../FastMines_core/src/fmg/core/img/WithBurgerMenuView.js"></script>
+
+    <script type="text/JavaScript" src="../FastMines_core/src/fmg/core/img/ImageController.js"></script>
+    <script type="text/JavaScript" src="../FastMines_core/src/fmg/core/img/AnimatedInnerController.js"></script>
+    <script type="text/JavaScript" src="../FastMines_core/src/fmg/core/img/AnimatedImgController.js"></script>
+    <script type="text/JavaScript" src="../FastMines_core/src/fmg/core/img/LogoController.js"></script>
+    <script type="text/JavaScript" src="../FastMines_core/src/fmg/core/img/MosaicSkillController.js"></script>
+
+    <script type="text/JavaScript" src="../FastMines_core/src/fmg/core/img/IModelTransformer.js"></script>
+    <script type="text/JavaScript" src="../FastMines_core/src/fmg/core/img/RotateTransformer.js"></script>
+    <script type="text/JavaScript" src="../FastMines_core/src/fmg/core/img/PolarLightFgTransformer.js"></script>
+    <script type="text/JavaScript" src="../FastMines_core/src/fmg/core/img/RotateLogoTransformer.js"></script>
+    <script type="text/JavaScript" src="../FastMines_core/src/fmg/core/img/PolarLightLogoTransformer.js"></script>
+
+    <script type="text/JavaScript" src="./src/fmg/js/img/svg/svgCommon.js"></script>
+    <script type="text/JavaScript" src="./src/fmg/js/img/svg/Logo.js"></script>
+    <script type="text/JavaScript" src="./src/fmg/js/img/svg/MosaicSkillOrGroupView.js"></script>
+    <script type="text/JavaScript" src="./src/fmg/js/img/svg/MosaicSkillImg.js"></script>
+
+    <script type="text/JavaScript" src="./src/fmg/js/app/ProjSettings.js"></script>
+
+    <title>FastMines project: images demo</title>
+</head>
+<body>
+
+    <svg xmlns='http://www.w3.org/2000/svg' version='1.1'
+        style='border: solid 1px red;'
+        preserveAspectRatio='none'
+        onload='initSvg(evt)' >
+    </svg>
+
+<script type='text/ecmascript'>
+
+//////////////////////////////////////
+//
+// execute in latest Firefox or Chrome
+// see console output
+//
+//////////////////////////////////////
+
+
+function initSvg(evt) {
+    if (!window.svgDoc)
+        window.svgDoc = evt.target.ownerDocument;
+    var svg = evt.target;
+    work(svg, window.svgDoc);
+}
+
+function work(svg, svgDoc) {
+    ProjSettings.useRandom = true;
+    ProjSettings.modify();
+
+    /** /
+    {
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>');
+        var hsv = new HSV();
+        for (var i=0; i<=360; ++i) {
+            hsv.h = i;
+            console.log('<item android:color="#' + hsv.toColor().asHexString + '" android:offset="' + round(i/360, 4) + '" />');
+        }
+        console.log('<<<<<<<<<<<<<<<<<<<<<<<');
+    }
+    /**/
+
+    svg.setAttributeNS(null, 'viewBox', '0 0 ' + ProjSettings.width + ' ' + ProjSettings.height);
+    svg.setAttributeNS(null, 'width'  , ProjSettings.width);
+    svg.setAttributeNS(null, 'height' , ProjSettings.height);
+
+
+    var cntrllr;
+    switch (ProjSettings.testedImageType) {
+    case 0:
+        cntrllr = new LogoControllerSvg(svg, svgDoc);
+        break;
+    case 1:
+        cntrllr = new MosaicSkillImgControllerSvg(ProjSettings.mosaicSkill, svg, svgDoc);
+        break;
+    }
+    ProjSettings.currentImageController = cntrllr;
+
+    cntrllr.useRotateTransforming(ProjSettings.useRotateTransforming);
+    cntrllr.usePolarLightFgTransforming(ProjSettings.usePolarLightFgTransforming);
+
+    // 1. configure image from settings
+    var model = cntrllr.Model;
+    model.size.width  = ProjSettings.width;
+    model.size.height = ProjSettings.height;
+    model.padding = ProjSettings.pad;
+    if (model instanceof AnimatedImageModel) {
+        model.mosaicSkill       = ProjSettings.mosaicSkill;
+        model.borderWidth       = ProjSettings.borderWidth;
+        model.backgroundColor   = ProjSettings.backgroundColor;
+        model.foregroundColor.a = ProjSettings.foregroundAlpha;
+        model.animated          = ProjSettings.animated;
+        model.animeDirection    = ProjSettings.animeDirection;
+        model.animatePeriod     = ProjSettings.animatePeriod;
+        model.totalFrames       = ProjSettings.totalFrames;
+        // if (cntrllr.View instanceof WithBurgerMenuView) {
+        //    cntrllr.View.burgerMenuModel.show = ProjSettings.showBurgerMenu;
+        // }
+        if (model instanceof LogoModel) {
+            model.useGradient = ProjSettings.useGradientFill;
+        }
+    } else {
+        throw new Error('implement me...');
+    }
+
+    if (model.animated)
+        // 2. run image animation
+        for (var i=0; i<model.totalFrames+1; ++i) {
+            model.currentFrame = i;
+            cntrllr.executeTransformers();
+            cntrllr.View.invalidate();
+            cntrllr.image; // call draw
+        }
+    else
+        cntrllr.image; // call draw
+
+    var svgContent = cntrllr.View.getSvgContent();
+    console.log(cntrllr.getFileName() + '.svg' + '\n' + svgContent);
+}
+
+</script>
+</body>
+</html>

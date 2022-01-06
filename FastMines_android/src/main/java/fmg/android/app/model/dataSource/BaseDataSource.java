@@ -1,0 +1,167 @@
+package fmg.android.app.model.dataSource;
+
+import android.graphics.Bitmap;
+
+import androidx.databinding.BaseObservable;
+import androidx.databinding.Bindable;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import fmg.android.app.BR;
+import fmg.android.app.model.items.BaseDataItem;
+import fmg.common.geom.SizeDouble;
+import fmg.common.notifier.INotifyPropertyChanged;
+import fmg.common.notifier.NotifyPropertyChanged;
+import fmg.core.img.IAnimatedModel;
+import fmg.core.img.IImageView;
+import fmg.core.img.ImageController;
+import fmg.core.types.Property;
+
+/** Base container for image items */
+public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THeaderModel, THeaderView, THeaderCtrlr>,
+                                     THeaderId,
+                                     THeaderModel extends IAnimatedModel,
+                                     THeaderView  extends IImageView<Bitmap, THeaderModel>,
+                                     THeaderCtrlr extends ImageController<Bitmap, THeaderView, THeaderModel>,
+
+                                     TItem   extends BaseDataItem<TItemId, TItemModel, TItemView, TItemCtrlr>,
+                                     TItemId,
+                                     TItemModel extends IAnimatedModel,
+                                     TItemView  extends IImageView<Bitmap, TItemModel>,
+                                     TItemCtrlr extends ImageController<Bitmap, TItemView, TItemModel>>
+    extends BaseObservable
+    implements INotifyPropertyChanged, AutoCloseable
+{
+
+    public static final String PROPERTY_DATA_SOURCE      = "DataSource";
+    public static final String PROPERTY_HEADER           = "Header";
+    public static final String PROPERTY_IMAGE_SIZE       = "ImageSize";
+    public static final String PROPERTY_CURRENT_ITEM     = "CurrentItem";
+    public static final String PROPERTY_CURRENT_ITEM_POS = "CurrentItemPos";
+
+    /** Images that describes this data source */
+    protected THeader header;
+    /** Data source - images that describes the elements */
+    protected List<TItem> dataSource; // TODO??? MutableLiveData<...>
+    
+    /** Current item index in {@link #dataSource} */
+    @Property(PROPERTY_CURRENT_ITEM_POS)
+    protected int currentItemPos = NOT_SELECTED_POS;
+    
+    private boolean disposed;
+
+    private static final int NOT_SELECTED_POS = -1;
+
+    protected final NotifyPropertyChanged notifier/*Sync*/ = new NotifyPropertyChanged(this, false);
+    private   final NotifyPropertyChanged notifierAsync    = new NotifyPropertyChanged(this, true);
+    private final PropertyChangeListener      onPropertyChangedListener = this::onPropertyChanged;
+    private final PropertyChangeListener onAsyncPropertyChangedListener = this::onAsyncPropertyChanged;
+
+    protected BaseDataSource() {
+        notifier     .addListener(onPropertyChangedListener);
+        notifierAsync.addListener(onAsyncPropertyChangedListener);
+    }
+
+    /** the top item that this data source describes */
+    @Bindable
+    public abstract THeader getHeader();
+
+    /** <summary> list of items */
+    @Bindable
+    public abstract List<TItem> getDataSource();
+
+    /** Selected element */
+    @Bindable
+    public TItem getCurrentItem() {
+        int pos = getCurrentItemPos();
+        if (pos < 0)
+            return null;
+        return getDataSource().get(pos);
+    }
+    public void setCurrentItem(TItem activeItem) {
+        setCurrentItemPos(getDataSource().indexOf(activeItem));
+    }
+
+    /** Selected index of element */
+    @Bindable
+    public int getCurrentItemPos() { return currentItemPos; }
+    public void setCurrentItemPos(int pos) {
+        if ((pos < 0) || (pos >= getDataSource().size())) {
+            if (pos != NOT_SELECTED_POS)
+                throw new IllegalArgumentException("Illegal index of pos=" + pos);
+        }
+        if (pos == currentItemPos)
+            return;
+        notifier.setProperty(this.currentItemPos, pos, PROPERTY_CURRENT_ITEM_POS);
+    }
+
+    @Bindable
+    public SizeDouble getImageSize() {
+        return getDataSource().stream().map(x -> x.getSize()).findAny().orElseGet(() -> new SizeDouble(-123, -456));
+    }
+    public void setImageSize(SizeDouble size) {
+        SizeDouble old = getImageSize();
+        getDataSource().forEach(mi -> mi.setSize(size));
+
+        //notifier.setProperty(old, size, PROPERTY_IMAGE_SIZE);
+        if (!old.equals(size))
+            notifier.firePropertyChanged(old, size, PROPERTY_IMAGE_SIZE);
+    }
+
+    /** for one selected - start animate; for all other - stop animate */
+    protected abstract void onCurrentItemChanged();
+
+    protected void onPropertyChanged(PropertyChangeEvent ev) {
+        // refire as async event
+        notifierAsync.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+
+        switch (ev.getPropertyName()) {
+        case PROPERTY_CURRENT_ITEM_POS:
+            onCurrentItemChanged();
+            notifier.firePropertyChanged(PROPERTY_CURRENT_ITEM);
+            break;
+        }
+    }
+
+    protected void onAsyncPropertyChanged(PropertyChangeEvent ev) {
+        // refire as android data binding event
+        switch (ev.getPropertyName()) {
+        case PROPERTY_DATA_SOURCE     : notifyPropertyChanged(BR.dataSource    ); break;
+        case PROPERTY_HEADER          : notifyPropertyChanged(BR.header        ); break;
+        case PROPERTY_IMAGE_SIZE      : notifyPropertyChanged(BR.imageSize     ); break;
+        case PROPERTY_CURRENT_ITEM    : notifyPropertyChanged(BR.currentItem   ); break;
+        case PROPERTY_CURRENT_ITEM_POS: notifyPropertyChanged(BR.currentItemPos); break;
+        }
+    }
+
+    protected boolean isDisposed() { return disposed; }
+
+    @Override
+    public void close() {
+        disposed = true;
+        if (header != null)
+            header.close();
+        if (dataSource != null) {
+            dataSource.forEach(TItem::close);
+            dataSource.clear();
+        }
+        notifier     .removeListener(onPropertyChangedListener);
+        notifierAsync.removeListener(onAsyncPropertyChangedListener);
+        notifier.close();
+        notifierAsync.close();
+    }
+
+
+    @Override
+    public void addListener(PropertyChangeListener listener) {
+        notifierAsync.addListener(listener);
+    }
+    @Override
+    public void removeListener(PropertyChangeListener listener) {
+        notifierAsync.removeListener(listener);
+    }
+
+}

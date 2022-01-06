@@ -1,0 +1,61 @@
+def getGitRepoPath() {
+    new File(new URL(new File(rootProject.projectDir.absolutePath).toURI().toURL(), './.git').toURI()).absolutePath
+}
+
+def gitBranchName() {
+    def branchInfo = ''
+    try {
+        def proc = ('git --git-dir=' + gitRepoPath + ' rev-parse --abbrev-ref HEAD').execute()
+        proc.in.eachLine { line -> branchInfo = line }
+        proc.err.eachLine { line -> println line }
+        proc.waitFor()
+    } catch(ex) {
+        println '--------------------------------------'
+        println 'error execution GIT: ' + ex
+    }
+    branchInfo
+}
+
+def gitLastLogOneLine(prettyPlaceholder) { // prettyPlaceholder - @see https://git-scm.com/docs/pretty-formats
+    def res = ''
+    try {
+        def proc = ('git --git-dir=' + gitRepoPath + ' log -1 --pretty=%' + prettyPlaceholder).execute()
+        proc.in.eachLine { line ->
+            line = line.trim()
+            if (line.isEmpty())
+                return
+            res += res.isEmpty() ? line : ('; ' + line)
+        }
+        proc.err.eachLine { line -> println line }
+        proc.waitFor()
+    } catch(ex) {
+        println '--------------------------------------'
+        println 'error execution GIT: ' + ex
+    }
+    res
+}
+
+def gitLastCommitInfoOneLine() {
+    return 'Commit: '  + gitLastLogOneLine('H')  + // commit hash
+         '; Author: '  + gitLastLogOneLine('an') + // author name
+                  ' '  + gitLastLogOneLine('ae') + // author email
+         '; Date: '    + gitLastLogOneLine('ai') + // author date
+         '; Comment: ' + gitLastLogOneLine('B')    // raw body (unwrapped subject and body)
+}
+
+def gitLastCommitInfo() {
+    def res = ''
+    def proc = ('git --git-dir=' + gitRepoPath +' log -1').execute()
+    proc.in.eachLine { line ->
+        res += res.isEmpty() ? line : ('\n' + line)
+    }
+    proc.err.eachLine { line -> println line }
+    proc.waitFor()
+    res
+}
+
+
+println '================== GIT info ==================='
+println gitBranchName()
+println gitLastCommitInfo()
+println '==============================================='

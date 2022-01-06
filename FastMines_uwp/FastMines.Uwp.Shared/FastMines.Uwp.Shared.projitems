@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>3ab77d5f-33da-4867-b97b-9e0da4901dde</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>FastMines.Uwp.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\src\fmg\uwp\utils\Timer.cs"                                Link="src_fmg.uwp\utils\Timer.cs" />
+    <Compile Include="..\src\fmg\uwp\utils\Cast.cs"                                 Link="src_fmg.uwp\utils\Cast.cs" />
+    <Compile Include="..\src\fmg\uwp\utils\AsyncRunner.cs"                          Link="src_fmg.uwp\utils\AsyncRunner.cs" />
+    <Compile Include="..\src\fmg\uwp\utils\ScreenResolutionHelper.cs"               Link="src_fmg.uwp\utils\ScreenResolutionHelper.cs" />
+    <Compile Include="..\src\fmg\uwp\mosaic\MosaicFrameworkElementController.cs"    Link="src_fmg.uwp\mosaic\MosaicFrameworkElementController.cs" />
+    <Compile Include="..\src\fmg\uwp\img\MosaicSkillCharImg.cs"                     Link="src_fmg.uwp\img\MosaicSkillCharImg.cs" />
+    <Compile Include="..\src\fmg\uwp\img\Animator.cs"                               Link="src_fmg.uwp\img\Animator.cs" />
+    <Compile Include="..\src\fmg\uwp\app\ProjSettings.cs"                           Link="src_fmg.uwp\app\ProjSettings.cs" />
+  </ItemGroup>
+</Project>

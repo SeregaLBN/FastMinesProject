@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.0</TargetFramework>
+
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Compile Include="..\src_test\fmg\Common\Notifier\NotifyPropertyChangedAvaTest.cs"  Link="fmg\Common\Notifier\NotifyPropertyChangedAvaTest.cs" />
+      <Compile Include="..\src_test\fmg\Common\Notifier\PropertyChangeExecutorAvaTest.cs" Link="fmg\Common\Notifier\PropertyChangeExecutorAvaTest.cs" />
+      <Compile Include="..\src_test\fmg\Core\Mosaic\MosaicControllerAvaTest.cs"           Link="fmg\Core\Mosaic\MosaicControllerAvaTest.cs" />
+      <Compile Include="..\src_test\fmg\Core\Mosaic\MosaicHelperAvaTest.cs"               Link="fmg\Core\Mosaic\MosaicHelperAvaTest.cs" />
+      <Compile Include="..\src_test\fmg\Core\Mosaic\MosaicInitDataAvaTest.cs"             Link="fmg\Core\Mosaic\MosaicInitDataAvaTest.cs" />
+      <Compile Include="..\src_test\fmg\Core\Mosaic\MosaicModelAvaTest.cs"                Link="fmg\Core\Mosaic\MosaicModelAvaTest.cs" />
+      <Compile Include="..\src_test\fmg\Core\Mosaic\MosaicViewAvaTest.cs"                 Link="fmg\Core\Mosaic\MosaicViewAvaTest.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
+        <PackageReference Include="xunit" Version="2.4.1" />
+        <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Avalonia" Version="0.10.6" />
+        <PackageReference Include="Avalonia.Desktop" Version="0.10.6" />
+    </ItemGroup>
+    <Import Project="..\..\FastMines_core\FastMines.Core.projitems" Label="Shared" />
+    <Import Project="..\..\FastMines_core\UnitTest.FastMines.Core\UnitTest.FastMines.Core.projitems" Label="Shared" />
+    <Import Project="..\FastMines.Ava.Draw\FastMines.Ava.Draw.projitems" Label="Shared" />
+
+</Project>

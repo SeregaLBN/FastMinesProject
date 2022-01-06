@@ -1,0 +1,45 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.0.4'
+
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+if (org.gradle.internal.os.OperatingSystem.current().isWindows())
+    exec {
+        // Using UTF-8 Encoding (CHCP 65001) in Command Prompt / Windows Powershell
+        commandLine 'cmd', '/c', 'chcp 65001'
+        // used for logo draw in console
+        // TODO: don`t help for me - see logo.gradle file
+    }
+
+apply from: 'logo.gradle'
+apply from: 'gitInfo.gradle'
+
+
+println 'JVM ' + org.gradle.internal.jvm.Jvm.current()
+println org.gradle.internal.jvm.Jvm.current().javaHome
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+
+defaultTasks 'clean', 'build'

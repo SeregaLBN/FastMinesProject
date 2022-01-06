@@ -1,0 +1,639 @@
+[
+{
+  "name":"com.sun.crypto.provider.DESedeCipher",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.java.swing.plaf.windows.WindowsButtonUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"com.sun.java.swing.plaf.windows.WindowsCheckBoxMenuItemUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"com.sun.java.swing.plaf.windows.WindowsCheckBoxUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"com.sun.java.swing.plaf.windows.WindowsComboBoxUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"com.sun.java.swing.plaf.windows.WindowsLabelUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"com.sun.java.swing.plaf.windows.WindowsLookAndFeel",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.java.swing.plaf.windows.WindowsMenuBarUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"com.sun.java.swing.plaf.windows.WindowsMenuItemUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"com.sun.java.swing.plaf.windows.WindowsMenuUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"com.sun.java.swing.plaf.windows.WindowsPopupMenuUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"com.sun.java.swing.plaf.windows.WindowsRadioButtonMenuItemUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"com.sun.java.swing.plaf.windows.WindowsRadioButtonUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"com.sun.java.swing.plaf.windows.WindowsRootPaneUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"com.sun.java.swing.plaf.windows.WindowsScrollBarUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"com.sun.java.swing.plaf.windows.WindowsSeparatorUI"
+},
+{
+  "name":"com.sun.java.swing.plaf.windows.WindowsSpinnerUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"com.sun.java.swing.plaf.windows.WindowsTabbedPaneUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"com.sun.java.swing.plaf.windows.WindowsTableHeaderUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"com.sun.java.swing.plaf.windows.WindowsTextFieldUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"com.sun.java.swing.plaf.windows.WindowsToggleButtonUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"fmg.core.img.AnimatedImageModel",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.img.AnimatedInnerModel",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.img.BurgerMenuModel",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.img.FlagModel",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.img.ImageController",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.img.ImageView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.img.LogoModel",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.img.MosaicAnimatedModel",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.img.MosaicGroupModel",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.img.MosaicSkillModel",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.img.SmileModel",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.img.WithBurgerMenuView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.mosaic.BackgroundFill",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.mosaic.MosaicController",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.mosaic.MosaicDrawModel",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.mosaic.MosaicGameModel",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.mosaic.MosaicInitData",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.mosaic.MosaicView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.core.mosaic.cells.Hexagon1",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Hexagon1$AttrHexagon1","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Hexagon1$AttrHexagon1",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Parquet1",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Parquet1$AttrParquet1","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Parquet1$AttrParquet1",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Parquet2",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Parquet2$AttrParquet2","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Parquet2$AttrParquet2",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.PenrousePeriodic1",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.PenrousePeriodic1$AttrPenrousePeriodic1","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.PenrousePeriodic1$AttrPenrousePeriodic1",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.PentagonT10",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.PentagonT10$AttrPentagonT10","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.PentagonT10$AttrPentagonT10",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.PentagonT24",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.PentagonT24$AttrPentagonT24","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.PentagonT24$AttrPentagonT24",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.PentagonT5",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.PentagonT5$AttrPentagonT5","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.PentagonT5$AttrPentagonT5",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Quadrangle1",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Quadrangle1$AttrQuadrangle1","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Quadrangle1$AttrQuadrangle1",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Rhombus1",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Rhombus1$AttrRhombus1","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Rhombus1$AttrRhombus1",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.SqTrHex",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.SqTrHex$AttrSqTrHex","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.SqTrHex$AttrSqTrHex",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Square1",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Square1$AttrSquare1","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Square1$AttrSquare1",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Square2",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Square2$AttrSquare2","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Square2$AttrSquare2",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.TrSq1",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.TrSq1$AttrTrSq1","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.TrSq1$AttrTrSq1",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.TrSq2",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.TrSq2$AttrTrSq2","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.TrSq2$AttrTrSq2",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Trapezoid1",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Trapezoid1$AttrTrapezoid1","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Trapezoid1$AttrTrapezoid1",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Trapezoid2",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Trapezoid2$AttrTrapezoid2","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Trapezoid2$AttrTrapezoid2",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Trapezoid3",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Trapezoid3$AttrTrapezoid3","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Trapezoid3$AttrTrapezoid3",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Triangle1",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Triangle1$AttrTriangle1","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Triangle1$AttrTriangle1",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Triangle2",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Triangle2$AttrTriangle2","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Triangle2$AttrTriangle2",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Triangle3",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Triangle3$AttrTriangle3","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Triangle3$AttrTriangle3",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Triangle4",
+  "methods":[{"name":"<init>","parameterTypes":["fmg.core.mosaic.cells.Triangle4$AttrTriangle4","fmg.common.geom.Coord"] }]
+},
+{
+  "name":"fmg.core.mosaic.cells.Triangle4$AttrTriangle4",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"fmg.core.types.draw.PenBorder",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.app.serializable.SerializeMosaicData",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.Flag$IconView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.Flag$SwingView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.Logo$IconView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.Logo$ImageAwtView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.Logo$SwingView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.MosaicGroupImg$IconView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.MosaicGroupImg$SwingView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.MosaicImg$IconView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.MosaicImg$ImageAwtView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.MosaicImg$SwingView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.MosaicSkillImg$IconView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.MosaicSkillImg$SwingView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.MosaicSkillOrGroupView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.Smile$IconView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.img.Smile$SwingView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.mosaic.MosaicJPanelController",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.mosaic.MosaicJPanelView",
+  "allDeclaredFields":true
+},
+{
+  "name":"fmg.swing.mosaic.MosaicSwingView",
+  "allDeclaredFields":true
+},
+{
+  "name":"java.awt.SequencedEvent"
+},
+{
+  "name":"java.awt.SystemColor",
+  "fields":[
+    {"name":"activeCaption"}, 
+    {"name":"activeCaptionBorder"}, 
+    {"name":"activeCaptionText"}, 
+    {"name":"control"}, 
+    {"name":"controlDkShadow"}, 
+    {"name":"controlHighlight"}, 
+    {"name":"controlLtHighlight"}, 
+    {"name":"controlShadow"}, 
+    {"name":"controlText"}, 
+    {"name":"desktop"}, 
+    {"name":"inactiveCaption"}, 
+    {"name":"inactiveCaptionBorder"}, 
+    {"name":"inactiveCaptionText"}, 
+    {"name":"info"}, 
+    {"name":"infoText"}, 
+    {"name":"menu"}, 
+    {"name":"menuText"}, 
+    {"name":"scrollbar"}, 
+    {"name":"text"}, 
+    {"name":"textHighlight"}, 
+    {"name":"textHighlightText"}, 
+    {"name":"textInactiveText"}, 
+    {"name":"textText"}, 
+    {"name":"window"}, 
+    {"name":"windowBorder"}, 
+    {"name":"windowText"}
+  ]
+},
+{
+  "name":"java.awt.event.ActionListener[]"
+},
+{
+  "name":"java.awt.event.KeyEvent",
+  "fields":[
+    {"name":"VK_A"}, 
+    {"name":"VK_BACK_SLASH"}, 
+    {"name":"VK_BACK_SPACE"}, 
+    {"name":"VK_C"}, 
+    {"name":"VK_CONTEXT_MENU"}, 
+    {"name":"VK_COPY"}, 
+    {"name":"VK_CUT"}, 
+    {"name":"VK_DELETE"}, 
+    {"name":"VK_DOWN"}, 
+    {"name":"VK_END"}, 
+    {"name":"VK_ENTER"}, 
+    {"name":"VK_ESCAPE"}, 
+    {"name":"VK_F10"}, 
+    {"name":"VK_F2"}, 
+    {"name":"VK_F4"}, 
+    {"name":"VK_F8"}, 
+    {"name":"VK_H"}, 
+    {"name":"VK_HOME"}, 
+    {"name":"VK_INSERT"}, 
+    {"name":"VK_KP_DOWN"}, 
+    {"name":"VK_KP_LEFT"}, 
+    {"name":"VK_KP_RIGHT"}, 
+    {"name":"VK_KP_UP"}, 
+    {"name":"VK_LEFT"}, 
+    {"name":"VK_O"}, 
+    {"name":"VK_PAGE_DOWN"}, 
+    {"name":"VK_PAGE_UP"}, 
+    {"name":"VK_PASTE"}, 
+    {"name":"VK_RIGHT"}, 
+    {"name":"VK_SLASH"}, 
+    {"name":"VK_SPACE"}, 
+    {"name":"VK_TAB"}, 
+    {"name":"VK_UP"}, 
+    {"name":"VK_V"}, 
+    {"name":"VK_X"}
+  ]
+},
+{
+  "name":"java.awt.event.MouseMotionListener[]"
+},
+{
+  "name":"java.lang.Object",
+  "allDeclaredFields":true
+},
+{
+  "name":"java.security.MessageDigestSpi"
+},
+{
+  "name":"java.security.SecureRandomParameters"
+},
+{
+  "name":"javax.swing.plaf.basic.BasicCheckBoxMenuItemUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"javax.swing.plaf.basic.BasicFormattedTextFieldUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"javax.swing.plaf.basic.BasicListUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"javax.swing.plaf.basic.BasicMenuBarUI",
+  "methods":[{"name":"loadActionMap","parameterTypes":["javax.swing.plaf.basic.LazyActionMap"] }]
+},
+{
+  "name":"javax.swing.plaf.basic.BasicMenuItemUI",
+  "methods":[
+    {"name":"createUI","parameterTypes":["javax.swing.JComponent"] }, 
+    {"name":"loadActionMap","parameterTypes":["javax.swing.plaf.basic.LazyActionMap"] }
+  ]
+},
+{
+  "name":"javax.swing.plaf.basic.BasicMenuUI",
+  "methods":[
+    {"name":"createUI","parameterTypes":["javax.swing.JComponent"] }, 
+    {"name":"loadActionMap","parameterTypes":["javax.swing.plaf.basic.LazyActionMap"] }
+  ]
+},
+{
+  "name":"javax.swing.plaf.basic.BasicPanelUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"javax.swing.plaf.basic.BasicPopupMenuUI",
+  "methods":[
+    {"name":"createUI","parameterTypes":["javax.swing.JComponent"] }, 
+    {"name":"loadActionMap","parameterTypes":["javax.swing.plaf.basic.LazyActionMap"] }
+  ]
+},
+{
+  "name":"javax.swing.plaf.basic.BasicRadioButtonMenuItemUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"javax.swing.plaf.basic.BasicScrollPaneUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"javax.swing.plaf.basic.BasicSeparatorUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"javax.swing.plaf.basic.BasicSpinnerUI",
+  "methods":[{"name":"loadActionMap","parameterTypes":["javax.swing.plaf.basic.LazyActionMap"] }]
+},
+{
+  "name":"javax.swing.plaf.basic.BasicTabbedPaneUI",
+  "methods":[{"name":"loadActionMap","parameterTypes":["javax.swing.plaf.basic.LazyActionMap"] }]
+},
+{
+  "name":"javax.swing.plaf.basic.BasicTableUI",
+  "methods":[
+    {"name":"createUI","parameterTypes":["javax.swing.JComponent"] }, 
+    {"name":"loadActionMap","parameterTypes":["javax.swing.plaf.basic.LazyActionMap"] }
+  ]
+},
+{
+  "name":"javax.swing.plaf.basic.BasicToolTipUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"javax.swing.plaf.basic.BasicViewportUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"javax.swing.plaf.metal.MetalButtonUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"javax.swing.plaf.metal.MetalLabelUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"javax.swing.plaf.metal.MetalMenuBarUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"javax.swing.plaf.metal.MetalRootPaneUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"javax.swing.plaf.metal.MetalSeparatorUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"javax.swing.plaf.metal.MetalTextFieldUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"javax.swing.plaf.metal.MetalToggleButtonUI",
+  "methods":[{"name":"createUI","parameterTypes":["javax.swing.JComponent"] }]
+},
+{
+  "name":"sun.awt.Symbol",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.awt.Win32FontManager",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.awt.Win32GraphicsEnvironment",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.awt.windows.WToolkit",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.awt.windows.WingDings",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.java2d.marlin.DMarlinRenderingEngine",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.provider.DRBG",
+  "methods":[{"name":"<init>","parameterTypes":["java.security.SecureRandomParameters"] }]
+},
+{
+  "name":"sun.security.provider.MD5",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.provider.SHA",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.provider.SHA2$SHA256",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+}
+]

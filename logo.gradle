@@ -1,0 +1,47 @@
+def printLogo() {
+    try {
+        def fmgCanonicalLogo = './res/Logo/Logo_2020x2020.png'
+        def img = javax.imageio.ImageIO.read(new File(new URL(new File(rootProject.projectDir.absolutePath).toURI().toURL(), fmgCanonicalLogo).toURI()))
+        def r = java.util.concurrent.ThreadLocalRandom.current()
+
+        // scaleToConsole
+        def inImg = img
+        int inW = inImg.getWidth()
+        int inH = inImg.getHeight()
+        int maxIn = Math.max(inW, inH)
+        int maxOut = 25 + r.nextInt(25)
+        int outW = inW*maxOut/maxIn
+        int outH = outW / 3.5 // (int)(0.6 * inH*maxOut/maxIn) // fix console char size
+        def outImg = new java.awt.image.BufferedImage(outW, outH, java.awt.image.BufferedImage.TYPE_USHORT_GRAY)
+        def g = outImg.createGraphics()
+        g.setColor(java.awt.Color.WHITE)
+        g.fillRect(0, 0, outW, outH)
+        g.drawImage(inImg, 0, 0, outW, outH, null)
+        outImg.flush()
+        g.dispose();
+        img = outImg
+
+        // printImage
+        int w = img.getWidth()
+        int h = img.getHeight()
+        def chr = '█'
+        if (org.gradle.internal.os.OperatingSystem.current().isWindows())
+            chr = '#' // TODO: terminal command 'chcp 65001' don`t help for me
+        for (int row = 0; row < h; row++) {
+            StringBuilder line = new StringBuilder()
+            for (int col = 0; col < w; col++)
+                line.append((img.getRGB(col, row) == -1) ? ' ' : chr)
+
+            int[] colorCodes = [31,32,33,34,35,36];
+            println(String.format("%c[%dm", 0x1B, colorCodes[r.nextInt(colorCodes.length)])) // http://www.termsys.demon.co.uk/vtansi.htm
+            println(line.toString())
+        }
+        println(String.format("%c[%dm", 0x1B, 0)) // Reset all attributes
+
+    } catch (Exception ex) {
+        System.err.println("printLogo failed: " + ex.getMessage())
+        //ex.printStackTrace(System.err)
+    }
+}
+
+printLogo();

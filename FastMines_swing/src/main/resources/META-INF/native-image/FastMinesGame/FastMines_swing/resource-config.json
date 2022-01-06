@@ -1,0 +1,10 @@
+{
+  "resources":{
+  "includes":[]},
+  "bundles":[
+    {"name":"com.sun.java.swing.plaf.windows.resources.windows"}, 
+    {"name":"com.sun.swing.internal.plaf.basic.resources.basic"}, 
+    {"name":"com.sun.swing.internal.plaf.metal.resources.metal"}, 
+    {"name":"sun.awt.resources.awt"}
+  ]
+}

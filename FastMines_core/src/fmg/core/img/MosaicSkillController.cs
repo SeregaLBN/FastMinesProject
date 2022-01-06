@@ -1,0 +1,26 @@
+using Fmg.Core.Types;
+
+namespace Fmg.Core.Img {
+
+    /// <summary> MVC controller of <see cref="ESkillLevel"/> image </summary>
+    /// <typeparam name="TImage">platform specific view/image/picture or other display context/canvas/window/panel</typeparam>
+    /// <typeparam name="MosaicSkillModel">MVC view</typeparam>
+    public abstract class MosaicSkillController<TImage, TImageView>
+                       : AnimatedImgController<TImage, TImageView, MosaicSkillModel>
+        where TImage : class
+        where TImageView : WithBurgerMenuView<TImage, MosaicSkillModel>
+    {
+        protected MosaicSkillController(bool showBurgerMenu, TImageView imageView)
+            : base(imageView)
+        {
+            View.BurgerMenuModel.Show = showBurgerMenu;
+
+            UsePolarLightFgTransforming(true);
+            UseRotateTransforming(true);
+        }
+
+        public BurgerMenuModel BurgerMenuModel => View.BurgerMenuModel;
+
+    }
+
+}

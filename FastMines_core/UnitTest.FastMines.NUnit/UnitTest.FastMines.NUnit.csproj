@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+   <PropertyGroup>
+      <TargetFramework>netcoreapp2.0</TargetFramework>
+
+      <IsPackable>false</IsPackable>
+   </PropertyGroup>
+
+   <ItemGroup>
+      <PackageReference Include="nunit" Version="3.13.2" />
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
+      <PackageReference Include="System.Reactive.Core" Version="5.0.0" />
+      <PackageReference Include="System.Reactive.Linq" Version="5.0.0" />
+   </ItemGroup>
+
+   <Import Project="..\..\FastMines_core\FastMines.Core.projitems" Label="Shared" />
+   <Import Project="..\UnitTest.FastMines.Core\UnitTest.FastMines.Core.projitems" Label="Shared" />
+
+    <ItemGroup>
+        <Compile Include="..\src_test\fmg\common\notifier\NotifyPropertyChangedNUnitTest.cs"  Link="fmg.common\notifier\NotifyPropertyChangedNUnitTest.cs" />
+        <Compile Include="..\src_test\fmg\common\notifier\PropertyChangeExecutorNUnitTest.cs" Link="fmg.common\notifier\PropertyChangeExecutorNUnitTest.cs" />
+        <Compile Include="..\src_test\fmg\common\SimpleUiThreadLoop.cs"                       Link="fmg.common\SimpleUiThreadLoop.cs" />
+
+        <Compile Include="..\src_test\fmg\core\mosaic\MosaicControllerNUnitTest.cs"           Link="fmg.core\mosaic\MosaicControllerNUnitTest.cs" />
+        <Compile Include="..\src_test\fmg\core\mosaic\MosaicHelperNUnitTest.cs"               Link="fmg.core\mosaic\MosaicHelperNUnitTest.cs" />
+        <Compile Include="..\src_test\fmg\core\mosaic\MosaicModelNUnitTest.cs"                Link="fmg.core\mosaic\MosaicModelNUnitTest.cs" />
+        <Compile Include="..\src_test\fmg\core\mosaic\MosaicViewNUnitTest.cs"                 Link="fmg.core\mosaic\MosaicViewNUnitTest.cs" />
+        <Compile Include="..\src_test\fmg\core\mosaic\MosaicInitDataNUnitTest.cs"             Link="fmg.core\mosaic\MosaicInitDataNUnitTest.cs" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,4 @@
+rootProject.name = 'FastMinesProject'
+
+include ':FastMines_core', ':FastMines_swing', ':FastMines_jfx'
+include ':FastMines_android' // disable (if not installed Android SDK)

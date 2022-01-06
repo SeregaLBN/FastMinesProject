@@ -1,0 +1,67 @@
+using Fmg.Common;
+using Fmg.Common.Geom;
+using Windows.Graphics.Display;
+
+namespace Fmg.Uwp.Utils {
+
+    /// <summary>
+    /// Приведение типов от платформо-независимых чистых C# классов Fmg.Common.* к библиотечным Windows.Foundation классам
+    /// </summary>
+    public static class Cast {
+
+        public static Size ToFmSize(this Windows.Foundation.Size self) { return new Size((int)self.Width, (int)self.Height); }
+        public static Windows.Foundation.Size ToWinSize(this Size self) { return new Windows.Foundation.Size { Width = self.Width, Height = self.Height }; }
+
+        public static SizeDouble ToFmSizeDouble(this Windows.Foundation.Size self) { return new SizeDouble(self.Width, self.Height); }
+        public static Windows.Foundation.Size ToWinSize(this SizeDouble self) { return new Windows.Foundation.Size { Width = self.Width, Height = self.Height }; }
+
+        public static Rect ToFmRect(this Windows.Foundation.Rect self) { return new Rect((int)self.X, (int)self.Y, (int)self.Width, (int)self.Height); }
+        public static Windows.Foundation.Rect ToWinRect(this Rect self) { return new Windows.Foundation.Rect(self.X, self.Y, self.Width, self.Height); }
+
+        public static RectDouble ToFmRectDouble(this Windows.Foundation.Rect self) { return new RectDouble(self.X, self.Y, self.Width, self.Height); }
+        public static Windows.Foundation.Rect ToWinRect(this RectDouble self) { return new Windows.Foundation.Rect(self.X, self.Y, self.Width, self.Height); }
+
+        public static Point ToFmPoint(this Windows.Foundation.Point self) { return new Point((int)self.X, (int)self.Y); }
+        public static Windows.Foundation.Point ToWinPoint(this Point self) { return new Windows.Foundation.Point { X = self.X, Y = self.Y }; }
+
+        public static PointDouble ToFmPointDouble(this Windows.Foundation.Point self) { return new PointDouble(self.X, self.Y); }
+        public static Windows.Foundation.Point ToWinPoint(this PointDouble self) { return new Windows.Foundation.Point { X = self.X, Y = self.Y }; }
+
+        public static Color ToFmColor(this Windows.UI.Color self) { return new Color(self.A, self.R, self.G, self.B); }
+        public static Windows.UI.Color ToWinColor(this Color self) { return new Windows.UI.Color { A = self.A, B = self.B, G = self.G, R = self.R }; }
+
+        public static HSV ToHsvColor(this Windows.UI.Color self) { return new HSV(self.ToFmColor()); }
+        public static Windows.UI.Color ToWinColor(this HSV self) { return self.ToColor().ToWinColor(); }
+
+        // <summary> </summary>
+
+        /// <summary>
+        /// Pixels to DPI
+        /// There are 72 points per inch; if it is sufficient to assume 96 pixels per inch, the formula is rather simple:
+        ///     points = pixels* 72 / 96
+        /// </summary>
+        public static double PxToDp(this double pixels) {
+            // UWP: (dpi:  96: 100%;  144: 150%)
+            // dp = px / (dpi / 72)
+            // dp = px / density
+
+            var di = DisplayInformation.GetForCurrentView();
+            var density = di.LogicalDpi / 72;
+            var dp = pixels / density;
+            return dp;
+        }
+        /// <summary> DPI to pixels </summary>
+        public static double DpToPx(this double dp) {
+            // UWP: (dpi:  96: 100%; ... 144: 150%)
+            // px = dp * dpi / 72
+            // px = dp * density
+
+            var di = DisplayInformation.GetForCurrentView();
+            var density = di.LogicalDpi / 72;
+            var px = dp * density;
+            return px;
+        }
+
+    }
+
+}

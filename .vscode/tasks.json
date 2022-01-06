@@ -1,0 +1,25 @@
+{
+   "version": "2.0.0",
+   "tasks": [
+        {
+            "label": "build UnitTest.FastMines.NUnit",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "test",
+                "${workspaceFolder}/FastMines_core/UnitTest.FastMines.NUnit/UnitTest.FastMines.NUnit.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build Test.FastMines.Ava.Images",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/FastMines_Ava/Test.FastMines.Ava.Images/Test.FastMines.Ava.Images.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        }
+   ]
+}
