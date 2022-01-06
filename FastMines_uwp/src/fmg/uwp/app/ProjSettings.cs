@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -13,6 +14,7 @@ namespace Fmg.Uwp.App {
 
         /// <summary> Mobile (true) or Desktop (false) </summary>
         public static bool IsMobile { get; }
+        public static double MinTouchSize => Cast.DpToPx(48); // android recommended size
 
         static ProjSettings() {
             UiInvoker.Deferred = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);

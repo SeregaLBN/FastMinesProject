@@ -76,12 +76,12 @@ namespace Fmg.Uwp.App {
                 logoModel.BorderWidth = 2;
                 logoModel.BorderColor = Color.BlueViolet;
 
-                panelMosaicHeader.Visibility = ProjSettings.IsMobile ? Visibility.Visible : Visibility.Collapsed;
+                //panelMosaicHeader.Visibility = ProjSettings.IsMobile ? Visibility.Visible : Visibility.Collapsed;
                 panelMosaicHeader.Background = new SolidColorBrush(MainPage.BackgroundHeaderColor.ToWinColor());
 
                 System.Diagnostics.Debug.Assert(ev.Parameter is IDictionary<string, object>);
                 if ((ev.Parameter is IDictionary<string, object> args) &&
-                    args.TryGetValue(MainPage.ARGUMENTS_KEY__HEADER_SIZE_HEIGHT, out object headerSizeHeight) &&
+                    args.TryGetValue(MainPage.ArgumentsKey_HeaderSizeHeight, out object headerSizeHeight) &&
                     (headerSizeHeight is double d))
                 {
                     UpdateHeader(d);

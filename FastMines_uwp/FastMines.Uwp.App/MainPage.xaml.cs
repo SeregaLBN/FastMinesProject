@@ -25,7 +25,7 @@ namespace Fmg.Uwp.App {
     public sealed partial class MainPage : Page {
 
         internal const int MenuTextWidth = 110;
-        internal const string ARGUMENTS_KEY__HEADER_SIZE_HEIGHT = "headerSizeHeight";
+        internal const string ArgumentsKey_HeaderSizeHeight = "headerSizeHeight";
 
         /// <summary> Model (a common model between all the pages in the application) </summary>
         public MosaicInitData InitData   => FastMinesApp.Get.MosaicInitData;
@@ -152,7 +152,7 @@ namespace Fmg.Uwp.App {
             } else {
                 //RightFrame.SourcePageType = typeof(SelectMosaicPage);
                 IDictionary<string, object> args = new Dictionary<string, object>();
-                args.Add(ARGUMENTS_KEY__HEADER_SIZE_HEIGHT, ViewModel.MosaicGroupDS.Header.Size.Height + Cast.DpToPx(ViewModel.MenuGroupPaddingInDip.dip));
+                args.Add(ArgumentsKey_HeaderSizeHeight, ViewModel.MosaicGroupDS.Header.Size.Height + Cast.DpToPx(ViewModel.MenuGroupPaddingInDip.dip));
                 RightFrame.Navigate(typeof(SelectMosaicPage), args);
             }
         }
@@ -214,8 +214,8 @@ namespace Fmg.Uwp.App {
             }
 
             //System.Diagnostics.Debug.WriteLine("OnSizeChanged");
-            const int minSize = 50;
-            const int topElemHeight = 48;
+            int minSize = (int)ProjSettings.MinTouchSize + 2; // 50
+            int topElemHeight = (int)ProjSettings.MinTouchSize; // 48;
             const int pad = 3;
             System.Diagnostics.Debug.Assert(topElemHeight <= minSize);
 
