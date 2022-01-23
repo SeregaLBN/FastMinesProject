@@ -42,12 +42,12 @@ public class MosaicActivity extends AppCompatActivity {
     public MosaicInitData getInitData() { return FastMinesApp.get().getMosaicInitData(); }
 
     public MosaicActivity() {
-        Logger.info("MosaicActivity.ctor: this.hash={0}", this.hashCode());
+        Logger.info("MosaicActivity.ctor: ");
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Logger.info("MosaicActivity.onCreate: this.hash={0}", this.hashCode());
+        Logger.info("MosaicActivity.onCreate: ");
         super.onCreate(savedInstanceState);
 
         // Remove notification bar
@@ -96,26 +96,26 @@ public class MosaicActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        Logger.info("MosaicActivity.onStart: this.hash={0}", this.hashCode());
+        Logger.info("MosaicActivity.onStart: ");
         super.onStart();
     }
 
     @Override
     protected void onRestart() {
-        Logger.info("MosaicActivity.onRestart: this.hash={0}", this.hashCode());
+        Logger.info("MosaicActivity.onRestart: ");
         super.onRestart();
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
-        Logger.info("MosaicActivity.onSaveInstanceState: this.hash={0}", this.hashCode());
+        Logger.info("MosaicActivity.onSaveInstanceState: ");
         //SharedData.save(savedInstanceState, getSomeData());
         super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
     public void onResume() {
-        Logger.info("MosaicActivity.onResume: this.hash={0}", this.hashCode());
+        Logger.info("MosaicActivity.onResume: ");
         super.onResume();
         getMosaicController().setViewControl(binding.mosaicView);
         getMosaicController().addListener(onMosaicControllerPropertyChangedListener);
@@ -126,7 +126,7 @@ public class MosaicActivity extends AppCompatActivity {
 
     @Override
     public void onPause() {
-        Logger.info("MosaicActivity.onPause: this.hash={0}", this.hashCode());
+        Logger.info("MosaicActivity.onPause: ");
         super.onPause();
         getMosaicController().removeListener(onMosaicControllerPropertyChangedListener);
         getMosaicController().setViewControl(null);
@@ -135,7 +135,7 @@ public class MosaicActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        Logger.info("MosaicActivity.onStop: this.hash={0}", this.hashCode());
+        Logger.info("MosaicActivity.onStop: ");
 
         MosaicViewController controller = getMosaicController();
         if (controller.getGameStatus() == EGameStatus.eGSPlay) {
@@ -152,7 +152,7 @@ public class MosaicActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        Logger.info("MosaicActivity.onDestroy: this.hash={0}", this.hashCode());
+        Logger.info("MosaicActivity.onDestroy: ");
         super.onDestroy();
         timer.close();
         getMosaicController().setOnClickEvent(null);

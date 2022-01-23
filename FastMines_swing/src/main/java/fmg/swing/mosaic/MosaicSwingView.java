@@ -16,7 +16,7 @@ import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.RegionDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.core.mosaic.BackgroundFill;
+import fmg.core.mosaic.CellFill;
 import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.mosaic.MosaicView;
 import fmg.core.mosaic.cells.BaseCell;
@@ -75,7 +75,8 @@ public abstract class MosaicSwingView<TImage,
         g.setStroke(new BasicStroke((float)pen.getWidth()));
         SizeDouble offset = model.getMosaicOffset();
         boolean isSimpleDraw = pen.getColorLight().equals(pen.getColorShadow());
-        BackgroundFill bkFill = model.getBackgroundFill();
+        CellFill cellFill = model.getCellFill();
+        Color cellColor = model.getCellColor();
 
         /** /
         { // DEBUG
@@ -117,9 +118,9 @@ public abstract class MosaicSwingView<TImage,
                 // 2.1.1. paint cell background
                 //if (!isIconicMode) // когда рисуется иконка, а не игровое поле, - делаю попроще...
                 {
-                    Color bkClrCell = cell.getBackgroundFillColor(bkFill.getMode(),
-                                                                  bkClr,
-                                                                  bkFill.getColors());
+                    Color bkClrCell = cell.getCellFillColor(cellFill.getMode(),
+                                                            cellColor,
+                                                            cellFill.getColors());
                     if (!drawBk || !bkClrCell.equals(bkClr)) {
                         g.setColor(Cast.toColor(bkClrCell));
                         g.fillPolygon(poly);

@@ -105,10 +105,10 @@ public abstract class BaseCell {
         public abstract double getVertexIntersection();
 
         /** макс кол-во режимов заливки фона, которые знает данный тип мозаики
-         * (знает ф-ция BaseCell::getBackgroundFillColor() или её наследующая)
+         * (знает ф-ция {@link BaseCell#getCellFillColor} или её наследующая)
          * (Не считая режима заливки цветом фона по-умолчанию...)
          */
-        public int getMaxBackgroundFillModeValue() {
+        public int getMaxCellFillModeValue() {
             return 19;
         }
 
@@ -384,7 +384,7 @@ public abstract class BaseCell {
         * <li> направления ячейки
         * <li> ... - как придумает дочерний класс
         */
-    public Color getBackgroundFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
+    public Color getCellFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
         switch (fillMode) {
         default:
             Logger.error(getClass().getSimpleName()+".getBackgroundFillColor: fillMode="+fillMode+":  добавь цветовую обработку для этого режима!");

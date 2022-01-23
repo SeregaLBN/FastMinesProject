@@ -254,7 +254,7 @@ public abstract class MosaicController<TImage, TImageInner,
     /** Начать игру, т.к. произошёл первый клик на поле */
     @Override
     public void gameBegin(BaseCell firstClickCell) {
-        getModel().getBackgroundFill().setMode(0);
+        getModel().getCellFill().setMode(0);
         setGameStatus(EGameStatus.eGSPlay);
 
         // set mines
@@ -539,10 +539,10 @@ public abstract class MosaicController<TImage, TImageInner,
     public boolean gameNew() {
 //        Logger.info("Mosaic::GameNew()");
         TMosaicModel m = getModel();
-        m.getBackgroundFill().setMode(
+        m.getCellFill().setMode(
                 1 + ThreadLocalRandom.current().nextInt(
                             m.getCellAttr() // MosaicHelper.createAttributeInstance(m.getMosaicType())
-                            .getMaxBackgroundFillModeValue()));
+                            .getMaxCellFillModeValue()));
 
         if (getGameStatus() == EGameStatus.eGSReady)
             return false;

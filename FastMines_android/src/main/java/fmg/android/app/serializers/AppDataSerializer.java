@@ -61,6 +61,7 @@ public class AppDataSerializer implements ISerializer {
 
     public void save(AppData data, SharedPreferences to) {
         SharedPreferences.Editor editor = to.edit();
+        editor.clear();
         editor.putInt(KEY__APP_DATA__VERSION, VERSION);
 
         MosaicActivityBackupData mosaicActivityBackupData = data.getMosaicActivityBackupData();

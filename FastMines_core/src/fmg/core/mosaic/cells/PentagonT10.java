@@ -114,8 +114,8 @@ public class PentagonT10 extends BaseCell {
         }
 
         @Override
-        public int getMaxBackgroundFillModeValue() {
-            return super.getMaxBackgroundFillModeValue() + 1;
+        public int getMaxCellFillModeValue() {
+            return super.getMaxCellFillModeValue() + 1;
 //          return 1;
         }
     }
@@ -332,8 +332,8 @@ public class PentagonT10 extends BaseCell {
     }
 
     @Override
-    public Color getBackgroundFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
-        if (fillMode == getAttr().getMaxBackgroundFillModeValue()) {
+    public Color getCellFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
+        if (fillMode == getAttr().getMaxCellFillModeValue()) {
             switch (getDirection()) {
             case  2: case  3: case  4: case  5: return repositoryColor.get(0);
             case  8: case  9: case 10: case 11: return repositoryColor.get(1);
@@ -343,7 +343,7 @@ public class PentagonT10 extends BaseCell {
 //              return repositoryColor.get(-1);
             }
         }
-        return super.getBackgroundFillColor(fillMode, defaultColor, repositoryColor);
+        return super.getCellFillColor(fillMode, defaultColor, repositoryColor);
     }
 
 }

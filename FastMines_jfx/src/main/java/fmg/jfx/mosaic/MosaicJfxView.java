@@ -21,7 +21,7 @@ import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.RegionDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.core.mosaic.BackgroundFill;
+import fmg.core.mosaic.CellFill;
 import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.mosaic.MosaicView;
 import fmg.core.mosaic.cells.BaseCell;
@@ -77,7 +77,8 @@ public abstract class MosaicJfxView<TImage,
         g.setLineWidth(pen.getWidth());
         SizeDouble offset = model.getMosaicOffset();
         boolean isSimpleDraw = pen.getColorLight().equals(pen.getColorShadow());
-        BackgroundFill bkFill = model.getBackgroundFill();
+        CellFill cellFill = model.getCellFill();
+        Color cellColor = model.getCellColor();
 
         if (DEBUG_DRAW_FLOW)
             Logger.info("MosaicJfxView.drawJfx: " + ((toDrawCells==null) ? "all" : ("cnt=" + toDrawCells.size()))
@@ -128,9 +129,9 @@ public abstract class MosaicJfxView<TImage,
                 // 2.1.1. paint cell background
                 //if (!isIconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
                 {
-                    Color bkClrCell = cell.getBackgroundFillColor(bkFill.getMode(),
-                                                                  bkClr,
-                                                                  bkFill.getColors());
+                    Color bkClrCell = cell.getCellFillColor(cellFill.getMode(),
+                                                            cellColor,
+                                                            cellFill.getColors());
                     if (!drawBk || !bkClrCell.equals(bkClr)) {
                         g.setFill(Cast.toColor(bkClrCell));
                         polyX = Cast.toPolygon(poly, true);

@@ -10,7 +10,7 @@ import fmg.common.notifier.NotifyPropertyChanged;
 import fmg.core.types.Property;
 
 /** all that apply to the background fill of cells */
-public class BackgroundFill implements AutoCloseable, INotifyPropertyChanged {
+public class CellFill implements AutoCloseable, INotifyPropertyChanged {
 
     public static final String PROPERTY_MODE = "Mode";
 

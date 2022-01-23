@@ -18,7 +18,7 @@ import fmg.common.geom.RectDouble;
 import fmg.common.geom.RegionDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicDrawModel;
-import fmg.core.mosaic.BackgroundFill;
+import fmg.core.mosaic.CellFill;
 import fmg.core.mosaic.MosaicView;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EClose;
@@ -68,8 +68,9 @@ public abstract class MosaicAndroidView<TImage,
             if (!bkClr.isOpaque())
                 g.drawColor(android.graphics.Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
             if (!bkClr.isTransparent()) {
-                paintFill.setColor(Cast.toColor(bkClr));
-                g.drawColor(Cast.toColor(bkClr));//, PorterDuff.Mode.CLEAR);
+                int clr = Cast.toColor(bkClr);
+                paintFill.setColor(clr);
+                g.drawColor(clr);//, PorterDuff.Mode.CLEAR);
             }
         }
 
@@ -91,7 +92,8 @@ public abstract class MosaicAndroidView<TImage,
         paintStroke.setStrokeWidth((float)pen.getWidth());
         SizeDouble offset = model.getMosaicOffset();
         boolean isSimpleDraw = pen.getColorLight().equals(pen.getColorShadow());
-        BackgroundFill bkFill = model.getBackgroundFill();
+        CellFill cellFill = model.getCellFill();
+        Color cellColor = model.getCellColor();
 
         if (DEBUG_DRAW_FLOW)
             Logger.info("MosaicAndroidView.drawAndroid: " + ((toDrawCells==null) ? "all" : ("cnt=" + toDrawCells.size()))
@@ -114,9 +116,9 @@ public abstract class MosaicAndroidView<TImage,
                 // 2.1.1. paint cell background
                 //if (!isSimpleDraw) // когда рисуется иконка, а не игровое поле, - делаю попроще...
                 {
-                    Color bkClrCell = cell.getBackgroundFillColor(bkFill.getMode(),
-                                                                    bkClr,
-                                                                    bkFill.getColors());
+                    Color bkClrCell = cell.getCellFillColor(cellFill.getMode(),
+                                                            cellColor,
+                                                            cellFill.getColors());
                     if (!drawBk || !bkClrCell.equals(bkClr)) {
                         paintFill.setColor(Cast.toColor(bkClrCell));
                         g.drawPath(poly, paintFill);
