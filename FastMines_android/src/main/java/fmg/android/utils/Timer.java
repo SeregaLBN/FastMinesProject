@@ -89,6 +89,13 @@ public class Timer implements ITimer {
         return new Date().getTime() - started;
     }
 
+    public void setTime(long time) {
+        if (paused)
+            started = time;
+        else
+            started = new Date().getTime() - time;
+    }
+
     @Override
     public void close() {
         callback = null;

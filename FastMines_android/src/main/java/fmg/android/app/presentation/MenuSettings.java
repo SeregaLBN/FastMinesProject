@@ -18,12 +18,6 @@ public class MenuSettings implements INotifyPropertyChanged, AutoCloseable {
 
     protected final NotifyPropertyChanged notifier = new NotifyPropertyChanged(this, true);
 
-    public void copyFrom(MenuSettings from) {
-        if (from == this)
-            return;
-        setSplitPaneOpen(from.isSplitPaneOpen());
-    }
-
     public boolean isSplitPaneOpen() {
         return splitPaneOpen;
     }

@@ -1,5 +1,6 @@
 package fmg.android.app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,6 +16,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import fmg.android.app.databinding.MosaicActivityBinding;
+import fmg.android.app.model.MosaicActivityBackupData;
 import fmg.android.app.presentation.MosaicViewModel;
 import fmg.android.mosaic.MosaicViewController;
 import fmg.android.utils.Timer;
@@ -35,6 +37,7 @@ public class MosaicActivity extends AppCompatActivity {
     private MosaicViewModel viewModel;
     private Timer timer;
     private final PropertyChangeListener onMosaicControllerPropertyChangedListener = this::onMosaicControllerPropertyChanged;
+    private MosaicActivityBackupData backupData;
 
     public MosaicInitData getInitData() { return FastMinesApp.get().getMosaicInitData(); }
 
@@ -71,12 +74,19 @@ public class MosaicActivity extends AppCompatActivity {
         binding.btnNewGame.setOnTouchListener(this::onBtnNewTouch);
 
         // init mosaic controller
-        MosaicInitData initData = getInitData();
         MosaicViewController controller = getMosaicController();
-        MosaicGameModel model = controller.getModel();
-        model.setMosaicType(initData.getMosaicType());
-        model.setSizeField(initData.getSizeField());
-        controller.setCountMines(initData.getCountMines());
+        if (FastMinesApp.get().hasMosaicActivityBackupData()) {
+            MosaicActivityBackupData mosaicActivityBackupData = FastMinesApp.get().getAndResetMosaicActivityBackupData();
+            controller.gameRestore(mosaicActivityBackupData.mosaicBackupData);
+            controller.getModel().setMosaicOffset(mosaicActivityBackupData.mosaicOffset);
+            timer.setTime(mosaicActivityBackupData.playTime);
+        } else {
+            MosaicInitData initData = getInitData();
+            MosaicGameModel model = controller.getModel();
+            model.setMosaicType(initData.getMosaicType());
+            model.setSizeField(initData.getSizeField());
+            controller.setCountMines(initData.getCountMines());
+        }
     }
 
     /** Mosaic controller */
@@ -126,6 +136,17 @@ public class MosaicActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         Logger.info("MosaicActivity.onStop: this.hash={0}", this.hashCode());
+
+        MosaicViewController controller = getMosaicController();
+        if (controller.getGameStatus() == EGameStatus.eGSPlay) {
+            backupData = new MosaicActivityBackupData();
+            backupData.mosaicBackupData = controller.gameBackup();
+            backupData.mosaicOffset     = controller.getModel().getMosaicOffset();
+            backupData.playTime         = timer.getTime();
+        } else {
+            backupData = null;
+        }
+
         super.onStop();
     }
 
@@ -226,6 +247,10 @@ public class MosaicActivity extends AppCompatActivity {
                            "Your best result is position #" + (pos + 1),
                            Toast.LENGTH_LONG)
                  .show();
+    }
+
+    public MosaicActivityBackupData getBackupData() {
+        return backupData;
     }
 
 }

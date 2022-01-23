@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -17,6 +18,7 @@ import java.beans.PropertyChangeListener;
 import java.util.function.Supplier;
 
 import fmg.android.app.databinding.MainActivityBinding;
+import fmg.android.app.model.MosaicActivityBackupData;
 import fmg.android.app.model.dataSource.MosaicGroupDataSource;
 import fmg.android.app.model.dataSource.MosaicSkillDataSource;
 import fmg.android.app.model.items.MosaicGroupDataItem;
@@ -26,6 +28,7 @@ import fmg.android.app.presentation.MenuSettings;
 import fmg.android.app.presentation.SmoothHelper;
 import fmg.android.app.recyclerView.MosaicGroupListViewAdapter;
 import fmg.android.app.recyclerView.MosaicSkillListViewAdapter;
+import fmg.android.app.serializers.MosaicActivityBackupDataSerializer;
 import fmg.android.utils.Cast;
 import fmg.common.Color;
 import fmg.common.Logger;
@@ -69,11 +72,18 @@ public class MainActivity extends AppCompatActivity {
         boolean isRunning() { return this == eResumed || this == eRunning; }
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Logger.info("MainActivity.onCreate: this.hash={0}", this.hashCode());
         super.onCreate(savedInstanceState);
+
+        if (FastMinesApp.get().hasMosaicActivityBackupData()) {
+            UiInvoker.DEFERRED.accept(() -> {
+                Intent intent = new Intent(getApplicationContext(), MosaicActivity.class);
+                startActivity(intent);
+            });
+        }
+
         activityStatus = EActivityStatus.eCreated;
 
         // Remove title bar

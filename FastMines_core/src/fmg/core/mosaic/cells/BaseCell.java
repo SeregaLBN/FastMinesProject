@@ -151,8 +151,8 @@ public abstract class BaseCell {
     public static class StateCell {
         // { union
         private EState status; // _Open, _Close
-        private EOpen   open;   // _Nil, _1, ... _21, _Mine
-        private EClose  close;  // _Unknown, _Clear, _Flag
+        private EOpen  open;   // _Nil, _1, ... _21, _Mine
+        private EClose close;  // _Unknown, _Clear, _Flag
         // } end union
         /** Нажата? Не путать с open! - ячейка может быть нажата, но ещё не открыта. Важно только для ф-ции прорисовки */
         private boolean down;
@@ -169,11 +169,11 @@ public abstract class BaseCell {
         public void setClose(EClose close) { this.close = close; }
         public EClose getClose() { return this.close; }
 
-        private StateCell() { reset(); }
+        public StateCell() { reset(); }
         public void reset() {
             status = EState._Close;
-            open = EOpen._Nil;
-            close = EClose._Clear;
+            open   = EOpen._Nil;
+            close  = EClose._Clear;
             down = false;
         }
     }
@@ -198,19 +198,10 @@ public abstract class BaseCell {
         state.open = EOpen._Mine;
     }
 
-    /*
-    public void lockNeighborMines(IMatrixCells matrix) {
-        lockMine = true;
-        // запретить установку мин у соседей
-        List<BaseCell> neighbors = getNeighbors(matrix);
-        for (BaseCell nCell : neighbors) {
-            if (nCell == null) continue; // существует ли сосед?
-            nCell.lockMine = true;
-        }
-    }
-    */
-
     public StateCell getState() { return state; }
+    public void setState(StateCell stateNew) {
+        this.state = stateNew;
+    }
 
     protected BaseCell(
         BaseAttribute attr,
