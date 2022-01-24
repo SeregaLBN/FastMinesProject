@@ -10,6 +10,7 @@ import java.util.stream.IntStream;
 
 import fmg.common.Logger;
 import fmg.common.geom.*;
+import fmg.common.ui.UiInvoker;
 import fmg.core.app.model.MosaicBackupData;
 import fmg.core.app.model.MosaicInitData;
 import fmg.core.img.ImageController;
@@ -60,6 +61,8 @@ public abstract class MosaicController<TImage, TImageInner,
 
     /** использовать ли флажок на поле */
     private boolean useUnknown = true;
+
+    private boolean ignoreModelChanges = false;
 
     private final PropertyChangeListener onModelPropertyChangedListener = this::onModelPropertyChanged;
 
@@ -505,33 +508,38 @@ public abstract class MosaicController<TImage, TImageInner,
         if (backup.area < MosaicInitData.AREA_MINIMUM)
             backup.area = MosaicInitData.AREA_MINIMUM;
 
-        setMosaicType(backup.mosaicType);
-        setSizeField(backup.sizeField);
-        getModel().setArea(backup.area);
-        setCountClick(backup.clickCount);
+        try {
+            ignoreModelChanges = true;
+            setMosaicType(backup.mosaicType);
+            setSizeField(backup.sizeField);
+            getModel().setArea(backup.area);
+            setCountClick(backup.clickCount);
 
-        countMines = 0;
-        int i = 0;
-        boolean anyOpen = false;
-        for (BaseCell cell : getMatrix()) {
-            BaseCell.StateCell stateNew = backup.cellStates.get(i++);
-            cell.setState(stateNew);
+            countMines = 0;
+            int i = 0;
+            boolean anyOpen = false;
+            for (BaseCell cell : getMatrix()) {
+                BaseCell.StateCell stateNew = backup.cellStates.get(i++);
+                cell.setState(stateNew);
 
-            if (stateNew.getStatus() == EState._Open)
-                anyOpen = true;
+                if (stateNew.getStatus() == EState._Open)
+                    anyOpen = true;
 
-            if (stateNew.getOpen() == EOpen._Mine)
-                countMines++;
+                if (stateNew.getOpen() == EOpen._Mine)
+                    countMines++;
+            }
+            assert countMines > 0;
+
+            setGameStatus(anyOpen ? EGameStatus.eGSPlay : EGameStatus.eGSReady);
+            setPlayInfo(anyOpen ? EPlayInfo.ePlayerUser : EPlayInfo.ePlayerUnknown); // TODO ?
+
+            notifier.firePropertyChanged(null, countMines, PROPERTY_COUNT_MINES);
+            notifier.firePropertyChanged(null, countMines, PROPERTY_COUNT_MINES_LEFT);
+
+            invalidateView(this.getMatrix());
+        } finally {
+            UiInvoker.DEFERRED.accept(() -> ignoreModelChanges = false );
         }
-        assert countMines > 0;
-
-        setGameStatus(anyOpen ? EGameStatus.eGSPlay : EGameStatus.eGSReady);
-        setPlayInfo(anyOpen ? EPlayInfo.ePlayerUser : EPlayInfo.ePlayerUnknown); // TODO ?
-
-        notifier.firePropertyChanged(null, countMines, PROPERTY_COUNT_MINES);
-        notifier.firePropertyChanged(null, countMines, PROPERTY_COUNT_MINES_LEFT);
-
-        invalidateView(this.getMatrix());
     }
 
     /** Подготовиться к началу игры - сбросить все ячейки */
@@ -615,6 +623,8 @@ public abstract class MosaicController<TImage, TImageInner,
     }
 
     protected void onModelPropertyChanged(PropertyChangeEvent ev) {
+        if (ignoreModelChanges)
+            return;
         switch (ev.getPropertyName()) {
         case MosaicGameModel.PROPERTY_SIZE_FIELD:
             setCellDown(null); // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...

@@ -26,7 +26,8 @@ public final class ProjSettings extends AProjSettings {
 
 
     static {
-        UiInvoker.DEFERRED = new Handler(Looper.getMainLooper())::post;
+        UiInvoker.DEFERRED  = new Handler(Looper.getMainLooper())::post;
+        UiInvoker.DEFERRED2 = new Handler(Looper.getMainLooper())::postDelayed;
         UiInvoker.ANIMATOR = Animator::getSingleton;
         UiInvoker.TIMER_CREATOR = Timer::new;
 

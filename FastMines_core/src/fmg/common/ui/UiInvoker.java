@@ -1,5 +1,6 @@
 package fmg.common.ui;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -12,8 +13,10 @@ public final class UiInvoker {
     /** Delayed execution in the thread of the user interface. */
     public static Consumer<Runnable> DEFERRED = run -> {
         throw new UnsupportedOperationException("Not implemented...");
-//        Logger.info("need redefine!");
-//        run.run();
+    };
+
+    public static BiConsumer<Runnable, Integer> DEFERRED2 = (run, delayedMsec) -> {
+        throw new UnsupportedOperationException("Not implemented...");
     };
 
     /** Platform-dependent factory of {@link IAnimator}. Set from outside... */

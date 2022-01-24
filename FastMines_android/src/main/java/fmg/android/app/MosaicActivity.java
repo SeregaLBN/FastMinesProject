@@ -1,6 +1,7 @@
 package fmg.android.app;
 
-import android.content.Intent;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,6 +22,7 @@ import fmg.android.app.presentation.MosaicViewModel;
 import fmg.android.mosaic.MosaicViewController;
 import fmg.android.utils.Timer;
 import fmg.common.Logger;
+import fmg.common.ui.UiInvoker;
 import fmg.core.img.SmileModel;
 import fmg.core.mosaic.MosaicController;
 import fmg.core.mosaic.MosaicGameModel;
@@ -38,8 +40,6 @@ public class MosaicActivity extends AppCompatActivity {
     private Timer timer;
     private final PropertyChangeListener onMosaicControllerPropertyChangedListener = this::onMosaicControllerPropertyChanged;
     private MosaicActivityBackupData backupData;
-
-    public MosaicInitData getInitData() { return FastMinesApp.get().getMosaicInitData(); }
 
     public MosaicActivity() {
         Logger.info("MosaicActivity.ctor: ");
@@ -75,13 +75,18 @@ public class MosaicActivity extends AppCompatActivity {
 
         // init mosaic controller
         MosaicViewController controller = getMosaicController();
-        if (FastMinesApp.get().hasMosaicActivityBackupData()) {
-            MosaicActivityBackupData mosaicActivityBackupData = FastMinesApp.get().getAndResetMosaicActivityBackupData();
-            controller.gameRestore(mosaicActivityBackupData.mosaicBackupData);
-            controller.getModel().setMosaicOffset(mosaicActivityBackupData.mosaicOffset);
-            timer.setTime(mosaicActivityBackupData.playTime);
+        FastMinesApp app = FastMinesApp.get();
+        if (app.hasMosaicActivityBackupData()) {
+            UiInvoker.DEFERRED2.accept(() -> {
+                    MosaicActivityBackupData mosaicActivityBackupData = app.getAndResetMosaicActivityBackupData();
+                    controller.gameRestore(mosaicActivityBackupData.mosaicBackupData);
+                    controller.getModel().setMosaicOffset(mosaicActivityBackupData.mosaicOffset);
+                    timer.setTime(mosaicActivityBackupData.playTime);
+                },
+                300 // !large MosaicViewController: subjSizeChanged.debounce(200
+            );
         } else {
-            MosaicInitData initData = getInitData();
+            MosaicInitData initData = app.getMosaicInitData();
             MosaicGameModel model = controller.getModel();
             model.setMosaicType(initData.getMosaicType());
             model.setSizeField(initData.getSizeField());
@@ -251,6 +256,22 @@ public class MosaicActivity extends AppCompatActivity {
 
     public MosaicActivityBackupData getBackupData() {
         return backupData;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getMosaicController().getGameStatus() != EGameStatus.eGSPlay) {
+            finish();
+            return;
+        }
+
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Confirm exit")
+//                .setMessage("Confirm exit")
+                .setPositiveButton("Yes", (dialog, which) -> finish())
+                .setNegativeButton("No", null)
+                .show();
     }
 
 }
