@@ -12,6 +12,7 @@ import fmg.common.Color;
 import fmg.common.Logger;
 import fmg.common.ui.UiInvoker;
 import fmg.core.app.AProjSettings;
+import fmg.core.mosaic.MosaicDrawModel;
 
 public final class ProjSettings extends AProjSettings {
     private ProjSettings() {}
@@ -32,9 +33,9 @@ public final class ProjSettings extends AProjSettings {
         UiInvoker.TIMER_CREATOR = Timer::new;
 
         // various background colors: #E6FFFFFF #FFEEEEEE #FFFAFAFA
-//      MosaicDrawModel.DefaultBkColor   = new Color(0xFFEEEEEE);
-//      MosaicDrawModel.DefaultCellColor = new Color(0xFFFAFAFA);
-        BaseDataSource.DefaultBkColor = new Color(0xFFEEEEEE);
+//      MosaicDrawModel.DefaultBkColor   = new Color(0xFFFAFAFA);
+        MosaicDrawModel.DefaultCellColor = new Color(0xFFEEEEEE);
+        BaseDataSource .DefaultBkColor   = new Color(0xFFEEEEEE);
 
         IS_MOBILE = true;
 
