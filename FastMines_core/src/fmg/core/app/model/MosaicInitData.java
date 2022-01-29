@@ -55,14 +55,6 @@ public class MosaicInitData implements INotifyPropertyChanged, AutoCloseable {
         notifier.addListener(onPropertyChangedListener);
     }
 
-    public void copyFrom(MosaicInitData from) {
-        if (from == this)
-            return;
-        setMosaicType(from.getMosaicType());
-        setSizeField( from.getSizeField());
-        setCountMines(from.getCountMines());
-    }
-
     public EMosaic getMosaicType() { return mosaicType; }
     public void setMosaicType(EMosaic mosaicType) {
         if (mosaicType == null)

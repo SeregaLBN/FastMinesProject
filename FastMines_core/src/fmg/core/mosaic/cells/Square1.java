@@ -128,10 +128,10 @@ public class Square1 extends BaseCell {
     public int getShiftPointBorderIndex() { return 2; }
 
     @Override
-    public Color getBackgroundFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
+    public Color getCellFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
         switch (fillMode) {
         default:
-            return super.getBackgroundFillColor(fillMode, defaultColor, repositoryColor);
+            return super.getCellFillColor(fillMode, defaultColor, repositoryColor);
         case 1: // перекрываю базовый на основе direction
             int pos = (-getCoord().x + getCoord().y) % ((getAttr().hashCode() & 0x3)+fillMode);
 //          Logger.info(pos);

@@ -79,8 +79,8 @@ public class Rhombus1 extends BaseCell {
         }
 
         @Override
-        public int getMaxBackgroundFillModeValue() {
-            return super.getMaxBackgroundFillModeValue()+1;
+        public int getMaxCellFillModeValue() {
+            return super.getMaxCellFillModeValue()+1;
         }
     }
 
@@ -264,8 +264,8 @@ public class Rhombus1 extends BaseCell {
     public int getShiftPointBorderIndex() { return 2; }
 
     @Override
-    public Color getBackgroundFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
-        if (fillMode == getAttr().getMaxBackgroundFillModeValue()) {
+    public Color getCellFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
+        if (fillMode == getAttr().getMaxCellFillModeValue()) {
             switch ((getCoord().y%4)*3+(getCoord().x%3)) { // почти как вычисление direction...
             // подсвечиваю 4 группы, составляющие каждая шестигранник из 3х ромбов
             case 0: case  1: case  3: return repositoryColor.get(0);
@@ -274,7 +274,7 @@ public class Rhombus1 extends BaseCell {
             case 8: case 10: case 11: return repositoryColor.get(3);
             }
         }
-        return super.getBackgroundFillColor(fillMode, defaultColor, repositoryColor);
+        return super.getCellFillColor(fillMode, defaultColor, repositoryColor);
     }
 
 }

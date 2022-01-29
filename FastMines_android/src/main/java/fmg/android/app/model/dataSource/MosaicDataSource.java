@@ -145,7 +145,7 @@ public class MosaicDataSource extends BaseDataSource<
         model.setAnimated(selected);
         model.getPenBorder().setColorLight (selected ? Color.White() : Color.Black());
         model.getPenBorder().setColorShadow(selected ? Color.White() : Color.Black());
-        model.setBackgroundColor(selected ? AnimatedImageModel.DEFAULT_BK_COLOR : MosaicDrawModel.DefaultBkColor);
+        model.setBackgroundColor(selected ? AnimatedImageModel.DEFAULT_BK_COLOR : DefaultBkColor);
         model.setPadding(new BoundDouble(model.getSize().width * (selected ? 10 : 5) /*/(mi.SkillLevel.Ordinal() + 1)*/ / 100));
         model.setRotateAngle(0);
     }

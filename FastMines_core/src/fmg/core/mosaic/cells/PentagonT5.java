@@ -130,8 +130,8 @@ public class PentagonT5 extends BaseCell {
         }
 
         @Override
-        public int getMaxBackgroundFillModeValue() {
-            return super.getMaxBackgroundFillModeValue()+2;
+        public int getMaxCellFillModeValue() {
+            return super.getMaxCellFillModeValue()+2;
 //          return 1;
         }
     }
@@ -662,8 +662,8 @@ public class PentagonT5 extends BaseCell {
     }
 
     @Override
-    public Color getBackgroundFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
-        if (fillMode == getAttr().getMaxBackgroundFillModeValue())
+    public Color getCellFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
+        if (fillMode == getAttr().getMaxCellFillModeValue())
         {
             // подсвечиваю 'ромашку'
             switch (getDirection()) {
@@ -685,7 +685,7 @@ public class PentagonT5 extends BaseCell {
 //              return repositoryColor.get(-1);
             }
         } else
-        if (fillMode == (getAttr().getMaxBackgroundFillModeValue()-1))
+        if (fillMode == (getAttr().getMaxCellFillModeValue()-1))
         {
             // подсвечиваю обратную 'диагональку'
             switch (getDirection()) {
@@ -709,7 +709,7 @@ public class PentagonT5 extends BaseCell {
 //              return repositoryColor.get(-1);
             }
         }
-        return super.getBackgroundFillColor(fillMode, defaultColor, repositoryColor);
+        return super.getCellFillColor(fillMode, defaultColor, repositoryColor);
     }
 
 }

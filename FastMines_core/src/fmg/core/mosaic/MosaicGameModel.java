@@ -79,11 +79,9 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
         }
         return cellAttr;
     }
-    private void setCellAttr(BaseCell.BaseAttribute newValue) {
+    private void resetCellAttr() {
         if (cellAttr == null)
             return;
-        if (newValue != null)
-            throw new IllegalArgumentException("Bad argument - support only null value!");
         cellAttr.removeListener(onCellAttributePropertyChangedListener);
         cellAttr.close();
         cellAttr = null;
@@ -153,7 +151,7 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
             return;
 
         this.mosaicType = newMosaicType;
-        setCellAttr(null);
+        resetCellAttr();
         notifier.firePropertyChanged(old, newMosaicType, PROPERTY_MOSAIC_TYPE);
     }
 
@@ -183,7 +181,7 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
         notifier.removeListener(onPropertyChangedListener);
         notifier.close();
         notifierAsync.close();
-        setCellAttr(null);
+        resetCellAttr();
     }
 
     @Override

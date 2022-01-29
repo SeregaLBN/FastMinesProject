@@ -204,8 +204,8 @@ public class PenrousePeriodic1 extends BaseCell {
         }
 
         @Override
-        public int getMaxBackgroundFillModeValue() {
-            return super.getMaxBackgroundFillModeValue() + 2;
+        public int getMaxCellFillModeValue() {
+            return super.getMaxCellFillModeValue() + 2;
         }
 
     }
@@ -1956,10 +1956,10 @@ public class PenrousePeriodic1 extends BaseCell {
     public int getShiftPointBorderIndex() { return 2; }
 
     @Override
-    public Color getBackgroundFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
+    public Color getCellFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
         //return super.getBackgroundFillColor(fillMode, defaultColor, repositoryColor);
 
-        if (fillMode == getAttr().getMaxBackgroundFillModeValue())
+        if (fillMode == getAttr().getMaxCellFillModeValue())
         {
             switch (getDirection()) {
             case   0: case   1: case   6: case   7: case  84: case  85:
@@ -1997,7 +1997,7 @@ public class PenrousePeriodic1 extends BaseCell {
                 throw new RuntimeException("Забыл case #" + getDirection());
             }
         } else
-        if (fillMode == (getAttr().getMaxBackgroundFillModeValue()-1))
+        if (fillMode == (getAttr().getMaxCellFillModeValue()-1))
         {
             switch (getDirection()) {
             case   1: case   3: case  13: case  19: case  20:
@@ -2039,7 +2039,7 @@ public class PenrousePeriodic1 extends BaseCell {
                 throw new RuntimeException("Забыл case #" + getDirection());
             }
         }
-        return super.getBackgroundFillColor(fillMode, defaultColor, repositoryColor);
+        return super.getCellFillColor(fillMode, defaultColor, repositoryColor);
 
 //      if (direction == dddd)
 //          return repositoryColor.get(1);

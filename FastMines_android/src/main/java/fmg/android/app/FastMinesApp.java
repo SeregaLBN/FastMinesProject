@@ -1,9 +1,13 @@
 package fmg.android.app;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
@@ -13,19 +17,20 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.UUID;
 
-import fmg.android.app.serializers.ChampionsAndroidSerializer;
-import fmg.android.app.serializers.PlayersAndroidSerializer;
 import fmg.common.Logger;
+import fmg.core.types.EMosaic;
+import fmg.core.types.ESkillLevel;
 import fmg.core.app.AProjSettings;
 import fmg.core.app.model.Champions;
 import fmg.core.app.model.MosaicInitData;
 import fmg.core.app.model.Players;
+import fmg.core.app.model.User;
 import fmg.android.app.model.AppData;
+import fmg.android.app.model.MosaicActivityBackupData;
 import fmg.android.app.presentation.MenuSettings;
 import fmg.android.app.serializers.AppDataSerializer;
-import fmg.core.app.model.User;
-import fmg.core.types.EMosaic;
-import fmg.core.types.ESkillLevel;
+import fmg.android.app.serializers.ChampionsAndroidSerializer;
+import fmg.android.app.serializers.PlayersAndroidSerializer;
 
 /** FastMines application */
 public class FastMinesApp extends Application implements LifecycleObserver {
@@ -37,15 +42,23 @@ public class FastMinesApp extends Application implements LifecycleObserver {
     private Context context;
     private MenuSettings menuSettings;
     private MosaicInitData mosaicInitData;
+    private MosaicActivityBackupData mosaicActivityBackupData;
     private Players players;
     private Champions champions;
     private boolean playersChanged;
     private boolean championsChanged;
     private final PropertyChangeListener   onPlayersPropertyChangedListener = this::onPlayersPropertyChanged;
     private final PropertyChangeListener onChampionsPropertyChangedListener = this::onChampionsPropertyChanged;
+    private Activity lastActivity;
 
     public MosaicInitData getMosaicInitData() { return mosaicInitData; }
     public MenuSettings   getMenuSettings()   { return menuSettings; }
+    public boolean hasMosaicActivityBackupData() { return  mosaicActivityBackupData != null; }
+    public MosaicActivityBackupData getAndResetMosaicActivityBackupData() {
+        MosaicActivityBackupData res = mosaicActivityBackupData;
+        mosaicActivityBackupData = null;
+        return res;
+    }
 
     private static FastMinesApp self;
 
@@ -70,6 +83,17 @@ public class FastMinesApp extends Application implements LifecycleObserver {
         ProjSettings.init();
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         load();
+        this.registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
+            @Override public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) { }
+            @Override public void onActivityStarted(@NonNull Activity activity) {
+                lastActivity = activity;
+            }
+            @Override public void onActivityResumed(@NonNull Activity activity) { }
+            @Override public void onActivityPaused(@NonNull Activity activity) { }
+            @Override public void onActivityStopped(@NonNull Activity activity) { }
+            @Override public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) { }
+            @Override public void onActivityDestroyed(@NonNull Activity activity) {}
+        });
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
@@ -113,6 +137,10 @@ public class FastMinesApp extends Application implements LifecycleObserver {
         AppData data = new AppData();
         data.setSplitPaneOpen(menuSettings.isSplitPaneOpen());
         data.setMosaicInitData(mosaicInitData);
+        if (lastActivity instanceof MosaicActivity) {
+            MosaicActivity mosaicActivity = (MosaicActivity)lastActivity;
+            data.setMosaicActivityBackupData(mosaicActivity.getBackupData());
+        }
 
         SharedPreferences preferences = getAppPreferences();
         new AppDataSerializer().save(data, preferences);
@@ -125,6 +153,7 @@ public class FastMinesApp extends Application implements LifecycleObserver {
         menuSettings = new MenuSettings();
         menuSettings.setSplitPaneOpen(data.isSplitPaneOpen());
         mosaicInitData = data.getMosaicInitData();
+        mosaicActivityBackupData = data.getMosaicActivityBackupData();
 
         players = new PlayersAndroidSerializer().load();
         players.addListener(onPlayersPropertyChangedListener);

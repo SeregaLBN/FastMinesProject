@@ -36,14 +36,17 @@ public interface IMosaicDrawModel<TImageInner> extends IImageModel, IMosaic {
     PenBorder getPenBorder();
     void setPenBorder(PenBorder penBorder);
 
-    BackgroundFill getBackgroundFill();
-    void setBackgroundFill(BackgroundFill backgroundFill);
+    CellFill getCellFill();
+    void setCellFill(CellFill cellFill);
 
     FontInfo getFontInfo();
     void setFontInfo(FontInfo fontInfo);
 
     Color getBackgroundColor();
     void setBackgroundColor(Color color);
+
+    Color getCellColor();
+    void setCellColor(Color color);
 
     TImageInner getImgBckgrnd();
     //void setImgBckgrnd(TImageInner imgBckgrnd);

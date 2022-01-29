@@ -42,7 +42,11 @@ public final class ProjSettings extends AProjSettings {
 
         try {
             UIDefaults uiDef = UIManager.getDefaults();
-            java.awt.Color clr = uiDef.getColor("TabbedPane.highlight"); // TabbedPane.highlight    Button.background    Label.background    Panel.background
+            java.awt.Color clr = uiDef.getColor("Panel.background"); // TabbedPane.highlight    Button.background    Label.background    Panel.background
+            if (clr != null)
+                MosaicDrawModel.DefaultCellColor = Cast.toColor(clr);
+
+            clr = uiDef.getColor("Button.background");
             if (clr != null)
                 MosaicDrawModel.DefaultBkColor = Cast.toColor(clr);
         } catch (Exception ex) {

@@ -1,5 +1,7 @@
 package fmg.android.app;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,10 +17,12 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import fmg.android.app.databinding.MosaicActivityBinding;
+import fmg.android.app.model.MosaicActivityBackupData;
 import fmg.android.app.presentation.MosaicViewModel;
 import fmg.android.mosaic.MosaicViewController;
 import fmg.android.utils.Timer;
 import fmg.common.Logger;
+import fmg.common.ui.UiInvoker;
 import fmg.core.img.SmileModel;
 import fmg.core.mosaic.MosaicController;
 import fmg.core.mosaic.MosaicGameModel;
@@ -35,16 +39,15 @@ public class MosaicActivity extends AppCompatActivity {
     private MosaicViewModel viewModel;
     private Timer timer;
     private final PropertyChangeListener onMosaicControllerPropertyChangedListener = this::onMosaicControllerPropertyChanged;
-
-    public MosaicInitData getInitData() { return FastMinesApp.get().getMosaicInitData(); }
+    private MosaicActivityBackupData backupData;
 
     public MosaicActivity() {
-        Logger.info("MosaicActivity.ctor: this.hash={0}", this.hashCode());
+        Logger.info("MosaicActivity.ctor: ");
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Logger.info("MosaicActivity.onCreate: this.hash={0}", this.hashCode());
+        Logger.info("MosaicActivity.onCreate: ");
         super.onCreate(savedInstanceState);
 
         // Remove notification bar
@@ -71,12 +74,24 @@ public class MosaicActivity extends AppCompatActivity {
         binding.btnNewGame.setOnTouchListener(this::onBtnNewTouch);
 
         // init mosaic controller
-        MosaicInitData initData = getInitData();
         MosaicViewController controller = getMosaicController();
-        MosaicGameModel model = controller.getModel();
-        model.setMosaicType(initData.getMosaicType());
-        model.setSizeField(initData.getSizeField());
-        controller.setCountMines(initData.getCountMines());
+        FastMinesApp app = FastMinesApp.get();
+        if (app.hasMosaicActivityBackupData()) {
+            UiInvoker.DEFERRED2.accept(() -> {
+                    MosaicActivityBackupData mosaicActivityBackupData = app.getAndResetMosaicActivityBackupData();
+                    controller.gameRestore(mosaicActivityBackupData.mosaicBackupData);
+                    controller.getModel().setMosaicOffset(mosaicActivityBackupData.mosaicOffset);
+                    timer.setTime(mosaicActivityBackupData.playTime);
+                },
+                300 // !large MosaicViewController: subjSizeChanged.debounce(200
+            );
+        } else {
+            MosaicInitData initData = app.getMosaicInitData();
+            MosaicGameModel model = controller.getModel();
+            model.setMosaicType(initData.getMosaicType());
+            model.setSizeField(initData.getSizeField());
+            controller.setCountMines(initData.getCountMines());
+        }
     }
 
     /** Mosaic controller */
@@ -86,26 +101,26 @@ public class MosaicActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        Logger.info("MosaicActivity.onStart: this.hash={0}", this.hashCode());
+        Logger.info("MosaicActivity.onStart: ");
         super.onStart();
     }
 
     @Override
     protected void onRestart() {
-        Logger.info("MosaicActivity.onRestart: this.hash={0}", this.hashCode());
+        Logger.info("MosaicActivity.onRestart: ");
         super.onRestart();
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
-        Logger.info("MosaicActivity.onSaveInstanceState: this.hash={0}", this.hashCode());
+        Logger.info("MosaicActivity.onSaveInstanceState: ");
         //SharedData.save(savedInstanceState, getSomeData());
         super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
     public void onResume() {
-        Logger.info("MosaicActivity.onResume: this.hash={0}", this.hashCode());
+        Logger.info("MosaicActivity.onResume: ");
         super.onResume();
         getMosaicController().setViewControl(binding.mosaicView);
         getMosaicController().addListener(onMosaicControllerPropertyChangedListener);
@@ -116,7 +131,7 @@ public class MosaicActivity extends AppCompatActivity {
 
     @Override
     public void onPause() {
-        Logger.info("MosaicActivity.onPause: this.hash={0}", this.hashCode());
+        Logger.info("MosaicActivity.onPause: ");
         super.onPause();
         getMosaicController().removeListener(onMosaicControllerPropertyChangedListener);
         getMosaicController().setViewControl(null);
@@ -125,13 +140,24 @@ public class MosaicActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        Logger.info("MosaicActivity.onStop: this.hash={0}", this.hashCode());
+        Logger.info("MosaicActivity.onStop: ");
+
+        MosaicViewController controller = getMosaicController();
+        if (controller.getGameStatus() == EGameStatus.eGSPlay) {
+            backupData = new MosaicActivityBackupData();
+            backupData.mosaicBackupData = controller.gameBackup();
+            backupData.mosaicOffset     = controller.getModel().getMosaicOffset();
+            backupData.playTime         = timer.getTime();
+        } else {
+            backupData = null;
+        }
+
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        Logger.info("MosaicActivity.onDestroy: this.hash={0}", this.hashCode());
+        Logger.info("MosaicActivity.onDestroy: ");
         super.onDestroy();
         timer.close();
         getMosaicController().setOnClickEvent(null);
@@ -226,6 +252,26 @@ public class MosaicActivity extends AppCompatActivity {
                            "Your best result is position #" + (pos + 1),
                            Toast.LENGTH_LONG)
                  .show();
+    }
+
+    public MosaicActivityBackupData getBackupData() {
+        return backupData;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getMosaicController().getGameStatus() != EGameStatus.eGSPlay) {
+            finish();
+            return;
+        }
+
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Confirm exit")
+//                .setMessage("Confirm exit")
+                .setPositiveButton("Yes", (dialog, which) -> finish())
+                .setNegativeButton("No", null)
+                .show();
     }
 
 }

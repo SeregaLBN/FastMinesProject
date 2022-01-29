@@ -105,8 +105,10 @@ public class MosaicModelTest {
                 Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        MosaicGameModel.PROPERTY_MATRIX          ).first);
                 Assert.assertTrue  (                    modifiedProperties.containsKey(MosaicDrawModel.PROPERTY_BACKGROUND_COLOR));
                 Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        MosaicDrawModel.PROPERTY_BACKGROUND_COLOR).first);
-                Assert.assertTrue  (                    modifiedProperties.containsKey(MosaicDrawModel.PROPERTY_BACKGROUND_FILL ));
-                Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        MosaicDrawModel.PROPERTY_BACKGROUND_FILL ).first);
+                Assert.assertTrue  (                    modifiedProperties.containsKey(MosaicDrawModel.PROPERTY_CELL_COLOR      ));
+                Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        MosaicDrawModel.PROPERTY_CELL_COLOR      ).first);
+                Assert.assertTrue  (                    modifiedProperties.containsKey(MosaicDrawModel.PROPERTY_CELL_FILL));
+                Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        MosaicDrawModel.PROPERTY_CELL_FILL).first);
                 Assert.assertTrue  (                    modifiedProperties.containsKey(MosaicDrawModel.PROPERTY_COLOR_TEXT      ));
                 Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        MosaicDrawModel.PROPERTY_COLOR_TEXT      ).first);
                 Assert.assertTrue  (                    modifiedProperties.containsKey(MosaicDrawModel.PROPERTY_PEN_BORDER      ));
@@ -655,7 +657,8 @@ public class MosaicModelTest {
       //m.setArea(1234);
         m.setPadding(new BoundDouble(10));
         m.setBackgroundColor(Color.DimGray());
-        m.getBackgroundFill().setMode(1);
+        m.setCellColor(Color.Gray());
+        m.getCellFill().setMode(1);
         m.getColorText().setColorClose(1, Color.LightSalmon());
         m.getColorText().setColorOpen(2, Color.MediumSeaGreen());
         m.getPenBorder().setColorLight(Color.MediumPurple());

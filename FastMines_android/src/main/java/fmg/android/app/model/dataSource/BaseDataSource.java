@@ -8,10 +8,10 @@ import androidx.databinding.Bindable;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import fmg.android.app.BR;
 import fmg.android.app.model.items.BaseDataItem;
+import fmg.common.Color;
 import fmg.common.geom.SizeDouble;
 import fmg.common.notifier.INotifyPropertyChanged;
 import fmg.common.notifier.NotifyPropertyChanged;
@@ -19,6 +19,7 @@ import fmg.core.img.IAnimatedModel;
 import fmg.core.img.IImageView;
 import fmg.core.img.ImageController;
 import fmg.core.types.Property;
+import fmg.core.mosaic.MosaicDrawModel;
 
 /** Base container for image items */
 public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THeaderModel, THeaderView, THeaderCtrlr>,
@@ -35,6 +36,7 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
     extends BaseObservable
     implements INotifyPropertyChanged, AutoCloseable
 {
+    public static Color DefaultBkColor = MosaicDrawModel.DefaultBkColor;
 
     public static final String PROPERTY_DATA_SOURCE      = "DataSource";
     public static final String PROPERTY_HEADER           = "Header";

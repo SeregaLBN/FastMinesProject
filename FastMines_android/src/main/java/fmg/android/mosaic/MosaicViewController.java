@@ -513,6 +513,8 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
     }
 
     static String motionEventToString(MotionEvent ev) {
+        if (ev == null)
+            return null;
         /** /
         switch (ev.getAction()) {
         case MotionEvent.ACTION_CANCEL      : return "Cancel";
