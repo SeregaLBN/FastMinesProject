@@ -11,8 +11,8 @@
 **/obj
 **/bin
 **/build
-**/Debug
-**/Release
+**/FastMines_Logo/Debug
+**/FastMines_Logo/Release
 FastMines.sln.DotSettings.user
 FastMines_uwp/*.VC.db
 FastMines_uwp/*.VC.opendb
