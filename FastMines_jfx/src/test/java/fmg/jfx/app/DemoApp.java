@@ -196,8 +196,8 @@ public final class DemoApp extends Application {
             prevImagesBtn.setOnAction(    ev -> onNextImages(false));
             refreshButton.setOnAction(    ev -> onNextImages(null));
             nextImagesBtn.setOnAction(    ev -> onNextImages(true));
-            UiInvoker.DEFERRED.accept(() -> onNextImages(null));
-            UiInvoker.DEFERRED.accept(nextImagesBtn::requestFocus);
+            UiInvoker.Deferred.accept(() -> onNextImages(null));
+            UiInvoker.Deferred.accept(nextImagesBtn::requestFocus);
         }
         { // center
             canvas = new Canvas(300, 300);

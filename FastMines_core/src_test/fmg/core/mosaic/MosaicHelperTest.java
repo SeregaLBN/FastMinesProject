@@ -157,7 +157,7 @@ public class MosaicHelperTest {
 
         Signal signal = new Signal();
         double[] area = { -1 };
-        UiInvoker.DEFERRED.accept(() -> {
+        UiInvoker.Deferred.accept(() -> {
             SizeDouble sizeClientIn = new SizeDouble(169.90442448471225, 313.90196868082262);
             SizeDouble sizeClientOut = new SizeDouble();
             area[0] = MosaicHelper.findAreaBySize(EMosaic.eMosaicTrapezoid3, new Matrisize(4, 2), sizeClientIn, sizeClientOut);

@@ -112,7 +112,7 @@ public class ManageDlg implements AutoCloseable {
                     try {
                         players.addNewPlayer(name, loginDialog.getPass());
                         int maxPos = players.size()-1; // new user added to end list
-                        UiInvoker.DEFERRED.accept(() -> table.getSelectionModel().setSelectionInterval(maxPos, maxPos));
+                        UiInvoker.Deferred.accept(() -> table.getSelectionModel().setSelectionInterval(maxPos, maxPos));
                     } catch (Exception ex) {
                         GuiTools.alert(dialog, ex.getMessage());
                         SwingUtilities.invokeLater(anew);

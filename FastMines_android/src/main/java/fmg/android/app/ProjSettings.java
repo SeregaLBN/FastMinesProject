@@ -27,10 +27,10 @@ public final class ProjSettings extends AProjSettings {
 
 
     static {
-        UiInvoker.DEFERRED  = new Handler(Looper.getMainLooper())::post;
-        UiInvoker.DEFERRED2 = new Handler(Looper.getMainLooper())::postDelayed;
-        UiInvoker.ANIMATOR = Animator::getSingleton;
-        UiInvoker.TIMER_CREATOR = Timer::new;
+        UiInvoker.Deferred        = new Handler(Looper.getMainLooper())::post;
+        UiInvoker.DeferredDelayed = new Handler(Looper.getMainLooper())::postDelayed;
+        UiInvoker.Animator = Animator::getSingleton;
+        UiInvoker.TimeCreator = Timer::new;
 
         // various background colors: #E6FFFFFF #FFEEEEEE #FFFAFAFA
 //      MosaicDrawModel.DefaultBkColor   = new Color(0xFFFAFAFA);

@@ -10,22 +10,23 @@ import fmg.core.img.IAnimator;
 public final class UiInvoker {
     private UiInvoker() {}
 
-    /** Delayed execution in the thread of the user interface. */
-    public static Consumer<Runnable> DEFERRED = run -> {
+    /** Deferred execution in the thread of the user interface */
+    public static Consumer<Runnable> Deferred = run -> {
         throw new UnsupportedOperationException("Not implemented...");
     };
 
-    public static BiConsumer<Runnable, Integer> DEFERRED2 = (run, delayedMsec) -> {
+    /** Deferred execution on the UI thread after the specified number of milliseconds */
+    public static BiConsumer<Runnable, Integer> DeferredDelayed = (run, delayedMsec) -> {
         throw new UnsupportedOperationException("Not implemented...");
     };
 
     /** Platform-dependent factory of {@link IAnimator}. Set from outside... */
-    public static Supplier<IAnimator> ANIMATOR = () -> {
+    public static Supplier<IAnimator> Animator = () -> {
         throw new UnsupportedOperationException("Not implemented...");
     };
 
     /** Platform-dependent factory of {@link ITimer}. Set from outside... */
-    public static Supplier<ITimer> TIMER_CREATOR = () -> {
+    public static Supplier<ITimer> TimeCreator = () -> {
         throw new UnsupportedOperationException("Not implemented...");
     };
 

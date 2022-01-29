@@ -10,9 +10,9 @@ public final class ProjSettings extends AProjSettings {
     private ProjSettings() {}
 
     static {
-        UiInvoker.DEFERRED = javafx.application.Platform::runLater;
-        UiInvoker.ANIMATOR = Animator::getSingleton;
-        UiInvoker.TIMER_CREATOR = Timer::new;
+        UiInvoker.Deferred = javafx.application.Platform::runLater;
+        UiInvoker.Animator = Animator::getSingleton;
+        UiInvoker.TimeCreator = Timer::new;
 
 //        try {
 //            javafx.scene.layout.Region region = new javafx.scene.layout.Pane();

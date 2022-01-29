@@ -18,7 +18,6 @@ import java.beans.PropertyChangeListener;
 import java.util.function.Supplier;
 
 import fmg.android.app.databinding.MainActivityBinding;
-import fmg.android.app.model.MosaicActivityBackupData;
 import fmg.android.app.model.dataSource.MosaicGroupDataSource;
 import fmg.android.app.model.dataSource.MosaicSkillDataSource;
 import fmg.android.app.model.items.MosaicGroupDataItem;
@@ -28,7 +27,6 @@ import fmg.android.app.presentation.MenuSettings;
 import fmg.android.app.presentation.SmoothHelper;
 import fmg.android.app.recyclerView.MosaicGroupListViewAdapter;
 import fmg.android.app.recyclerView.MosaicSkillListViewAdapter;
-import fmg.android.app.serializers.MosaicActivityBackupDataSerializer;
 import fmg.android.utils.Cast;
 import fmg.common.Color;
 import fmg.common.Logger;
@@ -78,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         if (FastMinesApp.get().hasMosaicActivityBackupData()) {
-            UiInvoker.DEFERRED.accept(() -> {
+            UiInvoker.Deferred.accept(() -> {
                 Intent intent = new Intent(getApplicationContext(), MosaicActivity.class);
                 startActivity(intent);
             });
@@ -154,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
         Logger.info("MainActivity.onResume: this.hash={0}", this.hashCode());
         super.onResume();
         activityStatus = EActivityStatus.eResumed;
-        UiInvoker.DEFERRED.accept(() -> {
+        UiInvoker.Deferred.accept(() -> {
             if (activityStatus != EActivityStatus.eResumed)
                 return;
             activityStatus = EActivityStatus.eRunning;

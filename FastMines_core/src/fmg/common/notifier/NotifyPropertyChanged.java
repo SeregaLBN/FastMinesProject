@@ -129,7 +129,7 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
                           //.filter(x -> !x.contains(".firePropertyChanged("))
                             .collect(Collectors.joining("\n   ")));
                 /**/
-                UiInvoker.DEFERRED.accept(() -> {
+                UiInvoker.Deferred.accept(() -> {
                     if (disposed)
                         return;
 

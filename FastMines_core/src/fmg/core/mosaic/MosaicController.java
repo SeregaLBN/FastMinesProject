@@ -538,7 +538,7 @@ public abstract class MosaicController<TImage, TImageInner,
 
             invalidateView(this.getMatrix());
         } finally {
-            UiInvoker.DEFERRED.accept(() -> ignoreModelChanges = false );
+            UiInvoker.Deferred.accept(() -> ignoreModelChanges = false );
         }
     }
 

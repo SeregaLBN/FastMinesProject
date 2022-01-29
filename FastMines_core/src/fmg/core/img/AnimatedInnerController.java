@@ -66,14 +66,14 @@ public final class AnimatedInnerController<TImage,
         case IAnimatedModel.PROPERTY_ANIMATED:
             animationWasUsed = true;
             if ((Boolean)ev.getNewValue()) {
-                UiInvoker.ANIMATOR.get().subscribe(this, timeFromStartSubscribe -> {
+                UiInvoker.Animator.get().subscribe(this, timeFromStartSubscribe -> {
                     long mod = timeFromStartSubscribe % model.getAnimatePeriod();
                     long frame = mod * model.getTotalFrames() / model.getAnimatePeriod();
                     //Logger.info("ANIMATOR : " + getClass().getSimpleName() + ": "+ timeFromStartSubscribe);
                     model.setCurrentFrame((int)frame);
                 });
             } else {
-                UiInvoker.ANIMATOR.get().pause(this);
+                UiInvoker.Animator.get().pause(this);
             }
             break;
         case IAnimatedModel.PROPERTY_CURRENT_FRAME:
@@ -88,7 +88,7 @@ public final class AnimatedInnerController<TImage,
     public void close() {
         model.removeListener(onModelPropertyChangedListener);
         if (animationWasUsed) // do not call UiInvoker.ANIMATOR if it is not already used
-            UiInvoker.ANIMATOR.get().unsubscribe(this);
+            UiInvoker.Animator.get().unsubscribe(this);
         transformers.clear();
     }
 

@@ -35,9 +35,9 @@ public final class ProjSettings extends AProjSettings {
         }
 
 
-        UiInvoker.DEFERRED = javax.swing.SwingUtilities::invokeLater;
-        UiInvoker.ANIMATOR = Animator::getSingleton;
-        UiInvoker.TIMER_CREATOR = Timer::new;
+        UiInvoker.Deferred = javax.swing.SwingUtilities::invokeLater;
+        UiInvoker.Animator = Animator::getSingleton;
+        UiInvoker.TimeCreator = Timer::new;
 
 
         try {

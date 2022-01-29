@@ -1134,7 +1134,7 @@ public class FastMinesApp {
                     User user = p.getUser(userId);
                     int pos = getChampions().add(user, playTime, eMosaic, eSkill, clickCount);
                     if (pos >= 0)
-                        UiInvoker.DEFERRED.accept(() -> getChampionDialog().showData(eSkill, eMosaic, pos));
+                        UiInvoker.Deferred.accept(() -> getChampionDialog().showData(eSkill, eMosaic, pos));
                 }
             }
         };

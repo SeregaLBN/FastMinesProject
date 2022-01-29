@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -116,7 +115,7 @@ public class SelectMosaicFragment extends Fragment {
                 binding.layoutBttnStartGame.setBackgroundColor(Cast.toColor(hsv.toColor()));
             };
             try {
-                AsyncRunner.Repeat(run, 100, () -> !rotateBkColorOfGameBttn);
+                AsyncRunner.repeat(run, 100, () -> !rotateBkColorOfGameBttn);
             } catch (Exception ex) {
                 Logger.info("SelectMosaicFragment::onResume: AsyncRunner.Repeat: {0}", ex);
             }
@@ -140,7 +139,7 @@ public class SelectMosaicFragment extends Fragment {
             sizeChangedObservable = subjSizeChanged.debounce(200, TimeUnit.MILLISECONDS)
                     .subscribe(ev -> {
 //                        Logger.info("  SelectMosaicFragment::onGlobalLayoutListener: Debounce: onNext: ev=" + ev);
-                        UiInvoker.DEFERRED.accept(() -> onFragmentSizeChanged(ev));
+                        UiInvoker.Deferred.accept(() -> onFragmentSizeChanged(ev));
                     }, ex -> {
                         Logger.info("  SelectMosaicFragment: sizeChangedObservable: Debounce: onError: " + ex);
                     });

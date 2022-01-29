@@ -29,7 +29,7 @@ public class MosaicModelTest {
     static final int TEST_SIZE_H = 789;
 
     public static void ProjSettings() {
-        UiInvoker.DEFERRED = SimpleUiThreadLoop::addTask;
+        UiInvoker.Deferred = SimpleUiThreadLoop::addTask;
     }
 
     @BeforeClass

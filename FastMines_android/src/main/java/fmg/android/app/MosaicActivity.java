@@ -1,7 +1,6 @@
 package fmg.android.app;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -77,7 +76,7 @@ public class MosaicActivity extends AppCompatActivity {
         MosaicViewController controller = getMosaicController();
         FastMinesApp app = FastMinesApp.get();
         if (app.hasMosaicActivityBackupData()) {
-            UiInvoker.DEFERRED2.accept(() -> {
+            UiInvoker.DeferredDelayed.accept(() -> {
                     MosaicActivityBackupData mosaicActivityBackupData = app.getAndResetMosaicActivityBackupData();
                     controller.gameRestore(mosaicActivityBackupData.mosaicBackupData);
                     controller.getModel().setMosaicOffset(mosaicActivityBackupData.mosaicOffset);

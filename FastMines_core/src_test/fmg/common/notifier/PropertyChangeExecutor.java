@@ -74,7 +74,7 @@ public class PropertyChangeExecutor<T extends INotifyPropertyChanged & AutoClose
                     Logger.info("timeout after " + notificationsTimeoutMs + "ms.");
                     signal.set();
                 });
-            UiInvoker.DEFERRED.accept(() -> {
+            UiInvoker.Deferred.accept(() -> {
                 if (ex1[0] != null)
                     return;
                 try {
@@ -110,7 +110,7 @@ public class PropertyChangeExecutor<T extends INotifyPropertyChanged & AutoClose
             T d = (T)data[0];
             if (d != null) {
                 Signal signal = new Signal();
-                UiInvoker.DEFERRED.accept(() -> {
+                UiInvoker.Deferred.accept(() -> {
                     try {
                         d.removeListener(onDataPropertyChanged);
                         if (needClose)
