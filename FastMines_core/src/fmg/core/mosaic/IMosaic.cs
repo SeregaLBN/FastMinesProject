@@ -20,18 +20,25 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ////////////////////////////////////////////////////////////////////////////////
 using System.Collections.Generic;
-using Fmg.Core.Mosaic.Cells;
+using Fmg.Common.Geom;
 using Fmg.Core.Types;
+using Fmg.Core.Mosaic.Cells;
 
 namespace Fmg.Core.Mosaic {
 
     /// <summary> interface of mosaic field </summary>
-    public interface IMosaic : BaseCell.IMatrixCells {
+    public interface IMosaic {
+
+        /// <summary>размер поля</summary>
+        Matrisize SizeField { get; set; }
 
         BaseCell.BaseAttribute CellAttr { get; }
 
         /// <summary>матрица ячеек, представленная(развёрнута) в виде вектора</summary>
         IList<BaseCell> Matrix { get; }
+
+        /// <summary>доступ к заданной ячейке</summary>
+        BaseCell GetCell(Coord coord);
 
         /// <summary>из каких фигур состоит мозаика поля</summary>
         EMosaic MosaicType { get; set; }

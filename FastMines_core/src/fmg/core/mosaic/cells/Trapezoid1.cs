@@ -70,7 +70,7 @@ namespace Fmg.Core.Mosaic.Cells {
 
         private new AttrTrapezoid1 Attr => (AttrTrapezoid1)base.Attr;
 
-        protected override IList<Coord> GetCoordsNeighbor() {
+        public override IList<Coord> GetCoordsNeighbor() {
             var neighborCoord = new Coord[Attr.GetNeighborNumber(GetDirection())];
 
             // определяю координаты соседей

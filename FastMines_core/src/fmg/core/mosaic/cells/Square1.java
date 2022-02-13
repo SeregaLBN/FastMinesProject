@@ -24,8 +24,7 @@ package fmg.core.mosaic.cells;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
+import java.util.function.IntFunction;
 
 import fmg.common.Color;
 import fmg.common.geom.*;
@@ -73,7 +72,7 @@ public class Square1 extends BaseCell {
     }
 
     @Override
-    protected List<Coord> getCoordsNeighbor() {
+    public List<Coord> getCoordsNeighbor() {
         List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
 
         // определяю координаты соседей
@@ -129,7 +128,7 @@ public class Square1 extends BaseCell {
     public int getShiftPointBorderIndex() { return 2; }
 
     @Override
-    public Color getCellFillColor(int fillMode, Color defaultColor, Function<Integer, Color> getColor) {
+    public Color getCellFillColor(int fillMode, Color defaultColor, IntFunction<Color> getColor) {
         switch (fillMode) {
         default:
             return super.getCellFillColor(fillMode, defaultColor, getColor);

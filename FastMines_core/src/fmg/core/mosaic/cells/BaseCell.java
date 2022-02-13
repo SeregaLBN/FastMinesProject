@@ -22,16 +22,18 @@
 package fmg.core.mosaic.cells;
 
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.IntFunction;
 
 import fmg.common.Color;
 import fmg.common.Logger;
 import fmg.common.geom.*;
 import fmg.common.notifier.INotifyPropertyChanged;
 import fmg.common.notifier.NotifyPropertyChanged;
-import fmg.core.types.*;
+import fmg.core.types.EClose;
+import fmg.core.types.EOpen;
+import fmg.core.types.EState;
+import fmg.core.types.Property;
 
 /** Базовый класс фигуры-ячейки */
 public abstract class BaseCell {
@@ -179,18 +181,6 @@ public abstract class BaseCell {
     /** запретить установку мины на данную ячейку */
     private boolean lockMine;
 
-    public void calcOpenState(IMatrixCells matrix) {
-        if (state.open == EOpen._Mine) return;
-        // подсчитать у соседей число мин и установить значение
-        int count = 0;
-        List<BaseCell> neighbors = this.getNeighbors(matrix);
-        for (BaseCell nCell : neighbors) {
-            if (nCell == null) continue; // существует ли сосед?
-            if (nCell.getState().getOpen() == EOpen._Mine) count++;
-        }
-        state.open = EOpen.class.getEnumConstants()[count];
-    }
-
     public void setMine() {
         if (this.lockMine || (state.open == EOpen._Mine))
             throw new IllegalStateException("Illegal usage");
@@ -221,33 +211,7 @@ public abstract class BaseCell {
     }
 
     /** координаты соседей */
-    protected abstract List<Coord> getCoordsNeighbor();
-
-    /** матрица ячеек поля мозаики */
-    public interface IMatrixCells {
-        /** размер поля */
-        Matrisize getSizeField();
-        void setSizeField(Matrisize size);
-
-        /** доступ к заданной ячейке */
-        BaseCell getCell(Coord coord);
-    }
-
-    /** соседние ячейки - с которыми граничит this */
-    public List<BaseCell> getNeighbors(IMatrixCells matrix) {
-        // получаю координаты соседних ячеек
-        List<Coord> neighborCoord = getCoordsNeighbor();
-
-        int m = matrix.getSizeField().m;
-        int n = matrix.getSizeField().n;
-        // по координатам получаю множество соседних обьектов-ячеек
-        List<BaseCell> neighbors = new ArrayList<>(neighborCoord.size());
-        for (Coord c : neighborCoord)
-            // проверяю что они не вылезли за размеры
-            if ((c.x >= 0) && (c.y >= 0) && (c.x < m) && (c.y < n))
-                neighbors.add( matrix.getCell(c) );
-        return neighbors;
-    }
+    public abstract List<Coord> getCoordsNeighbor();
 
     public Coord getCoord() { return coord; }
     public int getDirection() { return direction; }
@@ -271,119 +235,13 @@ public abstract class BaseCell {
     public abstract int getShiftPointBorderIndex();
 
 
-    public ClickCellResult leftButtonDown(IMatrixCells matrix) {
-        ClickCellResult result = new ClickCellResult();
-        if (state.getClose() == EClose._Flag)
-            return result;
-
-        if (state.getStatus() == EState._Close) {
-            state.setDown(true);
-            result.modified.add(this);
-            return result;
-        }
-
-        // эффект нажатости для неоткрытых соседей
-        if ((state.getStatus() == EState._Open) && (state.getOpen() != EOpen._Nil)) {
-            List<BaseCell> neighbors = getNeighbors(matrix);
-            for (BaseCell nCell : neighbors) {
-                if (nCell == null) continue; // существует ли сосед?
-                if ((nCell.state.getStatus() == EState._Open) ||
-                    (nCell.state.getClose()  == EClose._Flag)) continue;
-                nCell.state.setDown(true);
-                result.modified.add(nCell);
-            }
-        }
-        return result;
-    }
-
-    public ClickCellResult leftButtonUp(boolean isMy, IMatrixCells matrix) {
-        ClickCellResult result = new ClickCellResult();
-
-        if (state.getClose() == EClose._Flag)
-            return result;
-
-        // избавится от эффекта нажатости
-        if ((state.getStatus() == EState._Open) && (state.getOpen() != EOpen._Nil)) {
-            List<BaseCell> neighbors = getNeighbors(matrix);
-            for (BaseCell nCell : neighbors) {
-                if (nCell == null) continue; // существует ли сосед?
-                if ((nCell.state.getStatus() == EState._Open) ||
-                    (nCell.state.getClose()  == EClose._Flag)) continue;
-                nCell.state.setDown(false);
-                result.modified.add(nCell);
-            }
-        }
-        // Открыть закрытую ячейку на которой нажали
-        if (state.getStatus() == EState._Close) {
-            state.setDown(isMy);
-            result.modified.add(this);
-            if (!isMy)
-                return result;
-
-            getState().setStatus(EState._Open);
-        }
-
-        // ! В этой точке ячейка уже открыта
-        // Подсчитываю кол-во установленных вокруг флагов и не открытых ячеек
-        int countFlags = 0;
-        int countClear = 0;
-        List<BaseCell> neighbors = getNeighbors(matrix);
-        if (state.getOpen() != EOpen._Nil)
-            for (BaseCell nCell : neighbors) {
-                if (nCell == null) continue; // существует ли сосед?
-                if (nCell.state.getStatus() == EState._Open) continue;
-                if (nCell.state.getClose()  == EClose._Flag)
-                countFlags++;
-                else countClear++;
-            }
-        // оставшимся установить флаги
-        if ((state.getOpen() != EOpen._Nil) && ((countFlags+countClear) == state.getOpen().ordinal()))
-            for (BaseCell nCell : neighbors) {
-                if (nCell == null) continue; // существует ли сосед?
-                if ((nCell.state.getStatus() == EState._Open) ||
-                    (nCell.state.getClose()  == EClose._Flag)) continue;
-                nCell.state.setClose(EClose._Flag);
-                result.modified.add(nCell);
-            }
-        if (!isMy)
-            return result;
-
-        // открыть оставшиеся
-        if ((countFlags+result.getCountFlag()) == state.getOpen().ordinal())
-            for (BaseCell nCell : neighbors) {
-                if (nCell == null) continue; // существует ли сосед?
-                if ((nCell.state.getStatus() == EState._Open) ||
-                    (nCell.state.getClose()  == EClose._Flag)) continue;
-                nCell.state.setDown(true);
-                nCell.state.setStatus(EState._Open);
-                result.modified.add(nCell);
-                if (nCell.state.getOpen() == EOpen._Nil) {
-                    ClickCellResult result2 = nCell.leftButtonUp(true, matrix); // TODO на больших размерах поля и при маленьком числе мин, приводит к StackOverflowException
-                    result.modified.addAll(result2.modified);
-                }
-                if (nCell.state.getOpen() == EOpen._Mine)
-                    return result;
-            }
-        return result;
-    }
-
-    public ClickCellResult rightButtonDown(EClose close) {
-        ClickCellResult result = new ClickCellResult();
-        if ((state.getStatus() == EState._Open) || state.isDown())
-            return result;
-
-        state.setClose(close);
-        result.modified.add(this);
-        return result;
-    }
-
     /** <ul> Вернуть цвет заливки ячеки в зависимости от
         * <li> режима заливки фона ячеек
         * <li> координаты ячейки
         * <li> направления ячейки
         * <li> ... - как придумает дочерний класс
         */
-    public Color getCellFillColor(int fillMode, Color defaultColor, Function<Integer, Color> getColor) {
+    public Color getCellFillColor(int fillMode, Color defaultColor, IntFunction<Color> getColor) {
         switch (fillMode) {
         default:
             Logger.error(getClass().getSimpleName()+".getBackgroundFillColor: fillMode="+fillMode+":  добавь цветовую обработку для этого режима!");

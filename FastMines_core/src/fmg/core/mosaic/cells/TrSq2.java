@@ -134,7 +134,7 @@ public class TrSq2 extends BaseCell {
     }
 
     @Override
-    protected List<Coord> getCoordsNeighbor() {
+    public List<Coord> getCoordsNeighbor() {
         List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
 
         // определяю координаты соседей

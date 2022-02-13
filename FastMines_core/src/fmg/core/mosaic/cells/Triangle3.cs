@@ -57,7 +57,7 @@ namespace Fmg.Core.Mosaic.Cells {
 
         private new AttrTriangle3 Attr => (AttrTriangle3)base.Attr;
 
-        protected override IList<Coord> GetCoordsNeighbor() {
+        public override IList<Coord> GetCoordsNeighbor() {
             var neighborCoord = new Coord[Attr.GetNeighborNumber(GetDirection())];
 
             // определяю координаты соседей

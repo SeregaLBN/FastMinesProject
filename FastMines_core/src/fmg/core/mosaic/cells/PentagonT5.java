@@ -24,8 +24,7 @@ package fmg.core.mosaic.cells;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
+import java.util.function.IntFunction;
 
 import fmg.common.Color;
 import fmg.common.geom.*;
@@ -149,7 +148,7 @@ public class PentagonT5 extends BaseCell {
     }
 
     @Override
-    protected List<Coord> getCoordsNeighbor() {
+    public List<Coord> getCoordsNeighbor() {
         List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
 
         // определяю координаты соседей
@@ -663,7 +662,7 @@ public class PentagonT5 extends BaseCell {
     }
 
     @Override
-    public Color getCellFillColor(int fillMode, Color defaultColor, Function<Integer, Color> getColor) {
+    public Color getCellFillColor(int fillMode, Color defaultColor, IntFunction<Color> getColor) {
         if (fillMode == getAttr().getMaxCellFillModeValue())
         {
             // подсвечиваю 'ромашку'

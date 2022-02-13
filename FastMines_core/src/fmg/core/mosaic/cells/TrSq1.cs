@@ -89,7 +89,7 @@ namespace Fmg.Core.Mosaic.Cells {
 
          private new AttrTrSq1 Attr => (AttrTrSq1) base.Attr;
 
-         protected override IList<Coord> GetCoordsNeighbor() {
+         public override IList<Coord> GetCoordsNeighbor() {
             var neighborCoord = new Coord[Attr.GetNeighborNumber(GetDirection())];
 
             // определяю координаты соседей

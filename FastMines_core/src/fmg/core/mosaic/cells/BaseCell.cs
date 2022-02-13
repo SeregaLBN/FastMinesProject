@@ -158,21 +158,6 @@ namespace Fmg.Core.Mosaic.Cells {
         /// <summary>запретить установку мины на данную ячейку</summary>
         private bool lockMine;
 
-        public void CalcOpenState(IMatrixCells matrix) {
-            if (state.Open == EOpen._Mine)
-                return;
-            // подсчитать у соседей число мин и установить значение
-            var count = 0;
-            var neighbors = this.GetNeighbors(matrix);
-            foreach (var nCell in neighbors) {
-                if (nCell == null) // существует ли сосед?
-                    continue;
-                if (nCell.state.Open == EOpen._Mine)
-                    count++;
-            }
-            state.Open = EOpenEx.GetValues()[count];
-        }
-
         public void SetMine() {
             if (this.lockMine || (state.Open == EOpen._Mine))
                 throw new InvalidOperationException("Illegal usage");
@@ -201,32 +186,7 @@ namespace Fmg.Core.Mosaic.Cells {
         }
 
         /// <summary>координаты соседей</summary>
-        protected abstract IList<Coord> GetCoordsNeighbor();
-
-        /// <summary>матрица ячеек поля мозаики</summary>
-        public interface IMatrixCells {
-            /// <summary>размер поля</summary>
-            Matrisize SizeField { get; set; }
-
-            /// <summary>доступ к заданной ячейке</summary>
-            BaseCell GetCell(Coord coord);
-        }
-
-        /// <summary>соседние ячейки - с которыми граничит this</summary>
-        public IList<BaseCell> GetNeighbors(IMatrixCells matrix) {
-            // получаю координаты соседних ячеек
-            var neighborCoord = GetCoordsNeighbor();
-
-            var m = matrix.SizeField.m;
-            var n = matrix.SizeField.n;
-            // по координатам получаю множество соседних обьектов-ячеек
-            IList<BaseCell> neighbors = new List<BaseCell>(neighborCoord.Count);
-            foreach (var c in neighborCoord)
-                // проверяю что они не вылезли за размеры
-                if ((c.x >= 0) && (c.y >= 0) && (c.x < m) && (c.y < n))
-                    neighbors.Add(matrix.GetCell(c));
-            return neighbors;
-        }
+        public abstract IList<Coord> GetCoordsNeighbor();
 
         public Coord GetCoord() { return coord; }
         public int GetDirection() { return direction; }
@@ -248,122 +208,6 @@ namespace Fmg.Core.Mosaic.Cells {
 
         /// <summary>Index where border change color</summary>
         public abstract int GetShiftPointBorderIndex();
-
-
-        public ClickCellResult LButtonDown(IMatrixCells matrix) {
-            var result = new ClickCellResult();
-            if (state.Close == EClose._Flag)
-                return result;
-
-            if (state.Status == EState._Close) {
-                state.Down = true;
-                result.Modified.Add(this);
-                return result;
-            }
-
-            // эффект нажатости для неоткрытых соседей
-            if ((state.Status == EState._Open) && (state.Open != EOpen._Nil)) {
-                var neighbors = GetNeighbors(matrix);
-                foreach (var nCell in neighbors) {
-                    if (nCell == null) // существует ли сосед?
-                        continue;
-                    if ((nCell.state.Status == EState._Open) ||
-                        (nCell.state.Close  == EClose._Flag))
-                        continue;
-                    nCell.state.Down = true;
-                    result.Modified.Add(nCell);
-                }
-            }
-            return result;
-        }
-
-        public ClickCellResult LButtonUp(bool isMy, IMatrixCells matrix) {
-            var result = new ClickCellResult();
-
-            if (state.Close == EClose._Flag)
-                return result;
-
-            // избавится от эффекта нажатости
-            if ((state.Status == EState._Open) && (state.Open != EOpen._Nil)) {
-                var neighbors_ = GetNeighbors(matrix);
-                foreach (var nCell in neighbors_) {
-                    if (nCell == null) // существует ли сосед?
-                        continue;
-                    if ((nCell.state.Status == EState._Open) ||
-                        (nCell.state.Close  == EClose._Flag))
-                        continue;
-                    nCell.state.Down = false;
-                    result.Modified.Add(nCell);
-                }
-            }
-            // Открыть закрытую ячейку на которой нажали
-            if (state.Status == EState._Close) {
-                state.Down = isMy;
-                result.Modified.Add(this);
-                if (!isMy)
-                    return result;
-                state.Status = EState._Open;
-            }
-
-            // ! В этой точке ячейка уже открыта
-            // Подсчитываю кол-во установленных вокруг флагов и не открытых ячеек
-            var countFlags = 0;
-            var countClear = 0;
-            var neighbors = GetNeighbors(matrix);
-            if (state.Open != EOpen._Nil)
-                foreach (var nCell in neighbors) {
-                    if (nCell == null) // существует ли сосед?
-                        continue;
-                    if (nCell.state.Status == EState._Open)
-                        continue;
-                    if (nCell.state.Close == EClose._Flag)
-                        countFlags++;
-                    else countClear++;
-                }
-            // оставшимся установить флаги
-            if ((state.Open != EOpen._Nil) && ((countFlags + countClear) == state.Open.Ordinal()))
-                foreach (var nCell in neighbors) {
-                    if (nCell == null) // существует ли сосед?
-                        continue;
-                    if ((nCell.state.Status == EState._Open) ||
-                        (nCell.state.Close  == EClose._Flag))
-                        continue;
-                    nCell.state.Close = EClose._Flag;
-                    result.Modified.Add(nCell);
-                }
-            if (!isMy)
-                return result;
-
-            // открыть оставшиеся
-            if ((countFlags + result.CountFlag) == state.Open.Ordinal())
-                foreach (var nCell in neighbors) {
-                    if (nCell == null) // существует ли сосед?
-                        continue;
-                    if ((nCell.state.Status == EState._Open) ||
-                        (nCell.state.Close  == EClose._Flag))
-                        continue;
-                    nCell.state.Down = true;
-                    nCell.state.Status = EState._Open;
-                    result.Modified.Add(nCell);
-                    if (nCell.state.Open == EOpen._Nil) {
-                        var result2 = nCell.LButtonUp(true, matrix);
-                        result.Modified.UnionWith(result2.Modified);
-                    }
-                    if (nCell.state.Open == EOpen._Mine)
-                        return result;
-                }
-            return result;
-        }
-
-        public ClickCellResult RButtonDown(EClose close) {
-            var result = new ClickCellResult();
-            if ((state.Status == EState._Open) || state.Down)
-                return result;
-
-            state.Close = close;
-            result.Modified.Add(this);
-            return result;
-        }
 
         /// <summary>Вернуть цвет заливки ячеки в зависимости от
         /// * режима заливки фона ячеек

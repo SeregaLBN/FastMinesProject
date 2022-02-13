@@ -127,7 +127,24 @@ public abstract class MosaicController<TImage, TImageInner,
 
         // set other CellOpen and set all Caption
         for (BaseCell cell : getMatrix())
-            cell.calcOpenState(mosaic);
+            calcOpenState(cell);
+    }
+
+    /** соседние ячейки */
+    private List<BaseCell> getNeighbors(BaseCell cell) {
+        // получаю координаты соседних ячеек
+        List<Coord> neighborCoord = cell.getCoordsNeighbor();
+
+        IMosaic mosaic = getModel();
+        int m = mosaic.getSizeField().m;
+        int n = mosaic.getSizeField().n;
+        // по координатам получаю множество соседних обьектов-ячеек
+        List<BaseCell> neighbors = new ArrayList<>(neighborCoord.size());
+        for (Coord c : neighborCoord)
+            // проверяю что они не вылезли за размеры
+            if ((c.x >= 0) && (c.y >= 0) && (c.x < m) && (c.y < n))
+                neighbors.add( mosaic.getCell(c) );
+        return neighbors;
     }
 
     /** arrange Mines - set random mines */
@@ -140,7 +157,7 @@ public abstract class MosaicController<TImage, TImageInner,
         IMosaicDrawModel<TImageInner> mosaic = getModel();
         List<BaseCell> matrixClone = new ArrayList<>(getMatrix());
         matrixClone.remove(firstClickCell); // исключаю на которой кликал юзер
-        List<BaseCell> neighbors = firstClickCell.getNeighbors(mosaic);
+        List<BaseCell> neighbors = getNeighbors(firstClickCell);
         matrixClone.removeAll(neighbors); // и их соседей
         if (matrixClone.isEmpty())
             matrixClone.add(neighbors.get(ThreadLocalRandom.current().nextInt(neighbors.size())));
@@ -162,7 +179,22 @@ public abstract class MosaicController<TImage, TImageInner,
 
         // set other CellOpen and set all Caption
         for (BaseCell cell : getMatrix())
-            cell.calcOpenState(mosaic);
+            calcOpenState(cell);
+    }
+
+    private void calcOpenState(BaseCell cell) {
+        var state = cell.getState();
+        if (state.getOpen() == EOpen._Mine)
+            return;
+
+        // подсчитать у соседей число мин и установить значение
+        int count = 0;
+        List<BaseCell> neighbors = getNeighbors(cell);
+        for (BaseCell nCell : neighbors) {
+            if (nCell == null) continue; // существует ли сосед?
+            if (nCell.getState().getOpen() == EOpen._Mine) count++;
+        }
+        state.setOpen(EOpen.class.getEnumConstants()[count]);
     }
 
     @Override
@@ -326,6 +358,144 @@ public abstract class MosaicController<TImage, TImageInner,
         return Collections.emptySet();
     }
 
+    private ClickCellResult leftButtonDown(BaseCell cell) {
+        ClickCellResult result = new ClickCellResult();
+        var state = cell.getState();
+        if (state.getClose() == EClose._Flag)
+            return result;
+
+        if (state.getStatus() == EState._Close) {
+            state.setDown(true);
+            result.modified.add(cell);
+            return result;
+        }
+
+        // эффект нажатости для неоткрытых соседей
+        if ((state.getStatus() == EState._Open) && (state.getOpen() != EOpen._Nil)) {
+            List<BaseCell> neighbors = getNeighbors(cell);
+            for (BaseCell nCell : neighbors) {
+                if (nCell == null) // существует ли сосед?
+                    continue;
+
+                var nState = nCell.getState();
+                if ((nState.getStatus() == EState._Open) ||
+                    (nState.getClose()  == EClose._Flag))
+                    continue;
+
+                nState.setDown(true);
+                result.modified.add(nCell);
+            }
+        }
+        return result;
+    }
+
+    private ClickCellResult leftButtonUp(BaseCell cell, boolean isMy) {
+        ClickCellResult result = new ClickCellResult();
+
+        var state = cell.getState();
+        if (state.getClose() == EClose._Flag)
+            return result;
+
+        // избавится от эффекта нажатости
+        List<BaseCell> neighbors = getNeighbors(cell);
+        if ((state.getStatus() == EState._Open) && (state.getOpen() != EOpen._Nil)) {
+            for (BaseCell nCell : neighbors) {
+                if (nCell == null) // существует ли сосед?
+                    continue;
+
+                var nState = nCell.getState();
+                if ((nState.getStatus() == EState._Open) ||
+                    (nState.getClose()  == EClose._Flag))
+                    continue;
+
+                nState.setDown(false);
+                result.modified.add(nCell);
+            }
+        }
+
+        // Открыть закрытую ячейку на которой нажали
+        if (state.getStatus() == EState._Close) {
+            state.setDown(isMy);
+            result.modified.add(cell);
+            if (!isMy)
+                return result;
+
+            state.setStatus(EState._Open);
+        }
+
+        // ! В этой точке ячейка уже открыта
+        // Подсчитываю кол-во установленных вокруг флагов и не открытых ячеек
+        int countFlags = 0;
+        int countClear = 0;
+        if (state.getOpen() != EOpen._Nil)
+            for (BaseCell nCell : neighbors) {
+                if (nCell == null) // существует ли сосед?
+                    continue;
+
+                var nState = nCell.getState();
+                if (nState.getStatus() == EState._Open)
+                    continue;
+
+                if (nState.getClose()  == EClose._Flag)
+                    countFlags++;
+                else
+                    countClear++;
+            }
+
+        // оставшимся установить флаги
+        if ((state.getOpen() != EOpen._Nil) && ((countFlags+countClear) == state.getOpen().ordinal()))
+            for (BaseCell nCell : neighbors) {
+                if (nCell == null) // существует ли сосед?
+                    continue;
+
+                var nState = nCell.getState();
+                if ((nState.getStatus() == EState._Open) ||
+                    (nState.getClose()  == EClose._Flag))
+                    continue;
+
+                nState.setClose(EClose._Flag);
+                result.modified.add(nCell);
+            }
+
+        if (!isMy)
+            return result;
+
+        // открыть оставшиеся
+        if ((countFlags+result.getCountFlag()) == state.getOpen().ordinal())
+            for (BaseCell nCell : neighbors) {
+                if (nCell == null) // существует ли сосед?
+                    continue;
+
+                var nState = nCell.getState();
+                if ((nState.getStatus() == EState._Open) ||
+                    (nState.getClose()  == EClose._Flag))
+                    continue;
+
+                nState.setDown(true);
+                nState.setStatus(EState._Open);
+                result.modified.add(nCell);
+                if (nState.getOpen() == EOpen._Nil) {
+                    ClickCellResult result2 = leftButtonUp(nCell, true); // TODO на больших размерах поля и при маленьком числе мин, приводит к StackOverflowException
+                    result.modified.addAll(result2.modified);
+                }
+                if (nState.getOpen() == EOpen._Mine)
+                    return result;
+            }
+
+        return result;
+    }
+
+    private ClickCellResult rightButtonDown(BaseCell cell) {
+        ClickCellResult result = new ClickCellResult();
+        var state = cell.getState();
+        if ((state.getStatus() == EState._Open) || state.isDown())
+            return result;
+
+        state.setClose(state.getClose().nextState(getUseUnknown()));
+        result.modified.add(cell);
+        return result;
+    }
+
     protected ClickResult onLeftButtonDown(BaseCell cellLeftDown) {
         ClickResult result = new ClickResult(cellLeftDown, true, true);
         setCellDown(null);
@@ -348,7 +518,7 @@ public abstract class MosaicController<TImage, TImageInner,
             }
             result.modified.add(cellLeftDown);
         } else {
-            ClickCellResult resultCell = cellLeftDown.leftButtonDown(getModel());
+            ClickCellResult resultCell = leftButtonDown(cellLeftDown);
             result.modified = resultCell.modified; // copy reference; TODO result.modified.addAll(resultCell.modified);
         }
         invalidateView(result.modified);
@@ -372,7 +542,7 @@ public abstract class MosaicController<TImage, TImageInner,
                 gameBegin(cellDown);
                 result.modified.addAll(this.getMatrix());
             }
-            ClickCellResult resultCell = cellDown.leftButtonUp(cellDown == cellLeftUp, getModel());
+            ClickCellResult resultCell = leftButtonUp(cellDown, cellDown == cellLeftUp);
             if (!gameBegin)
                 result.modified.addAll(resultCell.modified);
             int countOpen = result.getCountOpen();
@@ -428,7 +598,7 @@ public abstract class MosaicController<TImage, TImageInner,
             return result;
 
         setCellDown(cellRightDown);
-        ClickCellResult resultCell = cellRightDown.rightButtonDown(cellRightDown.getState().getClose().nextState(getUseUnknown()));
+        ClickCellResult resultCell = rightButtonDown(cellRightDown);
         result.modified = resultCell.modified; // copy reference; TODO modify to result.modified.addAll(resultCell.modified);
 
         int countFlag = result.getCountFlag();

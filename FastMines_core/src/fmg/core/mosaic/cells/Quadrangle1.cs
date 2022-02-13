@@ -84,7 +84,7 @@ namespace Fmg.Core.Mosaic.Cells {
 
         private new AttrQuadrangle1 Attr => (AttrQuadrangle1) base.Attr;
 
-        protected override IList<Coord> GetCoordsNeighbor() {
+        public override IList<Coord> GetCoordsNeighbor() {
             var neighborCoord = new Coord[Attr.GetNeighborNumber(GetDirection())];
 
             // определяю координаты соседей

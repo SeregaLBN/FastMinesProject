@@ -9,6 +9,7 @@ using Fmg.Core.Img;
 using Fmg.Core.Mosaic.Cells;
 using Fmg.Core.App.Model;
 using Fmg.Common.UI;
+using static Fmg.Core.Mosaic.Cells.BaseCell;
 
 namespace Fmg.Core.Mosaic {
 
@@ -100,7 +101,24 @@ namespace Fmg.Core.Mosaic {
 
             // set other CellOpen and set all Caption
             foreach (var cell in Matrix)
-                cell.CalcOpenState(mosaic);
+                CalcOpenState(cell);
+        }
+
+        /// <summary>соседние ячейки - с которыми граничит this</summary>
+        private IList<BaseCell> GetNeighbors(BaseCell cell) {
+            IMosaic mosaic = Model;
+            // получаю координаты соседних ячеек
+            var neighborCoord = cell.GetCoordsNeighbor();
+
+            var m = mosaic.SizeField.m;
+            var n = mosaic.SizeField.n;
+            // по координатам получаю множество соседних обьектов-ячеек
+            IList<BaseCell> neighbors = new List<BaseCell>(neighborCoord.Count);
+            foreach (var c in neighborCoord)
+                // проверяю что они не вылезли за размеры
+                if ((c.x >= 0) && (c.y >= 0) && (c.x < m) && (c.y < n))
+                    neighbors.Add(mosaic.GetCell(c));
+            return neighbors;
         }
 
         /// <summary> arrange Mines - set random mines </summary>
@@ -113,7 +131,7 @@ namespace Fmg.Core.Mosaic {
             var mosaic = Model;
             var matrixClone = new List<BaseCell>(Matrix);
             matrixClone.Remove(firstClickCell); // исключаю на которой кликал юзер
-            var neighbors = firstClickCell.GetNeighbors(mosaic);
+            var neighbors = GetNeighbors(firstClickCell);
             foreach (var x in neighbors)
                 matrixClone.Remove(x); // и их соседей
             if (!matrixClone.Any())
@@ -136,8 +154,26 @@ namespace Fmg.Core.Mosaic {
 
             // set other CellOpen and set all Caption
             foreach (var cell in Matrix)
-                cell.CalcOpenState(mosaic);
+                CalcOpenState(cell);
         }
+
+        private void CalcOpenState(BaseCell cell) {
+            var state = cell.State;
+            if (state.Open == EOpen._Mine)
+                return;
+            
+            // подсчитать у соседей число мин и установить значение
+            var count = 0;
+            var neighbors = GetNeighbors(cell);
+            foreach (var nCell in neighbors) {
+                if (nCell == null) // существует ли сосед?
+                    continue;
+                if (nCell.State.Open == EOpen._Mine)
+                    count++;
+            }
+            state.Open = EOpenEx.GetValues()[count];
+        }
+
 
         public int CountOpen { get { return Matrix.Count(x => x.State.Status == EState._Open); } }
         public int CountFlag { get { return Matrix.Count(x => (x.State.Status == EState._Close) && (x.State.Close == EClose._Flag)); } }
@@ -260,6 +296,128 @@ namespace Fmg.Core.Mosaic {
             return Enumerable.Empty<BaseCell>();
         }
 
+        private ClickCellResult LButtonDown(BaseCell cell) {
+            var result = new ClickCellResult();
+            var state = cell.State;
+            if (state.Close == EClose._Flag)
+                return result;
+
+            if (state.Status == EState._Close) {
+                state.Down = true;
+                result.Modified.Add(cell);
+                return result;
+            }
+
+            // эффект нажатости для неоткрытых соседей
+            if ((state.Status == EState._Open) && (state.Open != EOpen._Nil)) {
+                var neighbors = GetNeighbors(cell);
+                foreach (var nCell in neighbors) {
+                    if (nCell == null) // существует ли сосед?
+                        continue;
+                    var nState = nCell.State;
+                    if ((nState.Status == EState._Open) ||
+                        (nState.Close  == EClose._Flag))
+                        continue;
+                    nState.Down = true;
+                    result.Modified.Add(nCell);
+                }
+            }
+            return result;
+        }
+
+        private ClickCellResult LButtonUp(BaseCell cell, bool isMy) {
+            var result = new ClickCellResult();
+
+            var state = cell.State;
+            if (state.Close == EClose._Flag)
+                return result;
+
+            var neighbors = GetNeighbors(cell);
+            // избавится от эффекта нажатости
+            if ((state.Status == EState._Open) && (state.Open != EOpen._Nil)) {
+                foreach (var nCell in neighbors) {
+                    if (nCell == null) // существует ли сосед?
+                        continue;
+                    var nState = nCell.State;
+                    if ((nState.Status == EState._Open) ||
+                        (nState.Close  == EClose._Flag))
+                        continue;
+                    nState.Down = false;
+                    result.Modified.Add(nCell);
+                }
+            }
+            // Открыть закрытую ячейку на которой нажали
+            if (state.Status == EState._Close) {
+                state.Down = isMy;
+                result.Modified.Add(cell);
+                if (!isMy)
+                    return result;
+                state.Status = EState._Open;
+            }
+
+            // ! В этой точке ячейка уже открыта
+            // Подсчитываю кол-во установленных вокруг флагов и не открытых ячеек
+            var countFlags = 0;
+            var countClear = 0;
+            if (state.Open != EOpen._Nil)
+                foreach (var nCell in neighbors) {
+                    if (nCell == null) // существует ли сосед?
+                        continue;
+                    var nState = nCell.State;
+                    if (nState.Status == EState._Open)
+                        continue;
+                    if (nState.Close == EClose._Flag)
+                        countFlags++;
+                    else countClear++;
+                }
+            // оставшимся установить флаги
+            if ((state.Open != EOpen._Nil) && ((countFlags + countClear) == state.Open.Ordinal()))
+                foreach (var nCell in neighbors) {
+                    if (nCell == null) // существует ли сосед?
+                        continue;
+                    var nState = nCell.State;
+                    if ((nState.Status == EState._Open) ||
+                        (nState.Close  == EClose._Flag))
+                        continue;
+                    nState.Close = EClose._Flag;
+                    result.Modified.Add(nCell);
+                }
+            if (!isMy)
+                return result;
+
+            // открыть оставшиеся
+            if ((countFlags + result.CountFlag) == state.Open.Ordinal())
+                foreach (var nCell in neighbors) {
+                    if (nCell == null) // существует ли сосед?
+                        continue;
+                    var nState = nCell.State;
+                    if ((nState.Status == EState._Open) ||
+                        (nState.Close  == EClose._Flag))
+                        continue;
+                    nState.Down = true;
+                    nState.Status = EState._Open;
+                    result.Modified.Add(nCell);
+                    if (nState.Open == EOpen._Nil) {
+                        var result2 = LButtonUp(nCell, true);
+                        result.Modified.UnionWith(result2.Modified);
+                    }
+                    if (nState.Open == EOpen._Mine)
+                        return result;
+                }
+            return result;
+        }
+
+        private ClickCellResult RButtonDown(BaseCell cell) {
+            var result = new ClickCellResult();
+            var state = cell.State;
+            if ((state.Status == EState._Open) || state.Down)
+                return result;
+
+            state.Close = state.Close.NextState(UseUnknown);
+            result.Modified.Add(cell);
+            return result;
+        }
+
         protected ClickResult OnLeftButtonDown(BaseCell cellLeftDown) {
             //using (new Fmg.Common.Tracer("Mosaic.OnLeftButtonDown"))
             {
@@ -284,7 +442,7 @@ namespace Fmg.Core.Mosaic {
                     }
                     result.Modified.Add(cellLeftDown);
                 } else {
-                    var resultCell = cellLeftDown.LButtonDown(Model);
+                    var resultCell = LButtonDown(cellLeftDown);
                     result.Modified = resultCell.Modified; // copy reference; TODO result.Modified.AddRange(resultCell.Modified);
                 }
                 InvalidateView(result.Modified);
@@ -310,7 +468,7 @@ namespace Fmg.Core.Mosaic {
                         GameBegin(CellDown);
                         result.Modified.UnionWith(this.Matrix);
                     }
-                    var resultCell = cellDown.LButtonUp(ReferenceEquals(cellDown, cellLeftUp), Model);
+                    var resultCell = LButtonUp(cellDown, ReferenceEquals(cellDown, cellLeftUp));
                     if (!gameBegin)
                         result.Modified.UnionWith(resultCell.Modified);
                     //tracer.Put(" result.Modified=" + result.Modified.Count);
@@ -369,7 +527,7 @@ namespace Fmg.Core.Mosaic {
                     return result;
 
                 CellDown = cellRightDown;
-                var resultCell = cellRightDown.RButtonDown(cellRightDown.State.Close.NextState(UseUnknown));
+                var resultCell = RButtonDown(cellRightDown);
                 result.Modified = resultCell.Modified; // copy reference; TODO modify to result.Modified.Add(resultCell.Modified);
 
                 var countFlag = result.CountFlag;
