@@ -115,7 +115,7 @@ public class SelectMosaicFragment extends Fragment {
                 binding.layoutBttnStartGame.setBackgroundColor(Cast.toColor(hsv.toColor()));
             };
             try {
-                AsyncRunner.repeat(run, 100, () -> !rotateBkColorOfGameBttn);
+                AsyncRunner.Repeat(run, 100, () -> !rotateBkColorOfGameBttn);
             } catch (Exception ex) {
                 Logger.info("SelectMosaicFragment::onResume: AsyncRunner.Repeat: {0}", ex);
             }

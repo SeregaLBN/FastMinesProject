@@ -136,7 +136,7 @@ namespace Fmg.Core.Img {
                     if (model is IMosaicDrawModel mdm) {
                         mdm.BackgroundColor = bkClr;
 
-                        mdm.BkFill.Mode = 1 + R(mdm.CellAttr.GetMaxBackgroundFillModeValue());
+                        mdm.CellFill.Mode = 1 + R(mdm.CellAttr.GetMaxCellFillModeValue());
 
                         mdm.PenBorder.Width = 1 + R(2);
                         SizeDouble size = mdm.Size;

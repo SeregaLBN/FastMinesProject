@@ -72,7 +72,7 @@ public class MosaicBackupDataSerializer implements ISerializer {
             return data;
 
         } catch(Exception ex) {
-            Logger.error("Can not read mosaic backup data from SharedPreferences", ex);
+            Logger.error("Can`t load mosaic backup data from SharedPreferences", ex);
         }
         return null;
     }

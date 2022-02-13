@@ -3,11 +3,11 @@ using System.Linq;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 using Microsoft.Graphics.Canvas;
-using Fmg.Uwp.App.Model.Items;
+using Fmg.Common;
 using Fmg.Common.Notifier;
 using Fmg.Common.Geom;
 using Fmg.Core.Img;
-using Fmg.Uwp.Utils;
+using Fmg.Uwp.App.Model.Items;
 
 namespace Fmg.Uwp.App.Model.DataSources {
 
@@ -25,6 +25,8 @@ namespace Fmg.Uwp.App.Model.DataSources {
         where TItemView  : IImageView<CanvasBitmap, TItemModel>
         where TItemCtrlr : ImageController<CanvasBitmap, TItemView, TItemModel>
     {
+        public static readonly Color DefaultBkColor = Color.Beige.Brighter(0.5); // Fmg.Core.Mosaic.MosaicDrawModelConst.DefaultBkColor;
+
         /// <summary> Images that describes this data source </summary>
         protected THeader header;
         /// <summary> Data source - images that describes the elements </summary>

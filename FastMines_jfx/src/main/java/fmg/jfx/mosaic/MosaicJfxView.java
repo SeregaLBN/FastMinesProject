@@ -131,7 +131,7 @@ public abstract class MosaicJfxView<TImage,
                 {
                     Color bkClrCell = cell.getCellFillColor(cellFill.getMode(),
                                                             cellColor,
-                                                            cellFill.getColors());
+                                                            cellFill::getColor);
                     if (!drawBk || !bkClrCell.equals(bkClr)) {
                         g.setFill(Cast.toColor(bkClrCell));
                         polyX = Cast.toPolygon(poly, true);

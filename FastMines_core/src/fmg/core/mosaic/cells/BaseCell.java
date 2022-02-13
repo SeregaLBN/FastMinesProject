@@ -24,7 +24,7 @@ package fmg.core.mosaic.cells;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.function.Function;
 
 import fmg.common.Color;
 import fmg.common.Logger;
@@ -149,11 +149,9 @@ public abstract class BaseCell {
     protected RegionDouble region;
 
     public static class StateCell {
-        // { union
         private EState status; // _Open, _Close
         private EOpen  open;   // _Nil, _1, ... _21, _Mine
         private EClose close;  // _Unknown, _Clear, _Flag
-        // } end union
         /** Нажата? Не путать с open! - ячейка может быть нажата, но ещё не открыта. Важно только для ф-ции прорисовки */
         private boolean down;
 
@@ -192,6 +190,7 @@ public abstract class BaseCell {
         }
         state.open = EOpen.class.getEnumConstants()[count];
     }
+
     public void setMine() {
         if (this.lockMine || (state.open == EOpen._Mine))
             throw new IllegalStateException("Illegal usage");
@@ -384,7 +383,7 @@ public abstract class BaseCell {
         * <li> направления ячейки
         * <li> ... - как придумает дочерний класс
         */
-    public Color getCellFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
+    public Color getCellFillColor(int fillMode, Color defaultColor, Function<Integer, Color> getColor) {
         switch (fillMode) {
         default:
             Logger.error(getClass().getSimpleName()+".getBackgroundFillColor: fillMode="+fillMode+":  добавь цветовую обработку для этого режима!");
@@ -401,7 +400,7 @@ public abstract class BaseCell {
             return defaultColor;
 
         case 1:
-            return repositoryColor.get(getDirection());
+            return getColor.apply(getDirection());
         case 2:
             {
                 // подсветить каждую i-тую строку c шагом div
@@ -409,7 +408,7 @@ public abstract class BaseCell {
                 final int div = 5;
                 int tmp1 = getCoord().x % div;
                 int tmp2 = (getCoord().y-tmp1) % div;
-                return repositoryColor.get((((tmp1 + tmp2) % div) == i) ? 0 : 1 );
+                return getColor.apply((((tmp1 + tmp2) % div) == i) ? 0 : 1 );
             }
         case 3:
             {
@@ -418,7 +417,7 @@ public abstract class BaseCell {
                 final int div = 4;
                 int tmp1 = getCoord().x % div;
                 int tmp2 = (getCoord().y+tmp1) % div;
-                return repositoryColor.get((((tmp1 + tmp2) % div) == i) ? 0 : 1 );
+                return getColor.apply((((tmp1 + tmp2) % div) == i) ? 0 : 1 );
             }
         case 4:
             {
@@ -427,7 +426,7 @@ public abstract class BaseCell {
                 final int div = 5;
                 int tmp1 = getCoord().x % div;
                 int tmp2 = (getCoord().y+tmp1) % div;
-                return repositoryColor.get((((tmp1 + tmp2) % div) == i) ? 0 : 1 );
+                return getColor.apply((((tmp1 + tmp2) % div) == i) ? 0 : 1 );
             }
         case 5:
             {
@@ -435,25 +434,25 @@ public abstract class BaseCell {
                 final int div = 15;
                 int tmp1 = getCoord().x % div;
                 int tmp2 = (getCoord().y+tmp1) % div;
-                return repositoryColor.get((tmp1 + tmp2) % div);
+                return getColor.apply((tmp1 + tmp2) % div);
             }
         case 6:
             {
                 final int div = 4;
-                return repositoryColor.get(((getCoord().x%div + getCoord().y%div) == div) ? 0 : 1);
+                return getColor.apply(((getCoord().x%div + getCoord().y%div) == div) ? 0 : 1);
             }
         case 7: case 8: case 9:
-            return repositoryColor.get(getCoord().x % (-5+fillMode));
+            return getColor.apply(getCoord().x % (-5+fillMode));
         case 10: case 11: case 12:
-            return repositoryColor.get(getCoord().y % (-8+fillMode));
+            return getColor.apply(getCoord().y % (-8+fillMode));
         case 13: case 14: case 15:
         case 16: case 17: case 18:
-            return repositoryColor.get(getCoord().x % (-fillMode) - fillMode + getCoord().y % (+fillMode));
+            return getColor.apply(getCoord().x % (-fillMode) - fillMode + getCoord().y % (+fillMode));
         case 19:
             // подсветить direction
             int zx = getCoord().x / getAttr().getDirectionSizeField().width +1;
             int zy = getCoord().y / getAttr().getDirectionSizeField().height +1;
-            return repositoryColor.get(zx*zy);
+            return getColor.apply(zx*zy);
         }
     }
 

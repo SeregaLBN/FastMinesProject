@@ -25,6 +25,7 @@ package fmg.core.mosaic.cells;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import fmg.common.Color;
 import fmg.common.geom.*;
@@ -662,27 +663,27 @@ public class PentagonT5 extends BaseCell {
     }
 
     @Override
-    public Color getCellFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
+    public Color getCellFillColor(int fillMode, Color defaultColor, Function<Integer, Color> getColor) {
         if (fillMode == getAttr().getMaxCellFillModeValue())
         {
             // подсвечиваю 'ромашку'
             switch (getDirection()) {
-            case  0: case  1: case  2: case 14: case 15: case 16: return repositoryColor.get(0);
-            case  3: case  4: case  5: case 17: case 18: case 19: return repositoryColor.get(1);
-            case  6: case  7: case  8: case 20: case 21: case 22: return repositoryColor.get(2);
-            case  9: case 10: case 11: case 23: case 24: case 25: return repositoryColor.get(3);
-            case 12: case 13: case 27: case 26: case 40: case 41: return repositoryColor.get(4);
-            case 28: case 29: case 30: case 42: case 43: case 44: return repositoryColor.get(5);
-            case 31: case 32: case 33: case 45: case 46: case 47: return repositoryColor.get(6);
-            case 34: case 35: case 36: case 48: case 49: case 50: return repositoryColor.get(7);
-            case 37: case 38: case 39: case 51: case 52: case 53: return repositoryColor.get(8);
-            case 54: case 55: case 69: case 67: case 68: case 83: return repositoryColor.get(9);
-            case 56: case 57: case 58: case 70: case 71: case 72: return repositoryColor.get(10);
-            case 59: case 60: case 61: case 73: case 74: case 75: return repositoryColor.get(11);
-            case 62: case 63: case 64: case 76: case 77: case 78: return repositoryColor.get(12);
-            case 65: case 66: case 82: case 79: case 80: case 81: return repositoryColor.get(13);
+            case  0: case  1: case  2: case 14: case 15: case 16: return getColor.apply(0);
+            case  3: case  4: case  5: case 17: case 18: case 19: return getColor.apply(1);
+            case  6: case  7: case  8: case 20: case 21: case 22: return getColor.apply(2);
+            case  9: case 10: case 11: case 23: case 24: case 25: return getColor.apply(3);
+            case 12: case 13: case 27: case 26: case 40: case 41: return getColor.apply(4);
+            case 28: case 29: case 30: case 42: case 43: case 44: return getColor.apply(5);
+            case 31: case 32: case 33: case 45: case 46: case 47: return getColor.apply(6);
+            case 34: case 35: case 36: case 48: case 49: case 50: return getColor.apply(7);
+            case 37: case 38: case 39: case 51: case 52: case 53: return getColor.apply(8);
+            case 54: case 55: case 69: case 67: case 68: case 83: return getColor.apply(9);
+            case 56: case 57: case 58: case 70: case 71: case 72: return getColor.apply(10);
+            case 59: case 60: case 61: case 73: case 74: case 75: return getColor.apply(11);
+            case 62: case 63: case 64: case 76: case 77: case 78: return getColor.apply(12);
+            case 65: case 66: case 82: case 79: case 80: case 81: return getColor.apply(13);
 //          default:
-//              return repositoryColor.get(-1);
+//              return getColor.apply(-1);
             }
         } else
         if (fillMode == (getAttr().getMaxCellFillModeValue()-1))
@@ -692,24 +693,24 @@ public class PentagonT5 extends BaseCell {
             case  1: case  0: case 14:
             case 13: case 12: case 26: case 38: case 37: case 51: case 63: case 62: case 76:
             case  7: case  6: case 20: case 32: case 31: case 45: case 57: case 56: case 70:
-                return repositoryColor.get(0);
+                return getColor.apply(0);
             case  2: case 16: case 15:
             case 27: case 41: case 40: case 39: case 53: case 52: case 64: case 78: case 77:
             case  8: case 22: case 21: case 33: case 47: case 46: case 58: case 72: case 71:
-                return repositoryColor.get(1);
+                return getColor.apply(1);
             case  4: case  3: case 17:
             case 29: case 28: case 42: case 55: case 54: case 67: case 66: case 65: case 79:
             case 10: case  9: case 23: case 35: case 34: case 48: case 60: case 59: case 73:
-                return repositoryColor.get(2);
+                return getColor.apply(2);
             case  5: case 19: case 18:
             case 30: case 44: case 43: case 69: case 83: case 68: case 82: case 81: case 80:
             case 11: case 25: case 24: case 36: case 50: case 49: case 61: case 75: case 74:
-                return repositoryColor.get(3);
+                return getColor.apply(3);
 //          default:
-//              return repositoryColor.get(-1);
+//              return getColor.apply(-1);
             }
         }
-        return super.getCellFillColor(fillMode, defaultColor, repositoryColor);
+        return super.getCellFillColor(fillMode, defaultColor, getColor);
     }
 
 }

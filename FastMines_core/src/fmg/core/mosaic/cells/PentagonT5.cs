@@ -120,8 +120,8 @@ namespace Fmg.Core.Mosaic.Cells {
                 return (A * 2 * SQRT3 - 4 * w) / (SQRT3 + 1);
             }
 
-            public override int GetMaxBackgroundFillModeValue() {
-                return base.GetMaxBackgroundFillModeValue() + 2;
+            public override int GetMaxCellFillModeValue() {
+                return base.GetMaxCellFillModeValue() + 2;
                 //return 1;
             }
         }
@@ -643,8 +643,8 @@ namespace Fmg.Core.Mosaic.Cells {
             return 3;
         }
 
-        public override Color GetBackgroundFillColor(int fillMode, Color defaultColor, Func<int, Color> repositoryColor) {
-            if (fillMode == Attr.GetMaxBackgroundFillModeValue()) {
+        public override Color GetCellFillColor(int fillMode, Color defaultColor, Func<int, Color> repositoryColor) {
+            if (fillMode == Attr.GetMaxCellFillModeValue()) {
                 // подсвечиваю 'ромашку'
                 switch (GetDirection()) {
                 case  0: case  1: case  2: case 14: case 15: case 16: return repositoryColor(0);
@@ -665,7 +665,7 @@ namespace Fmg.Core.Mosaic.Cells {
                 //   return repositoryColor(-1);
                 }
             } else
-            if (fillMode == (Attr.GetMaxBackgroundFillModeValue()-1)) {
+            if (fillMode == (Attr.GetMaxCellFillModeValue()-1)) {
                 // подсвечиваю обратную 'диагональку'
                 switch (GetDirection()) {
                 case  1: case  0: case 14:
@@ -688,7 +688,7 @@ namespace Fmg.Core.Mosaic.Cells {
                 //   return repositoryColor(-1);
                 }
             }
-            return base.GetBackgroundFillColor(fillMode, defaultColor, repositoryColor);
+            return base.GetCellFillColor(fillMode, defaultColor, repositoryColor);
         }
 
     }

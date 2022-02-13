@@ -23,7 +23,7 @@ namespace Fmg.Core.Mosaic {
 
             var pen = model.PenBorder;
             pen.ColorLight = pen.ColorShadow;
-            model.BkFill.Mode = 1 + ThreadLocalRandom.Current.Next(model.CellAttr.GetMaxBackgroundFillModeValue());
+            model.CellFill.Mode = 1 + ThreadLocalRandom.Current.Next(model.CellAttr.GetMaxCellFillModeValue());
         }
 
         public void AddModelTransformer(IModelTransformer transformer) {

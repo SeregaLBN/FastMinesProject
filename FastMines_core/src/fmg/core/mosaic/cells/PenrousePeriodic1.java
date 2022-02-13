@@ -25,6 +25,7 @@ package fmg.core.mosaic.cells;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import fmg.common.Color;
 import fmg.common.geom.*;
@@ -1956,7 +1957,7 @@ public class PenrousePeriodic1 extends BaseCell {
     public int getShiftPointBorderIndex() { return 2; }
 
     @Override
-    public Color getCellFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
+    public Color getCellFillColor(int fillMode, Color defaultColor, Function<Integer, Color> getColor) {
         //return super.getBackgroundFillColor(fillMode, defaultColor, repositoryColor);
 
         if (fillMode == getAttr().getMaxCellFillModeValue())
@@ -1964,35 +1965,35 @@ public class PenrousePeriodic1 extends BaseCell {
             switch (getDirection()) {
             case   0: case   1: case   6: case   7: case  84: case  85:
             case  76: case 118: case 109: case 110: case 113: case 122: case 123:
-                return repositoryColor.get(1);
+                return getColor.apply(1);
             case   3: case   4: case  19: case  27: case  16: case  34: case  55:
             case  56: case  59: case  60: case  45: case  53: case  75: case   8:
-                return repositoryColor.get(2);
+                return getColor.apply(2);
             case   2: case  10: case  12: case  11: case  21:
             case   5: case  14: case  15: case  24: case  25:
             case  36: case  28: case  37: case  46: case  47:
             case  42: case  43: case  44: case  51: case  52:
             case  49: case  57: case  58: case  66: case  67:
-                return repositoryColor.get(3);
+                return getColor.apply(3);
             case  13: case  23: case  20: case  29: case  32: case  33: case  38: case  48: case  50: case  41:
-                return repositoryColor.get(4);
+                return getColor.apply(4);
             case  22: case  30: case  31: case  39: case  40:
             case  72: case  81: case  89: case  97: case  98:
-                return repositoryColor.get(5);
+                return getColor.apply(5);
             case   9: case  17: case  18: case  26: case  35:
             case  54: case  64: case  63: case  65: case  73:
             case  61: case  68: case  69: case  78: case  79:
             case  99: case 116: case 117: case 124: case 125:
             case 111: case 112: case 119: case 120: case 121:
-                return repositoryColor.get(6);
+                return getColor.apply(6);
             case  62:
-                return repositoryColor.get(7);
+                return getColor.apply(7);
             case  91: case  92: case  93: case 101: case 102:
             case  86: case  96: case 104: case 105: case 106:
-                return repositoryColor.get(8);
+                return getColor.apply(8);
             case  70: case  71: case  74: case  77: case  80: case  82: case  83: case  87: case 107:
             case  88: case  90: case  94: case  95: case 100: case 103: case 114: case 115: case 108:
-                return repositoryColor.get(9);
+                return getColor.apply(9);
             default:
                 throw new RuntimeException("Забыл case #" + getDirection());
             }
@@ -2007,52 +2008,52 @@ public class PenrousePeriodic1 extends BaseCell {
             case  33: case  34: case  41: case  53: case  60:
             case  48: case  50: case  56: case  59: case  75:
             case  80: case  82: case  88: case  90: case 107:
-                return repositoryColor.get(1);
+                return getColor.apply(1);
 
             case  54: case  64: case  63: case  65: case  73:
             case  61: case  68: case  69: case  78: case  79:
             case  86: case  96: case 104: case 105: case 106:
             case  91: case  92: case  93: case 101: case 102:
             case  99: case 116: case 117: case 124: case 125:
-                return repositoryColor.get(2);
+                return getColor.apply(2);
 
             case   2: case  10: case  12: case  11: case  21:
             case   5: case  14: case  15: case  24: case  25:
             case  36: case  28: case  37: case  46: case  47:
             case  42: case  43: case  44: case  51: case  52:
             case  49: case  57: case  58: case  66: case  67:
-                return repositoryColor.get(3);
+                return getColor.apply(3);
 
             case  22: case  30: case  31: case  39: case  40:
             case  72: case  81: case  89: case  97: case  98:
             case 111: case 112: case 119: case 120: case 121:
             case   9: case  17: case  18: case  26: case  35:
-                return repositoryColor.get(4);
+                return getColor.apply(4);
 
             case   0: case  74: case  83: case  84: case  76:
             case  85: case  77: case  87: case   7: case  70:
             case  62: case  71: case 108: case 100: case 109:
             case 118: case  94: case  95: case 122: case 114: case 123: case 115:
-                return repositoryColor.get(5);
+                return getColor.apply(5);
 
             default:
                 throw new RuntimeException("Забыл case #" + getDirection());
             }
         }
-        return super.getCellFillColor(fillMode, defaultColor, repositoryColor);
+        return super.getCellFillColor(fillMode, defaultColor, getColor);
 
 //      if (direction == dddd)
-//          return repositoryColor.get(1);
+//          return getColor.apply(1);
 //
 //      for (BaseCell cell1: cell.getNeighbors())
 //          if ((cell1 != null) && (cell1.direction == dddd))
-//              return repositoryColor.get(2);
+//              return getColor.apply(2);
 //
 //      for (BaseCell cell1: cell.getNeighbors())
 //          if (cell1 != null)
 //              for (BaseCell cell2: cell1.getNeighbors())
 //                  if ((cell2 != null) && (cell2.direction == dddd))
-//                      return repositoryColor.get(3);
+//                      return getColor.apply(3);
 //
 //      for (BaseCell cell1: cell.getNeighbors())
 //           if (cell1 != null)
@@ -2060,7 +2061,7 @@ public class PenrousePeriodic1 extends BaseCell {
 //                   if (cell2 != null)
 //                       for (BaseCell cell3: cell2.getNeighbors())
 //                           if ((cell3 != null) && (cell3.direction == dddd))
-//                               return repositoryColor.get(4);
+//                               return getColor.apply(4);
 //
 //      for (BaseCell cell1: cell.getNeighbors())
 //          if (cell1 != null)
@@ -2070,9 +2071,9 @@ public class PenrousePeriodic1 extends BaseCell {
 //                          if (cell3 != null)
 //                              for (BaseCell cell4: cell3.getNeighbors())
 //                                  if ((cell4 != null) && (cell4.direction == dddd))
-//                                      return repositoryColor.get(5);
+//                                      return getColor.apply(5);
 //
-//      return repositoryColor.get(0);
+//      return getColor.apply(0);
     }
 
 }

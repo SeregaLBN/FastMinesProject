@@ -25,6 +25,7 @@ package fmg.core.mosaic.cells;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import fmg.common.Color;
 import fmg.common.geom.*;
@@ -128,14 +129,14 @@ public class Square1 extends BaseCell {
     public int getShiftPointBorderIndex() { return 2; }
 
     @Override
-    public Color getCellFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
+    public Color getCellFillColor(int fillMode, Color defaultColor, Function<Integer, Color> getColor) {
         switch (fillMode) {
         default:
-            return super.getCellFillColor(fillMode, defaultColor, repositoryColor);
+            return super.getCellFillColor(fillMode, defaultColor, getColor);
         case 1: // перекрываю базовый на основе direction
             int pos = (-getCoord().x + getCoord().y) % ((getAttr().hashCode() & 0x3)+fillMode);
 //          Logger.info(pos);
-            return repositoryColor.get(pos);
+            return getColor.apply(pos);
         }
     }
 

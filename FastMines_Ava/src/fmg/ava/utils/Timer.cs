@@ -65,6 +65,12 @@ namespace Fmg.Ava.Utils {
                     return _started;
                 return DateTimeOffset.Now.ToUnixTimeMilliseconds() - _started;
             }
+            set {
+                if (_paused)
+                    _started = value;
+                else
+                    _started = DateTimeOffset.Now.ToUnixTimeMilliseconds() - value;
+            }
         }
 
         private void Clean() {

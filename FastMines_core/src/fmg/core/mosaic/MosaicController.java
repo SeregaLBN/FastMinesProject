@@ -339,11 +339,11 @@ public abstract class MosaicController<TImage, TImageInner,
             if (cellLeftDown.getState().getOpen() != EOpen._Mine) {
                 cellLeftDown.getState().setStatus(EState._Open);
                 cellLeftDown.setMine();
-                setCountMines(getCountMines()+1);
+                setCountMines(getCountMines() + 1);
                 getRepositoryMines().add(cellLeftDown.getCoord());
             } else {
                 cellLeftDown.reset();
-                setCountMines(getCountMines()-1);
+                setCountMines(getCountMines() - 1);
                 getRepositoryMines().remove(cellLeftDown.getCoord());
             }
             result.modified.add(cellLeftDown);
@@ -467,6 +467,7 @@ public abstract class MosaicController<TImage, TImageInner,
         return false;
     }
 
+    @Override
     public MosaicBackupData gameBackup() {
         MosaicBackupData backup = new MosaicBackupData();
         backup.mosaicType = getMosaicType();
@@ -488,6 +489,7 @@ public abstract class MosaicController<TImage, TImageInner,
         return backup;
     }
 
+    @Override
     public void gameRestore(MosaicBackupData backup) {
         if (backup == null)
             return;

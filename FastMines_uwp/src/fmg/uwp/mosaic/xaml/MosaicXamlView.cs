@@ -129,10 +129,10 @@ namespace Fmg.Uwp.Mosaic.Xaml {
                         if (isSimpleDraw) // когда русуется иконка, а не игровое поле, - делаю попроще...
                             clr = m.BackgroundColor;
                         else
-                            clr = cell.GetBackgroundFillColor(
-                                    m.BkFill.Mode,
+                            clr = cell.GetCellFillColor(
+                                    m.CellFill.Mode,
                                     m.BackgroundColor,
-                                    m.BkFill.GetColor);
+                                    m.CellFill.GetColor);
                         binder.Poly.Fill = FindBrush(clr);
                     }
 

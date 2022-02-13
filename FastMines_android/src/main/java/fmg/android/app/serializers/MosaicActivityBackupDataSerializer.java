@@ -25,7 +25,7 @@ public class MosaicActivityBackupDataSerializer implements ISerializer {
             if (version == 0)
                 return null;
             if (version != VERSION)
-                throw new IllegalArgumentException("AppDataSerializer: Version #" + version + " is not supported");
+                throw new IllegalArgumentException("MosaicActivityBackupDataSerializer: Version #" + version + " is not supported");
 
             MosaicBackupData mosaicBackupData = new MosaicBackupDataSerializer().load(from);
             if (mosaicBackupData == null)
@@ -38,7 +38,7 @@ public class MosaicActivityBackupDataSerializer implements ISerializer {
                                                from.getFloat(KEY__MOSAIC_ACTIVITY_BACKUP_DATA__MOSAIC_OFFSET_HEIGHT, 0));
             return data;
         } catch(Exception ex) {
-            Logger.error("Can not read MosaicActivityBackupData from SharedPreferences", ex);
+            Logger.error("Can`t load MosaicActivityBackupData from SharedPreferences", ex);
         }
         return null;
     }

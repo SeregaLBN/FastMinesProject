@@ -115,8 +115,8 @@ namespace Fmg.Uwp.Mosaic {
 
             _areaScaleObservable = Observable
                 .FromEventPattern<NeedAreaChangingEventHandler, NeedAreaChangingEventArgs>(h => NeedAreaChanging += h, h => NeedAreaChanging -= h)
-                .Throttle(TimeSpan.FromSeconds(0.7)) // debounce events
-                .Subscribe(x => AsyncRunner.InvokeFromUiLater(() => OnDeferredAreaChanging(x.Sender, x.EventArgs), Windows.UI.Core.CoreDispatcherPriority.High));
+                .Throttle(TimeSpan.FromSeconds(0.2)) // debounce events
+                .Subscribe(x => AsyncRunner.InvokeFromUi(() => OnDeferredAreaChanging(x.Sender, x.EventArgs), Windows.UI.Core.CoreDispatcherPriority.High));
 
             ctrl.KeyUp += OnKeyUp;
         }
@@ -475,7 +475,7 @@ namespace Fmg.Uwp.Mosaic {
                         ev.Handled = OnClick(currPoint.Position, isLeftClick, false);
                     }
                 } else {
-                    AsyncRunner.InvokeFromUiLater(() => {
+                    AsyncRunner.InvokeFromUi(() => {
                         if (!_clickInfo.Released) {
                             Logger.Info("ã OnPointerReleased: forced left release click...");
                             OnClick(currPoint.Position, true, false);

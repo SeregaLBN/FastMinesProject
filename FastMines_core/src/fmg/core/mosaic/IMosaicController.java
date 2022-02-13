@@ -3,6 +3,7 @@ package fmg.core.mosaic;
 import java.util.Collection;
 
 import fmg.common.geom.Matrisize;
+import fmg.core.app.model.MosaicBackupData;
 import fmg.core.img.IImageController;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EGameStatus;
@@ -53,6 +54,10 @@ public interface IMosaicController<TImage, TImageInner,
     int getCountUnknown();
 
 
+    /** Retrieve mosaic backup data */
+    MosaicBackupData gameBackup();
+    /** Restore mosaic field from backup */
+    void gameRestore(MosaicBackupData backup);
     /** Подготовиться к началу игры - сбросить все ячейки */
     boolean gameNew();
     /** Начать игру, т.к. произошёл первый клик на поле */

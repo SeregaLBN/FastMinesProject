@@ -52,7 +52,8 @@ namespace Fmg.Uwp.Mosaic.Win2d {
             var pen = model.PenBorder;
             var offset = model.MosaicOffset;
             bool isSimpleDraw = (pen.ColorLight == pen.ColorShadow);
-            var bkFill = model.BkFill;
+            var cellFill = model.CellFill;
+            var cellColor = model.CellColor;
             var font = Font;
             var cssBL = CssBorderLine;
 
@@ -66,9 +67,9 @@ namespace Fmg.Uwp.Mosaic.Win2d {
             foreach (BaseCell cell in toDrawCells) {
                 var rcInner = cell.GetRcInner(pen.Width).MoveXY(offset);
                 var region = cell.GetRegion();
-                var bkClrCell = cell.GetBackgroundFillColor(bkFill.Mode,
-                                                            bkClr,
-                                                            bkFill.GetColor);
+                var bkClrCell = cell.GetCellFillColor(cellFill.Mode,
+                                                      cellColor,
+                                                      cellFill.GetColor);
                 using (var polygon =  isSimpleDraw ? null : ds.CreatePolygon(region, offset))
                 using (var geom    = (isSimpleDraw || !drawBk || (bkClrCell != bkClr)) ? ds.BuildLines(region, offset) : null)
                 {

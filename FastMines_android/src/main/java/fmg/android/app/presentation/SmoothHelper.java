@@ -76,7 +76,7 @@ public final class SmoothHelper {
                 return;
 
             context.setCurrentStepAngle(context.isForward() ? 0 : 360);
-            AsyncRunner.repeat(() -> {
+            AsyncRunner.Repeat(() -> {
                 context.setCurrentStepAngle(context.getCurrentStepAngle() + (context.isForward() ? +1 : -1) * deltaStepAngle);
 
                 onIteration();
@@ -214,7 +214,7 @@ public final class SmoothHelper {
                         .translationY(targetIsVisible ? 0 : (float)-h)
                         .scaleX(targetIsVisible ? 1 : 0.01f)
                         .scaleY(targetIsVisible ? 1 : 0.01f);
-                AsyncRunner.runWithDelay(() -> menuView.animate().setDuration(original), 1); // mark to stop repeat
+                AsyncRunner.invokeFromUiDelayed(() -> menuView.animate().setDuration(original), 1); // mark to stop repeat
                 Converters.setViewHeight(menuView, ViewGroup.LayoutParams.WRAP_CONTENT);//h); // second - restore original height
 
                 if (postAction != null)

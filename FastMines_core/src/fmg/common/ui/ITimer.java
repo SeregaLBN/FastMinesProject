@@ -22,6 +22,7 @@ public interface ITimer extends AutoCloseable {
 
     /** total time in milliseconds after first start / restart */
     long getTime();
+    void setTime(long time);
 
     @Override
     void close();

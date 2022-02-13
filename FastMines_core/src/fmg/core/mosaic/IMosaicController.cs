@@ -3,6 +3,7 @@ using Fmg.Common.Geom;
 using Fmg.Core.Types;
 using Fmg.Core.Img;
 using Fmg.Core.Mosaic.Cells;
+using Fmg.Core.App.Model;
 
 namespace Fmg.Core.Mosaic
 {
@@ -45,6 +46,10 @@ namespace Fmg.Core.Mosaic
         int CountUnknown { get; }
 
 
+        /// <summary> Retrieve mosaic backup data </summary>
+        MosaicBackupData GameBackup();
+        /// <summary> Restore mosaic field from backup </summary>
+        void GameRestore(MosaicBackupData backup);
         /// <summary> Подготовиться к началу игры - сбросить все ячейки </summary>
         bool GameNew();
         /// <summary> Начать игру, т.к. произошёл первый клик на поле </summary>

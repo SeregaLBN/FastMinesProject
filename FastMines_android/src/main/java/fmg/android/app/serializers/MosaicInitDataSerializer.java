@@ -40,7 +40,7 @@ public class MosaicInitDataSerializer implements ISerializer {
 
             return true;
         } catch(Exception ex) {
-            Logger.error("Can not read mosaic init data from Bundle", ex);
+            Logger.error("Can`t load mosaic init data from Bundle", ex);
             return false;
         }
     }
@@ -55,21 +55,20 @@ public class MosaicInitDataSerializer implements ISerializer {
     /**/
 
     MosaicInitData load(SharedPreferences from) {
-        MosaicInitData data = new MosaicInitData();
         if (from != null) try {
             int version = from.getInt(KEY__MOSAIC_INIT_DATA__VERSION, 1);
             if (version != 1)
                 throw new IllegalArgumentException("MosaicInitDataSerializer: Version #" + version + " is not supported");
 
+            MosaicInitData data = new MosaicInitData();
             data.setSizeField(new Matrisize(       from.getInt(KEY__MOSAIC_INIT_DATA__SIZE_FIELD_M, MosaicInitData.DEFAULT_SIZE_FIELD_M),
                                                    from.getInt(KEY__MOSAIC_INIT_DATA__SIZE_FIELD_N, MosaicInitData.DEFAULT_SIZE_FIELD_M)));
             data.setMosaicType(EMosaic.fromOrdinal(from.getInt(KEY__MOSAIC_INIT_DATA__MOSAIC_TYPE , MosaicInitData.DEFAULT_MOSAIC_TYPE.ordinal())));
             data.setCountMines(                    from.getInt(KEY__MOSAIC_INIT_DATA__COUNT_MINES , MosaicInitData.DEFAULT_COUNT_MINES));
         } catch(Exception ex) {
-            Logger.error("Can not read mosaic init data from SharedPreferences", ex);
-            data = new MosaicInitData(); // reset
+            Logger.error("Can`t load mosaic init data from SharedPreferences", ex);
         }
-        return data;
+        return new MosaicInitData();
     }
 
     void save(MosaicInitData data, SharedPreferences.Editor editor) {

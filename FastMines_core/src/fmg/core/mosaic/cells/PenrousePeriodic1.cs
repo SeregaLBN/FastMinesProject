@@ -190,8 +190,8 @@ namespace Fmg.Core.Mosaic.Cells {
                 return A / SIN99 * SIN36 / SQRT2;
             }
 
-            public override int GetMaxBackgroundFillModeValue() {
-                return base.GetMaxBackgroundFillModeValue() + 2;
+            public override int GetMaxCellFillModeValue() {
+                return base.GetMaxCellFillModeValue() + 2;
             }
         }
 
@@ -1989,10 +1989,10 @@ namespace Fmg.Core.Mosaic.Cells {
 
         public override int GetShiftPointBorderIndex() { return 2; }
 
-        public override Color GetBackgroundFillColor(int fillMode, Color defaultColor, Func<int, Color> repositoryColor) {
-            //return base.GetBackgroundFillColor(fillMode, defaultColor, repositoryColor);
+        public override Color GetCellFillColor(int fillMode, Color defaultColor, Func<int, Color> repositoryColor) {
+            //return base.GetCellFillColor(fillMode, defaultColor, repositoryColor);
 
-            if (fillMode == Attr.GetMaxBackgroundFillModeValue()) {
+            if (fillMode == Attr.GetMaxCellFillModeValue()) {
                 switch (GetDirection()) {
                 case   0: case   1: case   6: case   7: case  84: case  85:
                 case  76: case 118: case 109: case 110: case 113: case 122: case 123:
@@ -2029,7 +2029,7 @@ namespace Fmg.Core.Mosaic.Cells {
                     throw new Exception("Забыл case #" + GetDirection());
                 }
             } else
-            if (fillMode == (Attr.GetMaxBackgroundFillModeValue()-1)) {
+            if (fillMode == (Attr.GetMaxCellFillModeValue()-1)) {
                 switch (GetDirection()) {
                 case   1: case   3: case  13: case  19: case  20:
                 case   8: case 103: case 110: case 113:
@@ -2065,7 +2065,7 @@ namespace Fmg.Core.Mosaic.Cells {
                    throw new Exception("Забыл case #" + GetDirection());
                 }
             }
-            return base.GetBackgroundFillColor(fillMode, defaultColor, repositoryColor);
+            return base.GetCellFillColor(fillMode, defaultColor, repositoryColor);
         }
 
     }

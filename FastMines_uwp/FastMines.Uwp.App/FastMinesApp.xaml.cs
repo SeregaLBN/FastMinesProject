@@ -30,11 +30,20 @@ namespace Fmg.Uwp.App {
 
         /// <summary> Model (a common model between all the pages in the application) </summary>
         public MosaicInitData MosaicInitData { get; private set; }
+        private MosaicPageBackupData MosaicPageBackupData { get; set; }
         public MenuSettings MenuSettings { get; private set; }
         public Players Players { get; private set; }
         public Champions Champions { get; private set; }
         private bool playersChanged;
         private bool championsChanged;
+        private Page lastPage;
+
+        public bool HasMosaicPageBackupData => (MosaicPageBackupData != null);
+        public MosaicPageBackupData GetAndResetMosaicPageBackupData() {
+            MosaicPageBackupData res = MosaicPageBackupData;
+            MosaicPageBackupData = null;
+            return res;
+        }
 
         private static FastMinesApp self;
 
@@ -166,7 +175,7 @@ namespace Fmg.Uwp.App {
             var deferral = e.SuspendingOperation.GetDeferral();
 
             // Save application state and stop any background activity
-            //SaveAppData();
+            await SaveAppData();
 
             //Frame rootFrame = Window.Current.Content as Frame;
             //var mp = rootFrame.Content as MainPage;
@@ -175,8 +184,6 @@ namespace Fmg.Uwp.App {
             //}
 
             deferral.Complete();
-
-            await SaveAppData();
 
             Players.PropertyChanged   -= OnPlayersPropertyChanged;
             Champions.PropertyChanged -= OnChampionsPropertyChanged;
@@ -211,10 +218,19 @@ namespace Fmg.Uwp.App {
         void OnBackRequested(object sender, BackRequestedEventArgs ev) {
             Logger.Info("FastMinesApp::OnBackRequested");
             var frame = (Frame)Window.Current.Content;
-            if (frame.CanGoBack) {
-                ev.Handled = true;
+            //if (frame.CanGoBack) {
+            //    ev.Handled = true;
+            //    frame.GoBack();
+            //}
+            if (!frame.CanGoBack)
+                return;
+
+            ev.Handled = true;
+
+            if (lastPage is MosaicPage mosaicPage)
+                mosaicPage.ConfirmBackRequested();
+            else
                 frame.GoBack();
-            }
         }
 
         void OnKeyDown(CoreWindow sender, KeyEventArgs ev) {
@@ -233,6 +249,7 @@ namespace Fmg.Uwp.App {
 
         void OnNavigated(object sender, NavigationEventArgs ev) {
             Logger.Info($"FastMinesApp::OnNavigated: ev={ev}");
+            lastPage = (sender as Frame)?.Content as Page;
             UpdateBackButtonVisibility();
         }
 
@@ -251,18 +268,22 @@ namespace Fmg.Uwp.App {
             await new PlayersUwpSerializer().Save(Players);
 
             var appData = new AppData {
-                MosaicInitData = this.MosaicInitData,
-                SplitPaneOpen = this.MenuSettings.SplitPaneOpen
+                SplitPaneOpen = this.MenuSettings.SplitPaneOpen,
+                MosaicInitData = this.MosaicInitData
             };
+            if (lastPage is MosaicPage mosaicPage)
+                appData.MosaicPageBackupData = mosaicPage.BackupData;
+
             new AppDataSerializer().Save(appData, Windows.Storage.ApplicationData.Current.LocalSettings.Values);
         }
 
         private async Task LoadAppData() {
             var appData = new AppDataSerializer().Load(Windows.Storage.ApplicationData.Current.LocalSettings.Values);
-            this.MosaicInitData = appData.MosaicInitData;
             this.MenuSettings = new MenuSettings() {
                 SplitPaneOpen = appData.SplitPaneOpen
             };
+            this.MosaicInitData = appData.MosaicInitData;
+            this.MosaicPageBackupData = appData.MosaicPageBackupData;
 
             Players = await new PlayersUwpSerializer().Load();
             if (!Players.Records.Any())

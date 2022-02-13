@@ -106,10 +106,10 @@ namespace Fmg.Core.Mosaic.Cells {
 
         public override int GetShiftPointBorderIndex() { return 2; }
 
-        public override Color GetBackgroundFillColor(int fillMode, Color defaultColor, Func<int, Color> repositoryColor) {
+        public override Color GetCellFillColor(int fillMode, Color defaultColor, Func<int, Color> repositoryColor) {
             switch (fillMode) {
             default:
-                return base.GetBackgroundFillColor(fillMode, defaultColor, repositoryColor);
+                return base.GetCellFillColor(fillMode, defaultColor, repositoryColor);
             case 1: // перекрываю базовый на основе direction
                 int pos = (-GetCoord().x + GetCoord().y) % ((Attr.GetHashCode() & 0x3) + fillMode);
                 return repositoryColor(pos);

@@ -20,19 +20,7 @@ public class CellFill implements AutoCloseable, INotifyPropertyChanged {
 
     /** кэшированные цвета фона ячеек
      * <br/> Нет цвета? - создасться с нужной интенсивностью! */
-    private final Map<Integer, Color> colors = new HashMap<Integer, Color>() {
-        private static final long serialVersionUID = 1L;
-        @Override
-        public Color get(Object key) {
-            assert key instanceof Integer;
-            Color res = super.get(key);
-            if (res == null) {
-                res = Color.RandomColor().brighter(0.45);
-                super.put((Integer)key, res);
-            }
-            return res;
-        }
-     };
+    private final Map<Integer, Color> colors = new HashMap<>();
 
     protected NotifyPropertyChanged notifier = new NotifyPropertyChanged(this);
 
@@ -51,8 +39,13 @@ public class CellFill implements AutoCloseable, INotifyPropertyChanged {
 
     /** кэшированные цвета фона ячеек
      * <br/> Нет цвета? - создасться с нужной интенсивностью! */
-    public Map<Integer, Color> getColors() {
-        return colors;
+    public Color getColor(int index) {
+        Color color = colors.get(index);
+        if (color == null) {
+            color = Color.RandomColor().brighter(0.45);
+            colors.put(index, color);
+        }
+        return color;
     }
 
     @Override

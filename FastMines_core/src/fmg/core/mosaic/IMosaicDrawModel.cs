@@ -27,11 +27,13 @@ namespace Fmg.Core.Mosaic {
 
         PenBorder PenBorder { get; set; }
 
-        BackgroundFill BkFill { get; set; }
+        CellFill CellFill { get; set; }
 
         FontInfo FontInfo { get; set; }
 
         Color BackgroundColor { get; set; }
+
+        Color CellColor { get; set; }
 
         TImageInner ImgBckgrnd { get; /*set;*/ }
     }

@@ -138,7 +138,7 @@ namespace Fmg.Uwp.App.Model.DataSources {
             model.Animated = selected;
             model.PenBorder.ColorLight =
             model.PenBorder.ColorShadow = selected ? Color.White : Color.Black;
-            model.BackgroundColor = selected ? AnimatedImageModelConst.DefaultBkColor : MosaicDrawModelConst.DefaultBkColor;
+            model.BackgroundColor = selected ? AnimatedImageModelConst.DefaultBkColor : DefaultBkColor;
             model.Padding = new BoundDouble(model.Size.Width * (selected ? 10 : 5) /*/(mi.SkillLevel.Ordinal() + 1)*/ / 100);
             model.RotateAngle = 0;
         }

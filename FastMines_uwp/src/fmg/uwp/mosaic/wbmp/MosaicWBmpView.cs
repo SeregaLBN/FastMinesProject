@@ -50,7 +50,8 @@ namespace Fmg.Uwp.Mosaic.Wbmp {
             var pen = model.PenBorder;
             var offset = model.MosaicOffset;
             var isSimpleDraw = (pen.ColorLight == pen.ColorShadow);
-            var bkFill = model.BkFill;
+            var cellFill = model.CellFill;
+            var cellColor = model.CellColor;
 
 #if DEBUG
             if (MosaicViewCfg.DEBUG_DRAW_FLOW)
@@ -73,9 +74,9 @@ namespace Fmg.Uwp.Mosaic.Wbmp {
                     // 2.1.1. paint background
                     //if (!isSimpleDraw) // когда русуется иконка, а не игровое поле, - делаю попроще...
                     {
-                        var bkClrCell = cell.GetBackgroundFillColor(bkFill.Mode,
-                                                                    bkClr,
-                                                                    bkFill.GetColor);
+                        var bkClrCell = cell.GetCellFillColor(cellFill.Mode,
+                                                              cellColor,
+                                                              cellFill.GetColor);
                         if (!drawBk || (bkClrCell != bkClr))
                             wbmp.FillPolygon(poly, bkClrCell.ToWinColor());
                     }

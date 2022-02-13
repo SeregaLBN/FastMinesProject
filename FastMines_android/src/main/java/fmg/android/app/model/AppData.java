@@ -18,8 +18,8 @@ public final class AppData {
 
     public void setDefaults() {
         mosaicInitData = new MosaicInitData();
-        splitPaneOpen = MenuSettings.DEFAULT_SPLIT_PANE_OPEN;
         mosaicActivityBackupData = null;
+        splitPaneOpen = MenuSettings.DEFAULT_SPLIT_PANE_OPEN;
     }
 
     public MosaicInitData getMosaicInitData() {
@@ -28,7 +28,10 @@ public final class AppData {
             MosaicBackupData mosaicBackupData = mosaicActivityBackupData.mosaicBackupData;
             res.setMosaicType(mosaicBackupData.mosaicType);
             res.setSizeField(mosaicBackupData.sizeField);
-            res.setCountMines((int)mosaicBackupData.cellStates.stream().filter(c -> c.getOpen() == EOpen._Mine).count());
+            res.setCountMines((int)mosaicBackupData.cellStates
+                                                   .stream()
+                                                   .filter(c -> c.getOpen() == EOpen._Mine)
+                                                   .count());
             return res;
         }
         return mosaicInitData;

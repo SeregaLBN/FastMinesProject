@@ -1,11 +1,13 @@
 using System;
 using System.ComponentModel;
+using Windows.ApplicationModel;
 using Windows.UI.Core;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Popups;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using Fmg.Common;
@@ -15,6 +17,7 @@ using Fmg.Common.Notifier;
 using Fmg.Core.Img;
 using Fmg.Core.Types;
 using Fmg.Core.App.Model;
+using Fmg.Uwp.App.Model;
 using Fmg.Uwp.Utils;
 using Fmg.Uwp.Img.Win2d;
 using Fmg.Uwp.Mosaic.Win2d;
@@ -41,7 +44,7 @@ namespace Fmg.Uwp.App {
     public sealed partial class MosaicPage : Page, INotifyPropertyChanged {
 
         private IMosaicController _mosaicController;
-        private Smile.CanvasImgSrcController btnNewGameImage;
+        private readonly Smile.CanvasImgSrcController btnNewGameImage;
         private ITimer GameTimer { get; }
         private Func<bool> IsVictory;
 
@@ -108,7 +111,7 @@ namespace Fmg.Uwp.App {
                 ManipulationModes.TranslateInertia;
 
             if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) {
-                AsyncRunner.InvokeFromUiLater(() => {
+                AsyncRunner.InvokeFromUi(() => {
                     MosaicController.SizeField = new Matrisize(10, 10);
                     MosaicController.MosaicType = EMosaic.eMosaicRhombus1;
                     MosaicController.CountMines = 3;
@@ -120,12 +123,25 @@ namespace Fmg.Uwp.App {
 
         protected override void OnNavigatedTo(NavigationEventArgs ev) {
             base.OnNavigatedTo(ev);
+            Windows.ApplicationModel.Core.CoreApplication.LeavingBackground += OnLeavingBackground;
 
-            System.Diagnostics.Debug.Assert(ev.Parameter is MosaicInitData);
-            var initParam = ev.Parameter as MosaicInitData;
-            MosaicController.SizeField  = initParam.SizeField;
-            MosaicController.MosaicType = initParam.MosaicType;
-            MosaicController.CountMines = initParam.CountMines;
+            System.Diagnostics.Debug.Assert((ev.Parameter is MosaicInitData) ||
+                                            (ev.Parameter is MosaicPageBackupData));
+
+            if (ev.Parameter is MosaicPageBackupData mosaicPageBackupData) {
+                    AsyncRunner.InvokeFromUiLaterDelayed(() => {
+                        MosaicController.GameRestore(mosaicPageBackupData.MosaicBackupData);
+                        MosaicController.Model.MosaicOffset = mosaicPageBackupData.MosaicOffset;
+                        GameTimer.Time = mosaicPageBackupData.PlayTime;
+                    },
+                    TimeSpan.FromMilliseconds(300) // !large MosaicFrameworkElementController: .Throttle(TimeSpan.FromSeconds(0.2)) // debounce events
+                );
+            } else {
+                var initParam = ev.Parameter as MosaicInitData;
+                MosaicController.SizeField  = initParam.SizeField;
+                MosaicController.MosaicType = initParam.MosaicType;
+                MosaicController.CountMines = initParam.CountMines;
+            }
         }
 
         private void OnMosaicControllerPropertyChanged(object sender, PropertyChangedEventArgs ev) {
@@ -172,6 +188,10 @@ namespace Fmg.Uwp.App {
         private void OnPageLoaded(object sender, RoutedEventArgs ev) {
             Window.Current.CoreWindow.KeyUp += OnKeyUp_CoreWindow;
             //this.DataContext = MosaicController;
+        }
+
+        private void OnLeavingBackground(object sender, LeavingBackgroundEventArgs ev) {
+            // Your code here.
         }
 
         private void OnPageUnloaded(object sender, RoutedEventArgs ev) {
@@ -298,8 +318,18 @@ namespace Fmg.Uwp.App {
 
         private CanvasImageSource BtnNewGameImg => btnNewGameImage.Image;
 
-        private void OnBtnNewClick(object sender, RoutedEventArgs ev) {
-            MosaicController.GameNew();
+        private async void OnBtnNewTapped(object sender, TappedRoutedEventArgs ev) {
+            if (MosaicController.GameStatus != EGameStatus.eGSPlay) {
+                MosaicController.GameNew();
+                return;
+            }
+
+            var dialog = new MessageDialog("New game?");
+            dialog.Commands.Add(new UICommand("Yes", new UICommandInvokedHandler(cmd => MosaicController.GameNew())));
+            dialog.Commands.Add(new UICommand("No", new UICommandInvokedHandler(cmd => { /* none */ })));
+            dialog.CancelCommandIndex = 1;
+            dialog.DefaultCommandIndex = 1;
+            await dialog.ShowAsync();
         }
 
         private void OnBtnNewPointerPressed(object sender, PointerRoutedEventArgs ev) {
@@ -356,6 +386,20 @@ namespace Fmg.Uwp.App {
                 ShowToastNotification("Victory", "Your best result is position #" + (pos + 1));
         }
 
+        public async void ConfirmBackRequested() {
+            if (MosaicController.GameStatus != EGameStatus.eGSPlay) {
+                Frame.GoBack();
+                return;
+            }
+
+            var dialog = new MessageDialog("Confirm exit");
+            dialog.Commands.Add(new UICommand("Yes", new UICommandInvokedHandler(cmd => Frame.GoBack() )));
+            dialog.Commands.Add(new UICommand("No" , new UICommandInvokedHandler(cmd => { /* none */ } )));
+            dialog.CancelCommandIndex = 1;
+            dialog.DefaultCommandIndex = 1;
+            await dialog.ShowAsync();
+        }
+
         public static void ShowToastNotification(string title, string stringContent) {
             try {
                 var toastNotifier = ToastNotificationManager.CreateToastNotifier();
@@ -371,6 +415,20 @@ namespace Fmg.Uwp.App {
                 toastNotifier.Show(toast);
             } catch (Exception ex) {
                 Logger.Error("ShowToastNotification", ex);
+            }
+        }
+
+        public MosaicPageBackupData BackupData { 
+            get {
+                var controller = MosaicController;
+                if (controller.GameStatus == EGameStatus.eGSPlay) 
+                    return new MosaicPageBackupData {
+                        MosaicBackupData = controller.GameBackup(),
+                        MosaicOffset = controller.Model.MosaicOffset,
+                        PlayTime = GameTimer.Time
+                    };
+
+                return null;
             }
         }
 

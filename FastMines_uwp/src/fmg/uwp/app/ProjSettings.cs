@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -17,31 +16,38 @@ namespace Fmg.Uwp.App {
         public static double MinTouchSize => Cast.DpToPx(48); // android recommended size
 
         static ProjSettings() {
-            UiInvoker.Deferred = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
+            UiInvoker.Deferred = doRun => AsyncRunner.InvokeFromUi(() => doRun(), CoreDispatcherPriority.Normal);
             UiInvoker.Animator = () => Animator.Singleton;
             UiInvoker.TimerCreator = () => new Timer();
 
             try {
                 var uiSettings = new UISettings();
 
-                Color clr;
+                Color clrCell;
+                Color clrBk;
+                UIElementType forCell = UIElementType.ButtonFace; // UIElementType.Window
+                UIElementType forBkrd = UIElementType.PageBackground;
                 try {
                     // desktop
-                    clr = uiSettings.UIElementColor(UIElementType.ButtonFace);
-                    //clr = uiSettings.UIElementColor(UIElementType.Window);
+                    clrCell = uiSettings.UIElementColor(forCell);
+                    clrBk   = uiSettings.UIElementColor(forBkrd);
                     IsMobile = false;
                 } catch (ArgumentException) {
                     IsMobile = true;
                     try {
                         // mobile
                         const int magic = 1000;
-                        clr = uiSettings.UIElementColor(magic + UIElementType.ButtonFace);
-                        //clr = uiSettings.UIElementColor(magic + UIElementType.Window);
-                    } catch (Exception) {
-                        clr = Fmg.Common.Color.Gray.ToWinColor(); // wtf??
+                        clrCell = uiSettings.UIElementColor(magic + forCell);
+                        clrCell = uiSettings.UIElementColor(magic + forBkrd);
+                    }
+                    catch (Exception) {
+                        // wtf??
+                        clrCell = MosaicDrawModelConst.DefaultCellColor.ToWinColor();
+                        clrCell = MosaicDrawModelConst.DefaultBkColor  .ToWinColor();
                     }
                 }
-                MosaicDrawModelConst.DefaultBkColor = clr.ToFmColor();
+                MosaicDrawModelConst.DefaultCellColor = clrCell.ToFmColor();
+                MosaicDrawModelConst.DefaultBkColor   = clrBk  .ToFmColor();
             } catch (Exception ex) {
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 System.Diagnostics.Debug.Assert(false, ex.Message);

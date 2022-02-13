@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using Fmg.Common;
 using Fmg.Common.Geom;
@@ -12,7 +10,8 @@ namespace Fmg.Core.Mosaic {
     public static class MosaicDrawModelConst {
 
         /// <summary> Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера. Переопределяется одним из MVC-наследником </summary>
-        public static Color DefaultBkColor = Color.Gray.Brighter();
+        public static Color DefaultBkColor   = Color.LightSlateGray.Brighter();
+        public static Color DefaultCellColor = Color.LightGray;
 
     }
 
@@ -59,7 +58,8 @@ namespace Fmg.Core.Mosaic {
         private ColorText      _colorText;
         private PenBorder      _penBorder;
         private FontInfo       _fontInfo;
-        private BackgroundFill _backgroundFill;
+        private CellFill       _cellFill;
+        private Color          _cellColor       = MosaicDrawModelConst.DefaultCellColor;
         private Color          _backgroundColor = MosaicDrawModelConst.DefaultBkColor;
         private TImageInner    _imgBckgrnd;
         private bool lockChanging = false;
@@ -189,22 +189,31 @@ namespace Fmg.Core.Mosaic {
             }
         }
 
-        public BackgroundFill BkFill {
+        public CellFill CellFill {
             get {
-                if (_backgroundFill == null)
-                    BkFill = new BackgroundFill();
-                return _backgroundFill;
+                if (_cellFill == null)
+                    CellFill = new CellFill();
+                return _cellFill;
             }
             set {
-                var old = this._backgroundFill;
-                if (_notifier.SetProperty(ref _backgroundFill, value)) {
+                var old = this._cellFill;
+                if (_notifier.SetProperty(ref _cellFill, value)) {
                     if (old != null) {
-                        old.PropertyChanged -= OnBackgroundFillPropertyChanged;
+                        old.PropertyChanged -= OnCellFillPropertyChanged;
                         old.Dispose();
                     }
                     if (value != null)
-                        value.PropertyChanged += OnBackgroundFillPropertyChanged;
+                        value.PropertyChanged += OnCellFillPropertyChanged;
                 }
+            }
+        }
+
+        public Color CellColor {
+            get {
+                return _cellColor;
+            }
+            set {
+                _notifier.SetProperty(ref _cellColor, value);
             }
         }
 
@@ -242,8 +251,8 @@ namespace Fmg.Core.Mosaic {
         private void OnFontInfoPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             _notifier.FirePropertyChanged(nameof(this.FontInfo));
         }
-        private void OnBackgroundFillPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            _notifier.FirePropertyChanged(nameof(this.BkFill));
+        private void OnCellFillPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            _notifier.FirePropertyChanged(nameof(this.CellFill));
         }
         private void OnColorTextPropertyChanged(object sender, PropertyChangedEventArgs ev) {
             _notifier.FirePropertyChanged(nameof(this.ColorText));
@@ -346,7 +355,7 @@ namespace Fmg.Core.Mosaic {
 
             // unsubscribe from local notifications
             FontInfo = null;
-            BkFill = null;
+            CellFill = null;
             ColorText = null;
             PenBorder = null;
 

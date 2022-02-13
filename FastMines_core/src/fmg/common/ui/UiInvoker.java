@@ -1,6 +1,5 @@
 package fmg.common.ui;
 
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -10,13 +9,8 @@ import fmg.core.img.IAnimator;
 public final class UiInvoker {
     private UiInvoker() {}
 
-    /** Deferred execution in the thread of the user interface */
+    /** Deferred execution in the UI thread */
     public static Consumer<Runnable> Deferred = run -> {
-        throw new UnsupportedOperationException("Not implemented...");
-    };
-
-    /** Deferred execution on the UI thread after the specified number of milliseconds */
-    public static BiConsumer<Runnable, Integer> DeferredDelayed = (run, delayedMsec) -> {
         throw new UnsupportedOperationException("Not implemented...");
     };
 

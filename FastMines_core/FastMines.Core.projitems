@@ -49,6 +49,7 @@
     <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\serializers\UserSerializer.cs"         Link="fmg.core\app\serializers\UserSerializer.cs" />
 
     <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\model\MosaicInitData.cs"               Link="fmg.core\app\model\MosaicInitData.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\model\MosaicBackupData.cs"             Link="fmg.core\app\model\MosaicBackupData.cs" />
     <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\model\Champions.cs"                    Link="fmg.core\app\model\Champions.cs" />
     <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\model\Players.cs"                      Link="fmg.core\app\model\Players.cs" />
     <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\app\model\Statistics.cs"                   Link="fmg.core\app\model\Statistics.cs" />
@@ -113,7 +114,7 @@
 
     <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\IMosaic.cs"                         Link="fmg.core\mosaic\IMosaic.cs" />
     <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\MosaicGameModel.cs"                 Link="fmg.core\mosaic\MosaicGameModel.cs" />
-    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\BackgroundFill.cs"                  Link="fmg.core\mosaic\BackgroundFill.cs" />
+    <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\CellFill.cs"                        Link="fmg.core\mosaic\CellFill.cs" />
     <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\IMosaicDrawModel.cs"                Link="fmg.core\mosaic\IMosaicDrawModel.cs" />
     <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\MosaicDrawModel.cs"                 Link="fmg.core\mosaic\MosaicDrawModel.cs" />
     <Compile Include="$(SolutionDir)\FastMines_core\src\fmg\core\mosaic\cells\BaseCell.cs"                  Link="fmg.core\mosaic\cells\BaseCell.cs" />

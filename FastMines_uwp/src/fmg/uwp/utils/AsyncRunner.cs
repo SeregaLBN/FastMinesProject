@@ -7,9 +7,29 @@ namespace Fmg.Uwp.Utils {
 
     public static class AsyncRunner {
 
+        /// <summary> send for execution on the UI thread, without waiting for the result </summary>
+        public static void InvokeFromUi(this DispatchedHandler action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal) {
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            InvokeFromUiAsync(action, priority);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+        }
+
         /// <summary> send for execution on the UI thread </summary>
-        public static IAsyncAction InvokeFromUiLaterAsync(this DispatchedHandler action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal) {
+        public static IAsyncAction InvokeFromUiAsync(this DispatchedHandler action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal) {
             return Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(priority, action);
+        }
+
+        /// <summary> send for execution on the UI thread with a delay, without waiting for the result </summary>
+        public static void InvokeFromUiLaterDelayed(this Action action, TimeSpan delay) {
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            InvokeFromUiLaterDelayedAsync(action, delay);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+        }
+
+        /// <summary> send for execution on the UI thread with a delay </summary>
+        public static async Task InvokeFromUiLaterDelayedAsync(this Action action, TimeSpan delay) {
+            await Task.Delay(delay);
+            await InvokeFromUiAsync(() => action.Invoke());
         }
 
         /// <summary> send for execution on the UI thread with result </summary>
@@ -19,12 +39,6 @@ namespace Fmg.Uwp.Utils {
             return t;
         }
 
-        /// <summary> send for execution on the UI thread, without waiting for the result </summary>
-        public static void InvokeFromUiLater(this DispatchedHandler action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal) {
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            InvokeFromUiLaterAsync(action, priority);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-        }
 
         /// <summary> send to run asynchronously without waiting for the result </summary>
         public static void InvokeLater(Windows.System.Threading.WorkItemHandler handler, Windows.System.Threading.WorkItemPriority priority = Windows.System.Threading.WorkItemPriority.Normal) {

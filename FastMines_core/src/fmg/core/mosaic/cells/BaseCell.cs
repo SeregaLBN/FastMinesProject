@@ -101,9 +101,9 @@ namespace Fmg.Core.Mosaic.Cells {
             public abstract double GetVertexIntersection();
 
             /// <summary>макс кол-во режимов заливки фона, которые знает данный тип мозаики
-            /// (знает ф-ция BaseCell::getBackgroundFillColor() или её наследующая)
+            /// (знает ф-ция BaseCell::GetCellFillColor() или её наследующая)
             /// (Не считая режима заливки цветом фона по-умолчанию...)</summary>
-            public virtual int GetMaxBackgroundFillModeValue() {
+            public virtual int GetMaxCellFillModeValue() {
                 return 19;
             }
 
@@ -134,60 +134,22 @@ namespace Fmg.Core.Mosaic.Cells {
 
         public class StateCell {
 
-            public StateCell(BaseCell self) {
-                owner = self;
+            public StateCell() {
                 Reset();
             }
 
-            private readonly BaseCell owner;
-
-            // { union
-            private EState status; // _Open, _Close
-            private EOpen  open;   // _Nil, _1, ... _21, _Mine
-            private EClose close;  // _Unknown, _Clear, _Flag
-            // } end union
+            public EState Status { get; set; } // _Open, _Close
+            public EOpen  Open   { get; set; } // _Nil, _1, ... _21, _Mine
+            public EClose Close  { get; set; } // _Unknown, _Clear, _Flag
 
             /// <summary>Нажата? Не путать с open! - ячейка может быть нажата, но ещё не открыта. Важно только для ф-ции прорисовки</summary>
             public bool Down { get; set; }
-            public EState Status {
-                get { return status; }
-                set { status = value; }
-            }
-            public void CalcOpenState(IMatrixCells matrix) {
-                if (this.open == EOpen._Mine)
-                    return;
-                // подсчитать у соседей число мин и установить значение
-                var count = 0;
-                var neighbors = owner.GetNeighbors(matrix);
-                foreach (var nCell in neighbors) {
-                    if (nCell == null) // существует ли сосед?
-                        continue;
-                    if (nCell.state.open == EOpen._Mine)
-                        count++;
-                }
-                open = EOpenEx.GetValues()[count];
-            }
-            public bool SetMine() {
-                if (owner.lockMine || (open == EOpen._Mine))
-                    return false;
-                open = EOpen._Mine;
-                return true;
-            }
-            public EOpen Open { get { return open; } }
-            public EClose Close {
-                get { return Close1; }
-                set { Close1 = value; }
-            }
-            public EClose Close1 {
-                get => close;
-                set => close = value;
-            }
 
             public void Reset() {
-                status = EState._Close;
-                open = EOpen._Nil;
-                Close1 = EClose._Clear;
-                Down = false;
+                Status = EState._Close;
+                Open   = EOpen._Nil;
+                Close  = EClose._Clear;
+                Down   = false;
             }
 
         }
@@ -196,18 +158,29 @@ namespace Fmg.Core.Mosaic.Cells {
         /// <summary>запретить установку мины на данную ячейку</summary>
         private bool lockMine;
 
-        public void LockNeighborMines(IMatrixCells matrix) {
-            lockMine = true;
-            // запретить установку мин у соседей,
-            var neighbors = GetNeighbors(matrix);
+        public void CalcOpenState(IMatrixCells matrix) {
+            if (state.Open == EOpen._Mine)
+                return;
+            // подсчитать у соседей число мин и установить значение
+            var count = 0;
+            var neighbors = this.GetNeighbors(matrix);
             foreach (var nCell in neighbors) {
                 if (nCell == null) // существует ли сосед?
                     continue;
-                nCell.lockMine = true;
+                if (nCell.state.Open == EOpen._Mine)
+                    count++;
             }
+            state.Open = EOpenEx.GetValues()[count];
         }
 
-        public StateCell State { get { return state; } }
+        public void SetMine() {
+            if (this.lockMine || (state.Open == EOpen._Mine))
+                throw new InvalidOperationException("Illegal usage");
+            state.Open = EOpen._Mine;
+        }
+
+        public StateCell State { get { return state; }
+                                 set { state = value; }}
 
         protected BaseCell(
               BaseAttribute attr,
@@ -219,7 +192,7 @@ namespace Fmg.Core.Mosaic.Cells {
             this.direction = iDirection;
             this.region = new RegionDouble(attr.GetVertexNumber(iDirection));
 
-            this.state = new StateCell(this);
+            this.state = new StateCell();
             Reset();
         }
 
@@ -397,10 +370,10 @@ namespace Fmg.Core.Mosaic.Cells {
         /// * координаты ячейки
         /// * направления ячейки
         /// * ... - как придумает дочерний класс </summary>
-        public virtual Color GetBackgroundFillColor(int fillMode, Color defaultColor, Func<int, Color> repositoryColor) {
+        public virtual Color GetCellFillColor(int fillMode, Color defaultColor, Func<int, Color> getColor) {
             switch (fillMode) {
             default:
-                System.Diagnostics.Debug.Assert(false, this.GetType() + ".getBackgroundFillColor: fillMode=" + fillMode + ":  добавь цветовую обработку для этого режима!");
+                System.Diagnostics.Debug.Assert(false, this.GetType() + ".GetCellFillColor: fillMode=" + fillMode + ":  добавь цветовую обработку для этого режима!");
                 //break;// !!! без break'а
                 goto case 0;
             case 0:
@@ -415,14 +388,14 @@ namespace Fmg.Core.Mosaic.Cells {
                 return defaultColor;
 
             case 1:
-                return repositoryColor(GetDirection());
+                return getColor(GetDirection());
             case 2: {
                 // подсветить каждую i-тую строку c шагом div
                 int i = 2;
                 int div = 5;
                 int tmp1 = GetCoord().x % div;
                 int tmp2 = (GetCoord().y - tmp1) % div;
-                return repositoryColor((((tmp1 + tmp2) % div) == i) ? 0 : 1);
+                return getColor((((tmp1 + tmp2) % div) == i) ? 0 : 1);
             }
             case 3: {
                 // дуршлаг
@@ -430,7 +403,7 @@ namespace Fmg.Core.Mosaic.Cells {
                 int div = 4;
                 int tmp1 = GetCoord().x % div;
                 int tmp2 = (GetCoord().y + tmp1) % div;
-                return repositoryColor((((tmp1 + tmp2) % div) == i) ? 0 : 1);
+                return getColor((((tmp1 + tmp2) % div) == i) ? 0 : 1);
             }
             case 4: {
                 // ход конём
@@ -438,30 +411,30 @@ namespace Fmg.Core.Mosaic.Cells {
                 int div = 5;
                 int tmp1 = GetCoord().x % div;
                 int tmp2 = (GetCoord().y + tmp1) % div;
-                return repositoryColor((((tmp1 + tmp2) % div) == i) ? 0 : 1);
+                return getColor((((tmp1 + tmp2) % div) == i) ? 0 : 1);
             }
             case 5: {
                 // волны
                 int div = 15;
                 int tmp1 = GetCoord().x % div;
                 int tmp2 = (GetCoord().y + tmp1) % div;
-                return repositoryColor((tmp1 + tmp2) % div);
+                return getColor((tmp1 + tmp2) % div);
             }
             case 6: {
                 int div = 4;
-                return repositoryColor(((GetCoord().x % div + GetCoord().y % div) == div) ? 0 : 1);
+                return getColor(((GetCoord().x % div + GetCoord().y % div) == div) ? 0 : 1);
             }
             case 7: case 8: case 9:
-                return repositoryColor(GetCoord().x % (-5 + fillMode));
+                return getColor(GetCoord().x % (-5 + fillMode));
             case 10: case 11: case 12:
-                return repositoryColor(GetCoord().y % (-8 + fillMode));
+                return getColor(GetCoord().y % (-8 + fillMode));
             case 13: case 14: case 15: case 16: case 17: case 18:
-                return repositoryColor(GetCoord().x % (-fillMode) - fillMode + GetCoord().y % (+fillMode));
+                return getColor(GetCoord().x % (-fillMode) - fillMode + GetCoord().y % (+fillMode));
             case 19:
                 // подсветить direction
                 var zx = GetCoord().x / Attr.GetDirectionSizeField().Width + 1;
                 var zy = GetCoord().y / Attr.GetDirectionSizeField().Height + 1;
-                return repositoryColor(zx * zy);
+                return getColor(zx * zy);
             }
         }
 

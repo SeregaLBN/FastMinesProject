@@ -48,14 +48,6 @@ namespace Fmg.Core.App.Model {
         }
 
 
-        public void CopyFrom(MosaicInitData from) {
-            if (ReferenceEquals(from, this))
-                return;
-            this.MosaicType = from.MosaicType;
-            this.SizeField  = from.SizeField;
-            this.CountMines = from.CountMines;
-        }
-
         public EMosaic MosaicType {
             get { return _mosaicType; }
             set { _notifier.SetProperty(ref _mosaicType, value); }

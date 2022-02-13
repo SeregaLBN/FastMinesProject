@@ -120,7 +120,7 @@ public abstract class MosaicSwingView<TImage,
                 {
                     Color bkClrCell = cell.getCellFillColor(cellFill.getMode(),
                                                             cellColor,
-                                                            cellFill.getColors());
+                                                            cellFill::getColor);
                     if (!drawBk || !bkClrCell.equals(bkClr)) {
                         g.setColor(Cast.toColor(bkClrCell));
                         g.fillPolygon(poly);

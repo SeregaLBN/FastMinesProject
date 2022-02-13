@@ -39,12 +39,12 @@ public class AppDataSerializer implements ISerializer {
     */
 
     public AppData load(SharedPreferences from) {
-        AppData data = new AppData();
         if (from != null) try {
             int version = from.getInt(KEY__APP_DATA__VERSION, 1);
             if (version != VERSION)
                 throw new IllegalArgumentException("AppDataSerializer: Version #" + version + " is not supported");
 
+            AppData data = new AppData();
             MosaicActivityBackupData mosaicActivityBackupData = new MosaicActivityBackupDataSerializer().load(from);
             if (mosaicActivityBackupData == null)
                 data.setMosaicInitData(new MosaicInitDataSerializer().load(from));
@@ -52,11 +52,12 @@ public class AppDataSerializer implements ISerializer {
                 data.setMosaicActivityBackupData(mosaicActivityBackupData);
 
             data.setSplitPaneOpen(from.getBoolean(KEY__APP_DATA__MENU_SETTINGS__SPLIT_PANE_OPEN, MenuSettings.DEFAULT_SPLIT_PANE_OPEN));
+            return data;
+
         } catch(Exception ex) {
-            Logger.error("Can not read app settings from SharedPreferences", ex);
-            data = new AppData(); // reset
+            Logger.error("Can`t load app settings from SharedPreferences", ex);
         }
-        return data;
+        return new AppData();
     }
 
     public void save(AppData data, SharedPreferences to) {

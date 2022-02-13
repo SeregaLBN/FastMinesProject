@@ -41,7 +41,7 @@
                        ToolTipService.ToolTip="New Game"
                        Padding="1"
                        IsTabStop="False"
-                       Click="OnBtnNewClick"
+                       Tapped="OnBtnNewTapped"
                        PointerPressed="OnBtnNewPointerPressed"
                        PointerReleased="OnBtnNewPointerReleased" > <!-- TODO  don`t handled OnBtnNewPointer* -->
                     <Image Source="{x:Bind BtnNewGameImg, Mode=OneWay}" />

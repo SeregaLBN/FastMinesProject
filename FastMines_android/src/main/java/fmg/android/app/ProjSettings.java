@@ -1,11 +1,10 @@
 package fmg.android.app;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 
 import fmg.android.app.model.dataSource.BaseDataSource;
 import fmg.android.img.Animator;
+import fmg.android.utils.AsyncRunner;
 import fmg.android.utils.Cast;
 import fmg.android.utils.Timer;
 import fmg.common.Color;
@@ -27,8 +26,7 @@ public final class ProjSettings extends AProjSettings {
 
 
     static {
-        UiInvoker.Deferred        = new Handler(Looper.getMainLooper())::post;
-        UiInvoker.DeferredDelayed = new Handler(Looper.getMainLooper())::postDelayed;
+        UiInvoker.Deferred = AsyncRunner::invokeFromUi;
         UiInvoker.Animator = Animator::getSingleton;
         UiInvoker.TimeCreator = Timer::new;
 

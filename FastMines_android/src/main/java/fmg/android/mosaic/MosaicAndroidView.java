@@ -118,7 +118,7 @@ public abstract class MosaicAndroidView<TImage,
                 {
                     Color bkClrCell = cell.getCellFillColor(cellFill.getMode(),
                                                             cellColor,
-                                                            cellFill.getColors());
+                                                            cellFill::getColor);
                     if (!drawBk || !bkClrCell.equals(bkClr)) {
                         paintFill.setColor(Cast.toColor(bkClrCell));
                         g.drawPath(poly, paintFill);

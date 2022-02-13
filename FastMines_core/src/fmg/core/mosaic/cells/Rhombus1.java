@@ -25,6 +25,7 @@ package fmg.core.mosaic.cells;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import fmg.common.Color;
 import fmg.common.geom.*;
@@ -264,17 +265,17 @@ public class Rhombus1 extends BaseCell {
     public int getShiftPointBorderIndex() { return 2; }
 
     @Override
-    public Color getCellFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
+    public Color getCellFillColor(int fillMode, Color defaultColor, Function<Integer, Color> getColor) {
         if (fillMode == getAttr().getMaxCellFillModeValue()) {
             switch ((getCoord().y%4)*3+(getCoord().x%3)) { // почти как вычисление direction...
             // подсвечиваю 4 группы, составляющие каждая шестигранник из 3х ромбов
-            case 0: case  1: case  3: return repositoryColor.get(0);
-            case 2: case  4: case  5: return repositoryColor.get(1);
-            case 6: case  7: case  9: return repositoryColor.get(2);
-            case 8: case 10: case 11: return repositoryColor.get(3);
+            case 0: case  1: case  3: return getColor.apply(0);
+            case 2: case  4: case  5: return getColor.apply(1);
+            case 6: case  7: case  9: return getColor.apply(2);
+            case 8: case 10: case 11: return getColor.apply(3);
             }
         }
-        return super.getCellFillColor(fillMode, defaultColor, repositoryColor);
+        return super.getCellFillColor(fillMode, defaultColor, getColor);
     }
 
 }

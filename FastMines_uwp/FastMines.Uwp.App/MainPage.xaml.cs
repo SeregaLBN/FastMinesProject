@@ -10,6 +10,7 @@ using Windows.UI.Xaml.Navigation;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using Fmg.Common;
+using Fmg.Common.UI;
 using Fmg.Common.Geom;
 using Fmg.Core.Types;
 using Fmg.Core.App.Model;
@@ -75,6 +76,13 @@ namespace Fmg.Uwp.App {
 
             SmoothHelper.ApplyButtonColorSmoothTransition(panelMenuMosaicGroupHeader, ViewModel.MosaicGroupDS.Header.Entity.Model);
             SmoothHelper.ApplyButtonColorSmoothTransition(panelMenuMosaicSkillHeader, ViewModel.MosaicSkillDS.Header.Entity.Model);
+
+            var app = FastMinesApp.Get;
+            if (app.HasMosaicPageBackupData) {
+                var backupData = app.GetAndResetMosaicPageBackupData();
+                UiInvoker.Deferred(() => Frame.Navigate(typeof(MosaicPage), backupData));
+            }
+
         }
 
         private void OnPageUnloaded(object sender, RoutedEventArgs ev) {
@@ -208,7 +216,7 @@ namespace Fmg.Uwp.App {
                     .FromEventPattern<SizeChangedEventHandler, SizeChangedEventArgs>(h => SizeChanged += h, h => SizeChanged -= h) // equals .FromEventPattern<SizeChangedEventArgs>(this, "SizeChanged")
                     .Throttle(TimeSpan.FromSeconds(0.2)) // debounce events
                     .Subscribe(x => {
-                        System.Threading.Tasks.Task.Run(() => AsyncRunner.InvokeFromUiLater(() => OnPageSizeChanged(x.Sender, x.EventArgs), Windows.UI.Core.CoreDispatcherPriority.Low));
+                        System.Threading.Tasks.Task.Run(() => AsyncRunner.InvokeFromUi(() => OnPageSizeChanged(x.Sender, x.EventArgs), Windows.UI.Core.CoreDispatcherPriority.Low));
                         //AsyncRunner.InvokeFromUiLater(() => OnPageSizeChanged(x.Sender, x.EventArgs), Windows.UI.Core.CoreDispatcherPriority.Low);
                     });
             }

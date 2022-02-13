@@ -350,7 +350,7 @@ namespace Test.FastMines.Uwp.Images {
                     #region lifehack for XAML
                             if (img.GetType() == typeof(MosaicXamlController)) {
                                 imgControl.Visibility = Visibility.Collapsed;
-                                AsyncRunner.InvokeFromUiLater(() => { imgControl.Visibility = Visibility.Visible; });
+                                AsyncRunner.InvokeFromUi(() => { imgControl.Visibility = Visibility.Visible; });
                             }
                     #endregion
                         } else {

@@ -19,7 +19,7 @@ namespace Fmg.Common.UI {
         void Reset();
 
         /// <summary> total time in milliseconds after first start / restart </summary>
-        long Time { get; }
+        long Time { get; set; }
 
     }
 

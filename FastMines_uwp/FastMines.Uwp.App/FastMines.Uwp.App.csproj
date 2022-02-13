@@ -108,6 +108,7 @@
     <Compile Include="..\src\fmg\uwp\app\Model\Items\MosaicSkillDataItem.cs"                               Link="fmg.uwp.app\Model\Items\MosaicSkillDataItem.cs"                              />
     <Compile Include="..\src\fmg\uwp\app\Model\Items\MosaicGroupDataItem.cs"                               Link="fmg.uwp.app\Model\Items\MosaicGroupDataItem.cs"                              />
     <Compile Include="..\src\fmg\uwp\app\Model\AppData.cs"                                                 Link="fmg.uwp.app\Model\AppData.cs"                                                />
+    <Compile Include="..\src\fmg\uwp\app\Model\MosaicPageBackupData.cs"                                    Link="fmg.uwp.app\Model\MosaicPageBackupData.cs"                                   />
 
     <Compile Include="..\src\fmg\uwp\app\Presentation\Converters\DipWrapper.cs"                            Link="fmg.uwp.app\Presentation\Converters\DipWrapper.cs"                           />
     <Compile Include="..\src\fmg\uwp\app\Presentation\Converters\ImageSizeWidthOpenPaneConverter.cs"       Link="fmg.uwp.app\Presentation\Converters\ImageSizeWidthOpenPaneConverter.cs"      />
@@ -133,6 +134,8 @@
     <Compile Include="..\src\fmg\uwp\app\Presentation\MainMenuViewModel.cs"                                Link="fmg.uwp.app\Presentation\MainMenuViewModel.cs"                               />
     <Compile Include="..\src\fmg\uwp\app\Serializers\AppDataSerializer.cs"                                 Link="fmg.uwp.app\Serializers\AppDataSerializer.cs"                                />
     <Compile Include="..\src\fmg\uwp\app\Serializers\MosaicInitDataSerializer.cs"                          Link="fmg.uwp.app\Serializers\MosaicInitDataSerializer.cs"                         />
+    <Compile Include="..\src\fmg\uwp\app\Serializers\MosaicBackupDataSerializer.cs"                        Link="fmg.uwp.app\Serializers\MosaicBackupDataSerializer.cs"                       />
+    <Compile Include="..\src\fmg\uwp\app\Serializers\MosaicPageBackupDataSerializer.cs"                    Link="fmg.uwp.app\Serializers\MosaicPageBackupDataSerializer.cs"                   />
     <Compile Include="..\src\fmg\uwp\app\Serializers\ChampionsUwpSerializer.cs"                            Link="fmg.uwp.app\Serializers\ChampionsUwpSerializer.cs"                           />
     <Compile Include="..\src\fmg\uwp\app\Serializers\PlayersUwpSerializer.cs"                              Link="fmg.uwp.app\Serializers\PlayersUwpSerializer.cs"                             />
 
@@ -274,7 +277,7 @@
     <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

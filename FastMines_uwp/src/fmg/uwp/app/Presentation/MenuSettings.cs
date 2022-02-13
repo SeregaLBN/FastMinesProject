@@ -21,10 +21,6 @@ namespace Fmg.Uwp.App.Presentation {
             _notifier = new NotifyPropertyChanged(this, true);
         }
 
-        public void CopyFrom(MenuSettings from) {
-            SplitPaneOpen = from.SplitPaneOpen;
-        }
-
         public bool SplitPaneOpen {
             get { return _splitPaneOpen; }
             set {

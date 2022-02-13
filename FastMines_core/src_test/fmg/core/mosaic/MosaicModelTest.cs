@@ -89,8 +89,10 @@ namespace Fmg.Core.Mosaic {
                     AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.Matrix)]);
                     AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicTestModel.BackgroundColor)));
                     AssertEqual(1, modifiedProperties[            nameof(MosaicTestModel.BackgroundColor)]);
-                    AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicTestModel.BkFill)));
-                    AssertEqual(1, modifiedProperties[            nameof(MosaicTestModel.BkFill)]);
+                    AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicTestModel.CellFill)));
+                    AssertEqual(1, modifiedProperties[            nameof(MosaicTestModel.CellFill)]);
+                    AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicTestModel.CellColor)));
+                    AssertEqual(1, modifiedProperties[            nameof(MosaicTestModel.CellColor)]);
                     AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicTestModel.ColorText)));
                     AssertEqual(1, modifiedProperties[            nameof(MosaicTestModel.ColorText)]);
                     AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicTestModel.PenBorder)));
@@ -637,7 +639,8 @@ namespace Fmg.Core.Mosaic {
           //m.Area = 1234;
             m.Padding = new BoundDouble(10);
             m.BackgroundColor = Color.DimGray;
-            m.BkFill.Mode = 1;
+            m.CellColor = Color.Gray;
+            m.CellFill.Mode = 1;
             m.ColorText.SetColorClose(1, Color.LightSalmon);
             m.ColorText.SetColorOpen(2, Color.MediumSeaGreen);
             m.PenBorder.ColorLight = Color.MediumPurple;

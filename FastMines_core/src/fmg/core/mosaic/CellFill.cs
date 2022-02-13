@@ -2,15 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Fmg.Common;
-using Fmg.Common.Geom;
 using Fmg.Common.Notifier;
-using Fmg.Core.Img;
-using Fmg.Core.Types.Draw;
 
 namespace Fmg.Core.Mosaic {
 
     /// <summary> all that apply to the background fill of cells </summary>
-    public class BackgroundFill : INotifyPropertyChanged, IDisposable {
+    public class CellFill : INotifyPropertyChanged, IDisposable {
         /// <summary> режим заливки фона ячеек </summary>
         private int _mode = 0;
         /// <summary> кэшированные цвета фона ячеек </summary>
@@ -22,7 +19,7 @@ namespace Fmg.Core.Mosaic {
         }
         protected readonly NotifyPropertyChanged _notifier;
 
-        public BackgroundFill() {
+        public CellFill() {
             _notifier = new NotifyPropertyChanged(this);
         }
 

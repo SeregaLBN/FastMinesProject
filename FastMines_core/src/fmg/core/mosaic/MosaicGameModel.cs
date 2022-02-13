@@ -72,18 +72,16 @@ namespace Fmg.Core.Mosaic {
                 }
                 return _cellAttr;
             }
-            set {
-                if (_cellAttr == null)
-                    return;
-                if (value != null)
-                    throw new ArgumentException("Bad argument - support only null value!");
-                _cellAttr.PropertyChanged -= OnCellAttributePropertyChanged;
-                _cellAttr.Dispose();
-                _cellAttr = null;
-                _matrix.Clear();
-                _notifier.FirePropertyChanged();
-                _notifier.FirePropertyChanged(nameof(this.Matrix));
-            }
+        }
+        private void ResetCellAttr() {
+            if (_cellAttr == null)
+                return;
+            _cellAttr.PropertyChanged -= OnCellAttributePropertyChanged;
+            _cellAttr.Dispose();
+            _cellAttr = null;
+            _matrix.Clear();
+            _notifier.FirePropertyChanged();
+            _notifier.FirePropertyChanged(nameof(this.Matrix));
         }
 
         /// <summary> площадь ячеек </summary>
@@ -141,7 +139,7 @@ namespace Fmg.Core.Mosaic {
                     return;
 
                 this._mosaicType = value;
-                CellAttr = null;
+                ResetCellAttr();
                 _notifier.FirePropertyChanged(old, value);
             }
         }
@@ -172,7 +170,7 @@ namespace Fmg.Core.Mosaic {
             this.PropertyChangedSync -= OnPropertyChanged;
             _notifier.Dispose();
             _notifierAsync.Dispose();
-            CellAttr = null; // call setter - unsubscribe & dispose
+            ResetCellAttr();
         }
 
         public void Dispose() {

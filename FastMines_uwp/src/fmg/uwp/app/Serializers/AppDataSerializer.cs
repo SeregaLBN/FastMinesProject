@@ -16,29 +16,49 @@ namespace Fmg.Uwp.App.Serializers {
         /// <summary> Singleton </summary>
         public static MenuSettings MenuSettings { get; } = new MenuSettings();
 
-        private static readonly string KEY__MENU_SETTINGS__SECTION         = nameof(MenuSettings);
-        private static readonly string KEY__MENU_SETTINGS__SPLIT_PANE_OPEN = nameof(MenuSettings) + '.' + nameof(MenuSettings.SplitPaneOpen);
+        private const int VERSION = 1;
+
+        private const string KEY__APP_DATA__VERSION              = "Version";
+        private const string KEY__MENU_SETTINGS__SECTION         = nameof(MenuSettings);
+        private const string KEY__MENU_SETTINGS__SPLIT_PANE_OPEN = nameof(MenuSettings.SplitPaneOpen);
 
         public AppData Load(IPropertySet from) {
-            if (from.ContainsKey(KEY__MENU_SETTINGS__SECTION)) try {
-                var mid = new MosaicInitDataSerializer().Load(from);
+            try {
+                if (!from.ContainsKey(KEY__APP_DATA__VERSION))
+                    return new AppData();
 
-                var compositeMosaic = (Windows.Storage.ApplicationDataCompositeValue)from[KEY__MENU_SETTINGS__SECTION];
-                var isSplitPaneOpen = (bool)compositeMosaic[KEY__MENU_SETTINGS__SPLIT_PANE_OPEN];
+                int version = (int)from[KEY__APP_DATA__VERSION];
+                if (version != VERSION)
+                    throw new ArgumentException($"AppDataSerializer: Version #{version} is not supported");
 
-                return new AppData() {
-                    MosaicInitData = mid,
-                    SplitPaneOpen = isSplitPaneOpen
-                };
+                AppData data = new AppData();
+                var mosaicPageBackupData = new MosaicPageBackupDataSerializer().Load(from);
+                if (mosaicPageBackupData == null)
+                    data.MosaicInitData = new MosaicInitDataSerializer().Load(from);
+                else
+                    data.MosaicPageBackupData = mosaicPageBackupData;
+
+                var menuSection = (Windows.Storage.ApplicationDataCompositeValue)from[KEY__MENU_SETTINGS__SECTION];
+                data.SplitPaneOpen = (bool)menuSection[KEY__MENU_SETTINGS__SPLIT_PANE_OPEN];
+
+                return data;
             } catch(Exception ex) {
-                Logger.Info($"Fail load data: {ex.Message}");
-                System.Diagnostics.Debug.Assert(false, ex.Message);
+                Logger.Error($"Can`t load app settings: {ex.Message}");
             }
             return new AppData();
         }
 
         public void Save(AppData data, IPropertySet to) {
-            new MosaicInitDataSerializer().Save(data.MosaicInitData, to);
+            to.Clear();
+
+            to[KEY__APP_DATA__VERSION] = VERSION;
+
+            var mosaicPageBackupData = data.MosaicPageBackupData;
+            if (mosaicPageBackupData == null)
+                new MosaicInitDataSerializer().Save(data.MosaicInitData, to);
+            else
+                new MosaicPageBackupDataSerializer().Save(mosaicPageBackupData, to);
+
             to[KEY__MENU_SETTINGS__SECTION] = new Windows.Storage.ApplicationDataCompositeValue() {
                 [KEY__MENU_SETTINGS__SPLIT_PANE_OPEN] = data.SplitPaneOpen,
             };

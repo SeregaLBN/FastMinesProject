@@ -667,7 +667,7 @@ public class MosaicViewController extends MosaicController<DrawableView, Bitmap,
             double[] deltaTranslationTotalX = { 0 };
             double[] deltaTranslationTotalY = { 0 };
             long[] currTime = { 0 };
-            AsyncRunner.repeat(() -> {
+            AsyncRunner.Repeat(() -> {
                     double currDistance = Math.sin(currTime[0] * Math.PI/2 / totalTime) * totalDistance; // Distance function in current inertia - sine decay function from 0 to Pi/2
                     double currX = currDistance * cos;
                     double currY = currDistance * sin;

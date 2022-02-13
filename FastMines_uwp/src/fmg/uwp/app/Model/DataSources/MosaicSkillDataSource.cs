@@ -63,7 +63,7 @@ namespace Fmg.Uwp.App.Model.DataSources {
             model.Animated = selected;
             model.PolarLights = selected;
             model.BorderColor = selected ? Color.LawnGreen : Color.IndianRed;
-            model.BackgroundColor = selected ? AnimatedImageModelConst.DefaultBkColor : MosaicDrawModelConst.DefaultBkColor;
+            model.BackgroundColor = selected ? AnimatedImageModelConst.DefaultBkColor : DefaultBkColor;
             model.Padding = new BoundDouble(selected ? 5 : 15);
             if (!selected)
                 model.ForegroundColor = AnimatedImageModelConst.DefaultForegroundColor.Brighter();

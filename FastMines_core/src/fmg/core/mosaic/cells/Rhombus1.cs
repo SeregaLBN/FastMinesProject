@@ -65,8 +65,8 @@ namespace Fmg.Core.Mosaic.Cells {
                 return (A * SQRT3 - w * 4) / (SQRT3 + 1);
            }
 
-           public override int GetMaxBackgroundFillModeValue() {
-                return base.GetMaxBackgroundFillModeValue() + 1;
+           public override int GetMaxCellFillModeValue() {
+                return base.GetMaxCellFillModeValue() + 1;
             }
         }
 
@@ -242,8 +242,8 @@ namespace Fmg.Core.Mosaic.Cells {
 
         public override int GetShiftPointBorderIndex() { return 2; }
 
-        public override Color GetBackgroundFillColor(int fillMode, Color defaultColor, Func<int, Color> repositoryColor) {
-            if (fillMode == Attr.GetMaxBackgroundFillModeValue()) {
+        public override Color GetCellFillColor(int fillMode, Color defaultColor, Func<int, Color> repositoryColor) {
+            if (fillMode == Attr.GetMaxCellFillModeValue()) {
                 var c = GetCoord();
                 switch ((c.y % 4) * 3 + (c.x % 3)) { // почти как вычисление direction...
                                                      // подсвечиваю 4 группы, составляющие каждая шестигранник из 3х ромбов
@@ -253,7 +253,7 @@ namespace Fmg.Core.Mosaic.Cells {
                 case 8: case 10: case 11: return repositoryColor(3);
                 }
             }
-            return base.GetBackgroundFillColor(fillMode, defaultColor, repositoryColor);
+            return base.GetCellFillColor(fillMode, defaultColor, repositoryColor);
         }
 
     }

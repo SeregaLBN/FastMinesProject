@@ -19,6 +19,7 @@ import fmg.android.app.databinding.MosaicActivityBinding;
 import fmg.android.app.model.MosaicActivityBackupData;
 import fmg.android.app.presentation.MosaicViewModel;
 import fmg.android.mosaic.MosaicViewController;
+import fmg.android.utils.AsyncRunner;
 import fmg.android.utils.Timer;
 import fmg.common.Logger;
 import fmg.common.ui.UiInvoker;
@@ -76,7 +77,7 @@ public class MosaicActivity extends AppCompatActivity {
         MosaicViewController controller = getMosaicController();
         FastMinesApp app = FastMinesApp.get();
         if (app.hasMosaicActivityBackupData()) {
-            UiInvoker.DeferredDelayed.accept(() -> {
+            AsyncRunner.invokeFromUiDelayed(() -> {
                     MosaicActivityBackupData mosaicActivityBackupData = app.getAndResetMosaicActivityBackupData();
                     controller.gameRestore(mosaicActivityBackupData.mosaicBackupData);
                     controller.getModel().setMosaicOffset(mosaicActivityBackupData.mosaicOffset);
@@ -196,7 +197,17 @@ public class MosaicActivity extends AppCompatActivity {
     }
 
     private void onBtnNewClick(View view) {
-        viewModel.getMosaicController().gameNew();
+        if (getMosaicController().getGameStatus() != EGameStatus.eGSPlay) {
+            getMosaicController().gameNew();
+            return;
+        }
+
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("New game?")
+                .setPositiveButton("Yes", (dialog, which) -> getMosaicController().gameNew())
+                .setNegativeButton("No", null)
+                .show();
     }
 
     private boolean onBtnNewTouch(View view, MotionEvent event) {

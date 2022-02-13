@@ -82,6 +82,14 @@ public class Timer implements ITimer {
     }
 
     @Override
+    public void setTime(long time) {
+        if (paused)
+            started = time;
+        else
+            started = new Date().getTime() - time;
+    }
+
+    @Override
     public void close() {
         callback = null;
         if (jfxTimer != null) {
