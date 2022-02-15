@@ -25,7 +25,10 @@ package fmg.core.mosaic.cells;
 import java.util.ArrayList;
 import java.util.List;
 
-import fmg.common.geom.*;
+import fmg.common.geom.Coord;
+import fmg.common.geom.PointDouble;
+import fmg.common.geom.RectDouble;
+import fmg.core.mosaic.shape.ShapeSqTrHex;
 
 /**
  * Комбинация. мозаика из 6Square 4Triangle 2Hexagon
@@ -33,93 +36,20 @@ import fmg.common.geom.*;
  **/
 public class SqTrHex extends BaseCell {
 
-    public static class AttrSqTrHex extends BaseAttribute {
-
-        @Override
-        public SizeDouble getSize(Matrisize sizeField) {
-            double a = getA();
-            double h = getH();
-            SizeDouble result = new SizeDouble(
-                 a/2+h + a/2*((sizeField.m+2)/3) +
-                         h * ((sizeField.m+1)/3) +
-                (a/2+h)    * ((sizeField.m+0)/3),
-                 a/2   + h * ((sizeField.n+1)/2)+
-                 a*3/2*      ((sizeField.n+0)/2));
-
-            if (sizeField.n < 4) {
-                int x = sizeField.m % 3;
-                switch (sizeField.n) {
-                case 1:
-                    switch (x) { case 0: result.width -= h; case 1: case 2: result.width -= h; }
-                    break;
-                case 2: case 3:
-                    switch (x) { case 0: case 1: result.width -= h; }
-                    break;
-                }
-            }
-            if (sizeField.m < 3) {
-                int y = sizeField.n % 4;
-                switch (sizeField.m) {
-                case 1:
-                    switch (y) { case 0: result.height -= a*1.5; break; case 2: case 3: result.height -= a/2; }
-                    break;
-                case 2:
-                    if (y == 0) result.height -= a/2;
-                    break;
-                }
-            }
-
-            return result;
-        }
-
-        @Override
-        public int getNeighborNumber(int direction) {
-            switch (direction) {
-            case  0: case  2: case  6: case  7: return 6;
-            case  1: case  3: case  5: case  8: case  9: case 10: return 8;
-            case  4: case 11: return 12;
-            default:
-                throw new IllegalArgumentException("Invalid value direction="+direction);
-            }
-        }
-        @Override
-        public int getVertexNumber(int direction) {
-            switch (direction) {
-            case  0: case  2: case  6: case  7: return 3;
-            case  1: case  3: case  5: case  8: case  9: case 10: return 4;
-            case  4: case 11: return 6;
-            default:
-                throw new IllegalArgumentException("Invalid value direction="+direction);
-            }
-        }
-        @Override
-        public double getVertexIntersection() { return 4.; }
-        @Override
-        public Size getDirectionSizeField() { return new Size(3, 4); }
-        @Override
-        protected double getA() { return Math.sqrt(getArea()/(0.5+1/SQRT3)); }
-        protected double getH() { return getA()*SQRT3/2; }
-        @Override
-        public double getSq(double borderWidth) {
-            double w = borderWidth/2.;
-            return (getA()*SQRT3 - w*6) / (2+SQRT3);
-        }
-    }
-
-    public SqTrHex(AttrSqTrHex attr, Coord coord) {
-        super(attr, coord,
+    public SqTrHex(ShapeSqTrHex shape, Coord coord) {
+        super(shape, coord,
                    (coord.y&3)*3+(coord.x%3) // 0..11
              );
     }
 
     @Override
-    public AttrSqTrHex getAttr() {
-        return (AttrSqTrHex) super.getAttr();
+    public ShapeSqTrHex getShape() {
+        return (ShapeSqTrHex)super.getShape();
     }
 
     @Override
     public List<Coord> getCoordsNeighbor() {
-        List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
+        List<Coord> neighborCoord = new ArrayList<>(getShape().getNeighborNumber(getDirection()));
 
         // определяю координаты соседей
         switch (direction) {
@@ -249,9 +179,9 @@ public class SqTrHex extends BaseCell {
     }
 
     private PointDouble getOffset() {
-        AttrSqTrHex attr = getAttr();
-        double a = attr.getA();
-        double h = attr.getH();
+        ShapeSqTrHex shape = getShape();
+        double a = shape.getA();
+        double h = shape.getH();
 
         return new PointDouble(
                 (h*2+a  )*(coord.x/3) + a+h,
@@ -260,10 +190,10 @@ public class SqTrHex extends BaseCell {
 
     @Override
     protected void calcRegion() {
-        AttrSqTrHex attr = getAttr();
-        double a = attr.getA();
+        ShapeSqTrHex shape = getShape();
+        double a = shape.getA();
         double b = a/2;
-        double h = attr.getH();
+        double h = shape.getH();
 
         PointDouble o = getOffset();
         switch (direction) {
@@ -344,12 +274,12 @@ public class SqTrHex extends BaseCell {
 
     @Override
     public RectDouble getRcInner(double borderWidth) {
-        AttrSqTrHex attr = getAttr();
-        double a = attr.getA();
+        ShapeSqTrHex shape = getShape();
+        double a = shape.getA();
         double b = a/2;
-        double h = attr.getH();
+        double h = shape.getH();
         double w = borderWidth/2.;
-        double sq = getAttr().getSq(borderWidth);
+        double sq = shape.getSq(borderWidth);
         double sq2 = sq/2;
 
         PointDouble o = getOffset();

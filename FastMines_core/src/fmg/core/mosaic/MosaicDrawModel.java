@@ -109,7 +109,7 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IMo
     /** get mosaic size in pixels */
     @Override
     public SizeDouble getMosaicSize() {
-        return getCellAttr().getSize(getSizeField());
+        return getShape().getSize(getSizeField());
     }
     /** get inner size in pixels, куда равномерно вписана мозаика. Inner, т.к. снаружи есть ещё padding */
     private SizeDouble getInnerSize() {
@@ -393,7 +393,7 @@ public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IMo
             case MosaicDrawModel.PROPERTY_SIZE:
             case MosaicDrawModel.PROPERTY_PEN_BORDER:
                 PenBorder penBorder = getPenBorder();
-                getFontInfo().setSize(getCellAttr().getSq(penBorder.getWidth()));
+                getFontInfo().setSize(getShape().getSq(penBorder.getWidth()));
                 break;
             default:
                 // none

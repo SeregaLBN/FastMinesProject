@@ -25,7 +25,10 @@ package fmg.core.mosaic.cells;
 import java.util.ArrayList;
 import java.util.List;
 
-import fmg.common.geom.*;
+import fmg.common.geom.Coord;
+import fmg.common.geom.PointDouble;
+import fmg.common.geom.RectDouble;
+import fmg.core.mosaic.shape.ShapeQuadrangle1;
 
 /**
  * Quadrangle1 - четырёхугольник 120°-90°-60°-90°
@@ -33,75 +36,20 @@ import fmg.common.geom.*;
  **/
 public class Quadrangle1 extends BaseCell {
 
-    public static class AttrQuadrangle1 extends BaseAttribute {
-
-        @Override
-        public SizeDouble getSize(Matrisize sizeField) {
-            double a = getA();
-            double b = getB();
-            double h = getH();
-            double m = getM();
-            SizeDouble result = new SizeDouble(
-                m + m*((sizeField.m+2)/3)+
-                    h*((sizeField.m+1)/3)+
-                    m*((sizeField.m+0)/3),
-                b + b*((sizeField.n+1)/2)+
-                    a*((sizeField.n+0)/2));
-
-            if (sizeField.m == 1)
-                if ((sizeField.n & 1) == 0)
-                    result.height -= a/4;
-            if (sizeField.m == 2)
-                if ((sizeField.n % 4) == 0)
-                    result.height -= a/4;
-            if ((sizeField.n == 1) || (sizeField.n == 2)) {
-                if ((sizeField.m % 3) == 2)
-                    result.width -= m;
-                if ((sizeField.m % 3) == 0)
-                    result.width -= m;
-            }
-
-            return result;
-        }
-
-        @Override
-        public int getNeighborNumber(int direction) { return 9; }
-        @Override
-        public int getVertexNumber(int direction) { return 4; }
-        @Override
-        public double getVertexIntersection() { return 4.25; } // (3+4+4+6)/4.
-        @Override
-        public Size getDirectionSizeField() { return new Size(3, 4); }
-        @Override
-        protected double getA() { return Math.sqrt(getArea()/SQRT3)*2; }
-        protected double getB() { return getA()/2; }
-        protected double getH() { return getB()*SQRT3; }
-        protected double getN() { return getA()*0.75; }
-        protected double getM() { return getH()/2; }
-        protected double getZ() { return getA()/(1+SQRT3); }
-        protected double getZx() { return getZ()*SQRT3/2; }
-        protected double getZy() { return getZ()/2; }
-        @Override
-        public double getSq(double borderWidth) {
-            double w = borderWidth/2.;
-            return (getA()*SQRT3 - w*2*(1+SQRT3))/(SQRT3+2);
-        }
-    }
-
-    public Quadrangle1(AttrQuadrangle1 attr, Coord coord) {
-        super(attr, coord,
+    public Quadrangle1(ShapeQuadrangle1 shape, Coord coord) {
+        super(shape, coord,
                    (coord.y&3)*3 + (coord.x%3) // 0..11
              );
     }
 
     @Override
-    public AttrQuadrangle1 getAttr() {
-        return (AttrQuadrangle1) super.getAttr();
+    public ShapeQuadrangle1 getShape() {
+        return (ShapeQuadrangle1)super.getShape();
     }
 
     @Override
     public List<Coord> getCoordsNeighbor() {
-        List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
+        List<Coord> neighborCoord = new ArrayList<>(getShape().getNeighborNumber(getDirection()));
 
         // определяю координаты соседей
         switch (direction) {
@@ -244,12 +192,12 @@ public class Quadrangle1 extends BaseCell {
 
     @Override
     protected void calcRegion() {
-        AttrQuadrangle1 attr = getAttr();
-        double a = attr.getA();
-        double b = attr.getB();
-        double h = attr.getH();
-        double n = attr.getN();
-        double m = attr.getM();
+        ShapeQuadrangle1 shape = getShape();
+        double a = shape.getA();
+        double b = shape.getB();
+        double h = shape.getH();
+        double n = shape.getN();
+        double m = shape.getM();
 
         // определение координат точек фигуры
         double oX = (h*2)*(coord.x/3) + h+m; // offset X
@@ -333,17 +281,17 @@ public class Quadrangle1 extends BaseCell {
 
     @Override
     public RectDouble getRcInner(double borderWidth) {
-        AttrQuadrangle1 attr = getAttr();
-        double a = attr.getA();
-        double b = attr.getB();
-        double h = attr.getH();
-        double n = attr.getN();
-        double m = attr.getM();
-        double z = attr.getZ();
-        double zx = attr.getZx();
-        double zy = attr.getZy();
+        ShapeQuadrangle1 shape = getShape();
+        double a = shape.getA();
+        double b = shape.getB();
+        double h = shape.getH();
+        double n = shape.getN();
+        double m = shape.getM();
+        double z = shape.getZ();
+        double zx = shape.getZx();
+        double zy = shape.getZy();
 //      double w = borderWidth/2.;
-        double sq    = attr.getSq(borderWidth);
+        double sq    = shape.getSq(borderWidth);
         double sq2   = sq/2;
 
         double oX = (h*2)*(coord.x/3) + h+m; // offset X

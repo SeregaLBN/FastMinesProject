@@ -6,7 +6,7 @@ import java.util.stream.IntStream;
 
 import fmg.common.geom.Matrisize;
 import fmg.core.mosaic.MosaicHelper;
-import fmg.core.mosaic.cells.BaseCell;
+import fmg.core.mosaic.shape.BaseShape;
 
 public enum ESkillLevel {
 
@@ -21,25 +21,25 @@ public enum ESkillLevel {
     static {
         mosaicCoefficient = new EnumMap<>(EMosaic.class);
         for (EMosaic mosaicType : EMosaic.values()) {
-            BaseCell.BaseAttribute attr = MosaicHelper.createAttributeInstance(mosaicType);
+            BaseShape shape = MosaicHelper.createShapeInstance(mosaicType);
 
             // variant 1 - сложность в зависимости от кол-ва пересечений ячеек в одной точке
-//            mosaicCoefficient.info(mosaicType, attr.getVertexIntersection());
+//            mosaicCoefficient.info(mosaicType, shape.getVertexIntersection());
 
             // variant 2 - сложность в зависимости от кол-ва соседних ячеек
-//            int cntDir = attr.GetDirectionCount();
+//            int cntDir = shape.GetDirectionCount();
 //            int neighbors = 0;
 //            for (int i=0; i<cntDir; i++)
-//               neighbors += attr.getNeighborNumber(i);
+//               neighbors += shape.getNeighborNumber(i);
 //            mosaicCoefficient.info(mosaicType, ((double)neighbors)/cntDir);
 
             // variant 3 - сложность в зависимости от кол-ва соседних ячеек и кол-ва точек пересечения
-            double neighbors = IntStream.range(0, attr.getDirectionCount())
-                  .map(i -> attr.getNeighborNumber(i))
+            double neighbors = IntStream.range(0, shape.getDirectionCount())
+                  .map(i -> shape.getNeighborNumber(i))
                   .average().getAsDouble();
-            mosaicCoefficient.put(mosaicType, attr.getVertexIntersection()/neighbors);
+            mosaicCoefficient.put(mosaicType, shape.getVertexIntersection()/neighbors);
 
-//            Logger.info(attr.getClass().getSimpleName() + ": " + mosaicCoefficient.get(mosaicType));
+//            Logger.info(shape.getClass().getSimpleName() + ": " + mosaicCoefficient.get(mosaicType));
         }
 
         // x*y * coefficient / mosaicCoefficient  = 15

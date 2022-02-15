@@ -25,7 +25,9 @@ package fmg.core.mosaic.cells;
 import java.util.ArrayList;
 import java.util.List;
 
-import fmg.common.geom.*;
+import fmg.common.geom.Coord;
+import fmg.common.geom.RectDouble;
+import fmg.core.mosaic.shape.ShapeParquet1;
 
 /**
  * Паркет в елку
@@ -33,53 +35,20 @@ import fmg.common.geom.*;
  **/
 public class Parquet1 extends BaseCell {
 
-    public static class AttrParquet1 extends BaseAttribute {
-
-        @Override
-        public SizeDouble getSize(Matrisize sizeField) {
-            double a = getA();
-            SizeDouble result = new SizeDouble(
-                (sizeField.m*2+1) * a,
-                (sizeField.n*2+2) * a);
-
-            if (sizeField.m == 1)
-                result.height -= a;
-
-            return result;
-        }
-
-        @Override
-        public int getNeighborNumber(int direction) { return 6; }
-        @Override
-        public int getVertexNumber(int direction) { return 4; }
-        @Override
-        public double getVertexIntersection() { return 3; }
-        @Override
-        public Size getDirectionSizeField() { return new Size(2, 1); }
-        @Override
-        protected double getA() { return Math.sqrt(getArea())/2; }
-        @Override
-        public double getSq(double borderWidth) {
-            double w = borderWidth/2.;
-            return getA()-w*SQRT2;
-        }
-
-    }
-
-    public Parquet1(AttrParquet1 attr, Coord coord) {
-        super(attr, coord,
+    public Parquet1(ShapeParquet1 shape, Coord coord) {
+        super(shape, coord,
                     coord.x&1 // 0..1
              );
     }
 
     @Override
-    public AttrParquet1 getAttr() {
-        return (AttrParquet1) super.getAttr();
+    public ShapeParquet1 getShape() {
+        return (ShapeParquet1)super.getShape();
     }
 
     @Override
     public List<Coord> getCoordsNeighbor() {
-        List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
+        List<Coord> neighborCoord = new ArrayList<>(getShape().getNeighborNumber(getDirection()));
 
         // определяю координаты соседей
         boolean bdir = (direction != 0);
@@ -95,8 +64,8 @@ public class Parquet1 extends BaseCell {
 
     @Override
     protected void calcRegion() {
-        AttrParquet1 attr = getAttr();
-        double a = attr.getA();
+        ShapeParquet1 shape = getShape();
+        double a = shape.getA();
 
         switch (direction) {
         case 0:
@@ -116,8 +85,8 @@ public class Parquet1 extends BaseCell {
 
     @Override
     public RectDouble getRcInner(double borderWidth) {
-        AttrParquet1 attr = getAttr();
-        double sq = attr.getSq(borderWidth);
+        ShapeParquet1 shape = getShape();
+        double sq = shape.getSq(borderWidth);
         double w = borderWidth/2.;
         boolean bdir = (direction != 0);
 

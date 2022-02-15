@@ -25,7 +25,10 @@ package fmg.core.mosaic.cells;
 import java.util.ArrayList;
 import java.util.List;
 
-import fmg.common.geom.*;
+import fmg.common.geom.Coord;
+import fmg.common.geom.PointDouble;
+import fmg.common.geom.RectDouble;
+import fmg.core.mosaic.shape.ShapeTrSq1;
 
 /**
  * Комбинация. Мозаика из 4х треугольников и 2х квадратов
@@ -33,80 +36,20 @@ import fmg.common.geom.*;
  **/
 public class TrSq1 extends BaseCell {
 
-    public static class AttrTrSq1 extends BaseAttribute {
-
-        @Override
-        public SizeDouble getSize(Matrisize sizeField) {
-            double b = getB();
-            double k = getK();
-            double n = getN();
-            double m = getM();
-            SizeDouble result = new SizeDouble(
-                b+n*((sizeField.m-1+2)/3)+
-                  k*((sizeField.m-1+1)/3)+
-                  m*((sizeField.m-1+0)/3),
-                b+n* (sizeField.n-1));
-
-            if (sizeField.n == 1) {
-                if ((sizeField.m % 3) == 2) result.width -= m;
-                if ((sizeField.m % 3) == 0) result.width -= k;
-            }
-            if (sizeField.m == 1)
-                if ((sizeField.n & 1) == 0)
-                    result.height -= m;
-
-            return result;
-        }
-
-        @Override
-        public int getNeighborNumber(int direction) {
-            switch (direction) {
-            case 1: case 2: case 3: case 5: return 9;
-            case 0: case 4: return 12;
-            default:
-                throw new IllegalArgumentException("Invalid value direction=" + direction);
-            }
-        }
-        @Override
-        public int getVertexNumber(int direction) {
-            switch (direction) {
-            case 1: case 2: case 3: case 5: return 3;
-            case 0: case 4: return 4;
-            default:
-                throw new IllegalArgumentException("Invalid value direction="+direction);
-            }
-        }
-        @Override
-        public double getVertexIntersection() { return 5.; }
-        @Override
-        public Size getDirectionSizeField() { return new Size(3, 2); }
-        @Override
-        protected double getA() { return Math.sqrt(3*getArea()/(1+SQRT3/2)); }
-        protected double getB() { return getN()+getM(); }
-        protected double getK() { return getN()-getM(); }
-        protected double getN() { return getA()*SIN75; }
-        protected double getM() { return getA()*SIN15; }
-        @Override
-        public double getSq(double borderWidth) {
-            double w = borderWidth/2.;
-            return (getA()*SQRT3 - w*6) / (4*SIN75);
-        }
-    }
-
-    public TrSq1(AttrTrSq1 attr, Coord coord) {
-        super(attr, coord,
+    public TrSq1(ShapeTrSq1 shape, Coord coord) {
+        super(shape, coord,
                    (coord.y&1)*3+(coord.x%3) // 0..5
              );
     }
 
     @Override
-    public AttrTrSq1 getAttr() {
-        return (AttrTrSq1) super.getAttr();
+    public ShapeTrSq1 getShape() {
+        return (ShapeTrSq1)super.getShape();
     }
 
     @Override
     public List<Coord> getCoordsNeighbor() {
-        List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
+        List<Coord> neighborCoord = new ArrayList<>(getShape().getNeighborNumber(getDirection()));
 
         // определяю координаты соседей
         switch (direction) {
@@ -189,11 +132,11 @@ public class TrSq1 extends BaseCell {
 
     @Override
     protected void calcRegion() {
-        AttrTrSq1 attr = getAttr();
-        double b = attr.getB();
-        double k = attr.getK();
-        double n = attr.getN();
-        double m = attr.getM();
+        ShapeTrSq1 shape = getShape();
+        double b = shape.getB();
+        double k = shape.getK();
+        double n = shape.getN();
+        double m = shape.getM();
 
         double oX = b + n * (coord.x/3*2); // offset X
         double oY = n + n*2*(coord.y/2);   // offset Y
@@ -236,13 +179,13 @@ public class TrSq1 extends BaseCell {
 
     @Override
     public RectDouble getRcInner(double borderWidth) {
-        AttrTrSq1 attr = getAttr();
-        double b = attr.getB();
-        double k = attr.getK();
-        double n = attr.getN();
-        double m = attr.getM();
+        ShapeTrSq1 shape = getShape();
+        double b = shape.getB();
+        double k = shape.getK();
+        double n = shape.getN();
+        double m = shape.getM();
         double w = borderWidth/2.;
-        double sq = attr.getSq(borderWidth);
+        double sq = shape.getSq(borderWidth);
         double sq2 = sq/2;
 
         double oX = b + n * (coord.x/3*2); // offset X

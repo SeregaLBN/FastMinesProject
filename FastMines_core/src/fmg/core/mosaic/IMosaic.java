@@ -5,6 +5,7 @@ import java.util.List;
 import fmg.common.geom.Coord;
 import fmg.common.geom.Matrisize;
 import fmg.core.mosaic.cells.BaseCell;
+import fmg.core.mosaic.shape.BaseShape;
 import fmg.core.types.EMosaic;
 
 /** interface of mosaic field */
@@ -14,7 +15,7 @@ public interface IMosaic {
     Matrisize getSizeField();
     void setSizeField(Matrisize size);
 
-    BaseCell.BaseAttribute getCellAttr();
+    BaseShape getShape();
 
     /** матрица ячеек, представленная(развёрнута) в виде вектора */
     List<BaseCell> getMatrix();

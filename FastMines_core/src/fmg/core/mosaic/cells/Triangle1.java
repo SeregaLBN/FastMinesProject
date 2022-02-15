@@ -25,7 +25,10 @@ package fmg.core.mosaic.cells;
 import java.util.ArrayList;
 import java.util.List;
 
-import fmg.common.geom.*;
+import fmg.common.geom.Coord;
+import fmg.common.geom.PointDouble;
+import fmg.common.geom.RectDouble;
+import fmg.core.mosaic.shape.ShapeTriangle1;
 
 /**
  * Треугольник. Вариант 1 - равносторонний, классика
@@ -33,53 +36,20 @@ import fmg.common.geom.*;
  **/
 public class Triangle1 extends BaseCell {
 
-    public static class AttrTriangle1 extends BaseAttribute {
-
-        @Override
-        public SizeDouble getSize(Matrisize sizeField) {
-            double b = getB();
-            double h = getH();
-            return new SizeDouble(
-                b * (sizeField.m+1),
-                h * (sizeField.n+0));
-        }
-
-        @Override
-        public int getNeighborNumber(int direction) { return 12; }
-        @Override
-        public int getVertexNumber(int direction) { return 3; }
-        @Override
-        public double getVertexIntersection() { return 6; }
-        @Override
-        public Size getDirectionSizeField() { return new Size(2, 2); }
-        @Override
-        protected double getA() { return getB() * 2.f; } // размер стороны треугольника
-        /** пол стороны треугольника */
-        protected double getB() { return Math.sqrt(getArea()/SQRT3); }
-        /** высота треугольника */
-        protected double getH() { return getB() * SQRT3; }
-        @Override
-        public double getSq(double borderWidth) {
-            double w = borderWidth/2.;
-            return (getH()*2 - 6*w)/(SQRT3+2);
-            //return (getA()*SQRT3 - 6*w)/(SQRT3+2);
-        }
-    }
-
-    public Triangle1(AttrTriangle1 attr, Coord coord) {
-        super(attr, coord,
+    public Triangle1(ShapeTriangle1 shape, Coord coord) {
+        super(shape, coord,
                   ((coord.y&1)<<1)+(coord.x&1) // 0..3
              );
     }
 
     @Override
-    public AttrTriangle1 getAttr() {
-        return (AttrTriangle1) super.getAttr();
+    public ShapeTriangle1 getShape() {
+        return (ShapeTriangle1)super.getShape();
     }
 
     @Override
     public List<Coord> getCoordsNeighbor() {
-        List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
+        List<Coord> neighborCoord = new ArrayList<>(getShape().getNeighborNumber(getDirection()));
 
         // определяю координаты соседей
         switch (direction) {
@@ -118,10 +88,10 @@ public class Triangle1 extends BaseCell {
 
     @Override
     protected void calcRegion() {
-        AttrTriangle1 attr = getAttr();
-        double a = attr.getA();
-        double b = attr.getB();
-        double h = attr.getH();
+        ShapeTriangle1 shape = getShape();
+        double a = shape.getA();
+        double b = shape.getB();
+        double h = shape.getH();
 
         double oX = a*(coord.x>>1); // offset X
         double oY = h* coord.y;     // offset Y
@@ -152,9 +122,9 @@ public class Triangle1 extends BaseCell {
 
     @Override
     public RectDouble getRcInner(double borderWidth) {
-        AttrTriangle1 attr = getAttr();
-        double b = attr.getB();
-        double sq = attr.getSq(borderWidth);
+        ShapeTriangle1 shape = getShape();
+        double b = shape.getB();
+        double sq = shape.getSq(borderWidth);
         double w = borderWidth/2.;
 
         PointDouble center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)

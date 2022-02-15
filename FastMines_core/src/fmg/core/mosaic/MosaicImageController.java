@@ -24,7 +24,7 @@ public abstract class MosaicImageController<TImage,        TMosaicView extends M
 
         PenBorder pen = model.getPenBorder();
         pen.setColorLight(pen.getColorShadow());
-        model.getCellFill().setMode(1 + ThreadLocalRandom.current().nextInt(model.getCellAttr().getMaxCellFillModeValue()));
+        model.getCellFill().setMode(1 + ThreadLocalRandom.current().nextInt(model.getShape().getMaxCellFillModeValue()));
     }
 
     @Override

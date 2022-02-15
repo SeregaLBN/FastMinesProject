@@ -62,7 +62,7 @@ public class MosaicModelTest {
         new PropertyChangeExecutor<>(() -> m[0] = new MosaicGameModel(), false).run(300, 5000,
             model -> {
                 Assert.assertTrue(!model.getMatrix().isEmpty());
-                Assert.assertTrue(model.getCellAttr() == model.getMatrix().get(0).getAttr()); // reference equals
+                Assert.assertTrue(model.getShape() == model.getMatrix().get(0).getShape()); // reference equals
 
                 model.setSizeField(new Matrisize(15, 10));
             }, (model, modifiedProperties) -> {
@@ -79,8 +79,8 @@ public class MosaicModelTest {
             }, (model, modifiedProperties) -> {
                 Assert.assertTrue  (   modifiedProperties.containsKey(MosaicGameModel.PROPERTY_AREA));
                 Assert.assertEquals(1, modifiedProperties.get(        MosaicGameModel.PROPERTY_AREA).first.intValue());
-                Assert.assertTrue  (   modifiedProperties.containsKey(MosaicGameModel.PROPERTY_CELL_ATTR));
-                Assert.assertEquals(1, modifiedProperties.get(        MosaicGameModel.PROPERTY_CELL_ATTR).first.intValue());
+                Assert.assertTrue  (   modifiedProperties.containsKey(MosaicGameModel.PROPERTY_CELL_SHAPE));
+                Assert.assertEquals(1, modifiedProperties.get(        MosaicGameModel.PROPERTY_CELL_SHAPE).first.intValue());
                 Assert.assertEquals(2, modifiedProperties.size());
             });
     }
@@ -97,8 +97,8 @@ public class MosaicModelTest {
                 Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        IImageModel    .PROPERTY_SIZE            ).first);
                 Assert.assertTrue  (                    modifiedProperties.containsKey(MosaicGameModel.PROPERTY_AREA            ));
                 Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        MosaicGameModel.PROPERTY_AREA            ).first);
-                Assert.assertTrue  (                    modifiedProperties.containsKey(MosaicGameModel.PROPERTY_CELL_ATTR       ));
-                Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        MosaicGameModel.PROPERTY_CELL_ATTR       ).first);
+                Assert.assertTrue  (                    modifiedProperties.containsKey(MosaicGameModel.PROPERTY_CELL_SHAPE       ));
+                Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        MosaicGameModel.PROPERTY_CELL_SHAPE       ).first);
                 Assert.assertTrue  (                    modifiedProperties.containsKey(MosaicGameModel.PROPERTY_MOSAIC_TYPE     ));
                 Assert.assertEquals(Integer.valueOf(1), modifiedProperties.get(        MosaicGameModel.PROPERTY_MOSAIC_TYPE     ).first);
                 Assert.assertTrue  (                    modifiedProperties.containsKey(MosaicGameModel.PROPERTY_MATRIX          ));
@@ -124,7 +124,7 @@ public class MosaicModelTest {
             model -> {
                 Assert.assertEquals(EMosaic.eMosaicSquare1, model.getMosaicType());
                 Assert.assertEquals(new Matrisize(10, 10), model.getSizeField());
-                Assert.assertEquals(model.getCellAttr().getSize(model.getSizeField()), model.getSize());
+                Assert.assertEquals(model.getShape().getSize(model.getSizeField()), model.getSize());
             }, (model, modifiedProperties) -> { });
     }
 

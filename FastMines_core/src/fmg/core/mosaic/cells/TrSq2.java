@@ -25,7 +25,10 @@ package fmg.core.mosaic.cells;
 import java.util.ArrayList;
 import java.util.List;
 
-import fmg.common.geom.*;
+import fmg.common.geom.Coord;
+import fmg.common.geom.PointDouble;
+import fmg.common.geom.RectDouble;
+import fmg.core.mosaic.shape.ShapeTrSq2;
 
 /**
  * Комбинация. мозаика из 24х треугольников и 12х квадратов (на 1 квадрат приходится 2 треугольника)
@@ -33,109 +36,20 @@ import fmg.common.geom.*;
  **/
 public class TrSq2 extends BaseCell {
 
-    public static class AttrTrSq2 extends BaseAttribute {
-
-        @Override
-        public SizeDouble getSize(Matrisize sizeField) {
-            double a = getA();
-            double b = getB();
-            double h = getH();
-            SizeDouble result = new SizeDouble(
-                b+h*((sizeField.m+2)/3)+
-                  a*((sizeField.m+1)/3)+
-                  b*((sizeField.m+0)/3),
-                b+h*((sizeField.n+2)/3)+
-                  a*((sizeField.n+1)/3)+
-                  b*((sizeField.n+0)/3));
-
-            if (sizeField.n < 5) {
-                int x = sizeField.m % 6;
-                switch (sizeField.n) {
-                case 1:
-                    switch (x) { case 0: case 2: case 5: result.width -= b; }
-                    break;
-                case 2: case 3: case 4:
-                    if (x == 5) result.width -= b;
-                    break;
-                }
-            }
-            if (sizeField.m < 5) {
-                int y = sizeField.n % 6;
-                switch (sizeField.m) {
-                case 1:
-                    switch (y) { case 2: case 3: case 5: result.height -= b; }
-                    break;
-                case 2: case 3: case 4:
-                    if (y == 2) result.height -= b;
-                    break;
-                }
-            }
-
-            return result;
-        }
-
-        @Override
-        public int getNeighborNumber(int direction) {
-            switch (direction) {
-            case  1: case  2: case  4: case  5:
-            case  6: case  8: case  9: case 11:
-            case 12: case 13: case 15: case 16:
-            case 19: case 20: case 22: case 23:
-            case 24: case 26: case 27: case 29:
-            case 30: case 31: case 33: case 34: return 9;
-            case  0: case  3: case  7: case 10:
-            case 14: case 17: case 18: case 21:
-            case 25: case 28: case 32: case 35: return 12;
-            default:
-                throw new IllegalArgumentException("Invalid value direction="+direction);
-            }
-        }
-        @Override
-        public int getVertexNumber(int direction) {
-            switch (direction) {
-            case  0: case  3: case  7: case 10:
-            case 14: case 17: case 18: case 21:
-            case 25: case 28: case 32: case 35: return 4;
-            case  1: case  2: case  4: case  5:
-            case  6: case  8: case  9: case 11:
-            case 12: case 13: case 15: case 16:
-            case 19: case 20: case 22: case 23:
-            case 24: case 26: case 27: case 29:
-            case 30: case 31: case 33: case 34: return 3;
-            default:
-                throw new IllegalArgumentException("Invalid value direction="+direction);
-            }
-        }
-        @Override
-        public double getVertexIntersection() { return 5.; }
-        @Override
-        public Size getDirectionSizeField() { return new Size(6, 6); }
-        /** размер стороны треугольника и квадрата */
-        @Override
-        protected double getA() { return Math.sqrt(6*getArea()/(2+SQRT3)); }
-        protected double getB() { return getA()/2; }
-        protected double getH() { return getB()*SQRT3; }
-        @Override
-        public double getSq(double borderWidth) {
-            double w = borderWidth/2.;
-            return (getA()*SQRT3 - w*6) / (2+SQRT3) - 1;
-        }
-    }
-
-    public TrSq2(AttrTrSq2 attr, Coord coord) {
-        super(attr, coord,
+    public TrSq2(ShapeTrSq2 shape, Coord coord) {
+        super(shape, coord,
                    (coord.y%6)*6+(coord.x%6) // 0..35
              );
     }
 
     @Override
-    public  AttrTrSq2 getAttr() {
-        return (AttrTrSq2) super.getAttr();
+    public  ShapeTrSq2 getShape() {
+        return (ShapeTrSq2)super.getShape();
     }
 
     @Override
     public List<Coord> getCoordsNeighbor() {
-        List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
+        List<Coord> neighborCoord = new ArrayList<>(getShape().getNeighborNumber(getDirection()));
 
         // определяю координаты соседей
         switch (direction) {
@@ -379,10 +293,10 @@ public class TrSq2 extends BaseCell {
     }
 
     private PointDouble getOffset() {
-        AttrTrSq2 attr = getAttr();
-        double a = attr.getA();
-        double b = attr.getB();
-        double h = attr.getH();
+        ShapeTrSq2 shape = getShape();
+        double a = shape.getA();
+        double b = shape.getB();
+        double h = shape.getH();
 
         double oX = 0; // offset X
         double oY = 0; // offset Y
@@ -402,10 +316,10 @@ public class TrSq2 extends BaseCell {
 
     @Override
     protected void calcRegion() {
-        AttrTrSq2 attr = getAttr();
-        double a = attr.getA();
-        double b = attr.getB();
-        double h = attr.getH();
+        ShapeTrSq2 shape = getShape();
+        double a = shape.getA();
+        double b = shape.getB();
+        double h = shape.getH();
 
         PointDouble o = getOffset();
         switch (direction) {
@@ -510,12 +424,12 @@ public class TrSq2 extends BaseCell {
 
     @Override
     public RectDouble getRcInner(double borderWidth) {
-        AttrTrSq2 attr = getAttr();
-        double a = attr.getA();
-        double b = attr.getB();
-        double h = attr.getH();
+        ShapeTrSq2 shape = getShape();
+        double a = shape.getA();
+        double b = shape.getB();
+        double h = shape.getH();
         double w = borderWidth/2.;
-        double sq = attr.getSq(borderWidth);
+        double sq = shape.getSq(borderWidth);
         double sq2 = sq/2;
         double wsq2 = w+sq2;
 

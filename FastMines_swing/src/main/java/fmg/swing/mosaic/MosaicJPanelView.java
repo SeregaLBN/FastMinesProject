@@ -314,7 +314,7 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
     /** переустанавливаю заного размер мины/флага для мозаики */
     protected void changeSizeImagesMineFlag() {
         MosaicDrawModel<Icon> model = getModel();
-        double sq = model.getCellAttr().getSq(model.getPenBorder().getWidth());
+        double sq = model.getShape().getSq(model.getPenBorder().getWidth());
         if (sq <= 0) {
             Logger.error("Error: too thick pen! There is no area for displaying the flag/mine image...");
             sq = 3; // ат балды...

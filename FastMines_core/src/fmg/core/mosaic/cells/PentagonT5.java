@@ -27,7 +27,10 @@ import java.util.List;
 import java.util.function.IntFunction;
 
 import fmg.common.Color;
-import fmg.common.geom.*;
+import fmg.common.geom.Coord;
+import fmg.common.geom.PointDouble;
+import fmg.common.geom.RectDouble;
+import fmg.core.mosaic.shape.ShapePentagonT5;
 
 /**
  * Пятиугольник. Тип №5
@@ -35,121 +38,20 @@ import fmg.common.geom.*;
  **/
 public class PentagonT5 extends BaseCell {
 
-    public static class AttrPentagonT5 extends BaseAttribute {
-
-        @Override
-        public SizeDouble getSize(Matrisize sizeField) {
-            double a = getA();
-            double h = getH();
-            SizeDouble result = new SizeDouble(
-                a*3.5 +
-                a*2.0*((sizeField.m+13)/14) +
-                a    *((sizeField.m+12)/14) +
-                a*1.5*((sizeField.m+11)/14) +
-                a*2.0*((sizeField.m+10)/14) +
-                a    *((sizeField.m+ 9)/14) +
-                a*1.5*((sizeField.m+ 8)/14) +
-                a*2.0*((sizeField.m+ 7)/14) +
-                a    *((sizeField.m+ 6)/14) +
-                a*1.5*((sizeField.m+ 5)/14) +
-                a*2.0*((sizeField.m+ 4)/14) +
-                a    *((sizeField.m+ 3)/14) +
-                a*2.0*((sizeField.m+ 2)/14) +
-                a    *((sizeField.m+ 1)/14) +
-                a*1.5*((sizeField.m+ 0)/14),
-                h*5  +
-                h*2  *((sizeField.n+ 5)/ 6) +
-                h*2  *((sizeField.n+ 4)/ 6) +
-                h*2  *((sizeField.n+ 3)/ 6) +
-                h*3  *((sizeField.n+ 2)/ 6) +
-                h*2  *((sizeField.n+ 1)/ 6) +
-                h*3  *((sizeField.n+ 0)/ 6));
-
-            // когда размер поля мал...
-            if (sizeField.m < 14) { // ...нужно вычислять не только по общей формуле, а и убрать остатки снизу..
-                if ((sizeField.n & 1) == 0) {
-                    if (sizeField.m < 11) result.height -= h;
-                    if (sizeField.m <  8) result.height -= h;
-                    if (sizeField.m <  5) result.height -= h;
-                    if (sizeField.m <  2) result.height -= h;
-                } else {
-                    if (sizeField.m < 10) result.height -= h;
-                    if (sizeField.m <  7) result.height -= h;
-                    if (sizeField.m <  4) result.height -= h;
-                }
-                if ((sizeField.n+5)%6 == 0) // y == 1 7 13 ..
-                    if (sizeField.m < 13) result.height -= h;
-            }
-            if (sizeField.n < 5) { // .. и справа
-                switch (sizeField.n) {
-                case 1:
-                    switch (sizeField.m % 14) {
-                    default: result.width -= 3*a;     break;
-                    case 12: result.width -= 3*a+a/2; break;
-                    case 13: result.width -= 3*a-a/2; break;
-                    } break;
-                case 2:
-                    switch (sizeField.m % 14) {
-                    default: result.width -= 3*a;     break;
-                    case 12: result.width -= 3*a+a/2; break;
-                    case 13: result.width -= 3*a-a/2; break;
-                    case  0: result.width -= 1.5*a;   break;
-                    } break;
-                case 3:
-                    switch (sizeField.m % 14) {
-                    default: result.width -= 1.5*a; break;
-                    case 12: result.width -=   2*a; break;
-                    } break;
-                case 4:
-                    switch (sizeField.m % 14) {
-                    default: result.width -= 1.5*a; break;
-                    case 12: result.width -=   2*a; break;
-                    case 13: result.width -=   1*a; break;
-                    } break;
-                }
-            }
-
-            return result;
-        }
-
-        @Override
-        public int getNeighborNumber(int direction) { return 8; }
-        @Override
-        public int getVertexNumber(int direction) { return 5; }
-        @Override
-        public double getVertexIntersection() { return 3.6; } // (3+3+3+3+6)/5.
-        @Override
-        public Size getDirectionSizeField() { return new Size(14, 6); }
-        @Override
-        protected double getA() { return 2*Math.sqrt(getArea()/SQRT147); }
-        protected double getH() { return getA()*SQRT3/2; }
-        @Override
-        public double getSq(double borderWidth) {
-            double w = borderWidth/2.;
-            return (getA()*2*SQRT3-4*w)/(SQRT3+1);
-        }
-
-        @Override
-        public int getMaxCellFillModeValue() {
-            return super.getMaxCellFillModeValue()+2;
-//          return 1;
-        }
-    }
-
-    public PentagonT5(AttrPentagonT5 attr, Coord coord) {
-        super(attr, coord,
+    public PentagonT5(ShapePentagonT5 shape, Coord coord) {
+        super(shape, coord,
                    (coord.y%6)*14 + (coord.x%14) // 0..83
              );
     }
 
     @Override
-    public AttrPentagonT5 getAttr() {
-        return (AttrPentagonT5) super.getAttr();
+    public ShapePentagonT5 getShape() {
+        return (ShapePentagonT5)super.getShape();
     }
 
     @Override
     public List<Coord> getCoordsNeighbor() {
-        List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
+        List<Coord> neighborCoord = new ArrayList<>(getShape().getNeighborNumber(getDirection()));
 
         // определяю координаты соседей
         switch (direction) {
@@ -530,9 +432,9 @@ public class PentagonT5 extends BaseCell {
 
     @Override
     protected void calcRegion() {
-        AttrPentagonT5 attr = getAttr();
-        double a = attr.getA();
-        double h = attr.getH();
+        ShapePentagonT5 shape = getShape();
+        double a = shape.getA();
+        double h = shape.getH();
 
         // определение координат точек фигуры
         double oX = a*21*(coord.x/14); // offset X
@@ -601,11 +503,11 @@ public class PentagonT5 extends BaseCell {
 
     @Override
     public RectDouble getRcInner(double borderWidth) {
-        AttrPentagonT5 attr = getAttr();
-        double a = attr.getA();
-        double h = attr.getH();
+        ShapePentagonT5 shape = getShape();
+        double a = shape.getA();
+        double h = shape.getH();
 //      double w = borderWidth/2.;
-        double sq  = getAttr().getSq(borderWidth);
+        double sq  = shape.getSq(borderWidth);
         double sq2 = sq/2;
 
         // определение координат точек фигуры
@@ -663,7 +565,7 @@ public class PentagonT5 extends BaseCell {
 
     @Override
     public Color getCellFillColor(int fillMode, Color defaultColor, IntFunction<Color> getColor) {
-        if (fillMode == getAttr().getMaxCellFillModeValue())
+        if (fillMode == getShape().getMaxCellFillModeValue())
         {
             // подсвечиваю 'ромашку'
             switch (getDirection()) {
@@ -685,7 +587,7 @@ public class PentagonT5 extends BaseCell {
 //              return getColor.apply(-1);
             }
         } else
-        if (fillMode == (getAttr().getMaxCellFillModeValue()-1))
+        if (fillMode == (getShape().getMaxCellFillModeValue()-1))
         {
             // подсвечиваю обратную 'диагональку'
             switch (getDirection()) {

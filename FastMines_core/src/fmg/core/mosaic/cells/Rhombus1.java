@@ -27,7 +27,10 @@ import java.util.List;
 import java.util.function.IntFunction;
 
 import fmg.common.Color;
-import fmg.common.geom.*;
+import fmg.common.geom.Coord;
+import fmg.common.geom.PointDouble;
+import fmg.common.geom.RectDouble;
+import fmg.core.mosaic.shape.ShapeRhombus1;
 
 /**
  * Rhombus1 - 3 ромба, составляющие равносторонний шестиугольник
@@ -35,69 +38,20 @@ import fmg.common.geom.*;
  **/
 public class Rhombus1 extends BaseCell {
 
-    public static class AttrRhombus1 extends BaseAttribute {
-
-        @Override
-        public SizeDouble getSize(Matrisize sizeField) {
-            double a = getA();
-            double r = getR();
-            double c = getC();
-            SizeDouble result = new SizeDouble(
-                c+a   *((sizeField.m+2)/3) +
-                 (a+c)*((sizeField.m+1)/3) +
-                    c *((sizeField.m+0)/3),
-                    r * (sizeField.n+1));
-
-            if (sizeField.m == 1)
-                result.height -= r;
-            if (sizeField.n == 1)
-                switch (sizeField.m % 3) {
-                case 0: result.width -= a/2; break;
-                case 2: result.width -= a; break;
-                }
-
-            return result;
-        }
-
-        @Override
-        public int getNeighborNumber(int direction) { return 10; }
-        @Override
-        public int getVertexNumber(int direction) { return 4; }
-        @Override
-        public double getVertexIntersection() { return 4.5; } // (3+3+6+6)/4.
-        @Override
-        public Size getDirectionSizeField() { return new Size(3, 2); }
-        @Override
-        protected double getA() { return Math.sqrt(getArea()*2/SQRT3); }
-        protected double getC() { return getA()/2; }
-        protected double getH() { return getA()*SQRT3; }
-        protected double getR() { return getH()/2; }
-        @Override
-        public double getSq(double borderWidth) {
-            double w = borderWidth/2.;
-            return (getA()*SQRT3 - w*4)/(SQRT3+1);
-        }
-
-        @Override
-        public int getMaxCellFillModeValue() {
-            return super.getMaxCellFillModeValue()+1;
-        }
-    }
-
-    public Rhombus1(AttrRhombus1 attr, Coord coord) {
-        super(attr, coord,
+    public Rhombus1(ShapeRhombus1 shape, Coord coord) {
+        super(shape, coord,
                    (coord.y&1)*3+(coord.x%3) // 0..5
              );
     }
 
     @Override
-    public AttrRhombus1 getAttr() {
-        return (AttrRhombus1) super.getAttr();
+    public ShapeRhombus1 getShape() {
+        return (ShapeRhombus1)super.getShape();
     }
 
     @Override
     public List<Coord> getCoordsNeighbor() {
-        List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
+        List<Coord> neighborCoord = new ArrayList<>(getShape().getNeighborNumber(getDirection()));
 
         // определяю координаты соседей
         switch (direction) {
@@ -180,11 +134,11 @@ public class Rhombus1 extends BaseCell {
 
     @Override
     protected void calcRegion() {
-        AttrRhombus1 attr = getAttr();
-        double a = attr.getA();
-        double c = attr.getC();
-        double h = attr.getH();
-        double r = attr.getR();
+        ShapeRhombus1 shape = getShape();
+        double a = shape.getA();
+        double c = shape.getC();
+        double h = shape.getH();
+        double r = shape.getR();
 
         // определение координат точек фигуры
         double oX = a*(coord.x/3*3+1)+c; // offset X
@@ -232,13 +186,13 @@ public class Rhombus1 extends BaseCell {
 
     @Override
     public RectDouble getRcInner(double borderWidth) {
-        AttrRhombus1 attr = getAttr();
-        double a = attr.getA();
-        double c = attr.getC();
-        double h = attr.getH();
-        double r = attr.getR();
+        ShapeRhombus1 shape = getShape();
+        double a = shape.getA();
+        double c = shape.getC();
+        double h = shape.getH();
+        double r = shape.getR();
 //      double w = borderWidth/2.;
-        double sq  = attr.getSq(borderWidth);
+        double sq  = shape.getSq(borderWidth);
         double sq2 = sq/2;
 
         double oX = a*(coord.x/3*3+1)+c; // offset X
@@ -265,7 +219,7 @@ public class Rhombus1 extends BaseCell {
 
     @Override
     public Color getCellFillColor(int fillMode, Color defaultColor, IntFunction<Color> getColor) {
-        if (fillMode == getAttr().getMaxCellFillModeValue()) {
+        if (fillMode == getShape().getMaxCellFillModeValue()) {
             switch ((getCoord().y%4)*3+(getCoord().x%3)) { // почти как вычисление direction...
             // подсвечиваю 4 группы, составляющие каждая шестигранник из 3х ромбов
             case 0: case  1: case  3: return getColor.apply(0);

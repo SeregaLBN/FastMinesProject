@@ -21,19 +21,19 @@
 ////////////////////////////////////////////////////////////////////////////////
 package fmg.core.mosaic.cells;
 
-import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.function.IntFunction;
 
 import fmg.common.Color;
 import fmg.common.Logger;
-import fmg.common.geom.*;
-import fmg.common.notifier.INotifyPropertyChanged;
-import fmg.common.notifier.NotifyPropertyChanged;
+import fmg.common.geom.Coord;
+import fmg.common.geom.PointDouble;
+import fmg.common.geom.RectDouble;
+import fmg.common.geom.RegionDouble;
+import fmg.core.mosaic.shape.BaseShape;
 import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
 import fmg.core.types.EState;
-import fmg.core.types.Property;
 
 /** Базовый класс фигуры-ячейки */
 public abstract class BaseCell {
@@ -54,85 +54,9 @@ public abstract class BaseCell {
     public static final double TAN45_2 = java.lang.Math.tan(java.lang.Math.PI/180.*45./2);
     public static final double SIN135a = java.lang.Math.sin(java.lang.Math.PI/180.*135.-java.lang.Math.atan(8./3));
 
-    /**
-     * Cell model.
-     * Контекст/метаданные, описывающий общие хар-ки для каждого из экземпляров BaseCell.
-     * <br> (Полные данные о конкретной мозаике) <br>
-     * Доопределаяется наследниками BaseCell
-     */
-    public abstract static class BaseAttribute implements INotifyPropertyChanged, AutoCloseable {
-
-        public static final String PROPERTY_AREA = "Area";
-
-        /** площадь ячейки/фигуры */
-        @Property(PROPERTY_AREA)
-        private double area = 500;
-
-        protected NotifyPropertyChanged notifier = new NotifyPropertyChanged(this);
-
-        /** площадь ячейки/фигуры */
-        public void setArea(double area) {
-            //setProperty(area, PROPERTY_AREA);
-            double old = this.area;
-            if (!DoubleExt.hasMinDiff(old, area)) {
-                this.area = area;
-                notifier.firePropertyChanged(old, area, PROPERTY_AREA);
-            }
-        }
-        /** площадь ячейки/фигуры */
-        public double getArea() {
-            return area;
-        }
-
-        /** размер квадрата, вписанного в фигуру - область куда выводиться изображение/текст
-         * на основе заданных параметров */
-        public abstract double getSq(double borderWidth);
-
-        /** значение A (базовая величина фигуры - обычно это размер одной из сторон фигуры) по заданной площади фигуры */
-        protected abstract double getA();
-
-        /** The size in pixels where to place the matrix */
-        public abstract SizeDouble getSize(Matrisize sizeField);
-
-        /** размер поля из группы ячеек состоящих из разных direction */
-        public abstract Size getDirectionSizeField();
-        /** кол-во direction'ов, которые знает данный тип мозаики */
-        public int getDirectionCount() { Size s = getDirectionSizeField(); return s.width*s.height; }
-
-        /** кол-во соседей у ячейки конкретной направленности */
-        public abstract int getNeighborNumber(int direction);
-        /** из скольки точек/вершин состоит фигура конкретной направленности */
-        public abstract int getVertexNumber(int direction);
-        /** сколько фигур пересекается в одной вершине (в среднем) */
-        public abstract double getVertexIntersection();
-
-        /** макс кол-во режимов заливки фона, которые знает данный тип мозаики
-         * (знает ф-ция {@link BaseCell#getCellFillColor} или её наследующая)
-         * (Не считая режима заливки цветом фона по-умолчанию...)
-         */
-        public int getMaxCellFillModeValue() {
-            return 19;
-        }
-
-        @Override
-        public void addListener(PropertyChangeListener listener) {
-            notifier.addListener(listener);
-        }
-        @Override
-        public void removeListener(PropertyChangeListener listener) {
-            notifier.removeListener(listener);
-        }
-
-        @Override
-        public void close() {
-            notifier.close();
-        }
-
-    }
-
-    private final BaseAttribute attr;
-    public BaseAttribute getAttr() {
-        return attr;
+    private final BaseShape shape;
+    public BaseShape getShape() {
+        return shape;
     }
 
     protected Coord coord;
@@ -193,14 +117,14 @@ public abstract class BaseCell {
     }
 
     protected BaseCell(
-        BaseAttribute attr,
+        BaseShape shape,
         Coord coord,
         int iDirection)
     {
-        this.attr = attr;
+        this.shape = shape;
         this.coord = coord;
         this.direction = iDirection;
-        this.region = new RegionDouble(attr.getVertexNumber(iDirection));
+        this.region = new RegionDouble(shape.getVertexNumber(iDirection));
 
         this.state = new StateCell();
         reset();
@@ -308,8 +232,8 @@ public abstract class BaseCell {
             return getColor.apply(getCoord().x % (-fillMode) - fillMode + getCoord().y % (+fillMode));
         case 19:
             // подсветить direction
-            int zx = getCoord().x / getAttr().getDirectionSizeField().width +1;
-            int zy = getCoord().y / getAttr().getDirectionSizeField().height +1;
+            int zx = getCoord().x / getShape().getDirectionSizeField().width +1;
+            int zy = getCoord().y / getShape().getDirectionSizeField().height +1;
             return getColor.apply(zx*zy);
         }
     }

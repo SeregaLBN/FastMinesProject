@@ -25,7 +25,9 @@ package fmg.core.mosaic.cells;
 import java.util.ArrayList;
 import java.util.List;
 
-import fmg.common.geom.*;
+import fmg.common.geom.Coord;
+import fmg.common.geom.RectDouble;
+import fmg.core.mosaic.shape.ShapePentagonT24;
 
 /**
  * Пятиугольник. Тип №2 и №4 - равносторонний
@@ -33,55 +35,20 @@ import fmg.common.geom.*;
  **/
 public class PentagonT24 extends BaseCell {
 
-    public static class AttrPentagonT24 extends BaseAttribute {
-
-        @Override
-        public SizeDouble getSize(Matrisize sizeField) {
-            double a = getA();
-            double b = getB();
-            SizeDouble result = new SizeDouble(
-                b + sizeField.m * a,
-                b + sizeField.n * a);
-
-            if (sizeField.n == 1)
-                result.width -= getC();
-
-            return result;
-        }
-
-        @Override
-        public int getNeighborNumber(int direction) { return 7; }
-        @Override
-        public int getVertexNumber(int direction) { return 5; }
-        @Override
-        public double getVertexIntersection() { return 3.4; } // (3+3+3+4+4)/5.
-        @Override
-        public Size getDirectionSizeField() { return new Size(2, 2); }
-        @Override
-        protected double getA() { return Math.sqrt(getArea()); }
-        protected double getB() { return getA()*6/11; }
-        protected double getC() { return getB()/2; }
-        @Override
-        public double getSq(double borderWidth) {
-            double w = borderWidth/2.;
-            return getA()*8/11-(w+w/SIN135a) / SQRT2;
-        }
-    }
-
-    public PentagonT24(AttrPentagonT24 attr, Coord coord) {
-        super(attr, coord,
+    public PentagonT24(ShapePentagonT24 shape, Coord coord) {
+        super(shape, coord,
                   ((coord.y&1)<<1) + (coord.x&1) // 0..3
              );
     }
 
     @Override
-    public AttrPentagonT24 getAttr() {
-        return (AttrPentagonT24) super.getAttr();
+    public ShapePentagonT24 getShape() {
+        return (ShapePentagonT24)super.getShape();
     }
 
     @Override
     public List<Coord> getCoordsNeighbor() {
-        List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
+        List<Coord> neighborCoord = new ArrayList<>(getShape().getNeighborNumber(getDirection()));
 
         // определяю координаты соседей
         switch (direction) {
@@ -128,10 +95,10 @@ public class PentagonT24 extends BaseCell {
 
     @Override
     protected void calcRegion() {
-        AttrPentagonT24 attr = getAttr();
-        double a = attr.getA();
-        double b = attr.getB();
-        double c = attr.getC();
+        ShapePentagonT24 shape = getShape();
+        double a = shape.getA();
+        double b = shape.getB();
+        double c = shape.getC();
 
         // определение координат точек фигуры
         double oX = a*((coord.x>>1)<<1); // offset X
@@ -170,8 +137,8 @@ public class PentagonT24 extends BaseCell {
 
     @Override
     public RectDouble getRcInner(double borderWidth) {
-        AttrPentagonT24 attr = getAttr();
-        double sq = attr.getSq(borderWidth);
+        ShapePentagonT24 shape = getShape();
+        double sq = shape.getSq(borderWidth);
         double w = borderWidth/2.;
         double w2 = w/SQRT2;
 

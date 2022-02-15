@@ -33,20 +33,21 @@ import fmg.common.notifier.INotifyPropertyChanged;
 import fmg.common.notifier.NotifyPropertyChanged;
 import fmg.core.app.model.MosaicInitData;
 import fmg.core.mosaic.cells.BaseCell;
+import fmg.core.mosaic.shape.BaseShape;
 import fmg.core.types.EMosaic;
 import fmg.core.types.Property;
 
 /** MVC: game model of mosaic field. Default implementation. */
 public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoCloseable {
 
-    public static final String PROPERTY_AREA        = BaseCell.BaseAttribute.PROPERTY_AREA;
-    public static final String PROPERTY_CELL_ATTR   = "CellAttr";
+    public static final String PROPERTY_AREA        = BaseShape.PROPERTY_AREA;
+    public static final String PROPERTY_CELL_SHAPE  = "CellShape";
     public static final String PROPERTY_SIZE_FIELD  = "SizeField";
     public static final String PROPERTY_MATRIX      = "Matrix";
     public static final String PROPERTY_MOSAIC_TYPE = "MosaicType";
 
-    @Property(PROPERTY_CELL_ATTR)
-    private BaseCell.BaseAttribute cellAttr;
+    @Property(PROPERTY_CELL_SHAPE)
+    private BaseShape shape;
 
     /** Matrix of cells, is represented as a vector {@link List<BaseCell>}.
       * Матрица ячеек, представленная(развёрнута) в виде вектора */
@@ -64,36 +65,36 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
     protected final NotifyPropertyChanged notifier/*Sync*/ = new NotifyPropertyChanged(this, false);
     private   final NotifyPropertyChanged notifierAsync    = new NotifyPropertyChanged(this, true);
 
-    private final PropertyChangeListener              onPropertyChangedListener = this::onPropertyChanged;
-    private final PropertyChangeListener onCellAttributePropertyChangedListener = this::onCellAttributePropertyChanged;
+    private final PropertyChangeListener      onPropertyChangedListener = this::onPropertyChanged;
+    private final PropertyChangeListener onShapePropertyChangedListener = this::onShapePropertyChanged;
 
     public MosaicGameModel() {
         notifier.addListener(onPropertyChangedListener);
     }
 
     @Override
-    public BaseCell.BaseAttribute getCellAttr() {
-        if (cellAttr == null) {
-            cellAttr = MosaicHelper.createAttributeInstance(getMosaicType());
-            cellAttr.addListener(onCellAttributePropertyChangedListener);
+    public BaseShape getShape() {
+        if (shape == null) {
+            shape = MosaicHelper.createShapeInstance(getMosaicType());
+            shape.addListener(onShapePropertyChangedListener);
         }
-        return cellAttr;
+        return shape;
     }
-    private void resetCellAttr() {
-        if (cellAttr == null)
+    private void resetShape() {
+        if (shape == null)
             return;
-        cellAttr.removeListener(onCellAttributePropertyChangedListener);
-        cellAttr.close();
-        cellAttr = null;
+        shape.removeListener(onShapePropertyChangedListener);
+        shape.close();
+        shape = null;
         matrix.clear();
-        notifier.firePropertyChanged(PROPERTY_CELL_ATTR);
+        notifier.firePropertyChanged(PROPERTY_CELL_SHAPE);
         notifier.firePropertyChanged(PROPERTY_MATRIX);
     }
 
     /** площадь ячеек */
     @Override
     public double getArea() {
-        return getCellAttr().getArea();
+        return getShape().getArea();
     }
     /** установить новую площадь ячеек */
     @Override
@@ -102,20 +103,19 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
             throw new IllegalArgumentException("Area must be positive");
         if (area < MosaicInitData.AREA_MINIMUM)
             Logger.warn("The area is very small = " + area);
-      //getCellAttr().setArea(Math.max(MosaicInitData.AREA_MINIMUM, area));
-        getCellAttr().setArea(area);
+      //getShape().setArea(Math.max(MosaicInitData.AREA_MINIMUM, area));
+        getShape().setArea(area);
     }
 
     @Override
     public List<BaseCell> getMatrix() {
         if (matrix.isEmpty()) {
-            BaseCell.BaseAttribute attr = getCellAttr();
+            BaseShape s = getShape();
             Matrisize size = getSizeField();
-            EMosaic mosaicType = getMosaicType();
             //_matrix = new ArrayList<BaseCell>(size.width * size.height);
             for (int i=0; i < size.m; i++)
                 for (int j=0; j < size.n; j++) {
-                    BaseCell cell = MosaicHelper.createCellInstance(attr, mosaicType, new Coord(i, j));
+                    BaseCell cell = MosaicHelper.createCellInstance(s, mosaicType, new Coord(i, j));
                     matrix.add(/* i*_size.n + j, */ cell);
                 }
         }
@@ -151,7 +151,7 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
             return;
 
         this.mosaicType = newMosaicType;
-        resetCellAttr();
+        resetShape();
         notifier.firePropertyChanged(old, newMosaicType, PROPERTY_MOSAIC_TYPE);
     }
 
@@ -166,14 +166,14 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
         notifierAsync.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
     }
 
-    protected void onCellAttributePropertyChanged(PropertyChangeEvent ev) {
+    protected void onShapePropertyChanged(PropertyChangeEvent ev) {
         String propName = ev.getPropertyName();
-        if (BaseCell.BaseAttribute.PROPERTY_AREA.equals(propName)) {
+        if (BaseShape.PROPERTY_AREA.equals(propName)) {
             getMatrix().forEach(BaseCell::init);
 
             notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_AREA); // ! rethrow event - notify parent class
         }
-        notifier.firePropertyChanged(PROPERTY_CELL_ATTR);
+        notifier.firePropertyChanged(PROPERTY_CELL_SHAPE);
     }
 
     @Override
@@ -181,7 +181,7 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
         notifier.removeListener(onPropertyChangedListener);
         notifier.close();
         notifierAsync.close();
-        resetCellAttr();
+        resetShape();
     }
 
     @Override

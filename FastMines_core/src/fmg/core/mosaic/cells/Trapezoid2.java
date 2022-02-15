@@ -25,7 +25,10 @@ package fmg.core.mosaic.cells;
 import java.util.ArrayList;
 import java.util.List;
 
-import fmg.common.geom.*;
+import fmg.common.geom.Coord;
+import fmg.common.geom.PointDouble;
+import fmg.common.geom.RectDouble;
+import fmg.core.mosaic.shape.ShapeTrapezoid2;
 
 /**
  * Trapezoid2 - 3 трапеции, составляющие равносторонний треугольник
@@ -33,63 +36,20 @@ import fmg.common.geom.*;
  **/
 public class Trapezoid2 extends BaseCell {
 
-    public static class AttrTrapezoid2 extends BaseAttribute {
-
-        @Override
-        public SizeDouble getSize(Matrisize sizeField) {
-            double a = getA();
-            double c = getC();
-            double r = getRIn();
-            double R = getROut();
-            SizeDouble result = new SizeDouble(
-                a+c+ c *((sizeField.m+2)/3)+
-                 (a+ c)*((sizeField.m+1)/3)+
-                     a *((sizeField.m+0)/3),
-                     R *((sizeField.n+1)/2)+
-                     r *((sizeField.n+0)/2));
-
-            if (sizeField.m == 1)
-                if ((sizeField.n % 4) == 3)
-                    result.height -= r;
-
-            return result;
-        }
-
-        @Override
-        public int getNeighborNumber(int direction) { return 9; }
-        @Override
-        public int getVertexNumber(int direction) { return 4; }
-        @Override
-        public double getVertexIntersection() { return 4.25; } // (6+4+4+3)/4.
-        @Override
-        public Size getDirectionSizeField() { return new Size(3, 4); }
-        @Override
-        protected double getA   () { return Math.sqrt(getArea()/SQRT27)*2; }
-        protected double getB   () { return getA()*2; }
-        protected double getC   () { return getA()/2; }
-        protected double getROut() { return getA()*SQRT3; }
-        protected double getRIn () { return getROut()/2; }
-        @Override
-        public double getSq(double borderWidth) {
-            double w = borderWidth/2.;
-            return (getA()*SQRT3 - w*4)/(SQRT3+1);
-        }
-    }
-
-    public Trapezoid2(AttrTrapezoid2 attr, Coord coord) {
-        super(attr, coord,
+    public Trapezoid2(ShapeTrapezoid2 shape, Coord coord) {
+        super(shape, coord,
                    (coord.y&3)*3+(coord.x%3) // 0..11
              );
     }
 
     @Override
-    public AttrTrapezoid2 getAttr() {
-        return (AttrTrapezoid2) super.getAttr();
+    public ShapeTrapezoid2 getShape() {
+        return (ShapeTrapezoid2)super.getShape();
     }
 
     @Override
     public List<Coord> getCoordsNeighbor() {
-        List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
+        List<Coord> neighborCoord = new ArrayList<>(getShape().getNeighborNumber(getDirection()));
 
         // определяю координаты соседей
         switch (direction) {
@@ -232,12 +192,12 @@ public class Trapezoid2 extends BaseCell {
 
     @Override
     protected void calcRegion() {
-        AttrTrapezoid2 attr = getAttr();
-        double a = attr.getA();
-        double b = attr.getB();
-        double c = attr.getC();
-        double R = attr.getROut();
-        double r = attr.getRIn();
+        ShapeTrapezoid2 shape = getShape();
+        double a = shape.getA();
+        double b = shape.getB();
+        double c = shape.getC();
+        double R = shape.getROut();
+        double r = shape.getRIn();
 
         // определение координат точек фигуры
         double oX = (a+b)*(coord.x/3) + b; // offset X
@@ -321,14 +281,14 @@ public class Trapezoid2 extends BaseCell {
 
     @Override
     public RectDouble getRcInner(double borderWidth) {
-        AttrTrapezoid2 attr = getAttr();
-        double a = attr.getA();
-        double b = attr.getB();
-        double c = attr.getC();
-        double R = attr.getROut();
-        double r = attr.getRIn();
+        ShapeTrapezoid2 shape = getShape();
+        double a = shape.getA();
+        double b = shape.getB();
+        double c = shape.getC();
+        double R = shape.getROut();
+        double r = shape.getRIn();
 //      double w = borderWidth/2.;
-        double sq  = attr.getSq(borderWidth);
+        double sq  = shape.getSq(borderWidth);
         double sq2 = sq/2;
 
         double oX = (a+b)*(coord.x/3) + b; // offset X

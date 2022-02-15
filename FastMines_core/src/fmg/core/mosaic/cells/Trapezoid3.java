@@ -25,7 +25,10 @@ package fmg.core.mosaic.cells;
 import java.util.ArrayList;
 import java.util.List;
 
-import fmg.common.geom.*;
+import fmg.common.geom.Coord;
+import fmg.common.geom.PointDouble;
+import fmg.common.geom.RectDouble;
+import fmg.core.mosaic.shape.ShapeTrapezoid3;
 
 /**
  * Trapezoid3 - 8 трапеций, складывающихся в шестигранник
@@ -33,100 +36,20 @@ import fmg.common.geom.*;
  **/
 public class Trapezoid3 extends BaseCell {
 
-    public static class AttrTrapezoid3 extends BaseAttribute {
-
-        @Override
-        public SizeDouble getSize(Matrisize sizeField) {
-            double a = getA();
-            double b = getB();
-            double R = getROut();
-            SizeDouble result = new SizeDouble(
-                  R *((sizeField.m+1)/2),
-                a+b *((sizeField.n+1)/2)+
-                  a *((sizeField.n+0)/2));
-
-            if (sizeField.m == 1)
-                switch (sizeField.n % 4) {
-                case 0: result.height -= a; break;
-                case 3: result.height -= a*1.5; break;
-                }
-            if (sizeField.n == 1)
-                if ((sizeField.m & 1) == 1)
-                    result.width -= getRIn();
-
-            return result;
-        }
-
-        @Override
-        public int getNeighborNumber(int direction) {
-            switch (direction) {
-            case  2: case  5: case 11: case 12: return 6;
-            case  0: case  7: case  9: case 14: return 10;
-            case  1: case  3: case  4: case  6:
-            case  8: case 10: case 13: case 15: return 11;
-            default:
-                throw new IllegalArgumentException("Invalid value direction=" + direction);
-            }
-        }
-        @Override
-        public int getVertexNumber(int direction) { return 4; }
-
-        static double vertexIntersection = 0.;
-        @Override
-        public double getVertexIntersection() {
-            if (vertexIntersection < 1) {
-                final int cntDirection = getDirectionCount(); // 0..11
-                double sum = 0;
-                for (int dir=0; dir<cntDirection; dir++)
-                    switch (dir) {
-                    case  2: case  5: case 11: case 12:
-                        sum += (4+4+3+3)/4.;
-                        break;
-                    case  0: case  7: case  9: case 14:
-                        sum += (6+6+3+3)/4.;
-                        break;
-                    case  1: case  3: case  4: case  6:
-                    case  8: case 10: case 13: case 15:
-                        sum += (6+6+4+3)/4.;
-                        break;
-                    default:
-                        throw new RuntimeException("Забыл case #" + dir);
-                    }
-                vertexIntersection = sum / cntDirection;
-//              Logger.info("Trapezoid3::getVertexNeighbor == " + vertexIntersection);
-            }
-            return vertexIntersection;
-        }
-
-        @Override
-        public Size getDirectionSizeField() { return new Size(4, 4); }
-        @Override
-        protected double getA   () { return Math.sqrt(getArea()/SQRT27)*2; }
-        protected double getB   () { return getA()*2; }
-        protected double getC   () { return getA()/2; }
-        protected double getROut() { return getA()*SQRT3; }
-        protected double getRIn () { return getROut()/2; }
-        @Override
-        public double getSq(double borderWidth) {
-            double w = borderWidth/2.;
-            return (getA()*SQRT3 - w*4)/(SQRT3+1);
-        }
-    }
-
-    public Trapezoid3(AttrTrapezoid3 attr, Coord coord) {
-        super(attr, coord,
+    public Trapezoid3(ShapeTrapezoid3 shape, Coord coord) {
+        super(shape, coord,
                   ((coord.y&3)<<2)+(coord.x&3) // 0..15
              );
     }
 
     @Override
-    public AttrTrapezoid3 getAttr() {
-        return (AttrTrapezoid3) super.getAttr();
+    public ShapeTrapezoid3 getShape() {
+        return (ShapeTrapezoid3)super.getShape();
     }
 
     @Override
     public List<Coord> getCoordsNeighbor() {
-        List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
+        List<Coord> neighborCoord = new ArrayList<>(getShape().getNeighborNumber(getDirection()));
 
         // определяю координаты соседей
         switch (direction) {
@@ -321,12 +244,12 @@ public class Trapezoid3 extends BaseCell {
 
     @Override
     protected void calcRegion() {
-        AttrTrapezoid3 attr = getAttr();
-        double a = attr.getA();
-        double b = attr.getB();
-        double c = attr.getC();
-        double R = attr.getROut();
-        double r = attr.getRIn();
+        ShapeTrapezoid3 shape = getShape();
+        double a = shape.getA();
+        double b = shape.getB();
+        double c = shape.getC();
+        double R = shape.getROut();
+        double r = shape.getRIn();
 
         // определение координат точек фигуры
         double oX = (R*2)*(coord.x/4) + R; // offset X
@@ -434,14 +357,14 @@ public class Trapezoid3 extends BaseCell {
 
     @Override
     public RectDouble getRcInner(double borderWidth) {
-        AttrTrapezoid3 attr = getAttr();
-        double a = attr.getA();
-        double b = attr.getB();
-        double c = attr.getC();
-        double R = attr.getROut();
-        double r = attr.getRIn();
+        ShapeTrapezoid3 shape = getShape();
+        double a = shape.getA();
+        double b = shape.getB();
+        double c = shape.getC();
+        double R = shape.getROut();
+        double r = shape.getRIn();
 //      double w = borderWidth/2.;
-        double sq  = attr.getSq(borderWidth);
+        double sq  = shape.getSq(borderWidth);
         double sq2 = sq/2;
 
         double oX = (R*2)*(coord.x/4) + R; // offset X

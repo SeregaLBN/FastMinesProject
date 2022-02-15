@@ -27,7 +27,10 @@ import java.util.List;
 import java.util.function.IntFunction;
 
 import fmg.common.Color;
-import fmg.common.geom.*;
+import fmg.common.geom.Coord;
+import fmg.common.geom.PointDouble;
+import fmg.common.geom.RectDouble;
+import fmg.core.mosaic.shape.ShapeSquare1;
 
 /**
  * Квадрат. Вариант 1
@@ -35,45 +38,18 @@ import fmg.common.geom.*;
  **/
 public class Square1 extends BaseCell {
 
-    public static class AttrSquare1 extends BaseAttribute {
-
-        @Override
-        public SizeDouble getSize(Matrisize sizeField) {
-            double a = getA(); // размер стороны квадрата
-            return new SizeDouble(
-                sizeField.m * a,
-                sizeField.n * a);
-        }
-
-        @Override
-        public int getNeighborNumber(int direction) { return 8; }
-        @Override
-        public int getVertexNumber(int direction) { return 4; }
-        @Override
-        public double getVertexIntersection() { return 4; }
-        @Override
-        public Size getDirectionSizeField() { return new Size(1,1); }
-        @Override
-        protected double getA() { return Math.sqrt(getArea()); }
-        @Override
-        public double getSq(double borderWidth) {
-            double w = borderWidth/2.;
-            return getA()-2*w;
-        }
-    }
-
-    public Square1(AttrSquare1 attr, Coord coord) {
-        super(attr, coord, -1);
+    public Square1(ShapeSquare1 shape, Coord coord) {
+        super(shape, coord, -1);
     }
 
     @Override
-    public AttrSquare1 getAttr() {
-        return (AttrSquare1) super.getAttr();
+    public ShapeSquare1 getShape() {
+        return (ShapeSquare1)super.getShape();
     }
 
     @Override
     public List<Coord> getCoordsNeighbor() {
-        List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
+        List<Coord> neighborCoord = new ArrayList<>(getShape().getNeighborNumber(getDirection()));
 
         // определяю координаты соседей
         neighborCoord.add(new Coord(coord.x-1, coord.y-1));
@@ -98,8 +74,8 @@ public class Square1 extends BaseCell {
 
     @Override
     protected void calcRegion() {
-        AttrSquare1 attr = getAttr();
-        double a = attr.getA();
+        ShapeSquare1 shape = getShape();
+        double a = shape.getA();
 
         double x1 = a * (coord.x + 0);
         double x2 = a * (coord.x + 1);
@@ -114,8 +90,8 @@ public class Square1 extends BaseCell {
 
     @Override
     public RectDouble getRcInner(double borderWidth) {
-        AttrSquare1 attr = getAttr();
-        double sq = attr.getSq(borderWidth);
+        ShapeSquare1 shape = getShape();
+        double sq = shape.getSq(borderWidth);
         double w = borderWidth/2.;
 
         return new RectDouble(
@@ -133,7 +109,7 @@ public class Square1 extends BaseCell {
         default:
             return super.getCellFillColor(fillMode, defaultColor, getColor);
         case 1: // перекрываю базовый на основе direction
-            int pos = (-getCoord().x + getCoord().y) % ((getAttr().hashCode() & 0x3)+fillMode);
+            int pos = (-getCoord().x + getCoord().y) % ((getShape().hashCode() & 0x3)+fillMode);
 //          Logger.info(pos);
             return getColor.apply(pos);
         }

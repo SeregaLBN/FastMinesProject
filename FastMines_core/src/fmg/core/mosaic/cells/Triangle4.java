@@ -25,7 +25,11 @@ package fmg.core.mosaic.cells;
 import java.util.ArrayList;
 import java.util.List;
 
-import fmg.common.geom.*;
+import fmg.common.geom.Coord;
+import fmg.common.geom.PointDouble;
+import fmg.common.geom.RectDouble;
+import fmg.core.mosaic.shape.ShapeTriangle4;
+import fmg.core.mosaic.shape.ShapeTriangle4.ComplexityMode;
 
 /**
  * Треугольник. Вариант 4 - треугольник 30°-30°-120°
@@ -33,157 +37,23 @@ import fmg.common.geom.*;
  **/
 public class Triangle4 extends BaseCell {
 
-    private static enum ComplexityMode {
-        /** original */
-        eUnrealMode,
-        eMeanMode,
-        eOptimalMode,
-        eSimpeMode
-    }
-
-    public static class AttrTriangle4 extends BaseAttribute {
-
-        private final static ComplexityMode Mode = ComplexityMode.eOptimalMode; // TODO: check others to view...
-
-        @Override
-        public SizeDouble getSize(Matrisize sizeField) {
-            double b = getB();
-            double r = getRIn();
-            double R = getROut();
-            SizeDouble result = new SizeDouble(
-                    b+b *((sizeField.m+2)/3) +
-                      b *((sizeField.m+0)/3),
-                   (R+r)*((sizeField.n+1)/2));
-
-            switch (Mode) {
-            case eUnrealMode:
-            case eOptimalMode:
-                // none  ...
-                break;
-            case eMeanMode:
-            case eSimpeMode:
-                {
-                    double u = getSnip()/2; // Snip * cos60
-                    double c = u*SQRT3; // Snip * cos30
-                    switch (sizeField.m%3) {
-                    case 0: result.width -= u+u; break;
-                    case 1: result.width -= u+c; break;
-                    case 2: result.width -= u; break;
-                    }
-                    if (Mode == ComplexityMode.eMeanMode) {
-                        if ((sizeField.n % 4) == 3)
-                            result.height -= u;
-                    } else {
-                        if ((sizeField.n & 1) == 1)
-                            result.height -= u;
-                    }
-                }
-                break;
-            }
-
-            if (sizeField.m == 1)
-                if ((sizeField.n % 4) == 3)
-                    result.height -= R;
-            if (sizeField.n == 1)
-                if ((sizeField.m % 3) == 1)
-                    result.width -= b;
-
-            return result;
-        }
-
-        @Override
-        public int getNeighborNumber(int direction) {
-            switch(Mode) {
-            case eUnrealMode : return 21;
-            case eMeanMode:
-                switch(direction) {
-                case 2: case 11:                                 return 7;
-                case 1: case 5: case 8: case 10:                 return 5;
-                case 0: case 3: case 4: case 6 : case 7: case 9: return 3;
-                default: throw new RuntimeException("Unknown direction==" + direction);
-                }
-            case eOptimalMode:
-                switch(direction) {
-                case 4: case 5: case 9: case 10:  return 6;
-                case 0: case 1: case 2: case 3:
-                case 6: case 7: case 8: case 11:  return 7;
-                default: throw new RuntimeException("Unknown direction==" + direction);
-                }
-            case eSimpeMode  : return 3;
-            default: throw new RuntimeException("Unknown Mode==" + Mode);
-            }
-        }
-        @Override
-        public int getVertexNumber(int direction) {
-            switch(Mode) {
-            case eUnrealMode: return 3;
-            case eMeanMode:
-                switch(direction) {
-                case 0: case 3: case 4: case 6: case 7: case 9: return 5;
-                case 1: case 5: case 8: case 10:                return 4;
-                case 2: case 11:                                return 3;
-                default: throw new RuntimeException("Unknown direction==" + direction);
-                }
-            case eOptimalMode: return 4;
-            case eSimpeMode  : return 5;
-            default: throw new RuntimeException("Unknown Mode==" + Mode);
-            }
-        }
-        @Override
-        public double getVertexIntersection() {
-            switch(Mode) {
-            case eUnrealMode : return 9.;   // (12+12+3)/3.
-            case eSimpeMode  : return 2.2;  // (2+2+2+2+3)/5.
-            case eOptimalMode: return 3.25; // (6+3+2+2)/4.
-            case eMeanMode   : return 2.62777777778;
-                // ( (2+2+2+2+3)/ getVertexNumber(0 or 3 or 4 or 6 or 7 or 9) * 6шт  +
-                //   ( 2+2+3+4 )/ getVertexNumber(1 or 5 or 8 or 10) * 4шт  +
-                //   (  3+4+4  )/ getVertexNumber(2 or 11) * 2шт ) / 12шт
-                //
-                // ((2+2+2+2+3)/5.*6 + (2+2+3+4)/4.*4 + (3+4+4)/3.*2 ) / 12
-                // (11/5.*6 + 11/4.*4 + 11/3.*2) / 12
-                // 11*2*(1/5.*3 + 1/4.*2 + 1/3.) / 12
-                // 11*2*(3/5. + 1/2. + 1/3.) / 12
-                // 11*(3/5. + 1/2. + 1/3.) / 6
-                // 11*(3/30. + 1/12. + 1/18.)
-                // http://www.google.com/search?q=11*%283/30.+%2B+1/12.+%2B+1/18.%29
-                //  2.62777777778
-            default: throw new RuntimeException("Unknown Mode==" + Mode);
-            }
-        }
-        @Override
-        public Size getDirectionSizeField() { return new Size(3, 4); }
-        @Override
-        protected double getA   () { return Math.sqrt(getArea()*SQRT48); }
-        protected double getB   () { return getA()/2; }
-        protected double getROut() { return getA()/SQRT3; }
-        protected double getRIn () { return getROut()/2; }
-        //private double __snip  = 2.3456789 + new java.util.Random(java.util.UUID.randomUUID().hashCode()).nextInt(15);
-        protected double getSnip() { return getA()/(/*12*/6.789012345 /*__snip*/); }
-        @Override
-        public double getSq(double borderWidth) {
-            double w = borderWidth/2.;
-            return (getA()-w*2/TAN15)/(SQRT3+3);
-        }
-    }
-
-    public Triangle4(AttrTriangle4 attr, Coord coord) {
-        super(attr, coord,
+    public Triangle4(ShapeTriangle4 shape, Coord coord) {
+        super(shape, coord,
                    (coord.y&3)*3+(coord.x%3) // 0..11
              );
     }
 
     @Override
-    public AttrTriangle4 getAttr() {
-        return (AttrTriangle4) super.getAttr();
+    public ShapeTriangle4 getShape() {
+        return (ShapeTriangle4)super.getShape();
     }
 
     @Override
     public List<Coord> getCoordsNeighbor() {
-        List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
+        List<Coord> neighborCoord = new ArrayList<>(getShape().getNeighborNumber(getDirection()));
 
         // определяю координаты соседей
-        switch (AttrTriangle4.Mode) {
+        switch (ShapeTriangle4.Mode) {
         case eUnrealMode:
             switch (direction) {
             case 0:
@@ -723,19 +593,19 @@ public class Triangle4 extends BaseCell {
 
     @Override
     protected void calcRegion() {
-        AttrTriangle4 attr = getAttr();
-        double a = attr.getA();
-        double b = attr.getB();
-        double R = attr.getROut();
-        double r = attr.getRIn();
-        double s = (AttrTriangle4.Mode != ComplexityMode.eUnrealMode) ? attr.getSnip() : 0;
-        double c = (AttrTriangle4.Mode != ComplexityMode.eUnrealMode) ? s/2*SQRT3 : 0; // s * cos30
-        double u = (AttrTriangle4.Mode != ComplexityMode.eUnrealMode) ? s/2 : 0; // s * cos60
+        ShapeTriangle4 shape = getShape();
+        double a = shape.getA();
+        double b = shape.getB();
+        double R = shape.getROut();
+        double r = shape.getRIn();
+        double s = (ShapeTriangle4.Mode != ComplexityMode.eUnrealMode) ? shape.getSnip() : 0;
+        double c = (ShapeTriangle4.Mode != ComplexityMode.eUnrealMode) ? s/2*SQRT3 : 0; // s * cos30
+        double u = (ShapeTriangle4.Mode != ComplexityMode.eUnrealMode) ? s/2 : 0; // s * cos60
 
         // определение координат точек фигуры
         double oX =  (coord.x/3)*a + b;      // offset X
         double oY = ((coord.y/4)*2+1)*(R+r); // offset Y
-        switch (AttrTriangle4.Mode) {
+        switch (ShapeTriangle4.Mode) {
         case eUnrealMode:
         case eOptimalMode:
             break;
@@ -745,7 +615,7 @@ public class Triangle4 extends BaseCell {
             break;
         }
 
-        switch (AttrTriangle4.Mode) {
+        switch (ShapeTriangle4.Mode) {
         case eUnrealMode:
             switch (direction) {
             case 0:
@@ -1059,9 +929,9 @@ public class Triangle4 extends BaseCell {
 
     @Override
     public RectDouble getRcInner(double borderWidth) {
-        AttrTriangle4 attr = getAttr();
+        ShapeTriangle4 shape = getShape();
         double w = borderWidth/2.;
-        double sq    = attr.getSq(borderWidth);
+        double sq    = shape.getSq(borderWidth);
         double sq2   = sq/2;
         double sq2w  = sq2+w;
         double sq2w3 = sq2+w/SQRT3;
@@ -1078,7 +948,7 @@ public class Triangle4 extends BaseCell {
             break;
         case 2: case 6:
             center.x = region.getPoint(1).x;
-            switch (AttrTriangle4.Mode) {
+            switch (ShapeTriangle4.Mode) {
             case eUnrealMode : center.y = region.getPoint(                 0    ).y + sq2w; break;
             case eMeanMode   : center.y = region.getPoint((direction==2) ? 0 : 4).y + sq2w; break;
             case eOptimalMode: center.y = region.getPoint(                   3  ).y + sq2w; break;
@@ -1086,7 +956,7 @@ public class Triangle4 extends BaseCell {
             }
             break;
         case 3: case 11:
-            switch (AttrTriangle4.Mode) {
+            switch (ShapeTriangle4.Mode) {
             case eUnrealMode : center.x = region.getPoint(                     2).x; break;
             case eMeanMode   : center.x = region.getPoint((direction==3) ? 3 : 2).x; break;
             case eOptimalMode: center.x = region.getPoint(                 3    ).x; break;
@@ -1095,7 +965,7 @@ public class Triangle4 extends BaseCell {
             center.y = region.getPoint(1).y - sq2w;
             break;
         case 4: case 8:
-            switch (AttrTriangle4.Mode) {
+            switch (ShapeTriangle4.Mode) {
             case eUnrealMode:
                 center.x = region.getPoint(2).x + sq2w;
                 center.y = region.getPoint(2).y - sq2w3;
@@ -1112,7 +982,7 @@ public class Triangle4 extends BaseCell {
             }
             break;
         case 5: case 7:
-            switch (AttrTriangle4.Mode) {
+            switch (ShapeTriangle4.Mode) {
             case eUnrealMode : center.x = region.getPoint(                 2    ).x + sq2w;
                                center.y = region.getPoint(                 2    ).y + sq2w3; break;
             case eMeanMode   : center.x = region.getPoint((direction==5) ? 2 : 3).x + sq2w;
@@ -1133,7 +1003,7 @@ public class Triangle4 extends BaseCell {
 
     @Override
     public int getShiftPointBorderIndex() {
-        switch (AttrTriangle4.Mode) {
+        switch (ShapeTriangle4.Mode) {
         case eUnrealMode:
             switch (direction) {
             case 1: case 3: case 5: case 7: case 9: case 11: return 1;
@@ -1156,7 +1026,7 @@ public class Triangle4 extends BaseCell {
             case 1: case 2: case 3: case 5: case 7: case 9: case 11: return 2;
             default: return 3;
             }
-        default: throw new RuntimeException("Unknown Mode==" + AttrTriangle4.Mode);
+        default: throw new RuntimeException("Unknown Mode==" + ShapeTriangle4.Mode);
         }
     }
 

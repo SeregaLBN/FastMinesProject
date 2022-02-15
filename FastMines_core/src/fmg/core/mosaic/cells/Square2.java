@@ -25,7 +25,10 @@ package fmg.core.mosaic.cells;
 import java.util.ArrayList;
 import java.util.List;
 
-import fmg.common.geom.*;
+import fmg.common.geom.Coord;
+import fmg.common.geom.PointDouble;
+import fmg.common.geom.RectDouble;
+import fmg.core.mosaic.shape.ShapeSquare2;
 
 /**
  * Квадрат. Вариант 2 - сдвинутые ряды
@@ -33,47 +36,20 @@ import fmg.common.geom.*;
  **/
 public class Square2 extends BaseCell {
 
-    public static class AttrSquare2 extends BaseAttribute {
-
-        @Override
-        public SizeDouble getSize(Matrisize sizeField) {
-            double a = getA(); // размер стороны квадрата
-            return new SizeDouble(
-                sizeField.m * a + a/2,
-                sizeField.n * a);
-        }
-
-        @Override
-        public int getNeighborNumber(int direction) { return 6; }
-        @Override
-        public int getVertexNumber(int direction) { return 4; }
-        @Override
-        public double getVertexIntersection() { return 3; }
-        @Override
-        public Size getDirectionSizeField() { return new Size(1, 2); }
-        @Override
-        protected double getA() { return Math.sqrt(getArea()); }
-        @Override
-        public double getSq(double borderWidth) {
-            double w = borderWidth/2.;
-            return getA()-2*w;
-        }
-    }
-
-    public Square2(AttrSquare2 attr, Coord coord) {
-        super(attr, coord,
+    public Square2(ShapeSquare2 shape, Coord coord) {
+        super(shape, coord,
                     coord.y&1 // 0..1
              );
     }
 
     @Override
-    public AttrSquare2 getAttr() {
-        return (AttrSquare2) super.getAttr();
+    public ShapeSquare2 getShape() {
+        return (ShapeSquare2)super.getShape();
     }
 
     @Override
     public List<Coord> getCoordsNeighbor() {
-        List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
+        List<Coord> neighborCoord = new ArrayList<>(getShape().getNeighborNumber(getDirection()));
 
         // определяю координаты соседей
         neighborCoord.add(new Coord(coord.x- direction   , coord.y-1));
@@ -96,8 +72,8 @@ public class Square2 extends BaseCell {
 
     @Override
     protected void calcRegion() {
-        AttrSquare2 attr = getAttr();
-        double a = attr.getA();
+        ShapeSquare2 shape = getShape();
+        double a = shape.getA();
 
         double x1 = a * (coord.x + 0) + ((direction != 0) ? 0 : a / 2);
         double x2 = a * (coord.x + 1) + ((direction != 0) ? 0 : a / 2);
@@ -112,8 +88,8 @@ public class Square2 extends BaseCell {
 
     @Override
     public RectDouble getRcInner(double borderWidth) {
-        AttrSquare2 attr = getAttr();
-        double sq = attr.getSq(borderWidth);
+        ShapeSquare2 shape = getShape();
+        double sq = shape.getSq(borderWidth);
         double w = borderWidth/2.;
 
         return new RectDouble(

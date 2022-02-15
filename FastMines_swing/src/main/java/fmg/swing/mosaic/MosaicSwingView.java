@@ -194,7 +194,7 @@ public abstract class MosaicSwingView<TImage,
                     g.drawPolygon(poly);
                 } else {
                     int s = cell.getShiftPointBorderIndex();
-                    int v = cell.getAttr().getVertexNumber(cell.getDirection());
+                    int v = cell.getShape().getVertexNumber(cell.getDirection());
                     for (int i=0; i<v; i++) {
                         PointDouble p1 = cell.getRegion().getPoint(i);
                         PointDouble p2 = (i != (v-1))

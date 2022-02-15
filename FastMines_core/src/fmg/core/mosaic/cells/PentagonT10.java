@@ -27,7 +27,10 @@ import java.util.List;
 import java.util.function.IntFunction;
 
 import fmg.common.Color;
-import fmg.common.geom.*;
+import fmg.common.geom.Coord;
+import fmg.common.geom.PointDouble;
+import fmg.common.geom.RectDouble;
+import fmg.core.mosaic.shape.ShapePentagonT10;
 
 /**
  * Пятиугольник. Тип №10
@@ -35,105 +38,20 @@ import fmg.common.geom.*;
  **/
 public class PentagonT10 extends BaseCell {
 
-    public static class AttrPentagonT10 extends BaseAttribute {
-
-        @Override
-        public SizeDouble getSize(Matrisize sizeField) {
-            double a = getA();
-            SizeDouble result = new SizeDouble(
-                2*a +
-                5*a*((sizeField.m+1)/2) +
-                    a*((sizeField.m+0)/2),
-                2*a +
-                3*a*((sizeField.n+2)/3) +
-                3*a*((sizeField.n+1)/3) +
-                    a*((sizeField.n+0)/3));
-
-            if (sizeField.n == 1)
-                if ((sizeField.m & 1) == 1)
-                    result.width -= 3*a;
-                else
-                    result.width -= a;
-            if (sizeField.n == 2)
-                if ((sizeField.m & 1) == 1)
-                    result.width -= 2*a;
-                else
-                    result.width -= a;
-
-            if (sizeField.m == 1)
-                if (((sizeField.n % 6) == 4) ||
-                    ((sizeField.n % 6) == 5))
-                    result.height -= 2*a;
-
-            return result;
-        }
-
-        @Override
-        public int getNeighborNumber(int direction) {
-            switch (direction) {
-            case 0: case 1: case 6: case 7: return 7;
-            case 2: case 3: case 4: case 5: case 8: case 9: case 10: case 11: return 6;
-            default:
-                throw new IllegalArgumentException("Invalid value direction=" + direction);
-            }
-        }
-        @Override
-        public int getVertexNumber(int direction) { return 5; }
-
-        static double vertexIntersection = 0.;
-        @Override
-        public double getVertexIntersection() {
-            if (vertexIntersection < 1) {
-                final int cntDirection = getDirectionCount(); // 0..11
-                double sum = 0;
-                for (int dir=0; dir<cntDirection; dir++)
-                    switch (dir) {
-                    case 0: case 1: case 6: case 7:
-                        sum += 3;
-                        break;
-                    case 2: case 3: case 4: case 5: case 8: case 9: case 10: case 11:
-                        sum += 16./5.;
-                        break;
-                    default:
-                        throw new RuntimeException("Забыл case #" + dir);
-                    }
-                vertexIntersection = sum / cntDirection;
-//              Logger.info("PentagonT10::getVertexNeighbor == " + vertexIntersection);
-            }
-            return vertexIntersection;
-        }
-
-        @Override
-        public Size getDirectionSizeField() { return new Size(2, 6); }
-        @Override
-        protected double getA() { return Math.sqrt(getArea()/7); }
-        @Override
-        public double getSq(double borderWidth) {
-            double w = borderWidth/2.;
-            return 2*(getA()-w);
-        }
-
-        @Override
-        public int getMaxCellFillModeValue() {
-            return super.getMaxCellFillModeValue() + 1;
-//          return 1;
-        }
-    }
-
-    public PentagonT10(AttrPentagonT10 attr, Coord coord) {
-        super(attr, coord,
+    public PentagonT10(ShapePentagonT10 shape, Coord coord) {
+        super(shape, coord,
                   ((coord.y%6)<<1) + (coord.x&1) // 0..11
              );
     }
 
     @Override
-    public AttrPentagonT10 getAttr() {
-        return (AttrPentagonT10) super.getAttr();
+    public ShapePentagonT10 getShape() {
+        return (ShapePentagonT10)super.getShape();
     }
 
     @Override
     public List<Coord> getCoordsNeighbor() {
-        List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
+        List<Coord> neighborCoord = new ArrayList<>(getShape().getNeighborNumber(getDirection()));
 
         // определяю координаты соседей
         switch (direction) {
@@ -243,8 +161,8 @@ public class PentagonT10 extends BaseCell {
     }
 
     private PointDouble getOffset() {
-        AttrPentagonT10 attr = getAttr();
-        double a = attr.getA();
+        ShapePentagonT10 shape = getShape();
+        double a = shape.getA();
 
         PointDouble o = new PointDouble(0,0);
         switch (direction) {
@@ -265,8 +183,8 @@ public class PentagonT10 extends BaseCell {
 
     @Override
     protected void calcRegion() {
-        AttrPentagonT10 attr = getAttr();
-        double a = attr.getA();
+        ShapePentagonT10 shape = getShape();
+        double a = shape.getA();
 
         PointDouble o = getOffset();
 
@@ -304,8 +222,8 @@ public class PentagonT10 extends BaseCell {
 
     @Override
     public RectDouble getRcInner(double borderWidth) {
-        AttrPentagonT10 attr = getAttr();
-        double sq = attr.getSq(borderWidth);
+        ShapePentagonT10 shape = getShape();
+        double sq = shape.getSq(borderWidth);
         double sq2 = sq/2;
 
         PointDouble center = new PointDouble(); // координата центра квадрата
@@ -333,7 +251,7 @@ public class PentagonT10 extends BaseCell {
 
     @Override
     public Color getCellFillColor(int fillMode, Color defaultColor, IntFunction<Color> getColor) {
-        if (fillMode == getAttr().getMaxCellFillModeValue()) {
+        if (fillMode == getShape().getMaxCellFillModeValue()) {
             switch (getDirection()) {
             case  2: case  3: case  4: case  5: return getColor.apply(0);
             case  8: case  9: case 10: case 11: return getColor.apply(1);

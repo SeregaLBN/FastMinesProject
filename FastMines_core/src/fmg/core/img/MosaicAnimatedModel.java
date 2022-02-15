@@ -18,7 +18,7 @@ import fmg.common.geom.SizeDouble;
 import fmg.common.geom.util.FigureHelper;
 import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.mosaic.cells.BaseCell;
-import fmg.core.mosaic.cells.BaseCell.BaseAttribute;
+import fmg.core.mosaic.shape.BaseShape;
 import fmg.core.types.Property;
 import fmg.core.types.draw.PenBorder;
 
@@ -111,7 +111,7 @@ public class MosaicAnimatedModel<TImageInner>
 
     public void rotateMatrix() { rotateMatrix(true); }
     private void rotateMatrix(boolean reinit) {
-        SizeDouble size = getCellAttr().getSize(getSizeField());
+        SizeDouble size = getShape().getSize(getSizeField());
         PointDouble center = new PointDouble(size.width  / 2,
                                                 size.height / 2);
         double rotateAngle = getRotateAngle();
@@ -140,7 +140,7 @@ public class MosaicAnimatedModel<TImageInner>
 
     /** rotate BaseCell from original Matrix with modified Region */
     protected void rotateCells() {
-        BaseAttribute attr = getCellAttr();
+        BaseShape shape = getShape();
         List<BaseCell> matrix = getMatrix();
         final double area = getArea();
         final double angle = getRotateAngle();
@@ -168,7 +168,7 @@ public class MosaicAnimatedModel<TImageInner>
             hackLock = true;
             try {
                 // modify
-                attr.setArea(cntxt.area);
+                shape.setArea(cntxt.area);
 
                 // rotate
                 cell.init();
@@ -177,7 +177,7 @@ public class MosaicAnimatedModel<TImageInner>
                 FigureHelper.moveCollection(FigureHelper.rotateCollection(cell.getRegion().getPoints(), (((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, rotateCellAlterantive ? center : centerNew), delta);
 
                 // restore
-                attr.setArea(area);
+                shape.setArea(area);
             } finally {
                 hackLock = false;
             }
@@ -324,14 +324,14 @@ public class MosaicAnimatedModel<TImageInner>
     }
 
     @Override
-    protected void onCellAttributePropertyChanged(PropertyChangeEvent ev) {
+    protected void onShapePropertyChanged(PropertyChangeEvent ev) {
         if (hackLock)
             return;
 
-        super.onCellAttributePropertyChanged(ev);
+        super.onShapePropertyChanged(ev);
 
         String propName = ev.getPropertyName();
-        if (BaseCell.BaseAttribute.PROPERTY_AREA.equals(propName))
+        if (BaseShape.PROPERTY_AREA.equals(propName))
             switch (getRotateMode()) {
             case fullMatrix:
                 if (!DoubleExt.hasMinDiff(rotateAngle, 0))

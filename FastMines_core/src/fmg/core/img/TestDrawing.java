@@ -144,7 +144,7 @@ public class TestDrawing {
                 IMosaicDrawModel<?> mdm = (IMosaicDrawModel<?>)model;
                 mdm.setBackgroundColor(bkClr);
 
-                mdm.getCellFill().setMode(1 + r(mdm.getCellAttr().getMaxCellFillModeValue()));
+                mdm.getCellFill().setMode(1 + r(mdm.getShape().getMaxCellFillModeValue()));
 
                 mdm.getPenBorder().setWidth(1 + r(2));
                 SizeDouble size = mdm.getSize();

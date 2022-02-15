@@ -16,7 +16,7 @@ import fmg.common.geom.Matrisize;
 import fmg.core.app.model.MosaicInitData;
 import fmg.core.mosaic.MosaicGameModel;
 import fmg.core.mosaic.MosaicHelper;
-import fmg.core.mosaic.cells.BaseCell;
+import fmg.core.mosaic.shape.BaseShape;
 import fmg.core.types.ESkillLevel;
 import fmg.swing.app.FastMinesApp;
 import fmg.swing.utils.GuiTools;
@@ -224,11 +224,12 @@ public class CustomSkillDlg implements AutoCloseable {
     private int getNeighborNumber() {
         if (app == null)
             return 21;
-        BaseCell.BaseAttribute attr = MosaicHelper.createAttributeInstance(app.getMosaicController().getMosaicType());
-        int max = IntStream.range(0, attr.getDirectionCount())
-                .map(attr::getNeighborNumber)
-                .max().getAsInt();
-        return max + 1; // +thisCell
+        try (BaseShape shape = MosaicHelper.createShapeInstance(app.getMosaicController().getMosaicType())) {
+            int max = IntStream.range(0, shape.getDirectionCount())
+                    .map(shape::getNeighborNumber)
+                    .max().getAsInt();
+            return max + 1; // +thisCell
+        }
     }
 
     private void recalcModelValueXY(boolean isFullScreen, boolean isFullScreenAtCurrArea) {

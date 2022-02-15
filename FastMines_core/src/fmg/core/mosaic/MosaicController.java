@@ -15,6 +15,7 @@ import fmg.core.app.model.MosaicBackupData;
 import fmg.core.app.model.MosaicInitData;
 import fmg.core.img.ImageController;
 import fmg.core.mosaic.cells.BaseCell;
+import fmg.core.mosaic.shape.BaseShape;
 import fmg.core.types.*;
 
 /** MVC: mosaic controller. Base implementation
@@ -721,7 +722,7 @@ public abstract class MosaicController<TImage, TImageInner,
         TMosaicModel m = getModel();
         m.getCellFill().setMode(
                 1 + ThreadLocalRandom.current().nextInt(
-                            m.getCellAttr() // MosaicHelper.createAttributeInstance(m.getMosaicType())
+                            m.getShape() // MosaicHelper.createShapeInstance(m.getMosaicType())
                             .getMaxCellFillModeValue()));
 
         if (getGameStatus() == EGameStatus.eGSReady)
@@ -773,7 +774,7 @@ public abstract class MosaicController<TImage, TImageInner,
     public SizeDouble getMosaicSize(Matrisize sizeField, double area) {
         TMosaicModel m = getModel();
         return DoubleExt.hasMinDiff(area, m.getArea())
-            ? m.getCellAttr().getSize(sizeField)
+            ? m.getShape().getSize(sizeField)
             : MosaicHelper.getSize(getMosaicType(), area, sizeField);
     }
     /** размер мозаики в пикселях */
@@ -782,9 +783,9 @@ public abstract class MosaicController<TImage, TImageInner,
     }
     /** узнать max количество соседей для текущей мозаики */
     public int getMaxNeighborNumber() {
-        BaseCell.BaseAttribute attr = getModel().getCellAttr();
-        return IntStream.range(0, attr.getDirectionCount())
-            .map(i -> attr.getNeighborNumber(i))
+        BaseShape shape = getModel().getShape();
+        return IntStream.range(0, shape.getDirectionCount())
+            .map(shape::getNeighborNumber)
             .max().getAsInt();
     }
 
