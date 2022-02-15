@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-// file name: "Trapezoid3.java"
+// file name: "ShapeTrapezoid3.java"
 //
 // Реализация класса Trapezoid3 - 8 трапеций, складывающихся в шестигранник
 // Author: 2002-2018  -  Serhii Kryvulia aka SeregaLBN

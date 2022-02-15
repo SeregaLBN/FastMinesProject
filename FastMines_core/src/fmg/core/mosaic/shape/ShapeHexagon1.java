@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-// file name: "Hexagon1.java"
+// file name: "ShapeHexagon1.java"
 //
 // Реализация класса Hexagon1 - правильный 6-ти угольник (сота)
 // Author: 2002-2018  -  Serhii Kryvulia aka SeregaLBN

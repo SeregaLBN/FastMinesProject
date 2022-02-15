@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-// file name: "Trapezoid1.java"
+// file name: "ShapeTrapezoid1.java"
 //
 // Реализация класса Trapezoid1 - 3 трапеции, составляющие равносторонний треугольник
 // Author: 2002-2018  -  Serhii Kryvulia aka SeregaLBN

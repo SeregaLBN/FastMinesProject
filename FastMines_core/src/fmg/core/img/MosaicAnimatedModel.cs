@@ -5,9 +5,10 @@ using System.Linq;
 using Fmg.Common;
 using Fmg.Common.Geom;
 using Fmg.Common.Geom.Util;
+using Fmg.Core.Types;
 using Fmg.Core.Mosaic;
 using Fmg.Core.Mosaic.Cells;
-using Fmg.Core.Types;
+using Fmg.Core.Mosaic.Shape;
 
 namespace Fmg.Core.Img {
 
@@ -88,7 +89,7 @@ namespace Fmg.Core.Img {
 
         public void RotateMatrix() { RotateMatrix(true); }
         private void RotateMatrix(bool reinit) {
-            var size = CellAttr.GetSize(SizeField);
+            var size = Shape.GetSize(SizeField);
             var center = new PointDouble(size.Width / 2,
                                          size.Height / 2);
             double rotateAngle = RotateAngle;
@@ -117,7 +118,7 @@ namespace Fmg.Core.Img {
 
         /// <summary> rotate BaseCell from original Matrix with modified Region </summary>
         internal void RotateCells() {
-            var attr = CellAttr;
+            var shape = Shape;
             var matrix = Matrix;
             double area = Area;
             double angle = RotateAngle;
@@ -145,7 +146,7 @@ namespace Fmg.Core.Img {
                 _hackLock = true;
                 try {
                     // modify
-                    attr.Area = cntxt.area;
+                    shape.Area = cntxt.area;
 
                     // rotate
                     cell.Init();
@@ -156,7 +157,7 @@ namespace Fmg.Core.Img {
                        .MoveList(delta);
 
                     // restore
-                    attr.Area = area;
+                    shape.Area = area;
                 } finally {
                     _hackLock = false;
                 }
@@ -304,14 +305,14 @@ namespace Fmg.Core.Img {
             }
         }
 
-        protected override void OnCellAttributePropertyChanged(object sender, PropertyChangedEventArgs ev) {
+        protected override void OnCellShapePropertyChanged(object sender, PropertyChangedEventArgs ev) {
             if (_hackLock)
                 return;
 
-            base.OnCellAttributePropertyChanged(sender, ev);
+            base.OnCellShapePropertyChanged(sender, ev);
 
             string propName = ev.PropertyName;
-            if (nameof(BaseCell.BaseAttribute.Area) == propName)
+            if (nameof(BaseShape.Area) == propName)
                 switch (RotateMode) {
                 case EMosaicRotateMode.fullMatrix:
                     if (!_rotateAngle.HasMinDiff(0))

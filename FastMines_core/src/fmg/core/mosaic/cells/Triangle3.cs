@@ -19,46 +19,25 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ////////////////////////////////////////////////////////////////////////////////
-using System;
 using System.Collections.Generic;
 using Fmg.Common.Geom;
+using Fmg.Core.Mosaic.Shape;
 
 namespace Fmg.Core.Mosaic.Cells {
 
     /// <summary> Треугольник. Вариант 3 - треугольник 45°-90°-45°(квадрат разделённый на 4 части) </summary>
     public class Triangle3 : BaseCell {
 
-        public class AttrTriangle3 : BaseAttribute {
-
-            public override SizeDouble GetSize(Matrisize sizeField) {
-               var a = A;
-               return new SizeDouble(a * ((sizeField.m + (sizeField.m & 1)) / 2),
-                                     a * ((sizeField.n + (sizeField.n & 1)) / 2));
-            }
-
-            public override int GetNeighborNumber(int direction) { return 14; }
-            public override int GetVertexNumber(int direction) { return 3; }
-            public override double GetVertexIntersection() { return 6.6666666666666666666666666666667; } // (8+8+4)/3.
-            public override Size GetDirectionSizeField() { return new Size(2, 2); }
-            public override double A => 2 * B;
-            /// <summary> пол стороны треугольника </summary>
-            public double B => Math.Sqrt(Area);
-            public override double GetSq(double borderWidth) {
-                var w = borderWidth / 2.0;
-                return (A - w * 2 / TAN45_2) / 3;
-            }
-        }
-
-        public Triangle3(AttrTriangle3 attr, Coord coord)
-            : base(attr, coord,
+        public Triangle3(ShapeTriangle3 shape, Coord coord)
+            : base(shape, coord,
                        ((coord.y & 1) << 1) + (coord.x & 1) // 0..3
                   )
         { }
 
-        private new AttrTriangle3 Attr => (AttrTriangle3)base.Attr;
+        private new ShapeTriangle3 Shape => (ShapeTriangle3)base.Shape;
 
         public override IList<Coord> GetCoordsNeighbor() {
-            var neighborCoord = new Coord[Attr.GetNeighborNumber(GetDirection())];
+            var neighborCoord = new Coord[Shape.GetNeighborNumber(GetDirection())];
 
             // определяю координаты соседей
             switch (direction) {
@@ -132,9 +111,9 @@ namespace Fmg.Core.Mosaic.Cells {
         }
 
         protected override void CalcRegion() {
-            var attr = Attr;
-            var a = attr.A;
-            var b = attr.B;
+            var shape = Shape;
+            var a = shape.A;
+            var b = shape.B;
 
             var oX = a * (coord.x >> 1); // offset X
             var oY = a * (coord.y >> 1); // offset Y
@@ -164,8 +143,8 @@ namespace Fmg.Core.Mosaic.Cells {
         }
 
         public override RectDouble GetRcInner(double borderWidth) {
-            var attr = Attr;
-            var sq = attr.GetSq(borderWidth);
+            var shape = Shape;
+            var sq = shape.GetSq(borderWidth);
             var w = borderWidth / 2.0;
 
             var center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)

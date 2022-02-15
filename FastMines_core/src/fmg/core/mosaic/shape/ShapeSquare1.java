@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-// file name: "Square1.java"
+// file name: "ShapeSquare1.java"
 //
 // Описание класса Square1 - квадрат (классический вариант поля)
 // Author: 2002-2018  -  Serhii Kryvulia aka SeregaLBN

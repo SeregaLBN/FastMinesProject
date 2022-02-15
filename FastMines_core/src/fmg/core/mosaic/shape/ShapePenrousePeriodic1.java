@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-// file name: "PenrousePeriodic1.java"
+// file name: "ShapePenrousePeriodic1.java"
 //
 // Реализация класса PenrousePeriodic1 - один из вариантов периодической мозаики Пенроуза (ромбы 72°-108° & 36°- 144°)
 // Author: 2010-2018  -  Serhii Kryvulia aka SeregaLBN

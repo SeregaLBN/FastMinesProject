@@ -144,7 +144,7 @@ namespace Fmg.Uwp.Mosaic.Wbmp {
                                 }
                     } else {
                         var s = cell.GetShiftPointBorderIndex();
-                        var v = cell.Attr.GetVertexNumber(cell.GetDirection());
+                        var v = cell.Shape.GetVertexNumber(cell.GetDirection());
                         for (var i = 0; i < v; i++) {
                             var p1 = region.GetPoint(i);
                             p1.Move(offset.Width, offset.Height);

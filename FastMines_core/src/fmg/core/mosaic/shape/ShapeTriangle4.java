@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-// file name: "Triangle4.java"
+// file name: "ShapeTriangle4.java"
 //
 // Реализация класса Triangle4 - треугольник 30°-30°-120°
 // Author: 2002-2018  -  Serhii Kryvulia aka SeregaLBN

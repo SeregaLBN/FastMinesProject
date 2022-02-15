@@ -124,9 +124,9 @@ namespace Fmg.Uwp.App {
         }
 
         private int GetNeighborNumber() {
-            var attr = MosaicHelper.CreateAttributeInstance(InitData.MosaicType);
-            int max = Enumerable.Range(0, attr.GetDirectionCount())
-                .Select(i => attr.GetNeighborNumber(i))
+            var shape = MosaicHelper.CreateShapeInstance(InitData.MosaicType);
+            int max = Enumerable.Range(0, shape.GetDirectionCount())
+                .Select(i => shape.GetNeighborNumber(i))
                 .Max();
             return max + 1; // +thisCell
         }

@@ -19,61 +19,25 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ////////////////////////////////////////////////////////////////////////////////
-using System;
 using System.Collections.Generic;
 using Fmg.Common.Geom;
+using Fmg.Core.Mosaic.Shape;
 
 namespace Fmg.Core.Mosaic.Cells {
 
     /// <summary> Trapezoid2 - 3 трапеции, составляющие равносторонний треугольник </summary>
     public class Trapezoid2 : BaseCell {
 
-        public class AttrTrapezoid2 : BaseAttribute {
-
-            public override SizeDouble GetSize(Matrisize sizeField) {
-                var a = A;
-                var c = C;
-                var r = RIn;
-                var R = ROut;
-                var result = new SizeDouble(
-                        a+c+ c  * ((sizeField.m + 2) / 3)+
-                         (a+ c) * ((sizeField.m + 1) / 3)+
-                             a  * ((sizeField.m + 0) / 3),
-                             R  * ((sizeField.n + 1) / 2)+
-                             r  * ((sizeField.n + 0) / 2));
-
-                if (sizeField.m == 1)
-                    if ((sizeField.n % 4) == 3)
-                        result.Height -= r;
-
-                return result;
-            }
-
-            public override int GetNeighborNumber(int direction) { return 9; }
-            public override int GetVertexNumber(int direction) { return 4; }
-            public override double GetVertexIntersection() { return 4.25; } // (6+4+4+3)/4.
-            public override Size GetDirectionSizeField() { return new Size(3, 4); }
-            public override double A => Math.Sqrt(Area / SQRT27) * 2;
-            public double B => A * 2;
-            public double C => A / 2;
-            public double ROut => A * SQRT3;
-            public double RIn => ROut / 2;
-            public override double GetSq(double borderWidth) {
-                var w = borderWidth / 2.0;
-                return (A * SQRT3 - w * 4) / (SQRT3 + 1);
-            }
-        }
-
-        public Trapezoid2(AttrTrapezoid2 attr, Coord coord)
-            : base(attr, coord,
+        public Trapezoid2(ShapeTrapezoid2 shape, Coord coord)
+            : base(shape, coord,
                         (coord.y & 3) * 3 + (coord.x % 3) // 0..11
                   )
         { }
 
-        private new AttrTrapezoid2 Attr => (AttrTrapezoid2)base.Attr;
+        private new ShapeTrapezoid2 Shape => (ShapeTrapezoid2)base.Shape;
 
         public override IList<Coord> GetCoordsNeighbor() {
-            var neighborCoord = new Coord[Attr.GetNeighborNumber(GetDirection())];
+            var neighborCoord = new Coord[Shape.GetNeighborNumber(GetDirection())];
 
             // определяю координаты соседей
             switch (direction) {
@@ -215,12 +179,12 @@ namespace Fmg.Core.Mosaic.Cells {
         }
 
         protected override void CalcRegion() {
-            var attr = Attr;
-            var a = attr.A;
-            var b = attr.B;
-            var c = attr.C;
-            var R = attr.ROut;
-            var r = attr.RIn;
+            var shape = Shape;
+            var a = shape.A;
+            var b = shape.B;
+            var c = shape.C;
+            var R = shape.ROut;
+            var r = shape.RIn;
 
             // определение координат точек фигуры
             var oX = (a + b) * (coord.x / 3) + b; // offset X
@@ -303,14 +267,14 @@ namespace Fmg.Core.Mosaic.Cells {
         }
 
         public override RectDouble GetRcInner(double borderWidth) {
-            var attr = Attr;
-            var a = attr.A;
-            var b = attr.B;
-            var c = attr.C;
-            var R = attr.ROut;
-            var r = attr.RIn;
+            var shape = Shape;
+            var a = shape.A;
+            var b = shape.B;
+            var c = shape.C;
+            var R = shape.ROut;
+            var r = shape.RIn;
             //var w = borderWidth / 2.0;
-            var sq  = attr.GetSq(borderWidth);
+            var sq  = shape.GetSq(borderWidth);
             var sq2 = sq / 2;
 
             var oX = (a + b) * (coord.x / 3) + b; // offset X

@@ -646,7 +646,7 @@ namespace Fmg.Core.Mosaic {
 
             var m = Model;
             m.CellFill.Mode =  1 + ThreadLocalRandom.Current.Next(
-                            m.CellAttr // MosaicHelper.CreateAttributeInstance(m.MosaicType
+                            m.Shape // MosaicHelper.CreateShapeInstance(m.MosaicType
                             .GetMaxCellFillModeValue());
 
             if (GameStatus == EGameStatus.eGSReady)
@@ -701,7 +701,7 @@ namespace Fmg.Core.Mosaic {
         public SizeDouble GetMosaicSize(Matrisize sizeField, double area) {
             var m = Model;
             return area.HasMinDiff(m.Area)
-                ? m.CellAttr.GetSize(sizeField)
+                ? m.Shape.GetSize(sizeField)
                 : MosaicHelper.GetSize(MosaicType, area, sizeField);
         }
         /// <summary> размер мозаики в пикселях </summary>
@@ -710,9 +710,9 @@ namespace Fmg.Core.Mosaic {
         /// <summary> узнать max количество соседей для текущей мозаики </summary>
         public int MaxNeighborNumber {
             get {
-                var attr = Model.CellAttr;
-                return Enumerable.Range(0, attr.GetDirectionCount())
-                        .Select(i => attr.GetNeighborNumber(i))
+                var shape = Model.Shape;
+                return Enumerable.Range(0, shape.GetDirectionCount())
+                        .Select(i => shape.GetNeighborNumber(i))
                         .Max();
             }
         }

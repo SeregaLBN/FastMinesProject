@@ -19,50 +19,25 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ////////////////////////////////////////////////////////////////////////////////
-using System;
 using System.Collections.Generic;
 using Fmg.Common.Geom;
+using Fmg.Core.Mosaic.Shape;
 
 namespace Fmg.Core.Mosaic.Cells {
 
     /// <summary> Паркет. Вариант №2 </summary>
     public class Parquet2 : BaseCell {
 
-        public class AttrParquet2 : BaseAttribute {
-
-            public override SizeDouble GetSize(Matrisize sizeField) {
-                var a = A;
-                var result = new SizeDouble(
-                      (sizeField.m * 2 + 2) * a,
-                      (sizeField.n * 2 + 2) * a);
-
-                if (sizeField.m == 1)
-                    result.Height -= a;
-
-                return result;
-            }
-
-            public override int GetNeighborNumber(int direction) { return 7; }
-            public override int GetVertexNumber(int direction) { return 4; }
-            public override double GetVertexIntersection() { return 3.5; } // (4+4+3+3) / 4
-            public override Size GetDirectionSizeField() { return new Size(2, 2); }
-            public override double A => Math.Sqrt(Area) / 2;
-            public override double GetSq(double borderWidth) {
-                var w = borderWidth / 2.0;
-                return A - w * SQRT2;
-            }
-        }
-
-        public Parquet2(AttrParquet2 attr, Coord coord)
-            : base(attr, coord,
+        public Parquet2(ShapeParquet2 shape, Coord coord)
+            : base(shape, coord,
                        ((coord.y & 1) << 1) + (coord.x & 1) // 0..3
                   )
         { }
 
-        private new AttrParquet2 Attr => (AttrParquet2)base.Attr;
+        private new ShapeParquet2 Shape => (ShapeParquet2)base.Shape;
 
         public override IList<Coord> GetCoordsNeighbor() {
-            var neighborCoord = new Coord[Attr.GetNeighborNumber(GetDirection())];
+            var neighborCoord = new Coord[Shape.GetNeighborNumber(GetDirection())];
 
             // определяю координаты соседей
             switch (direction) {
@@ -108,8 +83,8 @@ namespace Fmg.Core.Mosaic.Cells {
         }
 
         protected override void CalcRegion() {
-            var attr = Attr;
-            var a = attr.A;
+            var shape = Shape;
+            var a = shape.A;
 
             switch (direction) {
             case 0:
@@ -140,21 +115,21 @@ namespace Fmg.Core.Mosaic.Cells {
         }
 
         public override RectDouble GetRcInner(double borderWidth) {
-            var attr = Attr;
-            var sq = attr.GetSq(borderWidth);
+            var shape = Shape;
+            var sq = shape.GetSq(borderWidth);
             var w = borderWidth / 2.0;
 
             var square = new RectDouble();
             switch (direction) {
             case 0:
             case 3:
-                square.X = region.GetPoint(0).X + w / SQRT2;
-                square.Y = region.GetPoint(3).Y + w / SQRT2;
+                square.X = region.GetPoint(0).X + w / BaseShape.SQRT2;
+                square.Y = region.GetPoint(3).Y + w / BaseShape.SQRT2;
                 break;
             case 1:
             case 2:
-                square.X = region.GetPoint(2).X + w / SQRT2;
-                square.Y = region.GetPoint(1).Y + w / SQRT2;
+                square.X = region.GetPoint(2).X + w / BaseShape.SQRT2;
+                square.Y = region.GetPoint(1).Y + w / BaseShape.SQRT2;
                 break;
             }
             square.Width = sq;

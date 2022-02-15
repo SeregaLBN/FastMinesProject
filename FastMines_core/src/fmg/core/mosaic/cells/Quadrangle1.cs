@@ -19,73 +19,25 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ////////////////////////////////////////////////////////////////////////////////
-using System;
 using System.Collections.Generic;
 using Fmg.Common.Geom;
+using Fmg.Core.Mosaic.Shape;
 
 namespace Fmg.Core.Mosaic.Cells {
 
     /// <summary> Quadrangle1 - четырёхугольник 120°-90°-60°-90° </summary>
     public class Quadrangle1 : BaseCell {
 
-        public class AttrQuadrangle1 : BaseAttribute {
-
-            public override SizeDouble GetSize(Matrisize sizeField) {
-                var a = A;
-                var b = B;
-                var h = H;
-                var m = M;
-                var result = new SizeDouble(
-                    m + m * ((sizeField.m + 2) / 3)+
-                        h * ((sizeField.m + 1) / 3)+
-                        m * ((sizeField.m + 0) / 3),
-                    b + b * ((sizeField.n + 1) / 2)+
-                        a * ((sizeField.n + 0) / 2));
-
-                if (sizeField.m == 1)
-                    if ((sizeField.n & 1) == 0)
-                        result.Height -= a / 4;
-                if (sizeField.m == 2)
-                    if ((sizeField.n % 4) == 0)
-                        result.Height -= a / 4;
-                if ((sizeField.n == 1) || (sizeField.n == 2)) {
-                    if ((sizeField.m % 3) == 2)
-                        result.Width -= m;
-                    if ((sizeField.m % 3) == 0)
-                        result.Width -= m;
-                }
-
-                return result;
-            }
-
-            public override int GetNeighborNumber(int direction) { return 9; }
-            public override int GetVertexNumber(int direction) { return 4; }
-            public override double GetVertexIntersection() { return 4.25; } // (3+4+4+6)/4.
-            public override Size GetDirectionSizeField() { return new Size(3, 4); }
-            public override double A => Math.Sqrt(Area / SQRT3) * 2;
-            public double B => A / 2;
-            public double H => B * SQRT3;
-            public double N => A * 0.75;
-            public double M => H / 2;
-            public double Z => A / (1 + SQRT3);
-            public double Zx => Z * SQRT3 / 2;
-            public double Zy => Z / 2;
-            public override double GetSq(double borderWidth) {
-                var w = borderWidth / 2.0;
-                return (A * SQRT3 - w * 2 * (1 + SQRT3)) / (SQRT3 + 2);
-            }
-        }
-
-        public Quadrangle1(AttrQuadrangle1 attr, Coord coord)
-            : base(attr, coord,
+        public Quadrangle1(ShapeQuadrangle1 shape, Coord coord)
+            : base(shape, coord,
                         (coord.y & 3) * 3 + (coord.x % 3) // 0..11
                   )
         { }
 
-        private new AttrQuadrangle1 Attr => (AttrQuadrangle1) base.Attr;
+        private new ShapeQuadrangle1 Shape => (ShapeQuadrangle1)base.Shape;
 
         public override IList<Coord> GetCoordsNeighbor() {
-            var neighborCoord = new Coord[Attr.GetNeighborNumber(GetDirection())];
+            var neighborCoord = new Coord[Shape.GetNeighborNumber(GetDirection())];
 
             // определяю координаты соседей
             switch (direction) {
@@ -227,12 +179,12 @@ namespace Fmg.Core.Mosaic.Cells {
         }
 
         protected override void CalcRegion() {
-            var attr = Attr;
-            var a = attr.A;
-            var b = attr.B;
-            var h = attr.H;
-            var n = attr.N;
-            var m = attr.M;
+            var shape = Shape;
+            var a = shape.A;
+            var b = shape.B;
+            var h = shape.H;
+            var n = shape.N;
+            var m = shape.M;
 
             // определение координат точек фигуры
             var oX = (h * 2) * (coord.x / 3) + h + m; // offset X
@@ -315,17 +267,17 @@ namespace Fmg.Core.Mosaic.Cells {
         }
 
         public override RectDouble GetRcInner(double borderWidth) {
-            var attr = Attr;
-            var a = attr.A;
-            var b = attr.B;
-            var h = attr.H;
-            var n = attr.N;
-            var m = attr.M;
-            var z = attr.Z;
-            var zx = attr.Zx;
-            var zy = attr.Zy;
+            var shape = Shape;
+            var a = shape.A;
+            var b = shape.B;
+            var h = shape.H;
+            var n = shape.N;
+            var m = shape.M;
+            var z = shape.Z;
+            var zx = shape.Zx;
+            var zy = shape.Zy;
             //var w = borderWidth / 2.0;
-            var sq    = attr.GetSq(borderWidth);
+            var sq    = shape.GetSq(borderWidth);
             var sq2   = sq/2;
 
             var oX = (h * 2) * (coord.x / 3) + h + m; // offset X

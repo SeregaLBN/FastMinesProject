@@ -47,7 +47,7 @@ namespace Fmg.Core.Mosaic {
             await new PropertyChangeExecutor<MosaicGameModel>(() => m = new MosaicGameModel(), false).Run(300, 5000,
                 model => {
                     AssertTrue(model.Matrix.Any());
-                    AssertTrue(ReferenceEquals(model.CellAttr, model.Matrix[0].Attr));
+                    AssertTrue(ReferenceEquals(model.Shape, model.Matrix[0].Shape));
 
                     model.SizeField = new Matrisize(15, 10);
                 }, (model, modifiedProperties) => {
@@ -64,8 +64,8 @@ namespace Fmg.Core.Mosaic {
                 }, (model, modifiedProperties) => {
                     AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Area)));
                     AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.Area)]);
-                    AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.CellAttr)));
-                    AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.CellAttr)]);
+                    AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Shape)));
+                    AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.Shape)]);
                     AssertEqual(2, modifiedProperties.Count);
                 });
         }
@@ -81,8 +81,8 @@ namespace Fmg.Core.Mosaic {
                     AssertEqual(1, modifiedProperties[            nameof(IImageModel.Size)]);
                     AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Area)));
                     AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.Area)]);
-                    AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.CellAttr)));
-                    AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.CellAttr)]);
+                    AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Shape)));
+                    AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.Shape)]);
                     AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.MosaicType)));
                     AssertEqual(1, modifiedProperties[            nameof(MosaicGameModel.MosaicType)]);
                     AssertTrue (   modifiedProperties.ContainsKey(nameof(MosaicGameModel.Matrix)));
@@ -107,7 +107,7 @@ namespace Fmg.Core.Mosaic {
                 model => {
                     AssertEqual(EMosaic.eMosaicSquare1, model.MosaicType);
                     AssertEqual(new Matrisize(10, 10), model.SizeField);
-                    AssertEqual(model.CellAttr.GetSize(model.SizeField), model.Size);
+                    AssertEqual(model.Shape.GetSize(model.SizeField), model.Size);
                 }, (model, modifiedProperties) => { });
         }
 

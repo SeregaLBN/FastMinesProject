@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-// file name: "SqTrHex.java"
+// file name: "ShapeSqTrHex.java"
 //
 // Реализация класса SqTrHex - мозаика из 6Square 4Triangle 2Hexagon
 // Author: 2002-2018  -  Serhii Kryvulia aka SeregaLBN

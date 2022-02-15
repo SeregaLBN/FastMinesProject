@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-// file name: "Quadrangle1.java"
+// file name: "ShapeQuadrangle1.java"
 //
 // Реализация класса Quadrangle1 - четырёхугольник 120°-90°-60°-90°
 // Author: 2002-2018  -  Serhii Kryvulia aka SeregaLBN

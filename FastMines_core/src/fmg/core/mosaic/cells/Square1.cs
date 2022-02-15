@@ -23,40 +23,21 @@ using System;
 using System.Collections.Generic;
 using Fmg.Common;
 using Fmg.Common.Geom;
+using Fmg.Core.Mosaic.Shape;
 
 namespace Fmg.Core.Mosaic.Cells {
 
     /// <summary> Квадрат. Вариант 1 </summary>
     public class Square1 : BaseCell {
 
-        public class AttrSquare1 : BaseAttribute {
-
-            public override SizeDouble GetSize(Matrisize sizeField) {
-                var a = A; // размер стороны квадрата
-                return new SizeDouble(
-                      sizeField.m * a,
-                      sizeField.n * a);
-            }
-
-            public override int GetNeighborNumber(int direction) { return 8; }
-            public override int GetVertexNumber(int direction) { return 4; }
-            public override double GetVertexIntersection() { return 4; }
-            public override Size GetDirectionSizeField() { return new Size(1, 1); }
-            public override double A => Math.Sqrt(Area);
-            public override double GetSq(double borderWidth) {
-                var w = borderWidth / 2.0;
-                return A - 2 * w;
-            }
-        }
-
-        public Square1(AttrSquare1 attr, Coord coord)
-            : base(attr, coord, -1)
+        public Square1(ShapeSquare1 shape, Coord coord)
+            : base(shape, coord, -1)
         { }
 
-        private new AttrSquare1 Attr => (AttrSquare1)base.Attr;
+        private new ShapeSquare1 Shape => (ShapeSquare1)base.Shape;
 
         public override IList<Coord> GetCoordsNeighbor() {
-            var neighborCoord = new Coord[Attr.GetNeighborNumber(GetDirection())];
+            var neighborCoord = new Coord[Shape.GetNeighborNumber(GetDirection())];
 
             // определяю координаты соседей
             neighborCoord[0] = new Coord(coord.x - 1, coord.y - 1);
@@ -79,8 +60,8 @@ namespace Fmg.Core.Mosaic.Cells {
         }
 
         protected override void CalcRegion() {
-            var attr = Attr;
-            var a = attr.A;
+            var shape = Shape;
+            var a = shape.A;
 
             var x1 = a * (coord.x + 0);
             var x2 = a * (coord.x + 1);
@@ -94,8 +75,8 @@ namespace Fmg.Core.Mosaic.Cells {
         }
 
         public override RectDouble GetRcInner(double borderWidth) {
-            var attr = Attr;
-            var sq = attr.GetSq(borderWidth);
+            var shape = Shape;
+            var sq = shape.GetSq(borderWidth);
             var w = borderWidth / 2.0;
 
             return new RectDouble(
@@ -111,7 +92,7 @@ namespace Fmg.Core.Mosaic.Cells {
             default:
                 return base.GetCellFillColor(fillMode, defaultColor, repositoryColor);
             case 1: // перекрываю базовый на основе direction
-                int pos = (-GetCoord().x + GetCoord().y) % ((Attr.GetHashCode() & 0x3) + fillMode);
+                int pos = (-GetCoord().x + GetCoord().y) % ((Shape.GetHashCode() & 0x3) + fillMode);
                 return repositoryColor(pos);
             }
         }

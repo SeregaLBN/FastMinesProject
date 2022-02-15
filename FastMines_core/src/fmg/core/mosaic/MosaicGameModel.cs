@@ -28,6 +28,7 @@ using Fmg.Common.Notifier;
 using Fmg.Core.Types;
 using Fmg.Core.App.Model;
 using Fmg.Core.Mosaic.Cells;
+using Fmg.Core.Mosaic.Shape;
 
 namespace Fmg.Core.Mosaic {
 
@@ -36,7 +37,7 @@ namespace Fmg.Core.Mosaic {
 
     #region Members
 
-        private BaseCell.BaseAttribute _cellAttr;
+        private BaseShape _shape;
         /// <summary> Matrix of cells, is represented as a vector <see cref="IList<BaseCell>"/>.
         /// Матрица ячеек, представленная(развёрнута) в виде вектора </summary>
         private readonly IList<BaseCell> _matrix = new List<BaseCell>();
@@ -64,21 +65,21 @@ namespace Fmg.Core.Mosaic {
             this.PropertyChangedSync += OnPropertyChanged;
         }
 
-        public BaseCell.BaseAttribute CellAttr {
+        public BaseShape Shape {
             get {
-                if (_cellAttr == null) {
-                    _cellAttr = MosaicHelper.CreateAttributeInstance(MosaicType);
-                    _cellAttr.PropertyChanged += OnCellAttributePropertyChanged;
+                if (_shape == null) {
+                    _shape = MosaicHelper.CreateShapeInstance(MosaicType);
+                    _shape.PropertyChanged += OnCellShapePropertyChanged;
                 }
-                return _cellAttr;
+                return _shape;
             }
         }
-        private void ResetCellAttr() {
-            if (_cellAttr == null)
+        private void ResetShape() {
+            if (_shape == null)
                 return;
-            _cellAttr.PropertyChanged -= OnCellAttributePropertyChanged;
-            _cellAttr.Dispose();
-            _cellAttr = null;
+            _shape.PropertyChanged -= OnCellShapePropertyChanged;
+            _shape.Dispose();
+            _shape = null;
             _matrix.Clear();
             _notifier.FirePropertyChanged();
             _notifier.FirePropertyChanged(nameof(this.Matrix));
@@ -86,27 +87,27 @@ namespace Fmg.Core.Mosaic {
 
         /// <summary> площадь ячеек </summary>
         public double Area {
-            get { return CellAttr.Area; }
+            get { return Shape.Area; }
             set {
                 if (value <= 0)
                     throw new ArgumentException("Area must be positive");
                 if (value < MosaicInitData.AREA_MINIMUM)
                     Logger.Warn("The area is very small = " + value);
-              //CellAttr.Area = Math.Max(MosaicInitData.AREA_MINIMUM, value);
-                CellAttr.Area = value;
+              //Shape.Area = Math.Max(MosaicInitData.AREA_MINIMUM, value);
+                Shape.Area = value;
             }
         }
 
         public IList<BaseCell> Matrix {
             get {
                 if (!_matrix.Any()) {
-                    var attr = CellAttr;
+                    var shape = Shape;
                     var size = SizeField;
                     var mosaicType = MosaicType;
                     //_matrix = new List<BaseCell>(size.width * size.height);
                     for (var i=0; i < size.m; i++)
                         for (var j=0; j < size.n; j++) {
-                            var cell = MosaicHelper.CreateCellInstance(attr, mosaicType, new Coord(i, j));
+                            var cell = MosaicHelper.CreateCellInstance(shape, mosaicType, new Coord(i, j));
                             _matrix.Add(/* i*_size.n + j, */ cell);
                         }
                 }
@@ -139,7 +140,7 @@ namespace Fmg.Core.Mosaic {
                     return;
 
                 this._mosaicType = value;
-                ResetCellAttr();
+                ResetShape();
                 _notifier.FirePropertyChanged(old, value);
             }
         }
@@ -154,15 +155,15 @@ namespace Fmg.Core.Mosaic {
             _notifierAsync.FirePropertyChanged(ev);
         }
 
-        protected virtual void OnCellAttributePropertyChanged(object sender, PropertyChangedEventArgs ev) {
-            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, CellAttr));
+        protected virtual void OnCellShapePropertyChanged(object sender, PropertyChangedEventArgs ev) {
+            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, Shape));
 
-            if (ev.PropertyName == nameof(BaseCell.BaseAttribute.Area)) {
+            if (ev.PropertyName == nameof(BaseShape.Area)) {
                 foreach (var cell in Matrix)
                     cell.Init();
                 _notifier.FirePropertyChanged<double>(ev, nameof(this.Area)); // ! rethrow event - notify parent class
             }
-            _notifier.FirePropertyChanged(nameof(this.CellAttr));
+            _notifier.FirePropertyChanged(nameof(Shape));
         }
 
         /// <summary>  Dispose managed resources </summary>/
@@ -170,7 +171,7 @@ namespace Fmg.Core.Mosaic {
             this.PropertyChangedSync -= OnPropertyChanged;
             _notifier.Dispose();
             _notifierAsync.Dispose();
-            ResetCellAttr();
+            ResetShape();
         }
 
         public void Dispose() {

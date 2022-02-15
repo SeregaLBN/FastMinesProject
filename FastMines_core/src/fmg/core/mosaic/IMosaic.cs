@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using Fmg.Common.Geom;
 using Fmg.Core.Types;
 using Fmg.Core.Mosaic.Cells;
+using Fmg.Core.Mosaic.Shape;
 
 namespace Fmg.Core.Mosaic {
 
@@ -32,7 +33,7 @@ namespace Fmg.Core.Mosaic {
         /// <summary>размер поля</summary>
         Matrisize SizeField { get; set; }
 
-        BaseCell.BaseAttribute CellAttr { get; }
+        BaseShape Shape { get; }
 
         /// <summary>матрица ячеек, представленная(развёрнута) в виде вектора</summary>
         IList<BaseCell> Matrix { get; }

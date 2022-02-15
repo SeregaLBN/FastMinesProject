@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-// file name: "Triangle2.java"
+// file name: "ShapeTriangle2.java"
 //
 // Реализация класса Triangle2 - равносторонний треугольник (вариант поля №2 - ёлочкой)
 // Author: 2002-2018  -  Serhii Kryvulia aka SeregaLBN

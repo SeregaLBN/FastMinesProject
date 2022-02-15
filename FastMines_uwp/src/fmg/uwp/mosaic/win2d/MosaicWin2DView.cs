@@ -138,7 +138,7 @@ namespace Fmg.Uwp.Mosaic.Win2d {
                                     ds.DrawGeometry(geom, color, (float)pen.Width);
                                 } else {
                                     var s = cell.GetShiftPointBorderIndex();
-                                    var v = cell.Attr.GetVertexNumber(cell.GetDirection());
+                                    var v = cell.Shape.GetVertexNumber(cell.GetDirection());
                                     for (var i = 0; i < v; i++) {
                                         var p1 = region.GetPoint(i);
                                         var p2 = (i != (v - 1)) ? region.GetPoint(i + 1) : region.GetPoint(0);

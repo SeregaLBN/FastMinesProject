@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-// file name: "Parquet2.java"
+// file name: "ShapeParquet2.java"
 //
 // Реализация класса Parquet2 - ещё один паркет
 // Author: 2002-2018  -  Serhii Kryvulia aka SeregaLBN

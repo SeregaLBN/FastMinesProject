@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-// file name: "Square2.java"
+// file name: "ShapeSquare2.java"
 //
 // Реализация класса Square2 - квадрат (перекошенный вариант поля)
 // Author: 2002-2018  -  Serhii Kryvulia aka SeregaLBN

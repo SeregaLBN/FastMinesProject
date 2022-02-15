@@ -19,97 +19,25 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ////////////////////////////////////////////////////////////////////////////////
-using System;
 using System.Collections.Generic;
 using Fmg.Common.Geom;
+using Fmg.Core.Mosaic.Shape;
 
 namespace Fmg.Core.Mosaic.Cells {
 
     /// <summary> Trapezoid3 - 8 трапеций, складывающихся в шестигранник </summary>
     public class Trapezoid3 : BaseCell {
 
-        public class AttrTrapezoid3 : BaseAttribute {
-
-            public override SizeDouble GetSize(Matrisize sizeField) {
-                var a = A;
-                var b = B;
-                var R = ROut;
-                var result = new SizeDouble(
-                         R * ((sizeField.m + 1) / 2),
-                     a + b * ((sizeField.n + 1) / 2) +
-                         a * ((sizeField.n + 0) / 2));
-
-                if (sizeField.m == 1)
-                    switch (sizeField.n % 4) {
-                    case 0: result.Height -= a; break;
-                    case 3: result.Height -= a * 1.5; break;
-                    }
-                if (sizeField.n == 1)
-                    if ((sizeField.m & 1) == 1)
-                        result.Width -= RIn;
-
-                return result;
-            }
-
-            public override int GetNeighborNumber(int direction) {
-                 switch (direction) {
-                 case  2: case  5: case 11: case 12: return 6;
-                 case  0: case  7: case  9: case 14: return 10;
-                 case  1: case  3: case  4: case  6:
-                 case  8: case 10: case 13: case 15: return 11;
-                 default:
-                     throw new ArgumentException("Invalid value direction=" + direction);
-                 }
-            }
-            public override int GetVertexNumber(int direction) { return 4; }
-
-            static double _vertexIntersection = 0.0;
-            public override double GetVertexIntersection() {
-                if (_vertexIntersection < 1) {
-                    var cntDirection = GetDirectionCount(); // 0..11
-                    double sum = 0;
-                    for (var dir = 0; dir < cntDirection; dir++)
-                        switch (dir) {
-                        case  2: case  5: case 11: case 12:
-                            sum += (4 + 4 + 3 + 3) / 4.0;
-                            break;
-                        case  0: case  7: case  9: case 14:
-                            sum += (6 + 6 + 3 + 3) / 4.0;
-                            break;
-                        case  1: case  3: case  4: case  6:
-                        case  8: case 10: case 13: case 15:
-                            sum += (6 + 6 + 4 + 3) / 4.0;
-                            break;
-                        default:
-                            throw new Exception("Забыл case #" + dir);
-                       }
-                    _vertexIntersection = sum / cntDirection;
-                }
-                return _vertexIntersection;
-            }
-
-            public override Size GetDirectionSizeField() { return new Size(4, 4); }
-            public override double A => Math.Sqrt(Area / SQRT27) * 2;
-            public double B => A * 2;
-            public double C => A / 2;
-            public double ROut => A * SQRT3;
-            public double RIn => ROut / 2;
-            public override double GetSq(double borderWidth) {
-                var w = borderWidth / 2.0;
-                return (A * SQRT3 - w * 4) / (SQRT3 + 1);
-            }
-        }
-
-         public Trapezoid3(AttrTrapezoid3 attr, Coord coord)
-            : base(attr, coord,
+        public Trapezoid3(ShapeTrapezoid3 shape, Coord coord)
+            : base(shape, coord,
                        ((coord.y & 3) << 2) + (coord.x & 3) // 0..15
                   )
         { }
 
-        private new AttrTrapezoid3 Attr => (AttrTrapezoid3) base.Attr;
+        private new ShapeTrapezoid3 Shape => (ShapeTrapezoid3)base.Shape;
 
         public override IList<Coord> GetCoordsNeighbor() {
-            var neighborCoord = new Coord[Attr.GetNeighborNumber(GetDirection())];
+            var neighborCoord = new Coord[Shape.GetNeighborNumber(GetDirection())];
 
             // определяю координаты соседей
             switch (direction) {
@@ -303,12 +231,12 @@ namespace Fmg.Core.Mosaic.Cells {
         }
 
         protected override void CalcRegion() {
-            var attr = Attr;
-            var a = attr.A;
-            var b = attr.B;
-            var c = attr.C;
-            var R = attr.ROut;
-            var r = attr.RIn;
+            var shape = Shape;
+            var a = shape.A;
+            var b = shape.B;
+            var c = shape.C;
+            var R = shape.ROut;
+            var r = shape.RIn;
 
             // определение координат точек фигуры
             var oX = (R * 2) * (coord.x / 4) + R; // offset X
@@ -415,14 +343,14 @@ namespace Fmg.Core.Mosaic.Cells {
         }
 
         public override RectDouble GetRcInner(double borderWidth) {
-            var attr = Attr;
-            var a = attr.A;
-            var b = attr.B;
-            var c = attr.C;
-            var R = attr.ROut;
-            var r = attr.RIn;
+            var shape = Shape;
+            var a = shape.A;
+            var b = shape.B;
+            var c = shape.C;
+            var R = shape.ROut;
+            var r = shape.RIn;
             //var w = borderWidth / 2.0;
-            var sq  = attr.GetSq(borderWidth);
+            var sq  = shape.GetSq(borderWidth);
             var sq2 = sq / 2;
 
             var oX = (R * 2) * (coord.x / 4) + R; // offset X

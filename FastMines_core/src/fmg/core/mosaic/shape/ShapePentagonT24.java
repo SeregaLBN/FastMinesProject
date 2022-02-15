@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-// file name: "PentagonT24.java"
+// file name: "ShapePentagonT24.java"
 //
 // Реализация класса PentagonT24 - равносторонний 5-ти угольник, тип №2 и №4
 // Author: 2002-2018  -  Serhii Kryvulia aka SeregaLBN

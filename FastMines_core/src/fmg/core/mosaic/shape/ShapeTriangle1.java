@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-// file name: "Triangle1.java"
+// file name: "ShapeTriangle1.java"
 //
 // Реализация класса Triangle1 - равносторонний треугольник (вариант поля №1)
 // Author: 2002-2018  -  Serhii Kryvulia aka SeregaLBN

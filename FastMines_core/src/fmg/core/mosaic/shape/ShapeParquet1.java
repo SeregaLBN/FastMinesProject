@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-// file name: "Parquet1.java"
+// file name: "ShapeParquet1.java"
 //
 // Реализация класса Parquet1 - паркет в елку (herring-bone parquet)
 // Author: 2002-2018  -  Serhii Kryvulia aka SeregaLBN

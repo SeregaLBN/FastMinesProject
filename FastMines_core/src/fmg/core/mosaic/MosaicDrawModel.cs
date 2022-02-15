@@ -70,7 +70,7 @@ namespace Fmg.Core.Mosaic {
         }
 
         /// <summary> get mosaic size in pixels </summary>
-        public SizeDouble MosaicSize => CellAttr.GetSize(SizeField);
+        public SizeDouble MosaicSize => Shape.GetSize(SizeField);
 
         /// <summary> get inner size in pixels, куда равномерно вписана мозаика. Inner, т.к. снаружи есть ещё padding </summary>
         private SizeDouble InnerSize {
@@ -342,7 +342,7 @@ namespace Fmg.Core.Mosaic {
                 case nameof(this.Size):
                 case nameof(this.PenBorder):
                     var penBorder = PenBorder;
-                    FontInfo.Size = CellAttr.GetSq(penBorder.Width);
+                    FontInfo.Size = Shape.GetSq(penBorder.Width);
                     break;
                 }
             } finally {

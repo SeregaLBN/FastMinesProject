@@ -19,53 +19,25 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ////////////////////////////////////////////////////////////////////////////////
-using System;
 using System.Collections.Generic;
 using Fmg.Common.Geom;
+using Fmg.Core.Mosaic.Shape;
 
 namespace Fmg.Core.Mosaic.Cells {
 
     /// <summary> Пятиугольник. Тип №2 и №4 - равносторонний </summary>
     public class PentagonT24 : BaseCell {
 
-        public class AttrPentagonT24 : BaseAttribute {
-
-            public override SizeDouble GetSize(Matrisize sizeField) {
-                var a = A;
-                var b = B;
-                var result = new SizeDouble(
-                      b + sizeField.m * a,
-                      b + sizeField.n * a);
-
-                if (sizeField.n == 1)
-                    result.Width -= C;
-
-                return result;
-            }
-
-            public override int GetNeighborNumber(int direction) { return 7; }
-            public override int GetVertexNumber(int direction) { return 5; }
-            public override double GetVertexIntersection() { return 3.4; } // (3+3+3+4+4)/5.
-            public override Size GetDirectionSizeField() { return new Size(2, 2); }
-            public override double A => Math.Sqrt(Area);
-            public double B => A * 6 / 11;
-            public double C => B / 2;
-            public override double GetSq(double borderWidth) {
-                var w = borderWidth / 2.0;
-                return A * 8 / 11 - (w + w / SIN135a) / SQRT2;
-            }
-        }
-
-        public PentagonT24(AttrPentagonT24 attr, Coord coord)
-            : base(attr, coord,
+        public PentagonT24(ShapePentagonT24 shape, Coord coord)
+            : base(shape, coord,
                        ((coord.y & 1) << 1) + (coord.x & 1) // 0..3
                   )
         { }
 
-        private new AttrPentagonT24 Attr => (AttrPentagonT24)base.Attr;
+        private new ShapePentagonT24 Shape => (ShapePentagonT24)base.Shape;
 
         public override IList<Coord> GetCoordsNeighbor() {
-            var neighborCoord = new Coord[Attr.GetNeighborNumber(GetDirection())];
+            var neighborCoord = new Coord[Shape.GetNeighborNumber(GetDirection())];
 
             // определяю координаты соседей
             switch (direction) {
@@ -111,10 +83,10 @@ namespace Fmg.Core.Mosaic.Cells {
         }
 
         protected override void CalcRegion() {
-            var attr = Attr;
-            var a = attr.A;
-            var b = attr.B;
-            var c = attr.C;
+            var shape = Shape;
+            var a = shape.A;
+            var b = shape.B;
+            var c = shape.C;
 
             // определение координат точек фигуры
             var oX = a * ((coord.x >> 1) << 1); // offset X
@@ -152,10 +124,10 @@ namespace Fmg.Core.Mosaic.Cells {
         }
 
         public override RectDouble GetRcInner(double borderWidth) {
-            var attr = Attr;
-            var sq = attr.GetSq(borderWidth);
+            var shape = Shape;
+            var sq = shape.GetSq(borderWidth);
             var w = borderWidth / 2.0;
-            var w2 = w / SQRT2;
+            var w2 = w / BaseShape.SQRT2;
 
             var square = new RectDouble();
             switch (direction) {

@@ -19,52 +19,25 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ////////////////////////////////////////////////////////////////////////////////
-using System;
 using System.Collections.Generic;
 using Fmg.Common.Geom;
+using Fmg.Core.Mosaic.Shape;
 
 namespace Fmg.Core.Mosaic.Cells {
 
     /// <summary> Шестиугольник </summary>
     public class Hexagon1 : BaseCell {
 
-        public class AttrHexagon1 : BaseAttribute {
-
-            public override SizeDouble GetSize(Matrisize sizeField) {
-                var a = A;
-                var result = new SizeDouble(
-                      a * (sizeField.m       + 0.5) * SQRT3,
-                      a * (sizeField.n * 1.5 + 0.5));
-
-                if (sizeField.n == 1)
-                    result.Width -= B / 2;
-
-                return result;
-            }
-
-            public override int GetNeighborNumber(int direction) { return 6; }
-            public override int GetVertexNumber(int direction) { return 6; }
-            public override double GetVertexIntersection() { return 3; }
-            public override Size GetDirectionSizeField() { return new Size(1, 2); }
-            public override double A => Math.Sqrt(2 * Area / SQRT27);
-            /// <summary> пол стороны треугольника </summary>
-            public double B => A * SQRT3;
-            public override double GetSq(double borderWidth) {
-                var w = borderWidth / 2.0;
-                return 2 * (B - 2 * w) / (SQRT3 + 1);
-            }
-        }
-
-        public Hexagon1(AttrHexagon1 attr, Coord coord)
-            : base(attr, coord,
+        public Hexagon1(ShapeHexagon1 shape, Coord coord)
+            : base(shape, coord,
                          coord.y & 1 // 0..1
                   )
         { }
 
-        private new AttrHexagon1 Attr => (AttrHexagon1)base.Attr;
+        private new ShapeHexagon1 Shape => (ShapeHexagon1)base.Shape;
 
         public override IList<Coord> GetCoordsNeighbor() {
-            var neighborCoord = new Coord[Attr.GetNeighborNumber(GetDirection())];
+            var neighborCoord = new Coord[Shape.GetNeighborNumber(GetDirection())];
 
             // определяю координаты соседей
             neighborCoord[0] = new Coord(coord.x - (direction ^ 1), coord.y - 1);
@@ -78,9 +51,9 @@ namespace Fmg.Core.Mosaic.Cells {
         }
 
         protected override void CalcRegion() {
-            var attr = Attr;
-            var a = attr.A;
-            var b = attr.B;
+            var shape = Shape;
+            var a = shape.A;
+            var b = shape.B;
 
             var oX = (coord.x + 1) * b;                 // offset X
             var oY = (coord.y + (direction ^ 1)) * a * 1.5; // offset Y
@@ -106,10 +79,10 @@ namespace Fmg.Core.Mosaic.Cells {
         }
 
         public override RectDouble GetRcInner(double borderWidth) {
-            var attr = Attr;
-            var a = attr.A;
-            var b = attr.B;
-            var sq = attr.GetSq(borderWidth);
+            var shape = Shape;
+            var a = shape.A;
+            var b = shape.B;
+            var sq = shape.GetSq(borderWidth);
 
             var oX = (coord.x + 1) * b;               // offset X
             var oY = (coord.y + 1 - direction) * a * 1.5; // offset Y

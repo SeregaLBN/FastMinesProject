@@ -59,7 +59,7 @@ namespace Fmg.Uwp.Mosaic.Win2d {
         protected void ChangeSizeImagesMineFlag() {
             // PS: картинки не зависят от размера ячейки...
             MosaicDrawModel<CanvasBitmap> model = Model;
-            var sq = model.CellAttr.GetSq(model.PenBorder.Width);
+            var sq = model.Shape.GetSq(model.PenBorder.Width);
             if (sq <= 0) {
                 System.Diagnostics.Debug.Assert(false, "Error: слишком толстое перо! Нет области для вывода картиники флага/мины...");
                 sq = 3; // ат балды...

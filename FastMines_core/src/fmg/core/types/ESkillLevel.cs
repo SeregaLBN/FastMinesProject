@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Fmg.Common.Geom;
 using Fmg.Core.Mosaic;
-using Fmg.Core.Mosaic.Cells;
+using Fmg.Core.Mosaic.Shape;
 
 namespace Fmg.Core.Types {
 
@@ -29,25 +29,25 @@ namespace Fmg.Core.Types {
             var values = EMosaicEx.GetValues();
             mosaicCoefficient = new Dictionary<EMosaic, double>(values.Length);
             foreach (EMosaic mosaicType in values) {
-                BaseCell.BaseAttribute attr = MosaicHelper.CreateAttributeInstance(mosaicType);
+                BaseShape shape = MosaicHelper.CreateShapeInstance(mosaicType);
 
                 // variant 1 - сложность в зависимости от кол-ва пересечений ячеек в одной точке
-                //mosaicCoefficient.put(mosaicType, attr.getVertexIntersection());
+                //mosaicCoefficient.put(mosaicType, shape.getVertexIntersection());
 
                 // variant 2 - сложность в зависимости от кол-ва соседних ячеек
-                //int cntDir = attr.GetDirectionCount();
+                //int cntDir = shape.GetDirectionCount();
                 //int neighbors = 0;
                 //for (int i=0; i < cntDir; i++)
-                //   neighbors += attr.getNeighborNumber(i);
+                //   neighbors += shape.getNeighborNumber(i);
                 //mosaicCoefficient.Add(mosaicType, ((double)neighbors) / cntDir);
 
                 // variant 3 - сложность в зависимости от кол-ва соседних ячеек и кол-ва точек пересечения
-                var neighbors = Enumerable.Range(0, attr.GetDirectionCount())
-                          .Select(i => attr.GetNeighborNumber(i))
+                var neighbors = Enumerable.Range(0, shape.GetDirectionCount())
+                          .Select(shape.GetNeighborNumber)
                           .Average();
-                mosaicCoefficient.Add(mosaicType, attr.GetVertexIntersection() / neighbors);
+                mosaicCoefficient.Add(mosaicType, shape.GetVertexIntersection() / neighbors);
 
-                //System.out.println(attr.getClass().getSimpleName() + ": " + mosaicCoefficient.get(mosaicType));
+                //System.out.println(shape.getClass().getSimpleName() + ": " + mosaicCoefficient.get(mosaicType));
             }
 
             // x*y * coefficient / mosaicCoefficient  = 15

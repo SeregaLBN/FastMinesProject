@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FMG project
-// file name: "BaseCell.java"
+// file name: "BaseShape.java"
 //
 // Реализация базового класса BaseCell
 // Author: 2002-2018  -  Serhii Kryvulia aka SeregaLBN

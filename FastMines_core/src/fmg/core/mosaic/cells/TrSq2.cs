@@ -19,107 +19,25 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ////////////////////////////////////////////////////////////////////////////////
-using System;
 using System.Collections.Generic;
 using Fmg.Common.Geom;
+using Fmg.Core.Mosaic.Shape;
 
 namespace Fmg.Core.Mosaic.Cells {
 
     /// <summary> Комбинация. мозаика из 24х треугольников и 12х квадратов (на 1 квадрат приходится 2 треугольника) </summary>
     public class TrSq2 : BaseCell {
 
-        public class AttrTrSq2 : BaseAttribute {
-
-            public override SizeDouble GetSize(Matrisize sizeField) {
-                var a = A;
-                var b = B;
-                var h = H;
-                var result = new SizeDouble(
-                        b + h * ((sizeField.m + 2) / 3) +
-                        a *     ((sizeField.m + 1) / 3) +
-                        b *     ((sizeField.m + 0) / 3),
-                        b + h * ((sizeField.n + 2) / 3) +
-                        a *     ((sizeField.n + 1) / 3) +
-                        b *     ((sizeField.n + 0) / 3));
-
-                if (sizeField.n < 5) {
-                    var x = sizeField.m % 6;
-                    switch (sizeField.n) {
-                    case 1:
-                        switch (x) { case 0: case 2: case 5: result.Width -= b; break; }
-                        break;
-                    case 2: case 3: case 4:
-                        if (x == 5) result.Width -= b;
-                        break;
-                    }
-                }
-                if (sizeField.m < 5) {
-                    var y = sizeField.n % 6;
-                    switch (sizeField.m) {
-                    case 1:
-                        switch (y) { case 2: case 3: case 5: result.Height -= b; break; }
-                        break;
-                    case 2: case 3: case 4:
-                        if (y == 2) result.Height -= b;
-                        break;
-                    }
-                }
-
-                return result;
-            }
-
-            public override int GetNeighborNumber(int direction) {
-                switch (direction) {
-                case  1: case  2: case  4: case  5:
-                case  6: case  8: case  9: case 11:
-                case 12: case 13: case 15: case 16:
-                case 19: case 20: case 22: case 23:
-                case 24: case 26: case 27: case 29:
-                case 30: case 31: case 33: case 34: return 9;
-                case  0: case  3: case  7: case 10:
-                case 14: case 17: case 18: case 21:
-                case 25: case 28: case 32: case 35: return 12;
-                default:
-                    throw new ArgumentException("Invalid value direction="+direction);
-                }
-            }
-            public override int GetVertexNumber(int direction) {
-                switch (direction) {
-                case  0: case  3: case  7: case 10:
-                case 14: case 17: case 18: case 21:
-                case 25: case 28: case 32: case 35: return 4;
-                case  1: case  2: case  4: case  5:
-                case  6: case  8: case  9: case 11:
-                case 12: case 13: case 15: case 16:
-                case 19: case 20: case 22: case 23:
-                case 24: case 26: case 27: case 29:
-                case 30: case 31: case 33: case 34: return 3;
-                default:
-                    throw new ArgumentException("Invalid value direction="+direction);
-                }
-            }
-            public override double GetVertexIntersection() { return 5.0; }
-            public override Size GetDirectionSizeField() { return new Size(6, 6); }
-            /// <summary> </summary> размер стороны треугольника и квадрата */
-            public override double A => Math.Sqrt(6 * Area / (2 + SQRT3));
-            public double B => A / 2;
-            public double H => B * SQRT3;
-            public override double GetSq(double borderWidth) {
-                var w = borderWidth / 2.0;
-                return (A * SQRT3 - w * 6) / (2 + SQRT3) - 1;
-            }
-        }
-
-        public TrSq2(AttrTrSq2 attr, Coord coord)
-            : base(attr, coord,
+        public TrSq2(ShapeTrSq2 shape, Coord coord)
+            : base(shape, coord,
                         (coord.y % 6) * 6 + (coord.x % 6) // 0..35
                   )
         { }
 
-        private new AttrTrSq2 Attr => (AttrTrSq2) base.Attr;
+        private new ShapeTrSq2 Shape => (ShapeTrSq2)base.Shape;
 
         public override IList<Coord> GetCoordsNeighbor() {
-            var neighborCoord = new Coord[Attr.GetNeighborNumber(GetDirection())];
+            var neighborCoord = new Coord[Shape.GetNeighborNumber(GetDirection())];
 
             // определяю координаты соседей
             switch (direction) {
@@ -363,10 +281,10 @@ namespace Fmg.Core.Mosaic.Cells {
         }
 
         private PointDouble getOffset() {
-            var attr = Attr;
-            var a = attr.A;
-            var b = attr.B;
-            var h = attr.H;
+            var shape = Shape;
+            var a = shape.A;
+            var b = shape.B;
+            var h = shape.H;
 
             double oX = 0; // offset X
             double oY = 0; // offset Y
@@ -385,10 +303,10 @@ namespace Fmg.Core.Mosaic.Cells {
         }
 
         protected override void CalcRegion() {
-            var attr = Attr;
-            var a = attr.A;
-            var b = attr.B;
-            var h = attr.H;
+            var shape = Shape;
+            var a = shape.A;
+            var b = shape.B;
+            var h = shape.H;
 
             var o = getOffset();
             switch (direction) {
@@ -492,12 +410,12 @@ namespace Fmg.Core.Mosaic.Cells {
         }
 
         public override RectDouble GetRcInner(double borderWidth) {
-            var attr = Attr;
-            var a = attr.A;
-            var b = attr.B;
-            var h = attr.H;
+            var shape = Shape;
+            var a = shape.A;
+            var b = shape.B;
+            var h = shape.H;
             var w = borderWidth / 2.0;
-            var sq = attr.GetSq(borderWidth);
+            var sq = shape.GetSq(borderWidth);
             var sq2 = sq / 2;
             var wsq2 = w + sq2;
 

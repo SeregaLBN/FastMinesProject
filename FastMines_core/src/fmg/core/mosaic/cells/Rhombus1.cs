@@ -23,63 +23,23 @@ using System;
 using System.Collections.Generic;
 using Fmg.Common;
 using Fmg.Common.Geom;
+using Fmg.Core.Mosaic.Shape;
 
 namespace Fmg.Core.Mosaic.Cells {
 
     /// <summary> Rhombus1 - 3 ромба, составляющие равносторонний шестиугольник </summary>
     public class Rhombus1 : BaseCell {
 
-        public class AttrRhombus1 : BaseAttribute {
-
-           public override SizeDouble GetSize(Matrisize sizeField) {
-               var a = A;
-               var r = R;
-               var c = C;
-               var result = new SizeDouble(
-                     c + a  * ((sizeField.m + 2) / 3) +
-                    (a + c) * ((sizeField.m + 1) / 3) +
-                         c  * ((sizeField.m + 0) / 3),
-                         r  *  (sizeField.n + 1));
-
-               if (sizeField.m == 1)
-                  result.Height -= r;
-               if (sizeField.n == 1)
-                   switch (sizeField.m % 3) {
-                   case 0: result.Width -= a / 2; break;
-                   case 2: result.Width -= a; break;
-                   }
-
-               return result;
-           }
-
-           public override int GetNeighborNumber(int direction) { return 10; }
-           public override int GetVertexNumber(int direction) { return 4; }
-           public override double GetVertexIntersection() { return 4.5; } // (3+3+6+6)/4.
-           public override Size GetDirectionSizeField() { return new Size(3, 2); }
-           public override double A => Math.Sqrt(Area*2/SQRT3);
-           public double C => A / 2;
-           public double H => A * SQRT3;
-           public double R => H / 2;
-           public override double GetSq(double borderWidth) {
-                var w = borderWidth / 2.0;
-                return (A * SQRT3 - w * 4) / (SQRT3 + 1);
-           }
-
-           public override int GetMaxCellFillModeValue() {
-                return base.GetMaxCellFillModeValue() + 1;
-            }
-        }
-
-        public Rhombus1(AttrRhombus1 attr, Coord coord)
-            : base(attr, coord,
+        public Rhombus1(ShapeRhombus1 shape, Coord coord)
+            : base(shape, coord,
                         (coord.y & 1) * 3 + (coord.x % 3) // 0..5
                   )
         { }
 
-        private new AttrRhombus1 Attr => (AttrRhombus1) base.Attr;
+        private new ShapeRhombus1 Shape => (ShapeRhombus1)base.Shape;
 
         public override IList<Coord> GetCoordsNeighbor() {
-           var neighborCoord = new Coord[Attr.GetNeighborNumber(GetDirection())];
+           var neighborCoord = new Coord[Shape.GetNeighborNumber(GetDirection())];
 
            // определяю координаты соседей
             switch (direction) {
@@ -161,11 +121,11 @@ namespace Fmg.Core.Mosaic.Cells {
         }
 
         protected override void CalcRegion() {
-            var attr = Attr;
-            var a = attr.A;
-            var c = attr.C;
-            var h = attr.H;
-            var r = attr.R;
+            var shape = Shape;
+            var a = shape.A;
+            var c = shape.C;
+            var h = shape.H;
+            var r = shape.R;
 
             // определение координат точек фигуры
             var oX = a * (coord.x / 3 * 3 + 1) + c; // offset X
@@ -212,13 +172,13 @@ namespace Fmg.Core.Mosaic.Cells {
         }
 
         public override RectDouble GetRcInner(double borderWidth) {
-            var attr = Attr;
-            var a = attr.A;
-            var c = attr.C;
-            var h = attr.H;
-            var r = attr.R;
+            var shape = Shape;
+            var a = shape.A;
+            var c = shape.C;
+            var h = shape.H;
+            var r = shape.R;
           //var w = borderWidth / 2.0;
-            var sq  = attr.GetSq(borderWidth);
+            var sq  = shape.GetSq(borderWidth);
             var sq2 = sq / 2;
 
             var oX = a * (coord.x / 3 * 3 + 1) + c; // offset X
@@ -243,7 +203,7 @@ namespace Fmg.Core.Mosaic.Cells {
         public override int GetShiftPointBorderIndex() { return 2; }
 
         public override Color GetCellFillColor(int fillMode, Color defaultColor, Func<int, Color> repositoryColor) {
-            if (fillMode == Attr.GetMaxCellFillModeValue()) {
+            if (fillMode == Shape.GetMaxCellFillModeValue()) {
                 var c = GetCoord();
                 switch ((c.y % 4) * 3 + (c.x % 3)) { // почти как вычисление direction...
                                                      // подсвечиваю 4 группы, составляющие каждая шестигранник из 3х ромбов

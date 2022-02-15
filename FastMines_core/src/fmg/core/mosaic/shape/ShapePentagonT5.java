@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-// file name: "PentagonT5.java"
+// file name: "ShapePentagonT5.java"
 //
 // Реализация класса PentagonT5 - 5-ти угольник, тип №5
 // Author: 2002-2018  -  Serhii Kryvulia aka SeregaLBN

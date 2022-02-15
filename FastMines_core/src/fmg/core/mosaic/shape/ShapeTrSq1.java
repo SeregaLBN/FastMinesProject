@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-// file name: "TrSq1.java"
+// file name: "ShapeTrSq1.java"
 //
 // Реализация класса TrSq1 - мозаика из 4х треугольников и 2х квадратов
 // Author: 2002-2018  -  Serhii Kryvulia aka SeregaLBN

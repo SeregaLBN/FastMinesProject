@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-// file name: "Rhombus1.java"
+// file name: "ShapeRhombus1.java"
 //
 // Реализация класса Rhombus1 - 3 ромба, составляющие равносторонний шестиугольник
 // Author: 2002-2018  -  Serhii Kryvulia aka SeregaLBN

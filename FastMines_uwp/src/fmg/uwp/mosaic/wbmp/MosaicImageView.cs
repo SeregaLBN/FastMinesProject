@@ -100,7 +100,7 @@ namespace Fmg.Uwp.Mosaic.Wbmp {
         /// <summary> переустанавливаю заного размер мины/флага для мозаики </summary>
         protected void ChangeSizeImagesMineFlag() {
             MosaicDrawModel<WriteableBitmap> model = Model;
-            var sq = model.CellAttr.GetSq(model.PenBorder.Width);
+            var sq = model.Shape.GetSq(model.PenBorder.Width);
             if (sq <= 0) {
                 System.Diagnostics.Debug.WriteLine("Error: too thick pen! There is no area for displaying the flag/mine image...");
                 sq = 3; // ат балды...
