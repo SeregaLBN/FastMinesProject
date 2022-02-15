@@ -38,22 +38,6 @@ import fmg.core.types.EState;
 /** Базовый класс фигуры-ячейки */
 public abstract class BaseCell {
 
-    public static final double SQRT2   = java.lang.Math.sqrt(2.);
-    public static final double SQRT3   = java.lang.Math.sqrt(3.);
-    public static final double SQRT27  = java.lang.Math.sqrt(27.);
-    public static final double SQRT48  = java.lang.Math.sqrt(48.);
-    public static final double SQRT147 = java.lang.Math.sqrt(147.);
-    public static final double SIN15   = java.lang.Math.sin(java.lang.Math.PI/180.*15.);
-    public static final double SIN18   = java.lang.Math.sin(java.lang.Math.PI/180.*18.);
-    public static final double SIN36   = java.lang.Math.sin(java.lang.Math.PI/180.*36.);
-    public static final double SIN54   = java.lang.Math.sin(java.lang.Math.PI/180.*54.);
-    public static final double SIN72   = java.lang.Math.sin(java.lang.Math.PI/180.*72.);
-    public static final double SIN75   = java.lang.Math.sin(java.lang.Math.PI/180.*75.);
-    public static final double SIN99   = java.lang.Math.sin(java.lang.Math.PI/180.*99.);
-    public static final double TAN15   = java.lang.Math.tan(java.lang.Math.PI/180.*15.);
-    public static final double TAN45_2 = java.lang.Math.tan(java.lang.Math.PI/180.*45./2);
-    public static final double SIN135a = java.lang.Math.sin(java.lang.Math.PI/180.*135.-java.lang.Math.atan(8./3));
-
     private final BaseShape shape;
     public BaseShape getShape() {
         return shape;

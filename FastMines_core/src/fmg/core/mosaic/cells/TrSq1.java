@@ -28,6 +28,7 @@ import java.util.List;
 import fmg.common.geom.Coord;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
+import fmg.core.mosaic.shape.BaseShape;
 import fmg.core.mosaic.shape.ShapeTrSq1;
 
 /**
@@ -192,8 +193,8 @@ public class TrSq1 extends BaseCell {
         double oY = n + n*2*(coord.y/2);   // offset Y
 
 
-        double ksw1 = k/2-sq2-w/SQRT2;
-        double ksw2 = k/2+sq2+w/SQRT2;
+        double ksw1 = k/2-sq2-w/BaseShape.SQRT2;
+        double ksw2 = k/2+sq2+w/BaseShape.SQRT2;
         PointDouble center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)
         switch (direction) {
         case 0:  center.x = oX - b/2;    center.y = oY - k/2;    break;

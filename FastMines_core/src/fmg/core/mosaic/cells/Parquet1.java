@@ -27,6 +27,7 @@ import java.util.List;
 
 import fmg.common.geom.Coord;
 import fmg.common.geom.RectDouble;
+import fmg.core.mosaic.shape.BaseShape;
 import fmg.core.mosaic.shape.ShapeParquet1;
 
 /**
@@ -91,8 +92,8 @@ public class Parquet1 extends BaseCell {
         boolean bdir = (direction != 0);
 
         return new RectDouble(
-            (bdir ? region.getPoint(0).x: region.getPoint(2).x) + w / SQRT2,
-            (bdir ? region.getPoint(3).y: region.getPoint(1).y) + w / SQRT2,
+            (bdir ? region.getPoint(0).x: region.getPoint(2).x) + w / BaseShape.SQRT2,
+            (bdir ? region.getPoint(3).y: region.getPoint(1).y) + w / BaseShape.SQRT2,
             sq, sq);
     }
 

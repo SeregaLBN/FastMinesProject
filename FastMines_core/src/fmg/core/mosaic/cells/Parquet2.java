@@ -27,6 +27,7 @@ import java.util.List;
 
 import fmg.common.geom.Coord;
 import fmg.common.geom.RectDouble;
+import fmg.core.mosaic.shape.BaseShape;
 import fmg.core.mosaic.shape.ShapeParquet2;
 
 /**
@@ -135,12 +136,12 @@ public class Parquet2 extends BaseCell {
         RectDouble square = new RectDouble();
         switch (direction) {
         case 0: case 3:
-            square.x = region.getPoint(0).x + w/SQRT2;
-            square.y = region.getPoint(3).y + w/SQRT2;
+            square.x = region.getPoint(0).x + w/BaseShape.SQRT2;
+            square.y = region.getPoint(3).y + w/BaseShape.SQRT2;
             break;
         case 1: case 2:
-            square.x = region.getPoint(2).x + w/SQRT2;
-            square.y = region.getPoint(1).y + w/SQRT2;
+            square.x = region.getPoint(2).x + w/BaseShape.SQRT2;
+            square.y = region.getPoint(1).y + w/BaseShape.SQRT2;
             break;
         }
         square.width = sq;

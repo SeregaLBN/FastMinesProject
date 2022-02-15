@@ -28,6 +28,7 @@ import java.util.List;
 import fmg.common.geom.Coord;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
+import fmg.core.mosaic.shape.BaseShape;
 import fmg.core.mosaic.shape.ShapeTriangle4;
 import fmg.core.mosaic.shape.ShapeTriangle4.ComplexityMode;
 
@@ -599,7 +600,7 @@ public class Triangle4 extends BaseCell {
         double R = shape.getROut();
         double r = shape.getRIn();
         double s = (ShapeTriangle4.Mode != ComplexityMode.eUnrealMode) ? shape.getSnip() : 0;
-        double c = (ShapeTriangle4.Mode != ComplexityMode.eUnrealMode) ? s/2*SQRT3 : 0; // s * cos30
+        double c = (ShapeTriangle4.Mode != ComplexityMode.eUnrealMode) ? s/2*BaseShape.SQRT3 : 0; // s * cos30
         double u = (ShapeTriangle4.Mode != ComplexityMode.eUnrealMode) ? s/2 : 0; // s * cos60
 
         // определение координат точек фигуры
@@ -934,7 +935,7 @@ public class Triangle4 extends BaseCell {
         double sq    = shape.getSq(borderWidth);
         double sq2   = sq/2;
         double sq2w  = sq2+w;
-        double sq2w3 = sq2+w/SQRT3;
+        double sq2w3 = sq2+w/BaseShape.SQRT3;
 
         PointDouble center = new PointDouble(); // координата центра квадрата
         switch (direction) {

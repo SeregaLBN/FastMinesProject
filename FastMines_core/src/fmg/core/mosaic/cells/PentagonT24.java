@@ -27,6 +27,7 @@ import java.util.List;
 
 import fmg.common.geom.Coord;
 import fmg.common.geom.RectDouble;
+import fmg.core.mosaic.shape.BaseShape;
 import fmg.core.mosaic.shape.ShapePentagonT24;
 
 /**
@@ -140,7 +141,7 @@ public class PentagonT24 extends BaseCell {
         ShapePentagonT24 shape = getShape();
         double sq = shape.getSq(borderWidth);
         double w = borderWidth/2.;
-        double w2 = w/SQRT2;
+        double w2 = w/BaseShape.SQRT2;
 
         RectDouble square = new RectDouble();
         switch (direction) {
