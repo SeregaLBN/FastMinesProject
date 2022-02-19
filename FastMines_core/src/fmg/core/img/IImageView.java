@@ -9,6 +9,7 @@ import fmg.common.notifier.INotifyPropertyChanged;
  * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
  * @param <TImageModel> model data for display
  **/
+@Deprecated
 public interface IImageView<TImage, TImageModel extends IImageModel>
                  extends INotifyPropertyChanged, AutoCloseable
 {

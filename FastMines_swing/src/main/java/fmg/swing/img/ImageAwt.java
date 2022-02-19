@@ -10,6 +10,7 @@ import fmg.core.img.IImageModel;
 import fmg.core.img.IImageView;
 
 /** Internal wrapper-image implementation over java.awt.Image */
+@Deprecated
 class ImageAwt {
 
     private IImageView<java.awt.Image, ? extends IImageModel> imageView;

@@ -37,6 +37,7 @@ import fmg.swing.mosaic.MosaicJPanelController;
   gradle :FastMines_swing:runDemoApp
 
  */
+@Deprecated
 public class DemoApp  {
 
     private static final int MARGIN = 10; // panel margin - padding to inner images

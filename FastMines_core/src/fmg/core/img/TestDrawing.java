@@ -15,6 +15,7 @@ import fmg.core.img.IMosaicAnimatedModel.EMosaicRotateMode;
 import fmg.core.mosaic.IMosaicDrawModel;
 import fmg.core.mosaic.MosaicGameModel;
 
+@Deprecated
 public class TestDrawing {
 
     public Random getRandom() { return ThreadLocalRandom.current(); }

@@ -11,6 +11,7 @@ import fmg.core.img.IImageModel;
 import fmg.core.img.IImageView;
 
 /** Internal wrapper-image implementation over javax.swing.Icon */
+@Deprecated
 class IconSwing implements AutoCloseable {
 
     private IImageView<javax.swing.Icon, ? extends IImageModel> imageView;
@@ -53,4 +54,4 @@ class IconSwing implements AutoCloseable {
         gBuffImg = null;
     }
 
-    }
+}

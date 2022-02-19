@@ -8,6 +8,7 @@ import fmg.common.notifier.INotifyPropertyChanged;
  * Image MVC: model
  * Model of image data/properties/characteristics
  */
+@Deprecated
 public interface IImageModel extends INotifyPropertyChanged, AutoCloseable {
 
     public static final String PROPERTY_SIZE    = "Size";

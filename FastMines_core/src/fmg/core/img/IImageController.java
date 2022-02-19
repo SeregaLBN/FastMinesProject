@@ -10,6 +10,7 @@ import fmg.common.notifier.INotifyPropertyChanged;
  * @param <TImageView> image view
  * @param <TImageModel> image model
  */
+@Deprecated
 public interface IImageController<TImage,
                                   TImageView  extends IImageView<TImage, TImageModel>,
                                   TImageModel extends IImageModel>
