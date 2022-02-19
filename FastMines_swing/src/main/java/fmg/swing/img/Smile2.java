@@ -2,14 +2,10 @@ package fmg.swing.img;
 
 import java.awt.*;
 import java.awt.geom.*;
-import java.awt.image.BufferedImage;
 import java.util.function.Consumer;
 
 import fmg.common.geom.PointDouble;
-import fmg.common.ui.UiInvoker;
-import fmg.core.img.IImageController2;
-import fmg.core.img.IImageView2;
-import fmg.core.img.ImageHelper;
+import fmg.core.img.ImageController2;
 import fmg.core.img.SmileModel2;
 import fmg.core.img.SmileModel2.EFaceType;
 import fmg.swing.utils.Cast;
@@ -376,222 +372,24 @@ public final class Smile2 {
         return outside;
     }
 
-    /** Smile image view implementation over {@link javax.swing.Icon} */
-    private static class SmileSwingIconView implements IImageView2<javax.swing.Icon> {
-        private final SmileModel2 model;
-        private boolean valid;
-        private javax.swing.Icon image;
-        private Graphics2D gBuffImg;
-
-        public SmileSwingIconView(SmileModel2 model) {
-            this.model = model;
-        }
-
-        public boolean isValid() {
-            return valid;
-        }
-
-        @Override
-        public void invalidate() {
-            valid = false;
-        }
-
-        @Override
-        public javax.swing.Icon getImage() {
-            if (image == null) {
-                image = create((int)model.getSize().width, (int)model.getSize().height);
-                valid = false;
-            }
-            if (!valid) {
-                draw(gBuffImg, model);
-                valid = true;
-            }
-            return image;
-        }
-
-        private javax.swing.Icon create(int width, int height) {
-            if (gBuffImg != null)
-                gBuffImg.dispose();
-
-            var buffImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-            gBuffImg = buffImg.createGraphics();
-            gBuffImg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            gBuffImg.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-            //gBuffImg.setClip(0, 0, s.width, s.height);
-
-            return new javax.swing.Icon() {
-                @Override
-                public int getIconWidth() { return width; }
-                @Override
-                public int getIconHeight() { return height; }
-                @Override
-                public void paintIcon(Component c, Graphics g, int x, int y) {
-                    g.drawImage(buffImg, x,y, c);
-                }
-            };
-        }
-
-        public void reset() {
-            if (gBuffImg != null)
-                gBuffImg.dispose();
-            gBuffImg = null;
-            image = null;
-            valid = false;
-        }
-
-    }
-
-    /** Smile image view implementation over {@link java.awt.Image} */
-    private static class SmileAwtImageView implements IImageView2<java.awt.Image> {
-        private final SmileModel2 model;
-        private boolean valid;
-        private BufferedImage image;
-
-        public SmileAwtImageView(SmileModel2 model) {
-            this.model = model;
-        }
-
-        public boolean isValid() {
-            return valid;
-        }
-
-        @Override
-        public void invalidate() {
-            valid = false;
-        }
-
-        @Override
-        public java.awt.Image getImage() {
-            if (image == null) {
-                image = create((int)model.getSize().width, (int)model.getSize().height);
-                valid = false;
-            }
-            if (!valid) {
-                Graphics2D g = image.createGraphics();
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-                draw(g, model);
-                g.dispose();
-                valid = true;
-            }
-            return image;
-        }
-
-        private BufferedImage create(int width, int height) {
-            return new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        }
-
-        public void reset() {
-            image = null;
-            valid = false;
-        }
-
-    }
-
     /** Smile image controller implementation for {@link javax.swing.Icon} */
-    public static class SmileSwingIconController implements IImageController2<javax.swing.Icon, SmileModel2>, AutoCloseable {
-
-        private final SmileModel2 model;
-        private final SmileSwingIconView view;
-        private Consumer<String> changedCallback;
+    public static class SmileSwingIconController extends ImageController2<javax.swing.Icon, SmileModel2, SwingIconView<SmileModel2>> {
 
         public SmileSwingIconController(EFaceType faceType) {
-            model = new SmileModel2(faceType);
-            view = new SmileSwingIconView(model);
-            model.setListener(this::onModelChanged);
-        }
-
-        @Override
-        public SmileModel2 getModel() {
-            return model;
-        }
-
-        @Override
-        public javax.swing.Icon getImage() {
-            return view.getImage();
-        }
-
-        @Override
-        public void setListener(Consumer<String> callback) {
-            changedCallback = callback;
-            view.invalidate();
-        }
-
-        private void onModelChanged(String property) {
-            var isValidBefore = view.isValid();
-            var callback = changedCallback;
-
-            if (ImageHelper.PROPERTY_NAME_SIZE.equals(property)) {
-                view.reset();
-                if (callback != null)
-                    UiInvoker.Deferred.accept(() -> callback.accept(ImageHelper.PROPERTY_NAME_SIZE));
-            }
-
-            view.invalidate();
-
-            if ((callback != null) && isValidBefore)
-                UiInvoker.Deferred.accept(() -> callback.accept(ImageHelper.PROPERTY_NAME_IMAGE));
-        }
-
-        @Override
-        public void close() throws Exception {
-            changedCallback = null;
-            model.setListener(null);
-            view.reset();
+            var model = new SmileModel2(faceType);
+            var view = new SwingIconView<>(model, Smile2::draw);
+            init(model, view);
         }
 
     }
 
     /** Smile image controller implementation for {@link java.awt.Image} */
-    public static class SmileAwtImageController implements IImageController2<java.awt.Image, SmileModel2>, AutoCloseable {
-
-        private final SmileModel2 model;
-        private final SmileAwtImageView view;
-        private Consumer<String> changedCallback;
+    public static class SmileAwtImageController extends ImageController2<java.awt.Image, SmileModel2, AwtImageView<SmileModel2>> {
 
         public SmileAwtImageController(EFaceType faceType) {
-            model = new SmileModel2(faceType);
-            view = new SmileAwtImageView(model);
-            model.setListener(this::onModelChanged);
-        }
-
-        @Override
-        public SmileModel2 getModel() {
-            return model;
-        }
-
-        @Override
-        public java.awt.Image getImage() {
-            return view.getImage();
-        }
-
-        @Override
-        public void setListener(Consumer<String> callback) {
-            changedCallback = callback;
-            view.invalidate();
-        }
-
-        private void onModelChanged(String property) {
-            var isValidBefore = view.isValid();
-            var callback = changedCallback;
-
-            if (ImageHelper.PROPERTY_NAME_SIZE.equals(property)) {
-                view.reset();
-                if (callback != null)
-                    UiInvoker.Deferred.accept(() -> callback.accept(ImageHelper.PROPERTY_NAME_SIZE));
-            }
-
-            view.invalidate();
-
-            if ((callback != null) && isValidBefore)
-                UiInvoker.Deferred.accept(() -> callback.accept(ImageHelper.PROPERTY_NAME_IMAGE));
-        }
-
-        @Override
-        public void close() throws Exception {
-            changedCallback = null;
-            model.setListener(null);
-            view.reset();
+            var model = new SmileModel2(faceType);
+            var view = new AwtImageView<>(model, Smile2::draw);
+            init(model, view);
         }
 
     }

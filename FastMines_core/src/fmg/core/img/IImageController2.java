@@ -12,7 +12,6 @@ public interface IImageController2<TImage,
     TModel getModel();
     TImage getImage();
 
-
     /** set callback */
     void setListener(Consumer<String /* property name */> callback);
 

@@ -14,6 +14,7 @@ import fmg.common.notifier.NotifyPropertyChanged;
  * @param <TImageView> image view
  * @param <TImageModel> image model
  */
+@Deprecated
 public abstract class ImageController<TImage,
                                       TImageView  extends IImageView<TImage, TImageModel>,
                                       TImageModel extends IImageModel>

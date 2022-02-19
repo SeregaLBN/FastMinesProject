@@ -10,4 +10,9 @@ public interface IImageView2<TImage> {
      * Performs a call to the inner draw method (synchronously or asynchronously or implicitly, depending on the implementation) */
     void invalidate();
 
+    /** image is actual? */
+    boolean isValid();
+
+    void reset();
+
 }

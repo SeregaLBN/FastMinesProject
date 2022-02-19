@@ -5,10 +5,8 @@ import java.util.function.Consumer;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 
-/**
- * Image MVC: model
- * Model of image data/properties/characteristics
- */
+/** Image MVC: model
+ * Model of image data/properties/characteristics */
 public interface IImageModel2 {
 
     /** width and height of the displayed part in pixels */
