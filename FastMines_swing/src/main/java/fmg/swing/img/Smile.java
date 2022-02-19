@@ -12,6 +12,7 @@ import fmg.core.img.SmileModel.EFaceType;
 import fmg.swing.utils.Cast;
 
 /** Smile images */
+@Deprecated
 public final class Smile {
     private Smile() {}
 

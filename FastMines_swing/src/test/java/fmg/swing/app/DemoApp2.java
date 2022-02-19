@@ -18,9 +18,11 @@ import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.IImageController2;
 import fmg.core.img.ImageHelper;
+import fmg.core.img.SmileModel2.EFaceType;
 import fmg.core.img.TestDrawing2;
 import fmg.swing.img.Animator;
 import fmg.swing.img.Flag2;
+import fmg.swing.img.Smile2;
 import fmg.swing.mosaic.MosaicJPanelController;
 
 /** live UI test application
@@ -115,12 +117,12 @@ public class DemoApp2  {
         testApp(() -> Stream.of(new Flag2.FlagSwingIconController()
                               , new Flag2.FlagAwtImageController()));
     }
-//    public void testSmile() {
-//        testApp(() -> Stream.of(EFaceType.values())
-//                            .map(e -> Stream.of(new Smile.IconController(e),
-//                                                new Smile.ImageAwtController(e)))
-//                            .flatMap(x -> x));
-//    }
+    public void testSmile() {
+        testApp(() -> Stream.of(EFaceType.values())
+                            .map(e -> Stream.of(new Smile2.SmileSwingIconController(e),
+                                                new Smile2.SmileAwtImageController(e)))
+                            .flatMap(x -> x));
+    }
     // #endregion
 
     public void runApp() {
@@ -131,7 +133,7 @@ public class DemoApp2  {
 //            this::testMosaicImg,
 //            this::testMosaicSkillImg,
 //            this::testMosaicGroupImg,
-//            this::testSmile,
+            this::testSmile,
 //            this::testLogo,
 //            this::testMine,
             this::testFlag

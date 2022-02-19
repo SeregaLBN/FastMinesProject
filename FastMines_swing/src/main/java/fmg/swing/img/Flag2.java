@@ -9,8 +9,8 @@ import java.util.function.Consumer;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
+import fmg.core.img.FlagModel2;
 import fmg.core.img.IImageController2;
-import fmg.core.img.IImageModel2;
 import fmg.core.img.IImageView2;
 import fmg.core.img.ImageHelper;
 
@@ -74,59 +74,6 @@ public final class Flag2 {
         g.drawLine((int)p[1].x, (int)p[1].y, (int)p[2].x, (int)p[2].y);
     }
 
-    private static class FlagModel2 implements IImageModel2 {
-
-        private final SizeDouble size = new SizeDouble(100, 100);
-        private final BoundDouble pad = new BoundDouble(0);
-        private Consumer<String> changedCallback;
-
-        @Override
-        public SizeDouble getSize() {
-            return size;
-        }
-
-        @Override
-        public void setSize(SizeDouble size) {
-            if (this.size.equals(size))
-                return;
-
-            ImageHelper.checkSize(size);
-            this.size.width  = size.width;
-            this.size.height = size.height;
-
-            if (changedCallback != null)
-                changedCallback.accept(ImageHelper.PROPERTY_NAME_SIZE);
-        }
-
-        @Override
-        public BoundDouble getPadding() {
-            return pad;
-        }
-
-        @Override
-        public void setPadding(BoundDouble padding) {
-            if (pad.equals(padding))
-                return;
-
-            ImageHelper.checkPadding(size, padding);
-            this.pad.left   = padding.left;
-            this.pad.right  = padding.right;
-            this.pad.top    = padding.top;
-            this.pad.bottom = padding.bottom;
-
-            if (changedCallback != null)
-                changedCallback.accept(ImageHelper.PROPERTY_NAME_PADDING);
-        }
-
-        @Override
-        public void setListener(Consumer<String> callback) {
-            if ((callback != null) && (changedCallback != null))
-                throw new IllegalArgumentException("Can only set the controller once ");
-            changedCallback = callback;
-        }
-
-    }
-
     /** Flag image view implementation over {@link javax.swing.Icon} */
     private static class FlagSwingIconView implements IImageView2<javax.swing.Icon> {
         private final FlagModel2 model;
@@ -154,7 +101,7 @@ public final class Flag2 {
                 valid = false;
             }
             if (!valid) {
-                draw(gBuffImg, model.size, model.pad);
+                draw(gBuffImg, model.getSize(), model.getPadding());
                 valid = true;
             }
             return image;
@@ -221,7 +168,7 @@ public final class Flag2 {
                 Graphics2D g = image.createGraphics();
                 g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-                draw(g, model.size, model.pad);
+                draw(g, model.getSize(), model.getPadding());
                 g.dispose();
                 valid = true;
             }
