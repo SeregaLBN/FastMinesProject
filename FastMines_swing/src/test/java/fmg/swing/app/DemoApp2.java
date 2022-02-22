@@ -22,6 +22,7 @@ import fmg.core.img.SmileModel2.EFaceType;
 import fmg.core.img.TestDrawing2;
 import fmg.swing.img.Animator;
 import fmg.swing.img.Flag2;
+import fmg.swing.img.Logo2;
 import fmg.swing.img.Smile2;
 import fmg.swing.mosaic.MosaicJPanelController;
 
@@ -101,12 +102,12 @@ public class DemoApp2  {
 //                                      new MosaicSkillImg.ImageAwtController(e)))
 //                 .flatMap(x -> Stream.of(x.first, x.second)));
 //    }
-//    public void testLogo() {
-//        testApp(() -> Stream.of(new Logo.IconController()
-//                              , new Logo.ImageAwtController()
-//                              , new Logo.IconController()
-//                              , new Logo.ImageAwtController()));
-//    }
+    public void testLogo() {
+        testApp(() -> Stream.of(new Logo2.LogoSwingIconController()
+                              , new Logo2.LogoAwtImageController()
+                              , new Logo2.LogoSwingIconController()
+                              , new Logo2.LogoAwtImageController()));
+    }
 //    public void testMine() {
 //        testApp(() -> Stream.of(new Mine.IconController()
 //                              , new Mine.ImageAwtController()
@@ -134,7 +135,7 @@ public class DemoApp2  {
 //            this::testMosaicSkillImg,
 //            this::testMosaicGroupImg,
             this::testSmile,
-//            this::testLogo,
+            this::testLogo,
 //            this::testMine,
             this::testFlag
         };

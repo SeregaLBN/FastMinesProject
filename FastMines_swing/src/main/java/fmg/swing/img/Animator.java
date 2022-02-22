@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import fmg.common.Logger;
 import fmg.common.ui.ITimer;
 import fmg.core.img.IAnimator;
 import fmg.swing.utils.Timer;
@@ -58,10 +57,9 @@ public class Animator implements IAnimator, AutoCloseable {
     @Override
     public void pause(Object subscriber) {
         SubscribeInfo info = subscribers.get(subscriber);
-        if (info == null) {
-            Logger.warn("Animator: Illegal argument: subscriber not found: " + subscriber);
+        if (info == null)
             return;
-        }
+
         info.active = false;
         info.startTime = new Date().getTime() - info.startTime; // set of pause delta time
     }

@@ -44,6 +44,13 @@ public class HSV {
         a = 0xFF;
     }
 
+    public HSV(HSV from) {
+        h = from.h;
+        s = from.s;
+        v = from.v;
+        a = from.a;
+    }
+
     public HSV(int h, int s, int v) {
         this.h = h;
         this.s = s;

@@ -15,7 +15,7 @@ public class ImageController2<TImage, TModel extends IImageModel2, TView extends
     private TView view;
     private Consumer<String> changedCallback;
 
-    protected void init(TModel model,  TView view) {
+    protected void init(TModel model, TView view) {
         this.model = model;
         this.view = view;
         model.setListener(this::onModelChanged);
@@ -37,7 +37,7 @@ public class ImageController2<TImage, TModel extends IImageModel2, TView extends
         view.invalidate();
     }
 
-    private void onModelChanged(String property) {
+    protected void onModelChanged(String property) {
         var isValidBefore = view.isValid();
         var callback = changedCallback;
 

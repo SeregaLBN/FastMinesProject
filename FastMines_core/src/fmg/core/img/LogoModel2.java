@@ -1,43 +1,34 @@
 package fmg.core.img;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import fmg.common.Color;
 import fmg.common.HSV;
 import fmg.common.geom.BoundDouble;
+import fmg.common.geom.DoubleExt;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.core.types.Property;
 
 /** MVC: model for FastMines logo image */
-@Deprecated
-public class LogoModel extends AnimatedImageModel {
+public class LogoModel2 implements IImageModel2 {
 
-    public static final String PROPERTY_USE_GRADIENT = "UseGradient";
-    public static final String PROPERTY_ROTATE_MODE  = "RotateMode";
+    private SizeDouble size = new SizeDouble(ImageHelper.DEFAULT_IMAGE_SIZE, ImageHelper.DEFAULT_IMAGE_SIZE);
 
-    public enum ERotateMode {
-        /** rotate image */
-        classic,
+    /** inside padding */
+    private BoundDouble padding = new BoundDouble(ImageHelper.DEFAULT_PADDING);
 
-        /** rotate color Palette */
-        color,
+    private Color borderColor = Color.Maroon().darker(0.5);
 
-        /** {@link #color} + {@link #classic} */
-        combi
-    }
+    private double borderWidth = 3;
 
-    private final HSV[] palette = { new HSV(  0, 100, 100), new HSV( 45, 100, 100), new HSV( 90, 100, 100), new HSV(135, 100, 100),
-                                    new HSV(180, 100, 100), new HSV(225, 100, 100), new HSV(270, 100, 100), new HSV(315, 100, 100) };
+    public static final HSV[] DEFAULT_PALETTE = { new HSV(  0, 100, 100), new HSV( 45, 100, 100), new HSV( 90, 100, 100), new HSV(135, 100, 100),
+                                                  new HSV(180, 100, 100), new HSV(225, 100, 100), new HSV(270, 100, 100), new HSV(315, 100, 100) };
+    private final HSV[] palette = { new HSV(DEFAULT_PALETTE[0]), new HSV(DEFAULT_PALETTE[1]), new HSV(DEFAULT_PALETTE[2]), new HSV(DEFAULT_PALETTE[3]),
+                                    new HSV(DEFAULT_PALETTE[4]), new HSV(DEFAULT_PALETTE[5]), new HSV(DEFAULT_PALETTE[6]), new HSV(DEFAULT_PALETTE[7]) };
 
-    @Property(PROPERTY_USE_GRADIENT)
-    private boolean useGradient;
-
-    @Property(PROPERTY_ROTATE_MODE)
-    private ERotateMode rotateMode = ERotateMode.combi;
+    private boolean useGradient = true;
 
     /** owner rays points */
     private final List<PointDouble> rays = new ArrayList<>();
@@ -46,37 +37,111 @@ public class LogoModel extends AnimatedImageModel {
     /** central octahedron */
     private final List<PointDouble> oct = new ArrayList<>();
 
-    private final PropertyChangeListener onPropertyChangedListener = this::onPropertyChanged;
+    private Consumer<String> changedCallback;
 
 
-    public LogoModel() {
-        setBackgroundColor(Color.Transparent());
-        notifier.addListener(onPropertyChangedListener);
+    @Override
+    public SizeDouble getSize() {
+        return size;
+    }
+
+    @Override
+    public void setSize(SizeDouble size) {
+        if (this.size.equals(size))
+            return;
+
+        ImageHelper.checkSize(size);
+
+        SizeDouble oldSize = new SizeDouble(this.size);
+        this.size.width  = size.width;
+        this.size.height = size.height;
+
+        rays.clear();
+        inn.clear();
+        oct.clear();
+
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_NAME_SIZE);
+
+        setPadding(ImageHelper.recalcPadding(padding, size, oldSize));
+    }
+
+    @Override
+    public BoundDouble getPadding() {
+        return padding;
+    }
+
+    @Override
+    public void setPadding(BoundDouble padding) {
+        if (this.padding.equals(padding))
+            return;
+
+        ImageHelper.checkPadding(size, padding);
+
+        this.padding.left   = padding.left;
+        this.padding.right  = padding.right;
+        this.padding.top    = padding.top;
+        this.padding.bottom = padding.bottom;
+
+        rays.clear();
+        inn.clear();
+        oct.clear();
+
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+    }
+
+    public Color getBorderColor() {
+        return borderColor;
+    }
+
+    public void setBorderColor(Color borderColor) {
+        if (this.borderColor.equals(borderColor))
+            return;
+
+        this.borderColor = borderColor;
+
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+    }
+
+    public double getBorderWidth() {
+        return borderWidth;
+    }
+
+    public void setBorderWidth(double borderWidth) {
+        if (DoubleExt.hasMinDiff(this.borderWidth, borderWidth))
+            return;
+
+        this.borderWidth = borderWidth;
+
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
     }
 
     private BoundDouble getInnerPadding() {
-        BoundDouble pad = new BoundDouble(super.getPadding());
+        BoundDouble padInner = new BoundDouble(padding);
         SizeDouble s = getSize();
-        double innerX = s.width  - pad.getLeftAndRight();
-        double innerY = s.height - pad.getTopAndBottom();
+        double innerX = s.width  - padInner.getLeftAndRight();
+        double innerY = s.height - padInner.getTopAndBottom();
         if (innerX != innerY) {
             double add = (innerX - innerY) / 2;
             if (innerX > innerY) {
-                pad.left   += add;
-                pad.right  += add;
+                padInner.left   += add;
+                padInner.right  += add;
             } else {
-                pad.top    -= add;
-                pad.bottom -= add;
+                padInner.top    -= add;
+                padInner.bottom -= add;
             }
         }
-        return pad;
+        return padInner;
     }
 
     public HSV[] getPalette() {
         return palette;
     }
 
-    public static void toMineModel(LogoModel m) {
+    public static void toMineModel(LogoModel2 m) {
         m.setUseGradient(false);
         for (HSV item : m.getPalette())
             //item.v = 75;
@@ -85,12 +150,13 @@ public class LogoModel extends AnimatedImageModel {
 
     public boolean isUseGradient() { return useGradient; }
     public void setUseGradient(boolean value) {
-        notifier.setProperty(useGradient, value, PROPERTY_USE_GRADIENT);
-    }
+        if (this.useGradient == value)
+            return;
 
-    public ERotateMode getRotateMode() { return rotateMode; }
-    public void setRotateMode(ERotateMode value) {
-        notifier.setProperty(rotateMode, value, PROPERTY_ROTATE_MODE);
+        this.useGradient = value;
+
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
     }
 
     public double getZoomX() { return (getSize().width  - getInnerPadding().getLeftAndRight()) / 200.0; }
@@ -156,23 +222,11 @@ public class LogoModel extends AnimatedImageModel {
         return oct;
     }
 
-    protected void onPropertyChanged(PropertyChangeEvent ev) {
-        switch (ev.getPropertyName()) {
-        case PROPERTY_SIZE:
-        case PROPERTY_PADDING:
-            rays.clear();
-            inn.clear();
-            oct.clear();
-            break;
-        default:
-            // none
-        }
-    }
-
     @Override
-    public void close() {
-        notifier.removeListener(onPropertyChangedListener);
-        super.close();
+    public void setListener(Consumer<String> callback) {
+        if ((callback != null) && (changedCallback != null))
+            throw new IllegalArgumentException("Can only set the controller once");
+        changedCallback = callback;
     }
 
 }

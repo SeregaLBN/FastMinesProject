@@ -59,7 +59,7 @@ public class TestDrawing2 {
 //            BurgerMenuModel bmm = (BurgerMenuModel)model;
 //            bmm.setShow(true);
 //        }
-//        if (model instanceof LogoModel) {
+//        if (model instanceof MineModel) {
 //            LogoModel lm = (LogoModel)model;
 //            lm.setUseGradient(true);
 //        }
@@ -87,7 +87,23 @@ public class TestDrawing2 {
         double pad = Math.min(model.getSize().height/3, model.getSize().width/3);
         model.setPadding(new BoundDouble(-pad/4 + r((int)pad)));
 
+        Color bkClr = Color.RandomColor();
+        if (testTransparent)
+            bkClr = bkClr.updateA(50 + r(10));
 
+
+        if (model instanceof LogoModel2) {
+            var lc = (LogoController2<?, ?>)ctrller;
+            lc.setAnimatePeriod(2000 + r(7000));
+            lc.setFps(30 + r(30));
+            lc.setClockwise(bl());
+            lc.setPolarLights(bl());
+            lc.setRotateImage(bl());
+            var lm = (LogoModel2)model;
+            lm.setBorderColor(Color.RandomColor());
+            lm.setBorderWidth(r(4));
+            lm.setUseGradient(bl());
+        }
         if (model instanceof IAnimatedModel) {
             IAnimatedModel am = (IAnimatedModel)model;
             am.setAnimated(bl() || bl());
@@ -106,10 +122,6 @@ public class TestDrawing2 {
                     aic.addModelTransformer(new PolarLightBkTransformer());
             }
         }
-
-        Color bkClr = Color.RandomColor();
-        if (testTransparent)
-            bkClr = bkClr.updateA(50 + r(10));
 
         if (model instanceof AnimatedImageModel) {
             AnimatedImageModel aim = (AnimatedImageModel)model;

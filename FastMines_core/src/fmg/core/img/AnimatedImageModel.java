@@ -11,6 +11,7 @@ import fmg.common.notifier.NotifyPropertyChanged;
 import fmg.core.types.Property;
 
 /** MVC: model. Common animated image characteristics. */
+@Deprecated
 public abstract class AnimatedImageModel implements IAnimatedModel {
 
     public static final Color DEFAULT_BK_COLOR         = Color.DarkOrange(); // Color.Coral(); //
