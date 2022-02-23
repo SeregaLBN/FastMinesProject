@@ -138,4 +138,10 @@ public class LogoController2<TImage,
         super.close();
     }
 
+    public LogoController2<TImage,TView> asMine() {
+        for (HSV item : getModel().getPalette())
+            item.grayscale();
+        return this;
+    }
+
 }

@@ -106,14 +106,10 @@ public class DemoApp2  {
         testApp(() -> Stream.of(new Logo2.LogoSwingIconController()
                               , new Logo2.LogoAwtImageController()
                               , new Logo2.LogoSwingIconController()
-                              , new Logo2.LogoAwtImageController()));
+                              , new Logo2.LogoAwtImageController()
+                              , new Logo2.LogoSwingIconController().asMine()
+                              , new Logo2.LogoAwtImageController().asMine()));
     }
-//    public void testMine() {
-//        testApp(() -> Stream.of(new Mine.IconController()
-//                              , new Mine.ImageAwtController()
-//                              , new Mine.IconController()
-//                              , new Mine.ImageAwtController()));
-//    }
     public void testFlag() {
         testApp(() -> Stream.of(new Flag2.FlagSwingIconController()
                               , new Flag2.FlagAwtImageController()));
@@ -136,7 +132,6 @@ public class DemoApp2  {
 //            this::testMosaicGroupImg,
             this::testSmile,
             this::testLogo,
-//            this::testMine,
             this::testFlag
         };
 
