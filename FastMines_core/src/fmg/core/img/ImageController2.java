@@ -9,7 +9,7 @@ import fmg.common.ui.UiInvoker;
  * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
  * @param <TView> image view
  * @param <TModel> image model */
-public class ImageController2<TImage, TModel extends IImageModel2, TView extends IImageView2<TImage>> implements IImageController2<TImage, TModel>, AutoCloseable {
+public class ImageController2<TImage, TModel extends IImageModel2, TView extends IImageView2<TImage>> implements IImageController2<TImage, TModel> {
 
     private TModel model;
     private TView view;
@@ -54,7 +54,7 @@ public class ImageController2<TImage, TModel extends IImageModel2, TView extends
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         changedCallback = null;
         model.setListener(null);
         view.reset();

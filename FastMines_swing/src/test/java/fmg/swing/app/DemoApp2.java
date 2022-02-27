@@ -12,7 +12,6 @@ import java.util.stream.Stream;
 
 import javax.swing.*;
 
-import fmg.common.Logger;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
@@ -188,7 +187,7 @@ public class DemoApp2  {
 
     void testApp(Supplier<Stream<IImageController2<?,?>>> funcGetImages) {
         List<IImageController2<?,?>> images = funcGetImages.get().collect(Collectors.toList());
-        frame.setTitle(td.getTitle2(images));
+        frame.setTitle(td.getTitle(images));
         jPanel.removeAll();
 
         List<Component> imgControls = new ArrayList<>(images.size());
@@ -307,13 +306,7 @@ public class DemoApp2  {
         onCloseImages = () -> {
             jPanel.removeComponentListener(onSizeChanged);
             jPanel.removeMouseListener(onMousePressed);
-            images.forEach(imgObj -> {
-                if (imgObj instanceof AutoCloseable) try {
-                    ((AutoCloseable)imgObj).close();
-                } catch (Exception ex) {
-                    Logger.error("imgObj.close", ex);
-                }
-            });
+            images.forEach(IImageController2::close);
             //images.clear(); // unmodifiable list
             //images = null; // not final
         };

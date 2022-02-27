@@ -15,6 +15,7 @@ import fmg.core.types.Property;
  * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
  * @param <TImageModel> model data for display
  **/
+@Deprecated
 public abstract class ImageView<TImage, TImageModel extends IImageModel>
           implements IImageView<TImage, TImageModel>
 {

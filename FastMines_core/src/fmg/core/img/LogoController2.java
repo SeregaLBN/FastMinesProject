@@ -132,7 +132,7 @@ public class LogoController2<TImage,
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         if (animationWasUsed) // do not call UiInvoker.ANIMATOR if it is not already used
             UiInvoker.Animator.get().unsubscribe(this);
         super.close();

@@ -240,7 +240,7 @@ public class TestDrawing2 {
             int i = pos % cols;
             int j = pos / cols;
             PointDouble offset = new PointDouble(rc.x + i*dx + pad,
-                                                rc.y + j*dy + pad);
+                                                 rc.y + j*dy + pad);
             if (i == (cols-1))
                 offset.x -= addonX;
             if (j == (rows-1))
@@ -260,7 +260,7 @@ public class TestDrawing2 {
         return ctr;
     }
 
-    public String getTitle2(List<IImageController2<?,?>> images) {
+    public String getTitle(List<IImageController2<?,?>> images) {
         return titlePrefix + " test paints: " + images.stream()
             .map(i -> i.getClass().getName())
             .map(n -> Stream.of(n.split("\\.")).reduce((first, second) -> second).get().replace("$", ".") )
