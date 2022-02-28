@@ -15,10 +15,13 @@ import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
 import fmg.core.img.IImageController2;
 import fmg.core.img.ImageHelper;
+import fmg.core.img.SmileModel2.EFaceType;
 import fmg.core.img.TestDrawing2;
 import fmg.core.img.TestDrawing2.CellTilingInfo;
 import fmg.jfx.img.Animator;
 import fmg.jfx.img.Flag2;
+import fmg.jfx.img.Logo2;
+import fmg.jfx.img.Smile2;
 import fmg.jfx.mosaic.MosaicCanvasController;
 import fmg.jfx.utils.Cast;
 import javafx.animation.AnimationTimer;
@@ -118,28 +121,24 @@ public final class DemoApp2 extends Application {
 //                .flatMap(x -> Stream.of(x.first, x.second))
 //        );
 //    }
-//    public void testLogo() {
-//        testApp(() -> Stream.of(new Logo.CanvasController()
-//                              , new Logo.ImageJfxController()
-//                              , new Logo.CanvasController()
-//                              , new Logo.ImageJfxController()));
-//    }
-//    public void testMine() {
-//        testApp(() -> Stream.of(new Mine.CanvasController()
-//                              , new Mine.ImageJfxController()
-//                              , new Mine.CanvasController()
-//                              , new Mine.ImageJfxController()));
-//    }
+    public void testLogo() {
+        testApp(() -> Stream.of(new Logo2.LogoAwtImageController()
+                              , new Logo2.LogoSwingIconController()
+                              , new Logo2.LogoAwtImageController()
+                              , new Logo2.LogoSwingIconController()
+                              , new Logo2.LogoAwtImageController().asMine()
+                              , new Logo2.LogoSwingIconController().asMine()));
+    }
     public void testFlag() {
         testApp(() -> Stream.of(new Flag2.FlagJfxCanvasController()
                               , new Flag2.FlagJfxImageController()));
     }
-//    public void testSmile() {
-//        testApp(() -> Stream.of(EFaceType.values())
-//                    .map(e -> Stream.of(new Smile.CanvasController(e),
-//                                        new Smile.ImageJfxController(e)))
-//                    .flatMap(x -> x));
-//    }
+    public void testSmile() {
+        testApp(() -> Stream.of(EFaceType.values())
+                    .map(e -> Stream.of(new Smile2.SmileJfxCanvasController(e),
+                                        new Smile2.SmileJfxImageController(e)))
+                    .flatMap(x -> x));
+    }
     // #endregion
 
 
@@ -154,9 +153,8 @@ public final class DemoApp2 extends Application {
 //            this::testMosaicImg,
 //            this::testMosaicSkillImg,
 //            this::testMosaicGroupImg,
-//            this::testSmile,
-//            this::testLogo,
-//            this::testMine,
+            this::testSmile,
+            this::testLogo,
             this::testFlag
         };
 
