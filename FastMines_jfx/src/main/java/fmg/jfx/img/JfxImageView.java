@@ -40,8 +40,8 @@ public class JfxImageView<TModel extends IImageModel2> implements IImageView2<ja
             canvas = new javafx.scene.canvas.Canvas(s.width, s.height);
             valid = false;
         } else {
-            if (DoubleExt.hasMinDiff(canvas.getWidth() , s.width) ||
-                DoubleExt.hasMinDiff(canvas.getHeight(), s.height))
+            if (!DoubleExt.hasMinDiff(canvas.getWidth() , s.width) &&
+                !DoubleExt.hasMinDiff(canvas.getHeight(), s.height))
             {
                 canvas. setWidth(s.width);
                 canvas.setHeight(s.height);
@@ -63,7 +63,6 @@ public class JfxImageView<TModel extends IImageModel2> implements IImageView2<ja
     @Override
     public void reset() {
         img = null;
-        canvas = null;
         valid = false;
     }
 
