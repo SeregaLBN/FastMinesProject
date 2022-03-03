@@ -13,12 +13,12 @@ import javafx.scene.canvas.GraphicsContext;
 public class JfxImageView<TModel extends IImageModel2> implements IImageView2<javafx.scene.image.Image> {
 
     private final TModel model;
-    private final BiConsumer<GraphicsContext , TModel> draw;
+    private final BiConsumer<GraphicsContext, TModel> draw;
     private boolean valid;
     private javafx.scene.canvas.Canvas canvas;
     private javafx.scene.image.Image img;
 
-    public JfxImageView(TModel model, BiConsumer<GraphicsContext , TModel> draw) {
+    public JfxImageView(TModel model, BiConsumer<GraphicsContext, TModel> draw) {
         this.model = model;
         this.draw = draw;
     }

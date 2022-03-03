@@ -12,11 +12,11 @@ import javafx.scene.canvas.GraphicsContext;
 public class JfxCanvasView<TModel extends IImageModel2> implements IImageView2<javafx.scene.canvas.Canvas> {
 
     private final TModel model;
-    private final BiConsumer<GraphicsContext , TModel> draw;
+    private final BiConsumer<GraphicsContext, TModel> draw;
     private boolean valid;
     private javafx.scene.canvas.Canvas canvas;
 
-    public JfxCanvasView(TModel model, BiConsumer<GraphicsContext , TModel> draw) {
+    public JfxCanvasView(TModel model, BiConsumer<GraphicsContext, TModel> draw) {
         this.model = model;
         this.draw = draw;
     }

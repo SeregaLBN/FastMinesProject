@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import fmg.common.geom.SizeDouble;
 
 /** Internal class-wrapper for pair {@link Bitmap} and {@link Canvas} */
+@Deprecated
 class BmpCanvas implements AutoCloseable {
 
     private Bitmap bmp;

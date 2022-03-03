@@ -77,6 +77,10 @@ android {
             dimension 'runMode'
             applicationIdSuffix '.demo'
         }
+        demo2 { // demonstration of drawing performance
+            dimension 'runMode'
+            applicationIdSuffix '.demo2'
+        }
     }
 }
 

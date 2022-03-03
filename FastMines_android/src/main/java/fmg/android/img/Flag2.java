@@ -1,5 +1,6 @@
 package fmg.android.img;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -8,103 +9,59 @@ import android.graphics.PointF;
 
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.FlagModel;
+import fmg.core.img.FlagModel2;
 import fmg.core.img.ImageController;
+import fmg.core.img.ImageController2;
 import fmg.core.img.ImageView;
 
 /** Flag image */
-public final class Flag {
-    private Flag() {}
+public final class Flag2 {
+    private Flag2() {}
 
-    /** Flag image. Base image view Android implementation
-     * @param <TImage> Android specific image: {@link android.graphics.Bitmap} */
-    abstract static class AndroidView<TImage> extends ImageView<TImage, FlagModel> {
+    private static void draw(Canvas g, FlagModel2 fm) {
+        SizeDouble size = fm.getSize();
+        float h = (float)(size.height / 100.0);
+        float w = (float)(size.width  / 100.0);
 
-        public AndroidView() {
-            super(new FlagModel());
-        }
+        // perimeter figure points
+        PointF[] p = new PointF[] {
+                new PointF(13.50f * w, 90 * h),
+                new PointF(17.44f * w, 51 * h),
+                new PointF(21.00f * w, 16 * h),
+                new PointF(85.00f * w, 15 * h),
+                new PointF(81.45f * w, 50 * h)};
 
-        protected void draw(Canvas g) {
-            SizeDouble size = getSize();
-            float h = (float)(size.height / 100.0);
-            float w = (float)(size.width  / 100.0);
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(Math.max(1, 7*(w+h)/2));
+        paint.setColor(Color.BLACK);
+        g.drawLine(p[0].x, p[0].y, p[1].x, p[1].y, paint);
 
-            // perimeter figure points
-            PointF[] p = new PointF[] {
-                    new PointF(13.50f * w, 90 * h),
-                    new PointF(17.44f * w, 51 * h),
-                    new PointF(21.00f * w, 16 * h),
-                    new PointF(85.00f * w, 15 * h),
-                    new PointF(81.45f * w, 50 * h)};
+        paint.setColor(Color.RED);
+        Path path = new Path();
+        path.moveTo(p[2].x, p[2].y);
+        path.cubicTo(95.0f * w, 0 * h,
+                     19.3f * w, 32 * h,
+                     p[3].x, p[3].y);
+        path.cubicTo(77.80f * w, 32.89f * h,
+                     88.05f * w, 22.73f * h,
+                     p[4].x, p[4].y);
+        path.cubicTo(15.83f * w, 67 * h,
+                     91.45f * w, 35 * h,
+                     p[1].x, p[1].y);
+        path.lineTo(p[2].x, p[2].y);
+        path.close();
 
-            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(Math.max(1, 7*(w+h)/2));
-            paint.setColor(Color.BLACK);
-            g.drawLine(p[0].x, p[0].y, p[1].x, p[1].y, paint);
-
-            paint.setColor(Color.RED);
-            Path path = new Path();
-            path.moveTo(p[2].x, p[2].y);
-            path.cubicTo(95.0f * w, 0 * h,
-                         19.3f * w, 32 * h,
-                         p[3].x, p[3].y);
-            path.cubicTo(77.80f * w, 32.89f * h,
-                         88.05f * w, 22.73f * h,
-                         p[4].x, p[4].y);
-            path.cubicTo(15.83f * w, 67 * h,
-                         91.45f * w, 35 * h,
-                         p[1].x, p[1].y);
-            path.lineTo(p[2].x, p[2].y);
-            path.close();
-
-            g.drawPath(path, paint);
-        }
-
-        @Override
-        public void close() {
-            getModel().close();
-            super.close();
-        }
-
+        g.drawPath(path, paint);
     }
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-    //    custom implementations
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    /** Flag image controller implementation for {@link android.graphics.Bitmap} */
+    public static class FlagAndroidBitmapController extends ImageController2<Bitmap, FlagModel2, AndroidBitmapView<FlagModel2>> {
 
-    /** Flag image view implementation over {@link android.graphics.Bitmap} */
-    static class BitmapView extends AndroidView<android.graphics.Bitmap> {
-
-        private BmpCanvas wrap = new BmpCanvas();
-
-        @Override
-        protected android.graphics.Bitmap createImage() {
-            return wrap.createImage(getModel().getSize());
-        }
-
-        @Override
-        protected void drawBody() {
-            draw(wrap.getCanvas());
-        }
-
-        @Override
-        public void close() {
-            wrap.close();
-        }
-
-    }
-
-    /** Flag image controller implementation for {@link BitmapView} */
-    public static class BitmapController extends ImageController<android.graphics.Bitmap, BitmapView, FlagModel> {
-
-        public BitmapController() {
-            super(new BitmapView());
-        }
-
-        @Override
-        public void close() {
-            getView().close();
-            super.close();
+        public FlagAndroidBitmapController() {
+            var model = new FlagModel2();
+            var view = new AndroidBitmapView<>(model, Flag2::draw);
+            init(model, view);
         }
 
     }
