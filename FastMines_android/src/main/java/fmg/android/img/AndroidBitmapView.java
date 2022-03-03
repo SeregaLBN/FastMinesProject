@@ -42,8 +42,8 @@ public class AndroidBitmapView<TModel extends IImageModel2> implements IImageVie
             canvas = null;
             valid = false;
         } else {
-            if (!DoubleExt.hasMinDiff(canvas.getWidth() , s.width) ||
-                !DoubleExt.hasMinDiff(canvas.getHeight(), s.height))
+            if (!DoubleExt.almostEquals(canvas.getWidth() , s.width) ||
+                !DoubleExt.almostEquals(canvas.getHeight(), s.height))
             {
                 bmp.recycle();
                 bmp = android.graphics.Bitmap.createBitmap((int)s.width, (int)s.height, android.graphics.Bitmap.Config.ARGB_8888);

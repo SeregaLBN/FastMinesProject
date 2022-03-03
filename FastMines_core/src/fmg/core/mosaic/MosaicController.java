@@ -773,7 +773,7 @@ public abstract class MosaicController<TImage, TImageInner,
     /** размер мозаики в пикселях для указанных параметров */
     public SizeDouble getMosaicSize(Matrisize sizeField, double area) {
         TMosaicModel m = getModel();
-        return DoubleExt.hasMinDiff(area, m.getArea())
+        return DoubleExt.almostEquals(area, m.getArea())
             ? m.getShape().getSize(sizeField)
             : MosaicHelper.getSize(getMosaicType(), area, sizeField);
     }

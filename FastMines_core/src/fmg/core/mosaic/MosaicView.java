@@ -40,9 +40,9 @@ public abstract class MosaicView<TImage,
 
         // check to redraw all mosaic cells
         TMosaicModel model = getModel();
-        if (DoubleExt.hasMinDiff(invalidatedRect.x, 0) && DoubleExt.hasMinDiff(invalidatedRect.y, 0)) {
+        if (DoubleExt.almostEquals(invalidatedRect.x, 0) && DoubleExt.almostEquals(invalidatedRect.y, 0)) {
             SizeDouble size = model.getSize();
-            if (DoubleExt.hasMinDiff(invalidatedRect.width, size.width) && DoubleExt.hasMinDiff(invalidatedRect.height, size.height))
+            if (DoubleExt.almostEquals(invalidatedRect.width, size.width) && DoubleExt.almostEquals(invalidatedRect.height, size.height))
                 return null; // equals Model.Matrix
         }
 

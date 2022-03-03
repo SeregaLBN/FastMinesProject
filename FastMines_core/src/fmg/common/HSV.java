@@ -85,18 +85,18 @@ public class HSV {
         double min = Math.min(Math.min(r, g), b);
 
         { // calc H
-            if (DoubleExt.hasMinDiff(max, min))
+            if (DoubleExt.almostEquals(max, min))
                 h = 0;
-            else if (DoubleExt.hasMinDiff(max, r))
+            else if (DoubleExt.almostEquals(max, r))
                 h = 60 * (g - b) / (max - min) + ((g < b) ? 360 : 0);
-            else if (DoubleExt.hasMinDiff(max, g))
+            else if (DoubleExt.almostEquals(max, g))
                 h = 60 * (b - r) / (max - min) + 120;
-            else if (DoubleExt.hasMinDiff(max, b))
+            else if (DoubleExt.almostEquals(max, b))
                 h = 60 * (r - g) / (max - min) + 240;
             else
                 throw new RuntimeException();
         }
-        s = DoubleExt.hasMinDiff(max, 0) ? 0 : 100*(1 - min/max);
+        s = DoubleExt.almostEquals(max, 0) ? 0 : 100*(1 - min/max);
         v = max*100/255;
 
         fix();

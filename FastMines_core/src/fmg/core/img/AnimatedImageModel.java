@@ -107,7 +107,7 @@ public abstract class AnimatedImageModel implements IAnimatedModel {
 
     public double getBorderWidth() { return borderWidth; }
     public void setBorderWidth(double value) {
-        if (!DoubleExt.hasMinDiff(borderWidth, value)) {
+        if (!DoubleExt.almostEquals(borderWidth, value)) {
             double old = borderWidth;
             borderWidth = value;
             notifier.firePropertyChanged(old, value, PROPERTY_BORDER_WIDTH);

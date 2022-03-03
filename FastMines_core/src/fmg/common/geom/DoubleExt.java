@@ -12,11 +12,11 @@ public final class DoubleExt {
     }
 
     /** @return value1 == value2 */
-    public static boolean hasMinDiff(double value1, double value2) {
-        return hasMinDiff(value1, value2, 1);
+    public static boolean almostEquals(double value1, double value2) {
+        return almostEquals(value1, value2, 1);
     }
 
-    public static boolean hasMinDiff(double value1, double value2, int units) {
+    public static boolean almostEquals(double value1, double value2, int units) {
         long lValue1 = Double.doubleToLongBits(value1);
         long lValue2 = Double.doubleToLongBits(value2);
 

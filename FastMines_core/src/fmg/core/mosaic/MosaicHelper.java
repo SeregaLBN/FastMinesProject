@@ -132,9 +132,9 @@ public final class MosaicHelper {
         boolean deltaUp = true;
         do {
             double cmp = func.compareTo(res);
-            if (DoubleExt.hasMinDiff(cmp, 0))
+            if (DoubleExt.almostEquals(cmp, 0))
                 break;
-            if ((d < AREA_PRECISION) && DoubleExt.hasMinDiff(cmp, -1))
+            if ((d < AREA_PRECISION) && DoubleExt.almostEquals(cmp, -1))
                 break;
 
             boolean resultUp = (cmp < 0);
@@ -173,13 +173,13 @@ public final class MosaicHelper {
             SizeDouble tmp = shape.getSize(mosaicSizeField);
             sizeIter.width = tmp.width;
             sizeIter.height = tmp.height;
-            if (DoubleExt.hasMinDiff(sizeIter.width, sizeClientIn.width) &&
+            if (DoubleExt.almostEquals(sizeIter.width, sizeClientIn.width) &&
                 (sizeIter.width  <= sizeClientIn.width) &&
                 (sizeIter.height <= sizeClientIn.height))
                 return 0;
             if ((sizeIter.width  <= sizeClientIn.width) &&
                 (sizeIter.height <= sizeClientIn.height) &&
-                DoubleExt.hasMinDiff(sizeIter.height, sizeClientIn.height))
+                DoubleExt.almostEquals(sizeIter.height, sizeClientIn.height))
                 return 0;
             if ((sizeIter.width < sizeClientIn.width) &&
                 (sizeIter.height < sizeClientIn.height))
@@ -212,7 +212,7 @@ public final class MosaicHelper {
         finderI(2000, (Comparable<Integer>)newWidth -> {
             result.m = newWidth;
             SizeDouble sizeWnd = shape.getSize(result);
-            if (DoubleExt.hasMinDiff(sizeWnd.width, sizeClient.width))
+            if (DoubleExt.almostEquals(sizeWnd.width, sizeClient.width))
                 return 0;
             if (sizeWnd.width <= sizeClient.width)
                 return -1;
@@ -221,7 +221,7 @@ public final class MosaicHelper {
         finderI(2000, (Comparable<Integer>)newHeight -> {
             result.n = newHeight;
             SizeDouble sizeWnd = shape.getSize(result);
-            if (DoubleExt.hasMinDiff(sizeWnd.height, sizeClient.height))
+            if (DoubleExt.almostEquals(sizeWnd.height, sizeClient.height))
                 return 0;
             if (sizeWnd.height < sizeClient.height)
                 return -1;

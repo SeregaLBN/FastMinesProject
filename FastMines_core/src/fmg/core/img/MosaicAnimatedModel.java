@@ -334,7 +334,7 @@ public class MosaicAnimatedModel<TImageInner>
         if (BaseShape.PROPERTY_AREA.equals(propName))
             switch (getRotateMode()) {
             case fullMatrix:
-                if (!DoubleExt.hasMinDiff(rotateAngle, 0))
+                if (!DoubleExt.almostEquals(rotateAngle, 0))
                     rotateMatrix(false);
                 break;
             case someCells:

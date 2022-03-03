@@ -63,7 +63,7 @@ public class FontInfo implements INotifyPropertyChanged {
             size = 0.1;
         }
         double old = this.size;
-        if (DoubleExt.hasMinDiff(this.size, size))
+        if (DoubleExt.almostEquals(this.size, size))
             return;
         this.size = size;
         notifier.firePropertyChanged(old, size, PROPERTY_SIZE);
@@ -92,7 +92,7 @@ public class FontInfo implements INotifyPropertyChanged {
         }
         return name.equals(other.name) &&
                 (bold == other.bold) &&
-                DoubleExt.hasMinDiff(size, other.size);
+                DoubleExt.almostEquals(size, other.size);
     }
 
     @Override

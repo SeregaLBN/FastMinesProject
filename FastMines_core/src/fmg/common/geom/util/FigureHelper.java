@@ -114,7 +114,7 @@ public final class FigureHelper {
         double angleLastNM = angle * Math.sin(incrementSpeedAngle / 2); // angleLastNM|incrementSpeedAngle == 0°|0° .. angle|180° .. 0°|360°
         assert(angleLastNM >= 0); // incrementSpeedAngle parameter must have a value of 0°..360°
         double angleFirstN = (2 * Math.PI - angleLastNM * (m - n)) / n;
-        assert(DoubleExt.hasMinDiff(2 * Math.PI, n * angleFirstN + (m - n) * angleLastNM));
+        assert(DoubleExt.almostEquals(2 * Math.PI, n * angleFirstN + (m - n) * angleLastNM));
         int nn = n;
         return IntStream.range(0, m).
                 mapToObj(i -> (i < nn)
@@ -169,7 +169,7 @@ public final class FigureHelper {
        double angleLastNM = angle * Math.sin(incrementSpeedAngle / 2); // angleLastNM|incrementSpeedAngle == 0°|0° .. angle|180° .. 0°|360°
        assert(angleLastNM >= 0); // incrementSpeedAngle parameter must have a value of 0°..360°
        double angleFirstN = (2 * Math.PI - angleLastNM * (m - n) - angle) / (n - 1);
-       assert(DoubleExt.hasMinDiff(2 * Math.PI, (n - 1) * angleFirstN + angle + (m - n) * angleLastNM));
+       assert(DoubleExt.almostEquals(2 * Math.PI, (n - 1) * angleFirstN + angle + (m - n) * angleLastNM));
        int nn = n;
        return IntStream.range(0, m).
             mapToObj(i -> {

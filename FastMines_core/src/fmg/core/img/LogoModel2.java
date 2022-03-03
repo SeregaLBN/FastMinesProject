@@ -110,7 +110,7 @@ public class LogoModel2 implements IImageModel2 {
     }
 
     public void setBorderWidth(double borderWidth) {
-        if (DoubleExt.hasMinDiff(this.borderWidth, borderWidth))
+        if (DoubleExt.almostEquals(this.borderWidth, borderWidth))
             return;
 
         this.borderWidth = borderWidth;

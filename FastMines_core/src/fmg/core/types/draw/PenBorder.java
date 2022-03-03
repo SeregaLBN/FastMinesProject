@@ -63,7 +63,7 @@ public class PenBorder implements INotifyPropertyChanged {
 
     public void setWidth(double width) {
         double old = this.width;
-        if (DoubleExt.hasMinDiff(old, width))
+        if (DoubleExt.almostEquals(old, width))
             return;
         this.width = width;
         notifier.firePropertyChanged(old, width, PROPERTY_WIDTH);
@@ -82,7 +82,7 @@ public class PenBorder implements INotifyPropertyChanged {
         if (this == obj) return true;
         if (!(obj instanceof PenBorder)) return false;
         PenBorder penObj = (PenBorder) obj;
-        return DoubleExt.hasMinDiff(width, penObj.width)
+        return DoubleExt.almostEquals(width, penObj.width)
                 && colorShadow.equals(penObj.colorShadow)
                 && colorLight.equals(penObj.colorLight);
     }

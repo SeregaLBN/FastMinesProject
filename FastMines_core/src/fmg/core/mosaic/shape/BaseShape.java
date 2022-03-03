@@ -62,7 +62,7 @@ public abstract class BaseShape implements INotifyPropertyChanged, AutoCloseable
     public void setArea(double area) {
         //setProperty(area, PROPERTY_AREA);
         double old = this.area;
-        if (!DoubleExt.hasMinDiff(old, area)) {
+        if (!DoubleExt.almostEquals(old, area)) {
             this.area = area;
             notifier.firePropertyChanged(old, area, PROPERTY_AREA);
         }
