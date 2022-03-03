@@ -27,6 +27,7 @@ import fmg.android.app.databinding.DemoActivity2Binding;
 import fmg.android.img.Flag;
 import fmg.android.img.Flag2;
 import fmg.android.img.Logo;
+import fmg.android.img.Logo2;
 import fmg.android.img.Mine;
 import fmg.android.img.MosaicGroupImg;
 import fmg.android.img.MosaicImg;
@@ -103,12 +104,10 @@ public class DemoActivity2 extends AppCompatActivity {
 //                                                                   new MosaicSkillImg.BitmapController(e)))
 //                                              .flatMap(x -> Stream.of(x.first, x.second)));
 //    }
-//    public void testLogo          () { testApp(() -> Stream.of(new Logo.BitmapController()
-//                                                             , new Logo.BitmapController()
-//                                                             , new Logo.BitmapController()
-//                                                             , new Logo.BitmapController())); }
-//    public void testMine          () { testApp(() -> Stream.of(new Mine.BitmapController()
-//                                                             , new Mine.BitmapController())); }
+    public void testLogo          () { testApp(() -> Stream.of(new Logo2.LogoAndroidBitmapController()
+                                                             , new Logo2.LogoAndroidBitmapController()
+                                                             , new Logo2.LogoAndroidBitmapController().asMine()
+                                                             , new Logo2.LogoAndroidBitmapController().asMine())); }
     public void testFlag          () { testApp(() -> Stream.of(new Flag2.FlagAndroidBitmapController()
                                                              , new Flag2.FlagAndroidBitmapController())); }
     public void testSmile         () { testApp(() -> Stream.of(SmileModel2.EFaceType.values())
@@ -133,8 +132,7 @@ public class DemoActivity2 extends AppCompatActivity {
 //            this::testMosaicSkillImg,
 //            this::testMosaicGroupImg,
             this::testSmile,
-//            this::testLogo,
-//            this::testMine,
+            this::testLogo,
             this::testFlag
         };
 
