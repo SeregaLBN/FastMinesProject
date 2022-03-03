@@ -32,6 +32,7 @@ import fmg.android.img.MosaicGroupImg;
 import fmg.android.img.MosaicImg;
 import fmg.android.img.MosaicSkillImg;
 import fmg.android.img.Smile;
+import fmg.android.img.Smile2;
 import fmg.android.mosaic.MosaicViewController;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
@@ -40,6 +41,7 @@ import fmg.common.geom.SizeDouble;
 import fmg.core.img.IImageController;
 import fmg.core.img.IImageController2;
 import fmg.core.img.SmileModel;
+import fmg.core.img.SmileModel2;
 import fmg.core.img.TestDrawing2;
 import fmg.core.mosaic.MosaicView;
 import fmg.core.types.EMosaic;
@@ -109,9 +111,9 @@ public class DemoActivity2 extends AppCompatActivity {
 //                                                             , new Mine.BitmapController())); }
     public void testFlag          () { testApp(() -> Stream.of(new Flag2.FlagAndroidBitmapController()
                                                              , new Flag2.FlagAndroidBitmapController())); }
-//    public void testSmile         () { testApp(() -> Stream.of(SmileModel.EFaceType.values())
-//                                                         .map(e -> new Smile.BitmapController(e)));
-//    }
+    public void testSmile         () { testApp(() -> Stream.of(SmileModel2.EFaceType.values())
+                                                           .map(e -> new Smile2.SmileAndroidBitmapController(e)));
+    }
     // #endregion
 
     @Override
@@ -130,7 +132,7 @@ public class DemoActivity2 extends AppCompatActivity {
 //            this::testMosaicImg,
 //            this::testMosaicSkillImg,
 //            this::testMosaicGroupImg,
-//            this::testSmile,
+            this::testSmile,
 //            this::testLogo,
 //            this::testMine,
             this::testFlag
