@@ -2,6 +2,7 @@ package fmg.core.img;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -10,19 +11,62 @@ import fmg.common.Color;
 import fmg.common.HSV;
 import fmg.common.Pair;
 import fmg.common.geom.BoundDouble;
+import fmg.common.geom.DoubleExt;
 import fmg.common.geom.PointDouble;
+import fmg.common.geom.SizeDouble;
 import fmg.common.geom.util.FigureHelper;
 import fmg.core.types.EMosaicGroup;
-import fmg.core.types.Property;
 
 /** MVC model of {@link EMosaicGroup} representable as image */
-@Deprecated
-public class MosaicGroupModel extends AnimatedImageModel {
+public class MosaicGroupModel2 implements IImageModel2 {
 
-    public static final String PROPERTY_MOSAIC_GROUP = "MosaicGroup";
+    public MosaicGroupModel2(EMosaicGroup mosaicGroup) { this.mosaicGroup = mosaicGroup; }
 
-    @Property(PROPERTY_MOSAIC_GROUP)
+
     private EMosaicGroup mosaicGroup;
+
+    private final SizeDouble size = new SizeDouble(ImageHelper.DEFAULT_IMAGE_SIZE, ImageHelper.DEFAULT_IMAGE_SIZE);
+    /** inside padding */
+    private final BoundDouble pad = new BoundDouble(ImageHelper.DEFAULT_PADDING);
+    private Consumer<String> changedCallback;
+
+
+    private Color foregroundColor = ImageHelper.DEFAULT_FOREGROUND_COLOR;
+
+    /** background fill color */
+    private Color backgroundColor = ImageHelper.DEFAULT_BK_COLOR;
+
+    private Color borderColor = Color.Maroon().darker(0.5);
+
+    private double borderWidth = 3;
+
+    /** 0° .. +360° */
+    private double rotateAngle;
+
+    /** animation of polar lights */
+    private boolean polarLights = true;
+
+    /** animation direction (example: clockwise or counterclockwise for simple rotation) */
+    private boolean animeDirection = true;
+
+    /** Image is animated? */
+    private boolean animated;
+
+    /** Overall animation period (in milliseconds) */
+    private long animatePeriod = 3000;
+
+    /** Total frames of the animated period */
+    private int totalFrames = 30;
+
+    private int currentFrame = 0;
+
+    private boolean burgerShow = true;
+    private boolean burgerHorizontal = true;
+    private int burgerLayers = 3;
+    private BoundDouble burgerPad;
+
+
+
 
     public static final boolean varMosaicGroupAsValueOthers1 = false;
     /** triangle -> quadrangle -> hexagon -> anew triangle -> ... */
@@ -31,10 +75,257 @@ public class MosaicGroupModel extends AnimatedImageModel {
     private int nmIndex2 = 1;
     private double incrementSpeedAngle;
 
-    public MosaicGroupModel(EMosaicGroup mosaicGroup) { this.mosaicGroup = mosaicGroup; }
-
     public EMosaicGroup getMosaicGroup() { return mosaicGroup; }
-    public void setMosaicGroup(EMosaicGroup value) { notifier.setProperty(this.mosaicGroup, value, PROPERTY_MOSAIC_GROUP); }
+    public void setMosaicGroup(EMosaicGroup value) {
+        if (this.mosaicGroup == value)
+            return;
+
+        this.mosaicGroup = value;
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_NAME_MOSAIC_GROUP);
+    }
+
+    @Override
+    public SizeDouble getSize() {
+        return size;
+    }
+
+    @Override
+    public void setSize(SizeDouble size) {
+        if (this.size.equals(size))
+            return;
+
+        ImageHelper.checkSize(size);
+
+        SizeDouble oldSize = new SizeDouble(this.size);
+        this.size.width  = size.width;
+        this.size.height = size.height;
+
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_NAME_SIZE);
+
+        setPadding(ImageHelper.recalcPadding(pad, size, oldSize));
+    }
+
+    @Override
+    public BoundDouble getPadding() {
+        return pad;
+    }
+
+    @Override
+    public void setPadding(BoundDouble padding) {
+        if (pad.equals(padding))
+            return;
+
+        ImageHelper.checkPadding(size, padding);
+
+        this.pad.left   = padding.left;
+        this.pad.right  = padding.right;
+        this.pad.top    = padding.top;
+        this.pad.bottom = padding.bottom;
+
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+    }
+
+
+    /** Image is animated? */
+    public boolean isAnimated() { return animated; }
+    public void setAnimated(boolean value) {
+        if (this.animated == value)
+            return;
+
+        this.animated = value;
+
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+    }
+
+    /** Overall animation period (in milliseconds) */
+    public long getAnimatePeriod() { return animatePeriod; }
+    /** Overall animation period (in milliseconds) */
+    public void setAnimatePeriod(long value) {
+        if (this.animatePeriod == value)
+            return;
+
+        this.animatePeriod = value;
+
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+    }
+
+    /** Total frames of the animated period */
+    public int getTotalFrames() { return totalFrames; }
+    public void setTotalFrames(int value) {
+        if (this.totalFrames == value)
+            return;
+
+        this.totalFrames = value;
+
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+
+        setCurrentFrame(0);
+    }
+
+    public int getCurrentFrame() { return currentFrame; }
+    public void setCurrentFrame(int value) {
+        if (this.currentFrame == value)
+            return;
+
+        this.currentFrame = value;
+
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+    }
+
+
+    public Color getForegroundColor() { return foregroundColor; }
+    public void setForegroundColor(Color value) {
+        if (this.foregroundColor.equals(value))
+            return;
+
+        this.foregroundColor = value;
+
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+    }
+
+    /** background fill color */
+    public Color getBackgroundColor() { return backgroundColor; }
+    public void setBackgroundColor(Color value) {
+        if (this.backgroundColor.equals(value))
+            return;
+
+        this.backgroundColor = value;
+
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+    }
+
+    public Color getBorderColor() { return borderColor; }
+    public void setBorderColor(Color value) {
+        if (this.borderColor.equals(value))
+            return;
+
+        this.borderColor = value;
+
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+    }
+
+    public double getBorderWidth() { return borderWidth; }
+    public void setBorderWidth(double value) {
+        if (DoubleExt.almostEquals(this.borderWidth, value))
+            return;
+
+        this.borderWidth = value;
+
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+    }
+
+    /** 0° .. +360° */
+    public double getRotateAngle() { return rotateAngle; }
+    public void setRotateAngle(double value) {
+        value = fixAngle(value);
+        if (DoubleExt.almostEquals(this.rotateAngle, value))
+            return;
+
+        this.rotateAngle = value;
+
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+    }
+
+    /** to diapason (0° .. +360°] */
+    public static double fixAngle(double value) {
+        return (value >= 360)
+             ?              (value % 360)
+             : (value < 0)
+                ?           (value % 360) + 360
+                :            value;
+    }
+
+    public boolean isPolarLights() { return polarLights; }
+    public void setPolarLights(boolean polarLights) {
+        if (this.polarLights == polarLights)
+            return;
+
+        this.polarLights = polarLights;
+
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+    }
+
+    public boolean getAnimeDirection() { return animeDirection; }
+    public void setAnimeDirection(boolean animeDirection) {
+        if (this.animeDirection = animeDirection)
+            return;
+
+        this.animeDirection = animeDirection;
+
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+    }
+
+
+    public boolean isBurgerShow() {
+        return burgerShow;
+    }
+
+    public void setBurgerShow(boolean burgerShow) {
+        if (this.burgerShow = burgerShow)
+            return;
+
+        this.burgerShow = burgerShow;
+
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+    }
+
+    public boolean isBurgerHorizontal() {
+        return burgerHorizontal;
+    }
+
+    public void setBurgerHorizontal(boolean burgerHorizontal) {
+        if (this.burgerHorizontal = burgerHorizontal)
+            return;
+
+        this.burgerHorizontal = burgerHorizontal;
+
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+    }
+
+    public int getBurgerLayers() {
+        return burgerLayers;
+    }
+
+    public void setBurgerLayers(int burgerLayers) {
+        if (this.burgerLayers == burgerLayers)
+            return;
+
+        this.burgerLayers = burgerLayers;
+
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+    }
+
+    public BoundDouble getBurgerPadding() {
+        return burgerPad;
+    }
+
+    public void setBurgerPadding(BoundDouble burgerPadding) {
+        if (this.burgerPad.equals(burgerPadding))
+            return;
+
+        this.burgerPad = burgerPadding;
+
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+    }
+
 
     protected int[] getNmArray() { return nmArray; }
 
@@ -53,7 +344,7 @@ public class MosaicGroupModel extends AnimatedImageModel {
             ? getCoords_MosaicGroupAsType()
             : (mosaicGroup != EMosaicGroup.eOthers)
                 ? Stream.of(new Pair<>(getForegroundColor(), getCoords_MosaicGroupAsValue()))
-                : MosaicGroupModel.varMosaicGroupAsValueOthers1
+                : MosaicGroupModel2.varMosaicGroupAsValueOthers1
                     ? getCoords_MosaicGroupAsValueOthers1()
                     : getCoords_MosaicGroupAsValueOthers2();
     }
@@ -260,6 +551,14 @@ public class MosaicGroupModel extends AnimatedImageModel {
             return 0;
         });
         return resL.stream().map(x -> x.second);
+    }
+
+
+    @Override
+    public void setListener(Consumer<String> callback) {
+        if ((callback != null) && (changedCallback != null))
+            throw new IllegalArgumentException("Can only set the controller once");
+        changedCallback = callback;
     }
 
 }

@@ -15,6 +15,7 @@ public final class ImageHelper {
     public static final String PROPERTY_NAME_IMAGE = "Image";
     public static final String PROPERTY_NAME_SIZE  = "Size";
     public static final String PROPERTY_NAME_OTHER = "Other";
+    public static final String PROPERTY_NAME_MOSAIC_GROUP = "MosaicGroup";
 
 
     /** proportionally adjust when resizing */
