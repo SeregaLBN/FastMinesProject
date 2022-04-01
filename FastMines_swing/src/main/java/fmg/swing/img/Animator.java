@@ -49,6 +49,9 @@ public class Animator implements IAnimator, AutoCloseable {
             info.callback = subscriberCallback;
             subscribers.put(subscriber, info);
         } else {
+            if (info.active)
+                return; // alredy run
+
             info.active = true;
             info.startTime = new Date().getTime() - info.startTime; // apply of pause delta time
         }
@@ -59,6 +62,9 @@ public class Animator implements IAnimator, AutoCloseable {
         SubscribeInfo info = subscribers.get(subscriber);
         if (info == null)
             return;
+
+        if (!info.active)
+            return; // alredy paused
 
         info.active = false;
         info.startTime = new Date().getTime() - info.startTime; // set of pause delta time

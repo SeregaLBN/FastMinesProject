@@ -44,4 +44,13 @@ public final class ImageHelper {
             throw new IllegalArgumentException("Padding size is very large. Should be less than Height.");
     }
 
+    /** to diapason (0° .. +360°] */
+    public static double fixAngle(double value) {
+        if (value >= 360)
+            return value % 360;
+        if (value < 0)
+            return (value % 360) + 360;
+        return value;
+    }
+
 }
