@@ -3,11 +3,6 @@ package fmg.jfx.img;
 import java.util.Arrays;
 import java.util.List;
 
-import fmg.common.HSV;
-import fmg.common.geom.PointDouble;
-import fmg.core.img.LogoController2;
-import fmg.core.img.LogoModel2;
-import fmg.jfx.utils.Cast;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -15,6 +10,12 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.StrokeLineCap;
+
+import fmg.common.HSV;
+import fmg.common.geom.PointDouble;
+import fmg.core.img.LogoController2;
+import fmg.core.img.LogoModel2;
+import fmg.jfx.utils.Cast;
 
 /** Main logo image */
 public final class Logo2 {
@@ -111,10 +112,8 @@ public final class Logo2 {
                                      end  .getX(), end  .getY(),
                                      false,
                                      CycleMethod.NO_CYCLE,
-                                     new Stop[] {
-                                        new Stop(0, startClr),
-                                        new Stop(1, endClr)
-                                    }));
+                                     new Stop(0, startClr),
+                                     new Stop(1, endClr)));
     }
 
     private static void fillPolygon(GraphicsContext g, Point2D... p) {
@@ -126,9 +125,9 @@ public final class Logo2 {
 
 
     /** Logo image controller implementation for {@link javafx.scene.canvas.Canvas} */
-    public static class LogoSwingIconController extends LogoController2<javafx.scene.canvas.Canvas, JfxCanvasView<LogoModel2>> {
+    public static class LogoJfxCanvasController extends LogoController2<javafx.scene.canvas.Canvas, JfxCanvasView<LogoModel2>> {
 
-        public LogoSwingIconController() {
+        public LogoJfxCanvasController() {
             var model = new LogoModel2();
             var view = new JfxCanvasView<>(model, Logo2::draw);
             init(model, view);
@@ -137,9 +136,9 @@ public final class Logo2 {
     }
 
     /** Logo image controller implementation for {@link javafx.scene.image.Image} */
-    public static class LogoAwtImageController extends LogoController2<javafx.scene.image.Image, JfxImageView<LogoModel2>> {
+    public static class LogoJfxImageController extends LogoController2<javafx.scene.image.Image, JfxImageView<LogoModel2>> {
 
-        public LogoAwtImageController() {
+        public LogoJfxImageController() {
             var model = new LogoModel2();
             var view = new JfxImageView<>(model, Logo2::draw);
             init(model, view);

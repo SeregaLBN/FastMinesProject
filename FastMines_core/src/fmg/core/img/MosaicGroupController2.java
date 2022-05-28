@@ -50,7 +50,6 @@ public abstract class MosaicGroupController2<TImage,
     /** animation direction (example: clockwise or counterclockwise for simple rotation) */
     private boolean clockwise = true;
 
-    private boolean animationWasUsed = false;
 
     protected void init(TView view, EMosaicGroup mosaicGroup) {
         super.init(new MosaicGroupModel2(mosaicGroup), view);
@@ -111,7 +110,6 @@ public abstract class MosaicGroupController2<TImage,
     }
 
     private void startAnimation() {
-        animationWasUsed = true;
         UiInvoker.Animator.get().subscribe(this, this::nextAnimation);
     }
 
@@ -161,8 +159,7 @@ public abstract class MosaicGroupController2<TImage,
 
     @Override
     public void close() {
-        if (animationWasUsed) // do not call UiInvoker.ANIMATOR if it is not already used
-            UiInvoker.Animator.get().unsubscribe(this);
+        UiInvoker.Animator.get().unsubscribe(this);
         super.close();
     }
 
