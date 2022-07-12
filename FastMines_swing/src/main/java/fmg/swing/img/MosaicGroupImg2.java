@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
+import fmg.core.img.BurgerMenuModel2;
 import fmg.core.img.MosaicGroupController2;
 import fmg.core.img.MosaicGroupModel2;
 import fmg.core.types.EMosaicGroup;
@@ -19,7 +20,7 @@ import fmg.swing.utils.Cast;
 public final class MosaicGroupImg2 {
     private MosaicGroupImg2() {}
 
-    private static void draw(Graphics2D g, MosaicGroupModel2 m) {
+    private static void draw(Graphics2D g, MosaicGroupModel2 m, BurgerMenuModel2 bm) {
         var size = m.getSize();
         { // fill background
             g.setComposite(AlphaComposite.Src);
@@ -48,13 +49,14 @@ public final class MosaicGroupImg2 {
             }
         });
 
-//        // draw burger menu
-//        getBurgerMenuModel().getCoords()
-//            .forEach(li -> {
-//                g.setStroke(new BasicStroke((float)li.penWidht));
-//                g.setColor(Cast.toColor(li.clr));
-//                g.drawLine((int)li.from.x, (int)li.from.y, (int)li.to.x, (int)li.to.y);
-//            });
+        // draw burger menu
+        if (m.getMosaicGroup() == null)
+            bm.getCoords()
+                .forEach(li -> {
+                    g.setStroke(new BasicStroke((float)li.penWidht));
+                    g.setColor(Cast.toColor(li.clr));
+                    g.drawLine((int)li.from.x, (int)li.from.y, (int)li.to.x, (int)li.to.y);
+                });
     }
 
     /** MosaicGroup image controller implementation for {@link javax.swing.Icon} */
@@ -62,8 +64,12 @@ public final class MosaicGroupImg2 {
 
         public MosaicGroupSwingIconController(EMosaicGroup group) {
             var model = new MosaicGroupModel2(group);
-            var view = new SwingIconView<>(model, MosaicGroupImg2::draw);
+            var view = new SwingIconView<>(model, this::draw);
             init(model, view);
+        }
+
+        private void draw(Graphics2D g, MosaicGroupModel2 m) {
+            MosaicGroupImg2.draw(g, m, getBurgerModel());
         }
 
     }
@@ -73,8 +79,12 @@ public final class MosaicGroupImg2 {
 
         public MosaicGroupAwtImageController(EMosaicGroup group) {
             var model = new MosaicGroupModel2(group);
-            var view = new AwtImageView<>(model, MosaicGroupImg2::draw);
+            var view = new AwtImageView<>(model, this::draw);
             init(model, view);
+        }
+
+        private void draw(Graphics2D g, MosaicGroupModel2 m) {
+            MosaicGroupImg2.draw(g, m, getBurgerModel());
         }
 
     }

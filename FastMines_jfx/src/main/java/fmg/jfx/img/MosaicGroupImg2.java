@@ -9,6 +9,7 @@ import javafx.scene.canvas.GraphicsContext;
 import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
+import fmg.core.img.BurgerMenuModel2;
 import fmg.core.img.MosaicGroupController2;
 import fmg.core.img.MosaicGroupModel2;
 import fmg.core.types.EMosaicGroup;
@@ -18,7 +19,7 @@ import fmg.jfx.utils.Cast;
 public final class MosaicGroupImg2 {
     private MosaicGroupImg2() {}
 
-    private static void draw(GraphicsContext g, MosaicGroupModel2 m) {
+    private static void draw(GraphicsContext g, MosaicGroupModel2 m, BurgerMenuModel2 bm) {
         var size = m.getSize();
         { // fill background
             Color bkClr = m.getBackgroundColor();
@@ -52,13 +53,14 @@ public final class MosaicGroupImg2 {
             }
         });
 
-//        // draw burger menu
-//        getBurgerMenuModel().getCoords()
-//            .forEach(li -> {
-//                g.setLineWidth(li.penWidht);
-//                g.setStroke(Cast.toColor(li.clr));
-//                g.strokeLine(li.from.x, li.from.y, li.to.x, li.to.y);
-//            });
+        // draw burger menu
+        if (m.getMosaicGroup() == null)
+            bm.getCoords()
+                .forEach(li -> {
+                    g.setLineWidth(li.penWidht);
+                    g.setStroke(Cast.toColor(li.clr));
+                    g.strokeLine(li.from.x, li.from.y, li.to.x, li.to.y);
+                });
     }
 
     /** MosaicGroup image controller implementation for {@link javafx.scene.canvas.Canvas} */
@@ -66,8 +68,12 @@ public final class MosaicGroupImg2 {
 
         public MosaicGroupJfxCanvasController(EMosaicGroup group) {
             var model = new MosaicGroupModel2(group);
-            var view = new JfxCanvasView<>(model, MosaicGroupImg2::draw);
+            var view = new JfxCanvasView<>(model, this::draw);
             init(model, view);
+        }
+
+        private void draw(GraphicsContext g, MosaicGroupModel2 m) {
+            MosaicGroupImg2.draw(g, m, getBurgerModel());
         }
 
     }
@@ -77,8 +83,12 @@ public final class MosaicGroupImg2 {
 
         public MosaicGroupJfxImageController(EMosaicGroup group) {
             var model = new MosaicGroupModel2(group);
-            var view = new JfxImageView<>(model, MosaicGroupImg2::draw);
+            var view = new JfxImageView<>(model, this::draw);
             init(model, view);
+        }
+
+        private void draw(GraphicsContext g, MosaicGroupModel2 m) {
+            MosaicGroupImg2.draw(g, m, getBurgerModel());
         }
 
     }

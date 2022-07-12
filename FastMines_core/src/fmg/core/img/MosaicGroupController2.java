@@ -11,19 +11,6 @@ public abstract class MosaicGroupController2<TImage,
     extends ImageController2<TImage, MosaicGroupModel2, TView>
 {
 
-//    protected MosaicGroupController2(boolean showBurgerMenu, TImageView imageView) {
-//        super(imageView);
-//
-//        getBurgerMenuModel().setShow(showBurgerMenu);
-//
-//        addModelTransformer(new MosaicGroupTransformer());
-//        usePolarLightFgTransforming(true);
-//        useRotateTransforming(true);
-//    }
-//
-//    public BurgerMenuModel getBurgerMenuModel() { return getView().getBurgerMenuModel(); }
-//
-
     /** Overall animation period (in milliseconds) */
     private long animatePeriod = 3000;
 
@@ -44,9 +31,17 @@ public abstract class MosaicGroupController2<TImage,
     /** animation direction (example: clockwise or counterclockwise for simple rotation) */
     private boolean clockwise = true;
 
+    private BurgerMenuModel2 burgerModel;
 
-    protected void init(TView view, EMosaicGroup mosaicGroup) {
-        super.init(new MosaicGroupModel2(mosaicGroup), view);
+    public BurgerMenuModel2 getBurgerModel() {
+        return burgerModel;
+    }
+
+    @Override
+    protected void init(MosaicGroupModel2 model, TView view) {
+        super.init(model, view);
+        burgerModel = new BurgerMenuModel2();
+        burgerModel.setListener(this::onModelChanged);
         if (isAnimated())
             startAnimation();
     }
@@ -121,6 +116,8 @@ public abstract class MosaicGroupController2<TImage,
         if (currFrame == this.currentFrame)
             return;
 
+        this.currentFrame = currFrame;
+
         var m = getModel();
 
         long totalFrames = animatePeriod * fps / 1000;
@@ -128,11 +125,29 @@ public abstract class MosaicGroupController2<TImage,
         if (!clockwise)
             angle = -angle;
 
+        // rotate
+        if (rotateImage) {
+            m.setRotateAngle(angle);
+            burgerModel.setRotateAngle(angle);
+        }
+
         // polar light transform
         if (polarLightsFg)
             m.setForegroundAngle(angle);
         if (polarLightsBk)
             m.setBackgroundAngle(angle);
+    }
+
+    private boolean lock = false;
+    @Override
+    protected void onModelChanged(String property) {
+        if (!lock && ImageHelper.PROPERTY_NAME_SIZE.equals(property)) try {
+            lock = true;
+            burgerModel.setSize(getModel().getSize());
+        } finally {
+            lock = false;
+        }
+        super.onModelChanged(property);
     }
 
     @Override

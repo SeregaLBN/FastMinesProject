@@ -32,8 +32,10 @@ public class TestDrawing2 {
     public void changeSettings(IImageModel2 model, boolean testTransparent) {
         testTransparent = testTransparent || bl(); // probability 75%
 
-        double pad = Math.min(model.getSize().height/3, model.getSize().width/3);
-        model.setPadding(new BoundDouble(-pad/4 + r((int)pad)));
+        if (!(model instanceof BurgerMenuModel2)) {
+            double pad = Math.min(model.getSize().height/3, model.getSize().width/3);
+            model.setPadding(new BoundDouble(-pad/4 + r((int)pad)));
+        }
 
         Color bkClr = Color.RandomColor();
         if (testTransparent)
@@ -45,6 +47,12 @@ public class TestDrawing2 {
             m.setBorderColor(Color.RandomColor());
             m.setBorderWidth(r(4));
             m.setUseGradient(bl());
+        } else
+        if (model instanceof BurgerMenuModel2) {
+            var m = (BurgerMenuModel2)model;
+            if (bl())
+                m.setLayers(4);
+            m.setHorizontal(bl());
         } else
         if (model instanceof MosaicGroupModel2) {
             MosaicGroupModel2 m = (MosaicGroupModel2)model;

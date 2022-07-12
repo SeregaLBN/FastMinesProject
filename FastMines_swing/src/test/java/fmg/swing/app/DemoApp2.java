@@ -338,6 +338,7 @@ public class DemoApp2  {
         } else
         if (ctrller instanceof MosaicGroupController2) {
             var c = (MosaicGroupController2<?, ?>)ctrller;
+            td.changeSettings(c.getBurgerModel(), testTransparent);
             c.setAnimatePeriod(2000 + td.r(7000));
             c.setFps(30 + td.r(30));
             c.setClockwise(td.bl());
