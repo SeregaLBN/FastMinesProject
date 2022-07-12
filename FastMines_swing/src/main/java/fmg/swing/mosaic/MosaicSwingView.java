@@ -222,7 +222,7 @@ public abstract class MosaicSwingView<TImage,
 
             // test padding
             g.setStroke(new BasicStroke(5));
-            Color clr = Color.DarkRed.clone();
+            Color clr = new Color(Color.DarkRed);
             clr.setA(120);
             g.setColor(Cast.toColor(clr));
             g.drawRect((int)padding.left,
@@ -232,7 +232,7 @@ public abstract class MosaicSwingView<TImage,
 
             // test margin
             g.setStroke(new BasicStroke(3));
-            clr = Color.DarkGreen.clone();
+            clr = new Color(Color.DarkGreen);
             clr.setA(120);
             g.setColor(Cast.toColor(clr));
             g.drawRect((int)(padding.left + margin.left),

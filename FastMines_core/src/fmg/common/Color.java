@@ -211,9 +211,6 @@ public class Color {
         return String.format("argb[%02X%02X%02X%02X]", a,r,g,b);
     }
 
-    @Override
-    public Color clone() { return new Color(a,r,g,b); }
-
     /** get RED chanel */
     public int getR() { return r; }
     /** update RED chanel. Returned new Color */

@@ -4,6 +4,7 @@ package fmg.core.img;
  * Image MVC: model
  * Model of animated image data/properties/characteristics
  */
+@Deprecated
 public interface IAnimatedModel extends IImageModel {
 
     public static final String PROPERTY_ANIMATED       = "Animated";

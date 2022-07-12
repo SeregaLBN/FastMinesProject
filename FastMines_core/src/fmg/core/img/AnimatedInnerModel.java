@@ -8,6 +8,7 @@ import fmg.common.notifier.NotifyPropertyChanged;
 import fmg.core.types.Property;
 
 /** MVC: inner model. Animated image characteristics. */
+@Deprecated
 final class AnimatedInnerModel implements IAnimatedModel {
 
     /** Image is animated? */

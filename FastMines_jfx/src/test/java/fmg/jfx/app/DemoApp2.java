@@ -26,19 +26,16 @@ import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 
 import fmg.common.Color;
+import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
-import fmg.core.img.IImageController2;
-import fmg.core.img.ImageHelper;
+import fmg.core.img.*;
 import fmg.core.img.SmileModel2.EFaceType;
-import fmg.core.img.TestDrawing2;
 import fmg.core.img.TestDrawing2.CellTilingInfo;
-import fmg.jfx.img.Animator;
-import fmg.jfx.img.Flag2;
-import fmg.jfx.img.Logo2;
-import fmg.jfx.img.Smile2;
+import fmg.core.types.EMosaicGroup;
+import fmg.jfx.img.*;
 import fmg.jfx.mosaic.MosaicCanvasController;
 import fmg.jfx.utils.Cast;
 
@@ -104,15 +101,15 @@ public final class DemoApp2 extends Application {
 //                        return ctrlr;
 //                    }));
 //    }
-//    public void testMosaicGroupImg() {
-//        testApp(() ->
-//            Stream.concat(Stream.of((EMosaicGroup)null),
-//                          Stream.of(EMosaicGroup.values()))
-//                .map(e -> new Pair<>(new MosaicGroupImg.CanvasController (e),
-//                                     new MosaicGroupImg.ImageJfxController(e)))
-//                .flatMap(x -> Stream.of(x.first, x.second))
-//        );
-//    }
+    public void testMosaicGroupImg() {
+        testApp(() ->
+            Stream.concat(Stream.of((EMosaicGroup)null),
+                          Stream.of(EMosaicGroup.values()))
+                .map(e -> new Pair<>(new MosaicGroupImg2.MosaicGroupJfxCanvasController(e),
+                                     new MosaicGroupImg2.MosaicGroupJfxImageController (e)))
+                .flatMap(x -> Stream.of(x.first, x.second))
+        );
+    }
 //    public void testMosaicSkillImg() {
 //        testApp(() ->
 //            Stream.concat(Stream.of((ESkillLevel)null),
@@ -153,7 +150,7 @@ public final class DemoApp2 extends Application {
 //            this::testMosaicControl,
 //            this::testMosaicImg,
 //            this::testMosaicSkillImg,
-//            this::testMosaicGroupImg,
+            this::testMosaicGroupImg,
             this::testSmile,
             this::testLogo,
             this::testFlag
@@ -236,7 +233,7 @@ public final class DemoApp2 extends Application {
 
             if (applySettings) {
                 testTransparent[0] = td.bl();
-                images.forEach(img -> td.applySettings(img, testTransparent[0]));
+                images.forEach(img -> changeSettings(img, testTransparent[0]));
             }
 
             double sizeW = canvas.getWidth();
@@ -382,6 +379,28 @@ public final class DemoApp2 extends Application {
             }
 
         onCreateImages[nextCreateImagesIndex].run();
+    }
+
+    private void changeSettings(IImageController2<?,?> ctrller, boolean testTransparent) {
+        td.changeSettings(ctrller.getModel(), testTransparent);
+
+        if (ctrller instanceof LogoController2) {
+            var c = (LogoController2<?, ?>)ctrller;
+            c.setAnimatePeriod(2000 + td.r(7000));
+            c.setFps(30 + td.r(30));
+            c.setClockwise(td.bl());
+            c.setRotateImage(td.bl());
+            c.setPolarLights(td.bl());
+        } else
+        if (ctrller instanceof MosaicGroupController2) {
+            var c = (MosaicGroupController2<?, ?>)ctrller;
+            c.setAnimatePeriod(2000 + td.r(7000));
+            c.setFps(30 + td.r(30));
+            c.setClockwise(td.bl());
+            c.setRotateImage(td.bl());
+            c.setPolarLightsBackground(td.bl());
+            c.setPolarLightsForeground(td.bl());
+        }
     }
 
     public static void main(String[] args) {

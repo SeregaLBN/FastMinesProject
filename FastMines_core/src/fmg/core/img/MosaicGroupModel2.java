@@ -22,7 +22,6 @@ public class MosaicGroupModel2 implements IImageModel2 {
 
     public MosaicGroupModel2(EMosaicGroup mosaicGroup) {
         this.mosaicGroup = mosaicGroup;
-        this.burgerShow = mosaicGroup == null;
     }
 
 
@@ -43,43 +42,13 @@ public class MosaicGroupModel2 implements IImageModel2 {
 
     private double borderWidth = 3;
 
-//    /** 0° .. +360° */
-//    private double rotateAngle;
-//
-//    /** animation of polar lights */
-//    private boolean polarLights = true;
-//
-//    /** animation direction (example: clockwise or counterclockwise for simple rotation) */
-//    private boolean animeDirection = true;
-//
-//    /** Image is animated? */
-//    private boolean animated;
-//
-//    /** Overall animation period (in milliseconds) */
-//    private long animatePeriod = 3000;
-//
-//    /** Total frames of the animated period */
-//    private int totalFrames = 30;
-//
-//    private int currentFrame = 0;
+    /** 0° .. +360° */
+    private double rotateAngle;
+    /** 0° .. +360° foreground color angle-offset */
+    private double foregroundAngle;
+    /** 0° .. +360° background color angle-offset */
+    private double backgroundAngle;
 
-    private boolean burgerShow = false;
-    private boolean burgerHorizontal = true;
-    private int burgerLayers = 3;
-    private BoundDouble burgerPad = new BoundDouble(ImageHelper.DEFAULT_IMAGE_SIZE / 2,
-                                                    ImageHelper.DEFAULT_IMAGE_SIZE / 2,
-                                                    ImageHelper.DEFAULT_PADDING,
-                                                    ImageHelper.DEFAULT_PADDING);
-
-
-
-
-    public static final boolean varMosaicGroupAsValueOthers1 = false;
-    /** triangle -> quadrangle -> hexagon -> anew triangle -> ... */
-    private final int[] nmArray = { 3, 4, 6 };
-    private int nmIndex1 = 0;
-    private int nmIndex2 = 1;
-    private double incrementSpeedAngle;
 
     public EMosaicGroup getMosaicGroup() { return mosaicGroup; }
     public void setMosaicGroup(EMosaicGroup value) {
@@ -89,8 +58,6 @@ public class MosaicGroupModel2 implements IImageModel2 {
         this.mosaicGroup = value;
         if (changedCallback != null)
             changedCallback.accept(ImageHelper.PROPERTY_NAME_MOSAIC_GROUP);
-
-        setBurgerShow(value == null);
     }
 
     @Override
@@ -113,7 +80,6 @@ public class MosaicGroupModel2 implements IImageModel2 {
             changedCallback.accept(ImageHelper.PROPERTY_NAME_SIZE);
 
         setPadding(ImageHelper.recalcPadding(pad, size, oldSize));
-        setBurgerPadding(ImageHelper.recalcPadding(burgerPad, size, oldSize));
     }
 
     @Override
@@ -136,57 +102,6 @@ public class MosaicGroupModel2 implements IImageModel2 {
         if (changedCallback != null)
             changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
     }
-
-
-//    /** Image is animated? */
-//    public boolean isAnimated() { return animated; }
-//    public void setAnimated(boolean value) {
-//        if (this.animated == value)
-//            return;
-//
-//        this.animated = value;
-//
-//        if (changedCallback != null)
-//            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
-//    }
-//
-//    /** Overall animation period (in milliseconds) */
-//    public long getAnimatePeriod() { return animatePeriod; }
-//    /** Overall animation period (in milliseconds) */
-//    public void setAnimatePeriod(long value) {
-//        if (this.animatePeriod == value)
-//            return;
-//
-//        this.animatePeriod = value;
-//
-//        if (changedCallback != null)
-//            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
-//    }
-//
-//    /** Total frames of the animated period */
-//    public int getTotalFrames() { return totalFrames; }
-//    public void setTotalFrames(int value) {
-//        if (this.totalFrames == value)
-//            return;
-//
-//        this.totalFrames = value;
-//
-//        if (changedCallback != null)
-//            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
-//
-//        setCurrentFrame(0);
-//    }
-//
-//    public int getCurrentFrame() { return currentFrame; }
-//    public void setCurrentFrame(int value) {
-//        if (this.currentFrame == value)
-//            return;
-//
-//        this.currentFrame = value;
-//
-//        if (changedCallback != null)
-//            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
-//    }
 
 
     public Color getForegroundColor() { return foregroundColor; }
@@ -234,132 +149,60 @@ public class MosaicGroupModel2 implements IImageModel2 {
             changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
     }
 
-//    /** 0° .. +360° */
-//    public double getRotateAngle() { return rotateAngle; }
-//    public void setRotateAngle(double value) {
-//        value = fixAngle(value);
-//        if (DoubleExt.almostEquals(this.rotateAngle, value))
-//            return;
-//
-//        this.rotateAngle = value;
-//
-//        if (changedCallback != null)
-//            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
-//    }
-//
-//    public boolean isPolarLights() { return polarLights; }
-//    public void setPolarLights(boolean polarLights) {
-//        if (this.polarLights == polarLights)
-//            return;
-//
-//        this.polarLights = polarLights;
-//
-//        if (changedCallback != null)
-//            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
-//    }
-//
-//    public boolean getAnimeDirection() { return animeDirection; }
-//    public void setAnimeDirection(boolean animeDirection) {
-//        if (this.animeDirection = animeDirection)
-//            return;
-//
-//        this.animeDirection = animeDirection;
-//
-//        if (changedCallback != null)
-//            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
-//    }
 
-
-    public boolean isBurgerShow() {
-        return burgerShow;
-    }
-
-    public void setBurgerShow(boolean burgerShow) {
-        if (this.burgerShow == burgerShow)
+    /** 0° .. +360° */
+    public double getRotateAngle() { return rotateAngle; }
+    public void setRotateAngle(double value) {
+        value = ImageHelper.fixAngle(value);
+        if (DoubleExt.almostEquals(this.rotateAngle, value))
             return;
 
-        this.burgerShow = burgerShow;
+        this.rotateAngle = value;
 
         if (changedCallback != null)
             changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
     }
 
-    public boolean isBurgerHorizontal() {
-        return burgerHorizontal;
-    }
-
-    public void setBurgerHorizontal(boolean burgerHorizontal) {
-        if (this.burgerHorizontal == burgerHorizontal)
+    /** 0° .. +360° */
+    public double getForegroundAngle() { return foregroundAngle; }
+    public void setForegroundAngle(double value) {
+        value = ImageHelper.fixAngle(value);
+        if (DoubleExt.almostEquals(this.foregroundAngle, value))
             return;
 
-        this.burgerHorizontal = burgerHorizontal;
+        this.foregroundAngle = value;
 
         if (changedCallback != null)
             changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
     }
 
-    public int getBurgerLayers() {
-        return burgerLayers;
-    }
-
-    public void setBurgerLayers(int burgerLayers) {
-        if (this.burgerLayers == burgerLayers)
+    /** 0° .. +360° */
+    public double getBackgroundAngle() { return backgroundAngle; }
+    public void setBackgroundAngle(double value) {
+        value = ImageHelper.fixAngle(value);
+        if (DoubleExt.almostEquals(this.backgroundAngle, value))
             return;
 
-        this.burgerLayers = burgerLayers;
+        this.backgroundAngle = value;
 
         if (changedCallback != null)
             changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
     }
-
-    public BoundDouble getBurgerPadding() {
-        return burgerPad;
-    }
-
-    public void setBurgerPadding(BoundDouble burgerPadding) {
-        if (this.burgerPad.equals(burgerPadding))
-            return;
-
-        ImageHelper.checkPadding(size, burgerPad);
-
-        this.burgerPad.left   = burgerPadding.left;
-        this.burgerPad.right  = burgerPadding.right;
-        this.burgerPad.top    = burgerPadding.top;
-        this.burgerPad.bottom = burgerPadding.bottom;
-
-        if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
-    }
-
-
-    protected int[] getNmArray() { return nmArray; }
-
-    protected double getIncrementSpeedAngle() { return incrementSpeedAngle; }
-    protected void setIncrementSpeedAngle(double incrementSpeedAngle) { this.incrementSpeedAngle = incrementSpeedAngle; }
-
-    protected int getNmIndex1() { return nmIndex1; }
-    protected void setNmIndex1(int nmIndex1) { this.nmIndex1 = nmIndex1; }
-
-    protected int getNmIndex2() { return nmIndex2; }
-    protected void setNmIndex2(int nmIndex2) { this.nmIndex2 = nmIndex2; }
 
     public Stream<Pair<Color, Stream<PointDouble>>> getCoords() {
-        EMosaicGroup mosaicGroup = getMosaicGroup();
-        return (mosaicGroup == null)
-            ? getCoords_MosaicGroupAsType()
-            : (mosaicGroup != EMosaicGroup.eOthers)
-                ? Stream.of(new Pair<>(getForegroundColor(), getCoords_MosaicGroupAsValue()))
-                : MosaicGroupModel2.varMosaicGroupAsValueOthers1
-                    ? getCoords_MosaicGroupAsValueOthers1()
-                    : getCoords_MosaicGroupAsValueOthers2();
+        if (mosaicGroup == null)
+            return getCoordsMosaicGroupAsType();
+
+        if (mosaicGroup != EMosaicGroup.eOthers)
+            return Stream.of(new Pair<>(getForegroundColor(), getCoordsMosaicGroupAsValue()));
+
+        return getCoordsMosaicGroupAsValueOthers();
     }
 
-    private Stream<PointDouble> getCoords_MosaicGroupAsValue() {
-        BoundDouble pad = getPadding();
+    private Stream<PointDouble> getCoordsMosaicGroupAsValue() {
         double sq = Math.min( // size inner square
                                 getSize().width  - pad.getLeftAndRight(),
                                 getSize().height - pad.getTopAndBottom());
-        EMosaicGroup mosaicGroup = getMosaicGroup();
         int vertices = 3 + mosaicGroup.ordinal(); // vertices count
         PointDouble center = new PointDouble(getSize().width / 2.0, getSize().height / 2.0);
 
@@ -374,91 +217,16 @@ public class MosaicGroupModel2 implements IImageModel2 {
 
       //return                           FigureHelper.getFlowingToTheRightPolygonCoordsBySide(3, vertices, sq / 3.5, 2, center, ra, ra);
       //return FigureHelper.rotateBySide(FigureHelper.getFlowingToTheRightPolygonCoordsBySide(3, vertices, sq / 3.5, 2, center, ra, 0), 2, center, ra);
-
-      //Pair<Integer, Integer> nm = getNM(getNmIndex1());
-      //return                           FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(nm.first, nm.second, sq / 2, center, getIncrementSpeedAngle(), ra);
-      //return FigureHelper.rotateBySide(FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(nm.first, nm.second, sq / 2, center, getIncrementSpeedAngle(), 0), 2, center, ra);
     }
 
-    private Stream<Pair<Color, Stream<PointDouble>>> getCoords_MosaicGroupAsValueOthers1() {
-        BoundDouble pad = getPadding();
-        double sq = Math.min( // size inner square
-                                getSize().width  - pad.getLeftAndRight(),
-                                getSize().height - pad.getTopAndBottom());
-        PointDouble center = new PointDouble(getSize().width / 2.0, getSize().height / 2.0);
-
-
-        Pair<Integer, Integer> nm1 = getNM(getNmIndex1());
-        Pair<Integer, Integer> nm2 = getNM(getNmIndex2());
-        double isa = getIncrementSpeedAngle();
-        double ra = getRotateAngle();
-        int sideNum = 2;
-        double radius = sq / 3.7; // подобрал.., чтобы не вылазило за периметр изображения
-        double sizeSide = sq / 3.5; // подобрал.., чтобы не вылазило за периметр изображения
-
-        final boolean byRadius = false;
-        // высчитываю координаты двух фигур.
-        // с одинаковым размером одной из граней.
-        Stream<PointDouble> resS1 = byRadius
-                ? FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(nm1.first, nm1.second, radius, center, isa, 0)
-                : FigureHelper.getFlowingToTheRightPolygonCoordsBySide(nm1.first, nm1.second, sizeSide, sideNum, center, isa, 0);
-        List<PointDouble> res1 = FigureHelper.rotateBySide(resS1, sideNum, center, ra)
-                                            .collect(Collectors.toList());
-        Stream<PointDouble> resS2 = byRadius
-                ? FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(nm2.first, nm2.second, radius, center, isa, 0)
-                : FigureHelper.getFlowingToTheRightPolygonCoordsBySide(nm2.first, nm2.second, sizeSide, sideNum, center, isa, 0);
-        List<PointDouble> res2 = FigureHelper.rotateBySide(resS2, sideNum, center, ra+180) // +180° - разворачиваю вторую фигуру, чтобы не пересекалась с первой фигурой
-                                            .collect(Collectors.toList());
-
-        // и склеиваю грани:
-        //  * нахожу середины граней
-        PointDouble p11 = res1.get(sideNum - 1); PointDouble p12 = res1.get(sideNum);
-        PointDouble p21 = res2.get(sideNum - 1); PointDouble p22 = res2.get(sideNum);
-        PointDouble centerPoint1 = new PointDouble((p11.x + p12.x) / 2, (p11.y + p12.y) / 2);
-        PointDouble centerPoint2 = new PointDouble((p21.x + p22.x) / 2, (p21.y + p22.y) / 2);
-
-        //  * и совмещаю их по центру изображения
-        PointDouble offsetToCenter1 = new PointDouble(center.x - centerPoint1.x, center.y - centerPoint1.y);
-        PointDouble offsetToCenter2 = new PointDouble(center.x - centerPoint2.x, center.y - centerPoint2.y);
-        Color fgClr = getForegroundColor();
-        boolean pl = isPolarLights();
-        return Stream.of(
-                new Pair<>(        fgClr                       , FigureHelper.move(res1.stream(), offsetToCenter1)),
-                new Pair<>(pl ?
-                           new HSV(fgClr).addHue(180).toColor()
-                           :       fgClr                       , FigureHelper.move(res2.stream(), offsetToCenter2))
-            );
-    }
-
-    private Pair<Integer, Integer> getNM(int index) {
-        int[] nmArrayLocal = getNmArray();
-        int n = nmArrayLocal[index];
-        int m = nmArrayLocal[(index + 1) % nmArrayLocal.length];
-
-        // Во вторую половину вращения фиксирую значение N равно M.
-        // Т.к. в прервую половину, с 0 до 180, N стремится к M - см. описание FigureHelper.getFlowingToTheRightPolygonCoordsByXxx...
-        // Т.е. при значении 180 значение N уже достигло M.
-        // Фиксирую для того, чтобы при следующем инкременте параметра index, значение N не менялось. Т.о. обеспечиваю плавность анимации.
-        if (getIncrementSpeedAngle() >= 180) {
-            if (getAnimeDirection())
-                n = m;
-        } else {
-            if (!getAnimeDirection())
-                n = m;
-        }
-        return new Pair<>(n, m);
-    }
-
-    private Stream<Pair<Color, Stream<PointDouble>>> getCoords_MosaicGroupAsType() {
+    private Stream<Pair<Color, Stream<PointDouble>>> getCoordsMosaicGroupAsType() {
         final boolean accelerateRevert = true; // ускорение под конец анимации, иначе - в начале...
 
         int shapes = 4; // 3х-, 4х-, 5ти- и 6ти-угольники
 
-        double angle = getRotateAngle();
-      //double[] angleAccumulative = { angle };
+      //double[] angleAccumulative = { rotateAngle };
         double anglePart = 360.0/shapes;
 
-        BoundDouble pad = getPadding();
         double sqMax = Math.min( // размер квадрата куда будет вписана фигура при 0°
                                     getSize().width  - pad.getLeftAndRight(),
                                     getSize().height - pad.getTopAndBottom());
@@ -469,25 +237,23 @@ public class MosaicGroupModel2 implements IImageModel2 {
                                              pad.top  + (getSize().height - pad.getTopAndBottom()) / 2.0);
 
         Color fgClr = getForegroundColor();
-        boolean pl = isPolarLights();
         Stream<Pair<Double, Pair<Color, Stream<PointDouble>>>> res = IntStream.range(0, shapes)
             .mapToObj(shapeNum -> {
-                int vertices = 3+shapeNum;
-                double angleShape = fixAngle(angle + shapeNum * anglePart);
-              //angleAccumulative[0] = Math.sin(FigureHelper.toRadian(angle/4))*angleAccumulative[0]; // accelerate / ускоряшка..
+                int vertices = 3 + shapeNum;
+                double rtAngleShape = ImageHelper.fixAngle(    rotateAngle + shapeNum * anglePart);
+                double fgAngleShape = ImageHelper.fixAngle(foregroundAngle + shapeNum * anglePart);
+              //angleAccumulative[0] = Math.sin(FigureHelper.toRadian(rotateAngle/4)) * angleAccumulative[0]; // accelerate / ускоряшка..
 
-                double sq = angleShape * sqDiff / 360;
+                double sq = rtAngleShape * sqDiff / 360;
                 // (un)comment next line to view result changes...
-                sq = Math.sin(FigureHelper.toRadian(angleShape/4))*sq; // accelerate / ускоряшка..
+                sq = Math.sin(FigureHelper.toRadian(rtAngleShape/4)) * sq; // accelerate / ускоряшка..
                 sq = accelerateRevert
                     ? sqMin + sq
                     : sqMax - sq;
 
                 double radius = sq/1.8;
 
-                Color clr = !pl
-                    ? fgClr
-                    : new HSV(fgClr).addHue(+angleShape).toColor(); // try: -angleShape
+                Color clr = new HSV(fgClr).addHue(+fgAngleShape).toColor(); // try: -fgAngleShape
 
                 return new Pair<>(sq, new Pair<>(
                     clr,
@@ -507,8 +273,7 @@ public class MosaicGroupModel2 implements IImageModel2 {
         return resL.stream().map(x -> x.second);
     }
 
-    private Stream<Pair<Color, Stream<PointDouble>>> getCoords_MosaicGroupAsValueOthers2() {
-        BoundDouble pad = getPadding();
+    private Stream<Pair<Color, Stream<PointDouble>>> getCoordsMosaicGroupAsValueOthers() {
         double sq = Math.min( // size inner square
                                 getSize().width  - pad.getLeftAndRight(),
                                 getSize().height - pad.getTopAndBottom());
@@ -516,24 +281,21 @@ public class MosaicGroupModel2 implements IImageModel2 {
 
         int shapes = 3; // мозаики из группы EMosaicGroup.eOthers состоят из 3 типов фигур: треугольники, квадраты и шестигранники
 
-        double angle = getRotateAngle();
         double anglePart = 360.0/shapes;
 
         final PointDouble center = new PointDouble(getSize().width / 2.0, getSize().height / 2.0);
         final PointDouble zero = new PointDouble(0, 0);
         Color fgClr = getForegroundColor();
-        boolean pl = isPolarLights();
         Stream<Pair<Double, Pair<Color, Stream<PointDouble>>>> res = IntStream.range(0, shapes)
             .mapToObj(shapeNum -> {
-                double angleShape = angle*shapeNum;
+                double rtAngleShape = ImageHelper.fixAngle(    rotateAngle + shapeNum * anglePart);
+                double fgAngleShape = ImageHelper.fixAngle(foregroundAngle + shapeNum * anglePart);
 
                 // adding offset
-                PointDouble offset = FigureHelper.getPointOnCircle(sq / 5, angleShape + shapeNum * anglePart, zero);
+                PointDouble offset = FigureHelper.getPointOnCircle(sq / 5, rtAngleShape + shapeNum * anglePart, zero);
                 PointDouble centerStar = new PointDouble(center.x + offset.x, center.y + offset.y);
 
-                Color clr = !pl
-                    ? fgClr
-                    : new HSV(fgClr).addHue(shapeNum * anglePart).toColor();
+                Color clr = new HSV(fgClr).addHue(+fgAngleShape).toColor(); // try: -fgAngleShape
 
                 int vertices;
                 switch (shapeNum) { // мозаики из группы EMosaicGroup.eOthers состоят из 3 типов фигур:
@@ -546,7 +308,7 @@ public class MosaicGroupModel2 implements IImageModel2 {
                     1.0, // const value (no sorting). Provided for the future...
                     new Pair<>(
                         clr,
-                        FigureHelper.getRegularPolygonCoords(vertices, radius, centerStar, -angle)));
+                        FigureHelper.getRegularPolygonCoords(vertices, radius, centerStar, -rotateAngle)));
             });
 
         List<Pair<Double, Pair<Color, Stream<PointDouble>>>> resL = res.collect(Collectors.toList());

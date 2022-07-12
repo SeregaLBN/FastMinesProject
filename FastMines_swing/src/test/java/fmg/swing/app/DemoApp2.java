@@ -12,17 +12,14 @@ import java.util.stream.Stream;
 
 import javax.swing.*;
 
+import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.IImageController2;
-import fmg.core.img.ImageHelper;
+import fmg.core.img.*;
 import fmg.core.img.SmileModel2.EFaceType;
-import fmg.core.img.TestDrawing2;
-import fmg.swing.img.Animator;
-import fmg.swing.img.Flag2;
-import fmg.swing.img.Logo2;
-import fmg.swing.img.Smile2;
+import fmg.core.types.EMosaicGroup;
+import fmg.swing.img.*;
 import fmg.swing.mosaic.MosaicJPanelController;
 
 /** live UI test application
@@ -87,13 +84,13 @@ public class DemoApp2  {
 //                     return ctrlr;
 //                 }));
 //    }
-//    public void testMosaicGroupImg() {
-//        testApp(() -> Stream.concat(Stream.of((EMosaicGroup)null),
-//                                     Stream.of(EMosaicGroup.values()))
-//                 .map(e -> new Pair<>(new MosaicGroupImg.IconController (e),
-//                                      new MosaicGroupImg.ImageAwtController(e)))
-//                 .flatMap(x -> Stream.of(x.first, x.second)));
-//    }
+    public void testMosaicGroupImg() {
+        testApp(() -> Stream.concat(Stream.of((EMosaicGroup)null),
+                                     Stream.of(EMosaicGroup.values()))
+                 .map(e -> new Pair<>(new MosaicGroupImg2.MosaicGroupAwtImageController (e),
+                                      new MosaicGroupImg2.MosaicGroupSwingIconController(e)))
+                 .flatMap(x -> Stream.of(x.first, x.second)));
+    }
 //    public void testMosaicSkillImg() {
 //        testApp(() -> Stream.concat(Stream.of((ESkillLevel)null),
 //                                     Stream.of(ESkillLevel.values()))
@@ -128,7 +125,7 @@ public class DemoApp2  {
 //            this::testMosaicControl,
 //            this::testMosaicImg,
 //            this::testMosaicSkillImg,
-//            this::testMosaicGroupImg,
+            this::testMosaicGroupImg,
             this::testSmile,
             this::testLogo,
             this::testFlag
@@ -201,7 +198,7 @@ public class DemoApp2  {
 
             if (applySettings) {
                 testTransparent[0] = td.bl();
-                images.forEach(img -> td.applySettings(img, testTransparent[0]));
+                images.forEach(img -> changeSettings(img, testTransparent[0]));
             }
 
             double sizeW = jPanel.getWidth();
@@ -326,6 +323,28 @@ public class DemoApp2  {
             }
 
         onCreateImages[nextCreateImagesIndex].run();
+    }
+
+    private void changeSettings(IImageController2<?,?> ctrller, boolean testTransparent) {
+        td.changeSettings(ctrller.getModel(), testTransparent);
+
+        if (ctrller instanceof LogoController2) {
+            var c = (LogoController2<?, ?>)ctrller;
+            c.setAnimatePeriod(2000 + td.r(7000));
+            c.setFps(30 + td.r(30));
+            c.setClockwise(td.bl());
+            c.setRotateImage(td.bl());
+            c.setPolarLights(td.bl());
+        } else
+        if (ctrller instanceof MosaicGroupController2) {
+            var c = (MosaicGroupController2<?, ?>)ctrller;
+            c.setAnimatePeriod(2000 + td.r(7000));
+            c.setFps(30 + td.r(30));
+            c.setClockwise(td.bl());
+            c.setRotateImage(td.bl());
+            c.setPolarLightsBackground(td.bl());
+            c.setPolarLightsForeground(td.bl());
+        }
     }
 
     public static void main(String[] args) {

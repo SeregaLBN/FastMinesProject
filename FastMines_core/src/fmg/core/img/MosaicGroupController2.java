@@ -1,9 +1,5 @@
 package fmg.core.img;
 
-import fmg.common.HSV;
-import fmg.common.geom.PointDouble;
-import fmg.common.geom.SizeDouble;
-import fmg.common.geom.util.FigureHelper;
 import fmg.common.ui.UiInvoker;
 import fmg.core.types.EMosaicGroup;
 
@@ -28,8 +24,6 @@ public abstract class MosaicGroupController2<TImage,
 //    public BurgerMenuModel getBurgerMenuModel() { return getView().getBurgerMenuModel(); }
 //
 
-    public boolean isAnimated() { return rotateImage || polarLightsFg || polarLightsBk; }
-
     /** Overall animation period (in milliseconds) */
     private long animatePeriod = 3000;
 
@@ -53,7 +47,11 @@ public abstract class MosaicGroupController2<TImage,
 
     protected void init(TView view, EMosaicGroup mosaicGroup) {
         super.init(new MosaicGroupModel2(mosaicGroup), view);
+        if (isAnimated())
+            startAnimation();
     }
+
+    public boolean isAnimated() { return rotateImage || polarLightsFg || polarLightsBk; }
 
     public long getAnimatePeriod() {
         return animatePeriod;
@@ -120,41 +118,21 @@ public abstract class MosaicGroupController2<TImage,
     private void nextAnimation(long timeOfStartAnimation) {
         long mod = timeOfStartAnimation % animatePeriod;
         int currFrame = (int)(mod * fps / 1000.0);
-        if (currFrame != this.currentFrame) {
-            this.currentFrame = currFrame;
-            applyTransforming();
-        }
-    }
+        if (currFrame == this.currentFrame)
+            return;
 
-    private void applyTransforming() {
-        var lm = getModel();
+        var m = getModel();
 
         long totalFrames = animatePeriod * fps / 1000;
-        double rotateAngle = currentFrame * 360.0 / totalFrames;
+        double angle = currentFrame * 360.0 / totalFrames;
         if (!clockwise)
-            rotateAngle = -rotateAngle;
-
-        // rotate
-        if (rotateImage) {
-            lm.getRays().clear();
-            lm.getInn().clear();
-            lm.getOct().clear();
-
-            SizeDouble size = lm.getSize();
-            PointDouble center = new PointDouble(size.width/2.0, size.height/2.0);
-            FigureHelper.rotateCollection(lm.getRays(), rotateAngle, center);
-            FigureHelper.rotateCollection(lm.getInn() , rotateAngle, center);
-            FigureHelper.rotateCollection(lm.getOct() , rotateAngle, center);
-        }
+            angle = -angle;
 
         // polar light transform
-        if (polarLights) {
-            HSV[] palette = lm.getPalette();
-            for (int i = 0; i < palette.length; ++i)
-                palette[i].h = MosaicGroupModel2.DEFAULT_PALETTE[i].h + rotateAngle;
-        }
-
-        onModelChanged(ImageHelper.PROPERTY_NAME_OTHER);
+        if (polarLightsFg)
+            m.setForegroundAngle(angle);
+        if (polarLightsBk)
+            m.setBackgroundAngle(angle);
     }
 
     @Override

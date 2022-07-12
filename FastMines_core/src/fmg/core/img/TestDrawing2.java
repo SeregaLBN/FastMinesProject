@@ -29,60 +29,8 @@ public class TestDrawing2 {
         this.titlePrefix = titlePrefix;
     }
 
-    public void applySettings(IImageController2<?,?> ctrller, boolean testTransparent) {
-
-        ///////////////////////
-        //                   //
-        //  manual settings  //
-        //                   //
-        ///////////////////////
-
-        IImageModel2 model = ctrller.getModel();
-        //model.setSize(new SizeDouble(600, 600));
-        model.setPadding(new BoundDouble(10));
-
-//        if (model instanceof IAnimatedModel) {
-//            IAnimatedModel am = (IAnimatedModel)model;
-//            am.setAnimated(true);
-//            if (am.isAnimated()) {
-//                am.setAnimatePeriod(2000); // rotate period
-//                am.setTotalFrames(100); // animate iterations
-//            }
-//        }
-//        if (model instanceof AnimatedImageModel) {
-//            AnimatedImageModel aim = (AnimatedImageModel)model;
-//            aim.setBorderWidth(0);
-//            aim.setBackgroundColor(testTransparent ? new Color(0xC8FFFFFF) : Color.White());
-//            aim.setForegroundColor(aim.getForegroundColor().updateA(200)); // 0..255 - foreground alpha-chanel color
-//        }
-//        if (model instanceof BurgerMenuModel) {
-//            BurgerMenuModel bmm = (BurgerMenuModel)model;
-//            bmm.setShow(true);
-//        }
-//        if (model instanceof MineModel) {
-//            LogoModel lm = (LogoModel)model;
-//            lm.setUseGradient(true);
-//        }
-//
-//        if (ctrller instanceof IAnimatedController) { // if (ctrller instanceof AnimatedImgController)
-//            IAnimatedController<?,?,?> aic = (IAnimatedController<?,?,?>)ctrller;
-//            if (aic.getModel() instanceof AnimatedImageModel) {
-//                aic.useRotateTransforming(true);
-//                aic.usePolarLightFgTransforming(true);
-//            }
-//        }
-
-
-        boolean useRandom = true;
-        ///////////////////////
-        //                   //
-        //  random settings  //
-        //                   //
-        ///////////////////////
-        if (!useRandom)
-            return;
-
-        testTransparent = testTransparent || bl();
+    public void changeSettings(IImageModel2 model, boolean testTransparent) {
+        testTransparent = testTransparent || bl(); // probability 75%
 
         double pad = Math.min(model.getSize().height/3, model.getSize().width/3);
         model.setPadding(new BoundDouble(-pad/4 + r((int)pad)));
@@ -93,63 +41,28 @@ public class TestDrawing2 {
 
 
         if (model instanceof LogoModel2) {
-            var lc = (LogoController2<?, ?>)ctrller;
-            lc.setAnimatePeriod(2000 + r(7000));
-            lc.setFps(30 + r(30));
-            lc.setClockwise(bl());
-            lc.setPolarLights(bl());
-            lc.setRotateImage(bl());
-            var lm = (LogoModel2)model;
-            lm.setBorderColor(Color.RandomColor());
-            lm.setBorderWidth(r(4));
-            lm.setUseGradient(bl());
-        }
-        if (model instanceof IAnimatedModel) {
-            IAnimatedModel am = (IAnimatedModel)model;
-            am.setAnimated(bl() || bl());
-            if (am.isAnimated()) {
-                am.setAnimatePeriod(1000 + r(2000));
-                am.setTotalFrames(40 + r(20));
-            }
-        }
-        if (ctrller instanceof IAnimatedController) { // if (ctrller instanceof AnimatedImgController)
-            IAnimatedController<?,?,?> aic = (IAnimatedController<?,?,?>)ctrller;
-            IAnimatedModel animModel = aic.getModel();
-            if ((animModel instanceof AnimatedImageModel) && animModel.isAnimated()) {
-                aic.useRotateTransforming(bl());
-                aic.usePolarLightFgTransforming(bl());
-                if (bl())
-                    aic.addModelTransformer(new PolarLightBkTransformer());
-            }
-        }
+            var m = (LogoModel2)model;
+            m.setBorderColor(Color.RandomColor());
+            m.setBorderWidth(r(4));
+            m.setUseGradient(bl());
+        } else
+        if (model instanceof MosaicGroupModel2) {
+            MosaicGroupModel2 m = (MosaicGroupModel2)model;
+            m.setBorderColor(Color.RandomColor());
+            m.setBorderWidth(r(3));
+            m.setBackgroundColor(bkClr);
 
-        if (model instanceof AnimatedImageModel) {
-            AnimatedImageModel aim = (AnimatedImageModel)model;
-
-            aim.setBorderWidth(r(3));
-
-            aim.setBackgroundColor(bkClr);
-
-            aim.setForegroundColor(Color.RandomColor()/*.brighter()*/);
+            var fgColor = Color.RandomColor();//.brighter();
             if (testTransparent) {
                 // test transparent
-                Color clr = aim.getForegroundColor();
-                if ((aim.getBorderWidth() > 0) && (r(4) == 0)) {
-                    clr = clr.updateA(Color.Transparent().getA());
+                if ((m.getBorderWidth() > 0) && (r(4) == 0)) {
+                    fgColor = fgColor.updateA(Color.Transparent().getA());
                 } else {
-                    clr = clr.updateA(150 + r(255-150));
+                    fgColor = fgColor.updateA(150 + r(105));
                 }
-                aim.setForegroundColor(clr);
             }
-
-            aim.setPolarLights(bl());
-            aim.setAnimeDirection(bl());
-
-            if (model instanceof LogoModel) {
-                LogoModel lm = (LogoModel)model;
-                lm.setUseGradient(bl());
-            }
-        }
+            m.setForegroundColor(fgColor);
+        } else
         if (model instanceof MosaicGameModel) {
             MosaicGameModel mgm = (MosaicGameModel)model;
             mgm.setSizeField(new Matrisize(3+r(2), 3 + r(2)));
@@ -190,7 +103,7 @@ public class TestDrawing2 {
         public Function<IImageController2<?,?> /* imageControllers */, CellTilingInfo> itemCallback;
     }
 
-    public CellTilingResult2 cellTiling(RectDouble rc, List<IImageController2<?,?>> images, boolean testIntersection) {
+    public CellTilingResult2 cellTiling(RectDouble rc, List<IImageController2<?,?>> images, boolean tileIntersection) {
         int len = images.size();
 
         // max tiles in one column
@@ -227,8 +140,8 @@ public class TestDrawing2 {
         double dy = rc.height / rows; // cell tile height
 
         int pad = 2; // cell padding
-        double addonX = (cols==1) ? 0 : !testIntersection ? 0 : dx/4; // test intersection
-        double addonY = (rows==1) ? 0 : !testIntersection ? 0 : dy/4; // test intersection
+        double addonX = (cols==1) ? 0 : !tileIntersection ? 0 : dx/4; // test intersection
+        double addonY = (rows==1) ? 0 : !tileIntersection ? 0 : dy/4; // test intersection
         SizeDouble imgSize = new SizeDouble(dx - 2*pad + addonX,  // dx - 2*pad;
                                             dy - 2*pad + addonY); // dy - 2*pad;
 

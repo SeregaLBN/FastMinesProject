@@ -10,6 +10,7 @@ import fmg.common.geom.BoundDouble;
 import fmg.common.geom.DoubleExt;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.SizeDouble;
+import fmg.common.geom.util.FigureHelper;
 
 /** MVC: model for FastMines logo image */
 public class LogoModel2 implements IImageModel2 {
@@ -23,13 +24,18 @@ public class LogoModel2 implements IImageModel2 {
 
     private double borderWidth = 3;
 
-    public static final HSV[] DEFAULT_PALETTE = { new HSV(  0, 100, 100), new HSV( 45, 100, 100), new HSV( 90, 100, 100), new HSV(135, 100, 100),
-                                                  new HSV(180, 100, 100), new HSV(225, 100, 100), new HSV(270, 100, 100), new HSV(315, 100, 100) };
+    private static final HSV[] DEFAULT_PALETTE = { new HSV(  0, 100, 100), new HSV( 45, 100, 100), new HSV( 90, 100, 100), new HSV(135, 100, 100),
+                                                   new HSV(180, 100, 100), new HSV(225, 100, 100), new HSV(270, 100, 100), new HSV(315, 100, 100) };
     private final HSV[] palette = { new HSV(DEFAULT_PALETTE[0]), new HSV(DEFAULT_PALETTE[1]), new HSV(DEFAULT_PALETTE[2]), new HSV(DEFAULT_PALETTE[3]),
                                     new HSV(DEFAULT_PALETTE[4]), new HSV(DEFAULT_PALETTE[5]), new HSV(DEFAULT_PALETTE[6]), new HSV(DEFAULT_PALETTE[7]) };
 
     private boolean useGradient = true;
 
+
+    /** 0° .. +360° */
+    private double rotateAngle;
+    /** 0° .. +360° */
+    private double paletteColorOffset;
     /** owner rays points */
     private final List<PointDouble> rays = new ArrayList<>();
     /** inner octahedron */
@@ -154,6 +160,44 @@ public class LogoModel2 implements IImageModel2 {
             return;
 
         this.useGradient = value;
+
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+    }
+
+    /** 0° .. +360° */
+    public double getRotateAngle() { return rotateAngle; }
+    public void setRotateAngle(double value) {
+        value = ImageHelper.fixAngle(value);
+        if (DoubleExt.almostEquals(this.rotateAngle, value))
+            return;
+
+        this.rotateAngle = value;
+
+        rays.clear();
+        inn.clear();
+        oct.clear();
+
+        PointDouble center = new PointDouble(size.width/2.0, size.height/2.0);
+        FigureHelper.rotateCollection(getRays(), this.rotateAngle, center);
+        FigureHelper.rotateCollection(getInn() , this.rotateAngle, center);
+        FigureHelper.rotateCollection(getOct() , this.rotateAngle, center);
+
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+    }
+
+    /** 0° .. +360° */
+    public double getPaletteColorOffset() { return paletteColorOffset; }
+    public void setPaletteColorOffset(double value) {
+        value = ImageHelper.fixAngle(value);
+        if (DoubleExt.almostEquals(this.paletteColorOffset, value))
+            return;
+
+        this.paletteColorOffset = value;
+
+        for (int i = 0; i < palette.length; ++i)
+            palette[i].h = DEFAULT_PALETTE[i].h + this.paletteColorOffset;
 
         if (changedCallback != null)
             changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);

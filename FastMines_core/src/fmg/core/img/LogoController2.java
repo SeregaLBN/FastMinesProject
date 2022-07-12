@@ -1,9 +1,6 @@
 package fmg.core.img;
 
 import fmg.common.HSV;
-import fmg.common.geom.PointDouble;
-import fmg.common.geom.SizeDouble;
-import fmg.common.geom.util.FigureHelper;
 import fmg.common.ui.UiInvoker;
 
 /** MVC controller of logo image
@@ -13,8 +10,6 @@ public class LogoController2<TImage,
                             TView extends IImageView2<TImage>>
     extends ImageController2<TImage, LogoModel2, TView>
 {
-
-    public boolean isAnimated() { return rotateImage || polarLights; }
 
     /** Overall animation period (in milliseconds) */
     private long animatePeriod = 3000;
@@ -33,6 +28,14 @@ public class LogoController2<TImage,
     /** animation direction (example: clockwise or counterclockwise for simple rotation) */
     private boolean clockwise = true;
 
+    @Override
+    protected void init(LogoModel2 model, TView view) {
+        super.init(model, view);
+        if (isAnimated())
+            startAnimation();
+    }
+
+    public boolean isAnimated() { return rotateImage || polarLights; }
 
     public long getAnimatePeriod() {
         return animatePeriod;
@@ -88,41 +91,25 @@ public class LogoController2<TImage,
     private void nextAnimation(long timeOfStartAnimation) {
         long mod = timeOfStartAnimation % animatePeriod;
         int currFrame = (int)(mod * fps / 1000.0);
-        if (currFrame != this.currentFrame) {
-            this.currentFrame = currFrame;
-            applyTransforming();
-        }
-    }
+        if (currFrame == this.currentFrame)
+            return;
 
-    private void applyTransforming() {
+        this.currentFrame = currFrame;
+
         var lm = getModel();
 
         long totalFrames = animatePeriod * fps / 1000;
-        double rotateAngle = currentFrame * 360.0 / totalFrames;
+        double angle = currentFrame * 360.0 / totalFrames;
         if (!clockwise)
-            rotateAngle = -rotateAngle;
+            angle = -angle;
 
         // logo rotate
-        if (rotateImage) {
-            lm.getRays().clear();
-            lm.getInn().clear();
-            lm.getOct().clear();
-
-            SizeDouble size = lm.getSize();
-            PointDouble center = new PointDouble(size.width/2.0, size.height/2.0);
-            FigureHelper.rotateCollection(lm.getRays(), rotateAngle, center);
-            FigureHelper.rotateCollection(lm.getInn() , rotateAngle, center);
-            FigureHelper.rotateCollection(lm.getOct() , rotateAngle, center);
-        }
+        if (rotateImage)
+            lm.setRotateAngle(angle);
 
         // polar light transform
-        if (polarLights) {
-            HSV[] palette = lm.getPalette();
-            for (int i = 0; i < palette.length; ++i)
-                palette[i].h = LogoModel2.DEFAULT_PALETTE[i].h + rotateAngle;
-        }
-
-        onModelChanged(ImageHelper.PROPERTY_NAME_OTHER);
+        if (polarLights)
+            lm.setPaletteColorOffset(angle);
     }
 
     @Override
