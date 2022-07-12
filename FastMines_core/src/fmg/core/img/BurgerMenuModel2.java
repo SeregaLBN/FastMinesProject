@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import fmg.common.Color;
 import fmg.common.HSV;
@@ -107,7 +108,7 @@ public final class BurgerMenuModel2 implements IImageModel2 {
     }
 
     /** get paint information of drawing burger menu model image */
-    public List<LineInfo> getCoords() {
+    public Stream<LineInfo> getCoords() {
         RectDouble rc = new RectDouble(pad.left,
                                        pad.top,
                                        getSize().width  - pad.getLeftAndRight(),
@@ -134,8 +135,7 @@ public final class BurgerMenuModel2 implements IImageModel2 {
                 li.from = start;
                 li.to = end;
                 return li;
-            })
-            .collect(Collectors.toList());
+            });
     }
 
 }

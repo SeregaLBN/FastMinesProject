@@ -31,8 +31,10 @@ import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
-import fmg.core.img.*;
+import fmg.core.img.IImageController2;
+import fmg.core.img.ImageHelper;
 import fmg.core.img.SmileModel2.EFaceType;
+import fmg.core.img.TestDrawing2;
 import fmg.core.img.TestDrawing2.CellTilingInfo;
 import fmg.core.types.EMosaicGroup;
 import fmg.jfx.img.*;
@@ -233,7 +235,7 @@ public final class DemoApp2 extends Application {
 
             if (applySettings) {
                 testTransparent[0] = td.bl();
-                images.forEach(img -> changeSettings(img, testTransparent[0]));
+                images.forEach(img -> td.changeSettings(img, testTransparent[0]));
             }
 
             double sizeW = canvas.getWidth();
@@ -379,28 +381,6 @@ public final class DemoApp2 extends Application {
             }
 
         onCreateImages[nextCreateImagesIndex].run();
-    }
-
-    private void changeSettings(IImageController2<?,?> ctrller, boolean testTransparent) {
-        td.changeSettings(ctrller.getModel(), testTransparent);
-
-        if (ctrller instanceof LogoController2) {
-            var c = (LogoController2<?, ?>)ctrller;
-            c.setAnimatePeriod(2000 + td.r(7000));
-            c.setFps(30 + td.r(30));
-            c.setClockwise(td.bl());
-            c.setRotateImage(td.bl());
-            c.setPolarLights(td.bl());
-        } else
-        if (ctrller instanceof MosaicGroupController2) {
-            var c = (MosaicGroupController2<?, ?>)ctrller;
-            c.setAnimatePeriod(2000 + td.r(7000));
-            c.setFps(30 + td.r(30));
-            c.setClockwise(td.bl());
-            c.setRotateImage(td.bl());
-            c.setPolarLightsBackground(td.bl());
-            c.setPolarLightsForeground(td.bl());
-        }
     }
 
     public static void main(String[] args) {

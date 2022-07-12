@@ -29,6 +29,29 @@ public class TestDrawing2 {
         this.titlePrefix = titlePrefix;
     }
 
+    public void changeSettings(IImageController2<?,?> ctrller, boolean testTransparent) {
+        changeSettings(ctrller.getModel(), testTransparent);
+
+        if (ctrller instanceof LogoController2) {
+            var c = (LogoController2<?, ?>)ctrller;
+            c.setAnimatePeriod(2000 + r(7000));
+            c.setFps(30 + r(30));
+            c.setClockwise(bl());
+            c.setRotateImage(bl());
+            c.setPolarLights(bl());
+        } else
+        if (ctrller instanceof MosaicGroupController2) {
+            var c = (MosaicGroupController2<?, ?>)ctrller;
+            changeSettings(c.getBurgerModel(), testTransparent);
+            c.setAnimatePeriod(2000 + r(7000));
+            c.setFps(30 + r(30));
+            c.setClockwise(bl());
+            c.setRotateImage(bl());
+            c.setPolarLightsBackground(bl());
+            c.setPolarLightsForeground(bl());
+        }
+    }
+
     public void changeSettings(IImageModel2 model, boolean testTransparent) {
         testTransparent = testTransparent || bl(); // probability 75%
 

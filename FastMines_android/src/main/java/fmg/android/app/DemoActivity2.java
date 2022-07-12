@@ -30,6 +30,7 @@ import fmg.android.img.Logo;
 import fmg.android.img.Logo2;
 import fmg.android.img.Mine;
 import fmg.android.img.MosaicGroupImg;
+import fmg.android.img.MosaicGroupImg2;
 import fmg.android.img.MosaicImg;
 import fmg.android.img.MosaicSkillImg;
 import fmg.android.img.Smile;
@@ -94,11 +95,11 @@ public class DemoActivity2 extends AppCompatActivity {
 //                                                         .map(e -> new MosaicImg.BitmapController() { { setMosaicType(e); }})
 //                                     );
 //    }
-//    public void testMosaicGroupImg() { testApp(() -> Stream.concat(Stream.of((EMosaicGroup)null), Stream.of(EMosaicGroup.values()))
-//                                              .map(e -> new Pair<>(new MosaicGroupImg.BitmapController(e),
-//                                                                   new MosaicGroupImg.BitmapController(e)))
-//                                              .flatMap(x -> Stream.of(x.first, x.second)));
-//    }
+    public void testMosaicGroupImg() { testApp(() -> Stream.concat(Stream.of((EMosaicGroup)null), Stream.of(EMosaicGroup.values()))
+                                              .map(e -> new Pair<>(new MosaicGroupImg2.MosaicGroupAndroidBitmapController(e),
+                                                                   new MosaicGroupImg2.MosaicGroupAndroidBitmapController(e)))
+                                              .flatMap(x -> Stream.of(x.first, x.second)));
+    }
 //    public void testMosaicSkillImg() { testApp(() -> Stream.concat(Stream.of((ESkillLevel)null), Stream.of(ESkillLevel.values()))
 //                                              .map(e -> new Pair<>(new MosaicSkillImg.BitmapController(e),
 //                                                                   new MosaicSkillImg.BitmapController(e)))
@@ -130,7 +131,7 @@ public class DemoActivity2 extends AppCompatActivity {
 //            this::testMosaicControl,
 //            this::testMosaicImg,
 //            this::testMosaicSkillImg,
-//            this::testMosaicGroupImg,
+            this::testMosaicGroupImg,
             this::testSmile,
             this::testLogo,
             this::testFlag
@@ -170,7 +171,7 @@ public class DemoActivity2 extends AppCompatActivity {
 
             if (applySettings) {
                 testTransparent[0] = td.bl();
-                images.forEach(img -> td.applySettings(img, testTransparent[0]));
+                images.forEach(img -> td.changeSettings(img, testTransparent[0]));
             }
 
             double sizeW = innerLayout.getWidth();  // innerLayout.getMeasuredWidth();
