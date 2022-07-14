@@ -22,6 +22,7 @@ import fmg.android.app.ProjSettings;
 import fmg.android.utils.Cast;
 
 /** Main logos image */
+@Deprecated
 public final class Logo {
     private Logo() {}
 

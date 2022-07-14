@@ -2,15 +2,11 @@ package fmg.android.img;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
-import android.graphics.Shader;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -23,12 +19,8 @@ import fmg.common.Pair;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
-import fmg.common.geom.SizeDouble;
-import fmg.core.img.BurgerMenuModel;
 import fmg.core.img.BurgerMenuModel2;
-import fmg.core.img.MosaicGroupController;
 import fmg.core.img.MosaicGroupController2;
-import fmg.core.img.MosaicGroupModel;
 import fmg.core.img.MosaicGroupModel2;
 import fmg.core.types.EMosaicGroup;
 
@@ -39,7 +31,7 @@ public final class MosaicGroupImg2 {
     private static void draw(Canvas g, MosaicGroupModel2 m, BurgerMenuModel2 bm) {
         var size = m.getSize();
         { // fill background
-            Color bkClr = m.getBackgroundColor();
+            var bkClr = new HSV(m.getBackgroundColor()).addHue(m.getBackgroundAngle()).toColor();
             if (!bkClr.isOpaque())
                 g.drawColor(android.graphics.Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
             if (!bkClr.isTransparent())

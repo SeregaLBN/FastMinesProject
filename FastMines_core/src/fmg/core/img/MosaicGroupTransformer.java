@@ -3,6 +3,7 @@ package fmg.core.img;
 import fmg.core.types.EMosaicGroup;
 
 /** Transforming of {@link MosaicGroupModel} */
+@Deprecated
 public class MosaicGroupTransformer implements IModelTransformer {
 
     @Override

@@ -19,6 +19,7 @@ import fmg.core.img.LogoModel;
 import fmg.jfx.utils.Cast;
 
 /** Main logo image */
+@Deprecated
 public final class Logo {
     private Logo() {}
 

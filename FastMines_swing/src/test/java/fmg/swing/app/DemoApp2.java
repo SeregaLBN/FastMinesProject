@@ -21,6 +21,7 @@ import fmg.core.img.ImageHelper;
 import fmg.core.img.SmileModel2.EFaceType;
 import fmg.core.img.TestDrawing2;
 import fmg.core.types.EMosaicGroup;
+import fmg.core.types.ESkillLevel;
 import fmg.swing.img.*;
 import fmg.swing.mosaic.MosaicJPanelController;
 
@@ -93,13 +94,13 @@ public class DemoApp2  {
                                       new MosaicGroupImg2.MosaicGroupSwingIconController(e)))
                  .flatMap(x -> Stream.of(x.first, x.second)));
     }
-//    public void testMosaicSkillImg() {
-//        testApp(() -> Stream.concat(Stream.of((ESkillLevel)null),
-//                                     Stream.of(ESkillLevel.values()))
-//                 .map(e -> new Pair<>(new MosaicSkillImg.IconController (e),
-//                                      new MosaicSkillImg.ImageAwtController(e)))
-//                 .flatMap(x -> Stream.of(x.first, x.second)));
-//    }
+    public void testMosaicSkillImg() {
+        testApp(() -> Stream.concat(Stream.of((ESkillLevel)null),
+                                     Stream.of(ESkillLevel.values()))
+                 .map(e -> new Pair<>(new MosaicSkillImg2.MosaicSkillSwingIconController(e),
+                                      new MosaicSkillImg2.MosaicSkillAwtImageController (e)))
+                 .flatMap(x -> Stream.of(x.first, x.second)));
+    }
     public void testLogo() {
         testApp(() -> Stream.of(new Logo2.LogoSwingIconController()
                               , new Logo2.LogoAwtImageController()
@@ -126,7 +127,7 @@ public class DemoApp2  {
         onCreateImages = new Runnable[] {
 //            this::testMosaicControl,
 //            this::testMosaicImg,
-//            this::testMosaicSkillImg,
+            this::testMosaicSkillImg,
             this::testMosaicGroupImg,
             this::testSmile,
             this::testLogo,

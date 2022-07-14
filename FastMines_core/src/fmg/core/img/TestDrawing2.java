@@ -34,7 +34,7 @@ public class TestDrawing2 {
 
         if (ctrller instanceof LogoController2) {
             var c = (LogoController2<?, ?>)ctrller;
-            c.setAnimatePeriod(2000 + r(7000));
+            c.setAnimatePeriod(2000L + r(7000));
             c.setFps(30 + r(30));
             c.setClockwise(bl());
             c.setRotateImage(bl());
@@ -43,7 +43,17 @@ public class TestDrawing2 {
         if (ctrller instanceof MosaicGroupController2) {
             var c = (MosaicGroupController2<?, ?>)ctrller;
             changeSettings(c.getBurgerModel(), testTransparent);
-            c.setAnimatePeriod(2000 + r(7000));
+            c.setAnimatePeriod(2000L + r(7000));
+            c.setFps(30 + r(30));
+            c.setClockwise(bl());
+            c.setRotateImage(bl());
+            c.setPolarLightsBackground(bl());
+            c.setPolarLightsForeground(bl());
+        } else
+        if (ctrller instanceof MosaicSkillController2) {
+            var c = (MosaicSkillController2<?, ?>)ctrller;
+            changeSettings(c.getBurgerModel(), testTransparent);
+            c.setAnimatePeriod(2000L + r(7000));
             c.setFps(30 + r(30));
             c.setClockwise(bl());
             c.setRotateImage(bl());
@@ -79,6 +89,23 @@ public class TestDrawing2 {
         } else
         if (model instanceof MosaicGroupModel2) {
             MosaicGroupModel2 m = (MosaicGroupModel2)model;
+            m.setBorderColor(Color.RandomColor());
+            m.setBorderWidth(r(3));
+            m.setBackgroundColor(bkClr);
+
+            var fgColor = Color.RandomColor();//.brighter();
+            if (testTransparent) {
+                // test transparent
+                if ((m.getBorderWidth() > 0) && (r(4) == 0)) {
+                    fgColor = fgColor.updateA(Color.Transparent().getA());
+                } else {
+                    fgColor = fgColor.updateA(150 + r(105));
+                }
+            }
+            m.setForegroundColor(fgColor);
+        } else
+        if (model instanceof MosaicSkillModel2) {
+            MosaicSkillModel2 m = (MosaicSkillModel2)model;
             m.setBorderColor(Color.RandomColor());
             m.setBorderWidth(r(3));
             m.setBackgroundColor(bkClr);

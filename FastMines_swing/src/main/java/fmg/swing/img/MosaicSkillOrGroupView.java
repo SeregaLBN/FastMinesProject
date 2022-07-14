@@ -21,6 +21,7 @@ import fmg.swing.utils.Cast;
  * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
  * @param <TImageModel> {@link MosaicSkillModel} or {@link MosaicGroupModel}
  */
+@Deprecated
 abstract class MosaicSkillOrGroupView<TImage, TImageModel extends AnimatedImageModel> extends WithBurgerMenuView<TImage, TImageModel> {
 
     protected MosaicSkillOrGroupView(TImageModel imageModel) {

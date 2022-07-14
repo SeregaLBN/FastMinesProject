@@ -12,16 +12,16 @@ import fmg.common.HSV;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
 import fmg.core.img.BurgerMenuModel2;
-import fmg.core.img.MosaicGroupController2;
-import fmg.core.img.MosaicGroupModel2;
-import fmg.core.types.EMosaicGroup;
+import fmg.core.img.MosaicSkillController2;
+import fmg.core.img.MosaicSkillModel2;
+import fmg.core.types.ESkillLevel;
 import fmg.swing.utils.Cast;
 
-/** Representable {@link fmg.core.types.EMosaicGroup} as image */
-public final class MosaicGroupImg2 {
-    private MosaicGroupImg2() {}
+/** Representable {@link fmg.core.types.ESkillLevel} as image */
+public final class MosaicSkillImg2 {
+    private MosaicSkillImg2() {}
 
-    private static void draw(Graphics2D g, MosaicGroupModel2 m, BurgerMenuModel2 bm) {
+    private static void draw(Graphics2D g, MosaicSkillModel2 m, BurgerMenuModel2 bm) {
         var size = m.getSize();
         { // fill background
             g.setComposite(AlphaComposite.Src);
@@ -52,7 +52,7 @@ public final class MosaicGroupImg2 {
         });
 
         // draw burger menu
-        if (m.getMosaicGroup() == null)
+        if (m.getMosaicSkill() == null)
             bm.getCoords()
                 .forEach(li -> {
                     g.setStroke(new BasicStroke((float)li.penWidht));
@@ -61,32 +61,32 @@ public final class MosaicGroupImg2 {
                 });
     }
 
-    /** MosaicGroup image controller implementation for {@link javax.swing.Icon} */
-    public static class MosaicGroupSwingIconController extends MosaicGroupController2<javax.swing.Icon, SwingIconView<MosaicGroupModel2>> {
+    /** MosaicSkill image controller implementation for {@link javax.swing.Icon} */
+    public static class MosaicSkillSwingIconController extends MosaicSkillController2<javax.swing.Icon, SwingIconView<MosaicSkillModel2>> {
 
-        public MosaicGroupSwingIconController(EMosaicGroup group) {
-            var model = new MosaicGroupModel2(group);
+        public MosaicSkillSwingIconController(ESkillLevel skill) {
+            var model = new MosaicSkillModel2(skill);
             var view = new SwingIconView<>(model, this::draw);
             init(model, view);
         }
 
-        private void draw(Graphics2D g, MosaicGroupModel2 m) {
-            MosaicGroupImg2.draw(g, m, getBurgerModel());
+        private void draw(Graphics2D g, MosaicSkillModel2 m) {
+            MosaicSkillImg2.draw(g, m, getBurgerModel());
         }
 
     }
 
-    /** MosaicGroup image controller implementation for {@link java.awt.Image} */
-    public static class MosaicGroupAwtImageController extends MosaicGroupController2<java.awt.Image, AwtImageView<MosaicGroupModel2>> {
+    /** MosaicSkill image controller implementation for {@link java.awt.Image} */
+    public static class MosaicSkillAwtImageController extends MosaicSkillController2<java.awt.Image, AwtImageView<MosaicSkillModel2>> {
 
-        public MosaicGroupAwtImageController(EMosaicGroup group) {
-            var model = new MosaicGroupModel2(group);
+        public MosaicSkillAwtImageController(ESkillLevel skill) {
+            var model = new MosaicSkillModel2(skill);
             var view = new AwtImageView<>(model, this::draw);
             init(model, view);
         }
 
-        private void draw(Graphics2D g, MosaicGroupModel2 m) {
-            MosaicGroupImg2.draw(g, m, getBurgerModel());
+        private void draw(Graphics2D g, MosaicSkillModel2 m) {
+            MosaicSkillImg2.draw(g, m, getBurgerModel());
         }
 
     }

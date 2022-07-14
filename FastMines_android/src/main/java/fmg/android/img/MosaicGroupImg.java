@@ -10,6 +10,7 @@ import fmg.core.img.MosaicGroupModel;
 import fmg.core.types.EMosaicGroup;
 
 /** Representable {@link EMosaicGroup} as image */
+@Deprecated
 public final class MosaicGroupImg {
     private MosaicGroupImg() {}
 

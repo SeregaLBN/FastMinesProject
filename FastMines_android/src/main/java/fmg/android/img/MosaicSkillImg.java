@@ -10,6 +10,7 @@ import fmg.core.img.MosaicSkillModel;
 import fmg.core.types.ESkillLevel;
 
 /** Representable {@link ESkillLevel} as image */
+@Deprecated
 public final class MosaicSkillImg {
     private MosaicSkillImg() {}
 

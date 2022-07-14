@@ -8,8 +8,8 @@ import fmg.common.geom.SizeDouble;
 /** Model of the smile/face image */
 public class SmileModel2 implements IImageModel2 {
 
-    /** @see http://unicode-table.com/blocks/emoticons/
-        * <br>  http://unicode-table.com/blocks/miscellaneous-symbols-and-pictographs/
+    /** @see <a href="https://unicode-table.com/blocks/emoticons/">Emoticons (Emoji)</a>
+        * <br>  <a href="https://unicode-table.com/blocks/miscellaneous-symbols-and-pictographs/">Miscellaneous Symbols and Pictographs</a>
         */
     public enum EFaceType {
         /** :) ☺ -  White Smiling Face (Незакрашенное улыбающееся лицо) U+263A */

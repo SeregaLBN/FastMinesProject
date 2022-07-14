@@ -3,6 +3,7 @@ package fmg.android.img;
 import fmg.core.img.LogoModel;
 
 /** Mine image on the playing field */
+@Deprecated
 public final class Mine {
     private Mine() {}
 

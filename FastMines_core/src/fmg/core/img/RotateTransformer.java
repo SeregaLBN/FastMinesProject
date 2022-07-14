@@ -1,6 +1,7 @@
 package fmg.core.img;
 
 /** Transforming of rotate angle */
+@Deprecated
 public class RotateTransformer implements IModelTransformer {
 
     @Override

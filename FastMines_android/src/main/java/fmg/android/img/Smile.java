@@ -20,6 +20,7 @@ import fmg.core.img.SmileModel.EFaceType;
 import fmg.android.utils.Cast;
 
 /** Smile image */
+@Deprecated
 public final class Smile {
     private Smile() {}
 

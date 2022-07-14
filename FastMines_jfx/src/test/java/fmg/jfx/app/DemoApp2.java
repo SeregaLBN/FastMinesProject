@@ -37,6 +37,7 @@ import fmg.core.img.SmileModel2.EFaceType;
 import fmg.core.img.TestDrawing2;
 import fmg.core.img.TestDrawing2.CellTilingInfo;
 import fmg.core.types.EMosaicGroup;
+import fmg.core.types.ESkillLevel;
 import fmg.jfx.img.*;
 import fmg.jfx.mosaic.MosaicCanvasController;
 import fmg.jfx.utils.Cast;
@@ -112,15 +113,15 @@ public final class DemoApp2 extends Application {
                 .flatMap(x -> Stream.of(x.first, x.second))
         );
     }
-//    public void testMosaicSkillImg() {
-//        testApp(() ->
-//            Stream.concat(Stream.of((ESkillLevel)null),
-//                          Stream.of(ESkillLevel.values()))
-//                .map(e -> new Pair<>(new MosaicSkillImg.CanvasController(e),
-//                                     new MosaicSkillImg.ImageJfxController(e)))
-//                .flatMap(x -> Stream.of(x.first, x.second))
-//        );
-//    }
+    public void testMosaicSkillImg() {
+        testApp(() ->
+            Stream.concat(Stream.of((ESkillLevel)null),
+                          Stream.of(ESkillLevel.values()))
+                .map(e -> new Pair<>(new MosaicSkillImg2.MosaicSkillJfxCanvasController(e),
+                                     new MosaicSkillImg2.MosaicSkillJfxImageController (e)))
+                .flatMap(x -> Stream.of(x.first, x.second))
+        );
+    }
     public void testLogo() {
         testApp(() -> Stream.of(new Logo2.LogoJfxImageController()
                               , new Logo2.LogoJfxCanvasController()
@@ -151,7 +152,7 @@ public final class DemoApp2 extends Application {
         onCreateImages = new Runnable[] {
 //            this::testMosaicControl,
 //            this::testMosaicImg,
-//            this::testMosaicSkillImg,
+            this::testMosaicSkillImg,
             this::testMosaicGroupImg,
             this::testSmile,
             this::testLogo,

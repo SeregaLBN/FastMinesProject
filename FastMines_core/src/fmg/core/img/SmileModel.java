@@ -8,6 +8,7 @@ import fmg.common.notifier.NotifyPropertyChanged;
 import fmg.core.types.Property;
 
 /** Model of the smile/face image */
+@Deprecated
 public class SmileModel implements IImageModel {
 
     /** @see http://unicode-table.com/blocks/emoticons/

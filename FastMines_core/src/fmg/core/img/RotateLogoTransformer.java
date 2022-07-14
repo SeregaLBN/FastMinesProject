@@ -5,6 +5,7 @@ import fmg.common.geom.SizeDouble;
 import fmg.common.geom.util.FigureHelper;
 
 /** Transforming of logo rays */
+@Deprecated
 public class RotateLogoTransformer implements IModelTransformer {
 
     @Override

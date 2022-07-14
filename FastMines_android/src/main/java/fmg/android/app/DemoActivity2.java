@@ -33,6 +33,7 @@ import fmg.android.img.MosaicGroupImg;
 import fmg.android.img.MosaicGroupImg2;
 import fmg.android.img.MosaicImg;
 import fmg.android.img.MosaicSkillImg;
+import fmg.android.img.MosaicSkillImg2;
 import fmg.android.img.Smile;
 import fmg.android.img.Smile2;
 import fmg.android.mosaic.MosaicViewController;
@@ -100,11 +101,11 @@ public class DemoActivity2 extends AppCompatActivity {
                                                                    new MosaicGroupImg2.MosaicGroupAndroidBitmapController(e)))
                                               .flatMap(x -> Stream.of(x.first, x.second)));
     }
-//    public void testMosaicSkillImg() { testApp(() -> Stream.concat(Stream.of((ESkillLevel)null), Stream.of(ESkillLevel.values()))
-//                                              .map(e -> new Pair<>(new MosaicSkillImg.BitmapController(e),
-//                                                                   new MosaicSkillImg.BitmapController(e)))
-//                                              .flatMap(x -> Stream.of(x.first, x.second)));
-//    }
+    public void testMosaicSkillImg() { testApp(() -> Stream.concat(Stream.of((ESkillLevel)null), Stream.of(ESkillLevel.values()))
+                                              .map(e -> new Pair<>(new MosaicSkillImg2.MosaicSkillAndroidBitmapController(e),
+                                                                   new MosaicSkillImg2.MosaicSkillAndroidBitmapController(e)))
+                                              .flatMap(x -> Stream.of(x.first, x.second)));
+    }
     public void testLogo          () { testApp(() -> Stream.of(new Logo2.LogoAndroidBitmapController()
                                                              , new Logo2.LogoAndroidBitmapController()
                                                              , new Logo2.LogoAndroidBitmapController().asMine()
@@ -130,7 +131,7 @@ public class DemoActivity2 extends AppCompatActivity {
         onCreateImages = new Runnable[] {
 //            this::testMosaicControl,
 //            this::testMosaicImg,
-//            this::testMosaicSkillImg,
+            this::testMosaicSkillImg,
             this::testMosaicGroupImg,
             this::testSmile,
             this::testLogo,

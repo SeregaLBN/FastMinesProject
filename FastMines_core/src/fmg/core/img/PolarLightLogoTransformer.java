@@ -3,6 +3,7 @@ package fmg.core.img;
 import fmg.common.HSV;
 
 /** Transforming of logo palette */
+@Deprecated
 public class PolarLightLogoTransformer implements IModelTransformer {
 
     @Override

@@ -18,6 +18,7 @@ import fmg.jfx.utils.Cast;
  * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
  * @param <TImageModel> {@link fmg.core.img.MosaicSkillModel} or {@link fmg.core.img.MosaicGroupModel}
  */
+@Deprecated
 abstract class MosaicSkillOrGroupView<TImage, TImageModel extends AnimatedImageModel> extends WithBurgerMenuView<TImage, TImageModel> {
 
     protected MosaicSkillOrGroupView(TImageModel imageModel) {

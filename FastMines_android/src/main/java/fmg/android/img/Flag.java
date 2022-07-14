@@ -12,6 +12,7 @@ import fmg.core.img.ImageController;
 import fmg.core.img.ImageView;
 
 /** Flag image */
+@Deprecated
 public final class Flag {
     private Flag() {}
 

@@ -10,6 +10,7 @@ import fmg.core.img.IImageView;
 import fmg.jfx.utils.ImgUtils;
 
 /** Internal wrapper-image implementation over javafx.scene.image.Image */
+@Deprecated
 class ImageJfx {
 
     private IImageView<Image, ? extends IImageModel> imageView;

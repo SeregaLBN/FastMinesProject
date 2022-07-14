@@ -16,6 +16,7 @@ import fmg.jfx.utils.Cast;
 import fmg.jfx.utils.ShapeConverter;
 
 /** Smile images */
+@Deprecated
 public final class Smile {
     private Smile() {}
 

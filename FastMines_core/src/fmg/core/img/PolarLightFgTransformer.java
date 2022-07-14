@@ -3,6 +3,7 @@ package fmg.core.img;
 import fmg.common.HSV;
 
 /** Transforming of foreground color (rotation of foreground color) */
+@Deprecated
 public class PolarLightFgTransformer implements IModelTransformer {
 
     @Override
