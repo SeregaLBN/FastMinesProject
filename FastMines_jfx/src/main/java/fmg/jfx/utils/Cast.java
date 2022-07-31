@@ -3,6 +3,10 @@ package fmg.jfx.utils;
 import java.util.List;
 import java.util.stream.Stream;
 
+import javafx.stage.Screen;
+
+import fmg.common.Logger;
+
 /** Приведение типов от платформо-независимых чистых Java классов fmg.common.geom.* к библиотечным javafx классам */
 public final class Cast {
 
@@ -44,5 +48,33 @@ public final class Cast {
                                                                                                                 (int)(255*clr.getRed()),
                                                                                                                 (int)(255*clr.getGreen()),
                                                                                                                 (int)(255*clr.getBlue())); }
+
+
+    private static final double DISPLAY_DENSITY;
+    static {
+        double scale = 1; // 100%
+        try {
+            Screen sc = Screen.getPrimary();
+            scale = sc.getOutputScaleX();
+        } catch (Throwable ex) {
+            Logger.error("Can`t find display scale", ex);
+        }
+
+        double logicalDpi = scale * 96;
+        double density = logicalDpi / 72;
+        Logger.info("Curent display density: " + density);
+
+        DISPLAY_DENSITY = density;
+    }
+
+    /** Pixels to DPI */
+    public static double pxToDp(double px) {
+        return px / DISPLAY_DENSITY;
+    }
+
+    /** DPI to pixels */
+    public static double dpToPx(double dp) {
+        return dp * DISPLAY_DENSITY;
+    }
 
 }
