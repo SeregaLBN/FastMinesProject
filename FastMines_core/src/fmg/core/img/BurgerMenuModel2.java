@@ -41,7 +41,7 @@ public final class BurgerMenuModel2 implements IImageModel2 {
         this.size.height = size.height;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_NAME_SIZE);
+            changedCallback.accept(ImageHelper.PROPERTY_SIZE);
 
         setPadding(ImageHelper.recalcPadding(pad, size, oldSize));
     }
@@ -64,7 +64,7 @@ public final class BurgerMenuModel2 implements IImageModel2 {
         this.pad.bottom = padding.bottom;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     public boolean isHorizontal() { return horizontal; }
@@ -72,7 +72,7 @@ public final class BurgerMenuModel2 implements IImageModel2 {
         this.horizontal = value;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     public int  getLayers() { return layers; }
@@ -80,7 +80,7 @@ public final class BurgerMenuModel2 implements IImageModel2 {
         this.layers = value;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     /** 0° .. +360° */
@@ -90,7 +90,7 @@ public final class BurgerMenuModel2 implements IImageModel2 {
         this.rotateAngle = ImageHelper.fixAngle(value);
 
         if ((changedCallback != null) && !DoubleExt.almostEquals(old, this.rotateAngle))
-            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     @Override

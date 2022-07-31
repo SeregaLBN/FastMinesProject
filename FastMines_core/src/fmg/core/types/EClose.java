@@ -1,5 +1,7 @@
 package fmg.core.types;
 
+import fmg.common.Color;
+
 public enum EClose {
 
     _Unknown,
@@ -29,6 +31,15 @@ public enum EClose {
         case _Unknown: return _Clear;
         }
         throw new RuntimeException("Unknown current value EClose."+this);
+    }
+
+    public Color asColor() {
+        switch (this) {
+        case _Unknown: return Color.Teal ();
+        case _Clear  : return Color.Black();
+        case _Flag   : return Color.Red  ();
+        default: throw new RuntimeException("Beed support EClose value " + this);
+        }
     }
 
 }

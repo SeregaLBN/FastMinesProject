@@ -9,6 +9,7 @@ import fmg.common.notifier.NotifyPropertyChanged;
 import fmg.core.types.Property;
 
 /** Характеристики кисти у рамки ячейки */
+@Deprecated
 public class PenBorder implements INotifyPropertyChanged {
 
     public static final String PROPERTY_COLOR_SHADOW = "ColorShadow";

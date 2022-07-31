@@ -56,6 +56,7 @@ public abstract class BaseShape implements INotifyPropertyChanged, AutoCloseable
     @Property(PROPERTY_AREA)
     private double area = 500;
 
+    @Deprecated
     protected NotifyPropertyChanged notifier = new NotifyPropertyChanged(this);
 
     /** площадь ячейки/фигуры */
@@ -103,15 +104,18 @@ public abstract class BaseShape implements INotifyPropertyChanged, AutoCloseable
     }
 
     @Override
+    @Deprecated
     public void addListener(PropertyChangeListener listener) {
         notifier.addListener(listener);
     }
     @Override
+    @Deprecated
     public void removeListener(PropertyChangeListener listener) {
         notifier.removeListener(listener);
     }
 
     @Override
+    @Deprecated
     public void close() {
         notifier.close();
     }

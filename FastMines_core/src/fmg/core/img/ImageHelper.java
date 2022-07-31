@@ -12,10 +12,9 @@ public final class ImageHelper {
     public static final int   DEFAULT_IMAGE_SIZE = 100;
     public static final int   DEFAULT_PADDING = (int)(DEFAULT_IMAGE_SIZE * 0.05); // 5%
 
-    public static final String PROPERTY_NAME_IMAGE = "Image";
-    public static final String PROPERTY_NAME_SIZE  = "Size";
-    public static final String PROPERTY_NAME_OTHER = "Other";
-    public static final String PROPERTY_NAME_MOSAIC_GROUP = "MosaicGroup";
+    public static final String PROPERTY_IMAGE = "Image";
+    public static final String PROPERTY_SIZE  = "Size";
+    public static final String PROPERTY_OTHER = "Other";
 
 
     /** proportionally adjust when resizing */

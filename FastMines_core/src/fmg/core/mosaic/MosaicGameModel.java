@@ -38,6 +38,7 @@ import fmg.core.types.EMosaic;
 import fmg.core.types.Property;
 
 /** MVC: game model of mosaic field. Default implementation. */
+@Deprecated
 public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoCloseable {
 
     public static final String PROPERTY_AREA        = BaseShape.PROPERTY_AREA;
@@ -115,7 +116,7 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
             //_matrix = new ArrayList<BaseCell>(size.width * size.height);
             for (int i=0; i < size.m; i++)
                 for (int j=0; j < size.n; j++) {
-                    BaseCell cell = MosaicHelper.createCellInstance(s, mosaicType, new Coord(i, j));
+                    BaseCell cell = MosaicHelper.createCellInstance(s, mosaicType, new Coord(j, i));
                     matrix.add(/* i*_size.n + j, */ cell);
                 }
         }

@@ -20,6 +20,8 @@ import fmg.core.types.EMosaicGroup;
 /** MVC model of {@link EMosaicGroup} representable as image */
 public class MosaicGroupModel2 implements IImageModel2 {
 
+    public static final String PROPERTY_MOSAIC_GROUP = "MosaicGroup";
+
     public MosaicGroupModel2(EMosaicGroup mosaicGroup) {
         this.mosaicGroup = mosaicGroup;
     }
@@ -57,7 +59,7 @@ public class MosaicGroupModel2 implements IImageModel2 {
 
         this.mosaicGroup = value;
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_NAME_MOSAIC_GROUP);
+            changedCallback.accept(PROPERTY_MOSAIC_GROUP);
     }
 
     @Override
@@ -77,7 +79,7 @@ public class MosaicGroupModel2 implements IImageModel2 {
         this.size.height = size.height;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_NAME_SIZE);
+            changedCallback.accept(ImageHelper.PROPERTY_SIZE);
 
         setPadding(ImageHelper.recalcPadding(pad, size, oldSize));
     }
@@ -100,7 +102,7 @@ public class MosaicGroupModel2 implements IImageModel2 {
         this.pad.bottom = padding.bottom;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
 
@@ -112,7 +114,7 @@ public class MosaicGroupModel2 implements IImageModel2 {
         this.foregroundColor = value;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     /** background fill color */
@@ -124,7 +126,7 @@ public class MosaicGroupModel2 implements IImageModel2 {
         this.backgroundColor = value;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     public Color getBorderColor() { return borderColor; }
@@ -135,7 +137,7 @@ public class MosaicGroupModel2 implements IImageModel2 {
         this.borderColor = value;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     public double getBorderWidth() { return borderWidth; }
@@ -146,7 +148,7 @@ public class MosaicGroupModel2 implements IImageModel2 {
         this.borderWidth = value;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
 
@@ -160,7 +162,7 @@ public class MosaicGroupModel2 implements IImageModel2 {
         this.rotateAngle = value;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     /** 0° .. +360° */
@@ -173,7 +175,7 @@ public class MosaicGroupModel2 implements IImageModel2 {
         this.foregroundAngle = value;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     /** 0° .. +360° */
@@ -186,7 +188,7 @@ public class MosaicGroupModel2 implements IImageModel2 {
         this.backgroundAngle = value;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     public Stream<Pair<Color, Stream<PointDouble>>> getCoords() {

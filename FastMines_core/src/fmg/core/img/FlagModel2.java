@@ -29,7 +29,7 @@ public class FlagModel2 implements IImageModel2 {
         this.size.height = size.height;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_NAME_SIZE);
+            changedCallback.accept(ImageHelper.PROPERTY_SIZE);
 
         setPadding(ImageHelper.recalcPadding(pad, size, oldSize));
     }
@@ -52,7 +52,7 @@ public class FlagModel2 implements IImageModel2 {
         this.pad.bottom = padding.bottom;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     @Override

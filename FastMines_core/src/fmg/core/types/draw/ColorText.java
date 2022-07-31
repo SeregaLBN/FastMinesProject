@@ -10,6 +10,7 @@ import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
 import fmg.core.types.Property;
 
+@Deprecated
 public class ColorText implements INotifyPropertyChanged {
 
     public static final String PROPERTY_COLOR_OPEN    = "ColorOpen";

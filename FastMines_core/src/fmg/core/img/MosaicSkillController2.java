@@ -141,7 +141,7 @@ public abstract class MosaicSkillController2<TImage,
     private boolean lock = false;
     @Override
     protected void onModelChanged(String property) {
-        if (!lock && ImageHelper.PROPERTY_NAME_SIZE.equals(property)) try {
+        if (!lock && ImageHelper.PROPERTY_SIZE.equals(property)) try {
             lock = true;
             burgerModel.setSize(getModel().getSize());
         } finally {

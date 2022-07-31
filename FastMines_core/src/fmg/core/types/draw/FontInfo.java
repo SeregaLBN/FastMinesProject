@@ -9,6 +9,7 @@ import fmg.common.notifier.NotifyPropertyChanged;
 import fmg.core.types.Property;
 
 /** minimal font descripton */
+@Deprecated
 public class FontInfo implements INotifyPropertyChanged {
 
     public static final String PROPERTY_NAME = "Name";

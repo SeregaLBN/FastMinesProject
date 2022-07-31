@@ -1,6 +1,12 @@
 package fmg.swing.utils;
 
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.geom.AffineTransform;
 import java.util.List;
+
+import fmg.common.Logger;
 
 /** Приведение типов от платформо-независимых чистых Java классов fmg.common.geom.* к библиотечным SWING/AWT классам java.awt.*\java.swing.* */
 public final class Cast {
@@ -48,5 +54,35 @@ public final class Cast {
 
     public static   java.awt.Color toColor(fmg.common.Color clr) { return new java.awt.Color( clr.getR(), clr.getG(), clr.getB(), clr.getA()); }
     public static fmg.common.Color toColor(java.awt.Color   clr) { return new fmg.common.Color(clr.getAlpha(), clr.getRed(), clr.getGreen(), clr.getBlue()); }
+
+    private static final double DISPLAY_DENSITY;
+    static {
+        double scale = 1; // 100%
+        try {
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            GraphicsDevice gd = ge.getDefaultScreenDevice();
+            GraphicsConfiguration gc = gd.getDefaultConfiguration();
+            AffineTransform at = gc.getDefaultTransform();
+            scale = at.getScaleX();
+        } catch (Throwable ex) {
+            Logger.error("Can`t find display scale", ex);
+        }
+
+        double logicalDpi = scale * 96;
+        double density = logicalDpi / 72;
+        Logger.info("Curent display density: " + density);
+
+        DISPLAY_DENSITY = density;
+    }
+
+    /** Pixels to DPI */
+    public static double pxToDp(double px) {
+        return px / DISPLAY_DENSITY;
+    }
+
+    /** DPI to pixels */
+    public static double dpToPx(double dp) {
+        return dp * DISPLAY_DENSITY;
+    }
 
 }

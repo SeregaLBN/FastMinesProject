@@ -41,16 +41,16 @@ public class ImageController2<TImage, TModel extends IImageModel2, TView extends
         var isValidBefore = view.isValid();
         var callback = changedCallback;
 
-        if (ImageHelper.PROPERTY_NAME_SIZE.equals(property)) {
+        if (ImageHelper.PROPERTY_SIZE.equals(property)) {
             view.reset();
             if (callback != null)
-                UiInvoker.Deferred.accept(() -> callback.accept(ImageHelper.PROPERTY_NAME_SIZE));
+                UiInvoker.Deferred.accept(() -> callback.accept(ImageHelper.PROPERTY_SIZE));
         }
 
         view.invalidate();
 
         if ((callback != null) && isValidBefore)
-            UiInvoker.Deferred.accept(() -> callback.accept(ImageHelper.PROPERTY_NAME_IMAGE));
+            UiInvoker.Deferred.accept(() -> callback.accept(ImageHelper.PROPERTY_IMAGE));
     }
 
     @Override

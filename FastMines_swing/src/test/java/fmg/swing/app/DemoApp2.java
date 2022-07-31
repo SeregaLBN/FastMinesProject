@@ -255,7 +255,7 @@ public class DemoApp2  {
 
                         Component imgControl2 = imgControl;
                         Consumer<String> onChangeImage = property -> {
-                            if (ImageHelper.PROPERTY_NAME_IMAGE.equals(property)) {
+                            if (ImageHelper.PROPERTY_IMAGE.equals(property)) {
                                 jPanel.repaint();
                                 imgControl2.repaint();
                             }

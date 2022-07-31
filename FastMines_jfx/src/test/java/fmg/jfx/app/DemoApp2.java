@@ -313,7 +313,7 @@ public final class DemoApp2 extends Application {
                     if (imgControl != null) {
 //                        Canvas imgControl2 = imgControl;
                         Consumer<String> onChangeImage = name -> {
-                            if (ImageHelper.PROPERTY_NAME_IMAGE.equals(name)) {
+                            if (ImageHelper.PROPERTY_IMAGE.equals(name)) {
                                 //group.repaint();
                                 //imgControl2.invalidate();
                             }

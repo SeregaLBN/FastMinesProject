@@ -136,7 +136,7 @@ public abstract class MosaicController<TImage, TImageInner,
         // получаю координаты соседних ячеек
         List<Coord> neighborCoord = cell.getCoordsNeighbor();
 
-        IMosaic mosaic = getModel();
+        var mosaic = getModel();
         int m = mosaic.getSizeField().m;
         int n = mosaic.getSizeField().n;
         // по координатам получаю множество соседних обьектов-ячеек

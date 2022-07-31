@@ -67,7 +67,7 @@ public class LogoModel2 implements IImageModel2 {
         oct.clear();
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_NAME_SIZE);
+            changedCallback.accept(ImageHelper.PROPERTY_SIZE);
 
         setPadding(ImageHelper.recalcPadding(padding, size, oldSize));
     }
@@ -94,7 +94,7 @@ public class LogoModel2 implements IImageModel2 {
         oct.clear();
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     public Color getBorderColor() {
@@ -108,7 +108,7 @@ public class LogoModel2 implements IImageModel2 {
         this.borderColor = borderColor;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     public double getBorderWidth() {
@@ -122,7 +122,7 @@ public class LogoModel2 implements IImageModel2 {
         this.borderWidth = borderWidth;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     private BoundDouble getInnerPadding() {
@@ -162,7 +162,7 @@ public class LogoModel2 implements IImageModel2 {
         this.useGradient = value;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     /** 0° .. +360° */
@@ -184,7 +184,7 @@ public class LogoModel2 implements IImageModel2 {
         FigureHelper.rotateCollection(getOct() , this.rotateAngle, center);
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     /** 0° .. +360° */
@@ -200,7 +200,7 @@ public class LogoModel2 implements IImageModel2 {
             palette[i].h = DEFAULT_PALETTE[i].h + this.paletteColorOffset;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_NAME_OTHER);
+            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     public double getZoomX() { return (getSize().width  - getInnerPadding().getLeftAndRight()) / 200.0; }
