@@ -17,6 +17,7 @@ import fmg.core.types.draw.PenBorder;
  *
  * @param <TImageInner> platform specific view/image/picture or other display context/canvas/window/panel
  **/
+@Deprecated
 public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IMosaicDrawModel<TImageInner> {
 
     /** Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера. Переопределяется одним из MVC-наследником. */

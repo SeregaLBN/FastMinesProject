@@ -32,6 +32,7 @@ import fmg.common.notifier.NotifyPropertyChanged;
 import fmg.core.types.Property;
 
 /** Base shape */
+@Deprecated //           delete implements INotifyPropertyChanged, AutoCloseable
 public abstract class BaseShape implements INotifyPropertyChanged, AutoCloseable {
 
     public static final double SQRT2   = java.lang.Math.sqrt(2.);

@@ -12,9 +12,7 @@ import java.util.stream.Stream;
 
 import fmg.common.Color;
 import fmg.common.geom.*;
-import fmg.core.img.IMosaicAnimatedModel.EMosaicRotateMode;
-import fmg.core.mosaic.IMosaicDrawModel;
-import fmg.core.mosaic.MosaicGameModel;
+import fmg.core.mosaic.MosaicModel2;
 
 public class TestDrawing2 {
 
@@ -32,6 +30,14 @@ public class TestDrawing2 {
     public void changeSettings(IImageController2<?,?> ctrller, boolean testTransparent) {
         changeSettings(ctrller.getModel(), testTransparent);
 
+        if (ctrller instanceof MosaicImageController2) {
+            var c = (MosaicImageController2<?, ?>)ctrller;
+            c.setAnimatePeriod(2000L + r(7000));
+            c.setFps(30 + r(30));
+            c.setClockwise(bl());
+            c.setRotateImage(bl());
+            c.setPolarLightsBackground(bl());
+        } else
         if (ctrller instanceof LogoController2) {
             var c = (LogoController2<?, ?>)ctrller;
             c.setAnimatePeriod(2000L + r(7000));
@@ -121,28 +127,27 @@ public class TestDrawing2 {
             }
             m.setForegroundColor(fgColor);
         } else
-        if (model instanceof MosaicGameModel) {
-            MosaicGameModel mgm = (MosaicGameModel)model;
-            mgm.setSizeField(new Matrisize(3+r(2), 3 + r(2)));
+        if (model instanceof MosaicModel2) {
+            MosaicModel2 m = (MosaicModel2)model;
+            m.setSizeField(new Matrisize(3+r(2), 3 + r(2)));
 
-            if (model instanceof IMosaicDrawModel) {
-                IMosaicDrawModel<?> mdm = (IMosaicDrawModel<?>)model;
-                mdm.setBackgroundColor(bkClr);
+            if (model instanceof MosaicImageModel2) {
+                MosaicImageModel2 mim = (MosaicImageModel2)m;
+                mim.setBackgroundColor(bkClr);
 
-                mdm.getCellFill().setMode(1 + r(mdm.getShape().getMaxCellFillModeValue()));
+                mim.setFillMode(1 + r(mim.getShape().getMaxCellFillModeValue()));
 
-                mdm.getPenBorder().setWidth(1 + r(2));
-                SizeDouble size = mdm.getSize();
+                mim.getPenBorder().setWidth(1 + r(2));
+                SizeDouble size = mim.getSize();
                 double padLeftRight = r((int)(size.width /3));
                 double padTopBottom = r((int)(size.height/3));
-                mdm.setPadding(new BoundDouble(padLeftRight, padTopBottom, padLeftRight, padTopBottom));
+                mim.setPadding(new BoundDouble(padLeftRight, padTopBottom, padLeftRight, padTopBottom));
 
-                if (model instanceof IMosaicAnimatedModel) {
-                    IMosaicAnimatedModel<?> mam = (IMosaicAnimatedModel<?>)model;
 
-                    EMosaicRotateMode[] eRotateModes = EMosaicRotateMode.values();
-                    mam.setRotateMode(eRotateModes[r(eRotateModes.length)]);
-                }
+                MosaicImageModel2.ERotateMode[] eRotateModes = MosaicImageModel2.ERotateMode.values();
+                mim.setRotateMode(eRotateModes[r(eRotateModes.length)]);
+
+
             }
         }
     }

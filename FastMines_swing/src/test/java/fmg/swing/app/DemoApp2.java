@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -18,8 +19,10 @@ import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.IImageController2;
 import fmg.core.img.ImageHelper;
+import fmg.core.img.MosaicImageController2;
 import fmg.core.img.SmileModel2.EFaceType;
 import fmg.core.img.TestDrawing2;
+import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
 import fmg.swing.img.*;
@@ -63,30 +66,22 @@ public class DemoApp2  {
 //            return Stream.of(mosaicController);
 //        });
 //    }
-//
-//    public void testMosaicImg     () {
-//        testApp(() ->
-//             //// test single
-//             //Stream.of(new MosaicImg.ControllerImage() { { setMosaicType(EMosaic.eMosaicSquare1); }})
-//
-//             // test all
-//             Stream.of(EMosaic.values())
-//
-//             //// variant 1
-//             //.map(e -> Stream.of(new MosaicImg.ControllerIcon (),
-//             //                    new MosaicImg.ControllerImage())
-//             //                .peek(ctrlr -> ctrlr.setMosaicType(e)))
-//             //.flatMap(x -> x)
-//
-//             // variant 2
-//             .map(e -> {
-//                     MosaicImageController<?, ?> ctrlr = ThreadLocalRandom.current().nextBoolean()
-//                         ? new MosaicImg.IconController ()
-//                         : new MosaicImg.ImageAwtController();
-//                     ctrlr.setMosaicType(e);
-//                     return ctrlr;
-//                 }));
-//    }
+
+    public void testMosaicImg() {
+        testApp(() ->
+             //// test single
+             //Stream.of(new MosaicImg.ControllerImage() { { setMosaicType(EMosaic.eMosaicSquare1); }})
+
+             // test all
+             Stream.of(EMosaic.values())
+                 .map(e -> {
+                     MosaicImageController2<?, ?> ctrlr = ThreadLocalRandom.current().nextBoolean()
+                         ? new MosaicImg2.MosaicImageSwingIconController ()
+                         : new MosaicImg2.MosaicImageAwtImageController();
+                     ctrlr.getModel().setMosaicType(e);
+                     return ctrlr;
+                 }));
+    }
     public void testMosaicGroupImg() {
         testApp(() -> Stream.concat(Stream.of((EMosaicGroup)null),
                                      Stream.of(EMosaicGroup.values()))
@@ -126,7 +121,7 @@ public class DemoApp2  {
 
         onCreateImages = new Runnable[] {
 //            this::testMosaicControl,
-//            this::testMosaicImg,
+            this::testMosaicImg,
             this::testMosaicSkillImg,
             this::testMosaicGroupImg,
             this::testSmile,

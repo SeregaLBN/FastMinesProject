@@ -33,13 +33,14 @@ import fmg.common.geom.*;
 import fmg.core.app.model.MosaicInitData;
 import fmg.core.img.IImageModel2;
 import fmg.core.img.ImageHelper;
+import fmg.core.img.MosaicImageModel2;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.shape.BaseShape;
 import fmg.core.types.EMosaic;
 import fmg.core.types.draw.FontInfo2;
 import fmg.core.types.draw.PenBorder2;
 
-/** MVC: game model of mosaic field. Default implementation. */
+/** MVC: model of mosaic field (representable {@link fmg.core.types.EMosaic} ). Default implementation. */
 public class MosaicModel2 implements IImageModel2 {
 
     public static final String PROPERTY_SIZE_FIELD  = "SizeField";
@@ -49,13 +50,8 @@ public class MosaicModel2 implements IImageModel2 {
     public static Color DefaultBkColor   = Color.LightSlateGray().brighter();
     public static Color DefaultCellColor = Color.LightGray();
 
-    /** the effect of changing one property on another */
-    public enum EMode {
-        IMAGE_MODE,
-        CONTROL_MODE
-    }
-
-    private final EMode mode;
+    /** the effect of changing one property on another. true - control mode; false - image mode */
+    private final boolean isControlMode;
 
     /** из каких фигур состоит мозаика поля */
     private EMosaic mosaicType = EMosaic.eMosaicSquare1;
@@ -67,11 +63,11 @@ public class MosaicModel2 implements IImageModel2 {
     private final List<BaseCell> matrix = new ArrayList<>();
 
     /** Field size in cells */
-    private final Matrisize sizeField = new Matrisize(10, 10);
+    protected final Matrisize sizeField = new Matrisize(10, 10);
 
     /** size in pixels*/
-    private final SizeDouble size;
-    private final BoundDouble padding = new BoundDouble(0);
+    protected final SizeDouble size;
+    protected final BoundDouble padding = new BoundDouble(0);
     private final PenBorder2 penBorder = new PenBorder2();
     private final FontInfo2 fontInfo = new FontInfo2();
     private Color backgroundColor = DefaultBkColor;
@@ -83,11 +79,11 @@ public class MosaicModel2 implements IImageModel2 {
      * <br/> No color? - create with the desired intensity! */
     private final Map<Integer, Color> fillColors = new HashMap<>();
 
-    private Consumer<String> changedCallback;
+    protected Consumer<String> changedCallback;
 
 
-    public MosaicModel2(EMode mode) {
-        this.mode = mode;
+    public MosaicModel2(boolean isControlMode) {
+        this.isControlMode = isControlMode;
         this.size = getShape().getSize(sizeField);
     }
 
@@ -145,7 +141,7 @@ public class MosaicModel2 implements IImageModel2 {
             changedCallback.accept(PROPERTY_SIZE_FIELD);
 
 
-        if (mode == EMode.CONTROL_MODE)
+        if (isControlMode)
             setPadding(new BoundDouble(0));
         else
             uniformlyChangeMosaicSize();
@@ -171,7 +167,7 @@ public class MosaicModel2 implements IImageModel2 {
             changedCallback.accept(ImageHelper.PROPERTY_SIZE);
 
 
-        BoundDouble newPad = (mode == EMode.CONTROL_MODE)
+        BoundDouble newPad = isControlMode
                 ? new BoundDouble(0)
                 : ImageHelper.recalcPadding(this.padding, size, oldSize);
         setPadding(newPad);
@@ -207,7 +203,7 @@ public class MosaicModel2 implements IImageModel2 {
 
       if (area <= 0)
           throw new IllegalArgumentException("Area must be positive");
-      if (area < MosaicInitData.AREA_MINIMUM)
+      if ((area < MosaicInitData.AREA_MINIMUM) && !(this instanceof MosaicImageModel2))
           Logger.warn("The area is very small = " + area);
 
       //area = Math.max(MosaicInitData.AREA_MINIMUM, area);
@@ -329,6 +325,7 @@ public class MosaicModel2 implements IImageModel2 {
     }
 
 
+    public Consumer<String> getListener() { return changedCallback; }
     @Override
     public void setListener(Consumer<String> callback) {
         if ((callback != null) && (changedCallback != null))

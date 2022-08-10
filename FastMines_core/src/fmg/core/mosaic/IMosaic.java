@@ -9,6 +9,7 @@ import fmg.core.mosaic.shape.BaseShape;
 import fmg.core.types.EMosaic;
 
 /** interface of mosaic field */
+@Deprecated
 public interface IMosaic {
 
     /** размер поля */

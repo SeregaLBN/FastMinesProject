@@ -17,6 +17,7 @@ import fmg.core.mosaic.cells.BaseCell;
  * @param <TImageInner> image type of flag/mine into mosaic field
  * @param <TMosaicModel> mosaic data model
  */
+@Deprecated
 public abstract class MosaicView<TImage,
                                  TImageInner,
                                  TMosaicModel extends MosaicDrawModel<TImageInner>>

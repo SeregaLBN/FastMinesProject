@@ -3,6 +3,7 @@ package fmg.core.img;
 import fmg.core.mosaic.IMosaicDrawModel;
 
 /** Representable {@link fmg.core.types.EMosaic} as animated image */
+@Deprecated
 public interface IMosaicAnimatedModel<TImageInner>
          extends IMosaicDrawModel<TImageInner>, IAnimatedModel
  {

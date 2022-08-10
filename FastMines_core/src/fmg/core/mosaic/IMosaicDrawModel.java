@@ -10,6 +10,7 @@ import fmg.core.types.draw.PenBorder;
 /** MVC: draw model of mosaic field.
  * @param <TImageInner> platform specific view/image/picture or other display context/canvas/window/panel
  **/
+@Deprecated
 public interface IMosaicDrawModel<TImageInner> extends IImageModel, IMosaic {
 
     boolean getAutoFit();
