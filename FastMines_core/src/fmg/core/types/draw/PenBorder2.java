@@ -1,11 +1,9 @@
 package fmg.core.types.draw;
 
 import java.util.Objects;
-import java.util.function.Consumer;
 
 import fmg.common.Color;
 import fmg.common.geom.DoubleExt;
-import fmg.core.img.ImageHelper;
 
 /** Характеристики кисти у рамки ячейки */
 public class PenBorder2 {
@@ -13,8 +11,6 @@ public class PenBorder2 {
     private Color colorShadow;
     private Color colorLight;
     private double width;
-
-    private Consumer<String> changedCallback;
 
     public PenBorder2() {
         this(Color.Black(), Color.White(), 3);
@@ -24,11 +20,11 @@ public class PenBorder2 {
     public PenBorder2(
         Color colorShadow,
         Color colorLight,
-        int iWidth)
+        double penWidth)
     {
         this.colorShadow = colorShadow;
         this.colorLight  = colorLight;
-        this.width = iWidth;
+        this.width = penWidth;
     }
 
     public Color getColorShadow() {
@@ -40,9 +36,6 @@ public class PenBorder2 {
             return;
 
         this.colorShadow = Objects.requireNonNull(colorShadow);
-
-        if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     public Color getColorLight() {
@@ -54,9 +47,6 @@ public class PenBorder2 {
             return;
 
         this.colorLight = Objects.requireNonNull(colorLight);
-
-        if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     public double getWidth() {
@@ -68,9 +58,6 @@ public class PenBorder2 {
             return;
 
         this.width = width;
-
-        if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     @Override
@@ -78,10 +65,23 @@ public class PenBorder2 {
         return "PenBorder{colorShadow=" + colorShadow + ", colorLight=" + colorLight + ", width=" + width + "}";
     }
 
-    public void setListener(Consumer<String> callback) {
-        if ((callback != null) && (changedCallback != null))
-            throw new IllegalArgumentException("Can only set the controller once");
-        changedCallback = callback;
+    @Override
+    public int hashCode() {
+        return Objects.hash(colorLight, colorShadow, width);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PenBorder2 other = (PenBorder2)obj;
+        return Objects.equals(colorLight, other.colorLight)
+            && Objects.equals(colorShadow, other.colorShadow)
+            && (Double.doubleToLongBits(width) == Double.doubleToLongBits(other.width));
     }
 
 }

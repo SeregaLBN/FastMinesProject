@@ -1,11 +1,9 @@
 package fmg.core.types.draw;
 
 import java.util.Objects;
-import java.util.function.Consumer;
 
 import fmg.common.Logger;
 import fmg.common.geom.DoubleExt;
-import fmg.core.img.ImageHelper;
 
 /** Minimal font descripton */
 public class FontInfo2 {
@@ -19,10 +17,8 @@ public class FontInfo2 {
     /** font size */
     private double size = 10;
 
-    private Consumer<String> changedCallback;
-
     public FontInfo2() { }
-    public FontInfo2(String fontName, boolean isBold, int fontSize) {
+    public FontInfo2(String fontName, boolean isBold, double fontSize) {
         this.name = fontName;
         this.bold = isBold;
         this.size = fontSize;
@@ -34,8 +30,6 @@ public class FontInfo2 {
         if (this.name.equals(fontName))
             return;
         this.name = fontName;
-        if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     public boolean isBold() { return bold; }
@@ -43,8 +37,6 @@ public class FontInfo2 {
         if (this.bold == isBold)
             return;
         this.bold = isBold;
-        if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     public double getSize() { return size; }
@@ -58,8 +50,6 @@ public class FontInfo2 {
         if (DoubleExt.almostEquals(this.size, size))
             return;
         this.size = size;
-        if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     @Override
@@ -67,10 +57,23 @@ public class FontInfo2 {
         return "FontInfo{fontName=" + name + ", isBold=" + bold + ", size=" + size + "}";
     }
 
-    public void setListener(Consumer<String> callback) {
-        if ((callback != null) && (changedCallback != null))
-            throw new IllegalArgumentException("Can only set the controller once");
-        changedCallback = callback;
+    @Override
+    public int hashCode() {
+        return Objects.hash(bold, name, size);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        FontInfo2 other = (FontInfo2)obj;
+        return (bold == other.bold)
+            && Objects.equals(name, other.name)
+            && (Double.doubleToLongBits(size) == Double.doubleToLongBits(other.size));
     }
 
 }

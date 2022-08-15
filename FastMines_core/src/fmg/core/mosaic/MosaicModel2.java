@@ -43,6 +43,7 @@ import fmg.core.types.draw.PenBorder2;
 /** MVC: model of mosaic field (representable {@link fmg.core.types.EMosaic} ). Default implementation. */
 public class MosaicModel2 implements IImageModel2 {
 
+    public static final String PROPERTY_AREA        = "Area";
     public static final String PROPERTY_SIZE_FIELD  = "SizeField";
     public static final String PROPERTY_MOSAIC_TYPE = "MosaicType";
 
@@ -58,8 +59,7 @@ public class MosaicModel2 implements IImageModel2 {
 
     private BaseShape shape;
 
-    /** Matrix of cells, is represented as a vector {@link List<BaseCell>}.
-     * Матрица ячеек, представленная(развёрнута) в виде вектора */
+    /** Matrix of cells, is represented as a vector {@link List<BaseCell>} */
     private final List<BaseCell> matrix = new ArrayList<>();
 
     /** Field size in cells */
@@ -84,7 +84,7 @@ public class MosaicModel2 implements IImageModel2 {
 
     public MosaicModel2(boolean isControlMode) {
         this.isControlMode = isControlMode;
-        this.size = getShape().getSize(sizeField);
+        this.size = getSizeMosaic();
     }
 
     /** get mosaic type */
@@ -103,10 +103,30 @@ public class MosaicModel2 implements IImageModel2 {
             changedCallback.accept(PROPERTY_MOSAIC_TYPE);
     }
 
-    public BaseShape getShape() {
+    protected BaseShape getShape() {
         if (shape == null)
             shape = MosaicHelper.createShapeInstance(mosaicType);
         return shape;
+    }
+
+    /** cell area */
+    public double getArea() {
+        return getShape().getArea();
+    }
+
+    /** set new cell area */
+    public void setArea(double area) {
+        if (area <= 0)
+            throw new IllegalArgumentException("Area must be positive");
+        if (area < MosaicInitData.AREA_MINIMUM)
+            Logger.warn("The area is very small = " + area);
+
+      //getShape().setArea(Math.max(MosaicInitData.AREA_MINIMUM, area));
+        getShape().setArea(area);
+        matrix.forEach(BaseCell::init);
+
+        if (changedCallback != null)
+            changedCallback.accept(PROPERTY_AREA);
     }
 
     public List<BaseCell> getMatrix() {
@@ -125,6 +145,11 @@ public class MosaicModel2 implements IImageModel2 {
     /** доступ к заданной ячейке */
     public BaseCell getCell(Coord coord) { return getCell(coord.x, coord.y); }
 
+    /** get mosaic size in pixels */
+    public SizeDouble getSizeMosaic() {
+        return getShape().getSize(sizeField);
+    }
+
     /** get mosaic field size in cells */
     public Matrisize getSizeField() { return sizeField; }
 
@@ -140,7 +165,6 @@ public class MosaicModel2 implements IImageModel2 {
         if (changedCallback != null)
             changedCallback.accept(PROPERTY_SIZE_FIELD);
 
-
         if (isControlMode)
             setPadding(new BoundDouble(0));
         else
@@ -152,6 +176,7 @@ public class MosaicModel2 implements IImageModel2 {
     public SizeDouble getSize() {
         return size;
     }
+
     @Override
     public void setSize(SizeDouble size) {
         if (this.size.equals(size))
@@ -208,11 +233,10 @@ public class MosaicModel2 implements IImageModel2 {
 
       //area = Math.max(MosaicInitData.AREA_MINIMUM, area);
 
-      if (DoubleExt.almostEquals(getShape().getArea(), area))
+      if (DoubleExt.almostEquals(getArea(), area))
           return;
 
-      getShape().setArea(area);
-      matrix.forEach(BaseCell::init);
+      setArea(area);
 
       if (changedCallback != null)
           changedCallback.accept(ImageHelper.PROPERTY_OTHER);
@@ -221,7 +245,7 @@ public class MosaicModel2 implements IImageModel2 {
     /** Offset to mosaic */
     public SizeDouble getMosaicOffset() {
         var innerSize = new SizeDouble(size.width - padding.getLeftAndRight(), size.height - padding.getTopAndBottom());
-        var mosaicSize = getShape().getSize(sizeField);
+        var mosaicSize = getSizeMosaic();
         double dx = innerSize.width  - mosaicSize.width;
         double dy = innerSize.height - mosaicSize.height;
         return new SizeDouble(padding.left + dx / 2, padding.top + dy / 2);
@@ -244,13 +268,23 @@ public class MosaicModel2 implements IImageModel2 {
             changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
-    /** режим заливки фона ячеек */
+    /** the maximum number of background fill modes that this type of mosaic knows */
+    public int getMaxCellFillMode() {
+        return getShape().getMaxCellFillModeValue();
+    }
+
+    /** the size of the square inscribed in the cell */
+    public double getCellSquareSize() {
+        return getShape().getSq(getPenBorder().getWidth());
+    }
+
+    /** cell background fill mode */
     public int getFillMode() { return fillMode; }
 
-    /** режим заливки фона ячеек
+    /** cell background fill mode
      * @param newFillMode
-     *  <li> 0 - цвет заливки фона по-умолчанию
-     *  <li> not 0 - радуга %) */
+     *  <li> 0 - default background fill color
+     *  <li> not 0 - rainbow %) */
     public void setFillMode(int newFillMode) {
         if (this.fillMode == newFillMode)
             return;
@@ -262,8 +296,8 @@ public class MosaicModel2 implements IImageModel2 {
             changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
-    /** кэшированные цвета фона ячеек
-     * <br/> Нет цвета? - создасться с нужной интенсивностью! */
+    /** cached cell background colors
+     * <br/> No color? - create with the desired intensity! */
     public Color getFillColor(int index) {
         return fillColors
             .computeIfAbsent(index,
@@ -271,7 +305,7 @@ public class MosaicModel2 implements IImageModel2 {
     }
 
     public PenBorder2 getPenBorder() {
-        return penBorder;
+        return new PenBorder2(penBorder.getColorShadow(), penBorder.getColorLight(), penBorder.getWidth());
     }
 
     public void setPenBorder(PenBorder2 penBorder) {
@@ -281,10 +315,13 @@ public class MosaicModel2 implements IImageModel2 {
         this.penBorder.setWidth(penBorder.getWidth());
         this.penBorder.setColorLight(penBorder.getColorLight());
         this.penBorder.setColorShadow(penBorder.getColorShadow());
+
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     public FontInfo2 getFontInfo() {
-        return fontInfo;
+        return new FontInfo2(fontInfo.getName(), fontInfo.isBold(), fontInfo.getSize());
     }
 
     public void setFontInfo(FontInfo2 fontInfo) {
@@ -294,6 +331,9 @@ public class MosaicModel2 implements IImageModel2 {
         this.fontInfo.setName(fontInfo.getName());
         this.fontInfo.setBold(fontInfo.isBold());
         this.fontInfo.setSize(fontInfo.getSize());
+
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     public Color getCellColor() {
@@ -331,8 +371,6 @@ public class MosaicModel2 implements IImageModel2 {
         if ((callback != null) && (changedCallback != null))
             throw new IllegalArgumentException("Can only set the controller once");
         changedCallback = callback;
-        getPenBorder().setListener(callback);
-        getFontInfo().setListener(callback);
     }
 
 }

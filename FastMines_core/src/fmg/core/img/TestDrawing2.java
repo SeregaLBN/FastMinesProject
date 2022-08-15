@@ -135,7 +135,7 @@ public class TestDrawing2 {
                 MosaicImageModel2 mim = (MosaicImageModel2)m;
                 mim.setBackgroundColor(bkClr);
 
-                mim.setFillMode(1 + r(mim.getShape().getMaxCellFillModeValue()));
+                mim.setFillMode(1 + r(mim.getMaxCellFillMode()));
 
                 mim.getPenBorder().setWidth(1 + r(2));
                 SizeDouble size = mim.getSize();
