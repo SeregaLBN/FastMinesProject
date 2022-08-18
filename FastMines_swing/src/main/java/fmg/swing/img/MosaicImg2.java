@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import fmg.common.Color;
+import fmg.common.HSV;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.RegionDouble;
@@ -30,14 +31,17 @@ public final class MosaicImg2 {
     private MosaicImg2() {}
 
     private static void draw(Graphics2D g, MosaicImageModel2 m, Supplier<Object> mineImage, Supplier<Object> flagImage) {
+        Color bkClr = new HSV(m.getBackgroundColor())
+                        .addHue(m.getBackgroundAngle())
+                        .toColor();
         switch (m.getRotateMode()) {
         case FULL_MATRIX:
-            draw(g, m, m.getMatrix(), true, mineImage, flagImage);
+            draw(g, m, m.getMatrix(), true, () -> bkClr, mineImage, flagImage);
             break;
 
         case SOME_CELLS:
             // 1. draw static part
-            draw(g, m, m.getNotRotatedCells(), true, mineImage, flagImage);
+            draw(g, m, m.getNotRotatedCells(), true, () -> bkClr, mineImage, flagImage);
 
             // 2. draw rotated part
             PenBorder2 pb = m.getPenBorder();
@@ -54,7 +58,7 @@ public final class MosaicImg2 {
             pb.setColorLight(colorLight.darker(0.5));
             pb.setColorShadow(colorShadow.darker(0.5));
 
-            draw(g, m, m.getRotatedCells(), false, mineImage, flagImage);
+            draw(g, m, m.getRotatedCells(), false, () -> bkClr, mineImage, flagImage);
 
             // restore
             pb.setWidth(borderWidth);
@@ -69,7 +73,7 @@ public final class MosaicImg2 {
         }
     }
 
-    private static void draw(Graphics2D g, MosaicModel2 m, Collection<BaseCell> toDrawCells, boolean drawBk, Supplier<Object> mineImage, Supplier<Object> flagImage) {
+    private static void draw(Graphics2D g, MosaicModel2 m, Collection<BaseCell> toDrawCells, boolean drawBk, Supplier<Color> bkColor, Supplier<Object> mineImage, Supplier<Object> flagImage) {
         SizeDouble size = m.getSize();
 
         // save
@@ -79,7 +83,7 @@ public final class MosaicImg2 {
         Font oldFont = g.getFont();
 
         // 1. background color
-        Color bkClr = m.getBackgroundColor();
+        Color bkClr = bkColor.get();
         if (drawBk) {
             g.setComposite(AlphaComposite.Src);
             g.setColor(Cast.toColor(bkClr));

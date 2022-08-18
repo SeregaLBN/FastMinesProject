@@ -32,7 +32,7 @@ public class TestDrawing2 {
 
         if (ctrller instanceof MosaicImageController2) {
             var c = (MosaicImageController2<?, ?>)ctrller;
-            c.setAnimatePeriod(2000L + r(7000));
+            c.setAnimatePeriod(1000L + r(3000));
             c.setFps(30 + r(30));
             c.setClockwise(bl());
             c.setRotateImage(bl());
@@ -137,17 +137,14 @@ public class TestDrawing2 {
 
                 mim.setFillMode(1 + r(mim.getMaxCellFillMode()));
 
-                mim.getPenBorder().setWidth(1 + r(2));
+                mim.getPenBorder().setWidth(1. + r(2));
                 SizeDouble size = mim.getSize();
                 double padLeftRight = r((int)(size.width /3));
                 double padTopBottom = r((int)(size.height/3));
                 mim.setPadding(new BoundDouble(padLeftRight, padTopBottom, padLeftRight, padTopBottom));
 
-
                 MosaicImageModel2.ERotateMode[] eRotateModes = MosaicImageModel2.ERotateMode.values();
                 mim.setRotateMode(eRotateModes[r(eRotateModes.length)]);
-
-
             }
         }
     }

@@ -226,20 +226,17 @@ public class MosaicModel2 implements IImageModel2 {
         SizeDouble newMosaicSizeInPixels = new SizeDouble();
         double area = MosaicHelper.findAreaBySize(mosaicType, sizeField, innerSize, newMosaicSizeInPixels);
 
-      if (area <= 0)
-          throw new IllegalArgumentException("Area must be positive");
-      if ((area < MosaicInitData.AREA_MINIMUM) && !(this instanceof MosaicImageModel2))
-          Logger.warn("The area is very small = " + area);
+        if (area <= 0)
+            throw new IllegalArgumentException("Area must be positive");
+        if ((area < MosaicInitData.AREA_MINIMUM) && !(this instanceof MosaicImageModel2))
+            Logger.warn("The area is very small = " + area);
 
-      //area = Math.max(MosaicInitData.AREA_MINIMUM, area);
+        //area = Math.max(MosaicInitData.AREA_MINIMUM, area);
 
-      if (DoubleExt.almostEquals(getArea(), area))
-          return;
+        if (DoubleExt.almostEquals(getArea(), area))
+            return;
 
-      setArea(area);
-
-      if (changedCallback != null)
-          changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+        setArea(area);
     }
 
     /** Offset to mosaic */
@@ -305,7 +302,7 @@ public class MosaicModel2 implements IImageModel2 {
     }
 
     public PenBorder2 getPenBorder() {
-        return new PenBorder2(penBorder.getColorShadow(), penBorder.getColorLight(), penBorder.getWidth());
+        return penBorder;
     }
 
     public void setPenBorder(PenBorder2 penBorder) {
@@ -315,13 +312,10 @@ public class MosaicModel2 implements IImageModel2 {
         this.penBorder.setWidth(penBorder.getWidth());
         this.penBorder.setColorLight(penBorder.getColorLight());
         this.penBorder.setColorShadow(penBorder.getColorShadow());
-
-        if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     public FontInfo2 getFontInfo() {
-        return new FontInfo2(fontInfo.getName(), fontInfo.isBold(), fontInfo.getSize());
+        return fontInfo;
     }
 
     public void setFontInfo(FontInfo2 fontInfo) {
@@ -331,9 +325,6 @@ public class MosaicModel2 implements IImageModel2 {
         this.fontInfo.setName(fontInfo.getName());
         this.fontInfo.setBold(fontInfo.isBold());
         this.fontInfo.setSize(fontInfo.getSize());
-
-        if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     public Color getCellColor() {
@@ -371,6 +362,8 @@ public class MosaicModel2 implements IImageModel2 {
         if ((callback != null) && (changedCallback != null))
             throw new IllegalArgumentException("Can only set the controller once");
         changedCallback = callback;
+        getPenBorder().setListener(callback);
+        getFontInfo().setListener(callback);
     }
 
 }

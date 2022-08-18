@@ -39,6 +39,9 @@ public class MosaicImageModel2 extends MosaicModel2 {
 
     public MosaicImageModel2() {
         super(false);
+
+        var pen = getPenBorder();
+        pen.setColorShadow(pen.getColorLight());
     }
 
     public ERotateMode getRotateMode() { return rotateMode; }
@@ -51,8 +54,7 @@ public class MosaicImageModel2 extends MosaicModel2 {
         if (changedCallback != null)
             changedCallback.accept(ImageHelper.PROPERTY_OTHER);
 
-        prepareList.clear();
-        rotatedElements.clear();
+        applyRotateModeSomeCells();
     }
 
     /** 0° .. +360° */
@@ -81,14 +83,24 @@ public class MosaicImageModel2 extends MosaicModel2 {
             changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
-    public List<RotatedCellContext> getRotatedElements() { return rotatedElements; }
-
     @Override
     public void setSizeField(Matrisize newSizeField) {
         super.setSizeField(newSizeField);
 
-        if (rotateMode == ERotateMode.SOME_CELLS)
-            randomRotateElemenIndex();
+        applyRotateModeSomeCells();
+    }
+
+    private void applyRotateModeSomeCells() {
+        if (rotateMode != ERotateMode.SOME_CELLS)
+            return;
+
+        prepareList.clear();
+        rotatedElements.clear();
+
+        // create random cells indexes  and  base rotate offset (negative)
+        int len = getMatrix().size();
+        for (int i = 0; i < len/4.5; ++i)
+            addRandomToPrepareList(i==0);
     }
 
     /** ///////////// ================= PART {@link ERotateMode#FULL_MATRIX} ======================= ///////////// */
@@ -104,7 +116,7 @@ public class MosaicImageModel2 extends MosaicModel2 {
         }
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER); // PROPERTY_MATRIX
+            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     /** ///////////// ================= PART {@link ERotateMode#SOME_CELLS} ======================= ///////////// */
@@ -123,15 +135,60 @@ public class MosaicImageModel2 extends MosaicModel2 {
     }
 
     /** rotate BaseCell from original Matrix with modified Region */
-    protected void rotateCells() {
-        BaseShape shape = getShape();
-        List<BaseCell> matrix = getMatrix();
-        final double area = shape.getArea();
-        final double angle = rotateAngle;
+    protected void rotateCells(double rotateAngleDelta) {
+        // Step 1. updateAnglesOffsets
+        final double angleNew = rotateAngle;
+        final double angleOld = angleNew - rotateAngleDelta;
 
+        BaseShape shape = getShape();
+        final double area = shape.getArea();
+        List<BaseCell> matrix = getMatrix();
+
+        if (!prepareList.isEmpty()) {
+            List<Double> copyList = new ArrayList<>(prepareList);
+            for (int i = copyList.size()-1; i >= 0; --i) {
+                double angleOffset = copyList.get(i);
+                if ((rotateAngleDelta >= 0)
+                    ?  ((angleOld <= angleOffset && angleOffset <  angleNew && angleOld < angleNew) || // example: old=10   offset=15   new=20
+                        (angleOld <= angleOffset && angleOffset >  angleNew && angleOld > angleNew) || // example: old=350  offset=355  new=0
+                        (angleOld >  angleOffset && angleOffset <= angleNew && angleOld > angleNew))   // example: old=355  offset=0    new=5
+                    :  ((angleOld >= angleOffset && angleOffset >  angleNew && angleOld > angleNew) || // example: old=20   offset=15   new=10
+                        (angleOld <  angleOffset && angleOffset >  angleNew && angleOld < angleNew) || // example: old=0    offset=355  new=350
+                        (angleOld >= angleOffset && angleOffset <= angleNew && angleOld < angleNew)))  // example: old=5    offset=0    new=355
+                {
+                    prepareList.remove(i);
+                    rotatedElements.add(new RotatedCellContext(nextRandomIndex(), angleOffset, area));
+                }
+            }
+        }
+
+        List<RotatedCellContext> toRemove = new ArrayList<>();
+        rotatedElements.forEach(cntxt -> {
+            double angle2 = angleNew - cntxt.angleOffset;
+            if (angle2 < 0)
+                angle2 += 360;
+            assert (angle2 < 360);
+            assert (angle2 >= 0);
+
+            // prepare to next step - exclude current cell from rotate and add next random cell
+            double angle3 = angle2 + rotateAngleDelta;
+            if ((angle3 >= 360) || (angle3 < 0)) {
+                toRemove.add(cntxt);
+            }
+        });
+        toRemove.forEach(cntxt -> {
+                            matrix.get(cntxt.index).init(); // restore original region coords
+                            rotatedElements.remove(cntxt);
+                            if (rotatedElements.isEmpty())
+                                rotateCellAlterantive = !rotateCellAlterantive;
+                            addRandomToPrepareList(false);
+                        });
+
+
+        // Step 2. rotate cells
         rotatedElements.forEach(cntxt -> {
             assert (cntxt.angleOffset >= 0);
-            double angle2 = angle - cntxt.angleOffset;
+            double angle2 = angleNew - cntxt.angleOffset;
             if (angle2 < 0)
                 angle2 += 360;
             assert (angle2 < 360);
@@ -149,8 +206,6 @@ public class MosaicImageModel2 extends MosaicModel2 {
             Coord coord = cell.getCoord();
 
             // modify
-            var callback = changedCallback;
-            changedCallback = null; // lock to fire changing model
             shape.setArea(cntxt.area);
 
             // rotate
@@ -161,11 +216,13 @@ public class MosaicImageModel2 extends MosaicModel2 {
 
             // restore
             shape.setArea(area);
-            changedCallback = callback;
         });
 
         // Z-ordering
         Collections.sort(rotatedElements, (e1, e2) -> Double.compare(e1.area, e2.area));
+
+        if (changedCallback != null)
+            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
     }
 
     public List<BaseCell> getNotRotatedCells() {
@@ -195,19 +252,8 @@ public class MosaicImageModel2 extends MosaicModel2 {
         return rotatedCells;
     }
 
-    private void randomRotateElemenIndex() {
-        prepareList.clear();
-        rotatedElements.clear();
-
-        // create random cells indexes  and  base rotate offset (negative)
-        int len = getMatrix().size();
-        for (int i = 0; i < len/4.5; ++i) {
-            addRandomToPrepareList(i==0);
-        }
-    }
-
     private void addRandomToPrepareList(boolean zero) {
-        double offset = (zero ? 0 : ThreadLocalRandom.current().nextInt(360)) + getRotateAngle();
+        double offset = (zero ? 0 : ThreadLocalRandom.current().nextInt(360)) + rotateAngle;
         if (offset > 360)
             offset -= 360;
         prepareList.add(offset);
@@ -223,62 +269,6 @@ public class MosaicImageModel2 extends MosaicModel2 {
                 continue;
             return index;
         } while(true);
-    }
-
-    public void updateAnglesOffsets(double rotateAngleDelta) {
-        double angleNew = getRotateAngle();
-        double angleOld = angleNew - rotateAngleDelta;
-        double rotateDelta = rotateAngleDelta;
-        double area = getShape().getArea();
-
-        if (!prepareList.isEmpty()) {
-            List<Double> copyList = new ArrayList<>(prepareList);
-            for (int i = copyList.size()-1; i >= 0; --i) {
-                double angleOffset = copyList.get(i);
-                if ((rotateDelta >= 0)
-                    ?  ((angleOld <= angleOffset && angleOffset <  angleNew && angleOld < angleNew) || // example: old=10   offset=15   new=20
-                        (angleOld <= angleOffset && angleOffset >  angleNew && angleOld > angleNew) || // example: old=350  offset=355  new=0
-                        (angleOld >  angleOffset && angleOffset <= angleNew && angleOld > angleNew))   // example: old=355  offset=0    new=5
-                    :  ((angleOld >= angleOffset && angleOffset >  angleNew && angleOld > angleNew) || // example: old=20   offset=15   new=10
-                        (angleOld <  angleOffset && angleOffset >  angleNew && angleOld < angleNew) || // example: old=0    offset=355  new=350
-                        (angleOld >= angleOffset && angleOffset <= angleNew && angleOld < angleNew)))  // example: old=5    offset=0    new=355
-                {
-                    prepareList.remove(i);
-                    rotatedElements.add(new RotatedCellContext(nextRandomIndex(), angleOffset, area));
-
-                    if (changedCallback != null)
-                        changedCallback.accept(ImageHelper.PROPERTY_OTHER);
-                }
-            }
-        }
-
-        List<RotatedCellContext> toRemove = new ArrayList<>();
-        rotatedElements.forEach(cntxt -> {
-            double angle2 = angleNew - cntxt.angleOffset;
-            if (angle2 < 0)
-                angle2 += 360;
-            assert (angle2 < 360);
-            assert (angle2 >= 0);
-
-            // prepare to next step - exclude current cell from rotate and add next random cell
-            double angle3 = angle2 + rotateDelta;
-            if ((angle3 >= 360) || (angle3 < 0)) {
-                toRemove.add(cntxt);
-            }
-        });
-        if (!toRemove.isEmpty()) {
-            List<BaseCell> matrix = getMatrix();
-            toRemove.forEach(cntxt -> {
-                                matrix.get(cntxt.index).init(); // restore original region coords
-                                rotatedElements.remove(cntxt);
-                                if (rotatedElements.isEmpty())
-                                    rotateCellAlterantive = !rotateCellAlterantive;
-                                addRandomToPrepareList(false);
-                            });
-
-            if (changedCallback != null)
-                changedCallback.accept(ImageHelper.PROPERTY_OTHER);
-        }
     }
 
 }

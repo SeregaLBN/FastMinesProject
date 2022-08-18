@@ -12,6 +12,7 @@ import fmg.common.Logger;
 import fmg.common.ui.UiInvoker;
 import fmg.core.app.AProjSettings;
 import fmg.core.mosaic.MosaicDrawModel;
+import fmg.core.types.draw.PenBorder2;
 
 public final class ProjSettings extends AProjSettings {
     private ProjSettings() {}
@@ -29,6 +30,8 @@ public final class ProjSettings extends AProjSettings {
         UiInvoker.Deferred = AsyncRunner::invokeFromUi;
         UiInvoker.Animator = Animator::getSingleton;
         UiInvoker.TimeCreator = Timer::new;
+        
+        PenBorder2.DefaultWidth = Cast.dpToPx(2.25);
 
         // various background colors: #E6FFFFFF #FFEEEEEE #FFFAFAFA
 //      MosaicDrawModel.DefaultBkColor   = new Color(0xFFFAFAFA);

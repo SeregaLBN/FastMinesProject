@@ -140,10 +140,59 @@ public class MosaicAnimatedModel<TImageInner>
     }
 
     /** rotate BaseCell from original Matrix with modified Region */
-    protected void rotateCells() {
+    protected void rotateCells(double rotateAngleDelta) {
+        double angleNew = getRotateAngle();
+        double angleOld = angleNew - rotateAngleDelta;
+        double rotateDelta = rotateAngleDelta;
+        double area = getArea();
+
+        if (!prepareList.isEmpty()) {
+            List<Double> copyList = new ArrayList<>(prepareList);
+            for (int i = copyList.size()-1; i >= 0; --i) {
+                double angleOffset = copyList.get(i);
+                if ((rotateDelta >= 0)
+                    ?  ((angleOld <= angleOffset && angleOffset <  angleNew && angleOld < angleNew) || // example: old=10   offset=15   new=20
+                        (angleOld <= angleOffset && angleOffset >  angleNew && angleOld > angleNew) || // example: old=350  offset=355  new=0
+                        (angleOld >  angleOffset && angleOffset <= angleNew && angleOld > angleNew))   // example: old=355  offset=0    new=5
+                    :  ((angleOld >= angleOffset && angleOffset >  angleNew && angleOld > angleNew) || // example: old=20   offset=15   new=10
+                        (angleOld <  angleOffset && angleOffset >  angleNew && angleOld < angleNew) || // example: old=0    offset=355  new=350
+                        (angleOld >= angleOffset && angleOffset <= angleNew && angleOld < angleNew)))  // example: old=5    offset=0    new=355
+                {
+                    prepareList.remove(i);
+                    rotatedElements.add(new RotatedCellContext(nextRandomIndex(), angleOffset, area));
+                    notifier.firePropertyChanged(PROPERTY_ROTATED_ELEMENTS);
+                }
+            }
+        }
+
+        List<RotatedCellContext> toRemove = new ArrayList<>();
+        rotatedElements.forEach(cntxt -> {
+            double angle2 = angleNew - cntxt.angleOffset;
+            if (angle2 < 0)
+                angle2 += 360;
+            assert (angle2 < 360);
+            assert (angle2 >= 0);
+
+            // prepare to next step - exclude current cell from rotate and add next random cell
+            double angle3 = angle2 + rotateDelta;
+            if ((angle3 >= 360) || (angle3 < 0)) {
+                toRemove.add(cntxt);
+            }
+        });
+        if (!toRemove.isEmpty()) {
+            List<BaseCell> matrix = getMatrix();
+            toRemove.forEach(cntxt -> {
+                                matrix.get(cntxt.index).init(); // restore original region coords
+                                rotatedElements.remove(cntxt);
+                                if (rotatedElements.isEmpty())
+                                    rotateCellAlterantive = !rotateCellAlterantive;
+                                addRandomToPrepareList(false);
+                            });
+            notifier.firePropertyChanged(PROPERTY_ROTATED_ELEMENTS);
+        }
+
         BaseShape shape = getShape();
         List<BaseCell> matrix = getMatrix();
-        final double area = getArea();
         final double angle = getRotateAngle();
 
         rotatedElements.forEach(cntxt -> {
@@ -270,58 +319,6 @@ public class MosaicAnimatedModel<TImageInner>
                 continue;
             return index;
         } while(true);
-    }
-
-    public void updateAnglesOffsets(double rotateAngleDelta) {
-        double angleNew = getRotateAngle();
-        double angleOld = angleNew - rotateAngleDelta;
-        double rotateDelta = rotateAngleDelta;
-        double area = getArea();
-
-        if (!prepareList.isEmpty()) {
-            List<Double> copyList = new ArrayList<>(prepareList);
-            for (int i = copyList.size()-1; i >= 0; --i) {
-                double angleOffset = copyList.get(i);
-                if ((rotateDelta >= 0)
-                    ?  ((angleOld <= angleOffset && angleOffset <  angleNew && angleOld < angleNew) || // example: old=10   offset=15   new=20
-                        (angleOld <= angleOffset && angleOffset >  angleNew && angleOld > angleNew) || // example: old=350  offset=355  new=0
-                        (angleOld >  angleOffset && angleOffset <= angleNew && angleOld > angleNew))   // example: old=355  offset=0    new=5
-                    :  ((angleOld >= angleOffset && angleOffset >  angleNew && angleOld > angleNew) || // example: old=20   offset=15   new=10
-                        (angleOld <  angleOffset && angleOffset >  angleNew && angleOld < angleNew) || // example: old=0    offset=355  new=350
-                        (angleOld >= angleOffset && angleOffset <= angleNew && angleOld < angleNew)))  // example: old=5    offset=0    new=355
-                {
-                    prepareList.remove(i);
-                    rotatedElements.add(new RotatedCellContext(nextRandomIndex(), angleOffset, area));
-                    notifier.firePropertyChanged(PROPERTY_ROTATED_ELEMENTS);
-                }
-            }
-        }
-
-        List<RotatedCellContext> toRemove = new ArrayList<>();
-        rotatedElements.forEach(cntxt -> {
-            double angle2 = angleNew - cntxt.angleOffset;
-            if (angle2 < 0)
-                angle2 += 360;
-            assert (angle2 < 360);
-            assert (angle2 >= 0);
-
-            // prepare to next step - exclude current cell from rotate and add next random cell
-            double angle3 = angle2 + rotateDelta;
-            if ((angle3 >= 360) || (angle3 < 0)) {
-                toRemove.add(cntxt);
-            }
-        });
-        if (!toRemove.isEmpty()) {
-            List<BaseCell> matrix = getMatrix();
-            toRemove.forEach(cntxt -> {
-                                matrix.get(cntxt.index).init(); // restore original region coords
-                                rotatedElements.remove(cntxt);
-                                if (rotatedElements.isEmpty())
-                                    rotateCellAlterantive = !rotateCellAlterantive;
-                                addRandomToPrepareList(false);
-                            });
-            notifier.firePropertyChanged(PROPERTY_ROTATED_ELEMENTS);
-        }
     }
 
     @Override

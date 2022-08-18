@@ -21,8 +21,7 @@ public class MosaicRotateTransformer implements IModelTransformer {
             mam.rotateMatrix();
             break;
         case someCells:
-            mam.updateAnglesOffsets(rotateAngleDelta);
-            mam.rotateCells();
+            mam.rotateCells(rotateAngleDelta);
             break;
         default:
             throw new RuntimeException("Unsupported RotateMode=" + mam.getRotateMode());

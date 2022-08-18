@@ -100,20 +100,19 @@ public abstract class MosaicImageController2<TImage,
         var m = getModel();
 
         long totalFrames = animatePeriod * fps / 1000;
-        double angle = currentFrame * 360.0 / totalFrames;
+        double rotateAngleDelta = 360.0 / totalFrames;
         if (!clockwise)
-            angle = -angle;
+            rotateAngleDelta = -rotateAngleDelta;
+        double angle = currentFrame * rotateAngleDelta;
 
         // rotate
-        var oldAngle = m.getRotateAngle();
         m.setRotateAngle(angle);
         switch (m.getRotateMode()) {
         case FULL_MATRIX:
             m.rotateMatrix();
             break;
         case SOME_CELLS:
-            m.updateAnglesOffsets(angle - oldAngle);
-            m.rotateCells();
+            m.rotateCells(rotateAngleDelta);
             break;
         default:
             throw new RuntimeException("Unsupported RotateMode=" + m.getRotateMode());

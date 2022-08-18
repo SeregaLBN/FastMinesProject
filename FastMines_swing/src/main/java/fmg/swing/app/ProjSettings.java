@@ -7,6 +7,7 @@ import fmg.common.Logger;
 import fmg.common.ui.UiInvoker;
 import fmg.core.app.AProjSettings;
 import fmg.core.mosaic.MosaicDrawModel;
+import fmg.core.types.draw.PenBorder2;
 import fmg.swing.img.Animator;
 import fmg.swing.utils.Cast;
 import fmg.swing.utils.Timer;
@@ -38,6 +39,8 @@ public final class ProjSettings extends AProjSettings {
         UiInvoker.Deferred = javax.swing.SwingUtilities::invokeLater;
         UiInvoker.Animator = Animator::getSingleton;
         UiInvoker.TimeCreator = Timer::new;
+
+        PenBorder2.DefaultWidth = Cast.dpToPx(2.25);
 
 
         try {
