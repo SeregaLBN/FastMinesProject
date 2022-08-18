@@ -30,7 +30,7 @@ public final class ProjSettings extends AProjSettings {
         UiInvoker.Deferred = AsyncRunner::invokeFromUi;
         UiInvoker.Animator = Animator::getSingleton;
         UiInvoker.TimeCreator = Timer::new;
-        
+
         PenBorder2.DefaultWidth = Cast.dpToPx(2.25);
 
         // various background colors: #E6FFFFFF #FFEEEEEE #FFFAFAFA
