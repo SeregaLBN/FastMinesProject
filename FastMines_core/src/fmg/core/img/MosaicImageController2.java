@@ -1,7 +1,12 @@
 package fmg.core.img;
 
+import java.util.function.Consumer;
+
+import fmg.common.Color;
+import fmg.common.HSV;
 import fmg.common.ui.UiInvoker;
 import fmg.core.types.EMosaicGroup;
+import fmg.core.types.draw.PenBorder2;
 
 /** MVC controller of {@link EMosaicGroup} image
  * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
@@ -129,5 +134,50 @@ public abstract class MosaicImageController2<TImage,
         UiInvoker.Animator.get().unsubscribe(this);
         super.close();
     }
+
+    // TODO metod as protected
+    public static <T> void draw(MosaicImageModel2 m, Consumer<MosaicDrawContext<T>> realDraw) {
+        Color bkClr = new HSV(m.getBackgroundColor())
+                        .addHue(m.getBackgroundAngle())
+                        .toColor();
+        switch (m.getRotateMode()) {
+        case FULL_MATRIX:
+            realDraw.accept(new MosaicDrawContext<>(m, true, () -> bkClr, m::getMatrix, null, null));
+            break;
+
+        case SOME_CELLS:
+            // 1. draw static part
+            realDraw.accept(new MosaicDrawContext<>(m, true, () -> bkClr, m::getNotRotatedCells, null, null));
+
+            // 2. draw rotated part
+            PenBorder2 pb = m.getPenBorder();
+            // save
+            double borderWidth = pb.getWidth();
+            Color colorLight  = pb.getColorLight();
+            Color colorShadow = pb.getColorShadow();
+
+            // unset notifier (щоб не призводило до малювання із методу малювання)
+            var callback = m.getListener();
+            m.setListener(null); // lock to fire changing model
+            // modify
+            pb.setWidth(2 * borderWidth);
+            pb.setColorLight(colorLight.darker(0.5));
+            pb.setColorShadow(colorShadow.darker(0.5));
+
+            realDraw.accept(new MosaicDrawContext<>(m, false, () -> bkClr, m::getRotatedCells, null, null));
+
+            // restore
+            pb.setWidth(borderWidth);
+            pb.setColorLight(colorLight);
+            pb.setColorShadow(colorShadow);
+            m.setListener(callback);
+
+            break;
+
+        default:
+            throw new IllegalArgumentException();
+        }
+    }
+
 
 }

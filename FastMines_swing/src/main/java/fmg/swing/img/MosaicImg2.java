@@ -4,18 +4,16 @@ import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import fmg.common.Color;
-import fmg.common.HSV;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.RegionDouble;
 import fmg.common.geom.SizeDouble;
+import fmg.core.img.MosaicDrawContext;
 import fmg.core.img.MosaicImageController2;
 import fmg.core.img.MosaicImageModel2;
 import fmg.core.mosaic.MosaicModel2;
@@ -30,50 +28,12 @@ import fmg.swing.utils.Cast;
 public final class MosaicImg2 {
     private MosaicImg2() {}
 
-    private static void draw(Graphics2D g, MosaicImageModel2 m, Supplier<Object> mineImage, Supplier<Object> flagImage) {
-        Color bkClr = new HSV(m.getBackgroundColor())
-                        .addHue(m.getBackgroundAngle())
-                        .toColor();
-        switch (m.getRotateMode()) {
-        case FULL_MATRIX:
-            draw(g, m, m.getMatrix(), true, () -> bkClr, mineImage, flagImage);
-            break;
-
-        case SOME_CELLS:
-            // 1. draw static part
-            draw(g, m, m.getNotRotatedCells(), true, () -> bkClr, mineImage, flagImage);
-
-            // 2. draw rotated part
-            PenBorder2 pb = m.getPenBorder();
-            // save
-            double borderWidth = pb.getWidth();
-            Color colorLight  = pb.getColorLight();
-            Color colorShadow = pb.getColorShadow();
-
-            // unset notifier (щоб не призводило до малювання із методу малювання)
-            var callback = m.getListener();
-            m.setListener(null); // lock to fire changing model
-            // modify
-            pb.setWidth(2 * borderWidth);
-            pb.setColorLight(colorLight.darker(0.5));
-            pb.setColorShadow(colorShadow.darker(0.5));
-
-            draw(g, m, m.getRotatedCells(), false, () -> bkClr, mineImage, flagImage);
-
-            // restore
-            pb.setWidth(borderWidth);
-            pb.setColorLight(colorLight);
-            pb.setColorShadow(colorShadow);
-            m.setListener(callback);
-
-            break;
-
-        default:
-            throw new IllegalArgumentException();
-        }
+    private static void draw(Graphics2D g, MosaicImageModel2 m) {
+        MosaicImageController2.<Void>draw(m, ctx -> draw(g, ctx));
     }
 
-    private static void draw(Graphics2D g, MosaicModel2 m, Collection<BaseCell> toDrawCells, boolean drawBk, Supplier<Color> bkColor, Supplier<Object> mineImage, Supplier<Object> flagImage) {
+    public static <T> void draw(Graphics2D g, MosaicDrawContext<T> drawContext) {
+        var m = drawContext.model;
         SizeDouble size = m.getSize();
 
         // save
@@ -83,8 +43,10 @@ public final class MosaicImg2 {
         Font oldFont = g.getFont();
 
         // 1. background color
-        Color bkClr = bkColor.get();
-        if (drawBk) {
+        Color bkClr = (drawContext.getBackgroundColor == null)
+                ? m.getBackgroundColor()
+                : drawContext.getBackgroundColor.get();
+        if (drawContext.drawBackground) {
             g.setComposite(AlphaComposite.Src);
             g.setColor(Cast.toColor(bkClr));
             g.fillRect(0, 0, (int)size.width, (int)size.height);
@@ -99,12 +61,13 @@ public final class MosaicImg2 {
         boolean isSimpleDraw = pen.getColorLight().equals(pen.getColorShadow());
         Color cellColor = m.getCellColor();
 
-        if (toDrawCells == null)
-            toDrawCells = m.getMatrix();
+        var toDrawCells = (drawContext.drawCells == null)
+                ? m.getMatrix()
+                : drawContext.drawCells.get();
 
         int fillMode = m.getFillMode();
-        var imgMine = (mineImage==null) ? null : mineImage.get();
-        var imgFlag = (flagImage==null) ? null : flagImage.get();
+        var imgMine = (drawContext.mineImage == null) ? null : drawContext.mineImage.get();
+        var imgFlag = (drawContext.flagImage == null) ? null : drawContext.flagImage.get();
         for (BaseCell cell: toDrawCells) {
             RectDouble rcInner = cell.getRcInner(pen.getWidth()).moveXY(offset);
             Polygon poly = Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), offset));
@@ -121,7 +84,7 @@ public final class MosaicImg2 {
                 Color bkClrCell = cell.getCellFillColor(fillMode,
                                                         cellColor,
                                                         m::getFillColor);
-                if (!drawBk || !bkClrCell.equals(bkClr)) {
+                if (!drawContext.drawBackground || !bkClrCell.equals(bkClr)) {
                     g.setColor(Cast.toColor(bkClrCell));
                     g.fillPolygon(poly);
                 }
@@ -198,7 +161,6 @@ public final class MosaicImg2 {
             }
         }
 
-
         // restore
         g.setFont(oldFont);
         g.setStroke(oldStroke);
@@ -230,12 +192,6 @@ public final class MosaicImg2 {
         if ((text == null) || text.trim().isEmpty())
             return;
         Rectangle2D bnd = getStringBounds(m, text);
-//        { // test
-//            java.awt.Color clrOld = g.getColor();
-//            g.setColor(java.awt.Color.BLUE);
-//            g.fillRect((int)rc.x, (int)rc.y, (int)rc.width, (int)rc.height);
-//            g.setColor(clrOld);
-//        }
         g.drawString(text,
                 (int)(rc.x       +(rc.width -bnd.getWidth ())/2.),
                 (int)(rc.bottom()-(rc.height-bnd.getHeight())/2.));
@@ -247,12 +203,8 @@ public final class MosaicImg2 {
 
         public MosaicImageSwingIconController() {
             var model = new MosaicImageModel2();
-            var view = new SwingIconView<>(model, this::draw);
+            var view = new SwingIconView<>(model, MosaicImg2::draw);
             init(model, view);
-        }
-
-        private void draw(Graphics2D g, MosaicImageModel2 m) {
-            MosaicImg2.draw(g, m, null, null);
         }
 
     }
@@ -262,12 +214,8 @@ public final class MosaicImg2 {
 
         public MosaicImageAwtImageController() {
             var model = new MosaicImageModel2();
-            var view = new AwtImageView<>(model, this::draw);
+            var view = new AwtImageView<>(model, MosaicImg2::draw);
             init(model, view);
-        }
-
-        private void draw(Graphics2D g, MosaicImageModel2 m) {
-            MosaicImg2.draw(g, m, null, null);
         }
 
     }
