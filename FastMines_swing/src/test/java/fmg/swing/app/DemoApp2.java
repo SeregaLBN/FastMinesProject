@@ -70,17 +70,18 @@ public class DemoApp2  {
     public void testMosaicImg() {
         testApp(() ->
              //// test single
-             //Stream.of(new MosaicImg.ControllerImage() { { setMosaicType(EMosaic.eMosaicSquare1); }})
+             //Stream.of(new MosaicImg2.MosaicAwtImageController() { { getModel().setMosaicType(EMosaic.eMosaicSquare1); }})
 
              // test all
              Stream.of(EMosaic.values())
                  .map(e -> {
                      MosaicImageController2<?, ?> ctrlr = ThreadLocalRandom.current().nextBoolean()
-                         ? new MosaicImg2.MosaicImageSwingIconController ()
-                         : new MosaicImg2.MosaicImageAwtImageController();
+                         ? new MosaicImg2.MosaicSwingIconController ()
+                         : new MosaicImg2.MosaicAwtImageController();
                      ctrlr.getModel().setMosaicType(e);
                      return ctrlr;
-                 }));
+                 })
+         );
     }
     public void testMosaicGroupImg() {
         testApp(() -> Stream.concat(Stream.of((EMosaicGroup)null),

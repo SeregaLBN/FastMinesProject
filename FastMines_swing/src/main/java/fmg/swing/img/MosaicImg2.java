@@ -21,6 +21,7 @@ import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
 import fmg.core.types.EState;
+import fmg.core.types.draw.FontInfo2;
 import fmg.core.types.draw.PenBorder2;
 import fmg.swing.utils.Cast;
 
@@ -169,6 +170,7 @@ public final class MosaicImg2 {
     }
 
     private static final FontRenderContext FRC = new FontRenderContext(null, true, true);
+    /** cached Font for {@link FontInfo2} */
     private static final Map<String /* font name*/, Map<Boolean /* bold? */, Map<Integer /* size */, Font>>> CACHED_FONT = new HashMap<>();
     /** cached TextLayout for quick drawing */
     private static final Map<Font, Map<String /* text */, TextLayout>> CACHED_TEXT_LAYOUT = new HashMap<>();
@@ -183,7 +185,7 @@ public final class MosaicImg2 {
     private static Rectangle2D getStringBounds(MosaicModel2 m, String text) {
         var font = getFont(m);
         var map2 = CACHED_TEXT_LAYOUT.computeIfAbsent(font, f -> new HashMap<>());
-        var tl = map2.computeIfAbsent(text, t -> new TextLayout(t, font, FRC));
+        var tl = map2.computeIfAbsent(text, txt -> new TextLayout(txt, font, FRC));
         return tl.getBounds();
 //        return font.getStringBounds(text, new FontRenderContext(null, true, true));
     }
@@ -199,9 +201,9 @@ public final class MosaicImg2 {
 
 
     /** Mosaic image controller implementation for {@link javax.swing.Icon} */
-    public static class MosaicImageSwingIconController extends MosaicImageController2<javax.swing.Icon, SwingIconView<MosaicImageModel2>> {
+    public static class MosaicSwingIconController extends MosaicImageController2<javax.swing.Icon, SwingIconView<MosaicImageModel2>> {
 
-        public MosaicImageSwingIconController() {
+        public MosaicSwingIconController() {
             var model = new MosaicImageModel2();
             var view = new SwingIconView<>(model, MosaicImg2::draw);
             init(model, view);
@@ -210,9 +212,9 @@ public final class MosaicImg2 {
     }
 
     /** Mosaic image controller implementation for {@link java.awt.Image} */
-    public static class MosaicImageAwtImageController extends MosaicImageController2<java.awt.Image, AwtImageView<MosaicImageModel2>> {
+    public static class MosaicAwtImageController extends MosaicImageController2<java.awt.Image, AwtImageView<MosaicImageModel2>> {
 
-        public MosaicImageAwtImageController() {
+        public MosaicAwtImageController() {
             var model = new MosaicImageModel2();
             var view = new AwtImageView<>(model, MosaicImg2::draw);
             init(model, view);

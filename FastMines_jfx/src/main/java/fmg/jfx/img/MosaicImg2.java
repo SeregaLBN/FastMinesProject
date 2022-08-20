@@ -1,7 +1,5 @@
-package fmg.jfx.mosaic;
+package fmg.jfx.img;
 
-import java.beans.PropertyChangeEvent;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -11,49 +9,36 @@ import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Paint;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
+import javafx.scene.text.*;
 
 import fmg.common.Color;
-import fmg.common.Logger;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.RegionDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.core.mosaic.CellFill;
-import fmg.core.mosaic.MosaicDrawModel;
-import fmg.core.mosaic.MosaicView;
+import fmg.core.img.MosaicDrawContext;
+import fmg.core.img.MosaicImageController2;
+import fmg.core.img.MosaicImageModel2;
+import fmg.core.mosaic.MosaicModel2;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
 import fmg.core.types.EState;
-import fmg.core.types.draw.FontInfo;
-import fmg.core.types.draw.PenBorder;
+import fmg.core.types.draw.FontInfo2;
+import fmg.core.types.draw.PenBorder2;
 import fmg.jfx.utils.Cast;
 
-/** MVC: view. Abstract JFX implementation */
-public abstract class MosaicJfxView<TImage,
-                                    TImageInner,
-                                    TMosaicModel extends MosaicDrawModel<TImageInner>>
-                 extends MosaicView<TImage, TImageInner, TMosaicModel>
-{
+/** Representable {@link fmg.core.types.EMosaic} as image */
+public final class MosaicImg2 {
+    private MosaicImg2() {}
 
-    private Font font;
-    /** cached Text for quick drawing */
-    private final Map<String /* text */, Text> mapText = new HashMap<>();
-    protected boolean alreadyPainted = false;
-
-    protected MosaicJfxView(TMosaicModel mosaicModel) {
-        super(mosaicModel);
+    private static void draw(GraphicsContext g, MosaicImageModel2 m) {
+        MosaicImageController2.<Void>draw(m, ctx -> draw(g, ctx));
     }
 
-    protected void drawJfx(GraphicsContext g, Collection<BaseCell> toDrawCells, boolean drawBk) {
-        assert !alreadyPainted;
-        alreadyPainted = true;
-
-        TMosaicModel model = getModel();
-        SizeDouble size = model.getSize();
+    public static <T> void draw(GraphicsContext g, MosaicDrawContext<T> drawContext) {
+        var m = drawContext.model;
+        SizeDouble size = m.getSize();
 
         // save
         Paint oldFill = g.getFill();
@@ -61,8 +46,10 @@ public abstract class MosaicJfxView<TImage,
         Font oldFont = g.getFont();
 
         // 1. background color
-        Color bkClr = model.getBackgroundColor();
-        if (drawBk) {
+        Color bkClr = (drawContext.getBackgroundColor == null)
+                ? m.getBackgroundColor()
+                : drawContext.getBackgroundColor.get();
+        if (drawContext.drawBackground) {
             if (!bkClr.isOpaque())
                 g.clearRect(0, 0, size.width, size.height);
             if (!bkClr.isTransparent()) {
@@ -72,24 +59,24 @@ public abstract class MosaicJfxView<TImage,
         }
 
         // 2. paint cells
-        g.setFont(getFont());
-        PenBorder pen = model.getPenBorder();
+        g.setFont(getFont(m));
+        PenBorder2 pen = m.getPenBorder();
         g.setLineWidth(pen.getWidth());
-        SizeDouble offset = model.getMosaicOffset();
+        SizeDouble offset = m.getMosaicOffset();
         boolean isSimpleDraw = pen.getColorLight().equals(pen.getColorShadow());
-        CellFill cellFill = model.getCellFill();
-        Color cellColor = model.getCellColor();
-
-        if (DEBUG_DRAW_FLOW)
-            Logger.info("MosaicJfxView.drawJfx: " + ((toDrawCells==null) ? "all" : ("cnt=" + toDrawCells.size()))
-                                                         + "; drawBk=" + drawBk);
+        Color cellColor = m.getCellColor();
 
         /** HINT: Using the {@link GraphicsContext#clip} method slows down drawing (animation).
             * Especially noticeable at startup demo {@link MosaicCanvasController#main} */
         boolean useClip = !isSimpleDraw;
 
-        if (toDrawCells == null)
-            toDrawCells = model.getMatrix();
+        var toDrawCells = (drawContext.drawCells == null)
+                ? m.getMatrix()
+                : drawContext.drawCells.get();
+
+        int fillMode = m.getFillMode();
+        var imgMine = (drawContext.mineImage == null) ? null : drawContext.mineImage.get();
+        var imgFlag = (drawContext.flagImage == null) ? null : drawContext.flagImage.get();
         for (BaseCell cell: toDrawCells) {
             if (useClip)
                 g.save();
@@ -129,10 +116,10 @@ public abstract class MosaicJfxView<TImage,
                 // 2.1.1. paint cell background
                 //if (!isIconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
                 {
-                    Color bkClrCell = cell.getCellFillColor(cellFill.getMode(),
+                    Color bkClrCell = cell.getCellFillColor(fillMode,
                                                             cellColor,
-                                                            cellFill::getColor);
-                    if (!drawBk || !bkClrCell.equals(bkClr)) {
+                                                            m::getFillColor);
+                    if (!drawContext.drawBackground || !bkClrCell.equals(bkClr)) {
                         g.setFill(Cast.toColor(bkClrCell));
                         polyX = Cast.toPolygon(poly, true);
                         polyY = Cast.toPolygon(poly, false);
@@ -143,7 +130,7 @@ public abstract class MosaicJfxView<TImage,
 //                    g.setStroke(Cast.toColor(Color.Magenta));
 //                    g.strokeRect(rcInner.x, rcInner.y, rcInner.width, rcInner.height);
 
-                Consumer<TImageInner> paintImage = img -> {
+                Consumer<Object> paintImage = img -> {
                     if (img instanceof Image) {
                         g.drawImage((Image)img, rcInner.x, rcInner.y);
                     } else {
@@ -152,40 +139,32 @@ public abstract class MosaicJfxView<TImage,
                 };
 
                 // 2.1.2. output pictures
-                if ((model.getImgFlag() != null) &&
+                if ((imgFlag != null) &&
                     (cell.getState().getStatus() == EState._Close) &&
                     (cell.getState().getClose()  == EClose._Flag))
                 {
-                    paintImage.accept(model.getImgFlag());
+                    paintImage.accept(imgFlag);
                 } else
-                if ((model.getImgMine() != null) &&
+                if ((imgMine != null) &&
                     (cell.getState().getStatus() == EState._Open) &&
                     (cell.getState().getOpen()   == EOpen._Mine))
                 {
-                    paintImage.accept(model.getImgMine());
+                    paintImage.accept(imgMine);
                 } else
                 // 2.1.3. output text
                 {
                     String szCaption;
                     if (cell.getState().getStatus() == EState._Close) {
-                        g.setFill(Cast.toColor(model.getColorText().getColorClose(cell.getState().getClose().ordinal())));
+                        g.setFill(Cast.toColor(cell.getState().getClose().asColor()));
                         szCaption = cell.getState().getClose().toCaption();
-                      //szCaption = cell.getCoord().x + ";" + cell.getCoord().y; // debug
-                      //szCaption = ""+cell.getDirection(); // debug
                     } else {
-                        g.setFill(Cast.toColor(model.getColorText().getColorOpen(cell.getState().getOpen().ordinal())));
+                        g.setFill(Cast.toColor(cell.getState().getOpen().asColor()));
                         szCaption = cell.getState().getOpen().toCaption();
                     }
-                    if ((szCaption != null) && (szCaption.length() > 0) && (model.getFontInfo().getSize() >= 1)) {
+                    if ((szCaption != null) && (szCaption.length() > 0) && (m.getFontInfo().getSize() >= 1)) {
                         if (cell.getState().isDown())
                             rcInner.moveXY(pen.getWidth(), pen.getWidth());
-                        drawText(g, szCaption, rcInner);
-                        //{ // test
-                        //    Paint clrOld = g.getStroke(); // test
-                        //    g.setStroke(Cast.toColor(Color.Red));
-                        //    g.strokeRect(rcInner.x, rcInner.y, rcInner.width, rcInner.height);
-                        //    g.setStroke(clrOld);
-                        //}
+                        drawText(g, m, szCaption, rcInner);
                     }
                 }
 
@@ -219,80 +198,52 @@ public abstract class MosaicJfxView<TImage,
                         g.strokeLine(p1.x+offset.width, p1.y+offset.height, p2.x+offset.width, p2.y+offset.height);
                     }
                 }
-
-                // debug - визуально проверяю верность вписанного квадрата (проверять при ширине пера около 21)
-                //g.setColor(java.awt.Color.MAGENTA);
-                //g.drawRect(rcInner.x, rcInner.y, rcInner.width, rcInner.height);
             }
 
             if (useClip)
                g.restore();
         }
 
-        /** /
-        // test
-        {
-            g.setClip(oldShape);
-            //g.setComposite(AlphaComposite.SrcOver);
-
-            // test padding
-            g.setStroke(new BasicStroke(5));
-            Color clr = new Color(Color.DarkRed);
-            clr.setA(120);
-            g.setColor(Cast.toColor(clr));
-            g.drawRect(padding.left,
-                       padding.top,
-                       size.width  - padding.getLeftAndRight(),
-                       size.height - padding.getTopAndBottom());
-
-            // test margin
-            g.setStroke(new BasicStroke(3));
-            clr = new Color(Color.DarkGreen);
-            clr.setA(120);
-            g.setColor(Cast.toColor(clr));
-            g.drawRect(padding.left + margin.left,
-                       padding.top  + margin.top,
-                       size.width  - padding.getLeftAndRight() - margin.getLeftAndRight(),
-                       size.height - padding.getTopAndBottom() - margin.getTopAndBottom());
-        }
-        /**/
-
-        if (DEBUG_DRAW_FLOW)
-            Logger.info("-------------------------------");
-
         // restore
         g.setFont(oldFont);
         g.setStroke(oldStroke);
         g.setFill(oldFill);
-
-        alreadyPainted = false;
     }
 
-    private Bounds getStringBounds(String text) {
-        Text t = mapText.get(text);
-        if (t == null) {
-            t = new Text(text);
-            t.setFont(getFont());
+    /** cached Font for {@link FontInfo2} */
+    private static final Map<String /* font name*/, Map<Boolean /* bold? */, Map<Integer /* size */, Font>>> CACHED_FONT = new HashMap<>();
+    /** cached Text for quick drawing */
+    private static final Map<Font, Map<String /* text */, Text>> CACHED_TEXT = new HashMap<>();
+
+    private static Font getFont(MosaicModel2 m) {
+        var fi = m.getFontInfo();
+        var map2 = CACHED_FONT.computeIfAbsent(fi.getName(), fontName -> new HashMap<>());
+        var map3 = map2.computeIfAbsent(fi.isBold(), isBold -> new HashMap<>());
+        return map3.computeIfAbsent((int)fi.getSize(), size -> Font.font(fi.getName(),
+                                                                         fi.isBold()
+                                                                             ? FontWeight.BOLD
+                                                                             : FontWeight.NORMAL,
+                                                                         FontPosture.REGULAR,
+                                                                         size));
+    }
+
+    private static Bounds getStringBounds(MosaicModel2 m, String text) {
+        var font = getFont(m);
+        var map2 = CACHED_TEXT.computeIfAbsent(font, f -> new HashMap<>());
+        Text textResult = map2.computeIfAbsent(text, txt -> {
+            var t = new Text(txt);
+            t.setFont(getFont(m));
           //t.setTextAlignment(TextAlignment.CENTER);
           //t.setTextOrigin(VPos.CENTER);
-            mapText.put(text, t);
-        }
-        return t.getLayoutBounds();
+            return t;
+        });
+        return textResult.getLayoutBounds();
     }
 
-    private void drawText(GraphicsContext g, String text, RectDouble rc) {
+    private static void drawText(GraphicsContext g, MosaicModel2 m, String text, RectDouble rc) {
         if ((text == null) || text.trim().isEmpty())
             return;
-        Bounds bnd = getStringBounds(text);
-//        { // test
-//            Paint clrOld = g.getStroke();
-//            g.setLineWidth(1);
-//            g.setStroke(Cast.toColor(Color.Blue));
-//            g.strokeRect(bnd.getMinX()+rc.x, bnd.getMinY()+rc.y, bnd.getWidth(), bnd.getHeight());
-//            g.setStroke(Cast.toColor(Color.Red));
-//            g.strokeRect(rc.x, rc.y, rc.width, rc.height);
-//            g.setStroke(clrOld);
-//        }
+        Bounds bnd = getStringBounds(m, text);
         g.setTextAlign(TextAlignment.LEFT);
         g.setTextBaseline(VPos.TOP);
         g.fillText(text,
@@ -300,27 +251,27 @@ public abstract class MosaicJfxView<TImage,
                    rc.y+(rc.height-bnd.getHeight())/2.);
     }
 
-    private Font getFont() {
-        if (font == null) {
-            FontInfo fi = getModel().getFontInfo();
-            font = new Font(fi.getName(), /*fi.isBold() ? Font.BOLD : Font.PLAIN, */fi.getSize());
+
+    /** Mosaic image controller implementation for {@link javafx.scene.canvas.Canvas} */
+    public static class MosaicJfxCanvasController extends MosaicImageController2<javafx.scene.canvas.Canvas, JfxCanvasView<MosaicImageModel2>> {
+
+        public MosaicJfxCanvasController() {
+            var model = new MosaicImageModel2();
+            var view = new JfxCanvasView<>(model, MosaicImg2::draw);
+            init(model, view);
         }
-        return font;
+
     }
 
-    @Override
-    protected void onModelPropertyChanged(PropertyChangeEvent ev) {
-        super.onModelPropertyChanged(ev);
-        if (MosaicDrawModel.PROPERTY_FONT_INFO.equals(ev.getPropertyName())) {
-            font = null;
-            mapText.clear();
-        }
-    }
+    /** Mosaic image controller implementation for {@link javafx.scene.image.Image} */
+    public static class MosaicJfxImageController extends MosaicImageController2<javafx.scene.image.Image, JfxImageView<MosaicImageModel2>> {
 
-    @Override
-    public void close() {
-        mapText.clear();
-        super.close();
+        public MosaicJfxImageController() {
+            var model = new MosaicImageModel2();
+            var view = new JfxImageView<>(model, MosaicImg2::draw);
+            init(model, view);
+        }
+
     }
 
 }
