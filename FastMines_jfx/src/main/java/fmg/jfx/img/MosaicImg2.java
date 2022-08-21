@@ -243,6 +243,7 @@ public final class MosaicImg2 {
     private static void drawText(GraphicsContext g, MosaicModel2 m, String text, RectDouble rc) {
         if ((text == null) || text.trim().isEmpty())
             return;
+
         Bounds bnd = getStringBounds(m, text);
         g.setTextAlign(TextAlignment.LEFT);
         g.setTextBaseline(VPos.TOP);

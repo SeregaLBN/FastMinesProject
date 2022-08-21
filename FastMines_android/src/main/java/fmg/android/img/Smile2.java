@@ -15,7 +15,6 @@ import java.util.function.Consumer;
 
 import fmg.android.utils.Cast;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.FlagModel2;
 import fmg.core.img.ImageController2;
 import fmg.core.img.SmileModel2.EFaceType;
 import fmg.core.img.SmileModel2;

@@ -31,7 +31,7 @@ public final class ProjSettings extends AProjSettings {
         UiInvoker.Animator = Animator::getSingleton;
         UiInvoker.TimeCreator = Timer::new;
 
-        PenBorder2.DefaultWidth = Cast.dpToPx(2.25);
+        PenBorder2.DefaultWidth = Cast.dpToPx(2.25f);
 
         // various background colors: #E6FFFFFF #FFEEEEEE #FFFAFAFA
 //      MosaicDrawModel.DefaultBkColor   = new Color(0xFFFAFAFA);

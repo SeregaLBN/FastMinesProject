@@ -32,6 +32,7 @@ import fmg.android.img.Mine;
 import fmg.android.img.MosaicGroupImg;
 import fmg.android.img.MosaicGroupImg2;
 import fmg.android.img.MosaicImg;
+import fmg.android.img.MosaicImg2;
 import fmg.android.img.MosaicSkillImg;
 import fmg.android.img.MosaicSkillImg2;
 import fmg.android.img.Smile;
@@ -87,31 +88,38 @@ public class DemoActivity2 extends AppCompatActivity {
 //
 //        }
 //    );}
-//    public void testMosaicImg     () { testApp(() ->
-//                                                   //// test single
-//                                                   //Stream.of(new MosaicImg.BitmapController() { { setMosaicType(EMosaic.eMosaicSquare1); }})
-//
-//                                                   // test all
-//                                                   Stream.of(EMosaic.values())
-//                                                         .map(e -> new MosaicImg.BitmapController() { { setMosaicType(e); }})
-//                                     );
-//    }
+
+    public void testMosaicImg() {
+        testApp(() ->
+            //// test single
+            // Stream.of(new MosaicImg2.MosaicAndroidBitmapController() { { getModel().setMosaicType(EMosaic.eMosaicSquare1); }})
+
+            // test all
+            Stream.of(EMosaic.values())
+                         .map(e -> new MosaicImg2.MosaicAndroidBitmapController() { { getModel().setMosaicType(e); }})
+        );
+    }
+
     public void testMosaicGroupImg() { testApp(() -> Stream.concat(Stream.of((EMosaicGroup)null), Stream.of(EMosaicGroup.values()))
                                               .map(e -> new Pair<>(new MosaicGroupImg2.MosaicGroupAndroidBitmapController(e),
                                                                    new MosaicGroupImg2.MosaicGroupAndroidBitmapController(e)))
                                               .flatMap(x -> Stream.of(x.first, x.second)));
     }
+
     public void testMosaicSkillImg() { testApp(() -> Stream.concat(Stream.of((ESkillLevel)null), Stream.of(ESkillLevel.values()))
                                               .map(e -> new Pair<>(new MosaicSkillImg2.MosaicSkillAndroidBitmapController(e),
                                                                    new MosaicSkillImg2.MosaicSkillAndroidBitmapController(e)))
                                               .flatMap(x -> Stream.of(x.first, x.second)));
     }
+
     public void testLogo          () { testApp(() -> Stream.of(new Logo2.LogoAndroidBitmapController()
                                                              , new Logo2.LogoAndroidBitmapController()
                                                              , new Logo2.LogoAndroidBitmapController().asMine()
                                                              , new Logo2.LogoAndroidBitmapController().asMine())); }
+
     public void testFlag          () { testApp(() -> Stream.of(new Flag2.FlagAndroidBitmapController()
                                                              , new Flag2.FlagAndroidBitmapController())); }
+
     public void testSmile         () { testApp(() -> Stream.of(SmileModel2.EFaceType.values())
                                                            .map(e -> new Smile2.SmileAndroidBitmapController(e)));
     }
@@ -130,7 +138,7 @@ public class DemoActivity2 extends AppCompatActivity {
 
         onCreateImages = new Runnable[] {
 //            this::testMosaicControl,
-//            this::testMosaicImg,
+            this::testMosaicImg,
             this::testMosaicSkillImg,
             this::testMosaicGroupImg,
             this::testSmile,
@@ -146,7 +154,8 @@ public class DemoActivity2 extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        onCloseImages.run();
+        if (onCloseImages != null)
+            onCloseImages.run();
         super.onDestroy();
     }
 

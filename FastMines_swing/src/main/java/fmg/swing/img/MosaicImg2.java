@@ -193,6 +193,7 @@ public final class MosaicImg2 {
     private static void drawText(Graphics g, MosaicModel2 m, String text, RectDouble rc) {
         if ((text == null) || text.trim().isEmpty())
             return;
+
         Rectangle2D bnd = getStringBounds(m, text);
         g.drawString(text,
                 (int)(rc.x       +(rc.width -bnd.getWidth ())/2.),

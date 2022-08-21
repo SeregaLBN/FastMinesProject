@@ -18,12 +18,7 @@ import fmg.android.utils.Cast;
 import fmg.common.Color;
 import fmg.common.HSV;
 import fmg.common.geom.PointDouble;
-import fmg.core.img.FlagModel2;
-import fmg.core.img.ImageController2;
-import fmg.core.img.ImageView;
-import fmg.core.img.LogoController;
 import fmg.core.img.LogoController2;
-import fmg.core.img.LogoModel;
 import fmg.core.img.LogoModel2;
 
 /** Main logos image */

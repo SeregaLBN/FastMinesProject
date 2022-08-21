@@ -8,11 +8,8 @@ import android.graphics.Path;
 import android.graphics.PointF;
 
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.FlagModel;
 import fmg.core.img.FlagModel2;
-import fmg.core.img.ImageController;
 import fmg.core.img.ImageController2;
-import fmg.core.img.ImageView;
 
 /** Flag image */
 public final class Flag2 {
