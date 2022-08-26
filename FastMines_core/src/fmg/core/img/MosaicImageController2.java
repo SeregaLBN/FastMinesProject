@@ -10,7 +10,7 @@ import fmg.core.types.draw.PenBorder2;
 
 /** MVC controller of {@link EMosaicGroup} image
  * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
- * @param <TImageView> MVC view */
+ * @param <TView> mosaic view */
 public abstract class MosaicImageController2<TImage,
                                             TView extends IImageView2<TImage>>
     extends ImageController2<TImage, MosaicImageModel2, TView>
@@ -102,8 +102,6 @@ public abstract class MosaicImageController2<TImage,
 
         this.currentFrame = currFrame;
 
-        var m = getModel();
-
         long totalFrames = animatePeriod * fps / 1000;
         double rotateAngleDelta = 360.0 / totalFrames;
         if (!clockwise)
@@ -111,22 +109,21 @@ public abstract class MosaicImageController2<TImage,
         double angle = currentFrame * rotateAngleDelta;
 
         // rotate
-        m.setRotateAngle(angle);
-        switch (m.getRotateMode()) {
+        model.setRotateAngle(angle);
+        switch (model.getRotateMode()) {
         case FULL_MATRIX:
-            m.rotateMatrix();
+            model.rotateMatrix();
             break;
         case SOME_CELLS:
-            m.rotateCells(rotateAngleDelta);
+            model.rotateCells(rotateAngleDelta);
             break;
         default:
-            throw new RuntimeException("Unsupported RotateMode=" + m.getRotateMode());
+            throw new RuntimeException("Unsupported RotateMode=" + model.getRotateMode());
         }
-
 
         // polar light transform
         if (polarLightsBk)
-            m.setBackgroundAngle(angle);
+            model.setBackgroundAngle(angle);
     }
 
     @Override

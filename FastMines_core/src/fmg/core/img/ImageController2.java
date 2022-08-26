@@ -11,9 +11,9 @@ import fmg.common.ui.UiInvoker;
  * @param <TModel> image model */
 public class ImageController2<TImage, TModel extends IImageModel2, TView extends IImageView2<TImage>> implements IImageController2<TImage, TModel> {
 
-    private TModel model;
-    private TView view;
-    private Consumer<String> changedCallback;
+    protected TModel model;
+    protected TView view;
+    protected Consumer<String> changedCallback;
 
     protected void init(TModel model, TView view) {
         this.model = model;

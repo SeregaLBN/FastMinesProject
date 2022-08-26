@@ -96,8 +96,6 @@ public class LogoController2<TImage,
 
         this.currentFrame = currFrame;
 
-        var lm = getModel();
-
         long totalFrames = animatePeriod * fps / 1000;
         double angle = currentFrame * 360.0 / totalFrames;
         if (!clockwise)
@@ -105,11 +103,11 @@ public class LogoController2<TImage,
 
         // logo rotate
         if (rotateImage)
-            lm.setRotateAngle(angle);
+            model.setRotateAngle(angle);
 
         // polar light transform
         if (polarLights)
-            lm.setPaletteColorOffset(angle);
+            model.setPaletteColorOffset(angle);
     }
 
     @Override
@@ -119,7 +117,7 @@ public class LogoController2<TImage,
     }
 
     public LogoController2<TImage,TView> asMine() {
-        for (HSV item : getModel().getPalette())
+        for (HSV item : model.getPalette())
             item.grayscale();
         return this;
     }

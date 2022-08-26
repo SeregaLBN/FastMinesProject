@@ -1,7 +1,5 @@
 package fmg.core.mosaic;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
@@ -13,23 +11,17 @@ import fmg.common.geom.*;
 import fmg.common.ui.UiInvoker;
 import fmg.core.app.model.MosaicBackupData;
 import fmg.core.app.model.MosaicInitData;
-import fmg.core.img.ImageController;
+import fmg.core.img.ImageController2;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.shape.BaseShape;
 import fmg.core.types.*;
 
 /** MVC: mosaic controller. Base implementation
  * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
- * @param <TImageInner> image type of flag/mine into mosaic field
- * @param <TMosaicView> mosaic view
- * @param <TMosaicModel> mosaic model
- */
-@Deprecated
-public abstract class MosaicController<TImage, TImageInner,
-                                       TMosaicView extends IMosaicView<TImage, TImageInner, TMosaicModel>,
-                                       TMosaicModel extends IMosaicDrawModel<TImageInner>>
-               extends ImageController<TImage, TMosaicView, TMosaicModel>
-          implements IMosaicController<TImage, TImageInner, TMosaicView, TMosaicModel>
+   @param <TView> mosaic view */
+public abstract class MosaicController2<TImage,
+                                      TView extends IMosaicView2<TImage>>
+               extends ImageController2<TImage, MosaicModel2, TView>
 {
     public static final String PROPERTY_COUNT_MINES       = "CountMines";
     public static final String PROPERTY_COUNT_MINES_LEFT  = "CountMinesLeft";
@@ -42,23 +34,18 @@ public abstract class MosaicController<TImage, TImageInner,
     public static final String PROPERTY_GAME_STATUS       = "GameStatus";
 
     /** кол-во мин на поле */
-    @Property(PROPERTY_COUNT_MINES)
     protected int countMines = 10;
 
-    @Property(PROPERTY_GAME_STATUS)
     private EGameStatus gameStatus = EGameStatus.eGSReady;
 
-    @Property(PROPERTY_PLAY_INFO)
     private EPlayInfo playInfo = EPlayInfo.ePlayerUnknown;
 
-    @Property(PROPERTY_COUNT_CLICK)
     private int countClick;
 
     /** ячейка на которой было нажато (но не обязательно что отпущено) */
     private BaseCell cellDown;
 
     /** для load'a - координаты ячеек с минами */
-    @Property(PROPERTY_REPOSITORY_MINES)
     private List<Coord> repositoryMines;
 
     /** использовать ли флажок на поле */
@@ -66,38 +53,24 @@ public abstract class MosaicController<TImage, TImageInner,
 
     private boolean ignoreModelChanges = false;
 
-    private final PropertyChangeListener onModelPropertyChangedListener = this::onModelPropertyChanged;
-
-    protected MosaicController(TMosaicView mosaicView) {
-        super(mosaicView);
-        getModel().addListener(onModelPropertyChangedListener);
-    }
-
-
     public List<BaseCell> getMatrix() {
-        return getModel().getMatrix();
+        return model.getMatrix();
     }
 
     /** размер поля в ячейках */
-    @Override
-    public Matrisize getSizeField() { return getModel().getSizeField(); }
+    public Matrisize getSizeField() { return model.getSizeField(); }
     /** размер поля в ячейках */
-    @Override
-    public void setSizeField(Matrisize newSizeField) { getModel().setSizeField(newSizeField); }
+    public void setSizeField(Matrisize newSizeField) { model.setSizeField(newSizeField); }
 
     /** узнать тип мозаики
      * (из каких фигур состоит мозаика поля) */
-    @Override
-    public EMosaic getMosaicType() { return getModel().getMosaicType(); }
+    public EMosaic getMosaicType() { return model.getMosaicType(); }
     /** установить тип мозаики */
-    @Override
-    public void setMosaicType(EMosaic newMosaicType) { getModel().setMosaicType(newMosaicType); }
+    public void setMosaicType(EMosaic newMosaicType) { model.setMosaicType(newMosaicType); }
 
     /** количество мин */
-    @Override
     public int getCountMines() { return countMines; }
     /** количество мин */
-    @Override
     public void setCountMines(int newCountMines) {
         int newVal = Math.max((getGameStatus() == EGameStatus.eGSCreateGame) ? 0 : 1, Math.min(newCountMines, getMaxMines(getSizeField())));
         int oldVal = getCountMines();
@@ -111,8 +84,10 @@ public abstract class MosaicController<TImage, TImageInner,
             return;
 
         countMines = newVal;
-        notifier.firePropertyChanged(oldVal, countMines, PROPERTY_COUNT_MINES);
-        notifier.firePropertyChanged(null, countMines, PROPERTY_COUNT_MINES_LEFT);
+        if (changedCallback != null) {
+            //changedCallback.accept(PROPERTY_COUNT_MINES);
+            changedCallback.accept(PROPERTY_COUNT_MINES_LEFT);
+        }
 
         gameNew();
     }
@@ -123,9 +98,8 @@ public abstract class MosaicController<TImage, TImageInner,
 
     /** arrange Mines */
     public void setMines_LoadRepository(List<Coord> repository) {
-        IMosaicDrawModel<TImageInner> mosaic = getModel();
         for (Coord c: repository)
-            mosaic.getCell(c).setMine();
+            model.getCell(c).setMine();
 
         // set other CellOpen and set all Caption
         for (BaseCell cell : getMatrix())
@@ -137,15 +111,14 @@ public abstract class MosaicController<TImage, TImageInner,
         // получаю координаты соседних ячеек
         List<Coord> neighborCoord = cell.getCoordsNeighbor();
 
-        var mosaic = getModel();
-        int m = mosaic.getSizeField().m;
-        int n = mosaic.getSizeField().n;
+        int m = model.getSizeField().m;
+        int n = model.getSizeField().n;
         // по координатам получаю множество соседних обьектов-ячеек
         List<BaseCell> neighbors = new ArrayList<>(neighborCoord.size());
         for (Coord c : neighborCoord)
             // проверяю что они не вылезли за размеры
             if ((c.x >= 0) && (c.y >= 0) && (c.x < m) && (c.y < n))
-                neighbors.add( mosaic.getCell(c) );
+                neighbors.add( model.getCell(c) );
         return neighbors;
     }
 
@@ -156,7 +129,6 @@ public abstract class MosaicController<TImage, TImageInner,
             return;
         }
 
-        IMosaicDrawModel<TImageInner> mosaic = getModel();
         List<BaseCell> matrixClone = new ArrayList<>(getMatrix());
         matrixClone.remove(firstClickCell); // исключаю на которой кликал юзер
         List<BaseCell> neighbors = getNeighbors(firstClickCell);
@@ -199,20 +171,19 @@ public abstract class MosaicController<TImage, TImageInner,
         state.setOpen(EOpen.class.getEnumConstants()[count]);
     }
 
-    @Override
     public int getCountOpen() {
         return (int)getMatrix().stream()
             .filter(c -> c.getState().getStatus() == EState._Open)
             .count();
     }
-    @Override
+
     public int getCountFlag() {
         return (int)getMatrix().stream()
             .filter(c -> c.getState().getStatus() == EState._Close)
             .filter(c -> c.getState().getClose() == EClose._Flag)
             .count();
     }
-    @Override
+
     public int getCountUnknown() {
         return (int)getMatrix().stream()
             .filter(c -> c.getState().getStatus() == EState._Close)
@@ -221,21 +192,20 @@ public abstract class MosaicController<TImage, TImageInner,
     }
 
     /** сколько ещё осталось открыть мин */
-    @Override
     public int getCountMinesLeft() { return getCountMines() - getCountFlag(); }
-    @Override
+
     public int getCountClick()  { return countClick; }
     public void setCountClick(int clickCount) {
-        int oldVal = this.countClick;
-        int newVal = clickCount;
-        notifier.setProperty(oldVal, newVal, PROPERTY_COUNT_CLICK);
+        if (this.countClick == clickCount)
+            return;
+        this.countClick = clickCount;
+        if (changedCallback != null)
+            changedCallback.accept(PROPERTY_COUNT_CLICK);
     }
 
     /** ячейка на которой было нажато (но не обязательно что отпущено) */
-    @Override
     public BaseCell getCellDown() { return cellDown; }
     /** ячейка на которой было нажато (но не обязательно что отпущено) */
-    @Override
     public void setCellDown(BaseCell cellDown) { this.cellDown = cellDown; }
 
     /**
@@ -252,14 +222,17 @@ public abstract class MosaicController<TImage, TImageInner,
      *<br>     Так сделал только лишь потому, чтобы первый клик выполнялся не на мине. Естественно
      *<br>     это не относится к случаю, когда игра была создана пользователем или считана из файла.
      */
-    @Override
     public EGameStatus getGameStatus() {
         if (gameStatus == null)
             gameStatus = EGameStatus.eGSEnd;
         return gameStatus;
     }
     public void setGameStatus(EGameStatus newStatus) {
-        notifier.setProperty(gameStatus, newStatus, PROPERTY_GAME_STATUS);
+        if (this.gameStatus == newStatus)
+            return;
+        this.gameStatus = newStatus;
+        if (changedCallback != null)
+            changedCallback.accept(PROPERTY_GAME_STATUS);
     }
 
     public EPlayInfo getPlayInfo() {
@@ -268,7 +241,12 @@ public abstract class MosaicController<TImage, TImageInner,
         return playInfo;
     }
     public void setPlayInfo(EPlayInfo newVal) {
-        notifier.setProperty(playInfo, EPlayInfo.setPlayInfo(playInfo, newVal), PROPERTY_PLAY_INFO);
+        newVal = EPlayInfo.setPlayInfo(this.playInfo, newVal);
+        if (this.playInfo == newVal)
+            return;
+        this.playInfo = newVal;
+        if (changedCallback != null)
+            changedCallback.accept(PROPERTY_PLAY_INFO);
     }
 
     public List<Coord> getRepositoryMines() {
@@ -283,15 +261,15 @@ public abstract class MosaicController<TImage, TImageInner,
             if ((newMines != null) && !newMines.isEmpty())
                 current.addAll(newMines);
         }
-        notifier.firePropertyChanged(PROPERTY_REPOSITORY_MINES);
+        if (changedCallback != null)
+            changedCallback.accept(PROPERTY_REPOSITORY_MINES);
         //setGameStatus(EGameStatus.eGSEnd);
         gameNew();
     }
 
     /** Начать игру, т.к. произошёл первый клик на поле */
-    @Override
     public void gameBegin(BaseCell firstClickCell) {
-        getModel().getCellFill().setMode(0);
+        model.setFillMode(0);
         setGameStatus(EGameStatus.eGSPlay);
 
         // set mines
@@ -304,7 +282,6 @@ public abstract class MosaicController<TImage, TImageInner,
     }
 
     /** Завершить игру */
-    @Override
     public Collection<BaseCell> gameEnd(boolean victory) {
         if (getGameStatus() == EGameStatus.eGSEnd)
             return Collections.emptySet();
@@ -332,9 +309,11 @@ public abstract class MosaicController<TImage, TImageInner,
             }
 
         setGameStatus(EGameStatus.eGSEnd);
-        notifier.firePropertyChanged(PROPERTY_COUNT_MINES_LEFT);
-        notifier.firePropertyChanged(PROPERTY_COUNT_FLAG);
-        notifier.firePropertyChanged(PROPERTY_COUNT_OPEN);
+        if (changedCallback != null) {
+            changedCallback.accept(PROPERTY_COUNT_MINES_LEFT);
+            changedCallback.accept(PROPERTY_COUNT_FLAG);
+            changedCallback.accept(PROPERTY_COUNT_OPEN);
+        }
 
         return toRepaint;
     }
@@ -529,7 +508,6 @@ public abstract class MosaicController<TImage, TImageInner,
 
     protected ClickResult onLeftButtonUp(BaseCell cellLeftUp) {
         try {
-            BaseCell cellDown = getCellDown();
             ClickResult result = new ClickResult(cellDown, true, false);
             if (getGameStatus() == EGameStatus.eGSEnd)
                 return result;
@@ -554,12 +532,16 @@ public abstract class MosaicController<TImage, TImageInner,
             if (any) {
                 setCountClick(getCountClick()+1);
                 setPlayInfo(EPlayInfo.ePlayerUser);  // юзер играл
-                if (countOpen > 0)
-                    notifier.firePropertyChanged(PROPERTY_COUNT_OPEN);
+                if (countOpen > 0) {
+                    if (changedCallback != null)
+                        changedCallback.accept(PROPERTY_COUNT_OPEN);
+                }
                 if ((countFlag > 0) || (countUnknown > 0)) {
-                    notifier.firePropertyChanged(PROPERTY_COUNT_FLAG);
-                    notifier.firePropertyChanged(PROPERTY_COUNT_MINES_LEFT);
-                    notifier.firePropertyChanged(PROPERTY_COUNT_UNKNOWN);
+                    if (changedCallback != null) {
+                        changedCallback.accept(PROPERTY_COUNT_FLAG);
+                        changedCallback.accept(PROPERTY_COUNT_MINES_LEFT);
+                        changedCallback.accept(PROPERTY_COUNT_UNKNOWN);
+                    }
                 }
             }
 
@@ -609,9 +591,11 @@ public abstract class MosaicController<TImage, TImageInner,
         if (any) {
             setCountClick(getCountClick()+1);
             setPlayInfo(EPlayInfo.ePlayerUser); // то считаю что юзер играл
-            notifier.firePropertyChanged(PROPERTY_COUNT_FLAG);
-            notifier.firePropertyChanged(PROPERTY_COUNT_MINES_LEFT);
-            notifier.firePropertyChanged(PROPERTY_COUNT_UNKNOWN);
+            if (changedCallback != null) {
+                changedCallback.accept(PROPERTY_COUNT_FLAG);
+                changedCallback.accept(PROPERTY_COUNT_MINES_LEFT);
+                changedCallback.accept(PROPERTY_COUNT_UNKNOWN);
+            }
         }
 
         result.modified.addAll(verifyFlag());
@@ -625,7 +609,6 @@ public abstract class MosaicController<TImage, TImageInner,
 
     protected ClickResult onRightButtonUp(BaseCell cellRightUp) {
         try {
-            BaseCell cellDown = getCellDown();
             return new ClickResult(cellDown, false, false);
         } finally {
             setCellDown(null);
@@ -639,7 +622,6 @@ public abstract class MosaicController<TImage, TImageInner,
         return false;
     }
 
-    @Override
     public MosaicBackupData gameBackup() {
         MosaicBackupData backup = new MosaicBackupData();
         backup.mosaicType = getMosaicType();
@@ -657,11 +639,10 @@ public abstract class MosaicController<TImage, TImageInner,
                 })
                 .collect(Collectors.toList());
         backup.clickCount = getCountClick();
-        backup.area = getModel().getArea();
+        backup.area = model.getArea();
         return backup;
     }
 
-    @Override
     public void gameRestore(MosaicBackupData backup) {
         if (backup == null)
             return;
@@ -686,7 +667,7 @@ public abstract class MosaicController<TImage, TImageInner,
             ignoreModelChanges = true;
             setMosaicType(backup.mosaicType);
             setSizeField(backup.sizeField);
-            getModel().setArea(backup.area);
+            model.setArea(backup.area);
             setCountClick(backup.clickCount);
 
             countMines = 0;
@@ -707,8 +688,10 @@ public abstract class MosaicController<TImage, TImageInner,
             setGameStatus(anyOpen ? EGameStatus.eGSPlay : EGameStatus.eGSReady);
             setPlayInfo(anyOpen ? EPlayInfo.ePlayerUser : EPlayInfo.ePlayerUnknown); // TODO ?
 
-            notifier.firePropertyChanged(null, countMines, PROPERTY_COUNT_MINES);
-            notifier.firePropertyChanged(null, countMines, PROPERTY_COUNT_MINES_LEFT);
+            if (changedCallback != null) {
+                changedCallback.accept(PROPERTY_COUNT_MINES);
+                changedCallback.accept(PROPERTY_COUNT_MINES_LEFT);
+            }
 
             invalidateView(this.getMatrix());
         } finally {
@@ -717,13 +700,11 @@ public abstract class MosaicController<TImage, TImageInner,
     }
 
     /** Подготовиться к началу игры - сбросить все ячейки */
-    @Override
     public boolean gameNew() {
 //        Logger.info("Mosaic::GameNew()");
-        TMosaicModel m = getModel();
-        m.getCellFill().setMode(
+        model.setFillMode(
                 1 + ThreadLocalRandom.current().nextInt(
-                            m.getShape() // MosaicHelper.createShapeInstance(m.getMosaicType())
+                            model.getShape() // MosaicHelper.createShapeInstance(m.getMosaicType())
                             .getMaxCellFillModeValue()));
 
         if (getGameStatus() == EGameStatus.eGSReady)
@@ -744,7 +725,8 @@ public abstract class MosaicController<TImage, TImageInner,
         setGameStatus(EGameStatus.eGSReady);
         setPlayInfo(EPlayInfo.ePlayerUnknown); // пока не знаю кто будет играть
 
-        notifier.firePropertyChanged(PROPERTY_COUNT_MINES_LEFT);
+        if (changedCallback != null)
+            changedCallback.accept(PROPERTY_COUNT_MINES_LEFT);
 
         invalidateView(this.getMatrix());
 
@@ -773,44 +755,44 @@ public abstract class MosaicController<TImage, TImageInner,
     }
     /** размер мозаики в пикселях для указанных параметров */
     public SizeDouble getMosaicSize(Matrisize sizeField, double area) {
-        TMosaicModel m = getModel();
-        return DoubleExt.almostEquals(area, m.getArea())
-            ? m.getShape().getSize(sizeField)
+        return DoubleExt.almostEquals(area, model.getArea())
+            ? model.getShape().getSize(sizeField)
             : MosaicHelper.getSize(getMosaicType(), area, sizeField);
     }
     /** размер мозаики в пикселях */
     public SizeDouble getMosaicSize() {
-        return getModel().getMosaicSize();
+        return model.getSizeMosaic();
     }
     /** узнать max количество соседей для текущей мозаики */
     public int getMaxNeighborNumber() {
-        BaseShape shape = getModel().getShape();
+        BaseShape shape = model.getShape();
         return IntStream.range(0, shape.getDirectionCount())
             .map(shape::getNeighborNumber)
             .max().getAsInt();
     }
 
     /** действительно лишь когда gameStatus == gsEnd */
-    @Override
     public boolean isVictory() {
         return (getGameStatus() == EGameStatus.eGSEnd) && (0 == getCountMinesLeft());
     }
 
-    protected void onModelPropertyChanged(PropertyChangeEvent ev) {
+    @Override
+    protected void onModelChanged(String propertyName) {
+        super.onModelChanged(propertyName);
         if (ignoreModelChanges)
             return;
-        switch (ev.getPropertyName()) {
-        case MosaicGameModel.PROPERTY_SIZE_FIELD:
+        switch (propertyName) {
+        case MosaicModel2.PROPERTY_SIZE_FIELD:
             setCellDown(null); // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
             recheckCountMines();
             gameNew();
             break;
-        case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
+        case MosaicModel2.PROPERTY_MOSAIC_TYPE:
             recheckCountMines();
             gameNew();
             break;
-      //case MosaicGameModel.PROPERTY_AREA: // TODO при изменении модели итак все перерисовывается...
-      //    invalidateView(getModel().getMatrix());
+      //case MosaicModel2.PROPERTY_AREA: // TODO при изменении модели итак все перерисовывается...
+      //    invalidateView(model.getMatrix());
       //    break;
         default:
             break;
@@ -827,7 +809,7 @@ public abstract class MosaicController<TImage, TImageInner,
         if (cells == getMatrix()) // ReferenceEquals
             cells = null;
 
-        getView().invalidate(cells);
+        view.invalidate(cells);
     }
 
 
@@ -835,10 +817,9 @@ public abstract class MosaicController<TImage, TImageInner,
     private BaseCell cursorPointToCell(PointDouble point) {
         if (point == null)
             return null;
-        TMosaicModel m = getModel();
-        SizeDouble offset = m.getMosaicOffset();
+        SizeDouble offset = model.getMosaicOffset();
         point = new PointDouble(point.x - offset.width, point.y - offset.height);
-        for (BaseCell cell: m.getMatrix())
+        for (BaseCell cell: model.getMatrix())
             //if (cell.getRcOuter().contains(point)) // пох.. - тормозов нет..  (измерить время на макс размерах поля...) в принципе, проверка не нужная...
                 if (cell.pointInRegion(point))
                     return cell;
@@ -881,12 +862,6 @@ public abstract class MosaicController<TImage, TImageInner,
     private void acceptClickEvent(ClickResult clickResult) {
         if (clickEvent != null)
             clickEvent.accept(clickResult);
-    }
-
-    @Override
-    public void close() {
-        getModel().removeListener(onModelPropertyChangedListener);
-        super.close();
     }
 
 }

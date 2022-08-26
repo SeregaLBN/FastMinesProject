@@ -118,8 +118,6 @@ public abstract class MosaicGroupController2<TImage,
 
         this.currentFrame = currFrame;
 
-        var m = getModel();
-
         long totalFrames = animatePeriod * fps / 1000;
         double angle = currentFrame * 360.0 / totalFrames;
         if (!clockwise)
@@ -127,15 +125,15 @@ public abstract class MosaicGroupController2<TImage,
 
         // rotate
         if (rotateImage) {
-            m.setRotateAngle(angle);
+            model.setRotateAngle(angle);
             burgerModel.setRotateAngle(angle);
         }
 
         // polar light transform
         if (polarLightsFg)
-            m.setForegroundAngle(angle);
+            model.setForegroundAngle(angle);
         if (polarLightsBk)
-            m.setBackgroundAngle(angle);
+            model.setBackgroundAngle(angle);
     }
 
     private boolean lock = false;
@@ -143,7 +141,7 @@ public abstract class MosaicGroupController2<TImage,
     protected void onModelChanged(String property) {
         if (!lock && ImageHelper.PROPERTY_SIZE.equals(property)) try {
             lock = true;
-            burgerModel.setSize(getModel().getSize());
+            burgerModel.setSize(model.getSize());
         } finally {
             lock = false;
         }

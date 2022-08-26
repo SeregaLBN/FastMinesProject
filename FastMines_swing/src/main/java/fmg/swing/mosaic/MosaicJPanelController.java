@@ -17,6 +17,7 @@ import fmg.core.mosaic.MosaicDrawModel;
 import fmg.swing.utils.Cast;
 
 /** MVC: controller. SWING implementation */
+@Deprecated
 public class MosaicJPanelController extends MosaicController<JPanel, Icon, MosaicJPanelView, MosaicDrawModel<Icon>> {
 
     private MosaicMouseListener mosaicMouseListener;
