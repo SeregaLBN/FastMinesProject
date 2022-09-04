@@ -118,8 +118,8 @@ public final class Logo2 {
 
     private static void fillPolygon(GraphicsContext g, Point2D... p) {
         g.fillPolygon(
-            Arrays.stream(p).mapToDouble(s -> s.getX()).toArray(),
-            Arrays.stream(p).mapToDouble(s -> s.getY()).toArray(),
+            Arrays.stream(p).mapToDouble(Point2D::getX).toArray(),
+            Arrays.stream(p).mapToDouble(Point2D::getY).toArray(),
             p.length);
     }
 

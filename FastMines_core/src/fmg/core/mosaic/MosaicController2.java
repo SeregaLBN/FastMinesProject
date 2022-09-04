@@ -20,8 +20,8 @@ import fmg.core.types.*;
  * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
    @param <TView> mosaic view */
 public abstract class MosaicController2<TImage,
-                                      TView extends IMosaicView2<TImage>>
-               extends ImageController2<TImage, MosaicModel2, TView>
+                                       TView extends IMosaicView2<TImage>>
+              extends ImageController2<TImage, MosaicModel2, TView>
 {
     public static final String PROPERTY_COUNT_MINES       = "CountMines";
     public static final String PROPERTY_COUNT_MINES_LEFT  = "CountMinesLeft";
@@ -53,26 +53,15 @@ public abstract class MosaicController2<TImage,
 
     private boolean ignoreModelChanges = false;
 
-    public List<BaseCell> getMatrix() {
-        return model.getMatrix();
-    }
-
-    /** размер поля в ячейках */
-    public Matrisize getSizeField() { return model.getSizeField(); }
-    /** размер поля в ячейках */
-    public void setSizeField(Matrisize newSizeField) { model.setSizeField(newSizeField); }
-
-    /** узнать тип мозаики
-     * (из каких фигур состоит мозаика поля) */
-    public EMosaic getMosaicType() { return model.getMosaicType(); }
-    /** установить тип мозаики */
-    public void setMosaicType(EMosaic newMosaicType) { model.setMosaicType(newMosaicType); }
-
     /** количество мин */
     public int getCountMines() { return countMines; }
     /** количество мин */
     public void setCountMines(int newCountMines) {
-        int newVal = Math.max((getGameStatus() == EGameStatus.eGSCreateGame) ? 0 : 1, Math.min(newCountMines, getMaxMines(getSizeField())));
+        int newVal = Math.max((getGameStatus() == EGameStatus.eGSCreateGame)
+                                  ? 0
+                                  : 1,
+                              Math.min(newCountMines,
+                                       getMaxMines(model.getSizeField())));
         int oldVal = getCountMines();
         if ((oldVal != newCountMines) &&
             (newVal != newCountMines))
@@ -97,12 +86,12 @@ public abstract class MosaicController2<TImage,
     }
 
     /** arrange Mines */
-    public void setMines_LoadRepository(List<Coord> repository) {
+    public void setMinesLoadRepository(List<Coord> repository) {
         for (Coord c: repository)
             model.getCell(c).setMine();
 
         // set other CellOpen and set all Caption
-        for (BaseCell cell : getMatrix())
+        for (BaseCell cell : model.getMatrix())
             calcOpenState(cell);
     }
 
@@ -123,13 +112,13 @@ public abstract class MosaicController2<TImage,
     }
 
     /** arrange Mines - set random mines */
-    private void setMines_random(BaseCell firstClickCell) {
+    private void setMinesRandom(BaseCell firstClickCell) {
         if (countMines <= 0) {
             Logger.error("Illegal count of mines " + countMines);
             return;
         }
 
-        List<BaseCell> matrixClone = new ArrayList<>(getMatrix());
+        List<BaseCell> matrixClone = new ArrayList<>(model.getMatrix());
         matrixClone.remove(firstClickCell); // исключаю на которой кликал юзер
         List<BaseCell> neighbors = getNeighbors(firstClickCell);
         matrixClone.removeAll(neighbors); // и их соседей
@@ -152,7 +141,7 @@ public abstract class MosaicController2<TImage,
         } while (count < countMines);
 
         // set other CellOpen and set all Caption
-        for (BaseCell cell : getMatrix())
+        for (BaseCell cell : model.getMatrix())
             calcOpenState(cell);
     }
 
@@ -172,20 +161,20 @@ public abstract class MosaicController2<TImage,
     }
 
     public int getCountOpen() {
-        return (int)getMatrix().stream()
+        return (int)model.getMatrix().stream()
             .filter(c -> c.getState().getStatus() == EState._Open)
             .count();
     }
 
     public int getCountFlag() {
-        return (int)getMatrix().stream()
+        return (int)model.getMatrix().stream()
             .filter(c -> c.getState().getStatus() == EState._Close)
             .filter(c -> c.getState().getClose() == EClose._Flag)
             .count();
     }
 
     public int getCountUnknown() {
-        return (int)getMatrix().stream()
+        return (int)model.getMatrix().stream()
             .filter(c -> c.getState().getStatus() == EState._Close)
             .filter(c -> c.getState().getClose() == EClose._Unknown)
             .count();
@@ -275,9 +264,9 @@ public abstract class MosaicController2<TImage,
         // set mines
         if (!getRepositoryMines().isEmpty()) {
             setPlayInfo(EPlayInfo.ePlayIgnor);
-            setMines_LoadRepository(getRepositoryMines());
+            setMinesLoadRepository(getRepositoryMines());
         } else {
-            setMines_random(firstClickCell);
+            setMinesRandom(firstClickCell);
         }
     }
 
@@ -288,7 +277,7 @@ public abstract class MosaicController2<TImage,
 
         Set<BaseCell> toRepaint = new HashSet<>();
         // открыть оставшeеся
-        for (BaseCell cell: getMatrix())
+        for (BaseCell cell: model.getMatrix())
             if (cell.getState().getStatus() == EState._Close) {
                 if (victory) {
                     if (cell.getState().getOpen() == EOpen._Mine) {
@@ -321,14 +310,14 @@ public abstract class MosaicController2<TImage,
     private Collection<BaseCell> verifyFlag() {
         if (getGameStatus() == EGameStatus.eGSEnd) return Collections.emptySet();
         if (getCountMines() == getCountFlag()) {
-            for (BaseCell cell: getMatrix())
+            for (BaseCell cell: model.getMatrix())
                 if ((cell.getState().getClose() == EClose._Flag) &&
                     (cell.getState().getOpen() != EOpen._Mine))
                     return Collections.emptySet(); // неверно проставленный флажок - на выход
             return gameEnd(true);
         } else {
             if (getCountMines() == (getCountFlag() + getCountUnknown())) {
-                for (BaseCell cell: getMatrix())
+                for (BaseCell cell: model.getMatrix())
                     if (((cell.getState().getClose() == EClose._Unknown) ||
                         ( cell.getState().getClose() == EClose._Flag)) &&
                         ( cell.getState().getOpen() != EOpen._Mine))
@@ -520,7 +509,7 @@ public abstract class MosaicController2<TImage,
             boolean gameBegin = (getGameStatus() == EGameStatus.eGSReady) && (cellDown == cellLeftUp);
             if (gameBegin) {
                 gameBegin(cellDown);
-                result.modified.addAll(this.getMatrix());
+                result.modified.addAll(model.getMatrix());
             }
             ClickCellResult resultCell = leftButtonUp(cellDown, cellDown == cellLeftUp);
             if (!gameBegin)
@@ -549,7 +538,7 @@ public abstract class MosaicController2<TImage,
             if (result.isAnyOpenMine()) {
                 modified = gameEnd(false);
             } else {
-                Matrisize sizeField = getSizeField();
+                Matrisize sizeField = model.getSizeField();
                 if ((getCountOpen() + getCountMines()) == sizeField.m*sizeField.n) {
                     modified = gameEnd(true);
                 } else {
@@ -624,9 +613,9 @@ public abstract class MosaicController2<TImage,
 
     public MosaicBackupData gameBackup() {
         MosaicBackupData backup = new MosaicBackupData();
-        backup.mosaicType = getMosaicType();
-        backup.sizeField = new Matrisize(getSizeField());
-        backup.cellStates = getMatrix()
+        backup.mosaicType = model.getMosaicType();
+        backup.sizeField = new Matrisize(model.getSizeField());
+        backup.cellStates = model.getMatrix()
                 .stream()
                 .map(c -> {
                     BaseCell.StateCell state = c.getState();
@@ -665,15 +654,15 @@ public abstract class MosaicController2<TImage,
 
         try {
             ignoreModelChanges = true;
-            setMosaicType(backup.mosaicType);
-            setSizeField(backup.sizeField);
+            model.setMosaicType(backup.mosaicType);
+            model.setSizeField(backup.sizeField);
             model.setArea(backup.area);
             setCountClick(backup.clickCount);
 
             countMines = 0;
             int i = 0;
             boolean anyOpen = false;
-            for (BaseCell cell : getMatrix()) {
+            for (BaseCell cell : model.getMatrix()) {
                 BaseCell.StateCell stateNew = backup.cellStates.get(i++);
                 cell.setState(stateNew);
 
@@ -693,7 +682,7 @@ public abstract class MosaicController2<TImage,
                 changedCallback.accept(PROPERTY_COUNT_MINES_LEFT);
             }
 
-            invalidateView(this.getMatrix());
+            invalidateView(model.getMatrix());
         } finally {
             UiInvoker.Deferred.accept(() -> ignoreModelChanges = false );
         }
@@ -717,7 +706,7 @@ public abstract class MosaicController2<TImage,
                     getRepositoryMines().clear();
             }
 
-        for (BaseCell cell : getMatrix())
+        for (BaseCell cell : model.getMatrix())
             cell.reset();
 
         setCountClick(0);
@@ -728,7 +717,7 @@ public abstract class MosaicController2<TImage,
         if (changedCallback != null)
             changedCallback.accept(PROPERTY_COUNT_MINES_LEFT);
 
-        invalidateView(this.getMatrix());
+        invalidateView(model.getMatrix());
 
         return true;
     }
@@ -746,7 +735,9 @@ public abstract class MosaicController2<TImage,
     public boolean getUseUnknown() { return useUnknown; }
 
     /** Максимальное кол-во мин при  текущем  размере поля */
-    public int getMaxMines() { return getMaxMines(getSizeField()); }
+    public int getMaxMines() {
+        return getMaxMines(model.getSizeField());
+    }
     /** Максимальное кол-во мин при указанном размере поля */
     public int getMaxMines(Matrisize sizeFld) {
         int iMustFreeCell = getMaxNeighborNumber()+1;
@@ -757,7 +748,7 @@ public abstract class MosaicController2<TImage,
     public SizeDouble getMosaicSize(Matrisize sizeField, double area) {
         return DoubleExt.almostEquals(area, model.getArea())
             ? model.getShape().getSize(sizeField)
-            : MosaicHelper.getSize(getMosaicType(), area, sizeField);
+            : MosaicHelper.getSize(model.getMosaicType(), area, sizeField);
     }
     /** размер мозаики в пикселях */
     public SizeDouble getMosaicSize() {
@@ -804,9 +795,9 @@ public abstract class MosaicController2<TImage,
             return;
 
         // mark NULL if all mosaic is changed
-        if (cells.size() == getMatrix().size())
+        if (cells.size() == model.getMatrix().size())
             cells = null;
-        if (cells == getMatrix()) // ReferenceEquals
+        if (cells == model.getMatrix()) // ReferenceEquals
             cells = null;
 
         view.invalidate(cells);

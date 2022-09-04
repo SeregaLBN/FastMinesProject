@@ -32,6 +32,7 @@ import fmg.swing.utils.Cast;
  * @param <TImageInner> image type of flag/mine into mosaic field
  * @param <TMosaicModel> mosaic data model
  */
+@Deprecated
 public abstract class MosaicSwingView<TImage,
                                       TImageInner,
                                       TMosaicModel extends MosaicDrawModel<TImageInner>>

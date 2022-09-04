@@ -25,6 +25,7 @@ import fmg.swing.utils.Cast;
 import fmg.swing.utils.ImgUtils;
 
 /** MVC: view. SWING implementation over control {@link JPanel} */
+@Deprecated
 public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawModel<Icon>> {
 
     private JPanel control;
@@ -300,7 +301,7 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
         default:
             // none
         }
-        super.onModelPropertyChanged(ev);
+
         switch (ev.getPropertyName()) {
         case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
         case MosaicGameModel.PROPERTY_SIZE_FIELD:
