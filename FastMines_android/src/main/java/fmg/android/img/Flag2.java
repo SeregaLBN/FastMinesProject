@@ -57,7 +57,7 @@ public final class Flag2 {
 
         public FlagAndroidBitmapController() {
             var model = new FlagModel2();
-            var view = new AndroidBitmapView<>(model, Flag2::draw);
+            var view = new AndroidBitmapView<>(model, g -> Flag2.draw(g, model));
             init(model, view);
         }
 

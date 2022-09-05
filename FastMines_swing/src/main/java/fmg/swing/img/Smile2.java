@@ -377,7 +377,7 @@ public final class Smile2 {
 
         public SmileSwingIconController(EFaceType faceType) {
             var model = new SmileModel2(faceType);
-            var view = new SwingIconView<>(model, Smile2::draw);
+            var view = new SwingIconView<>(model, g -> Smile2.draw(g, model));
             init(model, view);
         }
 
@@ -388,7 +388,7 @@ public final class Smile2 {
 
         public SmileAwtImageController(EFaceType faceType) {
             var model = new SmileModel2(faceType);
-            var view = new AwtImageView<>(model, Smile2::draw);
+            var view = new AwtImageView<>(model, g -> Smile2.draw(g, model));
             init(model, view);
         }
 

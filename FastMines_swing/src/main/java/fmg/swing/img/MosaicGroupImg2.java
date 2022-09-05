@@ -66,12 +66,8 @@ public final class MosaicGroupImg2 {
 
         public MosaicGroupSwingIconController(EMosaicGroup group) {
             var model = new MosaicGroupModel2(group);
-            var view = new SwingIconView<>(model, this::draw);
+            var view = new SwingIconView<>(model, g -> MosaicGroupImg2.draw(g, model, getBurgerModel()));
             init(model, view);
-        }
-
-        private void draw(Graphics2D g, MosaicGroupModel2 m) {
-            MosaicGroupImg2.draw(g, m, getBurgerModel());
         }
 
     }
@@ -81,12 +77,8 @@ public final class MosaicGroupImg2 {
 
         public MosaicGroupAwtImageController(EMosaicGroup group) {
             var model = new MosaicGroupModel2(group);
-            var view = new AwtImageView<>(model, this::draw);
+            var view = new AwtImageView<>(model, g -> MosaicGroupImg2.draw(g, model, getBurgerModel()));
             init(model, view);
-        }
-
-        private void draw(Graphics2D g, MosaicGroupModel2 m) {
-            MosaicGroupImg2.draw(g, m, getBurgerModel());
         }
 
     }

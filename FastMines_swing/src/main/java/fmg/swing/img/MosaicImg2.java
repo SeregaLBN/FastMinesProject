@@ -206,7 +206,7 @@ public final class MosaicImg2 {
 
         public MosaicSwingIconController() {
             var model = new MosaicImageModel2();
-            var view = new SwingIconView<>(model, MosaicImg2::draw);
+            var view = new SwingIconView<>(model, g -> MosaicImg2.draw(g, model));
             init(model, view);
         }
 
@@ -217,7 +217,7 @@ public final class MosaicImg2 {
 
         public MosaicAwtImageController() {
             var model = new MosaicImageModel2();
-            var view = new AwtImageView<>(model, MosaicImg2::draw);
+            var view = new AwtImageView<>(model, g -> MosaicImg2.draw(g, model));
             init(model, view);
         }
 

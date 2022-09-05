@@ -129,7 +129,7 @@ public final class Logo2 {
 
         public LogoJfxCanvasController() {
             var model = new LogoModel2();
-            var view = new JfxCanvasView<>(model, Logo2::draw);
+            var view = new JfxCanvasView<>(model, g -> Logo2.draw(g, model));
             init(model, view);
         }
 
@@ -140,7 +140,7 @@ public final class Logo2 {
 
         public LogoJfxImageController() {
             var model = new LogoModel2();
-            var view = new JfxImageView<>(model, Logo2::draw);
+            var view = new JfxImageView<>(model, g -> Logo2.draw(g, model));
             init(model, view);
         }
 

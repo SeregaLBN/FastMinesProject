@@ -421,7 +421,7 @@ public final class Smile2 {
 
         public SmileAndroidBitmapController(EFaceType faceType) {
             var model = new SmileModel2(faceType);
-            var view = new AndroidBitmapView<>(model, Smile2::draw);
+            var view = new AndroidBitmapView<>(model, g -> Smile2.draw(g, model));
             init(model, view);
         }
 

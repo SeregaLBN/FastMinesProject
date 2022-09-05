@@ -3,7 +3,7 @@ package fmg.swing.img;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import fmg.core.img.IImageModel2;
 import fmg.core.img.IImageView2;
@@ -12,11 +12,11 @@ import fmg.core.img.IImageView2;
 public class AwtImageView<TModel extends IImageModel2> implements IImageView2<java.awt.Image> {
 
     private final TModel model;
-    private final BiConsumer<Graphics2D, TModel> draw;
+    private final Consumer<Graphics2D> draw;
     private boolean valid;
     private BufferedImage image;
 
-    public AwtImageView(TModel model, BiConsumer<Graphics2D, TModel> draw) {
+    public AwtImageView(TModel model, Consumer<Graphics2D> draw) {
         this.model = model;
         this.draw = draw;
     }
@@ -41,7 +41,7 @@ public class AwtImageView<TModel extends IImageModel2> implements IImageView2<ja
             Graphics2D g = image.createGraphics();
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-            draw.accept(g, model);
+            draw.accept(g);
             g.dispose();
             valid = true;
         }

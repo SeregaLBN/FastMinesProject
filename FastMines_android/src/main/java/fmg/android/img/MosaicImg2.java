@@ -217,7 +217,7 @@ public final class MosaicImg2 {
 
         public MosaicAndroidBitmapController() {
             var model = new MosaicImageModel2();
-            var view = new AndroidBitmapView<>(model, MosaicImg2::draw);
+            var view = new AndroidBitmapView<>(model, g -> MosaicImg2.draw(g, model));
             init(model, view);
         }
 

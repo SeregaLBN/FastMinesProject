@@ -5,7 +5,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import fmg.core.img.IImageModel2;
 import fmg.core.img.IImageView2;
@@ -14,12 +14,12 @@ import fmg.core.img.IImageView2;
 public class SwingIconView<TModel extends IImageModel2> implements IImageView2<javax.swing.Icon> {
 
     private final TModel model;
-    private final BiConsumer<Graphics2D, TModel> draw;
+    private final Consumer<Graphics2D> draw;
     private boolean valid;
     private javax.swing.Icon image;
     private Graphics2D gBuffImg;
 
-    public SwingIconView(TModel model, BiConsumer<Graphics2D, TModel> draw) {
+    public SwingIconView(TModel model, Consumer<Graphics2D> draw) {
         this.model = model;
         this.draw = draw;
     }
@@ -41,7 +41,7 @@ public class SwingIconView<TModel extends IImageModel2> implements IImageView2<j
             valid = false;
         }
         if (!valid) {
-            draw.accept(gBuffImg, model);
+            draw.accept(gBuffImg);
             valid = true;
         }
         return image;

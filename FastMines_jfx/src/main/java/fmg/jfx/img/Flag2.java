@@ -1,12 +1,13 @@
 package fmg.jfx.img;
 
+import javafx.geometry.Point2D;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.FlagModel2;
 import fmg.core.img.ImageController2;
-import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 
 /** Flag image */
 public final class Flag2 {
@@ -66,7 +67,7 @@ public final class Flag2 {
 
         public FlagJfxCanvasController() {
             var model = new FlagModel2();
-            var view = new JfxCanvasView<>(model, Flag2::draw);
+            var view = new JfxCanvasView<>(model, g -> Flag2.draw(g, model));
             init(model, view);
         }
 
@@ -77,7 +78,7 @@ public final class Flag2 {
 
         public FlagJfxImageController() {
             var model = new FlagModel2();
-            var view = new JfxImageView<>(model, Flag2::draw);
+            var view = new JfxImageView<>(model, g -> Flag2.draw(g, model));
             init(model, view);
         }
 

@@ -3,7 +3,7 @@ package fmg.android.img;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import fmg.common.geom.DoubleExt;
 import fmg.common.geom.SizeDouble;
@@ -14,12 +14,12 @@ import fmg.core.img.IImageView2;
 public class AndroidBitmapView<TModel extends IImageModel2> implements IImageView2<Bitmap>, AutoCloseable {
 
     private final TModel model;
-    private final BiConsumer<Canvas, TModel> draw;
+    private final Consumer<Canvas> draw;
     private boolean valid;
     private Bitmap bmp;
     private Canvas canvas;
 
-    public AndroidBitmapView(TModel model, BiConsumer<Canvas , TModel> draw) {
+    public AndroidBitmapView(TModel model, Consumer<Canvas> draw) {
         this.model = model;
         this.draw = draw;
     }
@@ -57,7 +57,7 @@ public class AndroidBitmapView<TModel extends IImageModel2> implements IImageVie
         }
 
         if (!valid) {
-            draw.accept(canvas, model);
+            draw.accept(canvas);
             valid = true;
         }
         return bmp;

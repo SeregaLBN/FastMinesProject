@@ -1,22 +1,23 @@
 package fmg.jfx.img;
 
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
+import javafx.scene.canvas.GraphicsContext;
 
 import fmg.common.geom.DoubleExt;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.IImageModel2;
 import fmg.core.img.IImageView2;
-import javafx.scene.canvas.GraphicsContext;
 
 /** Image view implementation over {@link javafx.scene.canvas.Canvas} */
 public class JfxCanvasView<TModel extends IImageModel2> implements IImageView2<javafx.scene.canvas.Canvas> {
 
     private final TModel model;
-    private final BiConsumer<GraphicsContext, TModel> draw;
+    private final Consumer<GraphicsContext> draw;
     private boolean valid;
     private javafx.scene.canvas.Canvas canvas;
 
-    public JfxCanvasView(TModel model, BiConsumer<GraphicsContext, TModel> draw) {
+    public JfxCanvasView(TModel model, Consumer<GraphicsContext> draw) {
         this.model = model;
         this.draw = draw;
     }
@@ -48,7 +49,7 @@ public class JfxCanvasView<TModel extends IImageModel2> implements IImageView2<j
         }
 
         if (!valid) {
-            draw.accept(canvas.getGraphicsContext2D(), model);
+            draw.accept(canvas.getGraphicsContext2D());
             valid = true;
         }
         return canvas;

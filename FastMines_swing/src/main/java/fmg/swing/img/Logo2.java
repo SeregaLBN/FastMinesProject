@@ -119,7 +119,7 @@ public final class Logo2 {
 
         public LogoSwingIconController() {
             var model = new LogoModel2();
-            var view = new SwingIconView<>(model, Logo2::draw);
+            var view = new SwingIconView<>(model, g -> Logo2.draw(g, model));
             init(model, view);
         }
 
@@ -130,7 +130,7 @@ public final class Logo2 {
 
         public LogoAwtImageController() {
             var model = new LogoModel2();
-            var view = new AwtImageView<>(model, Logo2::draw);
+            var view = new AwtImageView<>(model, g -> Logo2.draw(g, model));
             init(model, view);
         }
 

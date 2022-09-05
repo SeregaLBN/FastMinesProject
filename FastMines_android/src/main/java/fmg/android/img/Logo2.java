@@ -149,7 +149,7 @@ public final class Logo2 {
 
         public LogoAndroidBitmapController() {
             var model = new LogoModel2();
-            var view = new AndroidBitmapView<>(model, Logo2::draw);
+            var view = new AndroidBitmapView<>(model, g -> Logo2.draw(g, model));
             init(model, view);
         }
 

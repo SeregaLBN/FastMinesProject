@@ -66,12 +66,8 @@ public final class MosaicSkillImg2 {
 
         public MosaicSkillSwingIconController(ESkillLevel skill) {
             var model = new MosaicSkillModel2(skill);
-            var view = new SwingIconView<>(model, this::draw);
+            var view = new SwingIconView<>(model, g -> MosaicSkillImg2.draw(g, model, getBurgerModel()));
             init(model, view);
-        }
-
-        private void draw(Graphics2D g, MosaicSkillModel2 m) {
-            MosaicSkillImg2.draw(g, m, getBurgerModel());
         }
 
     }
@@ -81,12 +77,8 @@ public final class MosaicSkillImg2 {
 
         public MosaicSkillAwtImageController(ESkillLevel skill) {
             var model = new MosaicSkillModel2(skill);
-            var view = new AwtImageView<>(model, this::draw);
+            var view = new AwtImageView<>(model, g -> MosaicSkillImg2.draw(g, model, getBurgerModel()));
             init(model, view);
-        }
-
-        private void draw(Graphics2D g, MosaicSkillModel2 m) {
-            MosaicSkillImg2.draw(g, m, getBurgerModel());
         }
 
     }

@@ -68,12 +68,8 @@ public final class MosaicSkillImg2 {
 
         public MosaicSkillJfxCanvasController(ESkillLevel skill) {
             var model = new MosaicSkillModel2(skill);
-            var view = new JfxCanvasView<>(model, this::draw);
+            var view = new JfxCanvasView<>(model, g -> MosaicSkillImg2.draw(g, model, getBurgerModel()));
             init(model, view);
-        }
-
-        private void draw(GraphicsContext g, MosaicSkillModel2 m) {
-            MosaicSkillImg2.draw(g, m, getBurgerModel());
         }
 
     }
@@ -83,12 +79,8 @@ public final class MosaicSkillImg2 {
 
         public MosaicSkillJfxImageController(ESkillLevel skill) {
             var model = new MosaicSkillModel2(skill);
-            var view = new JfxImageView<>(model, this::draw);
+            var view = new JfxImageView<>(model, g -> MosaicSkillImg2.draw(g, model, getBurgerModel()));
             init(model, view);
-        }
-
-        private void draw(GraphicsContext g, MosaicSkillModel2 m) {
-            MosaicSkillImg2.draw(g, m, getBurgerModel());
         }
 
     }

@@ -80,7 +80,7 @@ public final class Flag2 {
 
         public FlagSwingIconController() {
             var model = new FlagModel2();
-            var view = new SwingIconView<>(model, Flag2::draw);
+            var view = new SwingIconView<>(model, g -> Flag2.draw(g, model));
             init(model, view);
         }
 
@@ -91,7 +91,7 @@ public final class Flag2 {
 
         public FlagAwtImageController() {
             var model = new FlagModel2();
-            var view = new AwtImageView<>(model, Flag2::draw);
+            var view = new AwtImageView<>(model, g -> Flag2.draw(g, model));
             init(model, view);
         }
 

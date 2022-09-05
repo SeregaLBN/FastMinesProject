@@ -2,6 +2,10 @@ package fmg.jfx.img;
 
 import java.util.function.Consumer;
 
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.*;
+import javafx.scene.shape.*;
+
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.ImageController2;
@@ -9,9 +13,6 @@ import fmg.core.img.SmileModel2;
 import fmg.core.img.SmileModel2.EFaceType;
 import fmg.jfx.utils.Cast;
 import fmg.jfx.utils.ShapeConverter;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
 
 /** Smile images */
 public final class Smile2 {
@@ -450,7 +451,7 @@ public final class Smile2 {
 
         public SmileJfxCanvasController(EFaceType faceType) {
             var model = new SmileModel2(faceType);
-            var view = new JfxCanvasView<>(model, Smile2::draw);
+            var view = new JfxCanvasView<>(model, g -> Smile2.draw(g, model));
             init(model, view);
         }
 
@@ -461,7 +462,7 @@ public final class Smile2 {
 
         public SmileJfxImageController(EFaceType faceType) {
             var model = new SmileModel2(faceType);
-            var view = new JfxImageView<>(model, Smile2::draw);
+            var view = new JfxImageView<>(model, g -> Smile2.draw(g, model));
             init(model, view);
         }
 

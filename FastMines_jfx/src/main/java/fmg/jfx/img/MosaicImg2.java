@@ -258,7 +258,7 @@ public final class MosaicImg2 {
 
         public MosaicJfxCanvasController() {
             var model = new MosaicImageModel2();
-            var view = new JfxCanvasView<>(model, MosaicImg2::draw);
+            var view = new JfxCanvasView<>(model, g -> MosaicImg2.draw(g, model));
             init(model, view);
         }
 
@@ -269,7 +269,7 @@ public final class MosaicImg2 {
 
         public MosaicJfxImageController() {
             var model = new MosaicImageModel2();
-            var view = new JfxImageView<>(model, MosaicImg2::draw);
+            var view = new JfxImageView<>(model, g -> MosaicImg2.draw(g, model));
             init(model, view);
         }
 
