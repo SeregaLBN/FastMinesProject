@@ -35,7 +35,7 @@ public class MosaicJPanelController2 extends MosaicController2<JPanel, MosaicJPa
         var v = new MosaicJPanelView2(m, imgFlag, imgMine);
         init(m, v);
 
-        changeSizeImagesMineFlag();
+        onChangeCellSquareSize();
 
         subscribeToViewControl();
     }
@@ -137,7 +137,7 @@ public class MosaicJPanelController2 extends MosaicController2<JPanel, MosaicJPa
         switch (property) {
         case MosaicModel2.PROPERTY_MOSAIC_TYPE:
         case MosaicModel2.PROPERTY_AREA:
-            changeSizeImagesMineFlag();
+            onChangeCellSquareSize();
             break;
         default:
             // none
@@ -149,12 +149,14 @@ public class MosaicJPanelController2 extends MosaicController2<JPanel, MosaicJPa
     }
 
     /** переустанавливаю заного размер мины/флага для мозаики */
-    private void changeSizeImagesMineFlag() {
+    private void onChangeCellSquareSize() {
         double sq = model.getCellSquareSize();
         if (sq <= 0) {
             Logger.error("Error: too thick pen! There is no area for displaying the flag/mine image...");
             sq = 3; // ат балды...
         }
+
+        model.getFontInfo().setSize(sq);
 
         final int max = 30;
         if (sq < max)

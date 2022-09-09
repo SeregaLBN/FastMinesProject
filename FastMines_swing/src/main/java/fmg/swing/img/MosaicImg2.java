@@ -1,9 +1,6 @@
 package fmg.swing.img;
 
 import java.awt.*;
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextLayout;
-import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -131,7 +128,7 @@ public final class MosaicImg2 {
                     if ((szCaption != null) && (szCaption.length() > 0) && (m.getFontInfo().getSize() >= 1)) {
                         if (cell.getState().isDown())
                             rcInner.moveXY(pen.getWidth(), pen.getWidth());
-                        drawText(g, m, szCaption, rcInner);
+                        drawText(g, szCaption, rcInner);
                     }
                 }
 
@@ -171,11 +168,8 @@ public final class MosaicImg2 {
         g.setClip(oldShape);
     }
 
-    private static final FontRenderContext FRC = new FontRenderContext(null, true, true);
     /** cached Font for {@link FontInfo2} */
     private static final Map<String /* font name*/, Map<Boolean /* bold? */, Map<Integer /* size */, Font>>> CACHED_FONT = new HashMap<>();
-    /** cached TextLayout for quick drawing */
-    private static final Map<Font, Map<String /* text */, TextLayout>> CACHED_TEXT_LAYOUT = new HashMap<>();
 
     private static Font getFont(MosaicModel2 m) {
         var fi = m.getFontInfo();
@@ -184,22 +178,15 @@ public final class MosaicImg2 {
         return map3.computeIfAbsent((int)fi.getSize(), size -> new Font(fi.getName(), fi.isBold() ? Font.BOLD : Font.PLAIN, size));
     }
 
-    private static Rectangle2D getStringBounds(MosaicModel2 m, String text) {
-        var font = getFont(m);
-        var map2 = CACHED_TEXT_LAYOUT.computeIfAbsent(font, f -> new HashMap<>());
-        var tl = map2.computeIfAbsent(text, txt -> new TextLayout(txt, font, FRC));
-        return tl.getBounds();
-//        return font.getStringBounds(text, new FontRenderContext(null, true, true));
-    }
-
-    private static void drawText(Graphics g, MosaicModel2 m, String text, RectDouble rc) {
+    private static void drawText(Graphics g, String text, RectDouble rc) {
         if ((text == null) || text.trim().isEmpty())
             return;
 
-        Rectangle2D bnd = getStringBounds(m, text);
-        g.drawString(text,
-                (int)(rc.x       +(rc.width -bnd.getWidth ())/2.),
-                (int)(rc.bottom()-(rc.height-bnd.getHeight())/2.));
+        // draw centered string
+        FontMetrics metrics = g.getFontMetrics();
+        var x = rc.x + (rc.width - metrics.stringWidth(text)) / 2;
+        var y = rc.y + ((rc.height - metrics.getHeight()) / 2) + metrics.getAscent();
+        g.drawString(text, (int)x, (int)y);
     }
 
 
