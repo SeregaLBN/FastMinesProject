@@ -27,6 +27,7 @@ import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
 import fmg.swing.img.*;
 import fmg.swing.mosaic.MosaicJPanelController;
+import fmg.swing.mosaic.MosaicJPanelController2;
 
 /** live UI test application
  * <p>run from command line
@@ -47,25 +48,25 @@ public class DemoApp2  {
     private int nextCreateImagesIndex;
 
     // #region images Fabrica
-//    public void testMosaicControl () {
-//        MosaicView.DEBUG_DRAW_FLOW = true;
-//        testApp(() -> {
-//            MosaicJPanelController mosaicController = new MosaicJPanelController();
-//
-//            if (ThreadLocalRandom.current().nextBoolean()) {
-//                // unmodified controller test
-//            } else {
-//                EMosaic mosaicType = EMosaic.fromOrdinal(ThreadLocalRandom.current().nextInt(EMosaic.values().length));
-//                ESkillLevel skill  = ESkillLevel.eBeginner;
-//
-//                mosaicController.setMosaicType(mosaicType);
-//                mosaicController.setSizeField(skill.getDefaultSize());
-//                mosaicController.setCountMines(skill.getNumberMines(mosaicType));
-//                mosaicController.gameNew();
-//            }
-//            return Stream.of(mosaicController);
-//        });
-//    }
+    public void testMosaicControl() {
+        testApp(() -> {
+            MosaicJPanelController2 mosaicController = new MosaicJPanelController2();
+
+            if (ThreadLocalRandom.current().nextBoolean()) {
+                // unmodified controller test
+            } else {
+                EMosaic mosaicType = EMosaic.fromOrdinal(ThreadLocalRandom.current().nextInt(EMosaic.values().length));
+                ESkillLevel skill  = ESkillLevel.eBeginner;
+
+                var model = mosaicController.getModel();
+                model.setMosaicType(mosaicType);
+                model.setSizeField(skill.getDefaultSize());
+                mosaicController.setCountMines(skill.getNumberMines(mosaicType));
+                mosaicController.gameNew();
+            }
+            return Stream.of(mosaicController);
+        });
+    }
 
     public void testMosaicImg() {
         testApp(() ->
@@ -121,7 +122,7 @@ public class DemoApp2  {
         td = new TestDrawing2("Swing");
 
         onCreateImages = new Runnable[] {
-//            this::testMosaicControl,
+            this::testMosaicControl,
             this::testMosaicImg,
             this::testMosaicSkillImg,
             this::testMosaicGroupImg,

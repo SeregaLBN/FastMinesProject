@@ -147,27 +147,30 @@ public abstract class MosaicImageController2<TImage,
             realDraw.accept(new MosaicDrawContext<>(m, true, () -> bkClr, m::getNotRotatedCells, null, null));
 
             // 2. draw rotated part
-            PenBorder2 pb = m.getPenBorder();
-            // save
-            double borderWidth = pb.getWidth();
-            Color colorLight  = pb.getColorLight();
-            Color colorShadow = pb.getColorShadow();
+            var rotatedCells = m.getRotatedCells();
+            if (!rotatedCells.isEmpty()) {
+                PenBorder2 pb = m.getPenBorder();
+                // save
+                double borderWidth = pb.getWidth();
+                Color colorLight  = pb.getColorLight();
+                Color colorShadow = pb.getColorShadow();
 
-            // unset notifier (щоб не призводило до малювання із методу малювання)
-            var callback = m.getListener();
-            m.setListener(null); // lock to fire changing model
-            // modify
-            pb.setWidth(2 * borderWidth);
-            pb.setColorLight(colorLight.darker(0.5));
-            pb.setColorShadow(colorShadow.darker(0.5));
+                // unset notifier (щоб не призводило до малювання із методу малювання)
+                var callback = m.getListener();
+                m.setListener(null); // lock to fire changing model
+                // modify
+                pb.setWidth(2 * borderWidth);
+                pb.setColorLight(colorLight.darker(0.5));
+                pb.setColorShadow(colorShadow.darker(0.5));
 
-            realDraw.accept(new MosaicDrawContext<>(m, false, () -> bkClr, m::getRotatedCells, null, null));
+                realDraw.accept(new MosaicDrawContext<>(m, false, () -> bkClr, () -> rotatedCells, null, null));
 
-            // restore
-            pb.setWidth(borderWidth);
-            pb.setColorLight(colorLight);
-            pb.setColorShadow(colorShadow);
-            m.setListener(callback);
+                // restore
+                pb.setWidth(borderWidth);
+                pb.setColorLight(colorLight);
+                pb.setColorShadow(colorShadow);
+                m.setListener(callback);
+            }
 
             break;
 

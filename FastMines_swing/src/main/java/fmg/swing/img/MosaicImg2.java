@@ -65,6 +65,8 @@ public final class MosaicImg2 {
         var toDrawCells = (drawContext.drawCells == null)
                 ? m.getMatrix()
                 : drawContext.drawCells.get();
+        if (toDrawCells.isEmpty())
+            throw new IllegalArgumentException("Undefined drawing cells");
 
         int fillMode = m.getFillMode();
         var imgMine = (drawContext.mineImage == null) ? null : drawContext.mineImage.get();

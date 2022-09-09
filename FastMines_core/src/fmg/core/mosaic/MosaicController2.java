@@ -491,7 +491,8 @@ public abstract class MosaicController2<TImage,
             ClickCellResult resultCell = leftButtonDown(cellLeftDown);
             result.modified = resultCell.modified; // copy reference; TODO result.modified.addAll(resultCell.modified);
         }
-        invalidateView(result.modified);
+        if (!result.modified.isEmpty())
+            view.invalidate(result.modified);
         return result;
     }
 
@@ -548,7 +549,9 @@ public abstract class MosaicController2<TImage,
 
             if (!gameBegin)
                 result.modified.addAll(modified);
-            invalidateView(result.modified);
+
+            if (!result.modified.isEmpty())
+                view.invalidate(result.modified);
 
             return result;
         } finally {
@@ -592,7 +595,9 @@ public abstract class MosaicController2<TImage,
             //...
         }
 
-        invalidateView(result.modified);
+        if (!result.modified.isEmpty())
+            view.invalidate(result.modified);
+
         return result;
     }
 
@@ -682,7 +687,7 @@ public abstract class MosaicController2<TImage,
                 changedCallback.accept(PROPERTY_COUNT_MINES_LEFT);
             }
 
-            invalidateView(model.getMatrix());
+            view.invalidate();
         } finally {
             UiInvoker.Deferred.accept(() -> ignoreModelChanges = false );
         }
@@ -717,7 +722,7 @@ public abstract class MosaicController2<TImage,
         if (changedCallback != null)
             changedCallback.accept(PROPERTY_COUNT_MINES_LEFT);
 
-        invalidateView(model.getMatrix());
+        view.invalidate();
 
         return true;
     }
@@ -783,26 +788,12 @@ public abstract class MosaicController2<TImage,
             gameNew();
             break;
       //case MosaicModel2.PROPERTY_AREA: // TODO при изменении модели итак все перерисовывается...
-      //    invalidateView(model.getMatrix());
+      //    view.invalidate();
       //    break;
         default:
             break;
         }
     }
-
-    protected void invalidateView(Collection<BaseCell> cells) {
-        if (cells.isEmpty())
-            return;
-
-        // mark NULL if all mosaic is changed
-        if (cells.size() == model.getMatrix().size())
-            cells = null;
-        if (cells == model.getMatrix()) // ReferenceEquals
-            cells = null;
-
-        view.invalidate(cells);
-    }
-
 
     /** преобразовать экранные координаты в ячейку поля мозаики */
     private BaseCell cursorPointToCell(PointDouble point) {
@@ -834,7 +825,6 @@ public abstract class MosaicController2<TImage,
     }
 
     public ClickResult mouseFocusLost() {
-        BaseCell cellDown = this.getCellDown();
         if (cellDown == null)
             return null;
         boolean isLeft = cellDown.getState().isDown(); // hint: State.Down used only for the left click

@@ -191,11 +191,12 @@ public class MosaicModel2 implements IImageModel2 {
         if (changedCallback != null)
             changedCallback.accept(ImageHelper.PROPERTY_SIZE);
 
-
-        BoundDouble newPad = isControlMode
-                ? new BoundDouble(0)
-                : ImageHelper.recalcPadding(this.padding, size, oldSize);
-        setPadding(newPad);
+        if (isControlMode) {
+            setPaddingInner(new BoundDouble(0));
+        } else {
+            BoundDouble newPad = ImageHelper.recalcPadding(this.padding, size, oldSize);
+            setPadding(newPad);
+        }
     }
 
     @Override
@@ -208,6 +209,11 @@ public class MosaicModel2 implements IImageModel2 {
         if (this.padding.equals(padding))
             return;
 
+        setPaddingInner(padding);
+    }
+
+    private void setPaddingInner(BoundDouble padding) {
+        var oldPad = new BoundDouble(this.padding);
         ImageHelper.checkPadding(size, padding);
 
         this.padding.left   = padding.left;
@@ -215,7 +221,7 @@ public class MosaicModel2 implements IImageModel2 {
         this.padding.top    = padding.top;
         this.padding.bottom = padding.bottom;
 
-        if (changedCallback != null)
+        if ((changedCallback != null) && !oldPad.equals(padding))
             changedCallback.accept(ImageHelper.PROPERTY_OTHER);
 
         uniformlyChangeMosaicSize();
