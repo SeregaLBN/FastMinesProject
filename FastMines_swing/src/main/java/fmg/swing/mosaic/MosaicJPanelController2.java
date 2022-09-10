@@ -112,7 +112,8 @@ public class MosaicJPanelController2 extends MosaicController2<JPanel, MosaicJPa
         return (iRes == JOptionPane.NO_OPTION);
     }
 
-    private void subscribeToViewControl() {
+    @Override
+    protected void subscribeToViewControl() {
         JPanel control = view.getControl();
         control.setFocusable(true); // иначе не будет срабатывать FocusListener
 
@@ -124,7 +125,8 @@ public class MosaicJPanelController2 extends MosaicController2<JPanel, MosaicJPa
         control.setSize(control.getPreferredSize());
     }
 
-    private void unsubscribeToViewControl() {
+    @Override
+    protected void unsubscribeToViewControl() {
         JPanel control = view.getControl();
         MosaicMouseListener listener = getMosaicMouseListener();
         control.removeMouseListener(listener);
@@ -134,22 +136,13 @@ public class MosaicJPanelController2 extends MosaicController2<JPanel, MosaicJPa
 
     @Override
     protected void onModelChanged(String property) {
-        switch (property) {
-        case MosaicModel2.PROPERTY_MOSAIC_TYPE:
-        case MosaicModel2.PROPERTY_AREA:
-            onChangeCellSquareSize();
-            break;
-        default:
-            // none
-        }
-
         view.onModelChanged(property);
-
         super.onModelChanged(property);
     }
 
     /** переустанавливаю заного размер мины/флага для мозаики */
-    private void onChangeCellSquareSize() {
+    @Override
+    protected void onChangeCellSquareSize() {
         double sq = model.getCellSquareSize();
         if (sq <= 0) {
             Logger.error("Error: too thick pen! There is no area for displaying the flag/mine image...");
@@ -167,7 +160,6 @@ public class MosaicJPanelController2 extends MosaicController2<JPanel, MosaicJPa
 
     @Override
     public void close() {
-        unsubscribeToViewControl();
         super.close();
         view.close();
     }

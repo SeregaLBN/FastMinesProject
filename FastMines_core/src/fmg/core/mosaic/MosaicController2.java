@@ -53,6 +53,14 @@ public abstract class MosaicController2<TImage,
 
     private boolean ignoreModelChanges = false;
 
+
+    @Override
+    protected void init(MosaicModel2 model, TView view) {
+        super.init(model, view);
+        onChangeCellSquareSize();
+        subscribeToViewControl();
+    }
+
     /** количество мин */
     public int getCountMines() { return countMines; }
     /** количество мин */
@@ -793,6 +801,15 @@ public abstract class MosaicController2<TImage,
         default:
             break;
         }
+
+        switch (propertyName) {
+        case MosaicModel2.PROPERTY_MOSAIC_TYPE:
+        case MosaicModel2.PROPERTY_AREA:
+            onChangeCellSquareSize();
+            break;
+        default:
+            // none
+        }
     }
 
     /** преобразовать экранные координаты в ячейку поля мозаики */
@@ -843,6 +860,17 @@ public abstract class MosaicController2<TImage,
     private void acceptClickEvent(ClickResult clickResult) {
         if (clickEvent != null)
             clickEvent.accept(clickResult);
+    }
+
+    /** переустанавливаю заного размер мины/флага для мозаики */
+    protected abstract void onChangeCellSquareSize();
+    protected abstract void subscribeToViewControl();
+    protected abstract void unsubscribeToViewControl();
+
+    @Override
+    public void close() {
+        unsubscribeToViewControl();
+        super.close();
     }
 
 }
