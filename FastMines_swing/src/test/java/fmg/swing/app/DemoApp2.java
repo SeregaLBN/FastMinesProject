@@ -26,7 +26,6 @@ import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
 import fmg.swing.img.*;
-import fmg.swing.mosaic.MosaicJPanelController;
 import fmg.swing.mosaic.MosaicJPanelController2;
 
 /** live UI test application
@@ -189,7 +188,7 @@ public class DemoApp2  {
 
         List<Component> imgControls = new ArrayList<>(images.size());
         boolean[] testTransparent = { false };
-        boolean isMosaicGameController = images.get(0) instanceof MosaicJPanelController;
+        boolean isMosaicGameController = false; // images.get(0) instanceof MosaicJPanelController2;
 
         Proc3Bool onCellTilingHandler = (applySettings, createImgControls, resized) -> {
             if (isMosaicGameController) // when is this game field...

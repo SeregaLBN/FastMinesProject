@@ -42,7 +42,7 @@ import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
 import fmg.jfx.img.*;
-import fmg.jfx.mosaic.MosaicCanvasController;
+import fmg.jfx.mosaic.MosaicCanvasController2;
 import fmg.jfx.utils.Cast;
 
 /** live UI test application
@@ -65,24 +65,24 @@ public final class DemoApp2 extends Application {
     private int nextCreateImagesIndex;
 
     // #region images Fabrica
-//    public void testMosaicControl() {
-//        //MosaicView._DEBUG_DRAW_FLOW = true;
-//        testApp(() -> {
-//            MosaicCanvasController ctrllr = new MosaicCanvasController();
-//            if (ThreadLocalRandom.current().nextBoolean()) {
-//                // unmodified controller test
-//            } else {
-//                EMosaic mosaicType = EMosaic.fromOrdinal(ThreadLocalRandom.current().nextInt(EMosaic.values().length));
-//                ESkillLevel skill  = ESkillLevel.eBeginner;
-//
-//                ctrllr.setMosaicType(mosaicType);
-//                ctrllr.setSizeField(skill.getDefaultSize());
-//                ctrllr.setCountMines(skill.getNumberMines(mosaicType));
-//                ctrllr.gameNew();
-//            }
-//            return Stream.of(ctrllr);
-//        }
-//    );}
+    public void testMosaicControl() {
+        testApp(() -> {
+            MosaicCanvasController2 ctrllr = new MosaicCanvasController2();
+            if (ThreadLocalRandom.current().nextBoolean()) {
+                // unmodified controller test
+            } else {
+                EMosaic mosaicType = EMosaic.fromOrdinal(ThreadLocalRandom.current().nextInt(EMosaic.values().length));
+                ESkillLevel skill  = ESkillLevel.eBeginner;
+
+                var model = ctrllr.getModel();
+                model.setMosaicType(mosaicType);
+                model.setSizeField(skill.getDefaultSize());
+                ctrllr.setCountMines(skill.getNumberMines(mosaicType));
+                ctrllr.gameNew();
+            }
+            return Stream.of(ctrllr);
+        }
+    );}
 
     public void testMosaicImg() {
         testApp(() ->
@@ -146,7 +146,7 @@ public final class DemoApp2 extends Application {
         td = new TestDrawing2("JFX");
 
         onCreateImages = new Runnable[] {
-//            this::testMosaicControl,
+            this::testMosaicControl,
             this::testMosaicImg,
             this::testMosaicSkillImg,
             this::testMosaicGroupImg,
@@ -220,7 +220,7 @@ public final class DemoApp2 extends Application {
 
         List<Canvas> imgControls = new ArrayList<>(images.size());
         boolean[] testTransparent = { false };
-        boolean isMosaicGameController = images.get(0) instanceof MosaicCanvasController;
+        boolean isMosaicGameController = false; // images.get(0) instanceof MosaicCanvasController2;
         AnimationTimer[] timer = { null };
         boolean[] closed = { false };
 

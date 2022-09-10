@@ -59,8 +59,6 @@ public class MosaicJPanelView2 implements IMosaicView2<JPanel>, AutoCloseable {
         this.imgFlag = imgFlag;
         this.imgMine = imgMine;
 
-        imgMine.asMine();
-
         timerDebounceSize = new Timer(300, ev -> {
             timerDebounceSize.stop();
             setSizeFinish(lastSize);
@@ -106,7 +104,7 @@ public class MosaicJPanelView2 implements IMosaicView2<JPanel>, AutoCloseable {
                 @Override
                 protected void paintComponent(Graphics g) {
                     //super.paintComponent(g);
-                    MosaicJPanelView2.this.drawJPanel((Graphics2D)g);
+                    MosaicJPanelView2.this.draw((Graphics2D)g);
                 }
 
                 @Override
@@ -143,9 +141,9 @@ public class MosaicJPanelView2 implements IMosaicView2<JPanel>, AutoCloseable {
         return control;
     }
 
-    private void drawJPanel(Graphics2D g) {
+    private void draw(Graphics2D g) {
         try {
-            drawJPanel2(g);
+            draw2(g);
         } finally {
             valid = true;
             drawBk = true;
@@ -153,7 +151,7 @@ public class MosaicJPanelView2 implements IMosaicView2<JPanel>, AutoCloseable {
         }
     }
 
-    private void drawJPanel2(Graphics2D g) {
+    private void draw2(Graphics2D g) {
         SizeDouble size = model.getSize();
 
         if (isControlResizing && (lastImg != null)) {
@@ -228,6 +226,16 @@ public class MosaicJPanelView2 implements IMosaicView2<JPanel>, AutoCloseable {
     }
 
     @Override
+    public void invalidate() {
+        valid = false;
+        drawBk = true;
+        this.modifiedCells.clear(); // all matrix
+
+        if (control != null)
+            control.repaint();
+    }
+
+    @Override
     public void invalidate(Collection<BaseCell> modifiedCells) {
         Objects.requireNonNull(modifiedCells);
         if (modifiedCells.isEmpty())
@@ -236,16 +244,6 @@ public class MosaicJPanelView2 implements IMosaicView2<JPanel>, AutoCloseable {
         valid = false;
         drawBk = false;
         this.modifiedCells.addAll(modifiedCells);
-
-        if (control != null)
-            control.repaint();
-    }
-
-    @Override
-    public void invalidate() {
-        valid = false;
-        drawBk = true;
-        this.modifiedCells.clear(); // all matrix
 
         if (control != null)
             control.repaint();

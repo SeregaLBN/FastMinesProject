@@ -34,10 +34,6 @@ public class MosaicJPanelController2 extends MosaicController2<JPanel, MosaicJPa
         var m = new MosaicModel2(true);
         var v = new MosaicJPanelView2(m, imgFlag, imgMine);
         init(m, v);
-
-        onChangeCellSquareSize();
-
-        subscribeToViewControl();
     }
 
     public JPanel getViewPanel() {

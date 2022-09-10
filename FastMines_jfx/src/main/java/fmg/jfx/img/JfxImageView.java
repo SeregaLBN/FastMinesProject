@@ -44,7 +44,7 @@ public class JfxImageView<TModel extends IImageModel2> implements IImageView2<ja
             if (!DoubleExt.almostEquals(canvas.getWidth() , s.width) &&
                 !DoubleExt.almostEquals(canvas.getHeight(), s.height))
             {
-                canvas. setWidth(s.width);
+                canvas.setWidth (s.width);
                 canvas.setHeight(s.height);
                 valid = false;
             }
