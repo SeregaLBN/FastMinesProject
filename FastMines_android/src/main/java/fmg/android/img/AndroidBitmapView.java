@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 
 import java.util.function.Consumer;
 
-import fmg.common.geom.DoubleExt;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.IImageModel2;
 import fmg.core.img.IImageView2;
@@ -37,19 +36,16 @@ public class AndroidBitmapView<TModel extends IImageModel2> implements IImageVie
     @Override
     public Bitmap getImage() {
         SizeDouble s = model.getSize();
-        if (bmp == null) {
-            bmp = android.graphics.Bitmap.createBitmap((int)s.width, (int)s.height, android.graphics.Bitmap.Config.ARGB_8888);
+        if ((bmp == null) ||
+            (bmp.getWidth()  != (int)s.width) ||
+            (bmp.getHeight() != (int)s.height))
+        {
+            if (bmp != null)
+                bmp.recycle();
+
+            bmp = Bitmap.createBitmap((int)s.width, (int)s.height, Bitmap.Config.ARGB_8888);
             canvas = null;
             valid = false;
-        } else {
-            if (!DoubleExt.almostEquals(canvas.getWidth() , s.width) ||
-                !DoubleExt.almostEquals(canvas.getHeight(), s.height))
-            {
-                bmp.recycle();
-                bmp = android.graphics.Bitmap.createBitmap((int)s.width, (int)s.height, android.graphics.Bitmap.Config.ARGB_8888);
-                canvas = null;
-                valid = false;
-            }
         }
         if (canvas == null) {
             canvas = new Canvas(bmp);

@@ -12,6 +12,7 @@ import fmg.common.ui.UiInvoker;
 import fmg.core.types.Property;
 
 /** Notifies owner clients that a owner property value has changed */
+@Deprecated
 public final class NotifyPropertyChanged implements AutoCloseable, INotifyPropertyChanged
 {
     private final INotifyPropertyChanged owner;

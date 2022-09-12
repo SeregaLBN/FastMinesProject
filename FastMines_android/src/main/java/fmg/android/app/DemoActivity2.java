@@ -38,6 +38,7 @@ import fmg.android.img.MosaicSkillImg2;
 import fmg.android.img.Smile;
 import fmg.android.img.Smile2;
 import fmg.android.mosaic.MosaicViewController;
+import fmg.android.mosaic.MosaicViewController2;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
@@ -68,26 +69,26 @@ public class DemoActivity2 extends AppCompatActivity {
 
 
     // #region images Fabrica
-//    public void testMosaicControl () {
-//        MosaicView.DEBUG_DRAW_FLOW = true;
-//        testApp(() -> {
-//            MosaicViewController mosaicController = new MosaicViewController(this);
-//
-//            if (ThreadLocalRandom.current().nextBoolean()) {
-//                // unmodified controller test
-//            } else {
-//                EMosaic mosaicType = EMosaic.fromOrdinal(ThreadLocalRandom.current().nextInt(EMosaic.values().length));
-//                ESkillLevel skill  = ESkillLevel.eBeginner;
-//
-//                mosaicController.setMosaicType(mosaicType);
-//                mosaicController.setSizeField(skill.getDefaultSize());
-//                mosaicController.setCountMines(skill.getNumberMines(mosaicType));
-//                mosaicController.gameNew();
-//            }
-//            return Stream.of(mosaicController);
-//
-//        }
-//    );}
+    public void testMosaicControl () {
+        testApp(() -> {
+            MosaicViewController2 mosaicController = new MosaicViewController2(this);
+
+            if (ThreadLocalRandom.current().nextBoolean()) {
+                // unmodified controller test
+            } else {
+                EMosaic mosaicType = EMosaic.fromOrdinal(ThreadLocalRandom.current().nextInt(EMosaic.values().length));
+                ESkillLevel skill  = ESkillLevel.eBeginner;
+
+                var model = mosaicController.getModel();
+                model.setMosaicType(mosaicType);
+                model.setSizeField(skill.getDefaultSize());
+                mosaicController.setCountMines(skill.getNumberMines(mosaicType));
+                mosaicController.gameNew();
+            }
+            return Stream.of(mosaicController);
+
+        }
+    );}
 
     public void testMosaicImg() {
         testApp(() ->
@@ -137,7 +138,7 @@ public class DemoActivity2 extends AppCompatActivity {
         td = new TestDrawing2("Android");
 
         onCreateImages = new Runnable[] {
-//            this::testMosaicControl,
+            this::testMosaicControl,
             this::testMosaicImg,
             this::testMosaicSkillImg,
             this::testMosaicGroupImg,

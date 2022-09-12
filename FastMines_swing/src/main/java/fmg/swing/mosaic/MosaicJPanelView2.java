@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 
-import javax.swing.Icon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -186,19 +185,23 @@ public class MosaicJPanelView2 implements IMosaicView2<JPanel>, AutoCloseable {
                 (int)(lastImgMosaicOffset.height + lastImgMosaicSize.height),
                 (ImageObserver)null);
         } else {
-            MosaicDrawContext<Icon> drawContext;
             if ((lastImg == null) ||
                 (lastImg.getWidth()  != (int)size.width) ||
                 (lastImg.getHeight() != (int)size.height))
             {
                 lastImg = new BufferedImage((int)size.width, (int)size.height, BufferedImage.TYPE_INT_ARGB);
-                drawContext = new MosaicDrawContext<>(model, true, model::getBackgroundColor, model::getMatrix, imgMine::getImage, imgFlag::getImage);
-            } else {
-                if (modifiedCells.isEmpty())
-                    modifiedCells.addAll(model.getMatrix());
-
-                drawContext = new MosaicDrawContext<>(model, drawBk, model::getBackgroundColor, () -> modifiedCells, imgMine::getImage, imgFlag::getImage);
+                modifiedCells.clear(); // redraw all
             }
+
+            var drawContext = new MosaicDrawContext<>(
+                model,
+                drawBk,
+                model::getBackgroundColor,
+                modifiedCells.isEmpty()
+                    ? model::getMatrix
+                    : () -> modifiedCells,
+                imgMine::getImage,
+                imgFlag::getImage);
 
             // draw to buffered image (caching image)
             Graphics2D gImg = lastImg.createGraphics();

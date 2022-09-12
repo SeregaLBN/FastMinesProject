@@ -45,10 +45,15 @@ public class MosaicCanvasView2 implements IMosaicView2<Canvas> {
 
     private void draw(GraphicsContext g) {
         try {
-            if (modifiedCells.isEmpty())
-                modifiedCells.addAll(model.getMatrix());
-
-            var drawContext = new MosaicDrawContext<>(model, drawBk, model::getBackgroundColor, () -> modifiedCells, imgMine::getImage, imgFlag::getImage);
+            var drawContext = new MosaicDrawContext<>(
+                    model,
+                    drawBk,
+                    model::getBackgroundColor,
+                    modifiedCells.isEmpty()
+                        ? model::getMatrix
+                        : () -> modifiedCells,
+                    imgMine::getImage,
+                    imgFlag::getImage);
             MosaicImg2.draw(g, drawContext);
         } finally {
             drawBk = true;
