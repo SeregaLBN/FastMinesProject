@@ -5,22 +5,20 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Insets;
 import java.awt.event.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.IImageController;
-import fmg.core.img.MosaicAnimatedModel;
+import fmg.core.img.ImageHelper;
+import fmg.core.img.MosaicImageModel2;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.swing.app.FastMinesApp;
 import fmg.swing.app.model.control.SpinNumberDocListener;
 import fmg.swing.app.model.control.SpinnerDiapasonModel;
-import fmg.swing.img.MosaicImg;
+import fmg.swing.img.MosaicImg2;
 import fmg.swing.utils.Cast;
 import fmg.swing.utils.GuiTools;
 import fmg.swing.utils.ImgUtils;
@@ -33,11 +31,11 @@ public class SelectMosaicDlg implements AutoCloseable {
     private JComboBox<?> cmbxMosaicTypes;
     private JButton btnOk;
 
-    private MosaicImg.ImageAwtController mosaicsImg, mosaicsImgRollover;
-    private final PropertyChangeListener onMosaicsImgPropertyChangedListener = this::onMosaicsImgPropertyChanged;
+    private MosaicImg2.MosaicAwtImageController mosaicsImg;
+    private MosaicImg2.MosaicAwtImageController mosaicsImgRollover;
 
-    private static final int ImgSize = 40;
-    private static final int ImgZoomQuality = 3;
+    private static final int IMG_SIZE = 40;
+    private static final int IMG_ZOOM_QUALITY = 3;
     private static final Color bkTabBkColor = Cast.toColor(fmg.common.Color.Transparent()); // UIManager.getColor("Button.light"); // "Button.light" "Button.foreground"
     private static final Color bkTabBkColorSelected = UIManager.getColor("Button.shadow"); // "Button.select" "Button.darkShadow"
 
@@ -259,44 +257,44 @@ public class SelectMosaicDlg implements AutoCloseable {
     }
     private void setBtnOkIcons(EMosaic mosaicType) {
         if (mosaicsImg == null) {
-            mosaicsImg = new MosaicImg.ImageAwtController();
-            mosaicsImg.setMosaicType(mosaicType);
-            mosaicsImg.setSizeField(mosaicType.sizeIcoField(true));
-            MosaicAnimatedModel<?> imgModel = mosaicsImg.getModel();
-            imgModel.setSize(new SizeDouble(ImgSize*ImgZoomQuality, ImgSize*ImgZoomQuality));
+            mosaicsImg = new MosaicImg2.MosaicAwtImageController();
+            mosaicsImg.getModel().setMosaicType(mosaicType);
+            mosaicsImg.getModel().setSizeField(mosaicType.sizeIcoField(true));
+            MosaicImageModel2 imgModel = mosaicsImg.getModel();
+            imgModel.setSize(new SizeDouble(IMG_SIZE * IMG_ZOOM_QUALITY, IMG_SIZE * IMG_ZOOM_QUALITY));
             imgModel.setPadding(new BoundDouble(10));
             imgModel.setBackgroundColor(Cast.toColor(bkTabBkColor));
             int redrawInterval = 50;
             double rotateAngleDelta = 3.5;
             double totalFrames = 360 / rotateAngleDelta;
-            imgModel.setAnimatePeriod((int)(totalFrames * redrawInterval));
-            imgModel.setTotalFrames((int)totalFrames);
-            imgModel.setAnimated(true);
-            mosaicsImg.addListener(onMosaicsImgPropertyChangedListener);
+            mosaicsImg.setAnimatePeriod((int)(totalFrames * redrawInterval));
+            mosaicsImg.setFps(30);
+            mosaicsImg.setRotateImage(true);
+            mosaicsImg.setListener(this::onMosaicsImgPropertyChanged);
         } else {
-            mosaicsImg.setMosaicType(mosaicType);
+            mosaicsImg.getModel().setMosaicType(mosaicType);
         }
-        btnOk.setIcon(ImgUtils.toIco(mosaicsImg.getImage(), ImgSize, ImgSize));
+        btnOk.setIcon(ImgUtils.toIco(mosaicsImg.getImage(), IMG_SIZE, IMG_SIZE));
 
         if (mosaicsImgRollover == null) {
-            mosaicsImgRollover = new MosaicImg.ImageAwtController();
-            mosaicsImgRollover.setMosaicType(mosaicType);
-            mosaicsImgRollover.setSizeField(mosaicType.sizeIcoField(true));
-            MosaicAnimatedModel<?> imgModel = mosaicsImg.getModel();
-            imgModel.setSize(new SizeDouble(ImgSize*ImgZoomQuality, ImgSize*ImgZoomQuality));
+            mosaicsImgRollover = new MosaicImg2.MosaicAwtImageController();
+            mosaicsImgRollover.getModel().setMosaicType(mosaicType);
+            mosaicsImgRollover.getModel().setSizeField(mosaicType.sizeIcoField(true));
+            MosaicImageModel2 imgModel = mosaicsImg.getModel();
+            imgModel.setSize(new SizeDouble(IMG_SIZE * IMG_ZOOM_QUALITY, IMG_SIZE * IMG_ZOOM_QUALITY));
             imgModel.setPadding(new BoundDouble(3));
             imgModel.setBackgroundColor(Cast.toColor(bkTabBkColorSelected));
         } else {
-            mosaicsImgRollover.setMosaicType(mosaicType);
+            mosaicsImgRollover.getModel().setMosaicType(mosaicType);
         }
-        btnOk.setRolloverIcon(ImgUtils.toIco(mosaicsImgRollover.getImage(), ImgSize, ImgSize));
+        btnOk.setRolloverIcon(ImgUtils.toIco(mosaicsImgRollover.getImage(), IMG_SIZE, IMG_SIZE));
     }
 
-    private void onMosaicsImgPropertyChanged(PropertyChangeEvent ev) {
+    private void onMosaicsImgPropertyChanged(String propertyName) {
         if (!dialog.isVisible())
             return;
-        if (ev.getPropertyName().equalsIgnoreCase(IImageController.PROPERTY_IMAGE)) {
-            btnOk.setIcon(ImgUtils.toIco(mosaicsImg.getImage(), ImgSize, ImgSize));
+        if (propertyName.equalsIgnoreCase(ImageHelper.PROPERTY_IMAGE)) {
+            btnOk.setIcon(ImgUtils.toIco(mosaicsImg.getImage(), IMG_SIZE, IMG_SIZE));
         }
     }
 
@@ -315,7 +313,7 @@ public class SelectMosaicDlg implements AutoCloseable {
 
 
     public void setVisible(boolean b) {
-        mosaicsImg.getModel().setAnimated(b);
+        mosaicsImg.setRotateImage(b);
         dialog.setVisible(b);
     }
 
@@ -339,7 +337,7 @@ public class SelectMosaicDlg implements AutoCloseable {
 
     @Override
     public void close() {
-        mosaicsImg.removeListener(onMosaicsImgPropertyChangedListener);
+        mosaicsImg.setListener(null);
         mosaicsImg.close();
         mosaicsImgRollover.close();
     }

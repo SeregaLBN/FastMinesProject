@@ -51,8 +51,6 @@ public abstract class MosaicController2<TImage,
     /** использовать ли флажок на поле */
     private boolean useUnknown = true;
 
-    private boolean ignoreModelChanges = false;
-
 
     @Override
     protected void init(MosaicModel2 model, TView view) {
@@ -81,10 +79,8 @@ public abstract class MosaicController2<TImage,
             return;
 
         countMines = newVal;
-        if (changedCallback != null) {
-            //changedCallback.accept(PROPERTY_COUNT_MINES);
-            changedCallback.accept(PROPERTY_COUNT_MINES_LEFT);
-        }
+        //firePropertyChanged(PROPERTY_COUNT_MINES);
+        firePropertyChanged(PROPERTY_COUNT_MINES_LEFT);
 
         gameNew();
     }
@@ -196,8 +192,7 @@ public abstract class MosaicController2<TImage,
         if (this.countClick == clickCount)
             return;
         this.countClick = clickCount;
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_COUNT_CLICK);
+        firePropertyChanged(PROPERTY_COUNT_CLICK);
     }
 
     /** ячейка на которой было нажато (но не обязательно что отпущено) */
@@ -228,8 +223,7 @@ public abstract class MosaicController2<TImage,
         if (this.gameStatus == newStatus)
             return;
         this.gameStatus = newStatus;
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_GAME_STATUS);
+        firePropertyChanged(PROPERTY_GAME_STATUS);
     }
 
     public EPlayInfo getPlayInfo() {
@@ -242,8 +236,7 @@ public abstract class MosaicController2<TImage,
         if (this.playInfo == newVal)
             return;
         this.playInfo = newVal;
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_PLAY_INFO);
+        firePropertyChanged(PROPERTY_PLAY_INFO);
     }
 
     public List<Coord> getRepositoryMines() {
@@ -258,8 +251,7 @@ public abstract class MosaicController2<TImage,
             if ((newMines != null) && !newMines.isEmpty())
                 current.addAll(newMines);
         }
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_REPOSITORY_MINES);
+        firePropertyChanged(PROPERTY_REPOSITORY_MINES);
         //setGameStatus(EGameStatus.eGSEnd);
         gameNew();
     }
@@ -306,11 +298,9 @@ public abstract class MosaicController2<TImage,
             }
 
         setGameStatus(EGameStatus.eGSEnd);
-        if (changedCallback != null) {
-            changedCallback.accept(PROPERTY_COUNT_MINES_LEFT);
-            changedCallback.accept(PROPERTY_COUNT_FLAG);
-            changedCallback.accept(PROPERTY_COUNT_OPEN);
-        }
+        firePropertyChanged(PROPERTY_COUNT_MINES_LEFT);
+        firePropertyChanged(PROPERTY_COUNT_FLAG);
+        firePropertyChanged(PROPERTY_COUNT_OPEN);
 
         return toRepaint;
     }
@@ -531,15 +521,12 @@ public abstract class MosaicController2<TImage,
                 setCountClick(getCountClick()+1);
                 setPlayInfo(EPlayInfo.ePlayerUser);  // юзер играл
                 if (countOpen > 0) {
-                    if (changedCallback != null)
-                        changedCallback.accept(PROPERTY_COUNT_OPEN);
+                    firePropertyChanged(PROPERTY_COUNT_OPEN);
                 }
                 if ((countFlag > 0) || (countUnknown > 0)) {
-                    if (changedCallback != null) {
-                        changedCallback.accept(PROPERTY_COUNT_FLAG);
-                        changedCallback.accept(PROPERTY_COUNT_MINES_LEFT);
-                        changedCallback.accept(PROPERTY_COUNT_UNKNOWN);
-                    }
+                    firePropertyChanged(PROPERTY_COUNT_FLAG);
+                    firePropertyChanged(PROPERTY_COUNT_MINES_LEFT);
+                    firePropertyChanged(PROPERTY_COUNT_UNKNOWN);
                 }
             }
 
@@ -591,11 +578,9 @@ public abstract class MosaicController2<TImage,
         if (any) {
             setCountClick(getCountClick()+1);
             setPlayInfo(EPlayInfo.ePlayerUser); // то считаю что юзер играл
-            if (changedCallback != null) {
-                changedCallback.accept(PROPERTY_COUNT_FLAG);
-                changedCallback.accept(PROPERTY_COUNT_MINES_LEFT);
-                changedCallback.accept(PROPERTY_COUNT_UNKNOWN);
-            }
+            firePropertyChanged(PROPERTY_COUNT_FLAG);
+            firePropertyChanged(PROPERTY_COUNT_MINES_LEFT);
+            firePropertyChanged(PROPERTY_COUNT_UNKNOWN);
         }
 
         result.modified.addAll(verifyFlag());
@@ -665,8 +650,9 @@ public abstract class MosaicController2<TImage,
         if (backup.area < MosaicInitData.AREA_MINIMUM)
             backup.area = MosaicInitData.AREA_MINIMUM;
 
+        var saveCallback = model.getListener();
+        model.setListener(null); // tmp unset
         try {
-            ignoreModelChanges = true;
             model.setMosaicType(backup.mosaicType);
             model.setSizeField(backup.sizeField);
             model.setArea(backup.area);
@@ -690,14 +676,12 @@ public abstract class MosaicController2<TImage,
             setGameStatus(anyOpen ? EGameStatus.eGSPlay : EGameStatus.eGSReady);
             setPlayInfo(anyOpen ? EPlayInfo.ePlayerUser : EPlayInfo.ePlayerUnknown); // TODO ?
 
-            if (changedCallback != null) {
-                changedCallback.accept(PROPERTY_COUNT_MINES);
-                changedCallback.accept(PROPERTY_COUNT_MINES_LEFT);
-            }
+            firePropertyChanged(PROPERTY_COUNT_MINES);
+            firePropertyChanged(PROPERTY_COUNT_MINES_LEFT);
 
             view.invalidate();
         } finally {
-            UiInvoker.Deferred.accept(() -> ignoreModelChanges = false );
+            UiInvoker.Deferred.accept(() -> model.setListener(saveCallback) ); // restore
         }
     }
 
@@ -707,7 +691,7 @@ public abstract class MosaicController2<TImage,
         model.setFillMode(
                 1 + ThreadLocalRandom.current().nextInt(
                             model.getShape() // MosaicHelper.createShapeInstance(m.getMosaicType())
-                            .getMaxCellFillModeValue()));
+                                 .getMaxCellFillModeValue()));
 
         if (getGameStatus() == EGameStatus.eGSReady)
             return false;
@@ -727,8 +711,7 @@ public abstract class MosaicController2<TImage,
         setGameStatus(EGameStatus.eGSReady);
         setPlayInfo(EPlayInfo.ePlayerUnknown); // пока не знаю кто будет играть
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_COUNT_MINES_LEFT);
+        firePropertyChanged(PROPERTY_COUNT_MINES_LEFT);
 
         view.invalidate();
 
@@ -783,8 +766,6 @@ public abstract class MosaicController2<TImage,
     @Override
     protected void onModelChanged(String propertyName) {
         super.onModelChanged(propertyName);
-        if (ignoreModelChanges)
-            return;
         switch (propertyName) {
         case MosaicModel2.PROPERTY_SIZE_FIELD:
             setCellDown(null); // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
@@ -810,6 +791,9 @@ public abstract class MosaicController2<TImage,
         default:
             // none
         }
+
+        // refire model changes
+        firePropertyChanged(propertyName);
     }
 
     /** преобразовать экранные координаты в ячейку поля мозаики */

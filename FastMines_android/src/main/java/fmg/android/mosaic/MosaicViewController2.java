@@ -454,6 +454,7 @@ public class MosaicViewController2 extends MosaicController2<DrawableView, Mosai
 
     @Override
     protected void onModelChanged(String property) {
+        view.onModelChanged(property);
         super.onModelChanged(property);
         switch (property) {
         case ImageHelper.PROPERTY_SIZE:

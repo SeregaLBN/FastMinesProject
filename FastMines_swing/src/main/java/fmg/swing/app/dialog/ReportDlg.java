@@ -8,8 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -22,13 +20,13 @@ import javax.swing.table.TableCellRenderer;
 import fmg.common.Color;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.IImageController;
-import fmg.core.img.MosaicAnimatedModel;
+import fmg.core.img.ImageHelper;
+import fmg.core.img.MosaicImageModel2;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
 import fmg.swing.app.FastMinesApp;
 import fmg.swing.app.model.view.ReportTableModel;
-import fmg.swing.img.MosaicImg;
+import fmg.swing.img.MosaicImg2;
 import fmg.swing.utils.ImgUtils;
 
 public abstract class ReportDlg implements AutoCloseable {
@@ -43,11 +41,10 @@ public abstract class ReportDlg implements AutoCloseable {
     protected JTabbedPane tabPanel;
     protected JToggleButton[] btns = new JToggleButton[ESkillLevel.values().length-1];
     private Map<EMosaic, JScrollPane> scrollPanes = new EnumMap<>(EMosaic.class);
-    private List<MosaicImg.IconController> images = new ArrayList<>(EMosaic.values().length);
+    private List<MosaicImg2.MosaicSwingIconController> images = new ArrayList<>(EMosaic.values().length);
     protected ButtonGroup radioGroup;
-    private final PropertyChangeListener onImagePropertyChangedListener = this::onImagePropertyChanged;
 
-    public ReportDlg(FastMinesApp app, boolean modal) {
+    protected ReportDlg(FastMinesApp app, boolean modal) {
         this.app = app;
         dialog = new JDialog((app == null) ? null : app.getFrame(), "report window...", modal);
         initialize();
@@ -93,26 +90,27 @@ public abstract class ReportDlg implements AutoCloseable {
         {
             tabPanel.setBorder(BorderFactory.createEmptyBorder(12,12,2,12));
 
+            int i = 0;
             for (EMosaic eMosaic: EMosaic.values()) {
                 JScrollPane scroll = new JScrollPane();
-                MosaicImg.IconController imgCntrllr = new MosaicImg.IconController();
-                MosaicAnimatedModel<?> imgModel = imgCntrllr.getModel();
+                MosaicImg2.MosaicSwingIconController imgCntrllr = new MosaicImg2.MosaicSwingIconController();
+                MosaicImageModel2 imgModel = imgCntrllr.getModel();
                 imgModel.setMosaicType(eMosaic);
                 imgModel.setSizeField(eMosaic.sizeIcoField(true));
                 imgModel.setSize(new SizeDouble(IMG_SIZE*IMAGE_ZOOM_QUALITY, IMG_SIZE * IMAGE_ZOOM_QUALITY));
                 imgModel.setPadding(new BoundDouble(5 * IMAGE_ZOOM_QUALITY));
                 imgModel.setBackgroundColor(bkTabBkColor);
-                int redrawInterval = 50;
-                double rotateAngleDelta = 3.5;
-                double totalFrames = 360 / rotateAngleDelta;
-                imgModel.setAnimatePeriod((int)(totalFrames * redrawInterval));
-                imgModel.setTotalFrames((int)totalFrames);
-                imgCntrllr.addListener(onImagePropertyChangedListener);
+                imgCntrllr.setAnimatePeriod(5000);
+                imgCntrllr.setFps(30);
+                var index = i;
+                imgCntrllr.setListener(pn -> onImagePropertyChanged(index, pn));
                 images.add(imgCntrllr);
 
                 tabPanel.addTab(null, ImgUtils.zoom(imgCntrllr.getImage(), IMG_SIZE, IMG_SIZE), scroll, eMosaic.getDescription(false));
                 scroll.setPreferredSize(getPreferredScrollPaneSize());
                 scrollPanes.put(eMosaic, scroll);
+
+                ++i;
             }
 
             // таблички создаю динамически - когда юзер выберет конкретную вкладку. См. getSelectedTable()
@@ -153,8 +151,8 @@ public abstract class ReportDlg implements AutoCloseable {
         updateModel(getSelectedSkillLevel());
 
         images.forEach(imgCtrllr -> {
-            boolean selected = (imgCtrllr.getMosaicType() == eMosaic);
-            imgCtrllr.getModel().setAnimated(selected);
+            boolean selected = (imgCtrllr.getModel().getMosaicType() == eMosaic);
+            imgCtrllr.setRotateImage(selected);
             imgCtrllr.getModel().setBackgroundColor(selected ? bkTabBkColorSelected : bkTabBkColor);
         });
     }
@@ -222,12 +220,12 @@ public abstract class ReportDlg implements AutoCloseable {
         throw new IllegalArgumentException("dialog Report::getSelectedSkillLevel: radioGroup.getSelection() return unknown model ???");
     }
 
-    private void onImagePropertyChanged(PropertyChangeEvent ev) {
+    private void onImagePropertyChanged(int index, String propertyName) {
         if (!dialog.isVisible())
             return;
-        if (IImageController.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
-            MosaicImg.IconController imgCtrllr = ((MosaicImg.IconController)ev.getSource());
-            tabPanel.setIconAt(imgCtrllr.getMosaicType().ordinal(), ImgUtils.zoom(imgCtrllr.getImage(), IMG_SIZE, IMG_SIZE));
+        if (ImageHelper.PROPERTY_IMAGE.equals(propertyName)) {
+            MosaicImg2.MosaicSwingIconController imgCtrllr = images.get(index);
+            tabPanel.setIconAt(imgCtrllr.getModel().getMosaicType().ordinal(), ImgUtils.zoom(imgCtrllr.getImage(), IMG_SIZE, IMG_SIZE));
         }
     }
 
@@ -272,8 +270,8 @@ public abstract class ReportDlg implements AutoCloseable {
 
     public void setVisible(boolean b) {
         EMosaic mosaicType = getSelectedMosaicType();
-        MosaicImg.IconController imgCtrllr = images.stream().filter(img -> img.getMosaicType() == mosaicType).findAny().get();
-        imgCtrllr.getModel().setAnimated(b);
+        var imgCtrllr = images.stream().filter(img -> img.getModel().getMosaicType() == mosaicType).findAny().get();
+        imgCtrllr.setRotateImage(true);;
         if (!b)
             imgCtrllr.getModel().setBackgroundColor(bkTabBkColor);
 
@@ -290,7 +288,7 @@ public abstract class ReportDlg implements AutoCloseable {
     @Override
     public void close() {
         images.forEach(imgCtrllr -> {
-            imgCtrllr.removeListener(onImagePropertyChangedListener);
+            imgCtrllr.setListener(null);
             imgCtrllr.close();
         });
         dialog.dispose();

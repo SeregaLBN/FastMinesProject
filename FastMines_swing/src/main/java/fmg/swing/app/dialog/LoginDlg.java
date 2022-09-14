@@ -12,8 +12,10 @@ import fmg.swing.utils.GuiTools;
 public class LoginDlg {
 
     private final JDialog dialog;
-    private JTextField nameField, passwrdField;
-    private ActionListener onOkActionListener, onCancelActionListener;
+    private JTextField nameField;
+    private JTextField passwrdField;
+    private ActionListener onOkActionListener;
+    private ActionListener onCancelActionListener;
 
     public LoginDlg(
         Window parent,

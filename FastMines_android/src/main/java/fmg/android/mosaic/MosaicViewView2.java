@@ -113,6 +113,17 @@ public class MosaicViewView2 implements IMosaicView2<DrawableView>, AutoCloseabl
         canvas.drawBitmap(lastImg, 0, 0, null);
     }
 
+    public void onModelChanged(String property) {
+        switch (property) {
+        case MosaicModel2.PROPERTY_MOSAIC_TYPE:
+        case MosaicModel2.PROPERTY_SIZE_FIELD:
+            lastImg = null;
+            break;
+        default:
+            // none
+        }
+    }
+
     @Override
     public void invalidate() {
         valid = false;

@@ -1,6 +1,7 @@
 package fmg.swing.app.dialog;
 
 import java.awt.Dimension;
+import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,10 +72,8 @@ public class StatisticDlg extends ReportDlg {
         super.showData(eSkill, eMosaic, pos);
     }
 
-    @Override
-    public void close() {
-        tableModels.forEach(StaticsticTblModel::close);
-        super.close();
+    public void onPlayersPropertyChanged(PropertyChangeEvent ev) {
+        tableModels.forEach(tbl -> tbl.onPlayersPropertyChanged(ev));
     }
 
 }

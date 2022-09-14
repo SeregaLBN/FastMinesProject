@@ -1,8 +1,6 @@
 package fmg.swing.app.menu;
 
 import java.awt.Container;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,12 +10,12 @@ import javax.swing.*;
 
 import fmg.common.Color;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.IImageController;
-import fmg.core.img.MosaicSkillModel;
+import fmg.core.img.ImageHelper;
+import fmg.core.img.MosaicSkillModel2;
 import fmg.core.types.ESkillLevel;
-import fmg.swing.app.KeyCombo;
 import fmg.swing.app.FastMinesApp;
-import fmg.swing.img.MosaicSkillImg;
+import fmg.swing.app.KeyCombo;
+import fmg.swing.img.MosaicSkillImg2;
 
 public class GameMenu implements AutoCloseable {
 
@@ -25,10 +23,9 @@ public class GameMenu implements AutoCloseable {
     private final JMenu menu = new JMenu("Game");
     private JMenuItem anew;
     private Map<ESkillLevel, JRadioButtonMenuItem> skillLevel;
-    private List<MosaicSkillImg.IconController> skillLevelImages;
+    private List<MosaicSkillImg2.MosaicSkillSwingIconController> skillLevelImages;
     private JMenuItem playerManage;
     private JMenuItem exit;
-    private final PropertyChangeListener onMosaicSkillImgPropertyChagedListener = this::onMosaicSkillImgPropertyChaged;
 
     public GameMenu(FastMinesApp app) {
         this.app = app;
@@ -39,13 +36,13 @@ public class GameMenu implements AutoCloseable {
         return menu;
     }
 
-    private void onMosaicSkillImgPropertyChaged(PropertyChangeEvent ev) {
-        MosaicSkillImg.IconController img = (MosaicSkillImg.IconController)ev.getSource();
+    private void onMosaicSkillImgPropertyChaged(int index, String propertyName) {
+        var img = skillLevelImages.get(index);
         JRadioButtonMenuItem menuItem = skillLevel.get(img.getModel().getMosaicSkill());
         Container parent = menuItem.getParent();
         if ((parent == null) || !parent.isVisible())
             return;
-        if (ev.getPropertyName().equalsIgnoreCase(IImageController.PROPERTY_IMAGE)) {
+        if (propertyName.equalsIgnoreCase(ImageHelper.PROPERTY_IMAGE)) {
             MainMenu.setMenuItemIcon(menuItem, img.getImage());
         }
     }
@@ -84,6 +81,7 @@ public class GameMenu implements AutoCloseable {
             skillLevel = new HashMap<>(ESkillLevel.values().length);
             skillLevelImages = new ArrayList<>(ESkillLevel.values().length);
 
+            int i = 0;
             for (ESkillLevel val: ESkillLevel.values()) {
                 JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem();
 
@@ -96,8 +94,8 @@ public class GameMenu implements AutoCloseable {
                 menuItem.setAccelerator(KeyCombo.getKeyStroke_SkillLevel(val));
                 menuItem.addActionListener(app.getHandlers().getSkillLevelAction(val));
 
-                MosaicSkillImg.IconController img = new MosaicSkillImg.IconController(val);
-                MosaicSkillModel imgModel = img.getModel();
+                var img = new MosaicSkillImg2.MosaicSkillSwingIconController(val);
+                MosaicSkillModel2 imgModel = img.getModel();
                 double sq = MainMenu.MENU_HEIGHT_WITH_ICON * MainMenu.ZOOM_QUALITY_FACTOR;
                 imgModel.setSize(new SizeDouble(sq, sq));
                 skillLevelImages.add(img);
@@ -105,13 +103,16 @@ public class GameMenu implements AutoCloseable {
                 imgModel.setBorderColor(Color.RandomColor().darker(0.4));
                 imgModel.setForegroundColor(Color.RandomColor().brighter(0.4));
                 imgModel.setBackgroundColor(Color.Transparent());
-                imgModel.setAnimated(true);
-                imgModel.setAnimatePeriod(6400);
-                imgModel.setTotalFrames(130);
+                img.setRotateImage(true);
+                img.setAnimatePeriod(6400);
+                img.setFps(30);
                 MainMenu.setMenuItemIcon(menuItem, img.getImage());
-                img.addListener(onMosaicSkillImgPropertyChagedListener);
+                int index = i;
+                img.setListener(pn -> onMosaicSkillImgPropertyChaged(index, pn));
 
                 skillLevel.put(val, menuItem);
+
+                ++i;
             }
 
             recheckSelectedSkillLevel();
@@ -143,13 +144,13 @@ public class GameMenu implements AutoCloseable {
     public void recheckSelectedSkillLevel() {
         ESkillLevel skill = app.getSkillLevel();
         getMenuItemSkillLevel(skill).setSelected(true);
-        skillLevelImages.forEach(img -> img.useRotateTransforming(img.getModel().getMosaicSkill() == skill));
+        skillLevelImages.forEach(img -> img.setRotateImage(img.getModel().getMosaicSkill() == skill));
     }
 
     @Override
     public void close() {
         skillLevelImages.forEach(img -> {
-            img.removeListener(onMosaicSkillImgPropertyChagedListener);
+            img.setListener(null);
             img.close();
         });
     }

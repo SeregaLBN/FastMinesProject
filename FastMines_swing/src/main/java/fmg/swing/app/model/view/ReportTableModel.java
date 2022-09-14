@@ -14,9 +14,9 @@ public abstract class ReportTableModel implements TableModel {
 
     protected ESkillLevel eSkill;
     protected final EMosaic eMosaic;
-    private final List<TableModelListener> arrTableModelListener = new ArrayList<TableModelListener>();
+    private final List<TableModelListener> arrTableModelListener = new ArrayList<>();
 
-    public ReportTableModel(EMosaic eMosaic) {
+    protected ReportTableModel(EMosaic eMosaic) {
         this.eMosaic = eMosaic;
     }
 
@@ -33,16 +33,17 @@ public abstract class ReportTableModel implements TableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        if (rowIndex == 0)
+        if (rowIndex == 0) {
             if (columnIndex == 0)
                 return ESkillLevel.class.getSimpleName();
             else
                 return eSkill.getDescription();
-        else
+        } else {
             if (columnIndex == 0)
                 return EMosaic.class.getSimpleName();
             else
                 return eMosaic.getDescription(false);
+        }
     }
 
     @Override

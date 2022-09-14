@@ -2,8 +2,6 @@ package fmg.swing.app.dialog;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.net.URI;
 
 import javax.swing.*;
@@ -14,11 +12,11 @@ import javax.swing.border.EtchedBorder;
 import fmg.common.Logger;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.IImageController;
-import fmg.core.img.LogoModel;
-import fmg.core.img.SmileModel;
-import fmg.swing.img.Logo;
-import fmg.swing.img.Smile;
+import fmg.core.img.ImageHelper;
+import fmg.core.img.LogoModel2;
+import fmg.core.img.SmileModel2;
+import fmg.swing.img.Logo2;
+import fmg.swing.img.Smile2;
 import fmg.swing.utils.GuiTools;
 import fmg.swing.utils.ImgUtils;
 
@@ -31,10 +29,9 @@ public class AboutDlg implements AutoCloseable {
     private static final String HTML_A_HREF = "'><a href='";
 
     private final JDialog dialog;
-    private Logo.IconController logo;
-    private Smile.IconController smile;
+    private Logo2.LogoSwingIconController logo;
+    private Smile2.SmileSwingIconController smile;
     private JButton btnLogo;
-    private final PropertyChangeListener onLogoPropertyChangedListener = this::onLogoPropertyChanged;
 
     public AboutDlg(JFrame parent, boolean modal) {
         dialog = new JDialog(parent, "About", modal);
@@ -111,8 +108,8 @@ public class AboutDlg implements AutoCloseable {
         dialog.getContentPane().add(createPanelOk(), BorderLayout.SOUTH);
     }
 
-    private void onLogoPropertyChanged(PropertyChangeEvent ev) {
-        if (IImageController.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
+    private void onLogoPropertyChanged(String propertyName) {
+        if (ImageHelper.PROPERTY_IMAGE.equals(propertyName)) {
             btnLogo.setIcon(ImgUtils.zoom(logo.getImage(), ICON_SIZE, ICON_SIZE));
             btnLogo.repaint();
         }
@@ -125,20 +122,18 @@ public class AboutDlg implements AutoCloseable {
 
         int icoSize = ICON_SIZE * IMAGE_ZOOM_QUALITY;
         if (logo == null)
-            logo = new Logo.IconController();
-        LogoModel lm = logo.getModel();
+            logo = new Logo2.LogoSwingIconController();
+        LogoModel2 lm = logo.getModel();
         lm.setUseGradient(true);
         lm.setSize(new SizeDouble(icoSize, icoSize));
         lm.setPadding(new BoundDouble(1));
-        lm.setRotateMode(LogoModel.ERotateMode.color);
-        logo.usePolarLightFgTransforming(true);
-        lm.setAnimated(true);
-        lm.setAnimatePeriod(12000);
-        lm.setTotalFrames(250);
+        logo.setPolarLights(true);
+        logo.setAnimatePeriod(12000);
+        logo.setFps(15);
         btnLogo = new JButton(ImgUtils.zoom(logo.getImage(), ICON_SIZE, ICON_SIZE));
-        logo.addListener(onLogoPropertyChangedListener);
+        logo.setListener(this::onLogoPropertyChanged);
 
-        smile = new Smile.IconController(SmileModel.EFaceType.Face_Disappointed);
+        smile = new Smile2.SmileSwingIconController(SmileModel2.EFaceType.Face_Disappointed);
         smile.getModel().setSize(new SizeDouble(icoSize, icoSize));
         btnLogo.setPressedIcon(ImgUtils.zoom(smile.getImage(), ICON_SIZE, ICON_SIZE));
         btnLogo.setFocusable(false);
@@ -319,7 +314,7 @@ public class AboutDlg implements AutoCloseable {
 
     @Override
     public void close() {
-        logo.removeListener(onLogoPropertyChangedListener);
+        logo.setListener(null);
         logo.close();
         smile.close();
         dialog.dispose();

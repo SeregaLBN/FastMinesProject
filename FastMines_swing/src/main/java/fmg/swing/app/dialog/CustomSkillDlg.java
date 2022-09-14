@@ -5,8 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.stream.IntStream;
 
 import javax.swing.*;
@@ -14,8 +12,8 @@ import javax.swing.event.ChangeListener;
 
 import fmg.common.geom.Matrisize;
 import fmg.core.app.model.MosaicInitData;
-import fmg.core.mosaic.MosaicGameModel;
 import fmg.core.mosaic.MosaicHelper;
+import fmg.core.mosaic.MosaicModel2;
 import fmg.core.mosaic.shape.BaseShape;
 import fmg.core.types.ESkillLevel;
 import fmg.swing.app.FastMinesApp;
@@ -29,13 +27,9 @@ public class CustomSkillDlg implements AutoCloseable {
     private JSpinner spinY;
     private JSpinner spinMines;
     private JButton btnPopup;
-    private JButton btnOk;
-    private JButton btnCancel;
     private JRadioButton radioFullScreenCurrSizeArea;
-    private JRadioButton radioFullScreenMiniSizeArea;
     private ButtonGroup radioGroup;
     private JPopupMenu popupMenu;
-    private final PropertyChangeListener onMosaicModelPropertyChangedListener = this::onMosaicModelPropertyChanged;
 
     public CustomSkillDlg(FastMinesApp app, boolean modal) {
         this.app = app;
@@ -74,9 +68,6 @@ public class CustomSkillDlg implements AutoCloseable {
         // задаю предпочтительный размер
         dialog.pack();
         dialog.setLocationRelativeTo((app == null) ? null : app.getFrame());
-
-        if (app != null)
-            app.getMosaicController().getModel().addListener(onMosaicModelPropertyChangedListener);
     }
 
     // создаю панели с нужным расположением
@@ -123,14 +114,14 @@ public class CustomSkillDlg implements AutoCloseable {
         btnPopup.setMargin(margin);
         btnPopup.addActionListener(e -> onPopup());
 
-        btnOk = new JButton();
+        JButton btnOk = new JButton();
         btnOk.setText("Ok");
         margin = btnOk.getMargin();
         margin.left = margin.right = 5; margin.top = margin.bottom = 2;
         btnOk.setMargin(margin);
         btnOk.addActionListener(e -> onOk());
 
-        btnCancel = new JButton();
+        JButton btnCancel = new JButton();
         btnCancel.setText("Cancel");
         margin = btnCancel.getMargin();
         margin.left = margin.right = 5; margin.top = margin.bottom = 2;
@@ -142,7 +133,7 @@ public class CustomSkillDlg implements AutoCloseable {
         panel4Radio.setBorder(BorderFactory.createTitledBorder("Full screen"));
         radioGroup = new ButtonGroup();
         radioFullScreenCurrSizeArea = new JRadioButton("Current cell area");
-        radioFullScreenMiniSizeArea = new JRadioButton("Minimal cell area");
+        JRadioButton radioFullScreenMiniSizeArea = new JRadioButton("Minimal cell area");
         panel4Radio.add(radioFullScreenCurrSizeArea);
         panel4Radio.add(radioFullScreenMiniSizeArea);
         radioGroup.add(radioFullScreenCurrSizeArea);
@@ -224,7 +215,7 @@ public class CustomSkillDlg implements AutoCloseable {
     private int getNeighborNumber() {
         if (app == null)
             return 21;
-        try (BaseShape shape = MosaicHelper.createShapeInstance(app.getMosaicController().getMosaicType())) {
+        try (BaseShape shape = MosaicHelper.createShapeInstance(app.getMosaicController().getModel().getMosaicType())) {
             int max = IntStream.range(0, shape.getDirectionCount())
                     .map(shape::getNeighborNumber)
                     .max().getAsInt();
@@ -248,7 +239,7 @@ public class CustomSkillDlg implements AutoCloseable {
                 if (isFullScreenAtCurrArea)
                     s = app.calcMaxMosaicSize(app.getMosaicController().getModel().getArea());
             } else {
-                s = app.getMosaicController().getSizeField();
+                s = app.getMosaicController().getModel().getSizeField();
             }
             currSizeX = s.m; currSizeY = s.n;
         }
@@ -296,23 +287,22 @@ public class CustomSkillDlg implements AutoCloseable {
         if (app == null)
             return;
         Matrisize size = new Matrisize((Integer)spinX.getValue(), (Integer)spinY.getValue());
-        int mines = eSkill.getNumberMines(app.getMosaicController().getMosaicType(), size);
+        int mines = eSkill.getNumberMines(app.getMosaicController().getModel().getMosaicType(), size);
         spinMines.setValue(mines);
     }
 
-    private void onMosaicModelPropertyChanged(PropertyChangeEvent evt) {
-        switch (evt.getPropertyName()) {
-        case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
+    public void onMosaicPropertyChanged(String propertyName) {
+        switch (propertyName) {
+        case MosaicModel2.PROPERTY_MOSAIC_TYPE:
             if (dialog.isVisible())
                 onChangeMosaicType();
             break;
-        case MosaicGameModel.PROPERTY_AREA:
+        case MosaicModel2.PROPERTY_AREA:
             if (radioFullScreenCurrSizeArea.isSelected())
                 radioGroup.clearSelection();
             break;
-        //case MosaicController.PROPERTY_SIZE_FIELD:
-        //    ...
-        //    break;
+        default:
+            // none
         }
     }
 
@@ -335,8 +325,6 @@ public class CustomSkillDlg implements AutoCloseable {
 
     @Override
     public void close() {
-        if (this.app != null)
-            app.getMosaicController().getModel().removeListener(onMosaicModelPropertyChangedListener);
         dialog.dispose();
     }
 

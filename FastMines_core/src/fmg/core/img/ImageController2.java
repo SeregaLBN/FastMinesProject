@@ -13,7 +13,7 @@ public class ImageController2<TImage, TModel extends IImageModel2, TView extends
 
     protected TModel model;
     protected TView view;
-    protected Consumer<String> changedCallback;
+    private Consumer<String> changedCallback;
 
     protected void init(TModel model, TView view) {
         this.model = model;
@@ -33,24 +33,35 @@ public class ImageController2<TImage, TModel extends IImageModel2, TView extends
 
     @Override
     public void setListener(Consumer<String> callback) {
-        changedCallback = callback;
-        view.invalidate();
+        if (callback == null) {
+            // unset
+            changedCallback = null;
+        } else {
+            // set
+            if (changedCallback != null)
+                throw new IllegalArgumentException("The callback is already set");
+            changedCallback = callback;
+            view.invalidate();
+        }
     }
 
     protected void onModelChanged(String property) {
         var isValidBefore = view.isValid();
-        var callback = changedCallback;
 
         if (ImageHelper.PROPERTY_SIZE.equals(property)) {
             view.reset();
-            if (callback != null)
-                UiInvoker.Deferred.accept(() -> callback.accept(ImageHelper.PROPERTY_SIZE));
+            firePropertyChanged(ImageHelper.PROPERTY_SIZE);
         }
 
         view.invalidate();
 
-        if ((callback != null) && isValidBefore)
-            UiInvoker.Deferred.accept(() -> callback.accept(ImageHelper.PROPERTY_IMAGE));
+        if (isValidBefore)
+            firePropertyChanged(ImageHelper.PROPERTY_IMAGE);
+    }
+
+    protected void firePropertyChanged(String propertyName) {
+        if (changedCallback != null)
+            UiInvoker.Deferred.accept(() -> changedCallback.accept(propertyName));
     }
 
     @Override

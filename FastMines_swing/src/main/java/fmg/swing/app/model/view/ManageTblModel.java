@@ -1,7 +1,6 @@
 package fmg.swing.app.model.view;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -13,21 +12,15 @@ import javax.swing.table.TableModel;
 import fmg.core.app.model.Players;
 import fmg.core.app.model.User;
 
-public class ManageTblModel implements TableModel, AutoCloseable {
+public class ManageTblModel implements TableModel {
 
     private final Players players;
-    private final PropertyChangeListener onPlayersPropertyChangedListener = this::onPlayersPropertyChanged;
     private final List<TableModelListener> arrTableModelListener = new ArrayList<>();
 
     public ManageTblModel(Players players) {
         this.players = Objects.requireNonNull(players);
-        players.addListener(onPlayersPropertyChangedListener);
     }
 
-    @Override
-    public void close() {
-        players.removeListener(onPlayersPropertyChangedListener);
-    }
 
     //=================================== Table model =========================================//
     @Override
@@ -95,7 +88,7 @@ public class ManageTblModel implements TableModel, AutoCloseable {
             listener.tableChanged(e);
     }
 
-    private void onPlayersPropertyChanged(PropertyChangeEvent ev) {
+    public void onPlayersPropertyChanged(PropertyChangeEvent ev) {
         User user;
         int pos;
         switch (ev.getPropertyName()) {

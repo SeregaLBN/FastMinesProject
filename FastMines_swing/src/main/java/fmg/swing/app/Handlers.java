@@ -297,7 +297,7 @@ public class Handlers {
                     else {
                         app.getChampionDialog().showData(
                                 app.getSkillLevel(),
-                                app.getMosaicController().getMosaicType());
+                                app.getMosaicController().getModel().getMosaicType());
                     }
                 }
             };
@@ -315,7 +315,7 @@ public class Handlers {
                     if (app.getStatisticDialog().getDialog().isVisible())
                         app.getStatisticDialog().setVisible(false);
                     else
-                        app.getStatisticDialog().showData(app.getSkillLevel(), app.getMosaicController().getMosaicType());
+                        app.getStatisticDialog().showData(app.getSkillLevel(), app.getMosaicController().getModel().getMosaicType());
                 }
             };
 
@@ -388,7 +388,7 @@ public class Handlers {
                 private static final long serialVersionUID = 1L;
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Matrisize size = app.getMosaicController().getSizeField();
+                    Matrisize size = app.getMosaicController().getModel().getSizeField();
                     size = new Matrisize(size);
                     size.m++;
                     app.changeGame(size);
@@ -403,7 +403,7 @@ public class Handlers {
                 private static final long serialVersionUID = 1L;
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Matrisize size = app.getMosaicController().getSizeField();
+                    Matrisize size = app.getMosaicController().getModel().getSizeField();
                     size = new Matrisize(size);
                     size.m = Math.max(3, size.m - 1);
                     app.changeGame(size);
@@ -418,7 +418,7 @@ public class Handlers {
                 private static final long serialVersionUID = 1L;
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Matrisize size = app.getMosaicController().getSizeField();
+                    Matrisize size = app.getMosaicController().getModel().getSizeField();
                     size = new Matrisize(size);
                     size.n++;
                     app.changeGame(size);
@@ -433,7 +433,7 @@ public class Handlers {
                 private static final long serialVersionUID = 1L;
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Matrisize size = app.getMosaicController().getSizeField();
+                    Matrisize size = app.getMosaicController().getModel().getSizeField();
                     size = new Matrisize(size);
                     size.n = Math.max(3, size.n - 1);
                     app.changeGame(size);

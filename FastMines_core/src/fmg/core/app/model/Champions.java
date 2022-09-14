@@ -1,16 +1,15 @@
 package fmg.core.app.model;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.*;
+import java.util.function.Consumer;
 
-import fmg.common.notifier.INotifyPropertyChanged;
-import fmg.common.notifier.NotifyPropertyChanged;
+import fmg.common.ui.UiInvoker;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
 
 /** Champions data model */
-public class Champions implements INotifyPropertyChanged, AutoCloseable {
+public class Champions {
 
     private static final int MAX_SIZE = 10;
     public static final String CHAMPION_ADDED = ChampionAdded.class.getSimpleName();
@@ -19,9 +18,7 @@ public class Champions implements INotifyPropertyChanged, AutoCloseable {
     @SuppressWarnings("unchecked")
     private List<Record>[][] records = new List[EMosaic.values().length][ESkillLevel.values().length - 1];
 
-    private NotifyPropertyChanged notifier = new NotifyPropertyChanged(this, true);
-    private final PropertyChangeListener onPlayersPropertyChangedListener = this::onPlayersPropertyChanged;
-    private Runnable unsubscriber;
+    private Consumer<PropertyChangeEvent> changedCallback;
 
     public static class Record implements Comparable<Record> {
         public UUID userId;
@@ -98,18 +95,6 @@ public class Champions implements INotifyPropertyChanged, AutoCloseable {
                     records[mosaic.ordinal()][eSkill.ordinal()] = new ArrayList<>(MAX_SIZE);
     }
 
-    public void subscribeTo(Players players) {
-        if (unsubscriber != null) {
-            unsubscriber.run();
-            unsubscriber = null;
-        }
-
-        if (players != null) {
-            players.addListener(onPlayersPropertyChangedListener);
-            unsubscriber = () -> players.removeListener(onPlayersPropertyChangedListener);
-        }
-    }
-
     public List<Record>[][] getRecords() {
         return records;
     }
@@ -133,7 +118,7 @@ public class Champions implements INotifyPropertyChanged, AutoCloseable {
             list.subList(MAX_SIZE, list.size()).clear();
 
         if (pos < MAX_SIZE) {
-            notifier.firePropertyChanged(null, new ChampionAdded(user.getId(), mosaic, eSkill, pos), CHAMPION_ADDED);
+            firePropertyChanged(null, new ChampionAdded(user.getId(), mosaic, eSkill, pos), CHAMPION_ADDED);
             return pos;
         }
 
@@ -171,7 +156,7 @@ public class Champions implements INotifyPropertyChanged, AutoCloseable {
         return -1;
     }
 
-    private void onPlayersPropertyChanged(PropertyChangeEvent ev) {
+    public void onPlayersPropertyChanged(PropertyChangeEvent ev) {
         if (!ev.getPropertyName().equals(Players.USER_NAME_UPDATED))
             return;
 
@@ -184,32 +169,31 @@ public class Champions implements INotifyPropertyChanged, AutoCloseable {
                 if (eSkill != ESkillLevel.eCustom) {
                     List<Record> list = records[mosaic.ordinal()][eSkill.ordinal()];
                     boolean isChanged = false;
-                    for (Record record : list)
-                        if ((user.getId() == record.userId) && !user.getName().equals(record.userName)) {
-                            record.userName = user.getName();
+                    for (Record rec : list)
+                        if ((user.getId() == rec.userId) && !user.getName().equals(rec.userName)) {
+                            rec.userName = user.getName();
                             isChanged = true;
                         }
                     if (isChanged)
-                        notifier.firePropertyChanged(null, user.getId(), CHAMPION_RENAMED);
+                        firePropertyChanged(null, user.getId(), CHAMPION_RENAMED);
                 }
     }
 
-    @Override
-    public void close() {
-        if (unsubscriber != null)
-            unsubscriber.run();
-
-        notifier.close();
+    private void firePropertyChanged(Object oldValue, Object newValue, String propertyName) {
+        if (changedCallback != null)
+            UiInvoker.Deferred.accept(() -> changedCallback.accept(new PropertyChangeEvent(this, propertyName, oldValue, newValue)));
     }
 
-    @Override
-    public void addListener(PropertyChangeListener listener) {
-        notifier.addListener(listener);
-    }
-
-    @Override
-    public void removeListener(PropertyChangeListener listener) {
-        notifier.removeListener(listener);
+    public void setListener(Consumer<PropertyChangeEvent> callback) {
+        if (callback == null) {
+            // unset
+            changedCallback = null;
+        } else {
+            // set
+            if (changedCallback != null)
+                throw new IllegalArgumentException("The callback is already set");
+            changedCallback = callback;
+        }
     }
 
 }

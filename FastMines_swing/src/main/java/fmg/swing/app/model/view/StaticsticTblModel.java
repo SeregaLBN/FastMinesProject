@@ -1,7 +1,6 @@
 package fmg.swing.app.model.view;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -10,25 +9,18 @@ import java.util.Locale;
 import javax.swing.event.TableModelEvent;
 
 import fmg.core.app.model.Players;
+import fmg.core.app.model.Players.UserStatisticChanged;
 import fmg.core.app.model.Statistics;
 import fmg.core.app.model.User;
-import fmg.core.app.model.Players.UserStatisticChanged;
 import fmg.core.types.EMosaic;
 
-public class StaticsticTblModel extends ReportTableModel implements AutoCloseable {
+public class StaticsticTblModel extends ReportTableModel {
 
     private final Players players;
-    private final PropertyChangeListener onPlayersPropertyChangedListener = this::onPlayersPropertyChanged;
 
     public StaticsticTblModel(Players players, EMosaic eMosaic) {
         super(eMosaic);
         this.players = players;
-        players.addListener(onPlayersPropertyChangedListener);
-    }
-
-    @Override
-    public void close() {
-        players.removeListener(onPlayersPropertyChangedListener);
     }
 
     @Override
@@ -81,7 +73,7 @@ public class StaticsticTblModel extends ReportTableModel implements AutoCloseabl
     @Override
     public Class<?> getColumnClass(int columnIndex) { return String.class; }
 
-    private void onPlayersPropertyChanged(PropertyChangeEvent ev) {
+    public void onPlayersPropertyChanged(PropertyChangeEvent ev) {
         if (ev.getPropertyName().equals(Players.USER_STATISTIC_CHANGED)) {
             UserStatisticChanged usc = (UserStatisticChanged)ev.getNewValue();
             int pos = players.getPos(usc.userId);

@@ -1,6 +1,7 @@
 package fmg.swing.app.dialog;
 
 import java.awt.Dimension;
+import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,9 +60,12 @@ public class ChampionDlg extends ReportDlg {
         super.showData(eSkill, eMosaic, pos);
     }
 
+    public void onChampionsPropertyChanged(PropertyChangeEvent ev) {
+        tableModels.forEach(tm -> tm.onChampionsPropertyChanged(ev));
+    }
+
     @Override
     public void close() {
-        tableModels.forEach(ChampionTblModel::close);
         super.close();
     }
 

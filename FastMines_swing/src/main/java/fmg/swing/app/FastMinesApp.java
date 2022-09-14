@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +15,6 @@ import java.util.function.Supplier;
 
 import javax.swing.*;
 
-import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.Matrisize;
@@ -28,12 +26,11 @@ import fmg.core.app.model.Champions;
 import fmg.core.app.model.MosaicInitData;
 import fmg.core.app.model.Players;
 import fmg.core.app.model.User;
-import fmg.core.img.IImageController;
-import fmg.core.img.LogoModel;
-import fmg.core.mosaic.MosaicController;
-import fmg.core.mosaic.MosaicDrawModel;
-import fmg.core.mosaic.MosaicGameModel;
+import fmg.core.img.ImageHelper;
+import fmg.core.img.LogoModel2;
+import fmg.core.mosaic.MosaicController2;
 import fmg.core.mosaic.MosaicHelper;
+import fmg.core.mosaic.MosaicModel2;
 import fmg.core.types.EGameStatus;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
@@ -49,8 +46,8 @@ import fmg.swing.app.serializers.PlayersSwingSerializer;
 import fmg.swing.app.toolbar.EBtnNewGameState;
 import fmg.swing.app.toolbar.ToolBar;
 import fmg.swing.img.Animator;
-import fmg.swing.img.Logo;
-import fmg.swing.mosaic.MosaicJPanelController;
+import fmg.swing.img.Logo2;
+import fmg.swing.mosaic.MosaicJPanelController2;
 import fmg.swing.utils.Cast;
 import fmg.swing.utils.ScreenResolutionHelper;
 import fmg.swing.utils.Timer;
@@ -70,11 +67,11 @@ public class FastMinesApp {
     private JPanel     contentPane;
     private MainMenu   menu;
     private ToolBar    toolbar;
-    private MosaicJPanelController mosaicController;
+    private MosaicJPanelController2 mosaicController;
     private PausePanel pausePanel;
     private StatusBar  statusBar;
 
-    private Logo.ImageAwtController logo;
+    private Logo2.LogoAwtImageController logo;
     private Players players;
     private UUID activeUserId; // current user
     private Champions champions;
@@ -94,12 +91,6 @@ public class FastMinesApp {
     private boolean shedulePack;
 
     private static final boolean IS_WIN_10 = System.getProperty("os.name").equalsIgnoreCase("Windows 10");
-
-    private final PropertyChangeListener      onMosaicModelPropertyChangedListener = this::onMosaicModelPropertyChanged;
-    private final PropertyChangeListener onMosaicControllerPropertyChangedListener = this::onMosaicControllerPropertyChanged;
-    private final PropertyChangeListener     onLogoMainIconPropertyChangedListener = this::onLogoMainIconPropertyChanged;
-    private final PropertyChangeListener          onPlayersPropertyChangedListener = this::onPlayersPropertyChanged;
-    private final PropertyChangeListener        onChampionsPropertyChangedListener = this::onChampionsPropertyChanged;
 
     public FastMinesApp() {
         super();
@@ -191,25 +182,23 @@ public class FastMinesApp {
     }
 
     /** mosaic controller */
-    private void setMosaicController(MosaicJPanelController mosaicController) {
+    private void setMosaicController(MosaicJPanelController2 mosaicController) {
         if (this.mosaicController != null) {
-            this.mosaicController.getModel().removeListener(onMosaicModelPropertyChangedListener);
-            this.mosaicController.removeListener(onMosaicControllerPropertyChangedListener);
+            this.mosaicController.setListener(null);
             this.mosaicController.close();
         }
         this.mosaicController = mosaicController;
         if (mosaicController != null) {
-            MosaicDrawModel<?> model = mosaicController.getModel();
+            MosaicModel2 model = mosaicController.getModel();
             model.setPadding(new BoundDouble(0));
             model.setBackgroundColor(model.getBackgroundColor().darker(0.2));
-            model.addListener(onMosaicModelPropertyChangedListener);
-            mosaicController.addListener(onMosaicControllerPropertyChangedListener);
+            mosaicController.setListener(this::onMosaicPropertyChanged);
         }
     }
     /** mosaic controller */
-    public MosaicJPanelController getMosaicController() {
+    public MosaicJPanelController2 getMosaicController() {
         if (mosaicController == null)
-            setMosaicController(new MosaicJPanelController());
+            setMosaicController(new MosaicJPanelController2());
         return mosaicController;
     }
 //    /** mosaic data */
@@ -267,7 +256,7 @@ public class FastMinesApp {
         final Point startLocation = new Point();
         boolean defaultData;
         boolean doNotAskStartup;
-        MosaicJPanelController mosaicCtrllr;
+        MosaicJPanelController2 mosaicCtrllr;
         { // load settings and apply
             AppData mwd = new AppData();
             defaultData = !new AppDataSerializer().load(mwd);
@@ -287,8 +276,8 @@ public class FastMinesApp {
             frame.setUndecorated(!mwd.getShowElement(EShowElement.eCaption));
 
             mosaicCtrllr = getMosaicController();
-            mosaicCtrllr.setSizeField(mwd.getSizeField());
-            mosaicCtrllr.setMosaicType(mwd.getMosaicType());
+            mosaicCtrllr.getModel().setSizeField(mwd.getSizeField());
+            mosaicCtrllr.getModel().setMosaicType(mwd.getMosaicType());
             mosaicCtrllr.setCountMines(mwd.getCountMines());
             mosaicCtrllr.getModel().setSize(mwd.getSizeMosaic());
 
@@ -325,17 +314,15 @@ public class FastMinesApp {
 
         frame.setJMenuBar(getMenu().getMenuBar());
         frame.setTitle("FastMines");
-        this.logo = new Logo.ImageAwtController();
-        LogoModel logoModel = this.logo.getModel();
+        this.logo = new Logo2.LogoAwtImageController();
+        LogoModel2 logoModel = this.logo.getModel();
         logoModel.setUseGradient(true);
         logoModel.setSize(new SizeDouble(128, 128));
         logoModel.setPadding(new BoundDouble(1));
-        logoModel.setBackgroundColor(Color.Transparent());//ImageProperties.DefaultBkColor);
-        logoModel.setRotateMode(LogoModel.ERotateMode.combi);
-        logoModel.setAnimatePeriod(25000);
-        logoModel.setTotalFrames(260);
-        this.logo.useRotateTransforming(true);
-        this.logo.usePolarLightFgTransforming(true);
+        this.logo.setRotateImage(true);
+        this.logo.setPolarLights(true);
+        this.logo.setAnimatePeriod(25000);
+        this.logo.setFps(30);
         /** /
          this.logo.addModelTransformer((currentFrame, totalFrames, model) -> {
              double angle = currentFrame * 180.0 * 2 / totalFrames;
@@ -347,9 +334,8 @@ public class FastMinesApp {
             logoModel.setPadding((int)padding);
         });
         /**/
-        logoModel.setAnimated(true);
         frame.setIconImage(logo.getImage());
-        this.logo.addListener(onLogoMainIconPropertyChangedListener);
+        this.logo.setListener(this::onLogoMainIconPropertyChanged);
 
 //        this.getHandlers().getMosaicListener().OnChangedArea(new MosaicEvent(getMosaic())); // TODO: это нужно только тогда, когда нет десериализации
         getToolbar().getEdtMinesLeft().setText(Integer.toString(mosaicCtrllr.getCountMinesLeft()));
@@ -425,8 +411,9 @@ public class FastMinesApp {
 
     public ESkillLevel getSkillLevel() {
         var mc = getMosaicController();
-        EMosaic eMosaic   = mc.getMosaicType();
-        Matrisize sizeFld = mc.getSizeField();
+        var md = mc.getModel();
+        EMosaic eMosaic   = md.getMosaicType();
+        Matrisize sizeFld = md.getSizeField();
         int numberMines   = mc.getCountMines();
         return ESkillLevel.calcSkillLevel(eMosaic, sizeFld, numberMines);
     }
@@ -557,7 +544,7 @@ public class FastMinesApp {
     }
 
     void onClose() {
-        MosaicJPanelController mosaicCtrllr = getMosaicController();
+        var mosaicCtrllr = getMosaicController();
         mosaicCtrllr.setOnClickEvent(null);
 
         if (playersChanged)
@@ -568,10 +555,11 @@ public class FastMinesApp {
         { // csabe settings
             AppData spm = new AppData();
 
-            spm.setSizeField(mosaicCtrllr.getSizeField());
-            spm.setMosaicType(mosaicCtrllr.getMosaicType());
+            var mosaicModel = mosaicCtrllr.getModel();
+            spm.setSizeField(mosaicModel.getSizeField());
+            spm.setMosaicType(mosaicModel.getMosaicType());
             spm.setCountMines(mosaicCtrllr.getCountMines());
-            spm.setSizeMosaic(mosaicCtrllr.getSize());
+            spm.setSizeMosaic(mosaicModel.getSize());
 
             spm.setActiveUserId(getActiveUserId());
             spm.setDoNotAskStartup(getPlayerManageDlg().isDoNotAskStartupChecked());
@@ -604,19 +592,15 @@ public class FastMinesApp {
         if (isPlayerManageDialogExist())
             getPlayerManageDlg().close();
 
-        if (champions != null) {
-            champions.removeListener(onChampionsPropertyChangedListener);
-            champions.close();
-        }
-        if (players != null) {
-            players.removeListener(onPlayersPropertyChangedListener);
-            players.close();
-        }
+        if (champions != null)
+            champions.setListener(null);
+        if (players != null)
+            players.setListener(null);
 
 //      frame.setVisible(false);
         setMosaicController(null);
 
-        logo.removeListener(onLogoMainIconPropertyChangedListener);
+        logo.setListener(null);
         logo.close();
 
         getGameTimer().close();
@@ -650,7 +634,7 @@ public class FastMinesApp {
         changeGame(newSize,
                     (skill == ESkillLevel.eCustom)
                         ? getMosaicController().getCountMines()
-                        : skill.getNumberMines(getMosaicController().getMosaicType()));
+                        : skill.getNumberMines(getMosaicController().getModel().getMosaicType()));
     }
 
     /** Поменять игру на новую мозаику */
@@ -659,7 +643,7 @@ public class FastMinesApp {
             changePause();
 
         ESkillLevel skill = getSkillLevel();
-        getMosaicController().setMosaicType(mosaicType);
+        getMosaicController().getModel().setMosaicType(mosaicType);
         if (skill != ESkillLevel.eCustom) {
             int numberMines = skill.getNumberMines(mosaicType);
             getMosaicController().setCountMines(numberMines);
@@ -680,7 +664,7 @@ public class FastMinesApp {
         if (isPaused())
             changePause();
 
-        getMosaicController().setSizeField(newSize);
+        getMosaicController().getModel().setSizeField(newSize);
         getMosaicController().setCountMines(numberMines);
     }
 
@@ -695,15 +679,16 @@ public class FastMinesApp {
         if (isPaused())
             changePause();
 
-        MosaicJPanelController ctrlr = getMosaicController();
-        int numberMines = skill.getNumberMines(ctrlr.getMosaicType());
+        var ctrlr = getMosaicController();
+        var model = ctrlr.getModel();
+        int numberMines = skill.getNumberMines(model.getMosaicType());
         Matrisize sizeFld = skill.getDefaultSize();
-        double oldArea = ctrlr.getModel().getArea();
+        double oldArea = model.getArea();
 
-        ctrlr.setSizeField(sizeFld);
+        model.setSizeField(sizeFld);
         ctrlr.setCountMines(numberMines);
 
-        SizeDouble newSize = MosaicHelper.getSize(ctrlr.getMosaicType(), oldArea, sizeFld);
+        SizeDouble newSize = MosaicHelper.getSize(model.getMosaicType(), oldArea, sizeFld);
         setMosaicSize(newSize);
     }
 
@@ -768,7 +753,7 @@ public class FastMinesApp {
     SizeDouble calcMaxMosaicSize(Matrisize mosaicSizeField) {
         SizeDouble sizeMosaicIn = calcMosaicWindowSize(ScreenResolutionHelper.getDesktopSize(frame.getGraphicsConfiguration()));
         SizeDouble sizeMosaicOut = new SizeDouble();
-        MosaicHelper.findAreaBySize(getMosaicController().getMosaicType(), mosaicSizeField, sizeMosaicIn, sizeMosaicOut);
+        MosaicHelper.findAreaBySize(getMosaicController().getModel().getMosaicType(), mosaicSizeField, sizeMosaicIn, sizeMosaicOut);
         return sizeMosaicOut;
     }
 
@@ -778,7 +763,7 @@ public class FastMinesApp {
      * @return max размер поля мозаики */
     public Matrisize calcMaxMosaicSize(double area) {
         SizeDouble sizeMosaic = calcMosaicWindowSize(ScreenResolutionHelper.getDesktopSize(frame.getGraphicsConfiguration()));
-        return MosaicHelper.findSizeByArea(getMosaicController().getMosaicType(), area, sizeMosaic);
+        return MosaicHelper.findSizeByArea(getMosaicController().getModel().getMosaicType(), area, sizeMosaic);
     }
 
     /** проверить что находится в рамках экрана */
@@ -806,9 +791,9 @@ public class FastMinesApp {
             if (getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected()) {
                 sizeMax();
             } else {
-                MosaicJPanelController mosaicController = getMosaicController();
-                SizeDouble maxSize = calcMaxMosaicSize(mosaicController.getSizeField());
-                if ((maxSize.height < mosaicController.getSize().height) || (maxSize.width < mosaicController.getSize().width))
+                var mosaicModel = getMosaicController().getModel();
+                SizeDouble maxSize = calcMaxMosaicSize(mosaicModel.getSizeField());
+                if ((maxSize.height < mosaicModel.getSize().height) || (maxSize.width < mosaicModel.getSize().width))
                     setMosaicSize(maxSize);
             }
 
@@ -852,7 +837,7 @@ public class FastMinesApp {
 
     /** mosaic size in pixels */
     void setMosaicSize(SizeDouble size) {
-        SizeDouble maxSize = calcMaxMosaicSize(getMosaicController().getSizeField());
+        SizeDouble maxSize = calcMaxMosaicSize(getMosaicController().getModel().getSizeField());
         if ((maxSize.width < size.width) || (maxSize.height < size.height))
             size = maxSize;
         Insets o = getMosaicMargin();
@@ -863,14 +848,14 @@ public class FastMinesApp {
 
     /** Zoom + */
     void sizeInc() {
-        MosaicGameModel model = getMosaicController().getModel();
+        var model = getMosaicController().getModel();
         model.setArea(model.getArea() * 1.05);
         frame.pack();
     }
 
     /** Zoom - */
     void sizeDec() {
-        MosaicGameModel model = getMosaicController().getModel();
+        var model = getMosaicController().getModel();
         double newArea = Math.max(model.getArea() * 0.95, MosaicInitData.AREA_MINIMUM);
         model.setArea(newArea);
         frame.pack();
@@ -878,7 +863,7 @@ public class FastMinesApp {
 
     /** Zoom minimum */
     void sizeMin() {
-        MosaicGameModel model = getMosaicController().getModel();
+        var model = getMosaicController().getModel();
         model.setArea(MosaicInitData.AREA_MINIMUM);
         frame.pack();
     }
@@ -887,9 +872,9 @@ public class FastMinesApp {
     void sizeMax() {
         SizeDouble sizeMosaicIn = calcMosaicWindowSize(ScreenResolutionHelper.getDesktopSize(frame.getGraphicsConfiguration()));
         SizeDouble sizeMosaicOut = new SizeDouble();
-        MosaicJPanelController ctrllr = getMosaicController();
-        MosaicGameModel model = ctrllr.getModel();
-        double newArea = MosaicHelper.findAreaBySize(ctrllr.getMosaicType(), ctrllr.getSizeField(), sizeMosaicIn, sizeMosaicOut);
+        var ctrllr = getMosaicController();
+        var model = ctrllr.getModel();
+        double newArea = MosaicHelper.findAreaBySize(model.getMosaicType(), model.getSizeField(), sizeMosaicIn, sizeMosaicOut);
         model.setArea(newArea);
         frame.pack();
     }
@@ -1067,15 +1052,14 @@ public class FastMinesApp {
     public Players getPlayers() {
         if (players == null) {
             players = new PlayersSwingSerializer().load();
-            players.addListener(onPlayersPropertyChangedListener);
+            players.setListener(this::onPlayersPropertyChanged);
         }
         return players;
     }
     public Champions getChampions() {
         if (champions == null) {
             champions = new ChampionsSwingSerializer().load();
-            champions.subscribeTo(getPlayers());
-            champions.addListener(onChampionsPropertyChangedListener);
+            champions.setListener(this::onChampionsPropertyChanged);
         }
         return champions;
     }
@@ -1098,7 +1082,7 @@ public class FastMinesApp {
 
     /** Сохранить чемпиона && Установить статистику */
     private void saveStatisticAndChampion() {
-        MosaicJPanelController mosaicCtrllr = getMosaicController();
+        var mosaicCtrllr = getMosaicController();
         if (mosaicCtrllr.getGameStatus() != EGameStatus.eGSEnd)
             throw new IllegalArgumentException("Invalid method state call");
 
@@ -1111,7 +1095,7 @@ public class FastMinesApp {
         if (eSkill == ESkillLevel.eCustom)
             return;
 
-        final EMosaic eMosaic = mosaicCtrllr.getMosaicType();
+        final EMosaic eMosaic = mosaicCtrllr.getModel().getMosaicType();
         final long realCountOpen = victory ? mosaicCtrllr.getCountMines() : mosaicCtrllr.getCountOpen();
         final long playTime = getGameTimer().getTime();
         final int clickCount = mosaicCtrllr.getCountClick();
@@ -1158,41 +1142,33 @@ public class FastMinesApp {
         return getPlayers().getUser(userId);
     }
 
-    private void onLogoMainIconPropertyChanged(PropertyChangeEvent ev) {
-        if (IImageController.PROPERTY_IMAGE.equals(ev.getPropertyName()))
+    private void onLogoMainIconPropertyChanged(String propertyName) {
+        if (ImageHelper.PROPERTY_IMAGE.equals(propertyName))
             frame.setIconImage(logo.getImage());
     }
 
-    private void onMosaicModelPropertyChanged(PropertyChangeEvent ev) {
-        switch (ev.getPropertyName()) {
-        case MosaicDrawModel.PROPERTY_SIZE:
-          //Logger.info(">>>>>>>>>>>>>>>>>>>>>");
+    private void onMosaicPropertyChanged(String propertyName) {
+//        Logger.info("Main::propertyChange: " + propertyName);
+        switch (propertyName) {
+        case ImageHelper.PROPERTY_SIZE:
+            //Logger.info(">>>>>>>>>>>>>>>>>>>>>");
             recheckLocation();
             break;
-        case MosaicGameModel.PROPERTY_SIZE_FIELD:
+        case MosaicModel2.PROPERTY_SIZE_FIELD:
             getMenu().getGame().recheckSelectedSkillLevel();
             break;
-        case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
+        case MosaicModel2.PROPERTY_MOSAIC_TYPE:
             getMenu().getMosaics().recheckSelectedMosaicType();
             break;
-        default:
-            // none
-        }
-    }
-
-    private void onMosaicControllerPropertyChanged(PropertyChangeEvent ev) {
-//        Logger.info("Main::propertyChange: eventName=" + ev.getSource().getClass().getSimpleName() + "." + ev.getPropertyName());
-//        MosaicControllerSwing source = (MosaicControllerSwing)ev.getSource();
-        switch (ev.getPropertyName()) {
-        case MosaicController.PROPERTY_COUNT_MINES:
+        case MosaicController2.PROPERTY_COUNT_MINES:
             getMenu().getMosaics().recheckSelectedMosaicType();
             getMenu().getGame().recheckSelectedSkillLevel();
             break;
-        case MosaicController.PROPERTY_GAME_STATUS:
+        case MosaicController2.PROPERTY_GAME_STATUS:
             {
                 getToolbar().getBtnPause().getButton().setEnabled(getMosaicController().getGameStatus() == EGameStatus.eGSPlay);
-                //Logger.info("OnChangeGameStatus: " + e.getSource().getGameStatus());
-                switch ((EGameStatus)ev.getNewValue()) {
+                //Logger.info("OnChangeGameStatus: " + getMosaicController().getGameStatus());
+                switch (getMosaicController().getGameStatus()) {
                 case eGSCreateGame:
                 case eGSReady:
                     {
@@ -1233,56 +1209,37 @@ public class FastMinesApp {
         //    break;
         //case MosaicController.PROPERTY_COUNT_OPEN:
         //    break;
-        case MosaicController.PROPERTY_COUNT_MINES_LEFT:
+        case MosaicController2.PROPERTY_COUNT_MINES_LEFT:
             getToolbar().getEdtMinesLeft().setText(Integer.toString(getMosaicController().getCountMinesLeft()));
             break;
-        case MosaicController.PROPERTY_COUNT_CLICK:
+        case MosaicController2.PROPERTY_COUNT_CLICK:
             getStatusBar().setClickCount(getMosaicController().getCountClick());
             break;
         default:
             // none
         }
+
+        if (isCustomSkillDialogExist())
+            getCustomSkillDialog().onMosaicPropertyChanged(propertyName);
     }
 
 
     private void onPlayersPropertyChanged(PropertyChangeEvent ev) {
         playersChanged = true;
+        if (champions != null)
+            champions.onPlayersPropertyChanged(ev);
+        if (isPlayerManageDialogExist())
+            playerManageDialog.onPlayersPropertyChanged(ev);
+        if (isStatisticDialogExist())
+            statisticDialog.onPlayersPropertyChanged(ev);
     }
 
     private void onChampionsPropertyChanged(PropertyChangeEvent ev) {
         championsChanged = true;
+        if (isChampionDialogExist())
+            championDialog.onChampionsPropertyChanged(ev);
     }
 
-    /** /
-    static void printSystemProperties() {
-        System.getProperties().entrySet().forEach(kv -> Logger.info(kv.getKey() + "=" + kv.getValue()));
-    }
-
-    /** /
-    static void setSysOut() {
-        try {
-            Properties props = System.getProperties();
-            Object val = props.get("user.dir");
-            if (val != null) {
-                String file = val.toString();
-
-                val = props.get("file.separator");
-                if (val == null)
-                    val = '/';
-
-                file += val + "FastMines.log";
-                GuiTools.alert(file);
-
-                //new FileOutputStream(file);
-                PrintStream ps = new PrintStream(file);
-                System.setOut(ps);
-                System.setErr(ps);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            GuiTools.alert(ex.toString());
-        }
-    }
 
     /** /
     static void ViewAllEvents() {

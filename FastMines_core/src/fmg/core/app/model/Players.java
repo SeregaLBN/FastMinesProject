@@ -1,17 +1,17 @@
 package fmg.core.app.model;
 
-import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
-import fmg.common.notifier.INotifyPropertyChanged;
-import fmg.common.notifier.NotifyPropertyChanged;
+import fmg.common.ui.UiInvoker;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
 
 /** Players data model == all users and their statistics */
-public class Players implements INotifyPropertyChanged, AutoCloseable {
+public class Players {
 
     public static final String USER_NAME_UPDATED      = "UserNameUpdated";
     public static final String USER_DELETED           = "UserDeleted";
@@ -19,7 +19,7 @@ public class Players implements INotifyPropertyChanged, AutoCloseable {
     public static final String USER_STATISTIC_CHANGED = UserStatisticChanged.class.getSimpleName();
 
     private List<Record> records = new ArrayList<>();
-    private NotifyPropertyChanged notifier = new NotifyPropertyChanged(this, true);
+    private Consumer<PropertyChangeEvent> changedCallback;
 
     public static class Record {
         public final User user;
@@ -65,7 +65,7 @@ public class Players implements INotifyPropertyChanged, AutoCloseable {
         int pos = records.indexOf(rec);
         records.remove(pos);
 
-        notifier.firePropertyChanged(pos, rec.user, USER_DELETED);
+        firePropertyChanged(pos, rec.user, USER_DELETED);
     }
 
     public boolean isExist(UUID userId) { return find(userId) != null; }
@@ -84,7 +84,7 @@ public class Players implements INotifyPropertyChanged, AutoCloseable {
         user.setName(name);
         user.setPassword(pass);
         records.add(new Record(user));
-        notifier.firePropertyChanged(null, user, USER_ADDED);
+        firePropertyChanged(null, user, USER_ADDED);
         return user.getId();
     }
 
@@ -126,7 +126,7 @@ public class Players implements INotifyPropertyChanged, AutoCloseable {
             subRec.clickCount += clickCount;
         }
 
-        notifier.firePropertyChanged(null, new UserStatisticChanged(userId, mosaic, skill), USER_STATISTIC_CHANGED);
+        firePropertyChanged(null, new UserStatisticChanged(userId, mosaic, skill), USER_STATISTIC_CHANGED);
     }
 
     private Record find(UUID userId) {
@@ -178,23 +178,24 @@ public class Players implements INotifyPropertyChanged, AutoCloseable {
     public void setUserName(int pos, String name) {
         User user = getUser(pos);
         user.setName(name);
-        notifier.firePropertyChanged(null, user, USER_NAME_UPDATED);
+        firePropertyChanged(null, user, USER_NAME_UPDATED);
     }
 
-
-    @Override
-    public void close() {
-        notifier.close();
+    private void firePropertyChanged(Object oldValue, Object newValue, String propertyName) {
+        if (changedCallback != null)
+            UiInvoker.Deferred.accept(() -> changedCallback.accept(new PropertyChangeEvent(this, propertyName, oldValue, newValue)));
     }
 
-    @Override
-    public void addListener(PropertyChangeListener listener) {
-        notifier.addListener(listener);
-    }
-
-    @Override
-    public void removeListener(PropertyChangeListener listener) {
-        notifier.removeListener(listener);
+    public void setListener(Consumer<PropertyChangeEvent> callback) {
+        if (callback == null) {
+            // unset
+            changedCallback = null;
+        } else {
+            // set
+            if (changedCallback != null)
+                throw new IllegalArgumentException("The callback is already set");
+            changedCallback = callback;
+        }
     }
 
 }

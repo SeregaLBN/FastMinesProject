@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
 import java.util.UUID;
 
 import javax.swing.*;
@@ -93,7 +94,6 @@ public class ManageDlg implements AutoCloseable {
 
     @Override
     public void close() {
-        tableModel.close();
         dialog.dispose();
     }
 
@@ -311,6 +311,11 @@ public class ManageDlg implements AutoCloseable {
 
     public void setDoNotAskStartupChecked(boolean checked) {
         doNotAskStartup.setSelected(checked);
+    }
+
+    public void onPlayersPropertyChanged(PropertyChangeEvent ev) {
+        if (tableModel != null)
+            tableModel.onPlayersPropertyChanged(ev);
     }
 
 }

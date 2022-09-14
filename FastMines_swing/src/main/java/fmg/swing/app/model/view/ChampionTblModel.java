@@ -1,7 +1,6 @@
 package fmg.swing.app.model.view;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.text.SimpleDateFormat;
 
 import javax.swing.event.TableModelEvent;
@@ -12,24 +11,19 @@ import fmg.core.app.model.Champions.ChampionAdded;
 import fmg.core.app.model.Champions.Record;
 import fmg.core.types.EMosaic;
 
-public class ChampionTblModel extends ReportTableModel implements AutoCloseable {
+public class ChampionTblModel extends ReportTableModel {
 
     private final Champions champions;
-    private final PropertyChangeListener onPlayersPropertyChangedListener = this::onChampionsPropertyChanged;
 
     public ChampionTblModel(Champions champions, EMosaic eMosaic) {
         super(eMosaic);
         this.champions = champions;
-        champions.addListener(onPlayersPropertyChangedListener);
     }
 
     @Override
-    public void close() {
-        champions.removeListener(onPlayersPropertyChangedListener);
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        // none
     }
-
-    @Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {}
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) { return false; }
@@ -77,7 +71,7 @@ public class ChampionTblModel extends ReportTableModel implements AutoCloseable 
     @Override
     public Class<?> getColumnClass(int columnIndex) { return (columnIndex==0) ? String.class : Integer.class; }
 
-    private void onChampionsPropertyChanged(PropertyChangeEvent ev) {
+    public void onChampionsPropertyChanged(PropertyChangeEvent ev) {
         if (ev.getPropertyName().equals(Champions.CHAMPION_ADDED)) {
             ChampionAdded val = (ChampionAdded)ev.getNewValue();
             if ((eMosaic == val.mosaic) && (eSkill  == val.skill))
