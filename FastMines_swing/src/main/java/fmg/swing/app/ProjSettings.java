@@ -6,7 +6,7 @@ import javax.swing.UIManager;
 import fmg.common.Logger;
 import fmg.common.ui.UiInvoker;
 import fmg.core.app.AProjSettings;
-import fmg.core.mosaic.MosaicDrawModel;
+import fmg.core.mosaic.MosaicModel2;
 import fmg.core.types.draw.PenBorder2;
 import fmg.swing.img.Animator;
 import fmg.swing.utils.Cast;
@@ -47,11 +47,11 @@ public final class ProjSettings extends AProjSettings {
             UIDefaults uiDef = UIManager.getDefaults();
             java.awt.Color clr = uiDef.getColor("Panel.background"); // TabbedPane.highlight    Button.background    Label.background    Panel.background
             if (clr != null)
-                MosaicDrawModel.DefaultCellColor = Cast.toColor(clr);
+                MosaicModel2.DefaultCellColor = Cast.toColor(clr);
 
             clr = uiDef.getColor("Button.background");
             if (clr != null)
-                MosaicDrawModel.DefaultBkColor = Cast.toColor(clr);
+                MosaicModel2.DefaultBkColor = Cast.toColor(clr);
         } catch (Exception ex) {
             Logger.error("ProjSettings", ex);
         }

@@ -1,7 +1,7 @@
 package fmg.swing.app.toolbar;
 
-import fmg.core.img.SmileModel;
-import fmg.core.img.SmileModel.EFaceType;
+import fmg.core.img.SmileModel2;
+import fmg.core.img.SmileModel2.EFaceType;
 
 public enum EBtnPauseState {
     eNormal,
@@ -15,7 +15,7 @@ public enum EBtnPauseState {
     /** типа ход ассистента - задел на будущее */
     eAssistant;
 
-    public SmileModel.EFaceType mapToSmileType() {
+    public SmileModel2.EFaceType mapToSmileType() {
         switch (this) {
         case eNormal          : return EFaceType.Face_EyesOpen;
         case ePressed         : return EFaceType.Face_WinkingEyeLeft;

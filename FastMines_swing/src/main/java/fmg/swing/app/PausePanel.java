@@ -2,23 +2,20 @@ package fmg.swing.app;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import javax.swing.JPanel;
 
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.IImageController;
-import fmg.core.img.LogoModel;
-import fmg.swing.img.Logo;
+import fmg.core.img.ImageHelper;
+import fmg.core.img.LogoModel2;
+import fmg.swing.img.Logo2;
 
 class PausePanel {
 
     private final FastMinesApp app;
     private final JPanel panel;
-    private Logo.IconController logo;
-    private final PropertyChangeListener onLogoPausePropertyChangedListener = this::onLogoPausePropertyChanged;
+    private Logo2.LogoSwingIconController logo;
 
     public PausePanel(FastMinesApp app) {
         this.app = app;
@@ -42,46 +39,45 @@ class PausePanel {
         return panel;
     }
 
-    private void onLogoPausePropertyChanged(PropertyChangeEvent ev) {
+    private void onLogoPausePropertyChanged(String propertyName) {
         if (!panel.isVisible())
             return;
-        if (IImageController.PROPERTY_IMAGE.equals(ev.getPropertyName()))
+        if (ImageHelper.PROPERTY_IMAGE.equals(propertyName))
             panel.repaint();
     }
 
     private void paintComponent(Graphics g) {
         Dimension sizeOutward = panel.getSize();
-        Logo.IconController l = getLogo();
+        var l = getLogo();
         double sq = Math.min(sizeOutward.getWidth(), sizeOutward.getHeight());
-        LogoModel lModel = l.getModel();
+        var lModel = l.getModel();
         lModel.setSize(new SizeDouble(sq, sq));
         l.getImage().paintIcon(panel, g,
                                (int)((sizeOutward.width  - lModel.getSize().width ) / 2),
                                (int)((sizeOutward.height - lModel.getSize().height) / 2));
     }
 
-    private Logo.IconController getLogo() {
+    private Logo2.LogoSwingIconController getLogo() {
         if (logo == null) {
-            logo = new Logo.IconController();
-            LogoModel model = logo.getModel();
+            logo = new Logo2.LogoSwingIconController();
+            LogoModel2 model = logo.getModel();
             model.setUseGradient(true);
             model.setPadding(new BoundDouble(3));
-            model.setRotateMode(LogoModel.ERotateMode.color);
-            model.setAnimatePeriod(12500);
-            model.setTotalFrames(250);
-            logo.usePolarLightFgTransforming(true);
-            logo.addListener(onLogoPausePropertyChangedListener);
+            logo.setPolarLights(true);
+            logo.setAnimatePeriod(12500);
+            logo.setFps(30);
+            logo.setListener(this::onLogoPausePropertyChanged);
         }
         return logo;
     }
 
     public void animateLogo(boolean start) {
-        getLogo().getModel().setAnimated(start);
+        getLogo().setPolarLights(start);
     }
 
     void close() {
         panel.removeMouseListener(app.getHandlers().getPausePanelMouseListener());
-        getLogo().removeListener(onLogoPausePropertyChangedListener);
+        getLogo().setListener(null);
         getLogo().close();
     }
 

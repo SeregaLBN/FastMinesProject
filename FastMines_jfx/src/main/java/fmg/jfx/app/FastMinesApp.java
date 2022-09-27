@@ -5,8 +5,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import fmg.core.mosaic.MosaicView;
-import fmg.jfx.mosaic.MosaicCanvasController;
+import fmg.jfx.mosaic.MosaicCanvasController2;
 
 /** Simple app
  * <p>run from command line
@@ -19,8 +18,7 @@ public class FastMinesApp extends Application {
 
     @Override
     public void start(Stage stage) {
-        MosaicView.DEBUG_DRAW_FLOW = true;
-        MosaicCanvasController ctrllr = new MosaicCanvasController();
+        var ctrllr = new MosaicCanvasController2();
 
         stage.setScene(new Scene(new Group(ctrllr.getViewCanvas())));
         stage.setOnCloseRequest(event -> ctrllr.close());

@@ -8,9 +8,9 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.SmileModel;
+import fmg.core.img.SmileModel2;
 import fmg.swing.app.Handlers;
-import fmg.swing.img.Smile;
+import fmg.swing.img.Smile2;
 import fmg.swing.utils.ImgUtils;
 
 public class ToolBar {
@@ -76,8 +76,8 @@ public class ToolBar {
         }
     }
 
-    private Icon getSmileIco(SmileModel.EFaceType smileType, int size) {
-        try (Smile.IconController img = new Smile.IconController(smileType)) {
+    private Icon getSmileIco(SmileModel2.EFaceType smileType, int size) {
+        try (Smile2.SmileSwingIconController img = new Smile2.SmileSwingIconController(smileType)) {
             img.getModel().setSize(new SizeDouble(300, 300));//size, size);
 //                return smileImages.get(key).getImage();
             return ImgUtils.zoom(img.getImage(), size, size);
@@ -85,7 +85,7 @@ public class ToolBar {
     }
 
     public Icon getSmileIco(EBtnNewGameState btnNewGameState) {
-        SmileModel.EFaceType smileType = btnNewGameState.mapToSmileType();
+        SmileModel2.EFaceType smileType = btnNewGameState.mapToSmileType();
         if (smileType == null)
             return null;
         int size = (btnNewGameState == EBtnNewGameState.ePressed) ||
@@ -95,7 +95,7 @@ public class ToolBar {
     }
 
     public Icon getSmileIco(EBtnPauseState btnPauseState) {
-        SmileModel.EFaceType smileType = btnPauseState.mapToSmileType();
+        SmileModel2.EFaceType smileType = btnPauseState.mapToSmileType();
         if (smileType == null)
             return null;
         int size = (btnPauseState == EBtnPauseState.ePressed) ||

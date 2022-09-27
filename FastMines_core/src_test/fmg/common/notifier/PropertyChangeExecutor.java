@@ -18,10 +18,10 @@ import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
 /**
- * Simple UnitTest wrapper for testing {@link INotifyPropertyChanged} objects
+ * Simple UnitTest wrapper for testing objects that fire events
  * @param <T> the tested object
  */
-public class PropertyChangeExecutor<T extends INotifyPropertyChanged & AutoCloseable> {
+public class PropertyChangeExecutor<T> {
 
     private final boolean needClose;
     private final Supplier<T> dataCreator;

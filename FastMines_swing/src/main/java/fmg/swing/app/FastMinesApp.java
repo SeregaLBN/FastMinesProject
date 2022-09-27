@@ -1263,8 +1263,6 @@ public class FastMinesApp {
     public static void main(String[] args) {
         ProjSettings.init();
         //ViewAllEvents();
-        //setSysOut();
-        //printSystemProperties();
         SwingUtilities.invokeLater(() ->
             new FastMinesApp().getFrame().setVisible(true)
         );

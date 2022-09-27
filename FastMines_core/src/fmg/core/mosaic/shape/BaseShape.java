@@ -21,19 +21,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 package fmg.core.mosaic.shape;
 
-import java.beans.PropertyChangeListener;
-
 import fmg.common.geom.DoubleExt;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
-import fmg.common.notifier.INotifyPropertyChanged;
-import fmg.common.notifier.NotifyPropertyChanged;
-import fmg.core.types.Property;
 
 /** Base shape */
-@Deprecated //           delete implements INotifyPropertyChanged, AutoCloseable
-public abstract class BaseShape implements INotifyPropertyChanged, AutoCloseable {
+public abstract class BaseShape {
 
     public static final double SQRT2   = java.lang.Math.sqrt(2.);
     public static final double SQRT3   = java.lang.Math.sqrt(3.);
@@ -54,20 +48,14 @@ public abstract class BaseShape implements INotifyPropertyChanged, AutoCloseable
     public static final String PROPERTY_AREA = "Area";
 
     /** площадь ячейки/фигуры */
-    @Property(PROPERTY_AREA)
     private double area = 500;
-
-    @Deprecated
-    protected NotifyPropertyChanged notifier = new NotifyPropertyChanged(this);
 
     /** площадь ячейки/фигуры */
     public void setArea(double area) {
         //setProperty(area, PROPERTY_AREA);
         double old = this.area;
-        if (!DoubleExt.almostEquals(old, area)) {
+        if (!DoubleExt.almostEquals(old, area))
             this.area = area;
-            notifier.firePropertyChanged(old, area, PROPERTY_AREA);
-        }
     }
     /** площадь ячейки/фигуры */
     public double getArea() {
@@ -102,23 +90,6 @@ public abstract class BaseShape implements INotifyPropertyChanged, AutoCloseable
      */
     public int getMaxCellFillModeValue() {
         return 19;
-    }
-
-    @Override
-    @Deprecated
-    public void addListener(PropertyChangeListener listener) {
-        notifier.addListener(listener);
-    }
-    @Override
-    @Deprecated
-    public void removeListener(PropertyChangeListener listener) {
-        notifier.removeListener(listener);
-    }
-
-    @Override
-    @Deprecated
-    public void close() {
-        notifier.close();
     }
 
 }

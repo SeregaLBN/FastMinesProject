@@ -215,12 +215,11 @@ public class CustomSkillDlg implements AutoCloseable {
     private int getNeighborNumber() {
         if (app == null)
             return 21;
-        try (BaseShape shape = MosaicHelper.createShapeInstance(app.getMosaicController().getModel().getMosaicType())) {
-            int max = IntStream.range(0, shape.getDirectionCount())
-                    .map(shape::getNeighborNumber)
-                    .max().getAsInt();
-            return max + 1; // +thisCell
-        }
+        BaseShape shape = MosaicHelper.createShapeInstance(app.getMosaicController().getModel().getMosaicType());
+        int max = IntStream.range(0, shape.getDirectionCount())
+                .map(shape::getNeighborNumber)
+                .max().getAsInt();
+        return max + 1; // +thisCell
     }
 
     private void recalcModelValueXY(boolean isFullScreen, boolean isFullScreenAtCurrArea) {
