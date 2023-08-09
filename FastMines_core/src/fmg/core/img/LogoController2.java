@@ -8,7 +8,7 @@ import fmg.common.ui.UiInvoker;
  * @param <TView> MVC view  */
 public class LogoController2<TImage,
                             TView extends IImageView2<TImage>>
-    extends ImageController2<TImage, LogoModel2, TView>
+    extends ImageController2<TImage, TView, LogoModel2>
 {
 
     /** Overall animation period (in milliseconds) */

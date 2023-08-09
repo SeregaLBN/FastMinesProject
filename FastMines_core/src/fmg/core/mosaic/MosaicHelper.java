@@ -1,6 +1,7 @@
 package fmg.core.mosaic;
 
 import java.security.InvalidParameterException;
+import java.util.stream.IntStream;
 
 import fmg.common.geom.Coord;
 import fmg.common.geom.DoubleExt;
@@ -246,6 +247,24 @@ public final class MosaicHelper {
         BaseShape shape = createShapeInstance(mosaicType);
         shape.setArea(area);
         return shape.getSize(mosaicSizeField);
+    }
+
+    /** find out the max number of neighbors for the current mosaic */
+    public static int getMaxNeighborNumber(EMosaic mosaicType) {
+        return getMaxNeighborNumber(createShapeInstance(mosaicType));
+    }
+
+    /** find out the max number of neighbors for the current mosaic */
+    public static int getMaxNeighborNumber(BaseShape shape) {
+        return IntStream.range(0, shape.getDirectionCount())
+            .map(shape::getNeighborNumber)
+            .max().getAsInt();
+    }
+
+    /** get maximum number of mines for the mosaic */
+    public static int getMaxNumberMines(Matrisize sizeField, EMosaic mosaicType) {
+        return Math.max(1, sizeField.m * sizeField.n - (1 + MosaicHelper.getMaxNeighborNumber(mosaicType)));
+
     }
 
 }

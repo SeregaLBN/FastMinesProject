@@ -2,26 +2,24 @@ package fmg.android.app.model.items;
 
 import androidx.databinding.Bindable;
 
-import java.beans.PropertyChangeEvent;
+import java.util.Objects;
 
 import fmg.android.app.BR;
-import fmg.android.img.MosaicImg;
+import fmg.android.img.AndroidBitmapView;
+import fmg.android.img.MosaicImg2;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.Matrisize;
-import fmg.core.img.IMosaicAnimatedModel;
-import fmg.core.img.MosaicAnimatedModel;
-import fmg.core.mosaic.MosaicGameModel;
+import fmg.core.img.MosaicImageModel2;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
-import fmg.core.types.Property;
+
+import static fmg.core.img.PropertyConst.PROPERTY_MOSAIC_TYPE;
+import static fmg.core.img.PropertyConst.PROPERTY_SIZE;
+import static fmg.core.img.PropertyConst.PROPERTY_SKILL_LEVEL;
 
 /** Mosaic item for data model */
-public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicAnimatedModel<Void>, MosaicImg.BitmapView, MosaicImg.BitmapController> {
+public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicImageModel2, AndroidBitmapView<MosaicImageModel2>, MosaicImg2.MosaicAndroidBitmapController> {
 
-    public static final String PROPERTY_MOSAIC_TYPE = MosaicGameModel.PROPERTY_MOSAIC_TYPE;
-    public static final String PROPERTY_SKILL_LEVEL = "SkillLevel";
-
-    @Property(PROPERTY_SKILL_LEVEL)
     private ESkillLevel skillLevel;
 
     public MosaicDataItem(EMosaic mosaicType) {
@@ -40,21 +38,23 @@ public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicAnimatedModel<Vo
         return skillLevel;
     }
     public void setSkillLevel(ESkillLevel skillLevel) {
-        if (skillLevel == null)
-            throw new IllegalArgumentException("Value of type " + ESkillLevel.class.getSimpleName() + " must be defined");
-        notifier.setProperty(this.skillLevel, skillLevel, PROPERTY_SKILL_LEVEL);
+        Objects.requireNonNull(skillLevel, "Value of type " + ESkillLevel.class.getSimpleName() + " must be defined");
+        if (this.skillLevel == skillLevel)
+            return;
+        this.skillLevel = skillLevel;
+        onPropertyChanged(PROPERTY_SKILL_LEVEL);
     }
 
     @Override
-    public MosaicImg.BitmapController getEntity() {
+    public MosaicImg2.MosaicAndroidBitmapController getEntity() {
         if (this.entity == null) {
             Matrisize sizeField = getSkillLevel().sizeTileField(getMosaicType());
-            MosaicImg.BitmapController tmp = new MosaicImg.BitmapController();
-            MosaicAnimatedModel<?> m = tmp.getModel();
+            var tmp = new MosaicImg2.MosaicAndroidBitmapController();
+            var m = tmp.getModel();
             m.setMosaicType(getMosaicType());
             m.setSizeField(sizeField);
             m.setPadding(new BoundDouble(5 * getZoom()));
-            m.setRotateMode(IMosaicAnimatedModel.EMosaicRotateMode.someCells);
+            m.setRotateMode(MosaicImageModel2.ERotateMode.SOME_CELLS);
 //            m.setBackgroundColor(MosaicDrawModel.DefaultBkColor);
             m.getPenBorder().setWidth(3 * getZoom());
 //            m.setRotateAngle(45 * ThreadLocalRandom.current().nextInt(7));
@@ -68,31 +68,39 @@ public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicAnimatedModel<Vo
     }
 
     @Override
-    protected void onPropertyChanged(PropertyChangeEvent ev) {
-        super.onPropertyChanged(ev);
+    protected void onPropertyChanged(String propertyName) {
+        if (isDisposed())
+            return;
 
-        switch (ev.getPropertyName()) {
+        super.onPropertyChanged(propertyName);
+
+        switch (propertyName) {
         case PROPERTY_SIZE: // TODO delete this case!!
-            notifier.firePropertyChanged(PROPERTY_TITLE);
+            super.onPropertyChanged(PROPERTY_TITLE);
             break;
         case PROPERTY_UNIQUE_ID:
-            notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_MOSAIC_TYPE); // recall with another property name
-            getEntity().setMosaicType(getMosaicType());
-            getEntity().setSizeField(calcSizeField(getSkillLevel()));
+            getEntity().getModel().setMosaicType(getMosaicType());
+            getEntity().getModel().setSizeField(calcSizeField(getSkillLevel()));
             setTitle(fixTitle(getMosaicType()));
             break;
         case PROPERTY_SKILL_LEVEL:
-            getEntity().setSizeField(calcSizeField(getSkillLevel()));
+            getEntity().getModel().setSizeField(calcSizeField(getSkillLevel()));
+            break;
+        case PROPERTY_MOSAIC_TYPE:
+            super.onPropertyChanged(PROPERTY_UNIQUE_ID);
             break;
         }
     }
 
     @Override
-    protected void onAsyncPropertyChanged(PropertyChangeEvent ev) {
-        super.onAsyncPropertyChanged(ev);
+    protected void onAsyncPropertyChanged(String propertyName) {
+        if (isDisposed())
+            return;
+
+        super.onAsyncPropertyChanged(propertyName);
 
         // refire as android data binding event
-        switch (ev.getPropertyName()) {
+        switch (propertyName) {
         case PROPERTY_MOSAIC_TYPE: notifyPropertyChanged(BR.mosaicType); break;
         case PROPERTY_SKILL_LEVEL: notifyPropertyChanged(BR.skillLevel); break;
         }

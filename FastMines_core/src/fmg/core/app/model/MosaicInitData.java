@@ -1,8 +1,17 @@
 package fmg.core.app.model;
 
+import static fmg.core.img.PropertyConst.PROPERTY_COUNT_MINES;
+import static fmg.core.img.PropertyConst.PROPERTY_MOSAIC_GROUP;
+import static fmg.core.img.PropertyConst.PROPERTY_MOSAIC_TYPE;
+import static fmg.core.img.PropertyConst.PROPERTY_SIZE_FIELD;
+import static fmg.core.img.PropertyConst.PROPERTY_SKILL_LEVEL;
+
+import java.util.Objects;
 import java.util.function.Consumer;
 
+import fmg.common.Logger;
 import fmg.common.geom.Matrisize;
+import fmg.core.mosaic.MosaicHelper;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
@@ -23,19 +32,11 @@ public class MosaicInitData implements AutoCloseable {
     public static final int         DEFAULT_SIZE_FIELD_N = DEFAULT_SKILL_LEVEL.getDefaultSize().n;
     public static final int         DEFAULT_COUNT_MINES  = DEFAULT_SKILL_LEVEL.getNumberMines(DEFAULT_MOSAIC_TYPE);
 
-    public static final String PROPERTY_MOSAIC_TYPE  = "MosaicType";
-    public static final String PROPERTY_MOSAIC_GROUP = "MosaicGroup";
-    public static final String PROPERTY_SIZE_FIELD   = "SizeField";
-    public static final String PROPERTY_COUNT_MINES  = "CountMines";
-    public static final String PROPERTY_SKILL_LEVEL  = "SkillLevel";
-
     private EMosaic mosaicType;
 
     private Matrisize sizeField;
 
     private int countMines;
-
-    private boolean lockChanging = false;
 
     private Consumer<String> changedCallback;
 
@@ -51,17 +52,43 @@ public class MosaicInitData implements AutoCloseable {
             throw new IllegalArgumentException("Mosaic type can not be null");
         if (this.mosaicType == mosaicType)
             return;
+
         var oldValue = this.mosaicType;
         this.mosaicType = mosaicType;
-        firePropertyChanged(oldValue, PROPERTY_MOSAIC_TYPE);
+
+        var mosaicGroupChanged = (oldValue.getGroup() != mosaicType.getGroup());
+        var skillChanged = false;
+        var countMinesChanged = false;
+        ESkillLevel skillOld = ESkillLevel.calcSkillLevel(oldValue, sizeField, countMines);
+        if (skillOld != ESkillLevel.eCustom) {
+            // restore mines count for new mosaic type
+            var newCountMines = skillOld.getNumberMines(mosaicType);
+            countMinesChanged = (countMines != newCountMines);
+            if (countMinesChanged)
+                countMines = newCountMines;
+        }
+
+        if (changedCallback == null)
+            return;
+
+        ESkillLevel skillNew = getSkillLevel();
+        skillChanged = (skillNew != skillOld);
+
+        changedCallback.accept(PROPERTY_MOSAIC_TYPE);
+        if (mosaicGroupChanged)
+            changedCallback.accept(PROPERTY_MOSAIC_GROUP);
+        if (skillChanged)
+            changedCallback.accept(PROPERTY_SKILL_LEVEL);
+        if (countMinesChanged)
+            changedCallback.accept(PROPERTY_COUNT_MINES);
     }
 
     public EMosaicGroup getMosaicGroup() { return mosaicType.getGroup(); }
     public void setMosaicGroup(EMosaicGroup mosaicGroup) {
-        if (mosaicGroup == null)
-            throw new IllegalArgumentException("Mosaic group can not be null");
+        Objects.requireNonNull(mosaicGroup, "Mosaic group can not be null");
         if (mosaicType.getGroup() == mosaicGroup)
             return;
+
         int ordinalInOldGroup = mosaicType.getOrdinalInGroup();
         int ordinalInNewGroup = Math.min(ordinalInOldGroup, mosaicGroup.getMosaics().size() - 1);
         setMosaicType(mosaicGroup.getMosaics().get(ordinalInNewGroup));
@@ -84,20 +111,53 @@ public class MosaicInitData implements AutoCloseable {
         var oldValue = this.sizeField;
         if (oldValue.equals(newValue))
             return;
+
         this.sizeField = newValue;
-        firePropertyChanged(oldValue, PROPERTY_SIZE_FIELD);
+
+        if (changedCallback == null)
+            return;
+
+        ESkillLevel skillOld = ESkillLevel.calcSkillLevel(mosaicType, oldValue, countMines);
+        ESkillLevel skillNew = getSkillLevel();
+
+        int maxMines = Math.max(1, sizeField.m * sizeField.n - (1 + MosaicHelper.getMaxNeighborNumber(mosaicType)));
+        boolean countMinesChanged = (countMines > maxMines);
+        if (countMinesChanged)
+            countMines = maxMines;
+
+        changedCallback.accept(PROPERTY_SIZE_FIELD);
+        if (skillNew != skillOld)
+            changedCallback.accept(PROPERTY_SKILL_LEVEL);
+        if (countMinesChanged)
+            changedCallback.accept(PROPERTY_COUNT_MINES);
     }
 
     public int getCountMines() { return countMines; }
     public void setCountMines(int countMines) {
-        if (countMines <= 0)
+        if (countMines < 1)
             throw new IllegalArgumentException("Mines count must be positive");
+
+        int maxMines = MosaicHelper.getMaxNumberMines(sizeField, mosaicType);
+        if (countMines > maxMines) {
+            Logger.warn("Force set countMines to {0}. Input value is {1}", maxMines, countMines);
+            countMines = maxMines;
+        }
 
         if (this.countMines == countMines)
             return;
+
         var oldValue = this.countMines;
         this.countMines = countMines;
-        firePropertyChanged(oldValue, PROPERTY_COUNT_MINES);
+
+        if (changedCallback == null)
+            return;
+
+        changedCallback.accept(PROPERTY_COUNT_MINES);
+
+        ESkillLevel skillOld = ESkillLevel.calcSkillLevel(mosaicType, sizeField, oldValue);
+        ESkillLevel skillNew = getSkillLevel();
+        if (skillNew != skillOld)
+            changedCallback.accept(PROPERTY_SKILL_LEVEL);
     }
 
     public ESkillLevel getSkillLevel() {
@@ -105,86 +165,27 @@ public class MosaicInitData implements AutoCloseable {
     }
 
     public void setSkillLevel(ESkillLevel skill) {
-        if (skill == null)
-            throw new IllegalArgumentException("Mosaic skill level can not be null");
-        if (lockChanging)
-            throw new UnsupportedOperationException("Illegal usage");
+        Objects.requireNonNull(skill, "Mosaic skill level can not be null");
 
         ESkillLevel skillOld = getSkillLevel();
         if (skillOld == skill)
             return;
 
-        lockChanging = true;
-        try {
-            setCountMines(skill.getNumberMines(getMosaicType()));
-            setSizeField(skill.getDefaultSize());
-        } finally {
-            lockChanging = false;
-        }
+        countMines = skill.getNumberMines(mosaicType);
+        sizeField  = skill.getDefaultSize();
 
         ESkillLevel skillNew = getSkillLevel();
-        assert (skill == skillNew);
-        assert (skill != skillOld);
-        firePropertyChanged(skillOld, PROPERTY_SKILL_LEVEL);
-    }
+        if (skill != skillNew) // recheck
+            throw new IllegalArgumentException("skill != skillNew");
 
-    private <T> void firePropertyChanged(T oldValue, String propertyName) {
-        if (lockChanging)
+        if (changedCallback == null)
             return;
 
-        onPropertyChanged(oldValue, propertyName);
-
-        if (changedCallback != null)
-            changedCallback.accept(propertyName);
+        changedCallback.accept(PROPERTY_SKILL_LEVEL);
+        changedCallback.accept(PROPERTY_COUNT_MINES);
+        changedCallback.accept(PROPERTY_SIZE_FIELD);
     }
 
-    protected <T> void onPropertyChanged(T oldValue, String propertyName) {
-        if (lockChanging)
-            return;
-
-        lockChanging = true;
-        try {
-            switch(propertyName) {
-            case PROPERTY_MOSAIC_TYPE:
-                {
-                    EMosaic old = (EMosaic)oldValue;
-                    if (old.getGroup() != getMosaicType().getGroup())
-                        firePropertyChanged(old.getGroup(), PROPERTY_MOSAIC_GROUP);
-
-                    ESkillLevel skillOld = ESkillLevel.calcSkillLevel(old, sizeField, countMines);
-                    if (skillOld == ESkillLevel.eCustom) {
-                        ESkillLevel skillNew = getSkillLevel();
-                        if (skillNew != skillOld)
-                            firePropertyChanged(skillOld, PROPERTY_SKILL_LEVEL);
-                    } else {
-                        // restore mines count for new mosaic type
-                        setCountMines(skillOld.getNumberMines(getMosaicType()));
-                    }
-                }
-                break;
-            case PROPERTY_SIZE_FIELD:
-                {
-                    ESkillLevel skillOld = ESkillLevel.calcSkillLevel(mosaicType, (Matrisize)oldValue, countMines);
-                    ESkillLevel skillNew = getSkillLevel();
-                    if (skillNew != skillOld)
-                        firePropertyChanged(skillOld, PROPERTY_SKILL_LEVEL);
-                }
-                break;
-            case PROPERTY_COUNT_MINES:
-                {
-                    ESkillLevel skillOld = ESkillLevel.calcSkillLevel(mosaicType, sizeField, (int)oldValue);
-                    ESkillLevel skillNew = getSkillLevel();
-                    if (skillNew != skillOld)
-                        firePropertyChanged(skillOld, PROPERTY_SKILL_LEVEL);
-                }
-                break;
-            default:
-                // none
-            }
-        } finally {
-            lockChanging = false;
-        }
-    }
 
     @Override
     public void close() {

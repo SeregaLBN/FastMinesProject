@@ -1,5 +1,7 @@
 package fmg.swing.app.menu;
 
+import static fmg.core.img.PropertyConst.PROPERTY_IMAGE;
+
 import java.awt.Container;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,7 +12,7 @@ import javax.swing.*;
 
 import fmg.common.Color;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.ImageHelper;
+import fmg.common.ui.UiInvoker;
 import fmg.core.img.MosaicSkillModel2;
 import fmg.core.types.ESkillLevel;
 import fmg.swing.app.FastMinesApp;
@@ -37,12 +39,16 @@ public class GameMenu implements AutoCloseable {
     }
 
     private void onMosaicSkillImgPropertyChaged(int index, String propertyName) {
+        UiInvoker.Deferred.accept(() -> onMosaicSkillImgPropertyChagedAsync(index, propertyName));
+    }
+
+    private void onMosaicSkillImgPropertyChagedAsync(int index, String propertyName) {
         var img = skillLevelImages.get(index);
         JRadioButtonMenuItem menuItem = skillLevel.get(img.getModel().getMosaicSkill());
         Container parent = menuItem.getParent();
         if ((parent == null) || !parent.isVisible())
             return;
-        if (propertyName.equalsIgnoreCase(ImageHelper.PROPERTY_IMAGE)) {
+        if (propertyName.equalsIgnoreCase(PROPERTY_IMAGE)) {
             MainMenu.setMenuItemIcon(menuItem, img.getImage());
         }
     }

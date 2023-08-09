@@ -181,7 +181,7 @@ public class Champions {
 
     private void firePropertyChanged(Object oldValue, Object newValue, String propertyName) {
         if (changedCallback != null)
-            UiInvoker.Deferred.accept(() -> changedCallback.accept(new PropertyChangeEvent(this, propertyName, oldValue, newValue)));
+            changedCallback.accept(new PropertyChangeEvent(this, propertyName, oldValue, newValue));
     }
 
     public void setListener(Consumer<PropertyChangeEvent> callback) {

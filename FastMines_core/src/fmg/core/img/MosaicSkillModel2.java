@@ -1,5 +1,15 @@
 package fmg.core.img;
 
+import static fmg.core.img.PropertyConst.PROPERTY_BACKGROUND_ANGLE;
+import static fmg.core.img.PropertyConst.PROPERTY_BACKGROUND_COLOR;
+import static fmg.core.img.PropertyConst.PROPERTY_BORDER_COLOR;
+import static fmg.core.img.PropertyConst.PROPERTY_BORDER_WIDTH;
+import static fmg.core.img.PropertyConst.PROPERTY_FOREGROUND_ANGLE;
+import static fmg.core.img.PropertyConst.PROPERTY_FOREGROUND_COLOR;
+import static fmg.core.img.PropertyConst.PROPERTY_PADDING;
+import static fmg.core.img.PropertyConst.PROPERTY_ROTATE_ANGLE;
+import static fmg.core.img.PropertyConst.PROPERTY_SIZE;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -79,7 +89,7 @@ public class MosaicSkillModel2 implements IImageModel2 {
         this.size.height = size.height;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_SIZE);
+            changedCallback.accept(PROPERTY_SIZE);
 
         setPadding(ImageHelper.recalcPadding(pad, size, oldSize));
     }
@@ -102,7 +112,7 @@ public class MosaicSkillModel2 implements IImageModel2 {
         this.pad.bottom = padding.bottom;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_PADDING);
     }
 
 
@@ -114,7 +124,7 @@ public class MosaicSkillModel2 implements IImageModel2 {
         this.foregroundColor = value;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_FOREGROUND_COLOR);
     }
 
     /** background fill color */
@@ -126,7 +136,7 @@ public class MosaicSkillModel2 implements IImageModel2 {
         this.backgroundColor = value;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_BACKGROUND_COLOR);
     }
 
     public Color getBorderColor() { return borderColor; }
@@ -137,7 +147,7 @@ public class MosaicSkillModel2 implements IImageModel2 {
         this.borderColor = value;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_BORDER_COLOR);
     }
 
     public double getBorderWidth() { return borderWidth; }
@@ -148,7 +158,7 @@ public class MosaicSkillModel2 implements IImageModel2 {
         this.borderWidth = value;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_BORDER_WIDTH);
     }
 
 
@@ -162,7 +172,7 @@ public class MosaicSkillModel2 implements IImageModel2 {
         this.rotateAngle = value;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_ROTATE_ANGLE);
     }
 
     /** 0° .. +360° */
@@ -175,7 +185,7 @@ public class MosaicSkillModel2 implements IImageModel2 {
         this.foregroundAngle = value;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_FOREGROUND_ANGLE);
     }
 
     /** 0° .. +360° */
@@ -188,7 +198,7 @@ public class MosaicSkillModel2 implements IImageModel2 {
         this.backgroundAngle = value;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_BACKGROUND_ANGLE);
     }
 
     public Stream<Pair<Color, Stream<PointDouble>>> getCoords() {

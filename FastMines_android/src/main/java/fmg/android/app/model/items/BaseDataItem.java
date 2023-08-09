@@ -1,75 +1,66 @@
 package fmg.android.app.model.items;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 import fmg.android.app.BR;
 import fmg.common.Logger;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.common.notifier.INotifyPropertyChanged;
-import fmg.common.notifier.NotifyPropertyChanged;
-import fmg.core.img.IAnimatedModel;
-import fmg.core.img.IImageController;
-import fmg.core.img.IImageModel;
-import fmg.core.img.IImageView;
-import fmg.core.img.ImageController;
-import fmg.core.types.Property;
+import fmg.common.ui.UiInvoker;
+import fmg.core.img.IImageModel2;
+import fmg.core.img.IImageView2;
+import fmg.core.img.ImageController2;
 
-/** Base item class for <see cref="MosaicDataItem"/> and <see cref="MosaicGroupDataItem"/> and <see cref="MosaicSkillDataItem"/> */
+import static fmg.core.img.PropertyConst.PROPERTY_IMAGE;
+import static fmg.core.img.PropertyConst.PROPERTY_PADDING;
+import static fmg.core.img.PropertyConst.PROPERTY_SIZE;
+
+/** Base item class for @see {@link MosaicDataItem} and @see {@link MosaicGroupDataItem"} and @see {@link MosaicSkillDataItem} */
 public abstract class BaseDataItem<T,
-                                   TImageModel extends IAnimatedModel,
-                                   TImageView  extends IImageView<android.graphics.Bitmap, TImageModel>,
-                                   TImageCtrlr extends ImageController<android.graphics.Bitmap, TImageView, TImageModel>>
+                                   TImageModel extends IImageModel2,
+                                   TImageView  extends IImageView2<Bitmap>,
+                                   TImageCtrlr extends ImageController2<Bitmap, TImageView, TImageModel>>
     extends BaseObservable
-    implements INotifyPropertyChanged, AutoCloseable
+    implements AutoCloseable
 {
 
     public static final String PROPERTY_UNIQUE_ID = "UniqueId";
     public static final String PROPERTY_TITLE     = "Title";
     public static final String PROPERTY_ENTITY    = "Entity";
-    public static final String PROPERTY_IMAGE     = IImageController.PROPERTY_IMAGE;
-    public static final String PROPERTY_SIZE      = IImageModel.PROPERTY_SIZE;
-    public static final String PROPERTY_PADDING   = IImageModel.PROPERTY_PADDING;
 
-    @Property(PROPERTY_UNIQUE_ID)
     private T uniqueId;
-    
-    @Property(PROPERTY_ENTITY)
     protected TImageCtrlr entity;
-    
-    @Property(PROPERTY_TITLE)
     private String title = "";
-    
-    protected final NotifyPropertyChanged notifier/*Sync*/ = new NotifyPropertyChanged(this, false);
-    private   final NotifyPropertyChanged notifierAsync    = new NotifyPropertyChanged(this, true);
-    private final PropertyChangeListener           onPropertyChangedListener = this::onPropertyChanged;
-    private final PropertyChangeListener      onAsyncPropertyChangedListener = this::onAsyncPropertyChanged;
-    private final PropertyChangeListener onControllerPropertyChangedListener = this::onControllerPropertyChanged;
-    private final PropertyChangeListener      onModelPropertyChangedListener = this::onModelPropertyChanged;
+    private boolean disposed;
+
+    private Consumer<String> changedCallback;
 
     protected BaseDataItem(T uniqueId) {
         this.uniqueId = uniqueId;
-        notifier     .addListener(onPropertyChangedListener);
-        notifierAsync.addListener(onAsyncPropertyChangedListener);
     }
 
     @Bindable
     public T getUniqueId() { return uniqueId; }
     public void setUniqueId(T uniqueId) {
-        notifier.setProperty(this.uniqueId, uniqueId, PROPERTY_UNIQUE_ID);
+        if (Objects.equals(this.uniqueId, uniqueId))
+            return;
+        this.uniqueId = uniqueId;
+        onPropertyChanged(PROPERTY_UNIQUE_ID);
     }
 
     @Bindable
     public String getTitle() { return title; }
     public void setTitle(String title) {
-        notifier.setProperty(this.title, title, PROPERTY_TITLE);
+        if (Objects.equals(this.title, title))
+            return;
+        this.title = title;
+        onPropertyChanged(PROPERTY_TITLE);
     }
 
     protected double getZoom() { return 1; }
@@ -78,22 +69,24 @@ public abstract class BaseDataItem<T,
     public abstract TImageCtrlr getEntity();
     protected void setEntity(TImageCtrlr entity) {
         TImageCtrlr old = this.entity;
-        if (notifier.setProperty(this.entity, entity, PROPERTY_ENTITY)) {
-            if (old != null) {
-                old           .removeListener(onControllerPropertyChangedListener);
-                old.getModel().removeListener(onModelPropertyChangedListener);
-                old.close();
-            }
-            if (entity != null) {
-                entity.           addListener(onControllerPropertyChangedListener);
-                entity.getModel().addListener(onModelPropertyChangedListener);
-            }
+        if (Objects.equals(this.entity, entity))
+            return;
+
+        this.entity = entity;
+
+        if (old != null) {
+            old.setListener(null);
+            old.close();
         }
+        if (entity != null)
+            entity.setListener(this::onControllerPropertyChanged);
+
+        onPropertyChanged(PROPERTY_ENTITY);
     }
 
     @Bindable
     public Bitmap getImage() {
-        if (isDisposed()) {
+        if (disposed) {
             Logger.error("Object already disposed! Return faked image...");
             return android.graphics.Bitmap.createBitmap(1, 1, android.graphics.Bitmap.Config.RGB_565);
         }
@@ -134,14 +127,36 @@ public abstract class BaseDataItem<T,
         return new BoundDouble(pad.left * zoom, pad.top * zoom, pad.right * zoom, pad.bottom * zoom);
     }
 
-    protected void onPropertyChanged(PropertyChangeEvent ev) {
-        // refire as async event
-        notifierAsync.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+    private void onControllerPropertyChanged(String propertyName) {
+        if (!disposed)
+            UiInvoker.Deferred.accept(() -> onPropertyChanged(propertyName));
     }
 
-    protected void onAsyncPropertyChanged(PropertyChangeEvent ev) {
+    protected void onPropertyChanged(String propertyName) {
+        if (disposed)
+            return;
+
+        if (changedCallback != null) {
+            changedCallback.accept(PROPERTY_ENTITY);
+
+            switch (propertyName) {
+            case PROPERTY_IMAGE:
+            case PROPERTY_SIZE:
+            case PROPERTY_PADDING:
+                changedCallback.accept(propertyName);
+                break;
+            }
+        }
+        // refire as async event
+        UiInvoker.Deferred.accept(() -> onAsyncPropertyChanged(propertyName));
+    }
+
+    protected void onAsyncPropertyChanged(String propertyName) {
+        if (disposed)
+            return;
+
         // refire as android data binding event
-        switch (ev.getPropertyName()) {
+        switch (propertyName) {
         case PROPERTY_UNIQUE_ID: notifyPropertyChanged(BR.uniqueId); break;
         case PROPERTY_TITLE    : notifyPropertyChanged(BR.title   ); break;
         case PROPERTY_ENTITY   : notifyPropertyChanged(BR.entity  ); break;
@@ -151,51 +166,28 @@ public abstract class BaseDataItem<T,
         }
     }
 
-    protected void onControllerPropertyChanged(PropertyChangeEvent ev) {
-        assert (ev.getSource() == getEntity());
-        notifier.firePropertyChanged(PROPERTY_ENTITY);
-
-        switch (ev.getPropertyName()) {
-        case IImageController.PROPERTY_IMAGE:
-            notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_IMAGE);
-            break;
-        }
-    }
-
-    protected void onModelPropertyChanged(PropertyChangeEvent ev) {
-        assert (ev.getSource() == getEntity().getModel());
-
-        switch (ev.getPropertyName()) {
-        case IImageModel.PROPERTY_SIZE:
-            notifier.firePropertyChanged(zoomSize((SizeDouble)ev.getOldValue()), zoomSize((SizeDouble)ev.getNewValue()), PROPERTY_SIZE);
-            break;
-        case IImageModel.PROPERTY_PADDING:
-            notifier.firePropertyChanged(zoomPadding((BoundDouble)ev.getOldValue()), zoomPadding((BoundDouble)ev.getNewValue()), PROPERTY_PADDING);
-            break;
-        }
-    }
-
     @Override
     public String toString() { return title; }
 
-    @Override
-    public void addListener(PropertyChangeListener listener) {
-        notifierAsync.addListener(listener);
-    }
-    @Override
-    public void removeListener(PropertyChangeListener listener) {
-        notifierAsync.removeListener(listener);
+    public void setListener(Consumer<String> callback) {
+        if (callback == null) {
+            // unset
+            changedCallback = null;
+        } else {
+            // set
+            if (changedCallback != null)
+                throw new IllegalArgumentException("The callback is already set");
+            changedCallback = callback;
+        }
     }
 
-    public boolean isDisposed() { return notifier.isDisposed(); }
+    public boolean isDisposed() { return disposed; }
 
     @Override
     public void close() {
-        notifier     .removeListener(onPropertyChangedListener);
-        notifierAsync.removeListener(onAsyncPropertyChangedListener);
-        notifier.close();
-        notifierAsync.close();
-        setEntity(null); // call setter
+        disposed = true;
+        changedCallback = null;
+        setEntity(null);
     }
 
 }

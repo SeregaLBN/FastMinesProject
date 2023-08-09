@@ -1,5 +1,6 @@
 package fmg.android.app;
 
+import static fmg.core.img.PropertyConst.*;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Bundle;
@@ -24,18 +25,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import fmg.android.app.databinding.DemoActivity2Binding;
-import fmg.android.img.Flag;
 import fmg.android.img.Flag2;
-import fmg.android.img.Logo;
 import fmg.android.img.Logo2;
-import fmg.android.img.Mine;
-import fmg.android.img.MosaicGroupImg;
 import fmg.android.img.MosaicGroupImg2;
 import fmg.android.img.MosaicImg;
 import fmg.android.img.MosaicImg2;
-import fmg.android.img.MosaicSkillImg;
 import fmg.android.img.MosaicSkillImg2;
-import fmg.android.img.Smile;
 import fmg.android.img.Smile2;
 import fmg.android.mosaic.MosaicViewController;
 import fmg.android.mosaic.MosaicViewController2;
@@ -43,12 +38,10 @@ import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.IImageController;
+import fmg.common.ui.UiInvoker;
 import fmg.core.img.IImageController2;
-import fmg.core.img.SmileModel;
 import fmg.core.img.SmileModel2;
 import fmg.core.img.TestDrawing2;
-import fmg.core.mosaic.MosaicView;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
@@ -223,10 +216,11 @@ public class DemoActivity2 extends AppCompatActivity {
                       //imgControl.setBackgroundColor(Cast.toColor(Color.RandomColor().brighter()));
 
                         View imgControl2 = imgControl;
-                        Consumer<String> onChangeImage = propName -> {
-                            if (propName.equals(IImageController.PROPERTY_IMAGE))
+                        Consumer<String> onChangeImageAsync = propName -> {
+                            if (propName.equals(PROPERTY_IMAGE))
                                 imgControl2.invalidate();
                         };
+                        Consumer<String> onChangeImage = propName -> UiInvoker.Deferred.accept(() -> onChangeImageAsync.accept(propName));
                         imgObj.setListener(onChangeImage);
                     }
 

@@ -1,6 +1,7 @@
 package fmg.common.geom;
 
 public final class DoubleExt {
+    private DoubleExt() {}
 
     /** Equals N digit precision */
     public static boolean equalsPrecision(double value1, double value2) {

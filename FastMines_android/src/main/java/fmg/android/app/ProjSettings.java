@@ -12,6 +12,7 @@ import fmg.common.Logger;
 import fmg.common.ui.UiInvoker;
 import fmg.core.app.AProjSettings;
 import fmg.core.mosaic.MosaicDrawModel;
+import fmg.core.mosaic.MosaicModel2;
 import fmg.core.types.draw.PenBorder2;
 
 public final class ProjSettings extends AProjSettings {
@@ -35,7 +36,7 @@ public final class ProjSettings extends AProjSettings {
 
         // various background colors: #E6FFFFFF #FFEEEEEE #FFFAFAFA
 //      MosaicDrawModel.DefaultBkColor   = new Color(0xFFFAFAFA);
-        MosaicDrawModel.DefaultCellColor = new Color(0xFFEEEEEE);
+        MosaicModel2   .DefaultCellColor = new Color(0xFFEEEEEE);
         BaseDataSource .DefaultBkColor   = new Color(0xFFEEEEEE);
 
         IS_MOBILE = true;

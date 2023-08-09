@@ -1,5 +1,6 @@
 package fmg.android.mosaic;
 
+import static fmg.core.img.PropertyConst.*;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -457,10 +458,10 @@ public class MosaicViewController2 extends MosaicController2<DrawableView, Mosai
         view.onModelChanged(property);
         super.onModelChanged(property);
         switch (property) {
-        case ImageHelper.PROPERTY_SIZE:
+        case PROPERTY_SIZE:
             onModelSizeChanged();
             break;
-        case MosaicModel2.PROPERTY_AREA:
+        case PROPERTY_AREA:
             onModelAreaChanged();
             break;
         }

@@ -2,23 +2,25 @@ package fmg.android.app.model.items;
 
 import androidx.databinding.Bindable;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.concurrent.ThreadLocalRandom;
 
 import fmg.android.app.BR;
-import fmg.android.img.MosaicGroupImg;
+import fmg.android.img.AndroidBitmapView;
+import fmg.android.img.MosaicGroupImg2;
 import fmg.common.geom.BoundDouble;
-import fmg.core.img.BurgerMenuModel;
-import fmg.core.img.MosaicGroupModel;
+import fmg.common.ui.UiInvoker;
+import fmg.core.img.MosaicGroupModel2;
 import fmg.core.types.EMosaicGroup;
 
-/** Mosaic group item for data model */
-public class MosaicGroupDataItem extends BaseDataItem<EMosaicGroup, MosaicGroupModel, MosaicGroupImg.BitmapView, MosaicGroupImg.BitmapController> {
+import static fmg.core.img.PropertyConst.PROPERTY_BURGER;
+import static fmg.core.img.PropertyConst.PROPERTY_MOSAIC_GROUP;
+import static fmg.core.img.PropertyConst.PROPERTY_PADDING;
 
-    public static final String PROPERTY_MOSAIC_GROUP   = "MosaicGroup";
-    public static final String PROPERTY_PADDING_BURGER = "PaddingBurgerMenu";
-    private final PropertyChangeListener onBurgerMenuModelPropertyChangedListener = this::onBurgerMenuModelPropertyChanged;
+/** Mosaic group item for data model */
+public class MosaicGroupDataItem extends BaseDataItem<EMosaicGroup, MosaicGroupModel2, AndroidBitmapView<MosaicGroupModel2>, MosaicGroupImg2.MosaicGroupAndroidBitmapController> {
+
+    static final String PROPERTY_BURGER_SUFFIX = PROPERTY_BURGER + ".";
+    static final String PROPERTY_PADDING_BURGER = PROPERTY_BURGER_SUFFIX + PROPERTY_PADDING;
 
     public MosaicGroupDataItem(EMosaicGroup eMosaicGroup) {
         super(eMosaicGroup);
@@ -29,14 +31,17 @@ public class MosaicGroupDataItem extends BaseDataItem<EMosaicGroup, MosaicGroupM
     public EMosaicGroup getMosaicGroup()                          { return getUniqueId(); }
     public void         setMosaicGroup(EMosaicGroup eMosaicGroup) {        setUniqueId(eMosaicGroup); }
 
+    @Deprecated
+    public String getUnicodeChar() { return getMosaicGroup() == null ? null : Character.toString(getMosaicGroup().unicodeChar(false)); }
+
     @Override
-    public MosaicGroupImg.BitmapController getEntity() {
+    public MosaicGroupImg2.MosaicGroupAndroidBitmapController getEntity() {
         if (this.entity == null) {
-            MosaicGroupImg.BitmapController tmp = new MosaicGroupImg.BitmapController(getMosaicGroup());
-            MosaicGroupModel m = tmp.getModel();
+            var tmp = new MosaicGroupImg2.MosaicGroupAndroidBitmapController(getUniqueId());
+            var m = tmp.getModel();
             m.setBorderWidth(3);
             m.setRotateAngle(ThreadLocalRandom.current().nextInt(90));
-            tmp.getBurgerMenuModel().addListener(onBurgerMenuModelPropertyChangedListener);
+            tmp.getBurgerModel().setListener(this::onBurgerModelPropertyChanged);
             setEntity(tmp);
         }
         return this.entity;
@@ -44,12 +49,13 @@ public class MosaicGroupDataItem extends BaseDataItem<EMosaicGroup, MosaicGroupM
 
     @Bindable
     public BoundDouble getPaddingBurgerMenu() {
-        BoundDouble pad = getEntity().getBurgerMenuModel().getPadding();
+        BoundDouble pad = getEntity().getBurgerModel().getPadding();
         double zoom = getZoom();
         return new BoundDouble(pad.left / zoom, pad.top / zoom, pad.right / zoom, pad.bottom / zoom);
     }
+
     public void setPaddingBurgerMenu(BoundDouble paddingBurgerMenu) {
-        getEntity().getBurgerMenuModel().setPadding(zoomPadding(paddingBurgerMenu));
+        getEntity().getBurgerModel().setPadding(zoomPadding(paddingBurgerMenu));
     }
 
     @Bindable
@@ -58,38 +64,44 @@ public class MosaicGroupDataItem extends BaseDataItem<EMosaicGroup, MosaicGroupM
     }
 
     @Override
-    protected void onPropertyChanged(PropertyChangeEvent ev) {
-        super.onPropertyChanged(ev);
+    protected void onPropertyChanged(String propertyName) {
+        if (isDisposed())
+            return;
 
-        switch (ev.getPropertyName()) {
+        super.onPropertyChanged(propertyName);
+
+        switch (propertyName) {
         case PROPERTY_UNIQUE_ID:
-            notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_MOSAIC_GROUP); // recall with another property name
+            getEntity().getModel().setMosaicGroup(getMosaicGroup());
+            break;
+        case PROPERTY_MOSAIC_GROUP:
+            super.onPropertyChanged(PROPERTY_UNIQUE_ID);
             break;
         }
     }
 
     @Override
-    protected void onAsyncPropertyChanged(PropertyChangeEvent ev) {
-        super.onAsyncPropertyChanged(ev);
+    protected void onAsyncPropertyChanged(String propertyName) {
+        if (isDisposed())
+            return;
+
+        super.onAsyncPropertyChanged(propertyName);
 
         // refire as android data binding event
-        switch (ev.getPropertyName()) {
+        switch (propertyName) {
         case PROPERTY_MOSAIC_GROUP  : notifyPropertyChanged(BR.mosaicGroup      ); break;
         case PROPERTY_PADDING_BURGER: notifyPropertyChanged(BR.paddingBurgerMenu); break;
         }
     }
 
-    protected void onBurgerMenuModelPropertyChanged(PropertyChangeEvent ev) {
-        switch (ev.getPropertyName()) {
-        case BurgerMenuModel.PROPERTY_PADDING:
-            notifier.firePropertyChanged(zoomPadding((BoundDouble)ev.getOldValue()), zoomPadding((BoundDouble)ev.getNewValue()), PROPERTY_PADDING_BURGER);
-            break;
-        }
+    private void onBurgerModelPropertyChanged(String propertyName) {
+        if (!isDisposed())
+            UiInvoker.Deferred.accept(() -> onPropertyChanged(PROPERTY_BURGER_SUFFIX + propertyName));
     }
 
     @Override
     public void close() {
-        getEntity().getBurgerMenuModel().removeListener(onBurgerMenuModelPropertyChangedListener);
+        getEntity().getBurgerModel().setListener(null);
         super.close();
     }
 

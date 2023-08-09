@@ -1,15 +1,18 @@
 package fmg.core.img;
 
+import static fmg.core.img.PropertyConst.PROPERTY_IMAGE;
+import static fmg.core.img.PropertyConst.PROPERTY_MODEL;
+import static fmg.core.img.PropertyConst.PROPERTY_SIZE;
+
 import java.util.function.Consumer;
 
-import fmg.common.ui.UiInvoker;
 
 /** Image MVC: controller
  * Default implementation of image controller.
  * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
  * @param <TView> image view
  * @param <TModel> image model */
-public class ImageController2<TImage, TModel extends IImageModel2, TView extends IImageView2<TImage>> implements IImageController2<TImage, TModel> {
+public class ImageController2<TImage, TView extends IImageView2<TImage>, TModel extends IImageModel2> implements IImageController2<TImage, TModel> {
 
     protected TModel model;
     protected TView view;
@@ -48,20 +51,24 @@ public class ImageController2<TImage, TModel extends IImageModel2, TView extends
     protected void onModelChanged(String property) {
         var isValidBefore = view.isValid();
 
-        if (ImageHelper.PROPERTY_SIZE.equals(property)) {
+        boolean fireImageChanged = false;
+        if (PROPERTY_SIZE.equals(property)) {
             view.reset();
-            firePropertyChanged(ImageHelper.PROPERTY_SIZE);
+            fireImageChanged = true;
+            firePropertyChanged(PROPERTY_SIZE);
         }
 
         view.invalidate();
 
-        if (isValidBefore)
-            firePropertyChanged(ImageHelper.PROPERTY_IMAGE);
+        if (isValidBefore || fireImageChanged)
+            firePropertyChanged(PROPERTY_IMAGE);
+
+        firePropertyChanged(PROPERTY_MODEL);
     }
 
     protected void firePropertyChanged(String propertyName) {
         if (changedCallback != null)
-            UiInvoker.Deferred.accept(() -> changedCallback.accept(propertyName));
+            changedCallback.accept(propertyName);
     }
 
     @Override

@@ -1,5 +1,13 @@
 package fmg.core.img;
 
+import static fmg.core.img.PropertyConst.PROPERTY_BORDER_COLOR;
+import static fmg.core.img.PropertyConst.PROPERTY_BORDER_WIDTH;
+import static fmg.core.img.PropertyConst.PROPERTY_PADDING;
+import static fmg.core.img.PropertyConst.PROPERTY_PALETTE_COLOR_OFFSET;
+import static fmg.core.img.PropertyConst.PROPERTY_ROTATE_ANGLE;
+import static fmg.core.img.PropertyConst.PROPERTY_SIZE;
+import static fmg.core.img.PropertyConst.PROPERTY_USE_GRADIENT;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -67,7 +75,7 @@ public class LogoModel2 implements IImageModel2 {
         oct.clear();
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_SIZE);
+            changedCallback.accept(PROPERTY_SIZE);
 
         setPadding(ImageHelper.recalcPadding(padding, size, oldSize));
     }
@@ -94,7 +102,7 @@ public class LogoModel2 implements IImageModel2 {
         oct.clear();
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_PADDING);
     }
 
     public Color getBorderColor() {
@@ -108,7 +116,7 @@ public class LogoModel2 implements IImageModel2 {
         this.borderColor = borderColor;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_BORDER_COLOR);
     }
 
     public double getBorderWidth() {
@@ -122,7 +130,7 @@ public class LogoModel2 implements IImageModel2 {
         this.borderWidth = borderWidth;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_BORDER_WIDTH);
     }
 
     private BoundDouble getInnerPadding() {
@@ -162,7 +170,7 @@ public class LogoModel2 implements IImageModel2 {
         this.useGradient = value;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_USE_GRADIENT);
     }
 
     /** 0° .. +360° */
@@ -184,7 +192,7 @@ public class LogoModel2 implements IImageModel2 {
         FigureHelper.rotateCollection(getOct() , this.rotateAngle, center);
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_ROTATE_ANGLE);
     }
 
     /** 0° .. +360° */
@@ -200,7 +208,7 @@ public class LogoModel2 implements IImageModel2 {
             palette[i].h = DEFAULT_PALETTE[i].h + this.paletteColorOffset;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_PALETTE_COLOR_OFFSET);
     }
 
     public double getZoomX() { return (getSize().width  - getInnerPadding().getLeftAndRight()) / 200.0; }

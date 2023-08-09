@@ -1,5 +1,11 @@
 package fmg.core.img;
 
+import static fmg.core.img.PropertyConst.PROPERTY_BACKGROUND_ANGLE;
+import static fmg.core.img.PropertyConst.PROPERTY_ROTATE_ANGLE;
+import static fmg.core.img.PropertyConst.PROPERTY_ROTATE_FULL_MATRIX;
+import static fmg.core.img.PropertyConst.PROPERTY_ROTATE_MODE;
+import static fmg.core.img.PropertyConst.PROPERTY_ROTATE_SOME_CELLS;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -52,7 +58,7 @@ public class MosaicImageModel2 extends MosaicModel2 {
         this.rotateMode = value;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_ROTATE_MODE);
 
         applyRotateModeSomeCells();
     }
@@ -67,7 +73,7 @@ public class MosaicImageModel2 extends MosaicModel2 {
         this.rotateAngle = value;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_ROTATE_ANGLE);
     }
 
     /** 0° .. +360° */
@@ -80,7 +86,7 @@ public class MosaicImageModel2 extends MosaicModel2 {
         this.backgroundAngle = value;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_BACKGROUND_ANGLE);
     }
 
     @Override
@@ -116,7 +122,7 @@ public class MosaicImageModel2 extends MosaicModel2 {
         }
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_ROTATE_FULL_MATRIX);
     }
 
     /** ///////////// ================= PART {@link ERotateMode#SOME_CELLS} ======================= ///////////// */
@@ -222,7 +228,7 @@ public class MosaicImageModel2 extends MosaicModel2 {
         Collections.sort(rotatedElements, (e1, e2) -> Double.compare(e1.area, e2.area));
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_ROTATE_SOME_CELLS);
     }
 
     public List<BaseCell> getNotRotatedCells() {

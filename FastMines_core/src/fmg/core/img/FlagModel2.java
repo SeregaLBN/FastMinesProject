@@ -1,5 +1,8 @@
 package fmg.core.img;
 
+import static fmg.core.img.PropertyConst.PROPERTY_PADDING;
+import static fmg.core.img.PropertyConst.PROPERTY_SIZE;
+
 import java.util.function.Consumer;
 
 import fmg.common.geom.BoundDouble;
@@ -29,7 +32,7 @@ public class FlagModel2 implements IImageModel2 {
         this.size.height = size.height;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_SIZE);
+            changedCallback.accept(PROPERTY_SIZE);
 
         setPadding(ImageHelper.recalcPadding(pad, size, oldSize));
     }
@@ -52,7 +55,7 @@ public class FlagModel2 implements IImageModel2 {
         this.pad.bottom = padding.bottom;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_PADDING);
     }
 
     @Override

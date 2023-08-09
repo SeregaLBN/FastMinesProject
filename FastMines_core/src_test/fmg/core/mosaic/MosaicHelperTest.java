@@ -7,8 +7,6 @@ import org.junit.*;
 import fmg.common.Logger;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.SizeDouble;
-import fmg.common.notifier.Signal;
-import fmg.common.ui.UiInvoker;
 import fmg.core.types.EMosaic;
 
 public class MosaicHelperTest {
@@ -17,8 +15,6 @@ public class MosaicHelperTest {
     public static void setup() {
         Logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         Logger.info("> MosaicHelperTest::setup");
-
-        MosaicModelTest.ProjSettings();
     }
 
     @Before
@@ -34,8 +30,8 @@ public class MosaicHelperTest {
 
 
     @Test
-    public void findSizeByArea_eMosaicSquare1_Test() {
-        Logger.info("> MosaicHelperTest::findSizeByArea_eMosaicSquare1_Test");
+    public void findSizeByAreaMosaicSquare1Test() {
+        Logger.info("> MosaicHelperTest::findSizeByAreaMosaicSquare1Test");
 
         {
             SizeDouble sizeClient = new SizeDouble(100, 100);
@@ -58,8 +54,8 @@ public class MosaicHelperTest {
     }
 
     @Test
-    public void findAreaBySize_eMosaicSquare1_Test1() {
-        Logger.info("> MosaicHelperTest::findAreaBySize_eMosaicSquare1_Test1");
+    public void findAreaBySizeMosaicSquare1Test1() {
+        Logger.info("> MosaicHelperTest::findAreaBySizeMosaicSquare1Test1");
 
         SizeDouble sizeClientIn = new SizeDouble(100, 100);
         SizeDouble sizeClientOut = new SizeDouble();
@@ -74,8 +70,8 @@ public class MosaicHelperTest {
     }
 
     @Test
-    public void findAreaBySize_eMosaicSquare1_Test2() {
-        Logger.info("> MosaicHelperTest::findAreaBySize_eMosaicSquare1_Test2");
+    public void findAreaBySizeMosaicSquare1Test2() {
+        Logger.info("> MosaicHelperTest::findAreaBySizeMosaicSquare1Test2");
 
         SizeDouble sizeClientIn = new SizeDouble(200, 200);
         SizeDouble sizeClientOut = new SizeDouble();
@@ -90,8 +86,8 @@ public class MosaicHelperTest {
     }
 
     @Test
-    public void findAreaBySize_eMosaicSquare1_Test3() {
-        Logger.info("> MosaicHelperTest::findAreaBySize_eMosaicSquare1_Test3");
+    public void findAreaBySizeMosaicSquare1Test3() {
+        Logger.info("> MosaicHelperTest::findAreaBySizeMosaicSquare1Test3");
 
         {
             SizeDouble sizeClientIn = new SizeDouble(200, 400);
@@ -120,8 +116,8 @@ public class MosaicHelperTest {
     }
 
     @Test
-    public void findAreaBySize_Random_Test() {
-        Logger.info("> MosaicHelperTest::findAreaBySize_Random_Test");
+    public void findAreaBySizeRandomTest() {
+        Logger.info("> MosaicHelperTest::findAreaBySizeRandomTest");
 
         ThreadLocalRandom r = ThreadLocalRandom.current();
 
@@ -152,26 +148,19 @@ public class MosaicHelperTest {
     }
 
     @Test
-    public void findAreaBySize_eMosaicTrapezoid3_Test() {
-        Logger.info("> MosaicHelperTest::findAreaBySize_eMosaicTrapezoid3_Test");
+    public void findAreaBySizeMosaicTrapezoid3Test() {
+        Logger.info("> MosaicHelperTest::findAreaBySizeMosaicTrapezoid3Test");
 
-        Signal signal = new Signal();
-        double[] area = { -1 };
-        UiInvoker.Deferred.accept(() -> {
-            SizeDouble sizeClientIn = new SizeDouble(169.90442448471225, 313.90196868082262);
-            SizeDouble sizeClientOut = new SizeDouble();
-            area[0] = MosaicHelper.findAreaBySize(EMosaic.eMosaicTrapezoid3, new Matrisize(4, 2), sizeClientIn, sizeClientOut);
+        SizeDouble sizeClientIn = new SizeDouble(169.90442448471225, 313.90196868082262);
+        SizeDouble sizeClientOut = new SizeDouble();
+        var area = MosaicHelper.findAreaBySize(EMosaic.eMosaicTrapezoid3, new Matrisize(4, 2), sizeClientIn, sizeClientOut);
 
-            signal.set();
-        });
-
-        Assert.assertTrue(signal.await(1000));
-        Assert.assertTrue(area[0] > 0);
+        Assert.assertTrue(area > 0);
     }
 
     @Test
-    public void findAreaBySize_eMosaicTriangle1_Test() {
-        Logger.info("> MosaicHelperTest::findAreaBySize_eMosaicTriangle1_Test");
+    public void findAreaBySizeMosaicTriangle1Test() {
+        Logger.info("> MosaicHelperTest::findAreaBySizeMosaicTriangle1Test");
 
         SizeDouble sizeClientIn = new SizeDouble(186.89486693318347, 294.28309563827116);
         SizeDouble sizeClientOut = new SizeDouble();

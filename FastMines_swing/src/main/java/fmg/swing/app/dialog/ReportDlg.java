@@ -1,5 +1,7 @@
 package fmg.swing.app.dialog;
 
+import static fmg.core.img.PropertyConst.PROPERTY_IMAGE;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -20,7 +22,7 @@ import javax.swing.table.TableCellRenderer;
 import fmg.common.Color;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.ImageHelper;
+import fmg.common.ui.UiInvoker;
 import fmg.core.img.MosaicImageModel2;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
@@ -221,9 +223,13 @@ public abstract class ReportDlg implements AutoCloseable {
     }
 
     private void onImagePropertyChanged(int index, String propertyName) {
+        UiInvoker.Deferred.accept(() -> onImagePropertyChangedAsync(index, propertyName));
+    }
+
+    private void onImagePropertyChangedAsync(int index, String propertyName) {
         if (!dialog.isVisible())
             return;
-        if (ImageHelper.PROPERTY_IMAGE.equals(propertyName)) {
+        if (PROPERTY_IMAGE.equals(propertyName)) {
             MosaicImg2.MosaicSwingIconController imgCtrllr = images.get(index);
             tabPanel.setIconAt(imgCtrllr.getModel().getMosaicType().ordinal(), ImgUtils.zoom(imgCtrllr.getImage(), IMG_SIZE, IMG_SIZE));
         }

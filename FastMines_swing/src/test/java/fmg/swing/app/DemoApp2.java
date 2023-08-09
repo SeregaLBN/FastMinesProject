@@ -1,5 +1,7 @@
 package fmg.swing.app;
 
+import static fmg.core.img.PropertyConst.PROPERTY_IMAGE;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -17,8 +19,8 @@ import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
+import fmg.common.ui.UiInvoker;
 import fmg.core.img.IImageController2;
-import fmg.core.img.ImageHelper;
 import fmg.core.img.MosaicImageController2;
 import fmg.core.img.SmileModel2.EFaceType;
 import fmg.core.img.TestDrawing2;
@@ -250,13 +252,14 @@ public class DemoApp2  {
                       //imgControl.setBackgroundColor(Cast.toColor(Color.RandomColor().brighter()));
 
                         Component imgControl2 = imgControl;
-                        Consumer<String> onChangeImage = property -> {
-                            if (ImageHelper.PROPERTY_IMAGE.equals(property)) {
+                        Consumer<String> onChangeImageAsync = property -> {
+                            if (PROPERTY_IMAGE.equals(property)) {
                                 jPanel.repaint();
                                 imgControl2.repaint();
                             }
                         };
-                        jPanel.repaint();
+                        Consumer<String> onChangeImage = property -> UiInvoker.Deferred.accept(() -> onChangeImageAsync.accept(property));
+                                jPanel.repaint();
                         imgObj.setListener(onChangeImage);
                     } else {
                         throw new IllegalArgumentException("Unsupported image type: " + img.getClass().getName());

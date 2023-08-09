@@ -1,5 +1,7 @@
 package fmg.swing.app;
 
+import static fmg.core.img.PropertyConst.PROPERTY_IMAGE;
+
 import java.awt.Dimension;
 import java.awt.Graphics;
 
@@ -7,7 +9,7 @@ import javax.swing.JPanel;
 
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.ImageHelper;
+import fmg.common.ui.UiInvoker;
 import fmg.core.img.LogoModel2;
 import fmg.swing.img.Logo2;
 
@@ -40,9 +42,13 @@ class PausePanel {
     }
 
     private void onLogoPausePropertyChanged(String propertyName) {
+        UiInvoker.Deferred.accept(() -> onLogoPausePropertyChangedAsync(propertyName));
+    }
+
+    private void onLogoPausePropertyChangedAsync(String propertyName) {
         if (!panel.isVisible())
             return;
-        if (ImageHelper.PROPERTY_IMAGE.equals(propertyName))
+        if (PROPERTY_IMAGE.equals(propertyName))
             panel.repaint();
     }
 

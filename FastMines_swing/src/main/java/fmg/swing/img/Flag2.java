@@ -76,7 +76,7 @@ public final class Flag2 {
     }
 
     /** Flag image controller implementation for {@link javax.swing.Icon} */
-    public static class FlagSwingIconController extends ImageController2<javax.swing.Icon, FlagModel2, SwingIconView<FlagModel2>> {
+    public static class FlagSwingIconController extends ImageController2<javax.swing.Icon, SwingIconView<FlagModel2>, FlagModel2> {
 
         public FlagSwingIconController() {
             var model = new FlagModel2();
@@ -87,7 +87,7 @@ public final class Flag2 {
     }
 
     /** Flag image controller implementation for {@link java.awt.Image} */
-    public static class FlagAwtImageController extends ImageController2<java.awt.Image, FlagModel2, AwtImageView<FlagModel2>> {
+    public static class FlagAwtImageController extends ImageController2<java.awt.Image, AwtImageView<FlagModel2>, FlagModel2> {
 
         public FlagAwtImageController() {
             var model = new FlagModel2();

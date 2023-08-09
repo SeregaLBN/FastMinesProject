@@ -1,5 +1,7 @@
 package fmg.swing.app.menu;
 
+import static fmg.core.img.PropertyConst.PROPERTY_IMAGE;
+
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.util.*;
@@ -8,7 +10,7 @@ import javax.swing.*;
 
 import fmg.common.Color;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.ImageHelper;
+import fmg.common.ui.UiInvoker;
 import fmg.core.img.MosaicGroupModel2;
 import fmg.core.img.MosaicImageModel2.ERotateMode;
 import fmg.core.types.EMosaic;
@@ -39,23 +41,31 @@ public class MosaicsMenu implements AutoCloseable {
     }
 
     private void onMosaicImgPropertyChanged(int index, String propertyName) {
+        UiInvoker.Deferred.accept(() -> onMosaicImgPropertyChangedAsync(index, propertyName));
+    }
+
+    private void onMosaicImgPropertyChangedAsync(int index, String propertyName) {
         var img = mosaicsImages.get(index);
         JRadioButtonMenuItem menuItem = mosaics.get(img.getModel().getMosaicType());
         Container parent = menuItem.getParent();
         if ((parent == null) || !parent.isVisible())
             return;
-        if (propertyName.equalsIgnoreCase(ImageHelper.PROPERTY_IMAGE)) {
+        if (propertyName.equalsIgnoreCase(PROPERTY_IMAGE)) {
             MainMenu.setMenuItemIcon(menuItem, img.getImage());
         }
     }
 
     private void onMosaicGroupImgPropertyChanged(int index, String propertyName) {
+        UiInvoker.Deferred.accept(() -> onMosaicGroupImgPropertyChangedAsync(index, propertyName));
+    }
+
+    private void onMosaicGroupImgPropertyChangedAsync(int index, String propertyName) {
         var img = mosaicsGroupImages.get(index);
         JMenuItem menuItem = mosaicsGroup.get(img.getModel().getMosaicGroup());
         Container parent = menuItem.getParent();
         if ((parent == null) || !parent.isVisible())
             return;
-        if (propertyName.equalsIgnoreCase(ImageHelper.PROPERTY_IMAGE)) {
+        if (propertyName.equalsIgnoreCase(PROPERTY_IMAGE)) {
             MainMenu.setMenuItemIcon(menuItem, img.getImage());
         }
     }

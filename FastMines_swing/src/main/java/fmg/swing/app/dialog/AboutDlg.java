@@ -1,5 +1,7 @@
 package fmg.swing.app.dialog;
 
+import static fmg.core.img.PropertyConst.PROPERTY_IMAGE;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.net.URI;
@@ -12,7 +14,7 @@ import javax.swing.border.EtchedBorder;
 import fmg.common.Logger;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.ImageHelper;
+import fmg.common.ui.UiInvoker;
 import fmg.core.img.LogoModel2;
 import fmg.core.img.SmileModel2;
 import fmg.swing.img.Logo2;
@@ -109,7 +111,11 @@ public class AboutDlg implements AutoCloseable {
     }
 
     private void onLogoPropertyChanged(String propertyName) {
-        if (ImageHelper.PROPERTY_IMAGE.equals(propertyName)) {
+        UiInvoker.Deferred.accept(() -> onLogoPropertyChangedAsync(propertyName));
+    }
+
+    private void onLogoPropertyChangedAsync(String propertyName) {
+        if (PROPERTY_IMAGE.equals(propertyName)) {
             btnLogo.setIcon(ImgUtils.zoom(logo.getImage(), ICON_SIZE, ICON_SIZE));
             btnLogo.repaint();
         }

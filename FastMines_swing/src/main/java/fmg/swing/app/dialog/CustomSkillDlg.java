@@ -1,5 +1,8 @@
 package fmg.swing.app.dialog;
 
+import static fmg.core.img.PropertyConst.PROPERTY_AREA;
+import static fmg.core.img.PropertyConst.PROPERTY_MOSAIC_TYPE;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -13,7 +16,6 @@ import javax.swing.event.ChangeListener;
 import fmg.common.geom.Matrisize;
 import fmg.core.app.model.MosaicInitData;
 import fmg.core.mosaic.MosaicHelper;
-import fmg.core.mosaic.MosaicModel2;
 import fmg.core.mosaic.shape.BaseShape;
 import fmg.core.types.ESkillLevel;
 import fmg.swing.app.FastMinesApp;
@@ -292,11 +294,11 @@ public class CustomSkillDlg implements AutoCloseable {
 
     public void onMosaicPropertyChanged(String propertyName) {
         switch (propertyName) {
-        case MosaicModel2.PROPERTY_MOSAIC_TYPE:
+        case PROPERTY_MOSAIC_TYPE:
             if (dialog.isVisible())
                 onChangeMosaicType();
             break;
-        case MosaicModel2.PROPERTY_AREA:
+        case PROPERTY_AREA:
             if (radioFullScreenCurrSizeArea.isSelected())
                 radioGroup.clearSelection();
             break;

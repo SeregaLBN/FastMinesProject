@@ -5,10 +5,10 @@ import fmg.core.types.ESkillLevel;
 
 /** MVC controller of {@link ESkillLevel} image
  * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
- * @param <TImageView> MVC view */
+ * @param <TView> MVC view */
 public abstract class MosaicSkillController2<TImage,
                                             TView extends IImageView2<TImage>>
-    extends ImageController2<TImage, MosaicSkillModel2, TView>
+    extends ImageController2<TImage, TView, MosaicSkillModel2>
 {
 
     /** Overall animation period (in milliseconds) */
@@ -139,7 +139,7 @@ public abstract class MosaicSkillController2<TImage,
     private boolean lock = false;
     @Override
     protected void onModelChanged(String property) {
-        if (!lock && ImageHelper.PROPERTY_SIZE.equals(property)) try {
+        if (!lock && PropertyConst.PROPERTY_SIZE.equals(property)) try {
             lock = true;
             burgerModel.setSize(model.getSize());
         } finally {

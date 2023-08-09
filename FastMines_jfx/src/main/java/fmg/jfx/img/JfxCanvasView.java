@@ -57,6 +57,7 @@ public class JfxCanvasView<TModel extends IImageModel2> implements IImageView2<j
 
     @Override
     public void reset() {
+        canvas = null;
         valid = false;
     }
 

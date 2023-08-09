@@ -1,5 +1,10 @@
 package fmg.swing.app;
 
+import static fmg.core.img.PropertyConst.PROPERTY_IMAGE;
+import static fmg.core.img.PropertyConst.PROPERTY_MOSAIC_TYPE;
+import static fmg.core.img.PropertyConst.PROPERTY_SIZE;
+import static fmg.core.img.PropertyConst.PROPERTY_SIZE_FIELD;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
@@ -26,7 +31,6 @@ import fmg.core.app.model.Champions;
 import fmg.core.app.model.MosaicInitData;
 import fmg.core.app.model.Players;
 import fmg.core.app.model.User;
-import fmg.core.img.ImageHelper;
 import fmg.core.img.LogoModel2;
 import fmg.core.mosaic.MosaicController2;
 import fmg.core.mosaic.MosaicHelper;
@@ -1143,21 +1147,29 @@ public class FastMinesApp {
     }
 
     private void onLogoMainIconPropertyChanged(String propertyName) {
-        if (ImageHelper.PROPERTY_IMAGE.equals(propertyName))
+        UiInvoker.Deferred.accept(() -> onLogoMainIconPropertyChangedAsync(propertyName));
+    }
+
+    private void onLogoMainIconPropertyChangedAsync(String propertyName) {
+        if (PROPERTY_IMAGE.equals(propertyName))
             frame.setIconImage(logo.getImage());
     }
 
     private void onMosaicPropertyChanged(String propertyName) {
+        UiInvoker.Deferred.accept(() -> onMosaicPropertyChangedAsync(propertyName));
+    }
+
+    private void onMosaicPropertyChangedAsync(String propertyName) {
 //        Logger.info("Main::propertyChange: " + propertyName);
         switch (propertyName) {
-        case ImageHelper.PROPERTY_SIZE:
+        case PROPERTY_SIZE:
             //Logger.info(">>>>>>>>>>>>>>>>>>>>>");
             recheckLocation();
             break;
-        case MosaicModel2.PROPERTY_SIZE_FIELD:
+        case PROPERTY_SIZE_FIELD:
             getMenu().getGame().recheckSelectedSkillLevel();
             break;
-        case MosaicModel2.PROPERTY_MOSAIC_TYPE:
+        case PROPERTY_MOSAIC_TYPE:
             getMenu().getMosaics().recheckSelectedMosaicType();
             break;
         case MosaicController2.PROPERTY_COUNT_MINES:
@@ -1223,21 +1235,24 @@ public class FastMinesApp {
             getCustomSkillDialog().onMosaicPropertyChanged(propertyName);
     }
 
-
     private void onPlayersPropertyChanged(PropertyChangeEvent ev) {
-        playersChanged = true;
-        if (champions != null)
-            champions.onPlayersPropertyChanged(ev);
-        if (isPlayerManageDialogExist())
-            playerManageDialog.onPlayersPropertyChanged(ev);
-        if (isStatisticDialogExist())
-            statisticDialog.onPlayersPropertyChanged(ev);
+        UiInvoker.Deferred.accept(() -> {
+            playersChanged = true;
+            if (champions != null)
+                champions.onPlayersPropertyChanged(ev);
+            if (isPlayerManageDialogExist())
+                playerManageDialog.onPlayersPropertyChanged(ev);
+            if (isStatisticDialogExist())
+                statisticDialog.onPlayersPropertyChanged(ev);
+        });
     }
 
     private void onChampionsPropertyChanged(PropertyChangeEvent ev) {
-        championsChanged = true;
-        if (isChampionDialogExist())
-            championDialog.onChampionsPropertyChanged(ev);
+        UiInvoker.Deferred.accept(() -> {
+            championsChanged = true;
+            if (isChampionDialogExist())
+                championDialog.onChampionsPropertyChanged(ev);
+        });
     }
 
 

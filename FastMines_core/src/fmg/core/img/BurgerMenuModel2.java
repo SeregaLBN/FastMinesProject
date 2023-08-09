@@ -1,5 +1,11 @@
 package fmg.core.img;
 
+import static fmg.core.img.PropertyConst.PROPERTY_HORIZONTAL;
+import static fmg.core.img.PropertyConst.PROPERTY_LAYERS;
+import static fmg.core.img.PropertyConst.PROPERTY_PADDING;
+import static fmg.core.img.PropertyConst.PROPERTY_ROTATE_ANGLE;
+import static fmg.core.img.PropertyConst.PROPERTY_SIZE;
+
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -39,7 +45,7 @@ public final class BurgerMenuModel2 implements IImageModel2 {
         this.size.height = size.height;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_SIZE);
+            changedCallback.accept(PROPERTY_SIZE);
 
         setPadding(ImageHelper.recalcPadding(pad, size, oldSize));
     }
@@ -62,7 +68,7 @@ public final class BurgerMenuModel2 implements IImageModel2 {
         this.pad.bottom = padding.bottom;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_PADDING);
     }
 
     public boolean isHorizontal() { return horizontal; }
@@ -70,7 +76,7 @@ public final class BurgerMenuModel2 implements IImageModel2 {
         this.horizontal = value;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_HORIZONTAL);
     }
 
     public int  getLayers() { return layers; }
@@ -78,7 +84,7 @@ public final class BurgerMenuModel2 implements IImageModel2 {
         this.layers = value;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_LAYERS);
     }
 
     /** 0° .. +360° */
@@ -88,7 +94,7 @@ public final class BurgerMenuModel2 implements IImageModel2 {
         this.rotateAngle = ImageHelper.fixAngle(value);
 
         if ((changedCallback != null) && !DoubleExt.almostEquals(old, this.rotateAngle))
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_ROTATE_ANGLE);
     }
 
     @Override

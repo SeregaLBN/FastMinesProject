@@ -1,11 +1,14 @@
 package fmg.core.types.draw;
 
+import static fmg.core.img.PropertyConst.PROPERTY_COLOR_LIGHT;
+import static fmg.core.img.PropertyConst.PROPERTY_COLOR_SHADOW;
+import static fmg.core.img.PropertyConst.PROPERTY_WIDTH;
+
 import java.util.Objects;
 import java.util.function.Consumer;
 
 import fmg.common.Color;
 import fmg.common.geom.DoubleExt;
-import fmg.core.img.ImageHelper;
 
 /** Характеристики кисти у рамки ячейки */
 public class PenBorder2 {
@@ -44,7 +47,7 @@ public class PenBorder2 {
         this.colorShadow = Objects.requireNonNull(colorShadow);
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_COLOR_SHADOW);
     }
 
     public Color getColorLight() {
@@ -58,7 +61,7 @@ public class PenBorder2 {
         this.colorLight = Objects.requireNonNull(colorLight);
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_COLOR_LIGHT);
     }
 
     public double getWidth() {
@@ -72,7 +75,7 @@ public class PenBorder2 {
         this.width = width;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_WIDTH);
     }
 
     @Override

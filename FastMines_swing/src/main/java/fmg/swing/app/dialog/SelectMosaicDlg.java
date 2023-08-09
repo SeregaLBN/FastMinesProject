@@ -1,5 +1,7 @@
 package fmg.swing.app.dialog;
 
+import static fmg.core.img.PropertyConst.PROPERTY_IMAGE;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -11,7 +13,7 @@ import javax.swing.event.DocumentEvent;
 
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.ImageHelper;
+import fmg.common.ui.UiInvoker;
 import fmg.core.img.MosaicImageModel2;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
@@ -291,9 +293,13 @@ public class SelectMosaicDlg implements AutoCloseable {
     }
 
     private void onMosaicsImgPropertyChanged(String propertyName) {
+        UiInvoker.Deferred.accept(() -> onMosaicsImgPropertyChangedAsync( propertyName));
+    }
+
+    private void onMosaicsImgPropertyChangedAsync(String propertyName) {
         if (!dialog.isVisible())
             return;
-        if (propertyName.equalsIgnoreCase(ImageHelper.PROPERTY_IMAGE)) {
+        if (propertyName.equalsIgnoreCase(PROPERTY_IMAGE)) {
             btnOk.setIcon(ImgUtils.toIco(mosaicsImg.getImage(), IMG_SIZE, IMG_SIZE));
         }
     }

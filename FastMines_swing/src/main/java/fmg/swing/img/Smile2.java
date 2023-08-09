@@ -373,7 +373,7 @@ public final class Smile2 {
     }
 
     /** Smile image controller implementation for {@link javax.swing.Icon} */
-    public static class SmileSwingIconController extends ImageController2<javax.swing.Icon, SmileModel2, SwingIconView<SmileModel2>> {
+    public static class SmileSwingIconController extends ImageController2<javax.swing.Icon, SwingIconView<SmileModel2>, SmileModel2> {
 
         public SmileSwingIconController(EFaceType faceType) {
             var model = new SmileModel2(faceType);
@@ -384,7 +384,7 @@ public final class Smile2 {
     }
 
     /** Smile image controller implementation for {@link java.awt.Image} */
-    public static class SmileAwtImageController extends ImageController2<java.awt.Image, SmileModel2, AwtImageView<SmileModel2>> {
+    public static class SmileAwtImageController extends ImageController2<java.awt.Image, AwtImageView<SmileModel2>, SmileModel2> {
 
         public SmileAwtImageController(EFaceType faceType) {
             var model = new SmileModel2(faceType);

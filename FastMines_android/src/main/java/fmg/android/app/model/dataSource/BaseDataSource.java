@@ -5,38 +5,35 @@ import android.graphics.Bitmap;
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.List;
+import java.util.function.Consumer;
 
 import fmg.android.app.BR;
 import fmg.android.app.model.items.BaseDataItem;
 import fmg.common.Color;
 import fmg.common.geom.SizeDouble;
-import fmg.common.notifier.INotifyPropertyChanged;
-import fmg.common.notifier.NotifyPropertyChanged;
-import fmg.core.img.IAnimatedModel;
-import fmg.core.img.IImageView;
-import fmg.core.img.ImageController;
-import fmg.core.types.Property;
-import fmg.core.mosaic.MosaicDrawModel;
+import fmg.common.ui.UiInvoker;
+import fmg.core.img.IImageModel2;
+import fmg.core.img.IImageView2;
+import fmg.core.img.ImageController2;
+import fmg.core.mosaic.MosaicModel2;
 
 /** Base container for image items */
 public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THeaderModel, THeaderView, THeaderCtrlr>,
                                      THeaderId,
-                                     THeaderModel extends IAnimatedModel,
-                                     THeaderView  extends IImageView<Bitmap, THeaderModel>,
-                                     THeaderCtrlr extends ImageController<Bitmap, THeaderView, THeaderModel>,
+                                     THeaderModel extends IImageModel2,
+                                     THeaderView  extends IImageView2<Bitmap>,
+                                     THeaderCtrlr extends ImageController2<Bitmap, THeaderView, THeaderModel>,
 
                                      TItem   extends BaseDataItem<TItemId, TItemModel, TItemView, TItemCtrlr>,
                                      TItemId,
-                                     TItemModel extends IAnimatedModel,
-                                     TItemView  extends IImageView<Bitmap, TItemModel>,
-                                     TItemCtrlr extends ImageController<Bitmap, TItemView, TItemModel>>
+                                     TItemModel extends IImageModel2,
+                                     TItemView  extends IImageView2<Bitmap>,
+                                     TItemCtrlr extends ImageController2<Bitmap, TItemView, TItemModel>>
     extends BaseObservable
-    implements INotifyPropertyChanged, AutoCloseable
+    implements AutoCloseable
 {
-    public static Color DefaultBkColor = MosaicDrawModel.DefaultBkColor;
+    public static Color DefaultBkColor = MosaicModel2.DefaultBkColor;
 
     public static final String PROPERTY_DATA_SOURCE      = "DataSource";
     public static final String PROPERTY_HEADER           = "Header";
@@ -50,21 +47,15 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
     protected List<TItem> dataSource; // TODO??? MutableLiveData<...>
     
     /** Current item index in {@link #dataSource} */
-    @Property(PROPERTY_CURRENT_ITEM_POS)
     protected int currentItemPos = NOT_SELECTED_POS;
     
     private boolean disposed;
 
     private static final int NOT_SELECTED_POS = -1;
 
-    protected final NotifyPropertyChanged notifier/*Sync*/ = new NotifyPropertyChanged(this, false);
-    private   final NotifyPropertyChanged notifierAsync    = new NotifyPropertyChanged(this, true);
-    private final PropertyChangeListener      onPropertyChangedListener = this::onPropertyChanged;
-    private final PropertyChangeListener onAsyncPropertyChangedListener = this::onAsyncPropertyChanged;
+    private Consumer<String> changedCallback;
 
     protected BaseDataSource() {
-        notifier     .addListener(onPropertyChangedListener);
-        notifierAsync.addListener(onAsyncPropertyChangedListener);
     }
 
     /** the top item that this data source describes */
@@ -97,7 +88,8 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
         }
         if (pos == currentItemPos)
             return;
-        notifier.setProperty(this.currentItemPos, pos, PROPERTY_CURRENT_ITEM_POS);
+
+        onPropertyChanged(PROPERTY_CURRENT_ITEM_POS);
     }
 
     @Bindable
@@ -108,29 +100,37 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
         SizeDouble old = getImageSize();
         getDataSource().forEach(mi -> mi.setSize(size));
 
-        //notifier.setProperty(old, size, PROPERTY_IMAGE_SIZE);
         if (!old.equals(size))
-            notifier.firePropertyChanged(old, size, PROPERTY_IMAGE_SIZE);
+            onPropertyChanged(PROPERTY_IMAGE_SIZE);
     }
 
     /** for one selected - start animate; for all other - stop animate */
     protected abstract void onCurrentItemChanged();
 
-    protected void onPropertyChanged(PropertyChangeEvent ev) {
-        // refire as async event
-        notifierAsync.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+    protected void onPropertyChanged(String propertyName) {
+        if (disposed)
+            return;
 
-        switch (ev.getPropertyName()) {
-        case PROPERTY_CURRENT_ITEM_POS:
-            onCurrentItemChanged();
-            notifier.firePropertyChanged(PROPERTY_CURRENT_ITEM);
-            break;
+        if (changedCallback != null) {
+
+            switch (propertyName) {
+            case PROPERTY_CURRENT_ITEM_POS:
+                onCurrentItemChanged();
+                changedCallback.accept(PROPERTY_CURRENT_ITEM);
+                break;
+            }
         }
+
+        // refire as async event
+        UiInvoker.Deferred.accept(() -> onAsyncPropertyChanged(propertyName));
     }
 
-    protected void onAsyncPropertyChanged(PropertyChangeEvent ev) {
+    protected void onAsyncPropertyChanged(String propertyName) {
+        if (disposed)
+            return;
+
         // refire as android data binding event
-        switch (ev.getPropertyName()) {
+        switch (propertyName) {
         case PROPERTY_DATA_SOURCE     : notifyPropertyChanged(BR.dataSource    ); break;
         case PROPERTY_HEADER          : notifyPropertyChanged(BR.header        ); break;
         case PROPERTY_IMAGE_SIZE      : notifyPropertyChanged(BR.imageSize     ); break;
@@ -141,8 +141,21 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
 
     protected boolean isDisposed() { return disposed; }
 
+    public void setListener(Consumer<String> callback) {
+        if (callback == null) {
+            // unset
+            changedCallback = null;
+        } else {
+            // set
+            if (changedCallback != null)
+                throw new IllegalArgumentException("The callback is already set");
+            changedCallback = callback;
+        }
+    }
+
     @Override
     public void close() {
+        changedCallback = null;
         disposed = true;
         if (header != null)
             header.close();
@@ -150,20 +163,6 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
             dataSource.forEach(TItem::close);
             dataSource.clear();
         }
-        notifier     .removeListener(onPropertyChangedListener);
-        notifierAsync.removeListener(onAsyncPropertyChangedListener);
-        notifier.close();
-        notifierAsync.close();
-    }
-
-
-    @Override
-    public void addListener(PropertyChangeListener listener) {
-        notifierAsync.addListener(listener);
-    }
-    @Override
-    public void removeListener(PropertyChangeListener listener) {
-        notifierAsync.removeListener(listener);
     }
 
 }

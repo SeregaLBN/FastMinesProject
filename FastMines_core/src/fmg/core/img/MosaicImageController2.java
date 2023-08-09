@@ -13,7 +13,7 @@ import fmg.core.types.draw.PenBorder2;
  * @param <TView> mosaic view */
 public abstract class MosaicImageController2<TImage,
                                             TView extends IImageView2<TImage>>
-    extends ImageController2<TImage, MosaicImageModel2, TView>
+    extends ImageController2<TImage, TView, MosaicImageModel2>
 {
 
     /** Overall animation period (in milliseconds) */

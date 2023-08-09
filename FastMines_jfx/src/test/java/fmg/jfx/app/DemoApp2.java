@@ -1,5 +1,7 @@
 package fmg.jfx.app;
 
+import static fmg.core.img.PropertyConst.PROPERTY_IMAGE;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -33,7 +35,7 @@ import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
 import fmg.core.img.IImageController2;
-import fmg.core.img.ImageHelper;
+import fmg.core.img.MosaicGroupController2;
 import fmg.core.img.MosaicImageController2;
 import fmg.core.img.SmileModel2.EFaceType;
 import fmg.core.img.TestDrawing2;
@@ -104,8 +106,8 @@ public final class DemoApp2 extends Application {
         testApp(() ->
             Stream.concat(Stream.of((EMosaicGroup)null),
                           Stream.of(EMosaicGroup.values()))
-                .map(e -> new Pair<>(new MosaicGroupImg2.MosaicGroupJfxCanvasController(e),
-                                     new MosaicGroupImg2.MosaicGroupJfxImageController (e)))
+                .map(e -> new Pair<>((MosaicGroupController2<?,?>)new MosaicGroupImg2.MosaicGroupJfxCanvasController(e),
+                                     (MosaicGroupController2<?,?>)new MosaicGroupImg2.MosaicGroupJfxImageController (e)))
                 .flatMap(x -> Stream.of(x.first, x.second))
         );
     }
@@ -308,12 +310,13 @@ public final class DemoApp2 extends Application {
                     // TODO remove unused code
                     if (imgControl != null) {
 //                        Canvas imgControl2 = imgControl;
-                        Consumer<String> onChangeImage = name -> {
-                            if (ImageHelper.PROPERTY_IMAGE.equals(name)) {
+                        Consumer<String> onChangeImageAsync = name -> {
+                            if (PROPERTY_IMAGE.equals(name)) {
                                 //group.repaint();
                                 //imgControl2.invalidate();
                             }
                         };
+                        Consumer<String> onChangeImage = propName -> UiInvoker.Deferred.accept(() -> onChangeImageAsync.accept(propName));
 
                         imgObj.setListener(onChangeImage);
                         pane.getChildren().add(imgControl);

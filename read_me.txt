@@ -27,7 +27,7 @@
 ----------------------------------
 FastMines_xxx - projects of a specific language implementation, for a specific UI platform:
    FastMines_core     - shared project libraries (common utils;  core business logic;  unit tests)
-   FastMines_android  - (  demo  ) - Java Android tablet/mobile application                          (open from Android Studio)
+   FastMines_android  - (release ) - Java Android tablet/mobile application                          (open from Android Studio)
                                      Flavors: Main program;  visual check drawing demo-program;  Unit tests
    FastMines_swing    - ( stable ) - Java desktop SWING project (multiplatform)                      (open from the Eclipse workspace / IDEA / VSCode)
                                      Main program;  visual check drawing demo-program ;  unit tests

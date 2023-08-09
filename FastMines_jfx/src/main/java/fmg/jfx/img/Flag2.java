@@ -63,7 +63,7 @@ public final class Flag2 {
     }
 
     /** Flag image controller implementation for {@link javafx.scene.canvas.Canvas} */
-    public static class FlagJfxCanvasController extends ImageController2<javafx.scene.canvas.Canvas, FlagModel2, JfxCanvasView<FlagModel2>> {
+    public static class FlagJfxCanvasController extends ImageController2<javafx.scene.canvas.Canvas, JfxCanvasView<FlagModel2>, FlagModel2> {
 
         public FlagJfxCanvasController() {
             var model = new FlagModel2();
@@ -74,7 +74,7 @@ public final class Flag2 {
     }
 
     /** Flag image controller implementation for {@link javafx.scene.image.Image} */
-    public static class FlagJfxImageController extends ImageController2<javafx.scene.image.Image, FlagModel2, JfxImageView<FlagModel2>> {
+    public static class FlagJfxImageController extends ImageController2<javafx.scene.image.Image, JfxImageView<FlagModel2>, FlagModel2> {
 
         public FlagJfxImageController() {
             var model = new FlagModel2();

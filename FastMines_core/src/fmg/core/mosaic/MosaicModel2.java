@@ -21,6 +21,18 @@
 ////////////////////////////////////////////////////////////////////////////////
 package fmg.core.mosaic;
 
+import static fmg.core.img.PropertyConst.PROPERTY_AREA;
+import static fmg.core.img.PropertyConst.PROPERTY_BACKGROUND_COLOR;
+import static fmg.core.img.PropertyConst.PROPERTY_CELL_COLOR;
+import static fmg.core.img.PropertyConst.PROPERTY_FILL_MODE;
+import static fmg.core.img.PropertyConst.PROPERTY_FONT_INFO;
+import static fmg.core.img.PropertyConst.PROPERTY_MOSAIC_OFFSET;
+import static fmg.core.img.PropertyConst.PROPERTY_MOSAIC_TYPE;
+import static fmg.core.img.PropertyConst.PROPERTY_PADDING;
+import static fmg.core.img.PropertyConst.PROPERTY_PEN_BORDER;
+import static fmg.core.img.PropertyConst.PROPERTY_SIZE;
+import static fmg.core.img.PropertyConst.PROPERTY_SIZE_FIELD;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,10 +54,6 @@ import fmg.core.types.draw.PenBorder2;
 
 /** MVC: model of mosaic field (representable {@link fmg.core.types.EMosaic} ). Default implementation. */
 public class MosaicModel2 implements IImageModel2 {
-
-    public static final String PROPERTY_AREA        = "Area";
-    public static final String PROPERTY_SIZE_FIELD  = "SizeField";
-    public static final String PROPERTY_MOSAIC_TYPE = "MosaicType";
 
     /** Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера. Переопределяется одним из MVC-наследником. */
     public static Color DefaultBkColor   = Color.LightSlateGray().brighter();
@@ -101,6 +109,11 @@ public class MosaicModel2 implements IImageModel2 {
 
         if (changedCallback != null)
             changedCallback.accept(PROPERTY_MOSAIC_TYPE);
+
+        if (isControlMode)
+            setPaddingInner(new BoundDouble(0));
+        else
+            uniformlyChangeMosaicSize();
     }
 
     protected BaseShape getShape() {
@@ -116,6 +129,9 @@ public class MosaicModel2 implements IImageModel2 {
 
     /** set new cell area */
     public void setArea(double area) {
+        if (DoubleExt.almostEquals(getArea(), area))
+            return;
+
         if (area <= 0)
             throw new IllegalArgumentException("Area must be positive");
         if (area < MosaicInitData.AREA_MINIMUM)
@@ -166,7 +182,7 @@ public class MosaicModel2 implements IImageModel2 {
             changedCallback.accept(PROPERTY_SIZE_FIELD);
 
         if (isControlMode)
-            setPadding(new BoundDouble(0));
+            setPaddingInner(new BoundDouble(0));
         else
             uniformlyChangeMosaicSize();
     }
@@ -189,13 +205,14 @@ public class MosaicModel2 implements IImageModel2 {
         this.size.height = size.height;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_SIZE);
+            changedCallback.accept(PROPERTY_SIZE);
 
         if (isControlMode) {
             setPaddingInner(new BoundDouble(0));
         } else {
             BoundDouble newPad = ImageHelper.recalcPadding(this.padding, size, oldSize);
             setPadding(newPad);
+            uniformlyChangeMosaicSize();
         }
     }
 
@@ -222,7 +239,7 @@ public class MosaicModel2 implements IImageModel2 {
         this.padding.bottom = padding.bottom;
 
         if ((changedCallback != null) && !oldPad.equals(padding))
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_PADDING);
 
         uniformlyChangeMosaicSize();
     }
@@ -268,7 +285,7 @@ public class MosaicModel2 implements IImageModel2 {
         padding.bottom -= dy;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_MOSAIC_OFFSET);
     }
 
     /** the maximum number of background fill modes that this type of mosaic knows */
@@ -296,7 +313,7 @@ public class MosaicModel2 implements IImageModel2 {
         fillColors.clear();
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_FILL_MODE);
     }
 
     /** cached cell background colors
@@ -344,7 +361,7 @@ public class MosaicModel2 implements IImageModel2 {
         this.cellColor = color;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_CELL_COLOR);
     }
 
     public Color getBackgroundColor() {
@@ -358,7 +375,7 @@ public class MosaicModel2 implements IImageModel2 {
         this.backgroundColor = color;
 
         if (changedCallback != null)
-            changedCallback.accept(ImageHelper.PROPERTY_OTHER);
+            changedCallback.accept(PROPERTY_BACKGROUND_COLOR);
     }
 
 
@@ -368,8 +385,13 @@ public class MosaicModel2 implements IImageModel2 {
         if ((callback != null) && (changedCallback != null))
             throw new IllegalArgumentException("Can only set the controller once");
         changedCallback = callback;
-        getPenBorder().setListener(callback);
-        getFontInfo().setListener(callback);
+        if (callback == null) {
+            getPenBorder().setListener(callback);
+            getFontInfo().setListener(callback);
+        } else {
+            getPenBorder().setListener(name -> callback.accept(PROPERTY_PEN_BORDER + '.' + name));
+            getFontInfo ().setListener(name -> callback.accept(PROPERTY_FONT_INFO  + '.' + name));
+        }
     }
 
 }

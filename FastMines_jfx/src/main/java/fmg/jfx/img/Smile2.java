@@ -447,7 +447,7 @@ public final class Smile2 {
     }
 
     /** Smile image controller implementation for {@link javafx.scene.canvas.Canvas} */
-    public static class SmileJfxCanvasController extends ImageController2<javafx.scene.canvas.Canvas, SmileModel2, JfxCanvasView<SmileModel2>> {
+    public static class SmileJfxCanvasController extends ImageController2<javafx.scene.canvas.Canvas, JfxCanvasView<SmileModel2>, SmileModel2> {
 
         public SmileJfxCanvasController(EFaceType faceType) {
             var model = new SmileModel2(faceType);
@@ -458,7 +458,7 @@ public final class Smile2 {
     }
 
     /** Smile image controller implementation for {@link javafx.scene.image.Image} */
-    public static class SmileJfxImageController extends ImageController2<javafx.scene.image.Image, SmileModel2, JfxImageView<SmileModel2>> {
+    public static class SmileJfxImageController extends ImageController2<javafx.scene.image.Image, JfxImageView<SmileModel2>, SmileModel2> {
 
         public SmileJfxImageController(EFaceType faceType) {
             var model = new SmileModel2(faceType);

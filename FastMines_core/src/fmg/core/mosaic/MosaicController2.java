@@ -1,10 +1,13 @@
 package fmg.core.mosaic;
 
+import static fmg.core.img.PropertyConst.PROPERTY_AREA;
+import static fmg.core.img.PropertyConst.PROPERTY_MOSAIC_TYPE;
+import static fmg.core.img.PropertyConst.PROPERTY_SIZE_FIELD;
+
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import fmg.common.Logger;
 import fmg.common.geom.*;
@@ -13,7 +16,6 @@ import fmg.core.app.model.MosaicBackupData;
 import fmg.core.app.model.MosaicInitData;
 import fmg.core.img.ImageController2;
 import fmg.core.mosaic.cells.BaseCell;
-import fmg.core.mosaic.shape.BaseShape;
 import fmg.core.types.*;
 
 /** MVC: mosaic controller. Base implementation
@@ -21,7 +23,7 @@ import fmg.core.types.*;
    @param <TView> mosaic view */
 public abstract class MosaicController2<TImage,
                                        TView extends IMosaicView2<TImage>>
-              extends ImageController2<TImage, MosaicModel2, TView>
+              extends ImageController2<TImage, TView, MosaicModel2>
 {
     public static final String PROPERTY_COUNT_MINES       = "CountMines";
     public static final String PROPERTY_COUNT_MINES_LEFT  = "CountMinesLeft";
@@ -681,6 +683,7 @@ public abstract class MosaicController2<TImage,
 
             view.invalidate();
         } finally {
+            // TODO review to unuse async
             UiInvoker.Deferred.accept(() -> model.setListener(saveCallback) ); // restore
         }
     }
@@ -752,10 +755,7 @@ public abstract class MosaicController2<TImage,
     }
     /** узнать max количество соседей для текущей мозаики */
     public int getMaxNeighborNumber() {
-        BaseShape shape = model.getShape();
-        return IntStream.range(0, shape.getDirectionCount())
-            .map(shape::getNeighborNumber)
-            .max().getAsInt();
+        return MosaicHelper.getMaxNeighborNumber(model.getShape());
     }
 
     /** действительно лишь когда gameStatus == gsEnd */
@@ -767,16 +767,16 @@ public abstract class MosaicController2<TImage,
     protected void onModelChanged(String propertyName) {
         super.onModelChanged(propertyName);
         switch (propertyName) {
-        case MosaicModel2.PROPERTY_SIZE_FIELD:
+        case PROPERTY_SIZE_FIELD:
             setCellDown(null); // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
             recheckCountMines();
             gameNew();
             break;
-        case MosaicModel2.PROPERTY_MOSAIC_TYPE:
+        case PROPERTY_MOSAIC_TYPE:
             recheckCountMines();
             gameNew();
             break;
-      //case MosaicModel2.PROPERTY_AREA: // TODO при изменении модели итак все перерисовывается...
+      //case PROPERTY_AREA: // TODO при изменении модели итак все перерисовывается...
       //    view.invalidate();
       //    break;
         default:
@@ -784,8 +784,8 @@ public abstract class MosaicController2<TImage,
         }
 
         switch (propertyName) {
-        case MosaicModel2.PROPERTY_MOSAIC_TYPE:
-        case MosaicModel2.PROPERTY_AREA:
+        case PROPERTY_MOSAIC_TYPE:
+        case PROPERTY_AREA:
             onChangeCellSquareSize();
             break;
         default:

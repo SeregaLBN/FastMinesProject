@@ -2,23 +2,23 @@ package fmg.android.app.model.items;
 
 import androidx.databinding.Bindable;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.concurrent.ThreadLocalRandom;
 
 import fmg.android.app.BR;
-import fmg.android.img.MosaicSkillImg;
+import fmg.android.img.AndroidBitmapView;
+import fmg.android.img.MosaicSkillImg2;
 import fmg.common.geom.BoundDouble;
-import fmg.core.img.BurgerMenuModel;
-import fmg.core.img.MosaicSkillModel;
+import fmg.common.ui.UiInvoker;
+import fmg.core.img.MosaicSkillModel2;
 import fmg.core.types.ESkillLevel;
 
-/** Mosaic skill level item for data model */
-public class MosaicSkillDataItem extends BaseDataItem<ESkillLevel, MosaicSkillModel, MosaicSkillImg.BitmapView, MosaicSkillImg.BitmapController> {
+import static fmg.core.img.PropertyConst.PROPERTY_SKILL_LEVEL;
 
-    public static final String PROPERTY_SKILL_LEVEL    = "SkillLevel";
-    public static final String PROPERTY_PADDING_BURGER = "PaddingBurgerMenu";
-    private final PropertyChangeListener onBurgerMenuModelPropertyChangedListener = this::onBurgerMenuModelPropertyChanged;
+/** Mosaic skill level item for data model */
+public class MosaicSkillDataItem extends BaseDataItem<ESkillLevel, MosaicSkillModel2, AndroidBitmapView<MosaicSkillModel2>, MosaicSkillImg2.MosaicSkillAndroidBitmapController> {
+
+    private static final String PROPERTY_BURGER_SUFFIX = MosaicGroupDataItem.PROPERTY_BURGER_SUFFIX;
+    private static final String PROPERTY_PADDING_BURGER = MosaicGroupDataItem.PROPERTY_PADDING_BURGER;
 
     public MosaicSkillDataItem(ESkillLevel eSkill) {
         super(eSkill);
@@ -33,13 +33,13 @@ public class MosaicSkillDataItem extends BaseDataItem<ESkillLevel, MosaicSkillMo
     public String getUnicodeChar() { return getSkillLevel() == null ? null : Character.toString(getSkillLevel().unicodeChar()); }
 
     @Override
-    public MosaicSkillImg.BitmapController getEntity() {
+    public MosaicSkillImg2.MosaicSkillAndroidBitmapController getEntity() {
         if (this.entity == null) {
-            MosaicSkillImg.BitmapController tmp = new MosaicSkillImg.BitmapController(getSkillLevel());
-            MosaicSkillModel m = tmp.getModel();
+            var tmp = new MosaicSkillImg2.MosaicSkillAndroidBitmapController(getSkillLevel());
+            var m = tmp.getModel();
             m.setBorderWidth(2);
             m.setRotateAngle(ThreadLocalRandom.current().nextInt(90));
-            tmp.getBurgerMenuModel().addListener(onBurgerMenuModelPropertyChangedListener);
+            tmp.getBurgerModel().setListener(this::onBurgerModelPropertyChanged);
             setEntity(tmp);
         }
         return this.entity;
@@ -47,12 +47,13 @@ public class MosaicSkillDataItem extends BaseDataItem<ESkillLevel, MosaicSkillMo
 
     @Bindable
     public BoundDouble getPaddingBurgerMenu() {
-        BoundDouble pad = getEntity().getBurgerMenuModel().getPadding();
+        BoundDouble pad = getEntity().getBurgerModel().getPadding();
         double zoom = getZoom();
         return new BoundDouble(pad.left / zoom, pad.top / zoom, pad.right / zoom, pad.bottom / zoom);
     }
+
     public void setPaddingBurgerMenu(BoundDouble paddingBurgerMenu) {
-        getEntity().getBurgerMenuModel().setPadding(zoomPadding(paddingBurgerMenu));
+        getEntity().getBurgerModel().setPadding(zoomPadding(paddingBurgerMenu));
     }
 
     @Bindable
@@ -61,38 +62,44 @@ public class MosaicSkillDataItem extends BaseDataItem<ESkillLevel, MosaicSkillMo
     }
 
     @Override
-    protected void onPropertyChanged(PropertyChangeEvent ev) {
-        super.onPropertyChanged(ev);
+    protected void onPropertyChanged(String propertyName) {
+        if (isDisposed())
+            return;
 
-        switch (ev.getPropertyName()) {
+        super.onPropertyChanged(propertyName);
+
+        switch (propertyName) {
         case PROPERTY_UNIQUE_ID:
-            notifier.firePropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_SKILL_LEVEL); // recall with another property name
+            getEntity().getModel().setMosaicSkill(getSkillLevel());
+            break;
+        case PROPERTY_SKILL_LEVEL:
+            super.onPropertyChanged(PROPERTY_UNIQUE_ID);
             break;
         }
     }
 
     @Override
-    protected void onAsyncPropertyChanged(PropertyChangeEvent ev) {
-        super.onAsyncPropertyChanged(ev);
+    protected void onAsyncPropertyChanged(String propertyName) {
+        if (isDisposed())
+            return;
+
+        super.onAsyncPropertyChanged(propertyName);
 
         // refire as android data binding event
-        switch (ev.getPropertyName()) {
+        switch (propertyName) {
         case PROPERTY_SKILL_LEVEL   : notifyPropertyChanged(BR.skillLevel       ); break;
         case PROPERTY_PADDING_BURGER: notifyPropertyChanged(BR.paddingBurgerMenu); break;
         }
     }
 
-    protected void onBurgerMenuModelPropertyChanged(PropertyChangeEvent ev) {
-        switch (ev.getPropertyName()) {
-        case BurgerMenuModel.PROPERTY_PADDING:
-            notifier.firePropertyChanged(zoomPadding((BoundDouble)ev.getOldValue()), zoomPadding((BoundDouble)ev.getNewValue()), PROPERTY_PADDING_BURGER);
-            break;
-        }
+    private void onBurgerModelPropertyChanged(String propertyName) {
+        if (!isDisposed())
+            UiInvoker.Deferred.accept(() -> onPropertyChanged(PROPERTY_BURGER_SUFFIX + propertyName));
     }
 
     @Override
     public void close() {
-        getEntity().getBurgerMenuModel().removeListener(onBurgerMenuModelPropertyChangedListener);
+        getEntity().getBurgerModel().setListener(null);
         super.close();
     }
 

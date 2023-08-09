@@ -1,5 +1,8 @@
 package fmg.swing.mosaic;
 
+import static fmg.core.img.PropertyConst.PROPERTY_MOSAIC_TYPE;
+import static fmg.core.img.PropertyConst.PROPERTY_SIZE_FIELD;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
@@ -22,11 +25,10 @@ import fmg.swing.img.Logo2;
 import fmg.swing.img.MosaicImg2;
 import fmg.swing.utils.Cast;
 
-
 /*
  * 1. Model changed -> invalidate()              -> redraw all
- * 2. Clicks        -> invalidate(modifiedCells) -> redraw modified cells (without bakground)
- * 3. GUI framefork -> invalidate(clip region)   -> redraw cells in region (with bakground)
+ * 2. Clicks        -> invalidate(modifiedCells) -> redraw modified cells (without background)
+ * 3. GUI framefork -> invalidate(clip region)   -> redraw cells in region (with background)
  */
 
 /** MVC: view. SWING implementation over control {@link JPanel} */
@@ -219,8 +221,8 @@ public class MosaicJPanelView2 implements IMosaicView2<JPanel>, AutoCloseable {
 
     public void onModelChanged(String property) {
         switch (property) {
-        case MosaicModel2.PROPERTY_MOSAIC_TYPE:
-        case MosaicModel2.PROPERTY_SIZE_FIELD:
+        case PROPERTY_MOSAIC_TYPE:
+        case PROPERTY_SIZE_FIELD:
             lastImg = null;
             break;
         default:

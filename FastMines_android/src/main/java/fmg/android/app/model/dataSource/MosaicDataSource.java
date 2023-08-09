@@ -3,38 +3,35 @@ package fmg.android.app.model.dataSource;
 import androidx.databinding.Bindable;
 
 import java.beans.PropertyChangeEvent;
+
+import static fmg.core.img.PropertyConst.PROPERTY_MOSAIC_GROUP;
+import static fmg.core.img.PropertyConst.PROPERTY_MOSAIC_TYPE;
+import static fmg.core.img.PropertyConst.PROPERTY_SIZE;
+import static fmg.core.img.PropertyConst.PROPERTY_SKILL_LEVEL;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import fmg.android.app.BR;
 import fmg.android.app.model.items.LogoDataItem;
 import fmg.android.app.model.items.MosaicDataItem;
-import fmg.android.img.Logo;
-import fmg.android.img.MosaicImg;
+import fmg.android.img.AndroidBitmapView;
+import fmg.android.img.Logo2;
+import fmg.android.img.MosaicImg2;
 import fmg.common.Color;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.AnimatedImageModel;
-import fmg.core.img.LogoModel;
-import fmg.core.img.MosaicAnimatedModel;
-import fmg.core.mosaic.MosaicDrawModel;
+import fmg.core.img.LogoModel2;
+import fmg.core.img.MosaicImageModel2;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
-import fmg.core.types.Property;
 
 public class MosaicDataSource extends BaseDataSource<
-          LogoDataItem,    Void,           LogoModel      ,      Logo.BitmapView,      Logo.BitmapController,
-        MosaicDataItem, EMosaic, MosaicAnimatedModel<Void>, MosaicImg.BitmapView, MosaicImg.BitmapController>
+          LogoDataItem,      Void,        LogoModel2, AndroidBitmapView<LogoModel2>       ,      Logo2.  LogoAndroidBitmapController,
+          MosaicDataItem, EMosaic, MosaicImageModel2, AndroidBitmapView<MosaicImageModel2>, MosaicImg2.MosaicAndroidBitmapController>
 {
 
-    public static final String PROPERTY_MOSAIC_GROUP = "MosaicGroup";
-    public static final String PROPERTY_SKILL_LEVEL  = "SkillLevel";
-
-    @Property(PROPERTY_MOSAIC_GROUP)
     private EMosaicGroup mosaicGroup;
-    
-    @Property(PROPERTY_SKILL_LEVEL)
     private ESkillLevel skillLevel;
 
     @Override
@@ -42,9 +39,10 @@ public class MosaicDataSource extends BaseDataSource<
         if (header == null) {
             header = new LogoDataItem();
 
-            LogoModel model = header.getEntity().getModel();
+            var ctrlr = header.getEntity();
+            var model = ctrlr.getModel();
             model.setPadding(new BoundDouble(3));
-            model.setBackgroundColor(Color.Transparent());
+            ctrlr.isRotateImage()setBackgroundColor(Color.Transparent());
             model.setPolarLights(true);
             model.setAnimated(!true);
 

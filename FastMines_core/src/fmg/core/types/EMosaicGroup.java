@@ -30,7 +30,7 @@ public enum EMosaicGroup {
                 .collect(Collectors.toList());
     }
 
-    public char UnicodeChar(boolean dark) {
+    public char unicodeChar(boolean dark) {
         switch (this) {
         case eTriangles  : return dark ? '\u25B2' : '\u25B3'; // http://unicode-table.com/en/search/?q=triangle
         case eQuadrangles: return dark ? '\u25AE' : '\u25AF'; // http://unicode-table.com/en/search/?q=rectangle
