@@ -120,10 +120,7 @@ public class TestDialogs {
             pane.add(new JButton(title + "...") {
                 private static final long serialVersionUID = 1L;
                 {
-                    addActionListener(ev -> {
-                        SwingUtilities.invokeLater(clickHandler);
-                        frame.dispose();
-                    });
+                    addActionListener(ev -> SwingUtilities.invokeLater(clickHandler));
                 }
             });
         add.accept("Mosaic"      , TestDialogs::testMosaicJPanelController);
@@ -137,13 +134,19 @@ public class TestDialogs {
         add.accept("Statistic"   , TestDialogs::testStatisticDlg);
 
 
+        var exitListener = new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                Animator.getSingleton().close();
+                frame.dispose();
+            }
+        };
+
         frame.setPreferredSize(new Dimension(500, 150));
         frame.setLocationRelativeTo(null);
         frame.pack();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.addWindowListener(exitListener);
         frame.setVisible(true);
-
-        Animator.getSingleton().close();
     }
 
 }
