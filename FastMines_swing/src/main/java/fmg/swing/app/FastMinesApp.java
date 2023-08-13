@@ -1,9 +1,13 @@
 package fmg.swing.app;
 
+import static fmg.core.img.PropertyConst.PROPERTY_COUNT_CLICK;
+import static fmg.core.img.PropertyConst.PROPERTY_COUNT_MINES;
+import static fmg.core.img.PropertyConst.PROPERTY_COUNT_MINES_LEFT;
+import static fmg.core.img.PropertyConst.PROPERTY_GAME_STATUS;
 import static fmg.core.img.PropertyConst.PROPERTY_IMAGE;
-import static fmg.core.img.PropertyConst.PROPERTY_MOSAIC_TYPE;
-import static fmg.core.img.PropertyConst.PROPERTY_SIZE;
-import static fmg.core.img.PropertyConst.PROPERTY_SIZE_FIELD;
+import static fmg.core.img.PropertyConst.PROPERTY_MODEL_MOSAIC_TYPE;
+import static fmg.core.img.PropertyConst.PROPERTY_MODEL_SIZE;
+import static fmg.core.img.PropertyConst.PROPERTY_MODEL_SIZE_FIELD;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -32,7 +36,6 @@ import fmg.core.app.model.MosaicInitData;
 import fmg.core.app.model.Players;
 import fmg.core.app.model.User;
 import fmg.core.img.LogoModel2;
-import fmg.core.mosaic.MosaicController2;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.MosaicModel2;
 import fmg.core.types.EGameStatus;
@@ -1162,21 +1165,21 @@ public class FastMinesApp {
     private void onMosaicPropertyChangedAsync(String propertyName) {
 //        Logger.info("Main::propertyChange: " + propertyName);
         switch (propertyName) {
-        case PROPERTY_SIZE:
+        case PROPERTY_MODEL_SIZE:
             //Logger.info(">>>>>>>>>>>>>>>>>>>>>");
             recheckLocation();
             break;
-        case PROPERTY_SIZE_FIELD:
+        case PROPERTY_MODEL_SIZE_FIELD:
             getMenu().getGame().recheckSelectedSkillLevel();
             break;
-        case PROPERTY_MOSAIC_TYPE:
+        case PROPERTY_MODEL_MOSAIC_TYPE:
             getMenu().getMosaics().recheckSelectedMosaicType();
             break;
-        case MosaicController2.PROPERTY_COUNT_MINES:
+        case PROPERTY_COUNT_MINES:
             getMenu().getMosaics().recheckSelectedMosaicType();
             getMenu().getGame().recheckSelectedSkillLevel();
             break;
-        case MosaicController2.PROPERTY_GAME_STATUS:
+        case PROPERTY_GAME_STATUS:
             {
                 getToolbar().getBtnPause().getButton().setEnabled(getMosaicController().getGameStatus() == EGameStatus.eGSPlay);
                 //Logger.info("OnChangeGameStatus: " + getMosaicController().getGameStatus());
@@ -1217,14 +1220,14 @@ public class FastMinesApp {
                 }
             }
             break;
-        //case MosaicController.PROPERTY_COUNT_FLAG:
+        //case PROPERTY_COUNT_FLAG:
         //    break;
-        //case MosaicController.PROPERTY_COUNT_OPEN:
+        //case PROPERTY_COUNT_OPEN:
         //    break;
-        case MosaicController2.PROPERTY_COUNT_MINES_LEFT:
+        case PROPERTY_COUNT_MINES_LEFT:
             getToolbar().getEdtMinesLeft().setText(Integer.toString(getMosaicController().getCountMinesLeft()));
             break;
-        case MosaicController2.PROPERTY_COUNT_CLICK:
+        case PROPERTY_COUNT_CLICK:
             getStatusBar().setClickCount(getMosaicController().getCountClick());
             break;
         default:

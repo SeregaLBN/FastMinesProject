@@ -234,8 +234,7 @@ public class MosaicJPanelView2 implements IMosaicView2<JPanel>, AutoCloseable {
     public void invalidate() {
         valid = false;
         drawBk = true;
-        this.modifiedCells.clear(); // all matrix
-
+        modifiedCells.clear();
         if (control != null)
             control.repaint();
     }
@@ -263,7 +262,7 @@ public class MosaicJPanelView2 implements IMosaicView2<JPanel>, AutoCloseable {
     public void reset() {
         valid = false;
         drawBk = true;
-        this.modifiedCells.clear();
+        modifiedCells.clear();
     }
 
     @Override

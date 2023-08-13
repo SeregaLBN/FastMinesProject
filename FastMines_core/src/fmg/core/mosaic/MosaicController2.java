@@ -1,7 +1,16 @@
 package fmg.core.mosaic;
 
 import static fmg.core.img.PropertyConst.PROPERTY_AREA;
+import static fmg.core.img.PropertyConst.PROPERTY_COUNT_CLICK;
+import static fmg.core.img.PropertyConst.PROPERTY_COUNT_FLAG;
+import static fmg.core.img.PropertyConst.PROPERTY_COUNT_MINES;
+import static fmg.core.img.PropertyConst.PROPERTY_COUNT_MINES_LEFT;
+import static fmg.core.img.PropertyConst.PROPERTY_COUNT_OPEN;
+import static fmg.core.img.PropertyConst.PROPERTY_COUNT_UNKNOWN;
+import static fmg.core.img.PropertyConst.PROPERTY_GAME_STATUS;
 import static fmg.core.img.PropertyConst.PROPERTY_MOSAIC_TYPE;
+import static fmg.core.img.PropertyConst.PROPERTY_PLAY_INFO;
+import static fmg.core.img.PropertyConst.PROPERTY_REPOSITORY_MINES;
 import static fmg.core.img.PropertyConst.PROPERTY_SIZE_FIELD;
 
 import java.util.*;
@@ -25,15 +34,6 @@ public abstract class MosaicController2<TImage,
                                        TView extends IMosaicView2<TImage>>
               extends ImageController2<TImage, TView, MosaicModel2>
 {
-    public static final String PROPERTY_COUNT_MINES       = "CountMines";
-    public static final String PROPERTY_COUNT_MINES_LEFT  = "CountMinesLeft";
-    public static final String PROPERTY_COUNT_UNKNOWN     = "CountUnknown";
-    public static final String PROPERTY_COUNT_CLICK       = "CountClick";
-    public static final String PROPERTY_COUNT_FLAG        = "CountFlag";
-    public static final String PROPERTY_COUNT_OPEN        = "CountOpen";
-    public static final String PROPERTY_PLAY_INFO         = "PlayInfo";
-    public static final String PROPERTY_REPOSITORY_MINES  = "RepositoryMines";
-    public static final String PROPERTY_GAME_STATUS       = "GameStatus";
 
     /** кол-во мин на поле */
     protected int countMines = 10;
@@ -688,13 +688,14 @@ public abstract class MosaicController2<TImage,
         }
     }
 
+    protected int nextFillMode() {
+        return 1 + ThreadLocalRandom.current().nextInt(model.getShape() // MosaicHelper.createShapeInstance(m.getMosaicType())
+                                                            .getMaxCellFillModeValue());
+    }
     /** Подготовиться к началу игры - сбросить все ячейки */
     public boolean gameNew() {
 //        Logger.info("Mosaic::GameNew()");
-        model.setFillMode(
-                1 + ThreadLocalRandom.current().nextInt(
-                            model.getShape() // MosaicHelper.createShapeInstance(m.getMosaicType())
-                                 .getMaxCellFillModeValue()));
+        model.setFillMode(nextFillMode());
 
         if (getGameStatus() == EGameStatus.eGSReady)
             return false;
@@ -791,9 +792,6 @@ public abstract class MosaicController2<TImage,
         default:
             // none
         }
-
-        // refire model changes
-        firePropertyChanged(propertyName);
     }
 
     /** преобразовать экранные координаты в ячейку поля мозаики */

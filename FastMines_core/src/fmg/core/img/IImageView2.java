@@ -13,6 +13,7 @@ public interface IImageView2<TImage> {
     /** image is actual? */
     boolean isValid();
 
+    /** reset & invalidate */
     void reset();
 
 }

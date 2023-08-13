@@ -2,6 +2,7 @@ package fmg.core.img;
 
 import static fmg.core.img.PropertyConst.PROPERTY_IMAGE;
 import static fmg.core.img.PropertyConst.PROPERTY_MODEL;
+import static fmg.core.img.PropertyConst.PROPERTY_MODEL_DOT;
 import static fmg.core.img.PropertyConst.PROPERTY_SIZE;
 
 import java.util.function.Consumer;
@@ -49,21 +50,14 @@ public class ImageController2<TImage, TView extends IImageView2<TImage>, TModel 
     }
 
     protected void onModelChanged(String property) {
-        var isValidBefore = view.isValid();
-
-        boolean fireImageChanged = false;
-        if (PROPERTY_SIZE.equals(property)) {
+        if (PROPERTY_SIZE.equals(property))
             view.reset();
-            fireImageChanged = true;
-            firePropertyChanged(PROPERTY_SIZE);
-        }
+        else
+            view.invalidate();
 
-        view.invalidate();
-
-        if (isValidBefore || fireImageChanged)
-            firePropertyChanged(PROPERTY_IMAGE);
-
+        firePropertyChanged(PROPERTY_IMAGE);
         firePropertyChanged(PROPERTY_MODEL);
+        firePropertyChanged(PROPERTY_MODEL_DOT + property);
     }
 
     protected void firePropertyChanged(String propertyName) {

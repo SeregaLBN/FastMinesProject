@@ -7,8 +7,10 @@ import static fmg.core.img.PropertyConst.*;
      */
 
     public static final String PROPERTY_MODEL                = "Model";
+    public static final String PROPERTY_MODEL_DOT            = PROPERTY_MODEL + ".";
     public static final String PROPERTY_IMAGE                = "Image";
     public static final String PROPERTY_SIZE                 = "Size";
+    public static final String PROPERTY_MODEL_SIZE           = PROPERTY_MODEL_DOT + PROPERTY_SIZE;
     public static final String PROPERTY_PADDING              = "Padding";
     public static final String PROPERTY_BACKGROUND_COLOR     = "BackgroundColor";
     public static final String PROPERTY_BACKGROUND_ANGLE     = "BackgroundAngle";
@@ -32,20 +34,25 @@ import static fmg.core.img.PropertyConst.*;
     public static final String PROPERTY_ROTATE_SOME_CELLS    = "RotateSomeCells";
     public static final String PROPERTY_FONT_NAME            = "FontName";
     public static final String PROPERTY_BOLD                 = "Bold";
-//    public static final String PROPERTY_ = "";
-//    public static final String PROPERTY_ = "";
-//    public static final String PROPERTY_ = "";
-//    public static final String PROPERTY_ = "";
-//    public static final String PROPERTY_ = "";
     public static final String PROPERTY_FILL_MODE            = "FillMode";
-
     public static final String PROPERTY_AREA                 = "Area";
+    public static final String PROPERTY_MODEL_AREA           = PROPERTY_MODEL_DOT + PROPERTY_AREA;
     public static final String PROPERTY_SIZE_FIELD           = "SizeField";
+    public static final String PROPERTY_MODEL_SIZE_FIELD     = PROPERTY_MODEL_DOT + PROPERTY_SIZE_FIELD;
     public static final String PROPERTY_MOSAIC_TYPE          = "MosaicType";
+    public static final String PROPERTY_MODEL_MOSAIC_TYPE    = PROPERTY_MODEL_DOT + PROPERTY_MOSAIC_TYPE;
     public static final String PROPERTY_MOSAIC_OFFSET        = "MosaicOffset";
     public static final String PROPERTY_MOSAIC_GROUP         = "MosaicGroup";
     public static final String PROPERTY_COUNT_MINES          = "CountMines";
     public static final String PROPERTY_SKILL_LEVEL          = "SkillLevel";
     public static final String PROPERTY_BURGER               = "Burger";
+    public static final String PROPERTY_COUNT_MINES_LEFT     = "CountMinesLeft";
+    public static final String PROPERTY_COUNT_UNKNOWN        = "CountUnknown";
+    public static final String PROPERTY_COUNT_CLICK          = "CountClick";
+    public static final String PROPERTY_COUNT_FLAG           = "CountFlag";
+    public static final String PROPERTY_COUNT_OPEN           = "CountOpen";
+    public static final String PROPERTY_PLAY_INFO            = "PlayInfo";
+    public static final String PROPERTY_REPOSITORY_MINES     = "RepositoryMines";
+    public static final String PROPERTY_GAME_STATUS          = "GameStatus";
 
 }

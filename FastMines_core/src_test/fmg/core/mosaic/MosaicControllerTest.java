@@ -1,9 +1,9 @@
 package fmg.core.mosaic;
 
-import static fmg.core.img.PropertyConst.PROPERTY_AREA;
 import static fmg.core.img.PropertyConst.PROPERTY_IMAGE;
 import static fmg.core.img.PropertyConst.PROPERTY_MODEL;
-import static fmg.core.img.PropertyConst.PROPERTY_SIZE;
+import static fmg.core.img.PropertyConst.PROPERTY_MODEL_AREA;
+import static fmg.core.img.PropertyConst.PROPERTY_MODEL_SIZE;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -68,6 +68,9 @@ public class MosaicControllerTest {
             super.init(model, view);
         }
 
+        @Override // to exclude a random result
+        protected int nextFillMode() { return 1; }
+
         @Override protected void onChangeCellSquareSize() {}
         @Override protected void subscribeToViewControl() {}
         @Override protected void unsubscribeToViewControl() {}
@@ -119,7 +122,7 @@ public class MosaicControllerTest {
                 Assert.assertFalse(view.isValid());
 
                 Assert.assertTrue (modifiedProperties.containsKey(PROPERTY_IMAGE));
-                Assert.assertEquals(callGetImage ? 2 : 1, modifiedProperties.get(PROPERTY_IMAGE).intValue());
+                Assert.assertEquals(13, modifiedProperties.get(PROPERTY_IMAGE).intValue());
 
                 if (callGetImage)
                     Assert.assertEquals(2, view.getDrawCount());
@@ -145,14 +148,14 @@ public class MosaicControllerTest {
 
             ctrlr.getModel().setSize(new SizeDouble(TEST_SIZE_W, TEST_SIZE_H));
 
+            Assert.assertTrue  (   modifiedProperties.containsKey(PROPERTY_IMAGE));
+            Assert.assertEquals(2, modifiedProperties.get(        PROPERTY_IMAGE).intValue());
             Assert.assertTrue  (   modifiedProperties.containsKey(PROPERTY_MODEL));
             Assert.assertEquals(2, modifiedProperties.get(        PROPERTY_MODEL).intValue());
-            Assert.assertTrue  (   modifiedProperties.containsKey(PROPERTY_SIZE ));
-            Assert.assertEquals(2, modifiedProperties.get(        PROPERTY_SIZE ).intValue());
-            Assert.assertTrue  (   modifiedProperties.containsKey(PROPERTY_IMAGE));
-            Assert.assertEquals(1, modifiedProperties.get(        PROPERTY_IMAGE).intValue());
-            Assert.assertTrue  (   modifiedProperties.containsKey(PROPERTY_AREA ));
-            Assert.assertEquals(1, modifiedProperties.get(        PROPERTY_AREA ).intValue());
+            Assert.assertTrue  (   modifiedProperties.containsKey(PROPERTY_MODEL_SIZE ));
+            Assert.assertEquals(1, modifiedProperties.get(        PROPERTY_MODEL_SIZE ).intValue());
+            Assert.assertTrue  (   modifiedProperties.containsKey(PROPERTY_MODEL_AREA ));
+            Assert.assertEquals(1, modifiedProperties.get(        PROPERTY_MODEL_AREA ).intValue());
             Assert.assertEquals(4, modifiedProperties.size());
         }
     }
@@ -238,8 +241,8 @@ public class MosaicControllerTest {
 
             MosaicModelTest.changeModel(ctrlr.getModel());
 
-            Assert.assertTrue  (   modifiedProperties.containsKey(PROPERTY_IMAGE));
-            Assert.assertEquals(1, modifiedProperties.get(        PROPERTY_IMAGE).intValue());
+            Assert.assertTrue  (    modifiedProperties.containsKey(PROPERTY_IMAGE));
+            Assert.assertEquals(13, modifiedProperties.get(        PROPERTY_IMAGE).intValue());
             Assert.assertEquals(0, view.getDrawCount());
             view.getImage(); // call the implicit draw method
             Assert.assertEquals(1, view.getDrawCount());

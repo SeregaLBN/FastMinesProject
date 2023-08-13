@@ -128,7 +128,7 @@ public class MosaicViewView2 implements IMosaicView2<DrawableView>, AutoCloseabl
     public void invalidate() {
         valid = false;
         drawBk = true;
-        this.modifiedCells.clear(); // all matrix
+        modifiedCells.clear();
 
         if (control != null)
             control.invalidate();
@@ -157,7 +157,7 @@ public class MosaicViewView2 implements IMosaicView2<DrawableView>, AutoCloseabl
     public void reset() {
         valid = false;
         drawBk = true;
-        this.modifiedCells.clear();
+        modifiedCells.clear();
     }
 
     @Override

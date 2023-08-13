@@ -64,8 +64,7 @@ public class MosaicCanvasView2 implements IMosaicView2<Canvas> {
     @Override
     public void invalidate() {
         drawBk = true;
-        this.modifiedCells.clear(); // all matrix
-
+        modifiedCells.clear();
         proxyView.invalidate();
     }
 
@@ -89,6 +88,7 @@ public class MosaicCanvasView2 implements IMosaicView2<Canvas> {
     @Override
     public void reset() {
         drawBk = true;
+        modifiedCells.clear();
         proxyView.reset();
     }
 
