@@ -21,7 +21,9 @@ public class Animator implements IAnimator, AutoCloseable {
     private final Map<Object /* subscriber */, SubscribeInfo> subscribers;
 
     private static Animator singleton;
-    public static Animator getSingleton() { // not synchronized. since should work only in the thread of the UI.
+
+    /** get singleton instance (not synchronized. since should work only in the thread of the UI) */
+    public static Animator get() {
         if (singleton == null)
             singleton = new Animator();
         return singleton;

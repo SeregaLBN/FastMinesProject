@@ -37,7 +37,7 @@ public final class ProjSettings extends AProjSettings {
 
 
         UiInvoker.Deferred = javax.swing.SwingUtilities::invokeLater;
-        UiInvoker.Animator = Animator::getSingleton;
+        UiInvoker.Animator = Animator::get;
         UiInvoker.TimeCreator = Timer::new;
 
         PenBorder2.DefaultWidth = Cast.dpToPx(2.25);

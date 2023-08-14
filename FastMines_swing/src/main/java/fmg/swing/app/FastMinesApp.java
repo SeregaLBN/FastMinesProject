@@ -618,7 +618,7 @@ public class FastMinesApp {
         frame.removeMouseWheelListener (this.getHandlers().getMouseWheelListener());
 
         frame.dispose();
-        Animator.getSingleton().close();
+        Animator.get().close();
 //        System.exit(0);
     }
 

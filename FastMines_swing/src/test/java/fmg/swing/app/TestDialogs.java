@@ -133,19 +133,16 @@ public class TestDialogs {
         add.accept("SelectMosaic", TestDialogs::testSelectMosaicDlg);
         add.accept("Statistic"   , TestDialogs::testStatisticDlg);
 
-
-        var exitListener = new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                Animator.getSingleton().close();
-                frame.dispose();
-            }
-        };
-
         frame.setPreferredSize(new Dimension(500, 150));
         frame.setLocationRelativeTo(null);
         frame.pack();
-        frame.addWindowListener(exitListener);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                Animator.get().close();
+                frame.dispose();
+            }
+        });
         frame.setVisible(true);
     }
 

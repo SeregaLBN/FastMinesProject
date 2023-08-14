@@ -175,7 +175,7 @@ public class DemoApp2  {
     protected void onDestroy() {
         onCloseImages.run();
         frame.dispose();
-        Animator.getSingleton().close();
+        Animator.get().close();
     }
 
     @FunctionalInterface
