@@ -16,10 +16,14 @@ import fmg.core.mosaic.MosaicModel2;
 
 public class TestDrawing2 {
 
-    public Random getRandom() { return ThreadLocalRandom.current(); }
-    public int r(int max) { return getRandom().nextInt(max); }
-    public boolean bl() { return getRandom().nextBoolean(); } // random bool
-    public int np() { return (bl() ? -1 : +1); } // negative or positive
+    public static Random getRandom() { return ThreadLocalRandom.current(); }
+    public static int r(int max) { return getRandom().nextInt(max); }
+    public <E extends Enum<?>> E en(Class<E> clazz) { // random enum value
+        var all = clazz.getEnumConstants();
+        return all[r(all.length)];
+    }
+    public static boolean bl() { return getRandom().nextBoolean(); } // random bool
+    public static int np() { return (bl() ? -1 : +1); } // negative or positive
 
     private final String titlePrefix;
 
@@ -135,6 +139,7 @@ public class TestDrawing2 {
                 MosaicImageModel2 mim = (MosaicImageModel2)m;
                 mim.setBackgroundColor(bkClr);
 
+//                mim.setMosaicType(en(EMosaic.class));
                 mim.setFillMode(1 + r(mim.getMaxCellFillMode()));
 
                 mim.getPenBorder().setWidth(1. + r(2));
@@ -143,8 +148,7 @@ public class TestDrawing2 {
                 double padTopBottom = r((int)(size.height/3));
                 mim.setPadding(new BoundDouble(padLeftRight, padTopBottom, padLeftRight, padTopBottom));
 
-                MosaicImageModel2.ERotateMode[] eRotateModes = MosaicImageModel2.ERotateMode.values();
-                mim.setRotateMode(eRotateModes[r(eRotateModes.length)]);
+                mim.setRotateMode(en(MosaicImageModel2.ERotateMode.class));
             }
         }
     }

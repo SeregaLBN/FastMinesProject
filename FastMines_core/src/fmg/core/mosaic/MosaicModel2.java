@@ -134,7 +134,7 @@ public class MosaicModel2 implements IImageModel2 {
 
         if (area <= 0)
             throw new IllegalArgumentException("Area must be positive");
-        if (area < MosaicInitData.AREA_MINIMUM)
+        if ((area < MosaicInitData.AREA_MINIMUM) && !(this instanceof MosaicImageModel2))
             Logger.warn("The area is very small = " + area);
 
       //getShape().setArea(Math.max(MosaicInitData.AREA_MINIMUM, area));

@@ -87,14 +87,14 @@ public class DemoApp2  {
     }
     public void testMosaicGroupImg() {
         testApp(() -> Stream.concat(Stream.of((EMosaicGroup)null),
-                                     Stream.of(EMosaicGroup.values()))
+                                    Stream.of( EMosaicGroup.values()))
                  .map(e -> new Pair<>(new MosaicGroupImg2.MosaicGroupAwtImageController (e),
                                       new MosaicGroupImg2.MosaicGroupSwingIconController(e)))
                  .flatMap(x -> Stream.of(x.first, x.second)));
     }
     public void testMosaicSkillImg() {
         testApp(() -> Stream.concat(Stream.of((ESkillLevel)null),
-                                     Stream.of(ESkillLevel.values()))
+                                    Stream.of( ESkillLevel.values()))
                  .map(e -> new Pair<>(new MosaicSkillImg2.MosaicSkillSwingIconController(e),
                                       new MosaicSkillImg2.MosaicSkillAwtImageController (e)))
                  .flatMap(x -> Stream.of(x.first, x.second)));

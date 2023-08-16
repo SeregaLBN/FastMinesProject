@@ -1,10 +1,12 @@
 package fmg.core.img;
 
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 
 import fmg.common.Color;
 import fmg.common.HSV;
 import fmg.common.ui.UiInvoker;
+import fmg.core.mosaic.MosaicHelper;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.draw.PenBorder2;
 
@@ -37,6 +39,10 @@ public abstract class MosaicImageController2<TImage,
     @Override
     protected void init(MosaicImageModel2 model, TView view) {
         super.init(model, view);
+
+        var shape = MosaicHelper.createShapeInstance(model.getMosaicType());
+        model.setFillMode(1 + ThreadLocalRandom.current().nextInt(shape.getMaxCellFillModeValue()));
+
         if (isAnimated())
             startAnimation();
     }

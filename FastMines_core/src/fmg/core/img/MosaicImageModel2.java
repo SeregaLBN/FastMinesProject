@@ -47,7 +47,7 @@ public class MosaicImageModel2 extends MosaicModel2 {
         super(false);
 
         var pen = getPenBorder();
-        pen.setColorShadow(pen.getColorLight());
+        pen.setColorLight(pen.getColorShadow());
     }
 
     public ERotateMode getRotateMode() { return rotateMode; }
