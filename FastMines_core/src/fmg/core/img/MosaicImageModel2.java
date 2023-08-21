@@ -57,8 +57,7 @@ public class MosaicImageModel2 extends MosaicModel2 {
 
         this.rotateMode = value;
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_ROTATE_MODE);
+        firePropertyChanged(PROPERTY_ROTATE_MODE);
 
         applyRotateModeSomeCells();
     }
@@ -72,8 +71,7 @@ public class MosaicImageModel2 extends MosaicModel2 {
 
         this.rotateAngle = value;
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_ROTATE_ANGLE);
+        firePropertyChanged(PROPERTY_ROTATE_ANGLE);
     }
 
     /** 0° .. +360° */
@@ -85,8 +83,7 @@ public class MosaicImageModel2 extends MosaicModel2 {
 
         this.backgroundAngle = value;
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_BACKGROUND_ANGLE);
+        firePropertyChanged(PROPERTY_BACKGROUND_ANGLE);
     }
 
     @Override
@@ -121,8 +118,7 @@ public class MosaicImageModel2 extends MosaicModel2 {
             FigureHelper.rotateCollection(cell.getRegion().getPoints(), rotateAngle, center);
         }
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_ROTATE_FULL_MATRIX);
+        firePropertyChanged(PROPERTY_ROTATE_FULL_MATRIX);
     }
 
     /** ///////////// ================= PART {@link ERotateMode#SOME_CELLS} ======================= ///////////// */
@@ -227,8 +223,7 @@ public class MosaicImageModel2 extends MosaicModel2 {
         // Z-ordering
         Collections.sort(rotatedElements, (e1, e2) -> Double.compare(e1.area, e2.area));
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_ROTATE_SOME_CELLS);
+        firePropertyChanged(PROPERTY_ROTATE_SOME_CELLS);
     }
 
     public List<BaseCell> getNotRotatedCells() {

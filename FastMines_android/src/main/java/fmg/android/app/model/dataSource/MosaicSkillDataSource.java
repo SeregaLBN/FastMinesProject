@@ -4,20 +4,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import fmg.android.app.BuildConfig;
 import fmg.android.app.ProjSettings;
 import fmg.android.app.model.items.MosaicSkillDataItem;
-import fmg.android.img.MosaicSkillImg;
+import fmg.android.img.AndroidBitmapView;
+import fmg.android.img.MosaicSkillImg2;
 import fmg.common.Color;
 import fmg.common.geom.BoundDouble;
-import fmg.core.img.AnimatedImageModel;
-import fmg.core.img.MosaicSkillModel;
-import fmg.core.mosaic.MosaicDrawModel;
+import fmg.core.img.ImageHelper;
+import fmg.core.img.MosaicSkillModel2;
 import fmg.core.types.ESkillLevel;
 
 public class MosaicSkillDataSource extends BaseDataSource<
-        MosaicSkillDataItem, ESkillLevel, MosaicSkillModel, MosaicSkillImg.BitmapView, MosaicSkillImg.BitmapController,
-        MosaicSkillDataItem, ESkillLevel, MosaicSkillModel, MosaicSkillImg.BitmapView, MosaicSkillImg.BitmapController>
+        MosaicSkillDataItem, ESkillLevel, MosaicSkillModel2, AndroidBitmapView<MosaicSkillModel2>, MosaicSkillImg2.MosaicSkillAndroidBitmapController,
+        MosaicSkillDataItem, ESkillLevel, MosaicSkillModel2, AndroidBitmapView<MosaicSkillModel2>, MosaicSkillImg2.MosaicSkillAndroidBitmapController>
 {
 
     @Override
@@ -25,15 +24,15 @@ public class MosaicSkillDataSource extends BaseDataSource<
         if (header == null) {
             header = new MosaicSkillDataItem(null);
 
-            MosaicSkillModel model = header.getEntity().getModel();
+            var ctrlr = header.getEntity();
+            var model = ctrlr.getModel();
             model.setPadding(new BoundDouble(3));
             model.setBackgroundColor(Color.Transparent());
-            model.setTotalFrames(260);      // RotateAngleDelta = 1.4
-            model.setAnimatePeriod(12900);  // RedrawInterval = 50
-            model.setPolarLights(true);
-            model.setAnimated(true);
+            ctrlr.setFps(20);
+            ctrlr.setAnimatePeriod(13000);
+            ctrlr.setPolarLightsForeground(true);
 
-            notifier.firePropertyChanged(null, header, PROPERTY_HEADER);
+            firePropertyChanged(PROPERTY_HEADER);
         }
         return header;
     }
@@ -47,14 +46,14 @@ public class MosaicSkillDataSource extends BaseDataSource<
                     )
                     .map(MosaicSkillDataItem::new)
                     .peek(item -> {
-                        MosaicSkillModel model = item.getEntity().getModel();
-                        model.setTotalFrames(72);     // RotateAngleDelta = 5
-                        model.setAnimatePeriod(3600); // RedrawInterval = 50
+                        var ctrlr = item.getEntity();
+                        ctrlr.setFps(20);
+                        ctrlr.setAnimatePeriod(3600);
                         applySelection(item);
                     })
                     .collect(Collectors.toList());
 
-            notifier.firePropertyChanged(null, dataSource, PROPERTY_DATA_SOURCE);
+            firePropertyChanged(PROPERTY_DATA_SOURCE);
         }
         return dataSource;
     }
@@ -67,14 +66,14 @@ public class MosaicSkillDataSource extends BaseDataSource<
     /** for one selected item - start animate; for all other - stop animate */
     private void applySelection(MosaicSkillDataItem item) {
         boolean selected = (item.getUniqueId().ordinal() == currentItemPos);
-        MosaicSkillModel model = item.getEntity().getModel();
-        model.setPolarLights(selected);
-        model.setAnimated(selected);
+        var ctrlr = item.getEntity();
+        var model = ctrlr.getModel();
+        ctrlr.setPolarLightsForeground(selected);
         model.setBorderColor(selected ? Color.LawnGreen() : Color.IndianRed());
-        model.setBackgroundColor(selected ? AnimatedImageModel.DEFAULT_BK_COLOR : DefaultBkColor);
+        model.setBackgroundColor(selected ? ImageHelper.DEFAULT_BK_COLOR : DefaultBkColor);
         model.setPadding(new BoundDouble(selected ? 5 : 15));
         if (!selected)
-            model.setForegroundColor(AnimatedImageModel.DEFAULT_FOREGROUND_COLOR.brighter());
+            model.setForegroundColor(ImageHelper.DEFAULT_FOREGROUND_COLOR.brighter());
 //        else {
 //            HSV hsv = new HSV(AnimatedImageModel.DefaultForegroundColor);
 //            hsv.s = hsv.v = 100;

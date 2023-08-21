@@ -89,7 +89,7 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
         if (pos == currentItemPos)
             return;
 
-        onPropertyChanged(PROPERTY_CURRENT_ITEM_POS);
+        firePropertyChanged(PROPERTY_CURRENT_ITEM_POS);
     }
 
     @Bindable
@@ -101,13 +101,13 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
         getDataSource().forEach(mi -> mi.setSize(size));
 
         if (!old.equals(size))
-            onPropertyChanged(PROPERTY_IMAGE_SIZE);
+            firePropertyChanged(PROPERTY_IMAGE_SIZE);
     }
 
     /** for one selected - start animate; for all other - stop animate */
     protected abstract void onCurrentItemChanged();
 
-    protected void onPropertyChanged(String propertyName) {
+    protected void firePropertyChanged(String propertyName) {
         if (disposed)
             return;
 
@@ -122,10 +122,10 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
         }
 
         // refire as async event
-        UiInvoker.Deferred.accept(() -> onAsyncPropertyChanged(propertyName));
+        UiInvoker.Deferred.accept(() -> firePropertyChangedAsync(propertyName));
     }
 
-    protected void onAsyncPropertyChanged(String propertyName) {
+    protected void firePropertyChangedAsync(String propertyName) {
         if (disposed)
             return;
 

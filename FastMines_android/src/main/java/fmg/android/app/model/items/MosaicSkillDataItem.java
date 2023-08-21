@@ -17,7 +17,7 @@ import static fmg.core.img.PropertyConst.PROPERTY_SKILL_LEVEL;
 /** Mosaic skill level item for data model */
 public class MosaicSkillDataItem extends BaseDataItem<ESkillLevel, MosaicSkillModel2, AndroidBitmapView<MosaicSkillModel2>, MosaicSkillImg2.MosaicSkillAndroidBitmapController> {
 
-    private static final String PROPERTY_BURGER_SUFFIX = MosaicGroupDataItem.PROPERTY_BURGER_SUFFIX;
+    private static final String PROPERTY_BURGER_DOT = MosaicGroupDataItem.PROPERTY_BURGER_DOT;
     private static final String PROPERTY_PADDING_BURGER = MosaicGroupDataItem.PROPERTY_PADDING_BURGER;
 
     public MosaicSkillDataItem(ESkillLevel eSkill) {
@@ -62,28 +62,28 @@ public class MosaicSkillDataItem extends BaseDataItem<ESkillLevel, MosaicSkillMo
     }
 
     @Override
-    protected void onPropertyChanged(String propertyName) {
+    protected void firePropertyChanged(String propertyName) {
         if (isDisposed())
             return;
 
-        super.onPropertyChanged(propertyName);
+        super.firePropertyChanged(propertyName);
 
         switch (propertyName) {
         case PROPERTY_UNIQUE_ID:
             getEntity().getModel().setMosaicSkill(getSkillLevel());
             break;
         case PROPERTY_SKILL_LEVEL:
-            super.onPropertyChanged(PROPERTY_UNIQUE_ID);
+            super.firePropertyChanged(PROPERTY_UNIQUE_ID);
             break;
         }
     }
 
     @Override
-    protected void onAsyncPropertyChanged(String propertyName) {
+    protected void firePropertyChangedAsync(String propertyName) {
         if (isDisposed())
             return;
 
-        super.onAsyncPropertyChanged(propertyName);
+        super.firePropertyChangedAsync(propertyName);
 
         // refire as android data binding event
         switch (propertyName) {
@@ -94,7 +94,7 @@ public class MosaicSkillDataItem extends BaseDataItem<ESkillLevel, MosaicSkillMo
 
     private void onBurgerModelPropertyChanged(String propertyName) {
         if (!isDisposed())
-            UiInvoker.Deferred.accept(() -> onPropertyChanged(PROPERTY_BURGER_SUFFIX + propertyName));
+            UiInvoker.Deferred.accept(() -> firePropertyChanged(PROPERTY_BURGER_DOT + propertyName));
     }
 
     @Override

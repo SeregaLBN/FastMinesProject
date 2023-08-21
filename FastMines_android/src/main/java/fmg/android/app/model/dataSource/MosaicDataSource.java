@@ -2,12 +2,6 @@ package fmg.android.app.model.dataSource;
 
 import androidx.databinding.Bindable;
 
-import java.beans.PropertyChangeEvent;
-
-import static fmg.core.img.PropertyConst.PROPERTY_MOSAIC_GROUP;
-import static fmg.core.img.PropertyConst.PROPERTY_MOSAIC_TYPE;
-import static fmg.core.img.PropertyConst.PROPERTY_SIZE;
-import static fmg.core.img.PropertyConst.PROPERTY_SKILL_LEVEL;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,11 +14,15 @@ import fmg.android.img.MosaicImg2;
 import fmg.common.Color;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
+import fmg.core.img.ImageHelper;
 import fmg.core.img.LogoModel2;
 import fmg.core.img.MosaicImageModel2;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
+
+import static fmg.core.img.PropertyConst.PROPERTY_MOSAIC_GROUP;
+import static fmg.core.img.PropertyConst.PROPERTY_SKILL_LEVEL;
 
 public class MosaicDataSource extends BaseDataSource<
           LogoDataItem,      Void,        LogoModel2, AndroidBitmapView<LogoModel2>       ,      Logo2.  LogoAndroidBitmapController,
@@ -42,11 +40,9 @@ public class MosaicDataSource extends BaseDataSource<
             var ctrlr = header.getEntity();
             var model = ctrlr.getModel();
             model.setPadding(new BoundDouble(3));
-            ctrlr.isRotateImage()setBackgroundColor(Color.Transparent());
-            model.setPolarLights(true);
-            model.setAnimated(!true);
+            ctrlr.setPolarLights(true);
 
-            notifier.firePropertyChanged(null, header, PROPERTY_HEADER);
+            firePropertyChanged(PROPERTY_HEADER);
         }
         return header;
     }
@@ -61,13 +57,19 @@ public class MosaicDataSource extends BaseDataSource<
     @Bindable
     public EMosaicGroup getMosaicGroup() { return mosaicGroup; }
     public void setMosaicGroup(EMosaicGroup mosaicGroup) {
-        notifier.setProperty(this.mosaicGroup, mosaicGroup, PROPERTY_MOSAIC_GROUP);
+        if (mosaicGroup == this.mosaicGroup)
+            return;
+        this.mosaicGroup = mosaicGroup;
+        firePropertyChanged(PROPERTY_MOSAIC_GROUP);
     }
 
     @Bindable
     public ESkillLevel getSkillLevel() { return skillLevel; }
     public void setSkillLevel(ESkillLevel skillLevel) {
-        notifier.setProperty(this.skillLevel, skillLevel, PROPERTY_SKILL_LEVEL);
+        if (skillLevel == this.skillLevel)
+            return;
+        this.skillLevel = skillLevel;
+        firePropertyChanged(PROPERTY_SKILL_LEVEL);
     }
 
     private void reloadDataSource() {
@@ -82,7 +84,7 @@ public class MosaicDataSource extends BaseDataSource<
                     .map(this::makeItem)
                     .collect(Collectors.toList());
 
-            notifier.firePropertyChanged(null, dataSource, PROPERTY_DATA_SOURCE);
+            firePropertyChanged(PROPERTY_DATA_SOURCE);
             return;
         }
 
@@ -113,7 +115,7 @@ public class MosaicDataSource extends BaseDataSource<
                 dataSource.add(mi);
             }
         }
-        notifier.firePropertyChanged(null, dataSource, PROPERTY_DATA_SOURCE);
+        firePropertyChanged(PROPERTY_DATA_SOURCE);
         setCurrentItemPos(Math.min(pos, dataSource.size() - 1)); // restore pos
     }
 
@@ -122,10 +124,11 @@ public class MosaicDataSource extends BaseDataSource<
         ESkillLevel skill = getSkillLevel();
         if (skill != null)
             mi.setSkillLevel(skill);
-        MosaicAnimatedModel<?> model = mi.getEntity().getModel();
+        var ctrlr = mi.getEntity();
+        var model = ctrlr.getModel();
         model.getPenBorder().setWidth(1);
-        model.setAnimatePeriod(2500);
-        model.setTotalFrames(70);
+        ctrlr.setAnimatePeriod(2500);
+        ctrlr.setFps(30);
         applySelection(mi);
         return mi;
     }
@@ -139,20 +142,21 @@ public class MosaicDataSource extends BaseDataSource<
     /** for one selected item - start animate; for all other - stop animate */
     private void applySelection(MosaicDataItem item) {
         boolean selected = item == getCurrentItem(); // check by reference
-        MosaicAnimatedModel<?> model = item.getEntity().getModel();
-        model.setAnimated(selected);
+        var ctrlr = item.getEntity();
+        var model = ctrlr.getModel();
+        ctrlr.setRotateImage(selected);
         model.getPenBorder().setColorLight (selected ? Color.White() : Color.Black());
         model.getPenBorder().setColorShadow(selected ? Color.White() : Color.Black());
-        model.setBackgroundColor(selected ? AnimatedImageModel.DEFAULT_BK_COLOR : DefaultBkColor);
+        model.setBackgroundColor(selected ? ImageHelper.DEFAULT_BK_COLOR : DefaultBkColor);
         model.setPadding(new BoundDouble(model.getSize().width * (selected ? 10 : 5) /*/(mi.SkillLevel.Ordinal() + 1)*/ / 100));
         model.setRotateAngle(0);
     }
 
     @Override
-    protected void onPropertyChanged(PropertyChangeEvent ev) {
-        super.onPropertyChanged(ev);
+    protected void firePropertyChanged(String propertyName) {
+        super.firePropertyChanged(propertyName);
 
-        switch (ev.getPropertyName()) {
+        switch (propertyName) {
         case PROPERTY_MOSAIC_GROUP:
         case PROPERTY_SKILL_LEVEL:
             reloadDataSource();
@@ -161,10 +165,10 @@ public class MosaicDataSource extends BaseDataSource<
     }
 
     @Override
-    protected void onAsyncPropertyChanged(PropertyChangeEvent ev) {
-        super.onAsyncPropertyChanged(ev);
+    protected void firePropertyChangedAsync(String propertyName) {
+        super.firePropertyChangedAsync(propertyName);
 
-        switch (ev.getPropertyName()) {
+        switch (propertyName) {
         case PROPERTY_MOSAIC_GROUP: notifyPropertyChanged(BR.mosaicGroup); break;
         case PROPERTY_SKILL_LEVEL : notifyPropertyChanged(BR.skillLevel); break;
         }

@@ -51,7 +51,7 @@ public abstract class BaseDataItem<T,
         if (Objects.equals(this.uniqueId, uniqueId))
             return;
         this.uniqueId = uniqueId;
-        onPropertyChanged(PROPERTY_UNIQUE_ID);
+        firePropertyChanged(PROPERTY_UNIQUE_ID);
     }
 
     @Bindable
@@ -60,7 +60,7 @@ public abstract class BaseDataItem<T,
         if (Objects.equals(this.title, title))
             return;
         this.title = title;
-        onPropertyChanged(PROPERTY_TITLE);
+        firePropertyChanged(PROPERTY_TITLE);
     }
 
     protected double getZoom() { return 1; }
@@ -81,7 +81,7 @@ public abstract class BaseDataItem<T,
         if (entity != null)
             entity.setListener(this::onControllerPropertyChanged);
 
-        onPropertyChanged(PROPERTY_ENTITY);
+        firePropertyChanged(PROPERTY_ENTITY);
     }
 
     @Bindable
@@ -129,10 +129,10 @@ public abstract class BaseDataItem<T,
 
     private void onControllerPropertyChanged(String propertyName) {
         if (!disposed)
-            UiInvoker.Deferred.accept(() -> onPropertyChanged(propertyName));
+            UiInvoker.Deferred.accept(() -> firePropertyChanged(propertyName));
     }
 
-    protected void onPropertyChanged(String propertyName) {
+    protected void firePropertyChanged(String propertyName) {
         if (disposed)
             return;
 
@@ -148,10 +148,10 @@ public abstract class BaseDataItem<T,
             }
         }
         // refire as async event
-        UiInvoker.Deferred.accept(() -> onAsyncPropertyChanged(propertyName));
+        UiInvoker.Deferred.accept(() -> firePropertyChangedAsync(propertyName));
     }
 
-    protected void onAsyncPropertyChanged(String propertyName) {
+    protected void firePropertyChangedAsync(String propertyName) {
         if (disposed)
             return;
 

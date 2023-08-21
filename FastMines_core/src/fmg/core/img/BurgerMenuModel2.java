@@ -44,8 +44,7 @@ public final class BurgerMenuModel2 implements IImageModel2 {
         this.size.width  = size.width;
         this.size.height = size.height;
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_SIZE);
+        firePropertyChanged(PROPERTY_SIZE);
 
         setPadding(ImageHelper.recalcPadding(pad, size, oldSize));
     }
@@ -67,24 +66,21 @@ public final class BurgerMenuModel2 implements IImageModel2 {
         this.pad.top    = padding.top;
         this.pad.bottom = padding.bottom;
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_PADDING);
+        firePropertyChanged(PROPERTY_PADDING);
     }
 
     public boolean isHorizontal() { return horizontal; }
     public void   setHorizontal(boolean value) {
         this.horizontal = value;
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_HORIZONTAL);
+        firePropertyChanged(PROPERTY_HORIZONTAL);
     }
 
     public int  getLayers() { return layers; }
     public void setLayers(int value) {
         this.layers = value;
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_LAYERS);
+        firePropertyChanged(PROPERTY_LAYERS);
     }
 
     /** 0° .. +360° */
@@ -93,8 +89,8 @@ public final class BurgerMenuModel2 implements IImageModel2 {
         var old = this.rotateAngle;
         this.rotateAngle = ImageHelper.fixAngle(value);
 
-        if ((changedCallback != null) && !DoubleExt.almostEquals(old, this.rotateAngle))
-            changedCallback.accept(PROPERTY_ROTATE_ANGLE);
+        if (!DoubleExt.almostEquals(old, this.rotateAngle))
+            firePropertyChanged(PROPERTY_ROTATE_ANGLE);
     }
 
     @Override
@@ -140,6 +136,11 @@ public final class BurgerMenuModel2 implements IImageModel2 {
                 li.to = end;
                 return li;
             });
+    }
+
+    private void firePropertyChanged(String propertyName) {
+        if (changedCallback != null)
+            changedCallback.accept(propertyName);
     }
 
 }

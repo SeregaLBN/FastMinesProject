@@ -31,8 +31,7 @@ public class FlagModel2 implements IImageModel2 {
         this.size.width  = size.width;
         this.size.height = size.height;
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_SIZE);
+        firePropertyChanged(PROPERTY_SIZE);
 
         setPadding(ImageHelper.recalcPadding(pad, size, oldSize));
     }
@@ -54,8 +53,7 @@ public class FlagModel2 implements IImageModel2 {
         this.pad.top    = padding.top;
         this.pad.bottom = padding.bottom;
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_PADDING);
+        firePropertyChanged(PROPERTY_PADDING);
     }
 
     @Override
@@ -63,6 +61,11 @@ public class FlagModel2 implements IImageModel2 {
         if ((callback != null) && (changedCallback != null))
             throw new IllegalArgumentException("Can only set the controller once");
         changedCallback = callback;
+    }
+
+    private void firePropertyChanged(String propertyName) {
+        if (changedCallback != null)
+            changedCallback.accept(propertyName);
     }
 
 }

@@ -74,8 +74,7 @@ public class LogoModel2 implements IImageModel2 {
         inn.clear();
         oct.clear();
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_SIZE);
+        firePropertyChanged(PROPERTY_SIZE);
 
         setPadding(ImageHelper.recalcPadding(padding, size, oldSize));
     }
@@ -101,8 +100,7 @@ public class LogoModel2 implements IImageModel2 {
         inn.clear();
         oct.clear();
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_PADDING);
+        firePropertyChanged(PROPERTY_PADDING);
     }
 
     public Color getBorderColor() {
@@ -115,8 +113,7 @@ public class LogoModel2 implements IImageModel2 {
 
         this.borderColor = borderColor;
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_BORDER_COLOR);
+        firePropertyChanged(PROPERTY_BORDER_COLOR);
     }
 
     public double getBorderWidth() {
@@ -129,8 +126,7 @@ public class LogoModel2 implements IImageModel2 {
 
         this.borderWidth = borderWidth;
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_BORDER_WIDTH);
+        firePropertyChanged(PROPERTY_BORDER_WIDTH);
     }
 
     private BoundDouble getInnerPadding() {
@@ -169,8 +165,7 @@ public class LogoModel2 implements IImageModel2 {
 
         this.useGradient = value;
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_USE_GRADIENT);
+        firePropertyChanged(PROPERTY_USE_GRADIENT);
     }
 
     /** 0° .. +360° */
@@ -191,8 +186,7 @@ public class LogoModel2 implements IImageModel2 {
         FigureHelper.rotateCollection(getInn() , this.rotateAngle, center);
         FigureHelper.rotateCollection(getOct() , this.rotateAngle, center);
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_ROTATE_ANGLE);
+        firePropertyChanged(PROPERTY_ROTATE_ANGLE);
     }
 
     /** 0° .. +360° */
@@ -207,8 +201,7 @@ public class LogoModel2 implements IImageModel2 {
         for (int i = 0; i < palette.length; ++i)
             palette[i].h = DEFAULT_PALETTE[i].h + this.paletteColorOffset;
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_PALETTE_COLOR_OFFSET);
+        firePropertyChanged(PROPERTY_PALETTE_COLOR_OFFSET);
     }
 
     public double getZoomX() { return (getSize().width  - getInnerPadding().getLeftAndRight()) / 200.0; }
@@ -279,6 +272,11 @@ public class LogoModel2 implements IImageModel2 {
         if ((callback != null) && (changedCallback != null))
             throw new IllegalArgumentException("Can only set the controller once");
         changedCallback = callback;
+    }
+
+    private void firePropertyChanged(String propertyName) {
+        if (changedCallback != null)
+            changedCallback.accept(propertyName);
     }
 
 }

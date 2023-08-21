@@ -42,7 +42,7 @@ public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicImageModel2, And
         if (this.skillLevel == skillLevel)
             return;
         this.skillLevel = skillLevel;
-        onPropertyChanged(PROPERTY_SKILL_LEVEL);
+        firePropertyChanged(PROPERTY_SKILL_LEVEL);
     }
 
     @Override
@@ -68,15 +68,15 @@ public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicImageModel2, And
     }
 
     @Override
-    protected void onPropertyChanged(String propertyName) {
+    protected void firePropertyChanged(String propertyName) {
         if (isDisposed())
             return;
 
-        super.onPropertyChanged(propertyName);
+        super.firePropertyChanged(propertyName);
 
         switch (propertyName) {
         case PROPERTY_SIZE: // TODO delete this case!!
-            super.onPropertyChanged(PROPERTY_TITLE);
+            super.firePropertyChanged(PROPERTY_TITLE);
             break;
         case PROPERTY_UNIQUE_ID:
             getEntity().getModel().setMosaicType(getMosaicType());
@@ -87,17 +87,17 @@ public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicImageModel2, And
             getEntity().getModel().setSizeField(calcSizeField(getSkillLevel()));
             break;
         case PROPERTY_MOSAIC_TYPE:
-            super.onPropertyChanged(PROPERTY_UNIQUE_ID);
+            super.firePropertyChanged(PROPERTY_UNIQUE_ID);
             break;
         }
     }
 
     @Override
-    protected void onAsyncPropertyChanged(String propertyName) {
+    protected void firePropertyChangedAsync(String propertyName) {
         if (isDisposed())
             return;
 
-        super.onAsyncPropertyChanged(propertyName);
+        super.firePropertyChangedAsync(propertyName);
 
         // refire as android data binding event
         switch (propertyName) {

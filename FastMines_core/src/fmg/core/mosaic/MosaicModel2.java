@@ -107,8 +107,7 @@ public class MosaicModel2 implements IImageModel2 {
         shape = null;
         matrix.clear();
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_MOSAIC_TYPE);
+        firePropertyChanged(PROPERTY_MOSAIC_TYPE);
 
         if (isControlMode)
             setPaddingInner(new BoundDouble(0));
@@ -141,8 +140,7 @@ public class MosaicModel2 implements IImageModel2 {
         getShape().setArea(area);
         matrix.forEach(BaseCell::init);
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_AREA);
+        firePropertyChanged(PROPERTY_AREA);
     }
 
     public List<BaseCell> getMatrix() {
@@ -178,8 +176,7 @@ public class MosaicModel2 implements IImageModel2 {
         this.sizeField.m = newSizeField.m;
         this.sizeField.n = newSizeField.n;
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_SIZE_FIELD);
+        firePropertyChanged(PROPERTY_SIZE_FIELD);
 
         if (isControlMode)
             setPaddingInner(new BoundDouble(0));
@@ -204,8 +201,7 @@ public class MosaicModel2 implements IImageModel2 {
         this.size.width  = size.width;
         this.size.height = size.height;
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_SIZE);
+        firePropertyChanged(PROPERTY_SIZE);
 
         if (isControlMode) {
             setPaddingInner(new BoundDouble(0));
@@ -238,8 +234,8 @@ public class MosaicModel2 implements IImageModel2 {
         this.padding.top    = padding.top;
         this.padding.bottom = padding.bottom;
 
-        if ((changedCallback != null) && !oldPad.equals(padding))
-            changedCallback.accept(PROPERTY_PADDING);
+        if (!oldPad.equals(padding))
+            firePropertyChanged(PROPERTY_PADDING);
 
         uniformlyChangeMosaicSize();
     }
@@ -284,8 +280,7 @@ public class MosaicModel2 implements IImageModel2 {
         padding.right  -= dx;
         padding.bottom -= dy;
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_MOSAIC_OFFSET);
+        firePropertyChanged(PROPERTY_MOSAIC_OFFSET);
     }
 
     /** the maximum number of background fill modes that this type of mosaic knows */
@@ -312,8 +307,7 @@ public class MosaicModel2 implements IImageModel2 {
         this.fillMode = newFillMode;
         fillColors.clear();
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_FILL_MODE);
+        firePropertyChanged(PROPERTY_FILL_MODE);
     }
 
     /** cached cell background colors
@@ -360,8 +354,7 @@ public class MosaicModel2 implements IImageModel2 {
 
         this.cellColor = color;
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_CELL_COLOR);
+        firePropertyChanged(PROPERTY_CELL_COLOR);
     }
 
     public Color getBackgroundColor() {
@@ -374,8 +367,7 @@ public class MosaicModel2 implements IImageModel2 {
 
         this.backgroundColor = color;
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_BACKGROUND_COLOR);
+        firePropertyChanged(PROPERTY_BACKGROUND_COLOR);
     }
 
 
@@ -392,6 +384,11 @@ public class MosaicModel2 implements IImageModel2 {
             getPenBorder().setListener(name -> callback.accept(PROPERTY_PEN_BORDER + '.' + name));
             getFontInfo ().setListener(name -> callback.accept(PROPERTY_FONT_INFO  + '.' + name));
         }
+    }
+
+    protected void firePropertyChanged(String propertyName) {
+        if (changedCallback != null)
+            changedCallback.accept(propertyName);
     }
 
 }

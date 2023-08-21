@@ -68,8 +68,7 @@ public class MosaicSkillModel2 implements IImageModel2 {
             return;
 
         this.mosaicSkill = value;
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_MOSAIC_SKILL);
+        firePropertyChanged(PROPERTY_MOSAIC_SKILL);
     }
 
     @Override
@@ -88,8 +87,7 @@ public class MosaicSkillModel2 implements IImageModel2 {
         this.size.width  = size.width;
         this.size.height = size.height;
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_SIZE);
+        firePropertyChanged(PROPERTY_SIZE);
 
         setPadding(ImageHelper.recalcPadding(pad, size, oldSize));
     }
@@ -111,8 +109,7 @@ public class MosaicSkillModel2 implements IImageModel2 {
         this.pad.top    = padding.top;
         this.pad.bottom = padding.bottom;
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_PADDING);
+        firePropertyChanged(PROPERTY_PADDING);
     }
 
 
@@ -123,8 +120,7 @@ public class MosaicSkillModel2 implements IImageModel2 {
 
         this.foregroundColor = value;
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_FOREGROUND_COLOR);
+        firePropertyChanged(PROPERTY_FOREGROUND_COLOR);
     }
 
     /** background fill color */
@@ -135,8 +131,7 @@ public class MosaicSkillModel2 implements IImageModel2 {
 
         this.backgroundColor = value;
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_BACKGROUND_COLOR);
+        firePropertyChanged(PROPERTY_BACKGROUND_COLOR);
     }
 
     public Color getBorderColor() { return borderColor; }
@@ -146,8 +141,7 @@ public class MosaicSkillModel2 implements IImageModel2 {
 
         this.borderColor = value;
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_BORDER_COLOR);
+        firePropertyChanged(PROPERTY_BORDER_COLOR);
     }
 
     public double getBorderWidth() { return borderWidth; }
@@ -157,8 +151,7 @@ public class MosaicSkillModel2 implements IImageModel2 {
 
         this.borderWidth = value;
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_BORDER_WIDTH);
+        firePropertyChanged(PROPERTY_BORDER_WIDTH);
     }
 
 
@@ -171,8 +164,7 @@ public class MosaicSkillModel2 implements IImageModel2 {
 
         this.rotateAngle = value;
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_ROTATE_ANGLE);
+        firePropertyChanged(PROPERTY_ROTATE_ANGLE);
     }
 
     /** 0° .. +360° */
@@ -184,8 +176,7 @@ public class MosaicSkillModel2 implements IImageModel2 {
 
         this.foregroundAngle = value;
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_FOREGROUND_ANGLE);
+        firePropertyChanged(PROPERTY_FOREGROUND_ANGLE);
     }
 
     /** 0° .. +360° */
@@ -197,8 +188,7 @@ public class MosaicSkillModel2 implements IImageModel2 {
 
         this.backgroundAngle = value;
 
-        if (changedCallback != null)
-            changedCallback.accept(PROPERTY_BACKGROUND_ANGLE);
+        firePropertyChanged(PROPERTY_BACKGROUND_ANGLE);
     }
 
     public Stream<Pair<Color, Stream<PointDouble>>> getCoords() {
@@ -341,6 +331,11 @@ public class MosaicSkillModel2 implements IImageModel2 {
         if ((callback != null) && (changedCallback != null))
             throw new IllegalArgumentException("Can only set the controller once");
         changedCallback = callback;
+    }
+
+    private void firePropertyChanged(String propertyName) {
+        if (changedCallback != null)
+            changedCallback.accept(propertyName);
     }
 
 }

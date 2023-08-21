@@ -19,8 +19,8 @@ import static fmg.core.img.PropertyConst.PROPERTY_PADDING;
 /** Mosaic group item for data model */
 public class MosaicGroupDataItem extends BaseDataItem<EMosaicGroup, MosaicGroupModel2, AndroidBitmapView<MosaicGroupModel2>, MosaicGroupImg2.MosaicGroupAndroidBitmapController> {
 
-    static final String PROPERTY_BURGER_SUFFIX = PROPERTY_BURGER + ".";
-    static final String PROPERTY_PADDING_BURGER = PROPERTY_BURGER_SUFFIX + PROPERTY_PADDING;
+    static final String PROPERTY_BURGER_DOT = PROPERTY_BURGER + ".";
+    static final String PROPERTY_PADDING_BURGER = PROPERTY_BURGER_DOT + PROPERTY_PADDING;
 
     public MosaicGroupDataItem(EMosaicGroup eMosaicGroup) {
         super(eMosaicGroup);
@@ -64,28 +64,28 @@ public class MosaicGroupDataItem extends BaseDataItem<EMosaicGroup, MosaicGroupM
     }
 
     @Override
-    protected void onPropertyChanged(String propertyName) {
+    protected void firePropertyChanged(String propertyName) {
         if (isDisposed())
             return;
 
-        super.onPropertyChanged(propertyName);
+        super.firePropertyChanged(propertyName);
 
         switch (propertyName) {
         case PROPERTY_UNIQUE_ID:
             getEntity().getModel().setMosaicGroup(getMosaicGroup());
             break;
         case PROPERTY_MOSAIC_GROUP:
-            super.onPropertyChanged(PROPERTY_UNIQUE_ID);
+            super.firePropertyChanged(PROPERTY_UNIQUE_ID);
             break;
         }
     }
 
     @Override
-    protected void onAsyncPropertyChanged(String propertyName) {
+    protected void firePropertyChangedAsync(String propertyName) {
         if (isDisposed())
             return;
 
-        super.onAsyncPropertyChanged(propertyName);
+        super.firePropertyChangedAsync(propertyName);
 
         // refire as android data binding event
         switch (propertyName) {
@@ -96,7 +96,7 @@ public class MosaicGroupDataItem extends BaseDataItem<EMosaicGroup, MosaicGroupM
 
     private void onBurgerModelPropertyChanged(String propertyName) {
         if (!isDisposed())
-            UiInvoker.Deferred.accept(() -> onPropertyChanged(PROPERTY_BURGER_SUFFIX + propertyName));
+            UiInvoker.Deferred.accept(() -> firePropertyChanged(PROPERTY_BURGER_DOT + propertyName));
     }
 
     @Override
