@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.function.Consumer;
 
 import fmg.android.app.BR;
 import fmg.android.app.MainActivity;
@@ -19,7 +20,8 @@ public class MainMenuViewModel extends ViewModel {
     private final MosaicGroupDataSource mosaicGroupDS = new MosaicGroupDataSource();
     private final MosaicSkillDataSource mosaicSkillDS = new MosaicSkillDataSource();
     private final SplitViewPane splitViewPane = new SplitViewPane();
-    private final PropertyChangeListener onMosaicGroupDsPropertyChangedListener = this::onMosaicGroupDsPropertyChanged;
+    private Consumer<String> changedMosaicGroupDSCallback;
+    private Consumer<String> changedMosaicSkillDSCallback;
 
     public class SplitViewPane extends BaseObservable {
 
@@ -66,7 +68,8 @@ public class MainMenuViewModel extends ViewModel {
 
 
     public MainMenuViewModel() {
-        mosaicGroupDS.addListener(onMosaicGroupDsPropertyChangedListener);
+        mosaicGroupDS.setListener(this::onMosaicGroupDsPropertyChanged);
+        mosaicSkillDS.setListener(this::onMosaicSkillDsPropertyChanged);
     }
 
     public MosaicGroupDataSource getMosaicGroupDS() { return mosaicGroupDS; }
@@ -80,26 +83,54 @@ public class MainMenuViewModel extends ViewModel {
         return new Converters.DipWrapper(1);
     }
 
-    private void onMosaicGroupDsPropertyChanged(PropertyChangeEvent ev) {
-        assert (ev.getSource() == mosaicGroupDS);
-
-        switch (ev.getPropertyName()) {
-        case MosaicGroupDataSource.PROPERTY_IMAGE_SIZE:
-            getSplitViewPane().fireEvent();
-            break;
-        case MosaicGroupDataSource.PROPERTY_CURRENT_ITEM:
-            //// auto-close split view pane
-            //splitViewPane.setOpen(false);
-            break;
+    private void onMosaicGroupDsPropertyChanged(String propertyName) {
+        switch (propertyName) {
+            case MosaicGroupDataSource.PROPERTY_IMAGE_SIZE:
+                getSplitViewPane().fireEvent();
+                break;
+            case MosaicGroupDataSource.PROPERTY_CURRENT_ITEM:
+                //// auto-close split view pane
+                //splitViewPane.setOpen(false);
+                break;
         }
+        if (changedMosaicGroupDSCallback != null)
+            changedMosaicGroupDSCallback.accept(propertyName);
+    }
+
+    private void onMosaicSkillDsPropertyChanged(String propertyName) {
+        if (changedMosaicSkillDSCallback != null)
+            changedMosaicSkillDSCallback.accept(propertyName);
     }
 
     @Override
     protected void onCleared() {
         super.onCleared();
-        mosaicGroupDS.removeListener(onMosaicGroupDsPropertyChangedListener);
+        mosaicGroupDS.setListener(null);
         mosaicGroupDS.close();
         mosaicSkillDS.close();
     }
 
+    public void setMosaicGroupDSListener(Consumer<String> callback) {
+        if (callback == null) {
+            // unset
+            changedMosaicGroupDSCallback = null;
+        } else {
+            // set
+            if (changedMosaicGroupDSCallback != null)
+                throw new IllegalArgumentException("The callback is already set");
+            changedMosaicGroupDSCallback = callback;
+        }
+    }
+
+    public void setMosaicSkillDSListener(Consumer<String> callback) {
+        if (callback == null) {
+            // unset
+            changedMosaicSkillDSCallback = null;
+        } else {
+            // set
+            if (changedMosaicSkillDSCallback != null)
+                throw new IllegalArgumentException("The callback is already set");
+            changedMosaicSkillDSCallback = callback;
+        }
+    }
 }

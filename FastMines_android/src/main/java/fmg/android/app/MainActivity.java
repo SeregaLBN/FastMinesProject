@@ -1,23 +1,22 @@
 package fmg.android.app;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.databinding.DataBindingUtil;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import java.util.function.Supplier;
 
 import fmg.android.app.databinding.MainActivityBinding;
+import fmg.android.app.model.dataSource.BaseDataSource;
 import fmg.android.app.model.dataSource.MosaicGroupDataSource;
 import fmg.android.app.model.dataSource.MosaicSkillDataSource;
 import fmg.android.app.model.items.MosaicGroupDataItem;
@@ -33,9 +32,9 @@ import fmg.common.Logger;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
+import fmg.core.app.model.MosaicInitData;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
-import fmg.core.app.model.MosaicInitData;
 
 /** Main window activity */
 public class MainActivity extends AppCompatActivity {
@@ -50,8 +49,6 @@ public class MainActivity extends AppCompatActivity {
     private MosaicSkillListViewAdapter mosaicSkillListViewAdapter;
     private SizeDouble cachedSizeActivity = new SizeDouble(-1, -1);
     private EActivityStatus activityStatus = EActivityStatus.eLaunched;
-    private final PropertyChangeListener onMosaicGroupDsPropertyChangedListener = this::onMosaicGroupDsPropertyChanged;
-    private final PropertyChangeListener onMosaicSkillDsPropertyChangedListener = this::onMosaicSkillDsPropertyChanged;
 
     public MosaicInitData getInitData()     { return FastMinesApp.get().getMosaicInitData(); }
     public MenuSettings   getMenuSettings() { return FastMinesApp.get().getMenuSettings(); }
@@ -98,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         binding.rvMenuMosaicGroupItems.setLayoutManager(new LinearLayoutManager(this));
         binding.rvMenuMosaicSkillItems.setLayoutManager(new LinearLayoutManager(this));
 
-        viewModel.getMosaicGroupDS().getHeader().getEntity().getBurgerMenuModel().setHorizontal(viewModel.getSplitViewPane().isOpen());
+        viewModel.getMosaicGroupDS().getHeader().getEntity().getBurgerModel().setHorizontal(viewModel.getSplitViewPane().isOpen());
 
         viewModel.getMosaicGroupDS().setCurrentItem(viewModel.getMosaicGroupDS().getDataSource().stream().filter(x -> x.getMosaicGroup() == getInitData().getMosaicType().getGroup()).findFirst().get());
         viewModel.getMosaicSkillDS().setCurrentItem(viewModel.getMosaicSkillDS().getDataSource().stream().filter(x -> x.getSkillLevel()  == getInitData().getSkillLevel()           ).findFirst().get());
@@ -172,8 +169,8 @@ public class MainActivity extends AppCompatActivity {
 
         binding.rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(this::onGlobalLayoutListener);
 
-        viewModel.getMosaicGroupDS().addListener(onMosaicGroupDsPropertyChangedListener);
-        viewModel.getMosaicSkillDS().addListener(onMosaicSkillDsPropertyChangedListener);
+        viewModel.setMosaicGroupDSListener(this::onMosaicGroupDsPropertyChanged);
+        viewModel.setMosaicSkillDSListener(this::onMosaicSkillDsPropertyChanged);
     }
 
     @Override
@@ -183,8 +180,8 @@ public class MainActivity extends AppCompatActivity {
         activityStatus = EActivityStatus.ePaused;
 
         // unsubscribe all
-        viewModel.getMosaicGroupDS().removeListener(onMosaicGroupDsPropertyChangedListener);
-        viewModel.getMosaicSkillDS().removeListener(onMosaicSkillDsPropertyChangedListener);
+        viewModel.setMosaicGroupDSListener(null);
+        viewModel.setMosaicSkillDSListener(null);
 
         binding.rootLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this::onGlobalLayoutListener);
 
@@ -221,13 +218,13 @@ public class MainActivity extends AppCompatActivity {
 
         if (binding.rvMenuMosaicGroupItems.getVisibility() == View.GONE) {
             SmoothHelper.applySmoothVisibilityOverScale(binding.rvMenuMosaicGroupItems, true, this::getLvGroupHeight, null);
-            viewModel.getMosaicGroupDS().getHeader().getEntity().getBurgerMenuModel().setHorizontal(false);
+            viewModel.getMosaicGroupDS().getHeader().getEntity().getBurgerModel().setHorizontal(false);
         } else {
             boolean isSplitPaneOpen = !viewModel.getSplitViewPane().isOpen();
             getMenuSettings().setSplitPaneOpen(isSplitPaneOpen);
             viewModel.getSplitViewPane().setOpen(isSplitPaneOpen);
-            viewModel.getMosaicGroupDS().getHeader().getEntity().getModel().setAnimeDirection(
-                    !viewModel.getMosaicGroupDS().getHeader().getEntity().getModel().getAnimeDirection());
+            viewModel.getMosaicGroupDS().getHeader().getEntity().setClockwise(
+                    !viewModel.getMosaicGroupDS().getHeader().getEntity().isClockwise());
         }
     }
 
@@ -258,16 +255,16 @@ public class MainActivity extends AppCompatActivity {
                                 SmoothHelper.applySmoothVisibilityOverScale(binding.rvMenuMosaicGroupItems, false, this::getLvGroupHeight, null);
                         });
             }
-            viewModel.getMosaicSkillDS().getHeader().getEntity().getModel().setAnimeDirection(
-                    !viewModel.getMosaicSkillDS().getHeader().getEntity().getModel().getAnimeDirection());
+            viewModel.getMosaicSkillDS().getHeader().getEntity().setClockwise(
+                    !viewModel.getMosaicSkillDS().getHeader().getEntity().isClockwise());
         } else {
             if (isVisibleScroller && (binding.rvMenuMosaicGroupItems.getVisibility() == View.VISIBLE)) {
                 SmoothHelper.applySmoothVisibilityOverScale(binding.rvMenuMosaicGroupItems, false, this::getLvGroupHeight, null);
-                viewModel.getMosaicGroupDS().getHeader().getEntity().getBurgerMenuModel().setHorizontal(true);
+                viewModel.getMosaicGroupDS().getHeader().getEntity().getBurgerModel().setHorizontal(true);
             } else {
                 SmoothHelper.applySmoothVisibilityOverScale(binding.rvMenuMosaicSkillItems, false, this::getLvSkillHeight, null);
-                viewModel.getMosaicSkillDS().getHeader().getEntity().getModel().setAnimeDirection(
-                        !viewModel.getMosaicSkillDS().getHeader().getEntity().getModel().getAnimeDirection());
+                viewModel.getMosaicSkillDS().getHeader().getEntity().setClockwise(
+                        !viewModel.getMosaicSkillDS().getHeader().getEntity().isClockwise());
             }
         }
     }
@@ -337,59 +334,51 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void onMosaicGroupDsPropertyChanged(PropertyChangeEvent ev) {
+    private int currentItemPosMosaicGroup = BaseDataSource.NOT_SELECTED_POS;
+    private void onMosaicGroupDsPropertyChanged(String propertyName) {
         if (isFailedStatus("onMosaicGroupDsPropertyChanged"))
             return;
 
-        //Logger.info("> MainActivity.onMosaicGroupDsPropertyChanged: ev.Name=" + ev.getPropertyName());
-        switch (ev.getPropertyName()) {
+        //Logger.info("> MainActivity.onMosaicGroupDsPropertyChanged: propertyName=" + propertyName);
+        switch (propertyName) {
         case MosaicGroupDataSource.PROPERTY_CURRENT_ITEM_POS:
-//            Logger.info("  MainActivity.onMosaicGroupDsPropertyChanged: ev=" + ev);
-            int oldPos = (Integer)ev.getOldValue();
-            int newPos = (Integer)ev.getNewValue();
-
-//            // Below line is just like a safety check, because sometimes holder could be null,
-//            // in that case, getAdapterPosition() will return RecyclerView.NO_POSITION
-//            if (newPos == RecyclerView.NO_POSITION)
-//                return;
+            int oldPos = currentItemPosMosaicGroup;
+            int newPos = currentItemPosMosaicGroup = viewModel.getMosaicGroupDS().getCurrentItemPos();
 
             // Updating old as well as new positions
             if (mosaicGroupListViewAdapter != null) {
-                mosaicGroupListViewAdapter.notifyItemChanged(oldPos);
+                if (oldPos >= 0)
+                    mosaicGroupListViewAdapter.notifyItemChanged(oldPos);
                 mosaicGroupListViewAdapter.notifyItemChanged(newPos);
             }
             break;
         case MosaicGroupDataSource.PROPERTY_CURRENT_ITEM:
-            MosaicGroupDataItem currentGroupItem = ((MosaicGroupDataSource)ev.getSource()).getCurrentItem();
+            MosaicGroupDataItem currentGroupItem = viewModel.getMosaicGroupDS().getCurrentItem();
             onMenuCurrentItemChanged(true, currentGroupItem, viewModel.getMosaicSkillDS().getCurrentItem());
             break;
         }
     }
 
-    private void onMosaicSkillDsPropertyChanged(PropertyChangeEvent ev) {
+    private int currentItemPosMosaicSkill = BaseDataSource.NOT_SELECTED_POS;
+    private void onMosaicSkillDsPropertyChanged(String propertyName) {
         if (isFailedStatus("onMosaicSkillDsPropertyChanged"))
             return;
 
-        //Logger.info("> MainActivity.onMosaicSkillDsPropertyChanged: ev.Name=" + ev.getPropertyName());
-        switch (ev.getPropertyName()) {
+        //Logger.info("> MainActivity.onMosaicSkillDsPropertyChanged: propertyName=" + propertyName);
+        switch (propertyName) {
         case MosaicSkillDataSource.PROPERTY_CURRENT_ITEM_POS:
-            //Logger.info("  MainActivity.onMosaicSkillDsPropertyChanged: ev=" + ev);
-            int oldPos = (Integer)ev.getOldValue();
-            int newPos = (Integer)ev.getNewValue();
-
-//            // Below line is just like a safety check, because sometimes holder could be null,
-//            // in that case, getAdapterPosition() will return RecyclerView.NO_POSITION
-//            if (newPos == RecyclerView.NO_POSITION)
-//                return;
+            int oldPos = currentItemPosMosaicSkill;
+            int newPos = currentItemPosMosaicGroup = viewModel.getMosaicSkillDS().getCurrentItemPos();
 
             // Updating old as well as new positions
             if (mosaicSkillListViewAdapter != null) {
-                mosaicSkillListViewAdapter.notifyItemChanged(oldPos);
+                if (oldPos >= 0)
+                    mosaicSkillListViewAdapter.notifyItemChanged(oldPos);
                 mosaicSkillListViewAdapter.notifyItemChanged(newPos);
             }
             break;
         case MosaicSkillDataSource.PROPERTY_CURRENT_ITEM:
-            MosaicSkillDataItem currentSkillItem = ((MosaicSkillDataSource)ev.getSource()).getCurrentItem();
+            MosaicSkillDataItem currentSkillItem = viewModel.getMosaicSkillDS().getCurrentItem();
             onMenuCurrentItemChanged(false, viewModel.getMosaicGroupDS().getCurrentItem(), currentSkillItem);
             break;
         }

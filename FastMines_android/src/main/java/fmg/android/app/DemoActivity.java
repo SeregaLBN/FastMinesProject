@@ -12,11 +12,8 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
 
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -24,15 +21,13 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import fmg.android.app.databinding.DemoActivity2Binding;
+import fmg.android.app.databinding.DemoActivityBinding;
 import fmg.android.img.Flag2;
 import fmg.android.img.Logo2;
 import fmg.android.img.MosaicGroupImg2;
-import fmg.android.img.MosaicImg;
 import fmg.android.img.MosaicImg2;
 import fmg.android.img.MosaicSkillImg2;
 import fmg.android.img.Smile2;
-import fmg.android.mosaic.MosaicViewController;
 import fmg.android.mosaic.MosaicViewController2;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
@@ -47,12 +42,12 @@ import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
 
 /** live UI test application */
-public class DemoActivity2 extends AppCompatActivity {
+public class DemoActivity extends AppCompatActivity {
 
     private static final int MARGIN = 10; // panel margin - padding to inner images
 
     private TestDrawing2 td;
-    private DemoActivity2Binding activityBinding;
+    private DemoActivityBinding activityBinding;
     private Runnable onCloseImages;
     private Runnable[] onCreateImages; // images factory
     public static class DemoViewModel extends ViewModel {
@@ -123,7 +118,7 @@ public class DemoActivity2 extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        activityBinding = DataBindingUtil.setContentView(this, R.layout.demo_activity_2);
+        activityBinding = DataBindingUtil.setContentView(this, R.layout.demo_activity);
         DemoViewModel viewModel = ViewModelProviders.of(this).get(DemoViewModel.class);
         activityBinding.setViewModel(viewModel);
         activityBinding.executePendingBindings();

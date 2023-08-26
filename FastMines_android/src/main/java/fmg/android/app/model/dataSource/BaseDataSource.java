@@ -51,7 +51,7 @@ public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THe
     
     private boolean disposed;
 
-    private static final int NOT_SELECTED_POS = -1;
+    public static final int NOT_SELECTED_POS = -1; // RecyclerView.NO_POSITION;
 
     private Consumer<String> changedCallback;
 

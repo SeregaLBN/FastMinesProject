@@ -2,8 +2,7 @@ package fmg.android.app.presentation;
 
 import androidx.lifecycle.ViewModel;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.util.function.Consumer;
 
 import fmg.android.app.model.dataSource.MosaicDataSource;
 import fmg.common.geom.SizeDouble;
@@ -12,10 +11,10 @@ import fmg.common.geom.SizeDouble;
 public class MosaicDsViewModel extends ViewModel {
 
     private final MosaicDataSource mosaicDS = new MosaicDataSource();
-    private final PropertyChangeListener onMosaicDsPropertyChangedListener = this::onMosaicDsPropertyChanged;
+    private Consumer<String> changedMosaicDSCallback;
 
     public MosaicDsViewModel() {
-        mosaicDS.addListener(onMosaicDsPropertyChangedListener);
+        mosaicDS.setListener(this::onMosaicDsPropertyChanged);
     }
 
     public MosaicDataSource getMosaicDS() { return mosaicDS; }
@@ -23,19 +22,34 @@ public class MosaicDsViewModel extends ViewModel {
     public SizeDouble getImageSize()         { return mosaicDS.getImageSize(); }
     public void       setImageSize(SizeDouble size) { mosaicDS.setImageSize(size); }
 
-    private void onMosaicDsPropertyChanged(PropertyChangeEvent ev) {
-        switch (ev.getPropertyName()) {
+    private void onMosaicDsPropertyChanged(String propertyName) {
+        switch (propertyName) {
         case MosaicDataSource.PROPERTY_IMAGE_SIZE:
             // TODO ! notify parent container
             //notifier.firePropertyChanged<SizeDouble>(ev, nameof(this.ImageSize));
             break;
         }
+        if (changedMosaicDSCallback != null)
+            changedMosaicDSCallback.accept(propertyName);
     }
 
     @Override
     protected void onCleared() {
-        mosaicDS.removeListener(onMosaicDsPropertyChangedListener);
+        mosaicDS.setListener(null);
         mosaicDS.close();
+        changedMosaicDSCallback = null;
+    }
+
+    public void setMosaicDSListener(Consumer<String> callback) {
+        if (callback == null) {
+            // unset
+            changedMosaicDSCallback = null;
+        } else {
+            // set
+            if (changedMosaicDSCallback != null)
+                throw new IllegalArgumentException("The callback is already set");
+            changedMosaicDSCallback = callback;
+        }
     }
 
 }

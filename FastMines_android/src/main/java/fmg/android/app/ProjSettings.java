@@ -11,7 +11,6 @@ import fmg.common.Color;
 import fmg.common.Logger;
 import fmg.common.ui.UiInvoker;
 import fmg.core.app.AProjSettings;
-import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.mosaic.MosaicModel2;
 import fmg.core.types.draw.PenBorder2;
 

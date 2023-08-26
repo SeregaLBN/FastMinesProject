@@ -14,30 +14,25 @@ import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.UUID;
 
-import fmg.common.Logger;
-import fmg.core.types.EMosaic;
-import fmg.core.types.ESkillLevel;
-import fmg.core.app.AProjSettings;
-import fmg.core.app.model.Champions;
-import fmg.core.app.model.MosaicInitData;
-import fmg.core.app.model.Players;
-import fmg.core.app.model.User;
 import fmg.android.app.model.AppData;
 import fmg.android.app.model.MosaicActivityBackupData;
 import fmg.android.app.presentation.MenuSettings;
 import fmg.android.app.serializers.AppDataSerializer;
 import fmg.android.app.serializers.ChampionsAndroidSerializer;
 import fmg.android.app.serializers.PlayersAndroidSerializer;
+import fmg.common.Logger;
+import fmg.core.app.AProjSettings;
+import fmg.core.app.model.Champions;
+import fmg.core.app.model.MosaicInitData;
+import fmg.core.app.model.Players;
+import fmg.core.app.model.User;
+import fmg.core.types.EMosaic;
+import fmg.core.types.ESkillLevel;
 
 /** FastMines application */
 public class FastMinesApp extends Application implements LifecycleObserver {
-
-    private final PropertyChangeListener   onMenuSettingsPropertyChangedListener = this::onMenuSettingsPropertyChanged;
-    private final PropertyChangeListener onMosaicInitDataPropertyChangedListener = this::onMosaicInitDataPropertyChanged;
-
 
     private Context context;
     private MenuSettings menuSettings;
@@ -47,8 +42,6 @@ public class FastMinesApp extends Application implements LifecycleObserver {
     private Champions champions;
     private boolean playersChanged;
     private boolean championsChanged;
-    private final PropertyChangeListener   onPlayersPropertyChangedListener = this::onPlayersPropertyChanged;
-    private final PropertyChangeListener onChampionsPropertyChangedListener = this::onChampionsPropertyChanged;
     private Activity lastActivity;
 
     public MosaicInitData getMosaicInitData() { return mosaicInitData; }
@@ -100,8 +93,8 @@ public class FastMinesApp extends Application implements LifecycleObserver {
     private void onForegrounded() {
         Logger.info("FastMinesApp::onForegrounded");
 
-        getMenuSettings  ().addListener(onMenuSettingsPropertyChangedListener);
-        getMosaicInitData().addListener(onMosaicInitDataPropertyChangedListener);
+        getMenuSettings  ().setListener(this::onMenuSettingsPropertyChanged);
+        getMosaicInitData().setListener(this::onMosaicInitDataPropertyChanged);
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
@@ -109,17 +102,15 @@ public class FastMinesApp extends Application implements LifecycleObserver {
         Logger.info("FastMinesApp::onBackgrounded");
         save();
 
-        getMenuSettings  ().removeListener(onMenuSettingsPropertyChangedListener);
-        getMosaicInitData().removeListener(onMosaicInitDataPropertyChangedListener);
+        getMenuSettings  ().setListener(null);
+        getMosaicInitData().setListener(null);
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     private void onClosed() {
         Logger.info("FastMinesApp::onClosed");
-        champions.removeListener(onChampionsPropertyChangedListener);
-        players.removeListener(onPlayersPropertyChangedListener);
-        champions.close();
-        players.close();
+        champions.setListener(null);
+        players.setListener(null);
         menuSettings.close();
         mosaicInitData.close();
     }
@@ -156,26 +147,26 @@ public class FastMinesApp extends Application implements LifecycleObserver {
         mosaicActivityBackupData = data.getMosaicActivityBackupData();
 
         players = new PlayersAndroidSerializer().load();
-        players.addListener(onPlayersPropertyChangedListener);
+        players.setListener(this::onPlayersPropertyChanged);
         if (players.getRecords().isEmpty())
             // create default user for android
             players.addNewPlayer("You", null);
 
         champions = new ChampionsAndroidSerializer().load();
         //champions.subscribeTo(players);
-        champions.addListener(onChampionsPropertyChangedListener);
+        champions.setListener(this::onChampionsPropertyChanged);
     }
 
     private SharedPreferences getAppPreferences() {
         return getSharedPreferences(AProjSettings.getSettingsFileName(), Context.MODE_PRIVATE);
     }
 
-    private void onMenuSettingsPropertyChanged(PropertyChangeEvent ev) {
-        Logger.info("FastMinesApp::onMenuSettingsPropertyChanged: ev={0}", ev);
+    private void onMenuSettingsPropertyChanged(String propertyName) {
+        Logger.info("FastMinesApp::onMenuSettingsPropertyChanged: propertyName={0}", propertyName);
     }
 
-    private void onMosaicInitDataPropertyChanged(PropertyChangeEvent ev) {
-        Logger.info("FastMinesApp::onMosaicInitDataPropertyChanged: ev={0}", ev);
+    private void onMosaicInitDataPropertyChanged(String propertyName) {
+        Logger.info("FastMinesApp::onMosaicInitDataPropertyChanged: propertyName={0}", propertyName);
     }
 
     /** Сохранить чемпиона && Установить статистику */

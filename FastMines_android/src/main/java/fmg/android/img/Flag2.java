@@ -53,7 +53,7 @@ public final class Flag2 {
     }
 
     /** Flag image controller implementation for {@link android.graphics.Bitmap} */
-    public static class FlagAndroidBitmapController extends ImageController2<Bitmap, FlagModel2, AndroidBitmapView<FlagModel2>> {
+    public static class FlagAndroidBitmapController extends ImageController2<Bitmap, AndroidBitmapView<FlagModel2>, FlagModel2> {
 
         public FlagAndroidBitmapController() {
             var model = new FlagModel2();

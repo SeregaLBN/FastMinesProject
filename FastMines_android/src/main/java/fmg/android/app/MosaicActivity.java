@@ -12,25 +12,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
 import fmg.android.app.databinding.MosaicActivityBinding;
 import fmg.android.app.model.MosaicActivityBackupData;
 import fmg.android.app.presentation.MosaicViewModel;
-import fmg.android.mosaic.MosaicViewController;
+import fmg.android.mosaic.MosaicViewController2;
 import fmg.android.utils.AsyncRunner;
 import fmg.android.utils.Timer;
 import fmg.common.Logger;
-import fmg.common.ui.UiInvoker;
-import fmg.core.img.SmileModel;
-import fmg.core.mosaic.MosaicController;
-import fmg.core.mosaic.MosaicGameModel;
+import fmg.core.app.model.MosaicInitData;
+import fmg.core.img.SmileModel2;
 import fmg.core.types.ClickResult;
 import fmg.core.types.EGameStatus;
-import fmg.core.app.model.MosaicInitData;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
+
+import static fmg.core.img.PropertyConst.PROPERTY_COUNT_MINES_LEFT;
+import static fmg.core.img.PropertyConst.PROPERTY_GAME_STATUS;
 
 /** Game field activity of the project */
 public class MosaicActivity extends AppCompatActivity {
@@ -38,7 +35,6 @@ public class MosaicActivity extends AppCompatActivity {
     private MosaicActivityBinding binding;
     private MosaicViewModel viewModel;
     private Timer timer;
-    private final PropertyChangeListener onMosaicControllerPropertyChangedListener = this::onMosaicControllerPropertyChanged;
     private MosaicActivityBackupData backupData;
 
     public MosaicActivity() {
@@ -63,18 +59,17 @@ public class MosaicActivity extends AppCompatActivity {
         timer.setInterval(1000);
         timer.setCallback(viewModel::onTimerCallback);
 
-        MosaicViewController ctrl = viewModel.getMosaicController();
-        ctrl.setBindSizeDirection(false);
-        ctrl.setExtendedManipulation(true);
-        ctrl.getModel().setAutoFit(false);
-        ctrl.setOnClickEvent(this::onMosaicClickHandler);
+        var controller = getMosaicController();
+        controller.setBindSizeDirection(false);
+        controller.setExtendedManipulation(true);
+        //ctrlr.getModel().setAutoFit(false);
+        controller.setOnClickEvent(this::onMosaicClickHandler);
         binding.setViewModel(viewModel);
         binding.executePendingBindings();
         binding.btnNewGame.setOnClickListener(this::onBtnNewClick);
         binding.btnNewGame.setOnTouchListener(this::onBtnNewTouch);
 
         // init mosaic controller
-        MosaicViewController controller = getMosaicController();
         FastMinesApp app = FastMinesApp.get();
         if (app.hasMosaicActivityBackupData()) {
             AsyncRunner.invokeFromUiDelayed(() -> {
@@ -87,7 +82,7 @@ public class MosaicActivity extends AppCompatActivity {
             );
         } else {
             MosaicInitData initData = app.getMosaicInitData();
-            MosaicGameModel model = controller.getModel();
+            var model = controller.getModel();
             model.setMosaicType(initData.getMosaicType());
             model.setSizeField(initData.getSizeField());
             controller.setCountMines(initData.getCountMines());
@@ -95,7 +90,7 @@ public class MosaicActivity extends AppCompatActivity {
     }
 
     /** Mosaic controller */
-    public MosaicViewController getMosaicController() {
+    public MosaicViewController2 getMosaicController() {
         return viewModel.getMosaicController();
     }
 
@@ -122,10 +117,11 @@ public class MosaicActivity extends AppCompatActivity {
     public void onResume() {
         Logger.info("MosaicActivity.onResume: ");
         super.onResume();
-        getMosaicController().setViewControl(binding.mosaicView);
-        getMosaicController().addListener(onMosaicControllerPropertyChangedListener);
+        var controller = getMosaicController();
+        controller.setViewControl(binding.mosaicView);
+        controller.setListener(this::onMosaicControllerPropertyChanged);
         viewModel.onTimerCallback(timer);
-        if (getMosaicController().getGameStatus() == EGameStatus.eGSPlay)
+        if (controller.getGameStatus() == EGameStatus.eGSPlay)
             timer.start();
     }
 
@@ -133,8 +129,9 @@ public class MosaicActivity extends AppCompatActivity {
     public void onPause() {
         Logger.info("MosaicActivity.onPause: ");
         super.onPause();
-        getMosaicController().removeListener(onMosaicControllerPropertyChangedListener);
-        getMosaicController().setViewControl(null);
+        var controller = getMosaicController();
+        controller.setListener(null);
+        controller.setViewControl(null);
         timer.pause();
     }
 
@@ -142,7 +139,7 @@ public class MosaicActivity extends AppCompatActivity {
     protected void onStop() {
         Logger.info("MosaicActivity.onStop: ");
 
-        MosaicViewController controller = getMosaicController();
+        var controller = getMosaicController();
         if (controller.getGameStatus() == EGameStatus.eGSPlay) {
             backupData = new MosaicActivityBackupData();
             backupData.mosaicBackupData = controller.gameBackup();
@@ -163,14 +160,14 @@ public class MosaicActivity extends AppCompatActivity {
         getMosaicController().setOnClickEvent(null);
     }
 
-    private void onMosaicControllerPropertyChanged(PropertyChangeEvent ev) {
-        switch (ev.getPropertyName()) {
-        case MosaicController.PROPERTY_GAME_STATUS:
-            switch ((EGameStatus)ev.getNewValue()) {
+    private void onMosaicControllerPropertyChanged(String propertyName) {
+        switch (propertyName) {
+        case PROPERTY_GAME_STATUS:
+            switch (getMosaicController().getGameStatus()) {
             case eGSCreateGame:
             case eGSReady:
                 timer.reset();
-                viewModel.setBtnNewGameFaceType(SmileModel.EFaceType.Face_WhiteSmiling);
+                viewModel.setBtnNewGameFaceType(SmileModel2.EFaceType.Face_WhiteSmiling);
                 break;
             case eGSPlay:
                 timer.start();
@@ -178,8 +175,8 @@ public class MosaicActivity extends AppCompatActivity {
             case eGSEnd:
                 timer.pause();
                 viewModel.setBtnNewGameFaceType(getMosaicController().isVictory()
-                                ? SmileModel.EFaceType.Face_SmilingWithSunglasses
-                                : SmileModel.EFaceType.Face_Disappointed);
+                                ? SmileModel2.EFaceType.Face_SmilingWithSunglasses
+                                : SmileModel2.EFaceType.Face_Disappointed);
 
                 if (getSkillLevel() != ESkillLevel.eCustom)
                     // сохраняю статистику и чемпиона
@@ -189,7 +186,7 @@ public class MosaicActivity extends AppCompatActivity {
             }
             viewModel.onTimerCallback(timer); // reload UI
             break;
-        case MosaicController.PROPERTY_COUNT_MINES_LEFT:
+        case PROPERTY_COUNT_MINES_LEFT:
             // refire as android data binding event
             viewModel.getTopPanel().notifyPropertyChanged(BR.minesLeft);
             break;
@@ -197,15 +194,16 @@ public class MosaicActivity extends AppCompatActivity {
     }
 
     private void onBtnNewClick(View view) {
-        if (getMosaicController().getGameStatus() != EGameStatus.eGSPlay) {
-            getMosaicController().gameNew();
+        var controller = getMosaicController();
+        if (controller.getGameStatus() != EGameStatus.eGSPlay) {
+            controller.gameNew();
             return;
         }
 
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("New game?")
-                .setPositiveButton("Yes", (dialog, which) -> getMosaicController().gameNew())
+                .setPositiveButton("Yes", (dialog, which) -> controller.gameNew())
                 .setNegativeButton("No", null)
                 .show();
     }
@@ -213,10 +211,10 @@ public class MosaicActivity extends AppCompatActivity {
     private boolean onBtnNewTouch(View view, MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             // Pressed
-            viewModel.setBtnNewGameFaceType(SmileModel.EFaceType.Face_SavouringDeliciousFood);
+            viewModel.setBtnNewGameFaceType(SmileModel2.EFaceType.Face_SavouringDeliciousFood);
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
             // Released
-            viewModel.setBtnNewGameFaceType(SmileModel.EFaceType.Face_WhiteSmiling);
+            viewModel.setBtnNewGameFaceType(SmileModel2.EFaceType.Face_WhiteSmiling);
         }
         return false;
     }
@@ -226,35 +224,37 @@ public class MosaicActivity extends AppCompatActivity {
         //Logger.info("OnMosaicClick: down=" + clickResult.isDown + "; leftClick=" + clickResult.isLeft + "; gameStatus=" + gs);
         if (clickResult.isLeft && ((gs == EGameStatus.eGSPlay) || (gs == EGameStatus.eGSReady))) {
             viewModel.setBtnNewGameFaceType(clickResult.isDown
-                    ? SmileModel.EFaceType.Face_Grinning
-                    : SmileModel.EFaceType.Face_WhiteSmiling);
+                    ? SmileModel2.EFaceType.Face_Grinning
+                    : SmileModel2.EFaceType.Face_WhiteSmiling);
         }
     }
 
     public ESkillLevel getSkillLevel() {
-        var mc = getMosaicController();
-        var mosaicType = mc.getMosaicType();
-        var sizeFld = mc.getSizeField();
-        var numberMines = mc.getCountMines();
+        var controller = getMosaicController();
+        var model = controller.getModel();
+        var mosaicType = model.getMosaicType();
+        var sizeFld = model.getSizeField();
+        var numberMines = controller.getCountMines();
         return ESkillLevel.calcSkillLevel(mosaicType, sizeFld, numberMines);
     }
 
     /** Сохранить чемпиона && Установить статистику */
     private void saveStatisticAndChampion() {
-        MosaicController<?,?,?,?> mc = getMosaicController();
-        if (mc.getGameStatus() != EGameStatus.eGSEnd)
+        var controller = getMosaicController();
+        var model = controller.getModel();
+        if (controller.getGameStatus() != EGameStatus.eGSEnd)
             throw new IllegalArgumentException("Invalid method state call");
 
         // сохраняю все нужные данные
-        boolean victory = mc.isVictory();
+        boolean victory = controller.isVictory();
         ESkillLevel eSkill = getSkillLevel();
         if (eSkill == ESkillLevel.eCustom)
             return;
 
-        final EMosaic eMosaic = mc.getMosaicType();
-        final long realCountOpen = victory ? mc.getCountMines() : mc.getCountOpen();
+        final EMosaic eMosaic = model.getMosaicType();
+        final long realCountOpen = victory ? controller.getCountMines() : controller.getCountOpen();
         final long playTime = timer.getTime();
-        final int clickCount = mc.getCountClick();
+        final int clickCount = controller.getCountClick();
 
         int pos = FastMinesApp.get().updateStatistic(eMosaic, eSkill, victory, realCountOpen, playTime, clickCount);
         if (pos >= 0)

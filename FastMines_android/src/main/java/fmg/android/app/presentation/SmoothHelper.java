@@ -7,12 +7,15 @@ import android.view.ViewGroup;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import fmg.android.utils.AsyncRunner;
 import fmg.common.Color;
 import fmg.common.geom.util.FigureHelper;
-import fmg.core.img.AnimatedImageModel;
+import fmg.core.img.IImageModel2;
+import fmg.core.img.MosaicGroupModel2;
+import fmg.core.img.MosaicSkillModel2;
 
 public final class SmoothHelper {
     private SmoothHelper() {}
@@ -91,12 +94,30 @@ public final class SmoothHelper {
         Color clrStart;
         Color clrStop;
     }
-    private static Map<AnimatedImageModel, ColorContext> mapColorSmooth = new HashMap<>();
+    private static Map<IImageModel2, ColorContext> mapColorSmooth = new HashMap<>();
 
-    public static void runColorSmoothTransition(AnimatedImageModel model) {
+    private static Color getBackgroundColor(IImageModel2 model) {
+        if (model instanceof MosaicGroupModel2)
+            return ((MosaicGroupModel2)model).getBackgroundColor();
+        if (model instanceof MosaicSkillModel2)
+            return ((MosaicSkillModel2)model).getBackgroundColor();
+        throw new IllegalArgumentException();
+    }
+
+    private static void setBackgroundColor(IImageModel2 model, Color clr) {
+        if (model instanceof MosaicGroupModel2)
+            ((MosaicGroupModel2)model).setBackgroundColor(clr);
+        else
+        if (model instanceof MosaicSkillModel2)
+            ((MosaicSkillModel2)model).setBackgroundColor(clr);
+        else
+            throw new IllegalArgumentException();
+    }
+
+    public static void runColorSmoothTransition(IImageModel2 model) {
         if (!mapColorSmooth.containsKey(model)) {
             ColorContext context = new ColorContext();
-            context.clrStart = model.getBackgroundColor(); //Color.Coral;
+            context.clrStart = getBackgroundColor(model); //Color.Coral;
             context.clrStop = Color.BlueViolet();
             mapColorSmooth.put(model, context);
         }
@@ -114,7 +135,7 @@ public final class SmoothHelper {
                                           (int)(clrFrom.getR() + coef * (clrTo.getR() - clrFrom.getR())),
                                           (int)(clrFrom.getG() + coef * (clrTo.getG() - clrFrom.getG())),
                                           (int)(clrFrom.getB() + coef * (clrTo.getB() - clrFrom.getB())));
-                model.setBackgroundColor(clrCurr);
+                setBackgroundColor(model, clrCurr);
             }
 
             @Override

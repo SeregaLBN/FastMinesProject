@@ -13,8 +13,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.concurrent.TimeUnit;
 
 import fmg.android.app.databinding.SelectMosaicFragmentBinding;
@@ -23,7 +21,6 @@ import fmg.android.app.model.items.MosaicDataItem;
 import fmg.android.app.presentation.MosaicDsViewModel;
 import fmg.android.app.recyclerView.MosaicListViewAdapter;
 import fmg.android.app.recyclerView.RecyclerItemDoubleClickListener;
-import fmg.android.img.Logo;
 import fmg.android.utils.AsyncRunner;
 import fmg.android.utils.Cast;
 import fmg.common.Color;
@@ -32,11 +29,10 @@ import fmg.common.Logger;
 import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
-import fmg.core.img.AnimatedImageModel;
-import fmg.core.img.LogoModel;
+import fmg.core.app.model.MosaicInitData;
+import fmg.core.img.ImageHelper;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
-import fmg.core.app.model.MosaicInitData;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -55,7 +51,6 @@ public class SelectMosaicFragment extends Fragment {
     private boolean rotateBkColorOfGameBttn = true;
     private static final double TileMinSize = Cast.dpToPx(30);
     private static final double TileMaxSize = Cast.dpToPx(90);
-    private final PropertyChangeListener onMosaicDsPropertyChangedListener = this::onMosaicDsPropertyChanged;
 
     public MosaicInitData getInitData() { return FastMinesApp.get().getMosaicInitData(); }
     //public void setInitData(MosaicInitData initData) { MosaicInitDataExt.getSharedData().copyFrom(initData); }
@@ -75,14 +70,13 @@ public class SelectMosaicFragment extends Fragment {
         binding.rvMosaicItems.setLayoutManager(gridLayoutManager);
 
         { // setup header
-            Logo.BitmapController logoController = viewModel.getMosaicDS().getHeader().getEntity();
-            logoController.usePolarLightFgTransforming(true);
-            LogoModel logoModel = logoController.getModel();
-            logoModel.setRotateMode(LogoModel.ERotateMode.classic);
-            logoModel.setAnimatePeriod(30000);
-            logoModel.setTotalFrames(700);
+            var logoController = viewModel.getMosaicDS().getHeader().getEntity();
+            logoController.setPolarLights(true);
+            var logoModel = logoController.getModel();
+            logoController.setRotateImage(true);
+            logoController.setAnimatePeriod(30000);
+            logoController.setFps(25);
             logoModel.setUseGradient(true);
-            logoModel.setAnimated(true);
             logoModel.setBorderWidth(1);
             logoModel.setBorderColor(Color.BlueViolet());
 
@@ -103,7 +97,7 @@ public class SelectMosaicFragment extends Fragment {
         // subscribe all
         rotateBkColorOfGameBttn = true;
         {
-            HSV hsv = new HSV(AnimatedImageModel.DEFAULT_FOREGROUND_COLOR);
+            HSV hsv = new HSV(ImageHelper.DEFAULT_FOREGROUND_COLOR);
             hsv.s = 80;
             hsv.v = 70;
             hsv.a = 170;
@@ -132,7 +126,7 @@ public class SelectMosaicFragment extends Fragment {
 
         binding.panelMosaicHeader.setOnClickListener(this::onMosaicHeaderClick);
         binding.bttnBeginGame.setOnClickListener(this::onClickBttnBeginGame);
-        viewModel.getMosaicDS().addListener(onMosaicDsPropertyChangedListener);
+        viewModel.setMosaicDSListener(this::onMosaicDsPropertyChanged);
 
         { // onFragmentSizeChanged(newSize);
             subjSizeChanged = PublishSubject.create();
@@ -165,7 +159,7 @@ public class SelectMosaicFragment extends Fragment {
 
         binding.panelMosaicHeader.setOnClickListener(null);
         binding.bttnBeginGame.setOnClickListener(null);
-        viewModel.getMosaicDS().removeListener(onMosaicDsPropertyChangedListener);
+        viewModel.setMosaicDSListener(null);
 
         binding.rootLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this::onGlobalLayoutListener);
         sizeChangedObservable.dispose();
@@ -276,12 +270,14 @@ public class SelectMosaicFragment extends Fragment {
         viewModel.getMosaicDS().setCurrentItem(newItem);
     }
 
-    private void onMosaicDsPropertyChanged(PropertyChangeEvent ev) {
-        switch(ev.getPropertyName()) {
+    private int currentItemPos = 0;
+    private void onMosaicDsPropertyChanged(String propertyName) {
+        switch(propertyName) {
         case MosaicDataSource.PROPERTY_CURRENT_ITEM_POS: {
-                //Logger.info("  MenuMosaicListViewAdapter::onMosaicDsPropertyChanged: ev=" + ev);
-                int oldPos = (Integer) ev.getOldValue();
-                int newPos = (Integer) ev.getNewValue();
+                var oldPos = currentItemPos;
+                var newPos = viewModel.getMosaicDS().getCurrentItemPos();
+                currentItemPos = newPos;
+                //Logger.info("  SelectMosaicFragment::onMosaicDsPropertyChanged: oldPos=" + oldPos + "; newPos=" + newPos);
 
     //            // Below line is just like a safety check, because sometimes holder could be null,
     //            // in that case, getAdapterPosition() will return RecyclerView.NO_POSITION

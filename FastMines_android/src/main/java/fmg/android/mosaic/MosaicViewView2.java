@@ -14,6 +14,7 @@ import fmg.android.img.Logo2;
 import fmg.android.img.MosaicImg2;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.MosaicDrawContext;
+import fmg.core.img.PropertyConst;
 import fmg.core.mosaic.IMosaicView2;
 import fmg.core.mosaic.MosaicModel2;
 import fmg.core.mosaic.cells.BaseCell;
@@ -115,8 +116,8 @@ public class MosaicViewView2 implements IMosaicView2<DrawableView>, AutoCloseabl
 
     public void onModelChanged(String property) {
         switch (property) {
-        case MosaicModel2.PROPERTY_MOSAIC_TYPE:
-        case MosaicModel2.PROPERTY_SIZE_FIELD:
+        case PropertyConst.PROPERTY_MOSAIC_TYPE:
+        case PropertyConst.PROPERTY_SIZE_FIELD:
             lastImg = null;
             break;
         default:

@@ -417,7 +417,7 @@ public final class Smile2 {
     }
 
     /** Smile image controller implementation for {@link android.graphics.Bitmap} */
-    public static class SmileAndroidBitmapController extends ImageController2<Bitmap, SmileModel2, AndroidBitmapView<SmileModel2>> {
+    public static class SmileAndroidBitmapController extends ImageController2<Bitmap, AndroidBitmapView<SmileModel2>, SmileModel2> {
 
         public SmileAndroidBitmapController(EFaceType faceType) {
             var model = new SmileModel2(faceType);
