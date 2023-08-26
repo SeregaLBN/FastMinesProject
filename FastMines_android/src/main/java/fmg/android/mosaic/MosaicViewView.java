@@ -9,9 +9,9 @@ import java.util.HashSet;
 import java.util.Objects;
 
 import fmg.android.app.DrawableView;
-import fmg.android.img.Flag2;
-import fmg.android.img.Logo2;
-import fmg.android.img.MosaicImg2;
+import fmg.android.img.Flag;
+import fmg.android.img.Logo;
+import fmg.android.img.MosaicImg;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.MosaicDrawContext;
 import fmg.core.img.PropertyConst;
@@ -23,8 +23,8 @@ import fmg.core.mosaic.cells.BaseCell;
 public class MosaicViewView2 implements IMosaicView2<DrawableView>, AutoCloseable {
 
     private final MosaicModel2 model;
-    private final Flag2.FlagAndroidBitmapController imgFlag;
-    private final Logo2.LogoAndroidBitmapController imgMine;
+    private final Flag.FlagAndroidBitmapController imgFlag;
+    private final Logo.LogoAndroidBitmapController imgMine;
     private Context context;
     private DrawableView control;
     private final Collection<BaseCell> modifiedCells = new HashSet<>();
@@ -35,8 +35,8 @@ public class MosaicViewView2 implements IMosaicView2<DrawableView>, AutoCloseabl
 
     public MosaicViewView2(Context context,
                            MosaicModel2 model,
-                           Flag2.FlagAndroidBitmapController imgFlag,
-                           Logo2.LogoAndroidBitmapController imgMine)
+                           Flag.FlagAndroidBitmapController imgFlag,
+                           Logo.LogoAndroidBitmapController imgMine)
     {
         this.context = context;
         this.model = model;
@@ -110,7 +110,7 @@ public class MosaicViewView2 implements IMosaicView2<DrawableView>, AutoCloseabl
         if (lastCanvas == null)
             lastCanvas = new Canvas(lastImg);
 
-        MosaicImg2.draw(lastCanvas, drawContext);
+        MosaicImg.draw(lastCanvas, drawContext);
         canvas.drawBitmap(lastImg, 0, 0, null);
     }
 
