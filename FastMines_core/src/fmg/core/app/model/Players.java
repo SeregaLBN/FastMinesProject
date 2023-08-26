@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import fmg.common.ui.UiInvoker;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
 

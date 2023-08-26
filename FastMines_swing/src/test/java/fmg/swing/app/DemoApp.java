@@ -198,7 +198,7 @@ public class DemoApp {
             resized = resized || applySettings;
 
             if (applySettings) {
-                testTransparent[0] = td.bl();
+                testTransparent[0] = TestDrawing.bl();
                 images.forEach(img -> td.changeSettings(img, testTransparent[0]));
             }
 
