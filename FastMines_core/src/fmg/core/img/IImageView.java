@@ -2,7 +2,7 @@ package fmg.core.img;
 
 /** Image MVC: view (displayed view)
  * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel */
-public interface IImageView2<TImage> {
+public interface IImageView<TImage> {
 
     TImage getImage();
 

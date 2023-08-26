@@ -6,10 +6,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import fmg.android.app.BR;
 import fmg.android.img.AndroidBitmapView;
-import fmg.android.img.MosaicGroupImg2;
+import fmg.android.img.MosaicGroupImg;
 import fmg.common.geom.BoundDouble;
 import fmg.common.ui.UiInvoker;
-import fmg.core.img.MosaicGroupModel2;
+import fmg.core.img.MosaicGroupModel;
 import fmg.core.types.EMosaicGroup;
 
 import static fmg.core.img.PropertyConst.PROPERTY_BURGER;
@@ -17,7 +17,7 @@ import static fmg.core.img.PropertyConst.PROPERTY_MOSAIC_GROUP;
 import static fmg.core.img.PropertyConst.PROPERTY_PADDING;
 
 /** Mosaic group item for data model */
-public class MosaicGroupDataItem extends BaseDataItem<EMosaicGroup, MosaicGroupModel2, AndroidBitmapView<MosaicGroupModel2>, MosaicGroupImg2.MosaicGroupAndroidBitmapController> {
+public class MosaicGroupDataItem extends BaseDataItem<EMosaicGroup, MosaicGroupModel, AndroidBitmapView<MosaicGroupModel>, MosaicGroupImg.MosaicGroupAndroidBitmapController> {
 
     static final String PROPERTY_BURGER_DOT = PROPERTY_BURGER + ".";
     static final String PROPERTY_PADDING_BURGER = PROPERTY_BURGER_DOT + PROPERTY_PADDING;
@@ -35,9 +35,9 @@ public class MosaicGroupDataItem extends BaseDataItem<EMosaicGroup, MosaicGroupM
     public String getUnicodeChar() { return getMosaicGroup() == null ? null : Character.toString(getMosaicGroup().unicodeChar(false)); }
 
     @Override
-    public MosaicGroupImg2.MosaicGroupAndroidBitmapController getEntity() {
+    public MosaicGroupImg.MosaicGroupAndroidBitmapController getEntity() {
         if (this.entity == null) {
-            var tmp = new MosaicGroupImg2.MosaicGroupAndroidBitmapController(getUniqueId());
+            var tmp = new MosaicGroupImg.MosaicGroupAndroidBitmapController(getUniqueId());
             var m = tmp.getModel();
             m.setBorderWidth(3);
             m.setRotateAngle(ThreadLocalRandom.current().nextInt(90));

@@ -6,10 +6,10 @@ import java.util.Objects;
 
 import fmg.android.app.BR;
 import fmg.android.img.AndroidBitmapView;
-import fmg.android.img.MosaicImg2;
+import fmg.android.img.MosaicImg;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.Matrisize;
-import fmg.core.img.MosaicImageModel2;
+import fmg.core.img.MosaicImageModel;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
 
@@ -18,7 +18,7 @@ import static fmg.core.img.PropertyConst.PROPERTY_SIZE;
 import static fmg.core.img.PropertyConst.PROPERTY_SKILL_LEVEL;
 
 /** Mosaic item for data model */
-public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicImageModel2, AndroidBitmapView<MosaicImageModel2>, MosaicImg2.MosaicAndroidBitmapController> {
+public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicImageModel, AndroidBitmapView<MosaicImageModel>, MosaicImg.MosaicAndroidBitmapController> {
 
     private ESkillLevel skillLevel;
 
@@ -46,15 +46,15 @@ public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicImageModel2, And
     }
 
     @Override
-    public MosaicImg2.MosaicAndroidBitmapController getEntity() {
+    public MosaicImg.MosaicAndroidBitmapController getEntity() {
         if (this.entity == null) {
             Matrisize sizeField = getSkillLevel().sizeTileField(getMosaicType());
-            var tmp = new MosaicImg2.MosaicAndroidBitmapController();
+            var tmp = new MosaicImg.MosaicAndroidBitmapController();
             var m = tmp.getModel();
             m.setMosaicType(getMosaicType());
             m.setSizeField(sizeField);
             m.setPadding(new BoundDouble(5 * getZoom()));
-            m.setRotateMode(MosaicImageModel2.ERotateMode.SOME_CELLS);
+            m.setRotateMode(MosaicImageModel.ERotateMode.SOME_CELLS);
 //            m.setBackgroundColor(MosaicDrawModel.DefaultBkColor);
             m.getPenBorder().setWidth(3 * getZoom());
 //            m.setRotateAngle(45 * ThreadLocalRandom.current().nextInt(7));

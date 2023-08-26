@@ -13,9 +13,9 @@ import fmg.common.Logger;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
-import fmg.core.img.IImageModel2;
-import fmg.core.img.IImageView2;
-import fmg.core.img.ImageController2;
+import fmg.core.img.IImageModel;
+import fmg.core.img.IImageView;
+import fmg.core.img.ImageController;
 
 import static fmg.core.img.PropertyConst.PROPERTY_IMAGE;
 import static fmg.core.img.PropertyConst.PROPERTY_PADDING;
@@ -23,9 +23,9 @@ import static fmg.core.img.PropertyConst.PROPERTY_SIZE;
 
 /** Base item class for @see {@link MosaicDataItem} and @see {@link MosaicGroupDataItem"} and @see {@link MosaicSkillDataItem} */
 public abstract class BaseDataItem<T,
-                                   TImageModel extends IImageModel2,
-                                   TImageView  extends IImageView2<Bitmap>,
-                                   TImageCtrlr extends ImageController2<Bitmap, TImageView, TImageModel>>
+                                   TImageModel extends IImageModel,
+                                   TImageView  extends IImageView<Bitmap>,
+                                   TImageCtrlr extends ImageController<Bitmap, TImageView, TImageModel>>
     extends BaseObservable
     implements AutoCloseable
 {

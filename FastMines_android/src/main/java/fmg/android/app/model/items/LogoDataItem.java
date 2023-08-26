@@ -1,11 +1,11 @@
 package fmg.android.app.model.items;
 
 import fmg.android.img.AndroidBitmapView;
-import fmg.android.img.Logo2;
-import fmg.core.img.LogoModel2;
+import fmg.android.img.Logo;
+import fmg.core.img.LogoModel;
 
 /** Logo as data model */
-public class LogoDataItem extends BaseDataItem<Void, LogoModel2, AndroidBitmapView<LogoModel2>, Logo2.LogoAndroidBitmapController> {
+public class LogoDataItem extends BaseDataItem<Void, LogoModel, AndroidBitmapView<LogoModel>, Logo.LogoAndroidBitmapController> {
 
     public LogoDataItem() {
         super(null);
@@ -13,9 +13,9 @@ public class LogoDataItem extends BaseDataItem<Void, LogoModel2, AndroidBitmapVi
     }
 
     @Override
-    public Logo2.LogoAndroidBitmapController getEntity() {
+    public Logo.LogoAndroidBitmapController getEntity() {
         if (this.entity == null) {
-            var tmp = new Logo2.LogoAndroidBitmapController();
+            var tmp = new Logo.LogoAndroidBitmapController();
             var m = tmp.getModel();
             m.setBorderWidth(3);
 

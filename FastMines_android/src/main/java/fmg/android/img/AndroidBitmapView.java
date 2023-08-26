@@ -6,11 +6,11 @@ import android.graphics.Canvas;
 import java.util.function.Consumer;
 
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.IImageModel2;
-import fmg.core.img.IImageView2;
+import fmg.core.img.IImageModel;
+import fmg.core.img.IImageView;
 
 /** Image view implementation over {@link android.graphics.Bitmap} */
-public class AndroidBitmapView<TModel extends IImageModel2> implements IImageView2<Bitmap>, AutoCloseable {
+public class AndroidBitmapView<TModel extends IImageModel> implements IImageView<Bitmap>, AutoCloseable {
 
     private final TModel model;
     private final Consumer<Canvas> draw;

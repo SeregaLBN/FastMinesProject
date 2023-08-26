@@ -28,11 +28,11 @@ import fmg.common.geom.util.FigureHelper;
 import fmg.core.types.ESkillLevel;
 
 /** MVC model of {@link ESkillLevel} representable as image */
-public class MosaicSkillModel2 implements IImageModel2 {
+public class MosaicSkillModel implements IImageModel {
 
     public static final String PROPERTY_MOSAIC_SKILL = "MosaicSkill";
 
-    public MosaicSkillModel2(ESkillLevel mosaicSkill) {
+    public MosaicSkillModel(ESkillLevel mosaicSkill) {
         this.mosaicSkill = mosaicSkill;
     }
 

@@ -23,12 +23,12 @@ import fmg.common.Color;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
-import fmg.core.img.MosaicImageModel2;
+import fmg.core.img.MosaicImageModel;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
 import fmg.swing.app.FastMinesApp;
 import fmg.swing.app.model.view.ReportTableModel;
-import fmg.swing.img.MosaicImg2;
+import fmg.swing.img.MosaicImg;
 import fmg.swing.utils.ImgUtils;
 
 public abstract class ReportDlg implements AutoCloseable {
@@ -43,7 +43,7 @@ public abstract class ReportDlg implements AutoCloseable {
     protected JTabbedPane tabPanel;
     protected JToggleButton[] btns = new JToggleButton[ESkillLevel.values().length-1];
     private Map<EMosaic, JScrollPane> scrollPanes = new EnumMap<>(EMosaic.class);
-    private List<MosaicImg2.MosaicSwingIconController> images = new ArrayList<>(EMosaic.values().length);
+    private List<MosaicImg.MosaicSwingIconController> images = new ArrayList<>(EMosaic.values().length);
     protected ButtonGroup radioGroup;
 
     protected ReportDlg(FastMinesApp app, boolean modal) {
@@ -95,8 +95,8 @@ public abstract class ReportDlg implements AutoCloseable {
             int i = 0;
             for (EMosaic eMosaic: EMosaic.values()) {
                 JScrollPane scroll = new JScrollPane();
-                MosaicImg2.MosaicSwingIconController imgCntrllr = new MosaicImg2.MosaicSwingIconController();
-                MosaicImageModel2 imgModel = imgCntrllr.getModel();
+                MosaicImg.MosaicSwingIconController imgCntrllr = new MosaicImg.MosaicSwingIconController();
+                MosaicImageModel imgModel = imgCntrllr.getModel();
                 imgModel.setMosaicType(eMosaic);
                 imgModel.setSizeField(eMosaic.sizeIcoField(true));
                 imgModel.setSize(new SizeDouble(IMG_SIZE*IMAGE_ZOOM_QUALITY, IMG_SIZE * IMAGE_ZOOM_QUALITY));
@@ -230,7 +230,7 @@ public abstract class ReportDlg implements AutoCloseable {
         if (!dialog.isVisible())
             return;
         if (PROPERTY_IMAGE.equals(propertyName)) {
-            MosaicImg2.MosaicSwingIconController imgCtrllr = images.get(index);
+            MosaicImg.MosaicSwingIconController imgCtrllr = images.get(index);
             tabPanel.setIconAt(imgCtrllr.getModel().getMosaicType().ordinal(), ImgUtils.zoom(imgCtrllr.getImage(), IMG_SIZE, IMG_SIZE));
         }
     }

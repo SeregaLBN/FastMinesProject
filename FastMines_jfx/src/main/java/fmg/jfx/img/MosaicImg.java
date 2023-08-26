@@ -17,23 +17,23 @@ import fmg.common.geom.RectDouble;
 import fmg.common.geom.RegionDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.MosaicDrawContext;
-import fmg.core.img.MosaicImageController2;
-import fmg.core.img.MosaicImageModel2;
-import fmg.core.mosaic.MosaicModel2;
+import fmg.core.img.MosaicImageController;
+import fmg.core.img.MosaicImageModel;
+import fmg.core.mosaic.MosaicModel;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
 import fmg.core.types.EState;
-import fmg.core.types.draw.FontInfo2;
-import fmg.core.types.draw.PenBorder2;
+import fmg.core.types.draw.FontInfo;
+import fmg.core.types.draw.PenBorder;
 import fmg.jfx.utils.Cast;
 
 /** Representable {@link fmg.core.types.EMosaic} as image */
-public final class MosaicImg2 {
-    private MosaicImg2() {}
+public final class MosaicImg {
+    private MosaicImg() {}
 
-    private static void draw(GraphicsContext g, MosaicImageModel2 m) {
-        MosaicImageController2.<Void>draw(m, ctx -> draw(g, ctx));
+    private static void draw(GraphicsContext g, MosaicImageModel m) {
+        MosaicImageController.<Void>draw(m, ctx -> draw(g, ctx));
     }
 
     public static <T> void draw(GraphicsContext g, MosaicDrawContext<T> drawContext) {
@@ -60,7 +60,7 @@ public final class MosaicImg2 {
 
         // 2. paint cells
         g.setFont(getFont(m));
-        PenBorder2 pen = m.getPenBorder();
+        PenBorder pen = m.getPenBorder();
         g.setLineWidth(pen.getWidth());
         SizeDouble offset = m.getMosaicOffset();
         boolean isSimpleDraw = pen.getColorLight().equals(pen.getColorShadow());
@@ -212,12 +212,12 @@ public final class MosaicImg2 {
         g.setFill(oldFill);
     }
 
-    /** cached Font for {@link FontInfo2} */
+    /** cached Font for {@link FontInfo} */
     private static final Map<String /* font name*/, Map<Boolean /* bold? */, Map<Integer /* size */, Font>>> CACHED_FONT = new HashMap<>();
     /** cached Text for quick drawing */
     private static final Map<Font, Map<String /* text */, Text>> CACHED_TEXT = new HashMap<>();
 
-    private static Font getFont(MosaicModel2 m) {
+    private static Font getFont(MosaicModel m) {
         var fi = m.getFontInfo();
         var map2 = CACHED_FONT.computeIfAbsent(fi.getName(), fontName -> new HashMap<>());
         var map3 = map2.computeIfAbsent(fi.isBold(), isBold -> new HashMap<>());
@@ -229,7 +229,7 @@ public final class MosaicImg2 {
                                                                          size));
     }
 
-    private static Bounds getStringBounds(MosaicModel2 m, String text) {
+    private static Bounds getStringBounds(MosaicModel m, String text) {
         var font = getFont(m);
         var map2 = CACHED_TEXT.computeIfAbsent(font, f -> new HashMap<>());
         Text textResult = map2.computeIfAbsent(text, txt -> {
@@ -242,7 +242,7 @@ public final class MosaicImg2 {
         return textResult.getLayoutBounds();
     }
 
-    private static void drawText(GraphicsContext g, MosaicModel2 m, String text, RectDouble rc) {
+    private static void drawText(GraphicsContext g, MosaicModel m, String text, RectDouble rc) {
         if ((text == null) || text.trim().isEmpty())
             return;
 
@@ -256,22 +256,22 @@ public final class MosaicImg2 {
 
 
     /** Mosaic image controller implementation for {@link javafx.scene.canvas.Canvas} */
-    public static class MosaicJfxCanvasController extends MosaicImageController2<javafx.scene.canvas.Canvas, JfxCanvasView<MosaicImageModel2>> {
+    public static class MosaicJfxCanvasController extends MosaicImageController<javafx.scene.canvas.Canvas, JfxCanvasView<MosaicImageModel>> {
 
         public MosaicJfxCanvasController() {
-            var model = new MosaicImageModel2();
-            var view = new JfxCanvasView<>(model, g -> MosaicImg2.draw(g, model));
+            var model = new MosaicImageModel();
+            var view = new JfxCanvasView<>(model, g -> MosaicImg.draw(g, model));
             init(model, view);
         }
 
     }
 
     /** Mosaic image controller implementation for {@link javafx.scene.image.Image} */
-    public static class MosaicJfxImageController extends MosaicImageController2<javafx.scene.image.Image, JfxImageView<MosaicImageModel2>> {
+    public static class MosaicJfxImageController extends MosaicImageController<javafx.scene.image.Image, JfxImageView<MosaicImageModel>> {
 
         public MosaicJfxImageController() {
-            var model = new MosaicImageModel2();
-            var view = new JfxImageView<>(model, g -> MosaicImg2.draw(g, model));
+            var model = new MosaicImageModel();
+            var view = new JfxImageView<>(model, g -> MosaicImg.draw(g, model));
             init(model, view);
         }
 

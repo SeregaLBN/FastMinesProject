@@ -8,14 +8,14 @@ import fmg.common.HSV;
 import fmg.common.ui.UiInvoker;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.types.EMosaicGroup;
-import fmg.core.types.draw.PenBorder2;
+import fmg.core.types.draw.PenBorder;
 
 /** MVC controller of {@link EMosaicGroup} image
  * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
  * @param <TView> mosaic view */
-public abstract class MosaicImageController2<TImage,
-                                            TView extends IImageView2<TImage>>
-    extends ImageController2<TImage, TView, MosaicImageModel2>
+public abstract class MosaicImageController<TImage,
+                                            TView extends IImageView<TImage>>
+    extends ImageController<TImage, TView, MosaicImageModel>
 {
 
     /** Overall animation period (in milliseconds) */
@@ -37,7 +37,7 @@ public abstract class MosaicImageController2<TImage,
 
 
     @Override
-    protected void init(MosaicImageModel2 model, TView view) {
+    protected void init(MosaicImageModel model, TView view) {
         super.init(model, view);
 
         var shape = MosaicHelper.createShapeInstance(model.getMosaicType());
@@ -139,7 +139,7 @@ public abstract class MosaicImageController2<TImage,
     }
 
     // TODO metod as protected
-    public static <T> void draw(MosaicImageModel2 m, Consumer<MosaicDrawContext<T>> realDraw) {
+    public static <T> void draw(MosaicImageModel m, Consumer<MosaicDrawContext<T>> realDraw) {
         Color bkClr = new HSV(m.getBackgroundColor())
                         .addHue(m.getBackgroundAngle())
                         .toColor();
@@ -155,7 +155,7 @@ public abstract class MosaicImageController2<TImage,
             // 2. draw rotated part
             var rotatedCells = m.getRotatedCells();
             if (!rotatedCells.isEmpty()) {
-                PenBorder2 pb = m.getPenBorder();
+                PenBorder pb = m.getPenBorder();
                 // save
                 double borderWidth = pb.getWidth();
                 Color colorLight  = pb.getColorLight();

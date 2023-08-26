@@ -1,7 +1,7 @@
 package fmg.swing.app.toolbar;
 
-import fmg.core.img.SmileModel2;
-import fmg.core.img.SmileModel2.EFaceType;
+import fmg.core.img.SmileModel;
+import fmg.core.img.SmileModel.EFaceType;
 
 public enum EBtnNewGameState {
     eNormal,
@@ -17,7 +17,7 @@ public enum EBtnNewGameState {
     eNormalWin,
     eNormalLoss;
 
-    public SmileModel2.EFaceType mapToSmileType() {
+    public SmileModel.EFaceType mapToSmileType() {
         switch (this) {
         case eNormal          : return EFaceType.Face_WhiteSmiling;
         case ePressed         : return EFaceType.Face_SavouringDeliciousFood;

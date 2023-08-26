@@ -9,14 +9,14 @@ import fmg.android.app.BR;
 import fmg.android.app.model.items.LogoDataItem;
 import fmg.android.app.model.items.MosaicDataItem;
 import fmg.android.img.AndroidBitmapView;
-import fmg.android.img.Logo2;
-import fmg.android.img.MosaicImg2;
+import fmg.android.img.Logo;
+import fmg.android.img.MosaicImg;
 import fmg.common.Color;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.ImageHelper;
-import fmg.core.img.LogoModel2;
-import fmg.core.img.MosaicImageModel2;
+import fmg.core.img.LogoModel;
+import fmg.core.img.MosaicImageModel;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
@@ -25,8 +25,8 @@ import static fmg.core.img.PropertyConst.PROPERTY_MOSAIC_GROUP;
 import static fmg.core.img.PropertyConst.PROPERTY_SKILL_LEVEL;
 
 public class MosaicDataSource extends BaseDataSource<
-          LogoDataItem,      Void,        LogoModel2, AndroidBitmapView<LogoModel2>       ,      Logo2.  LogoAndroidBitmapController,
-          MosaicDataItem, EMosaic, MosaicImageModel2, AndroidBitmapView<MosaicImageModel2>, MosaicImg2.MosaicAndroidBitmapController>
+          LogoDataItem,      Void,        LogoModel, AndroidBitmapView<LogoModel>       ,      Logo.  LogoAndroidBitmapController,
+          MosaicDataItem, EMosaic, MosaicImageModel, AndroidBitmapView<MosaicImageModel>, MosaicImg.MosaicAndroidBitmapController>
 {
 
     private EMosaicGroup mosaicGroup;

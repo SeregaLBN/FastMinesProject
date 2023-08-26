@@ -14,13 +14,13 @@ import javax.swing.event.DocumentEvent;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
-import fmg.core.img.MosaicImageModel2;
+import fmg.core.img.MosaicImageModel;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.swing.app.FastMinesApp;
 import fmg.swing.app.model.control.SpinNumberDocListener;
 import fmg.swing.app.model.control.SpinnerDiapasonModel;
-import fmg.swing.img.MosaicImg2;
+import fmg.swing.img.MosaicImg;
 import fmg.swing.utils.Cast;
 import fmg.swing.utils.GuiTools;
 import fmg.swing.utils.ImgUtils;
@@ -33,8 +33,8 @@ public class SelectMosaicDlg implements AutoCloseable {
     private JComboBox<?> cmbxMosaicTypes;
     private JButton btnOk;
 
-    private MosaicImg2.MosaicAwtImageController mosaicsImg;
-    private MosaicImg2.MosaicAwtImageController mosaicsImgRollover;
+    private MosaicImg.MosaicAwtImageController mosaicsImg;
+    private MosaicImg.MosaicAwtImageController mosaicsImgRollover;
 
     private static final int IMG_SIZE = 40;
     private static final int IMG_ZOOM_QUALITY = 3;
@@ -259,10 +259,10 @@ public class SelectMosaicDlg implements AutoCloseable {
     }
     private void setBtnOkIcons(EMosaic mosaicType) {
         if (mosaicsImg == null) {
-            mosaicsImg = new MosaicImg2.MosaicAwtImageController();
+            mosaicsImg = new MosaicImg.MosaicAwtImageController();
             mosaicsImg.getModel().setMosaicType(mosaicType);
             mosaicsImg.getModel().setSizeField(mosaicType.sizeIcoField(true));
-            MosaicImageModel2 imgModel = mosaicsImg.getModel();
+            MosaicImageModel imgModel = mosaicsImg.getModel();
             imgModel.setSize(new SizeDouble(IMG_SIZE * IMG_ZOOM_QUALITY, IMG_SIZE * IMG_ZOOM_QUALITY));
             imgModel.setPadding(new BoundDouble(10));
             imgModel.setBackgroundColor(Cast.toColor(bkTabBkColor));
@@ -279,10 +279,10 @@ public class SelectMosaicDlg implements AutoCloseable {
         btnOk.setIcon(ImgUtils.toIco(mosaicsImg.getImage(), IMG_SIZE, IMG_SIZE));
 
         if (mosaicsImgRollover == null) {
-            mosaicsImgRollover = new MosaicImg2.MosaicAwtImageController();
+            mosaicsImgRollover = new MosaicImg.MosaicAwtImageController();
             mosaicsImgRollover.getModel().setMosaicType(mosaicType);
             mosaicsImgRollover.getModel().setSizeField(mosaicType.sizeIcoField(true));
-            MosaicImageModel2 imgModel = mosaicsImg.getModel();
+            MosaicImageModel imgModel = mosaicsImg.getModel();
             imgModel.setSize(new SizeDouble(IMG_SIZE * IMG_ZOOM_QUALITY, IMG_SIZE * IMG_ZOOM_QUALITY));
             imgModel.setPadding(new BoundDouble(3));
             imgModel.setBackgroundColor(Cast.toColor(bkTabBkColorSelected));

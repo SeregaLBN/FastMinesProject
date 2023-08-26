@@ -28,11 +28,11 @@ import fmg.common.geom.util.FigureHelper;
 import fmg.core.types.EMosaicGroup;
 
 /** MVC model of {@link EMosaicGroup} representable as image */
-public class MosaicGroupModel2 implements IImageModel2 {
+public class MosaicGroupModel implements IImageModel {
 
     public static final String PROPERTY_MOSAIC_GROUP = "MosaicGroup";
 
-    public MosaicGroupModel2(EMosaicGroup mosaicGroup) {
+    public MosaicGroupModel(EMosaicGroup mosaicGroup) {
         this.mosaicGroup = mosaicGroup;
     }
 

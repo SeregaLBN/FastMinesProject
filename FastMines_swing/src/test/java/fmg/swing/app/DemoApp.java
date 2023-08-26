@@ -20,15 +20,15 @@ import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
-import fmg.core.img.IImageController2;
-import fmg.core.img.MosaicImageController2;
-import fmg.core.img.SmileModel2.EFaceType;
-import fmg.core.img.TestDrawing2;
+import fmg.core.img.IImageController;
+import fmg.core.img.MosaicImageController;
+import fmg.core.img.SmileModel.EFaceType;
+import fmg.core.img.TestDrawing;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
 import fmg.swing.img.*;
-import fmg.swing.mosaic.MosaicJPanelController2;
+import fmg.swing.mosaic.MosaicJPanelController;
 
 /** live UI test application
  * <p>run from command line
@@ -37,11 +37,11 @@ import fmg.swing.mosaic.MosaicJPanelController2;
   gradle :FastMines_swing:runDemoApp
 
  */
-public class DemoApp2  {
+public class DemoApp {
 
     private static final int MARGIN = 10; // panel margin - padding to inner images
 
-    private TestDrawing2 td;
+    private TestDrawing td;
     private JFrame frame;
     private JPanel jPanel;
     private Runnable onCloseImages;
@@ -51,7 +51,7 @@ public class DemoApp2  {
     // #region images Fabrica
     public void testMosaicControl() {
         testApp(() -> {
-            MosaicJPanelController2 mosaicController = new MosaicJPanelController2();
+            MosaicJPanelController mosaicController = new MosaicJPanelController();
 
             if (ThreadLocalRandom.current().nextBoolean()) {
                 // unmodified controller test
@@ -77,9 +77,9 @@ public class DemoApp2  {
              // test all
              Stream.of(EMosaic.values())
                  .map(e -> {
-                     MosaicImageController2<?, ?> ctrlr = ThreadLocalRandom.current().nextBoolean()
-                         ? new MosaicImg2.MosaicSwingIconController ()
-                         : new MosaicImg2.MosaicAwtImageController();
+                     MosaicImageController<?, ?> ctrlr = ThreadLocalRandom.current().nextBoolean()
+                         ? new MosaicImg.MosaicSwingIconController ()
+                         : new MosaicImg.MosaicAwtImageController();
                      ctrlr.getModel().setMosaicType(e);
                      return ctrlr;
                  })
@@ -88,39 +88,39 @@ public class DemoApp2  {
     public void testMosaicGroupImg() {
         testApp(() -> Stream.concat(Stream.of((EMosaicGroup)null),
                                     Stream.of( EMosaicGroup.values()))
-                 .map(e -> new Pair<>(new MosaicGroupImg2.MosaicGroupAwtImageController (e),
-                                      new MosaicGroupImg2.MosaicGroupSwingIconController(e)))
+                 .map(e -> new Pair<>(new MosaicGroupImg.MosaicGroupAwtImageController (e),
+                                      new MosaicGroupImg.MosaicGroupSwingIconController(e)))
                  .flatMap(x -> Stream.of(x.first, x.second)));
     }
     public void testMosaicSkillImg() {
         testApp(() -> Stream.concat(Stream.of((ESkillLevel)null),
                                     Stream.of( ESkillLevel.values()))
-                 .map(e -> new Pair<>(new MosaicSkillImg2.MosaicSkillSwingIconController(e),
-                                      new MosaicSkillImg2.MosaicSkillAwtImageController (e)))
+                 .map(e -> new Pair<>(new MosaicSkillImg.MosaicSkillSwingIconController(e),
+                                      new MosaicSkillImg.MosaicSkillAwtImageController (e)))
                  .flatMap(x -> Stream.of(x.first, x.second)));
     }
     public void testLogo() {
-        testApp(() -> Stream.of(new Logo2.LogoSwingIconController()
-                              , new Logo2.LogoAwtImageController()
-                              , new Logo2.LogoSwingIconController()
-                              , new Logo2.LogoAwtImageController()
-                              , new Logo2.LogoSwingIconController().asMine()
-                              , new Logo2.LogoAwtImageController().asMine()));
+        testApp(() -> Stream.of(new Logo.LogoSwingIconController()
+                              , new Logo.LogoAwtImageController()
+                              , new Logo.LogoSwingIconController()
+                              , new Logo.LogoAwtImageController()
+                              , new Logo.LogoSwingIconController().asMine()
+                              , new Logo.LogoAwtImageController().asMine()));
     }
     public void testFlag() {
-        testApp(() -> Stream.of(new Flag2.FlagSwingIconController()
-                              , new Flag2.FlagAwtImageController()));
+        testApp(() -> Stream.of(new Flag.FlagSwingIconController()
+                              , new Flag.FlagAwtImageController()));
     }
     public void testSmile() {
         testApp(() -> Stream.of(EFaceType.values())
-                            .map(e -> Stream.of(new Smile2.SmileSwingIconController(e),
-                                                new Smile2.SmileAwtImageController(e)))
+                            .map(e -> Stream.of(new Smile.SmileSwingIconController(e),
+                                                new Smile.SmileAwtImageController(e)))
                             .flatMap(x -> x));
     }
     // #endregion
 
     public void runApp() {
-        td = new TestDrawing2("Swing");
+        td = new TestDrawing("Swing");
 
         onCreateImages = new Runnable[] {
             this::testMosaicControl,
@@ -183,8 +183,8 @@ public class DemoApp2  {
         void apply(boolean t1, boolean t2, boolean t3);
     }
 
-    void testApp(Supplier<Stream<IImageController2<?,?>>> funcGetImages) {
-        List<IImageController2<?,?>> images = funcGetImages.get().collect(Collectors.toList());
+    void testApp(Supplier<Stream<IImageController<?,?>>> funcGetImages) {
+        List<IImageController<?,?>> images = funcGetImages.get().collect(Collectors.toList());
         frame.setTitle(td.getTitle(images));
         jPanel.removeAll();
 
@@ -206,16 +206,16 @@ public class DemoApp2  {
             double sizeH = jPanel.getHeight();
             RectDouble rc = new RectDouble(MARGIN, MARGIN, sizeW - MARGIN * 2, sizeH - MARGIN * 2); // inner rect where drawing images as tiles
 
-            TestDrawing2.CellTilingResult2 ctr = td.cellTiling(rc, images, testTransparent[0]);
+            TestDrawing.CellTilingResult2 ctr = td.cellTiling(rc, images, testTransparent[0]);
             SizeDouble imgSize = ctr.imageSize;
             if (imgSize.width <= 0 || imgSize.height <= 0)
                 return;
             if (createImgControls)
                 imgControls.clear();
 
-            Function<IImageController2<?,?>, TestDrawing2.CellTilingInfo> callback = ctr.itemCallback;
-            for (IImageController2<?,?> imgObj : images) {
-                TestDrawing2.CellTilingInfo cti = callback.apply(imgObj);
+            Function<IImageController<?,?>, TestDrawing.CellTilingInfo> callback = ctr.itemCallback;
+            for (IImageController<?,?> imgObj : images) {
+                TestDrawing.CellTilingInfo cti = callback.apply(imgObj);
                 PointDouble offset = cti.imageOffset;
 
                 if (createImgControls) {
@@ -305,7 +305,7 @@ public class DemoApp2  {
         onCloseImages = () -> {
             jPanel.removeComponentListener(onSizeChanged);
             jPanel.removeMouseListener(onMousePressed);
-            images.forEach(IImageController2::close);
+            images.forEach(IImageController::close);
             //images.clear(); // unmodifiable list
             //images = null; // not final
         };
@@ -330,7 +330,7 @@ public class DemoApp2  {
     public static void main(String[] args) {
         ProjSettings.init();
         SwingUtilities.invokeLater(() ->
-            new DemoApp2().runApp()
+            new DemoApp().runApp()
         );
     }
 

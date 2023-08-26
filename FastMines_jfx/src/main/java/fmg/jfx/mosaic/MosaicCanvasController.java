@@ -15,24 +15,24 @@ import javafx.scene.input.MouseEvent;
 import fmg.common.Logger;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.core.mosaic.MosaicController2;
-import fmg.core.mosaic.MosaicModel2;
-import fmg.jfx.img.Flag2;
-import fmg.jfx.img.Logo2;
+import fmg.core.mosaic.MosaicController;
+import fmg.core.mosaic.MosaicModel;
+import fmg.jfx.img.Flag;
+import fmg.jfx.img.Logo;
 
 /** MVC: controller. JavaFX implementation */
-public class MosaicCanvasController2 extends MosaicController2<Canvas, MosaicCanvasView2> {
+public class MosaicCanvasController extends MosaicController<Canvas, MosaicCanvasView> {
 
-    private final Flag2.FlagJfxImageController imgFlag;
-    private final Logo2.LogoJfxImageController imgMine;
+    private final Flag.FlagJfxImageController imgFlag;
+    private final Logo.LogoJfxImageController imgMine;
 
-    public MosaicCanvasController2() {
-        imgFlag = new Flag2.FlagJfxImageController();
-        imgMine = new Logo2.LogoJfxImageController();
+    public MosaicCanvasController() {
+        imgFlag = new Flag.FlagJfxImageController();
+        imgMine = new Logo.LogoJfxImageController();
         imgMine.asMine();
 
-        var m = new MosaicModel2(true);
-        var v = new MosaicCanvasView2(m, imgFlag, imgMine);
+        var m = new MosaicModel(true);
+        var v = new MosaicCanvasView(m, imgFlag, imgMine);
         init(m, v);
     }
 
@@ -46,9 +46,9 @@ public class MosaicCanvasController2 extends MosaicController2<Canvas, MosaicCan
         var event = ev.getEventType();
         if (event == MouseEvent.MOUSE_PRESSED) {
             if (ev.isPrimaryButtonDown())
-                MosaicCanvasController2.this.mousePressed(clickPoint, true);
+                MosaicCanvasController.this.mousePressed(clickPoint, true);
             if (ev.isSecondaryButtonDown())
-                MosaicCanvasController2.this.mousePressed(clickPoint, false);
+                MosaicCanvasController.this.mousePressed(clickPoint, false);
         }
         else
         if (event == MouseEvent.MOUSE_RELEASED) {
@@ -60,16 +60,16 @@ public class MosaicCanvasController2 extends MosaicController2<Canvas, MosaicCan
 
             MouseButton eBttn = ev.getButton();
             if (eBttn == MouseButton.PRIMARY)
-                MosaicCanvasController2.this.mouseReleased(clickPoint, true);
+                MosaicCanvasController.this.mouseReleased(clickPoint, true);
             else
             if (eBttn == MouseButton.SECONDARY)
-                MosaicCanvasController2.this.mouseReleased(clickPoint, false);
+                MosaicCanvasController.this.mouseReleased(clickPoint, false);
         }
     };
 
     private ChangeListener<Boolean> focusHandler = (observableBoolValue, oldPropertyValue, newPropertyValue) -> {
         if (Boolean.FALSE.equals(newPropertyValue))
-            MosaicCanvasController2.this.mouseFocusLost();
+            MosaicCanvasController.this.mouseFocusLost();
     };
 
     @Override

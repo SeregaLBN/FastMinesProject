@@ -18,14 +18,14 @@ import fmg.android.utils.Cast;
 import fmg.common.Color;
 import fmg.common.HSV;
 import fmg.common.geom.PointDouble;
-import fmg.core.img.LogoController2;
-import fmg.core.img.LogoModel2;
+import fmg.core.img.LogoController;
+import fmg.core.img.LogoModel;
 
 /** Main logos image */
-public final class Logo2 {
-    private Logo2() {}
+public final class Logo {
+    private Logo() {}
 
-    private static void draw(Canvas g, LogoModel2 lm) {
+    private static void draw(Canvas g, LogoModel lm) {
         // fill background
         g.drawColor(android.graphics.Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
@@ -145,11 +145,11 @@ public final class Logo2 {
     }
 
     /** Logo image controller implementation for {@link android.graphics.Bitmap} */
-    public static class LogoAndroidBitmapController extends LogoController2<Bitmap, AndroidBitmapView<LogoModel2>> {
+    public static class LogoAndroidBitmapController extends LogoController<Bitmap, AndroidBitmapView<LogoModel>> {
 
         public LogoAndroidBitmapController() {
-            var model = new LogoModel2();
-            var view = new AndroidBitmapView<>(model, g -> Logo2.draw(g, model));
+            var model = new LogoModel();
+            var view = new AndroidBitmapView<>(model, g -> Logo.draw(g, model));
             init(model, view);
         }
 

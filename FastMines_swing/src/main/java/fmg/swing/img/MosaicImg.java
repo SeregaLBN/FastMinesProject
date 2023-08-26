@@ -11,23 +11,23 @@ import fmg.common.geom.RectDouble;
 import fmg.common.geom.RegionDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.MosaicDrawContext;
-import fmg.core.img.MosaicImageController2;
-import fmg.core.img.MosaicImageModel2;
-import fmg.core.mosaic.MosaicModel2;
+import fmg.core.img.MosaicImageController;
+import fmg.core.img.MosaicImageModel;
+import fmg.core.mosaic.MosaicModel;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
 import fmg.core.types.EState;
-import fmg.core.types.draw.FontInfo2;
-import fmg.core.types.draw.PenBorder2;
+import fmg.core.types.draw.FontInfo;
+import fmg.core.types.draw.PenBorder;
 import fmg.swing.utils.Cast;
 
 /** Representable {@link fmg.core.types.EMosaic} as image */
-public final class MosaicImg2 {
-    private MosaicImg2() {}
+public final class MosaicImg {
+    private MosaicImg() {}
 
-    private static void draw(Graphics2D g, MosaicImageModel2 m) {
-        MosaicImageController2.<Void>draw(m, ctx -> draw(g, ctx));
+    private static void draw(Graphics2D g, MosaicImageModel m) {
+        MosaicImageController.<Void>draw(m, ctx -> draw(g, ctx));
     }
 
     public static <T> void draw(Graphics2D g, MosaicDrawContext<T> drawContext) {
@@ -53,7 +53,7 @@ public final class MosaicImg2 {
         // 2. paint cells
         g.setComposite(AlphaComposite.SrcOver);
         g.setFont(getFont(m));
-        PenBorder2 pen = m.getPenBorder();
+        PenBorder pen = m.getPenBorder();
         g.setStroke(new BasicStroke((float)pen.getWidth()));
         SizeDouble offset = m.getMosaicOffset();
         boolean isSimpleDraw = pen.getColorLight().equals(pen.getColorShadow());
@@ -168,10 +168,10 @@ public final class MosaicImg2 {
         g.setClip(oldShape);
     }
 
-    /** cached Font for {@link FontInfo2} */
+    /** cached Font for {@link FontInfo} */
     private static final Map<String /* font name*/, Map<Boolean /* bold? */, Map<Integer /* size */, Font>>> CACHED_FONT = new HashMap<>();
 
-    private static Font getFont(MosaicModel2 m) {
+    private static Font getFont(MosaicModel m) {
         var fi = m.getFontInfo();
         var map2 = CACHED_FONT.computeIfAbsent(fi.getName(), fontName -> new HashMap<>());
         var map3 = map2.computeIfAbsent(fi.isBold(), isBold -> new HashMap<>());
@@ -191,22 +191,22 @@ public final class MosaicImg2 {
 
 
     /** Mosaic image controller implementation for {@link javax.swing.Icon} */
-    public static class MosaicSwingIconController extends MosaicImageController2<javax.swing.Icon, SwingIconView<MosaicImageModel2>> {
+    public static class MosaicSwingIconController extends MosaicImageController<javax.swing.Icon, SwingIconView<MosaicImageModel>> {
 
         public MosaicSwingIconController() {
-            var model = new MosaicImageModel2();
-            var view = new SwingIconView<>(model, g -> MosaicImg2.draw(g, model));
+            var model = new MosaicImageModel();
+            var view = new SwingIconView<>(model, g -> MosaicImg.draw(g, model));
             init(model, view);
         }
 
     }
 
     /** Mosaic image controller implementation for {@link java.awt.Image} */
-    public static class MosaicAwtImageController extends MosaicImageController2<java.awt.Image, AwtImageView<MosaicImageModel2>> {
+    public static class MosaicAwtImageController extends MosaicImageController<java.awt.Image, AwtImageView<MosaicImageModel>> {
 
         public MosaicAwtImageController() {
-            var model = new MosaicImageModel2();
-            var view = new AwtImageView<>(model, g -> MosaicImg2.draw(g, model));
+            var model = new MosaicImageModel();
+            var view = new AwtImageView<>(model, g -> MosaicImg.draw(g, model));
             init(model, view);
         }
 

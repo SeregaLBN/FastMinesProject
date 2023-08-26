@@ -15,15 +15,15 @@ import java.util.function.Consumer;
 
 import fmg.android.utils.Cast;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.ImageController2;
-import fmg.core.img.SmileModel2.EFaceType;
-import fmg.core.img.SmileModel2;
+import fmg.core.img.ImageController;
+import fmg.core.img.SmileModel;
+import fmg.core.img.SmileModel.EFaceType;
 
 /** Smile image */
-public final class Smile2 {
-    private Smile2() {}
+public final class Smile {
+    private Smile() {}
 
-    private static void draw(Canvas g, SmileModel2 sm) {
+    private static void draw(Canvas g, SmileModel sm) {
         g.save();
 
         drawBody(g, sm);
@@ -33,7 +33,7 @@ public final class Smile2 {
         g.restore();
     }
 
-    private static void drawBody(Canvas g, SmileModel2 sm) {
+    private static void drawBody(Canvas g, SmileModel sm) {
         g.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
         SizeDouble size = sm.getSize();
@@ -94,7 +94,7 @@ public final class Smile2 {
         }
     }
 
-    private static void drawEyes(Canvas g, SmileModel2 sm) {
+    private static void drawEyes(Canvas g, SmileModel sm) {
         EFaceType type = sm.getFaceType();
         float width  = (float)sm.getSize().width;
         float height = (float)sm.getSize().height;
@@ -115,7 +115,7 @@ public final class Smile2 {
                 g.drawLine(   0.746f *width, 0.148f*height,    0.885f *width, 0.055f*height, paintStroke);
                 g.drawLine((1-0.746f)*width, 0.148f*height, (1-0.885f)*width, 0.055f*height, paintStroke);
                 g.drawPath(newArc(   0.864f        *width, 0.047f*height, 0.100f*width, 0.100f*height,  0, 125), paintStroke);
-                g.drawPath(newArc((1-0.864f-0.100f)*width, 0.047f*height, 0.100f*width, 0.100f*height, 55, 125), paintStroke);
+                g.drawPath(newArc((1-0.864f-0.100f)*width, 0.047f*height, 0.100f*width, 0.100f*height, 55, 15), paintStroke);
             }
             //break; // ! no break
         case Face_SavouringDeliciousFood:
@@ -208,7 +208,7 @@ public final class Smile2 {
         }
     }
 
-    private static void drawMouth(Canvas g, SmileModel2 sm) {
+    private static void drawMouth(Canvas g, SmileModel sm) {
         EFaceType type = sm.getFaceType();
         float width  = (float)sm.getSize().width;
         float height = (float)sm.getSize().height;
@@ -308,7 +308,7 @@ public final class Smile2 {
         }
     }
 
-    private static void eyeOpened(Canvas g, boolean right, boolean disabled, Paint paintFill, SmileModel2 sm) {
+    private static void eyeOpened(Canvas g, boolean right, boolean disabled, Paint paintFill, SmileModel sm) {
         float width  = (float)sm.getSize().width;
         float height = (float)sm.getSize().height;
 
@@ -349,7 +349,7 @@ public final class Smile2 {
         }
     }
 
-    private static void eyeClosed(Canvas g, boolean right, boolean disabled, Paint paintFill, SmileModel2 sm) {
+    private static void eyeClosed(Canvas g, boolean right, boolean disabled, Paint paintFill, SmileModel sm) {
         float width  = (float)sm.getSize().width;
         float height = (float)sm.getSize().height;
 
@@ -417,11 +417,11 @@ public final class Smile2 {
     }
 
     /** Smile image controller implementation for {@link android.graphics.Bitmap} */
-    public static class SmileAndroidBitmapController extends ImageController2<Bitmap, AndroidBitmapView<SmileModel2>, SmileModel2> {
+    public static class SmileAndroidBitmapController extends ImageController<Bitmap, AndroidBitmapView<SmileModel>, SmileModel> {
 
         public SmileAndroidBitmapController(EFaceType faceType) {
-            var model = new SmileModel2(faceType);
-            var view = new AndroidBitmapView<>(model, g -> Smile2.draw(g, model));
+            var model = new SmileModel(faceType);
+            var view = new AndroidBitmapView<>(model, g -> Smile.draw(g, model));
             init(model, view);
         }
 

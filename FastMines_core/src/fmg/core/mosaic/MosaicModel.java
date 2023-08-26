@@ -43,17 +43,17 @@ import fmg.common.Color;
 import fmg.common.Logger;
 import fmg.common.geom.*;
 import fmg.core.app.model.MosaicInitData;
-import fmg.core.img.IImageModel2;
+import fmg.core.img.IImageModel;
 import fmg.core.img.ImageHelper;
-import fmg.core.img.MosaicImageModel2;
+import fmg.core.img.MosaicImageModel;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.shape.BaseShape;
 import fmg.core.types.EMosaic;
-import fmg.core.types.draw.FontInfo2;
-import fmg.core.types.draw.PenBorder2;
+import fmg.core.types.draw.FontInfo;
+import fmg.core.types.draw.PenBorder;
 
 /** MVC: model of mosaic field (representable {@link fmg.core.types.EMosaic} ). Default implementation. */
-public class MosaicModel2 implements IImageModel2 {
+public class MosaicModel implements IImageModel {
 
     /** Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера. Переопределяется одним из MVC-наследником. */
     public static Color DefaultBkColor   = Color.LightSlateGray().brighter();
@@ -76,8 +76,8 @@ public class MosaicModel2 implements IImageModel2 {
     /** size in pixels*/
     protected final SizeDouble size;
     protected final BoundDouble padding = new BoundDouble(0);
-    private final PenBorder2 penBorder = new PenBorder2();
-    private final FontInfo2 fontInfo = new FontInfo2();
+    private final PenBorder penBorder = new PenBorder();
+    private final FontInfo fontInfo = new FontInfo();
     private Color backgroundColor = DefaultBkColor;
     /** Default fill color (at {@link #fillMode} == 0) */
     private Color cellColor = DefaultCellColor;
@@ -90,7 +90,7 @@ public class MosaicModel2 implements IImageModel2 {
     protected Consumer<String> changedCallback;
 
 
-    public MosaicModel2(boolean isControlMode) {
+    public MosaicModel(boolean isControlMode) {
         this.isControlMode = isControlMode;
         this.size = getSizeMosaic();
     }
@@ -133,7 +133,7 @@ public class MosaicModel2 implements IImageModel2 {
 
         if (area <= 0)
             throw new IllegalArgumentException("Area must be positive");
-        if ((area < MosaicInitData.AREA_MINIMUM) && !(this instanceof MosaicImageModel2))
+        if ((area < MosaicInitData.AREA_MINIMUM) && !(this instanceof MosaicImageModel))
             Logger.warn("The area is very small = " + area);
 
       //getShape().setArea(Math.max(MosaicInitData.AREA_MINIMUM, area));
@@ -247,7 +247,7 @@ public class MosaicModel2 implements IImageModel2 {
 
         if (area <= 0)
             throw new IllegalArgumentException("Area must be positive");
-        if ((area < MosaicInitData.AREA_MINIMUM) && !(this instanceof MosaicImageModel2))
+        if ((area < MosaicInitData.AREA_MINIMUM) && !(this instanceof MosaicImageModel))
             Logger.warn("The area is very small = " + area);
 
         //area = Math.max(MosaicInitData.AREA_MINIMUM, area);
@@ -318,11 +318,11 @@ public class MosaicModel2 implements IImageModel2 {
                              i -> Color.RandomColor().brighter(0.45));
     }
 
-    public PenBorder2 getPenBorder() {
+    public PenBorder getPenBorder() {
         return penBorder;
     }
 
-    public void setPenBorder(PenBorder2 penBorder) {
+    public void setPenBorder(PenBorder penBorder) {
         if (this.penBorder.equals(penBorder))
             return;
 
@@ -331,11 +331,11 @@ public class MosaicModel2 implements IImageModel2 {
         this.penBorder.setColorShadow(penBorder.getColorShadow());
     }
 
-    public FontInfo2 getFontInfo() {
+    public FontInfo getFontInfo() {
         return fontInfo;
     }
 
-    public void setFontInfo(FontInfo2 fontInfo) {
+    public void setFontInfo(FontInfo fontInfo) {
         if (this.fontInfo.equals(fontInfo))
             return;
 

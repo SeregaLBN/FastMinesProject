@@ -8,28 +8,28 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
 import fmg.core.img.MosaicDrawContext;
-import fmg.core.mosaic.IMosaicView2;
-import fmg.core.mosaic.MosaicModel2;
+import fmg.core.mosaic.IMosaicView;
+import fmg.core.mosaic.MosaicModel;
 import fmg.core.mosaic.cells.BaseCell;
-import fmg.jfx.img.Flag2;
+import fmg.jfx.img.Flag;
 import fmg.jfx.img.JfxCanvasView;
-import fmg.jfx.img.Logo2;
-import fmg.jfx.img.MosaicImg2;
+import fmg.jfx.img.Logo;
+import fmg.jfx.img.MosaicImg;
 
 /** MVC: view. JavaFX implementation over node-control {@link Canvas} */
-public class MosaicCanvasView2 implements IMosaicView2<Canvas> {
+public class MosaicCanvasView implements IMosaicView<Canvas> {
 
-    private final JfxCanvasView<MosaicModel2> proxyView;
-    private final MosaicModel2 model;
-    private final Flag2.FlagJfxImageController imgFlag;
-    private final Logo2.LogoJfxImageController imgMine;
+    private final JfxCanvasView<MosaicModel> proxyView;
+    private final MosaicModel model;
+    private final Flag.FlagJfxImageController imgFlag;
+    private final Logo.LogoJfxImageController imgMine;
     private final Collection<BaseCell> modifiedCells = new HashSet<>();
     private boolean drawBk = true;
 
-    public MosaicCanvasView2(
-        MosaicModel2 model,
-        Flag2.FlagJfxImageController imgFlag,
-        Logo2.LogoJfxImageController imgMine)
+    public MosaicCanvasView(
+        MosaicModel model,
+        Flag.FlagJfxImageController imgFlag,
+        Logo.LogoJfxImageController imgMine)
     {
         this.model = model;
         this.imgFlag = imgFlag;
@@ -54,7 +54,7 @@ public class MosaicCanvasView2 implements IMosaicView2<Canvas> {
                         : () -> modifiedCells,
                     imgMine::getImage,
                     imgFlag::getImage);
-            MosaicImg2.draw(g, drawContext);
+            MosaicImg.draw(g, drawContext);
         } finally {
             drawBk = true;
             modifiedCells.clear();

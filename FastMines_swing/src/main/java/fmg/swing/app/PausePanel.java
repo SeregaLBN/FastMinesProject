@@ -10,14 +10,14 @@ import javax.swing.JPanel;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
-import fmg.core.img.LogoModel2;
-import fmg.swing.img.Logo2;
+import fmg.core.img.LogoModel;
+import fmg.swing.img.Logo;
 
 class PausePanel {
 
     private final FastMinesApp app;
     private final JPanel panel;
-    private Logo2.LogoSwingIconController logo;
+    private Logo.LogoSwingIconController logo;
 
     public PausePanel(FastMinesApp app) {
         this.app = app;
@@ -63,10 +63,10 @@ class PausePanel {
                                (int)((sizeOutward.height - lModel.getSize().height) / 2));
     }
 
-    private Logo2.LogoSwingIconController getLogo() {
+    private Logo.LogoSwingIconController getLogo() {
         if (logo == null) {
-            logo = new Logo2.LogoSwingIconController();
-            LogoModel2 model = logo.getModel();
+            logo = new Logo.LogoSwingIconController();
+            LogoModel model = logo.getModel();
             model.setUseGradient(true);
             model.setPadding(new BoundDouble(3));
             logo.setPolarLights(true);

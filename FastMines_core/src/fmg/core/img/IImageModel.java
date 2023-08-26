@@ -7,7 +7,7 @@ import fmg.common.geom.SizeDouble;
 
 /** Image MVC: model
  * Model of image data/properties/characteristics */
-public interface IImageModel2 {
+public interface IImageModel {
 
     /** width and height of the displayed part in pixels */
     SizeDouble getSize();

@@ -7,16 +7,16 @@ import java.util.stream.Stream;
 import fmg.android.app.ProjSettings;
 import fmg.android.app.model.items.MosaicSkillDataItem;
 import fmg.android.img.AndroidBitmapView;
-import fmg.android.img.MosaicSkillImg2;
+import fmg.android.img.MosaicSkillImg;
 import fmg.common.Color;
 import fmg.common.geom.BoundDouble;
 import fmg.core.img.ImageHelper;
-import fmg.core.img.MosaicSkillModel2;
+import fmg.core.img.MosaicSkillModel;
 import fmg.core.types.ESkillLevel;
 
 public class MosaicSkillDataSource extends BaseDataSource<
-        MosaicSkillDataItem, ESkillLevel, MosaicSkillModel2, AndroidBitmapView<MosaicSkillModel2>, MosaicSkillImg2.MosaicSkillAndroidBitmapController,
-        MosaicSkillDataItem, ESkillLevel, MosaicSkillModel2, AndroidBitmapView<MosaicSkillModel2>, MosaicSkillImg2.MosaicSkillAndroidBitmapController>
+        MosaicSkillDataItem, ESkillLevel, MosaicSkillModel, AndroidBitmapView<MosaicSkillModel>, MosaicSkillImg.MosaicSkillAndroidBitmapController,
+        MosaicSkillDataItem, ESkillLevel, MosaicSkillModel, AndroidBitmapView<MosaicSkillModel>, MosaicSkillImg.MosaicSkillAndroidBitmapController>
 {
 
     @Override

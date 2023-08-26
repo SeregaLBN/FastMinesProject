@@ -9,17 +9,17 @@ import javafx.scene.canvas.GraphicsContext;
 import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
-import fmg.core.img.BurgerMenuModel2;
-import fmg.core.img.MosaicGroupController2;
-import fmg.core.img.MosaicGroupModel2;
+import fmg.core.img.BurgerMenuModel;
+import fmg.core.img.MosaicGroupController;
+import fmg.core.img.MosaicGroupModel;
 import fmg.core.types.EMosaicGroup;
 import fmg.jfx.utils.Cast;
 
 /** Representable {@link fmg.core.types.EMosaicGroup} as image */
-public final class MosaicGroupImg2 {
-    private MosaicGroupImg2() {}
+public final class MosaicGroupImg {
+    private MosaicGroupImg() {}
 
-    private static void draw(GraphicsContext g, MosaicGroupModel2 m, BurgerMenuModel2 bm) {
+    private static void draw(GraphicsContext g, MosaicGroupModel m, BurgerMenuModel bm) {
         var size = m.getSize();
         { // fill background
             Color bkClr = m.getBackgroundColor();
@@ -64,22 +64,22 @@ public final class MosaicGroupImg2 {
     }
 
     /** MosaicGroup image controller implementation for {@link javafx.scene.canvas.Canvas} */
-    public static class MosaicGroupJfxCanvasController extends MosaicGroupController2<javafx.scene.canvas.Canvas, JfxCanvasView<MosaicGroupModel2>> {
+    public static class MosaicGroupJfxCanvasController extends MosaicGroupController<javafx.scene.canvas.Canvas, JfxCanvasView<MosaicGroupModel>> {
 
         public MosaicGroupJfxCanvasController(EMosaicGroup group) {
-            var model = new MosaicGroupModel2(group);
-            var view = new JfxCanvasView<>(model, g -> MosaicGroupImg2.draw(g, model, getBurgerModel()));
+            var model = new MosaicGroupModel(group);
+            var view = new JfxCanvasView<>(model, g -> MosaicGroupImg.draw(g, model, getBurgerModel()));
             init(model, view);
         }
 
     }
 
     /** MosaicGroup image controller implementation for {@link javafx.scene.image.Image} */
-    public static class MosaicGroupJfxImageController extends MosaicGroupController2<javafx.scene.image.Image, JfxImageView<MosaicGroupModel2>> {
+    public static class MosaicGroupJfxImageController extends MosaicGroupController<javafx.scene.image.Image, JfxImageView<MosaicGroupModel>> {
 
         public MosaicGroupJfxImageController(EMosaicGroup group) {
-            var model = new MosaicGroupModel2(group);
-            var view = new JfxImageView<>(model, g -> MosaicGroupImg2.draw(g, model, getBurgerModel()));
+            var model = new MosaicGroupModel(group);
+            var view = new JfxImageView<>(model, g -> MosaicGroupImg.draw(g, model, getBurgerModel()));
             init(model, view);
         }
 

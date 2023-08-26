@@ -12,9 +12,9 @@ import java.util.stream.Stream;
 
 import fmg.common.Color;
 import fmg.common.geom.*;
-import fmg.core.mosaic.MosaicModel2;
+import fmg.core.mosaic.MosaicModel;
 
-public class TestDrawing2 {
+public class TestDrawing {
 
     public static Random getRandom() { return ThreadLocalRandom.current(); }
     public static int r(int max) { return getRandom().nextInt(max); }
@@ -27,31 +27,31 @@ public class TestDrawing2 {
 
     private final String titlePrefix;
 
-    public TestDrawing2(String titlePrefix) {
+    public TestDrawing(String titlePrefix) {
         this.titlePrefix = titlePrefix;
     }
 
-    public void changeSettings(IImageController2<?,?> ctrller, boolean testTransparent) {
+    public void changeSettings(IImageController<?,?> ctrller, boolean testTransparent) {
         changeSettings(ctrller.getModel(), testTransparent);
 
-        if (ctrller instanceof MosaicImageController2) {
-            var c = (MosaicImageController2<?, ?>)ctrller;
+        if (ctrller instanceof MosaicImageController) {
+            var c = (MosaicImageController<?, ?>)ctrller;
             c.setAnimatePeriod(1000L + r(3000));
             c.setFps(30 + r(30));
             c.setClockwise(bl());
             c.setRotateImage(bl());
             c.setPolarLightsBackground(bl());
         } else
-        if (ctrller instanceof LogoController2) {
-            var c = (LogoController2<?, ?>)ctrller;
+        if (ctrller instanceof LogoController) {
+            var c = (LogoController<?, ?>)ctrller;
             c.setAnimatePeriod(2000L + r(7000));
             c.setFps(30 + r(30));
             c.setClockwise(bl());
             c.setRotateImage(bl());
             c.setPolarLights(bl());
         } else
-        if (ctrller instanceof MosaicGroupController2) {
-            var c = (MosaicGroupController2<?, ?>)ctrller;
+        if (ctrller instanceof MosaicGroupController) {
+            var c = (MosaicGroupController<?, ?>)ctrller;
             changeSettings(c.getBurgerModel(), testTransparent);
             c.setAnimatePeriod(2000L + r(7000));
             c.setFps(30 + r(30));
@@ -60,8 +60,8 @@ public class TestDrawing2 {
             c.setPolarLightsBackground(bl());
             c.setPolarLightsForeground(bl());
         } else
-        if (ctrller instanceof MosaicSkillController2) {
-            var c = (MosaicSkillController2<?, ?>)ctrller;
+        if (ctrller instanceof MosaicSkillController) {
+            var c = (MosaicSkillController<?, ?>)ctrller;
             changeSettings(c.getBurgerModel(), testTransparent);
             c.setAnimatePeriod(2000L + r(7000));
             c.setFps(30 + r(30));
@@ -72,10 +72,10 @@ public class TestDrawing2 {
         }
     }
 
-    public void changeSettings(IImageModel2 model, boolean testTransparent) {
+    public void changeSettings(IImageModel model, boolean testTransparent) {
         testTransparent = testTransparent || bl(); // probability 75%
 
-        if (!(model instanceof BurgerMenuModel2)) {
+        if (!(model instanceof BurgerMenuModel)) {
             double pad = Math.min(model.getSize().height/3, model.getSize().width/3);
             model.setPadding(new BoundDouble(-pad/4 + r((int)pad)));
         }
@@ -85,20 +85,20 @@ public class TestDrawing2 {
             bkClr = bkClr.updateA(50 + r(10));
 
 
-        if (model instanceof LogoModel2) {
-            var m = (LogoModel2)model;
+        if (model instanceof LogoModel) {
+            var m = (LogoModel)model;
             m.setBorderColor(Color.RandomColor());
             m.setBorderWidth(r(4));
             m.setUseGradient(bl());
         } else
-        if (model instanceof BurgerMenuModel2) {
-            var m = (BurgerMenuModel2)model;
+        if (model instanceof BurgerMenuModel) {
+            var m = (BurgerMenuModel)model;
             if (bl())
                 m.setLayers(4);
             m.setHorizontal(bl());
         } else
-        if (model instanceof MosaicGroupModel2) {
-            MosaicGroupModel2 m = (MosaicGroupModel2)model;
+        if (model instanceof MosaicGroupModel) {
+            MosaicGroupModel m = (MosaicGroupModel)model;
             m.setBorderColor(Color.RandomColor());
             m.setBorderWidth(r(3));
             m.setBackgroundColor(bkClr);
@@ -114,8 +114,8 @@ public class TestDrawing2 {
             }
             m.setForegroundColor(fgColor);
         } else
-        if (model instanceof MosaicSkillModel2) {
-            MosaicSkillModel2 m = (MosaicSkillModel2)model;
+        if (model instanceof MosaicSkillModel) {
+            MosaicSkillModel m = (MosaicSkillModel)model;
             m.setBorderColor(Color.RandomColor());
             m.setBorderWidth(r(3));
             m.setBackgroundColor(bkClr);
@@ -131,12 +131,12 @@ public class TestDrawing2 {
             }
             m.setForegroundColor(fgColor);
         } else
-        if (model instanceof MosaicModel2) {
-            MosaicModel2 m = (MosaicModel2)model;
+        if (model instanceof MosaicModel) {
+            MosaicModel m = (MosaicModel)model;
             m.setSizeField(new Matrisize(3+r(2), 3 + r(2)));
 
-            if (model instanceof MosaicImageModel2) {
-                MosaicImageModel2 mim = (MosaicImageModel2)m;
+            if (model instanceof MosaicImageModel) {
+                MosaicImageModel mim = (MosaicImageModel)m;
                 mim.setBackgroundColor(bkClr);
 
 //                mim.setMosaicType(en(EMosaic.class));
@@ -148,7 +148,7 @@ public class TestDrawing2 {
                 double padTopBottom = r((int)(size.height/3));
                 mim.setPadding(new BoundDouble(padLeftRight, padTopBottom, padLeftRight, padTopBottom));
 
-                mim.setRotateMode(en(MosaicImageModel2.ERotateMode.class));
+                mim.setRotateMode(en(MosaicImageModel.ERotateMode.class));
             }
         }
     }
@@ -164,10 +164,10 @@ public class TestDrawing2 {
     public static class CellTilingResult2 {
         public SizeDouble imageSize;
         public Size tableSize;
-        public Function<IImageController2<?,?> /* imageControllers */, CellTilingInfo> itemCallback;
+        public Function<IImageController<?,?> /* imageControllers */, CellTilingInfo> itemCallback;
     }
 
-    public CellTilingResult2 cellTiling(RectDouble rc, List<IImageController2<?,?>> images, boolean tileIntersection) {
+    public CellTilingResult2 cellTiling(RectDouble rc, List<IImageController<?,?>> images, boolean tileIntersection) {
         int len = images.size();
 
         // max tiles in one column
@@ -209,7 +209,7 @@ public class TestDrawing2 {
         SizeDouble imgSize = new SizeDouble(dx - 2*pad + addonX,  // dx - 2*pad;
                                             dy - 2*pad + addonY); // dy - 2*pad;
 
-        Function<IImageController2<?,?>, CellTilingInfo> itemCallback = item -> {
+        Function<IImageController<?,?>, CellTilingInfo> itemCallback = item -> {
             int pos = images.indexOf(item);
             if (pos == -1)
                 throw new RuntimeException("Illegal usage...");
@@ -237,7 +237,7 @@ public class TestDrawing2 {
         return ctr;
     }
 
-    public String getTitle(List<IImageController2<?,?>> images) {
+    public String getTitle(List<IImageController<?,?>> images) {
         return titlePrefix + " test paints: " + images.stream()
             .map(i -> i.getClass().getName())
             .map(n -> Stream.of(n.split("\\.")).reduce((first, second) -> second).get().replace("$", ".") )

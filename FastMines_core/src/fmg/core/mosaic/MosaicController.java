@@ -23,16 +23,16 @@ import fmg.common.geom.*;
 import fmg.common.ui.UiInvoker;
 import fmg.core.app.model.MosaicBackupData;
 import fmg.core.app.model.MosaicInitData;
-import fmg.core.img.ImageController2;
+import fmg.core.img.ImageController;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.*;
 
 /** MVC: mosaic controller. Base implementation
  * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
    @param <TView> mosaic view */
-public abstract class MosaicController2<TImage,
-                                       TView extends IMosaicView2<TImage>>
-              extends ImageController2<TImage, TView, MosaicModel2>
+public abstract class MosaicController<TImage,
+                                       TView extends IMosaicView<TImage>>
+              extends ImageController<TImage, TView, MosaicModel>
 {
 
     /** кол-во мин на поле */
@@ -55,7 +55,7 @@ public abstract class MosaicController2<TImage,
 
 
     @Override
-    protected void init(MosaicModel2 model, TView view) {
+    protected void init(MosaicModel model, TView view) {
         super.init(model, view);
         onChangeCellSquareSize();
         subscribeToViewControl();

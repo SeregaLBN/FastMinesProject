@@ -13,27 +13,27 @@ import fmg.android.app.model.items.BaseDataItem;
 import fmg.common.Color;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
-import fmg.core.img.IImageModel2;
-import fmg.core.img.IImageView2;
-import fmg.core.img.ImageController2;
-import fmg.core.mosaic.MosaicModel2;
+import fmg.core.img.IImageModel;
+import fmg.core.img.IImageView;
+import fmg.core.img.ImageController;
+import fmg.core.mosaic.MosaicModel;
 
 /** Base container for image items */
 public abstract class BaseDataSource<THeader extends BaseDataItem<THeaderId, THeaderModel, THeaderView, THeaderCtrlr>,
                                      THeaderId,
-                                     THeaderModel extends IImageModel2,
-                                     THeaderView  extends IImageView2<Bitmap>,
-                                     THeaderCtrlr extends ImageController2<Bitmap, THeaderView, THeaderModel>,
+                                     THeaderModel extends IImageModel,
+                                     THeaderView  extends IImageView<Bitmap>,
+                                     THeaderCtrlr extends ImageController<Bitmap, THeaderView, THeaderModel>,
 
                                      TItem   extends BaseDataItem<TItemId, TItemModel, TItemView, TItemCtrlr>,
                                      TItemId,
-                                     TItemModel extends IImageModel2,
-                                     TItemView  extends IImageView2<Bitmap>,
-                                     TItemCtrlr extends ImageController2<Bitmap, TItemView, TItemModel>>
+                                     TItemModel extends IImageModel,
+                                     TItemView  extends IImageView<Bitmap>,
+                                     TItemCtrlr extends ImageController<Bitmap, TItemView, TItemModel>>
     extends BaseObservable
     implements AutoCloseable
 {
-    public static Color DefaultBkColor = MosaicModel2.DefaultBkColor;
+    public static Color DefaultBkColor = MosaicModel.DefaultBkColor;
 
     public static final String PROPERTY_DATA_SOURCE      = "DataSource";
     public static final String PROPERTY_HEADER           = "Header";

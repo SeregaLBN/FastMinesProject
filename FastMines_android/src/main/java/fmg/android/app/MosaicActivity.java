@@ -15,12 +15,12 @@ import androidx.lifecycle.ViewModelProviders;
 import fmg.android.app.databinding.MosaicActivityBinding;
 import fmg.android.app.model.MosaicActivityBackupData;
 import fmg.android.app.presentation.MosaicViewModel;
-import fmg.android.mosaic.MosaicViewController2;
+import fmg.android.mosaic.MosaicViewController;
 import fmg.android.utils.AsyncRunner;
 import fmg.android.utils.Timer;
 import fmg.common.Logger;
 import fmg.core.app.model.MosaicInitData;
-import fmg.core.img.SmileModel2;
+import fmg.core.img.SmileModel;
 import fmg.core.types.ClickResult;
 import fmg.core.types.EGameStatus;
 import fmg.core.types.EMosaic;
@@ -90,7 +90,7 @@ public class MosaicActivity extends AppCompatActivity {
     }
 
     /** Mosaic controller */
-    public MosaicViewController2 getMosaicController() {
+    public MosaicViewController getMosaicController() {
         return viewModel.getMosaicController();
     }
 
@@ -167,7 +167,7 @@ public class MosaicActivity extends AppCompatActivity {
             case eGSCreateGame:
             case eGSReady:
                 timer.reset();
-                viewModel.setBtnNewGameFaceType(SmileModel2.EFaceType.Face_WhiteSmiling);
+                viewModel.setBtnNewGameFaceType(SmileModel.EFaceType.Face_WhiteSmiling);
                 break;
             case eGSPlay:
                 timer.start();
@@ -175,8 +175,8 @@ public class MosaicActivity extends AppCompatActivity {
             case eGSEnd:
                 timer.pause();
                 viewModel.setBtnNewGameFaceType(getMosaicController().isVictory()
-                                ? SmileModel2.EFaceType.Face_SmilingWithSunglasses
-                                : SmileModel2.EFaceType.Face_Disappointed);
+                                ? SmileModel.EFaceType.Face_SmilingWithSunglasses
+                                : SmileModel.EFaceType.Face_Disappointed);
 
                 if (getSkillLevel() != ESkillLevel.eCustom)
                     // сохраняю статистику и чемпиона
@@ -211,10 +211,10 @@ public class MosaicActivity extends AppCompatActivity {
     private boolean onBtnNewTouch(View view, MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             // Pressed
-            viewModel.setBtnNewGameFaceType(SmileModel2.EFaceType.Face_SavouringDeliciousFood);
+            viewModel.setBtnNewGameFaceType(SmileModel.EFaceType.Face_SavouringDeliciousFood);
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
             // Released
-            viewModel.setBtnNewGameFaceType(SmileModel2.EFaceType.Face_WhiteSmiling);
+            viewModel.setBtnNewGameFaceType(SmileModel.EFaceType.Face_WhiteSmiling);
         }
         return false;
     }
@@ -224,8 +224,8 @@ public class MosaicActivity extends AppCompatActivity {
         //Logger.info("OnMosaicClick: down=" + clickResult.isDown + "; leftClick=" + clickResult.isLeft + "; gameStatus=" + gs);
         if (clickResult.isLeft && ((gs == EGameStatus.eGSPlay) || (gs == EGameStatus.eGSReady))) {
             viewModel.setBtnNewGameFaceType(clickResult.isDown
-                    ? SmileModel2.EFaceType.Face_Grinning
-                    : SmileModel2.EFaceType.Face_WhiteSmiling);
+                    ? SmileModel.EFaceType.Face_Grinning
+                    : SmileModel.EFaceType.Face_WhiteSmiling);
         }
     }
 

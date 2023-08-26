@@ -6,11 +6,11 @@ import javafx.scene.canvas.GraphicsContext;
 
 import fmg.common.geom.DoubleExt;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.IImageModel2;
-import fmg.core.img.IImageView2;
+import fmg.core.img.IImageModel;
+import fmg.core.img.IImageView;
 
 /** Image view implementation over {@link javafx.scene.canvas.Canvas} */
-public class JfxCanvasView<TModel extends IImageModel2> implements IImageView2<javafx.scene.canvas.Canvas> {
+public class JfxCanvasView<TModel extends IImageModel> implements IImageView<javafx.scene.canvas.Canvas> {
 
     private final TModel model;
     private final Consumer<GraphicsContext> draw;

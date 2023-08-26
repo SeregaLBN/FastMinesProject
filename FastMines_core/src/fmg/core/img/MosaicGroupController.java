@@ -6,9 +6,9 @@ import fmg.core.types.EMosaicGroup;
 /** MVC controller of {@link EMosaicGroup} image
  * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
  * @param <TView> MVC view */
-public abstract class MosaicGroupController2<TImage,
-                                            TView extends IImageView2<TImage>>
-    extends ImageController2<TImage, TView, MosaicGroupModel2>
+public abstract class MosaicGroupController<TImage,
+                                            TView extends IImageView<TImage>>
+    extends ImageController<TImage, TView, MosaicGroupModel>
 {
 
     /** Overall animation period (in milliseconds) */
@@ -31,16 +31,16 @@ public abstract class MosaicGroupController2<TImage,
     /** animation direction (example: clockwise or counterclockwise for simple rotation) */
     private boolean clockwise = true;
 
-    private BurgerMenuModel2 burgerModel;
+    private BurgerMenuModel burgerModel;
 
-    public BurgerMenuModel2 getBurgerModel() {
+    public BurgerMenuModel getBurgerModel() {
         return burgerModel;
     }
 
     @Override
-    protected void init(MosaicGroupModel2 model, TView view) {
+    protected void init(MosaicGroupModel model, TView view) {
         super.init(model, view);
-        burgerModel = new BurgerMenuModel2();
+        burgerModel = new BurgerMenuModel();
         burgerModel.setListener(this::onModelChanged);
         if (isAnimated())
             startAnimation();

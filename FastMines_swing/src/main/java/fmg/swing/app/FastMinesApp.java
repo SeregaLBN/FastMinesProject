@@ -35,9 +35,9 @@ import fmg.core.app.model.Champions;
 import fmg.core.app.model.MosaicInitData;
 import fmg.core.app.model.Players;
 import fmg.core.app.model.User;
-import fmg.core.img.LogoModel2;
+import fmg.core.img.LogoModel;
 import fmg.core.mosaic.MosaicHelper;
-import fmg.core.mosaic.MosaicModel2;
+import fmg.core.mosaic.MosaicModel;
 import fmg.core.types.EGameStatus;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
@@ -53,8 +53,8 @@ import fmg.swing.app.serializers.PlayersSwingSerializer;
 import fmg.swing.app.toolbar.EBtnNewGameState;
 import fmg.swing.app.toolbar.ToolBar;
 import fmg.swing.img.Animator;
-import fmg.swing.img.Logo2;
-import fmg.swing.mosaic.MosaicJPanelController2;
+import fmg.swing.img.Logo;
+import fmg.swing.mosaic.MosaicJPanelController;
 import fmg.swing.utils.Cast;
 import fmg.swing.utils.ScreenResolutionHelper;
 import fmg.swing.utils.Timer;
@@ -74,11 +74,11 @@ public class FastMinesApp {
     private JPanel     contentPane;
     private MainMenu   menu;
     private ToolBar    toolbar;
-    private MosaicJPanelController2 mosaicController;
+    private MosaicJPanelController mosaicController;
     private PausePanel pausePanel;
     private StatusBar  statusBar;
 
-    private Logo2.LogoAwtImageController logo;
+    private Logo.LogoAwtImageController logo;
     private Players players;
     private UUID activeUserId; // current user
     private Champions champions;
@@ -189,23 +189,23 @@ public class FastMinesApp {
     }
 
     /** mosaic controller */
-    private void setMosaicController(MosaicJPanelController2 mosaicController) {
+    private void setMosaicController(MosaicJPanelController mosaicController) {
         if (this.mosaicController != null) {
             this.mosaicController.setListener(null);
             this.mosaicController.close();
         }
         this.mosaicController = mosaicController;
         if (mosaicController != null) {
-            MosaicModel2 model = mosaicController.getModel();
+            MosaicModel model = mosaicController.getModel();
             model.setPadding(new BoundDouble(0));
             model.setBackgroundColor(model.getBackgroundColor().darker(0.2));
             mosaicController.setListener(this::onMosaicPropertyChanged);
         }
     }
     /** mosaic controller */
-    public MosaicJPanelController2 getMosaicController() {
+    public MosaicJPanelController getMosaicController() {
         if (mosaicController == null)
-            setMosaicController(new MosaicJPanelController2());
+            setMosaicController(new MosaicJPanelController());
         return mosaicController;
     }
 //    /** mosaic data */
@@ -263,7 +263,7 @@ public class FastMinesApp {
         final Point startLocation = new Point();
         boolean defaultData;
         boolean doNotAskStartup;
-        MosaicJPanelController2 mosaicCtrllr;
+        MosaicJPanelController mosaicCtrllr;
         { // load settings and apply
             AppData mwd = new AppData();
             defaultData = !new AppDataSerializer().load(mwd);
@@ -321,8 +321,8 @@ public class FastMinesApp {
 
         frame.setJMenuBar(getMenu().getMenuBar());
         frame.setTitle("FastMines");
-        this.logo = new Logo2.LogoAwtImageController();
-        LogoModel2 logoModel = this.logo.getModel();
+        this.logo = new Logo.LogoAwtImageController();
+        LogoModel logoModel = this.logo.getModel();
         logoModel.setUseGradient(true);
         logoModel.setSize(new SizeDouble(128, 128));
         logoModel.setPadding(new BoundDouble(1));

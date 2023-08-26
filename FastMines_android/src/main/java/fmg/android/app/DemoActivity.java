@@ -1,6 +1,5 @@
 package fmg.android.app;
 
-import static fmg.core.img.PropertyConst.*;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Bundle;
@@ -22,36 +21,38 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import fmg.android.app.databinding.DemoActivityBinding;
-import fmg.android.img.Flag2;
-import fmg.android.img.Logo2;
-import fmg.android.img.MosaicGroupImg2;
-import fmg.android.img.MosaicImg2;
-import fmg.android.img.MosaicSkillImg2;
-import fmg.android.img.Smile2;
-import fmg.android.mosaic.MosaicViewController2;
+import fmg.android.img.Flag;
+import fmg.android.img.Logo;
+import fmg.android.img.MosaicGroupImg;
+import fmg.android.img.MosaicImg;
+import fmg.android.img.MosaicSkillImg;
+import fmg.android.img.Smile;
+import fmg.android.mosaic.MosaicViewController;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
-import fmg.core.img.IImageController2;
-import fmg.core.img.SmileModel2;
-import fmg.core.img.TestDrawing2;
+import fmg.core.img.IImageController;
+import fmg.core.img.SmileModel;
+import fmg.core.img.TestDrawing;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
+
+import static fmg.core.img.PropertyConst.PROPERTY_IMAGE;
 
 /** live UI test application */
 public class DemoActivity extends AppCompatActivity {
 
     private static final int MARGIN = 10; // panel margin - padding to inner images
 
-    private TestDrawing2 td;
+    private TestDrawing td;
     private DemoActivityBinding activityBinding;
     private Runnable onCloseImages;
     private Runnable[] onCreateImages; // images factory
     public static class DemoViewModel extends ViewModel {
-        private List<IImageController2<?,?>> images;
+        private List<IImageController<?,?>> images;
         private int nextCreateImagesIndex;
     }
 
@@ -59,7 +60,7 @@ public class DemoActivity extends AppCompatActivity {
     // #region images Fabrica
     public void testMosaicControl () {
         testApp(() -> {
-            MosaicViewController2 mosaicController = new MosaicViewController2(this);
+            MosaicViewController mosaicController = new MosaicViewController(this);
 
             if (ThreadLocalRandom.current().nextBoolean()) {
                 // unmodified controller test
@@ -81,36 +82,36 @@ public class DemoActivity extends AppCompatActivity {
     public void testMosaicImg() {
         testApp(() ->
             //// test single
-            // Stream.of(new MosaicImg2.MosaicAndroidBitmapController() { { getModel().setMosaicType(EMosaic.eMosaicSquare1); }})
+            // Stream.of(new MosaicImg.MosaicAndroidBitmapController() { { getModel().setMosaicType(EMosaic.eMosaicSquare1); }})
 
             // test all
             Stream.of(EMosaic.values())
-                         .map(e -> new MosaicImg2.MosaicAndroidBitmapController() { { getModel().setMosaicType(e); }})
+                         .map(e -> new MosaicImg.MosaicAndroidBitmapController() { { getModel().setMosaicType(e); }})
         );
     }
 
     public void testMosaicGroupImg() { testApp(() -> Stream.concat(Stream.of((EMosaicGroup)null), Stream.of(EMosaicGroup.values()))
-                                              .map(e -> new Pair<>(new MosaicGroupImg2.MosaicGroupAndroidBitmapController(e),
-                                                                   new MosaicGroupImg2.MosaicGroupAndroidBitmapController(e)))
+                                              .map(e -> new Pair<>(new MosaicGroupImg.MosaicGroupAndroidBitmapController(e),
+                                                                   new MosaicGroupImg.MosaicGroupAndroidBitmapController(e)))
                                               .flatMap(x -> Stream.of(x.first, x.second)));
     }
 
     public void testMosaicSkillImg() { testApp(() -> Stream.concat(Stream.of((ESkillLevel)null), Stream.of(ESkillLevel.values()))
-                                              .map(e -> new Pair<>(new MosaicSkillImg2.MosaicSkillAndroidBitmapController(e),
-                                                                   new MosaicSkillImg2.MosaicSkillAndroidBitmapController(e)))
+                                              .map(e -> new Pair<>(new MosaicSkillImg.MosaicSkillAndroidBitmapController(e),
+                                                                   new MosaicSkillImg.MosaicSkillAndroidBitmapController(e)))
                                               .flatMap(x -> Stream.of(x.first, x.second)));
     }
 
-    public void testLogo          () { testApp(() -> Stream.of(new Logo2.LogoAndroidBitmapController()
-                                                             , new Logo2.LogoAndroidBitmapController()
-                                                             , new Logo2.LogoAndroidBitmapController().asMine()
-                                                             , new Logo2.LogoAndroidBitmapController().asMine())); }
+    public void testLogo          () { testApp(() -> Stream.of(new Logo.LogoAndroidBitmapController()
+                                                             , new Logo.LogoAndroidBitmapController()
+                                                             , new Logo.LogoAndroidBitmapController().asMine()
+                                                             , new Logo.LogoAndroidBitmapController().asMine())); }
 
-    public void testFlag          () { testApp(() -> Stream.of(new Flag2.FlagAndroidBitmapController()
-                                                             , new Flag2.FlagAndroidBitmapController())); }
+    public void testFlag          () { testApp(() -> Stream.of(new Flag.FlagAndroidBitmapController()
+                                                             , new Flag.FlagAndroidBitmapController())); }
 
-    public void testSmile         () { testApp(() -> Stream.of(SmileModel2.EFaceType.values())
-                                                           .map(e -> new Smile2.SmileAndroidBitmapController(e)));
+    public void testSmile         () { testApp(() -> Stream.of(SmileModel.EFaceType.values())
+                                                           .map(e -> new Smile.SmileAndroidBitmapController(e)));
     }
     // #endregion
 
@@ -123,7 +124,7 @@ public class DemoActivity extends AppCompatActivity {
         activityBinding.setViewModel(viewModel);
         activityBinding.executePendingBindings();
 
-        td = new TestDrawing2("Android");
+        td = new TestDrawing("Android");
 
         onCreateImages = new Runnable[] {
             this::testMosaicControl,
@@ -153,8 +154,8 @@ public class DemoActivity extends AppCompatActivity {
         void apply(boolean t1, boolean t2, boolean t3);
     }
 
-    void testApp(Supplier<Stream<IImageController2<?,?>>> funcGetImages) {
-        List<IImageController2<?,?>> images = activityBinding.getViewModel().images = funcGetImages.get().collect(Collectors.toList());
+    void testApp(Supplier<Stream<IImageController<?,?>>> funcGetImages) {
+        List<IImageController<?,?>> images = activityBinding.getViewModel().images = funcGetImages.get().collect(Collectors.toList());
         setTitle(td.getTitle(images));
         FrameLayout innerLayout = activityBinding.innerLayout;
         innerLayout.removeAllViews();
@@ -177,16 +178,16 @@ public class DemoActivity extends AppCompatActivity {
             double sizeH = innerLayout.getHeight(); // innerLayout.getMeasuredHeight();
             RectDouble rc = new RectDouble(MARGIN, MARGIN, sizeW - MARGIN * 2, sizeH - MARGIN * 2); // inner rect where drawing images as tiles
 
-            TestDrawing2.CellTilingResult2 ctr = td.cellTiling(rc, images, testTransparent[0]);
+            TestDrawing.CellTilingResult2 ctr = td.cellTiling(rc, images, testTransparent[0]);
             SizeDouble imgSize = ctr.imageSize;
             if (imgSize.width <= 0 || imgSize.height <= 0)
                 return;
             if (createImgControls)
                 imgControls.clear();
 
-            Function<IImageController2<?,?>, TestDrawing2.CellTilingInfo> callback = ctr.itemCallback;
-            for (IImageController2<?,?> imgObj : images) {
-                TestDrawing2.CellTilingInfo cti = callback.apply(imgObj);
+            Function<IImageController<?,?>, TestDrawing.CellTilingInfo> callback = ctr.itemCallback;
+            for (IImageController<?,?> imgObj : images) {
+                TestDrawing.CellTilingInfo cti = callback.apply(imgObj);
                 PointDouble offset = cti.imageOffset;
 
                 if (createImgControls) {
@@ -263,7 +264,7 @@ public class DemoActivity extends AppCompatActivity {
                 innerLayout.setOnClickListener(null);
             else
                 innerLayout.setOnTouchListener(null);
-            images.forEach(IImageController2::close);
+            images.forEach(IImageController::close);
             //images.clear(); // unmodifiable list
             //images = null; // not final
         };

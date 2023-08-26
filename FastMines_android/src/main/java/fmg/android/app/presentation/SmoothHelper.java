@@ -7,15 +7,14 @@ import android.view.ViewGroup;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import fmg.android.utils.AsyncRunner;
 import fmg.common.Color;
 import fmg.common.geom.util.FigureHelper;
-import fmg.core.img.IImageModel2;
-import fmg.core.img.MosaicGroupModel2;
-import fmg.core.img.MosaicSkillModel2;
+import fmg.core.img.IImageModel;
+import fmg.core.img.MosaicGroupModel;
+import fmg.core.img.MosaicSkillModel;
 
 public final class SmoothHelper {
     private SmoothHelper() {}
@@ -94,27 +93,27 @@ public final class SmoothHelper {
         Color clrStart;
         Color clrStop;
     }
-    private static Map<IImageModel2, ColorContext> mapColorSmooth = new HashMap<>();
+    private static Map<IImageModel, ColorContext> mapColorSmooth = new HashMap<>();
 
-    private static Color getBackgroundColor(IImageModel2 model) {
-        if (model instanceof MosaicGroupModel2)
-            return ((MosaicGroupModel2)model).getBackgroundColor();
-        if (model instanceof MosaicSkillModel2)
-            return ((MosaicSkillModel2)model).getBackgroundColor();
+    private static Color getBackgroundColor(IImageModel model) {
+        if (model instanceof MosaicGroupModel)
+            return ((MosaicGroupModel)model).getBackgroundColor();
+        if (model instanceof MosaicSkillModel)
+            return ((MosaicSkillModel)model).getBackgroundColor();
         throw new IllegalArgumentException();
     }
 
-    private static void setBackgroundColor(IImageModel2 model, Color clr) {
-        if (model instanceof MosaicGroupModel2)
-            ((MosaicGroupModel2)model).setBackgroundColor(clr);
+    private static void setBackgroundColor(IImageModel model, Color clr) {
+        if (model instanceof MosaicGroupModel)
+            ((MosaicGroupModel)model).setBackgroundColor(clr);
         else
-        if (model instanceof MosaicSkillModel2)
-            ((MosaicSkillModel2)model).setBackgroundColor(clr);
+        if (model instanceof MosaicSkillModel)
+            ((MosaicSkillModel)model).setBackgroundColor(clr);
         else
             throw new IllegalArgumentException();
     }
 
-    public static void runColorSmoothTransition(IImageModel2 model) {
+    public static void runColorSmoothTransition(IImageModel model) {
         if (!mapColorSmooth.containsKey(model)) {
             ColorContext context = new ColorContext();
             context.clrStart = getBackgroundColor(model); //Color.Coral;

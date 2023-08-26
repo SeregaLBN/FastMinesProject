@@ -21,7 +21,7 @@ import fmg.common.geom.SizeDouble;
 import fmg.common.geom.util.FigureHelper;
 
 /** MVC: model for FastMines logo image */
-public class LogoModel2 implements IImageModel2 {
+public class LogoModel implements IImageModel {
 
     private SizeDouble size = new SizeDouble(ImageHelper.DEFAULT_IMAGE_SIZE, ImageHelper.DEFAULT_IMAGE_SIZE);
 
@@ -151,7 +151,7 @@ public class LogoModel2 implements IImageModel2 {
         return palette;
     }
 
-    public static void toMineModel(LogoModel2 m) {
+    public static void toMineModel(LogoModel m) {
         m.setUseGradient(false);
         for (HSV item : m.getPalette())
             //item.v = 75;

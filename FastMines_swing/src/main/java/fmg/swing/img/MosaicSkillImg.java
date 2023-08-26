@@ -11,17 +11,17 @@ import fmg.common.Color;
 import fmg.common.HSV;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
-import fmg.core.img.BurgerMenuModel2;
-import fmg.core.img.MosaicSkillController2;
-import fmg.core.img.MosaicSkillModel2;
+import fmg.core.img.BurgerMenuModel;
+import fmg.core.img.MosaicSkillController;
+import fmg.core.img.MosaicSkillModel;
 import fmg.core.types.ESkillLevel;
 import fmg.swing.utils.Cast;
 
 /** Representable {@link fmg.core.types.ESkillLevel} as image */
-public final class MosaicSkillImg2 {
-    private MosaicSkillImg2() {}
+public final class MosaicSkillImg {
+    private MosaicSkillImg() {}
 
-    private static void draw(Graphics2D g, MosaicSkillModel2 m, BurgerMenuModel2 bm) {
+    private static void draw(Graphics2D g, MosaicSkillModel m, BurgerMenuModel bm) {
         var size = m.getSize();
         { // fill background
             g.setComposite(AlphaComposite.Src);
@@ -62,22 +62,22 @@ public final class MosaicSkillImg2 {
     }
 
     /** MosaicSkill image controller implementation for {@link javax.swing.Icon} */
-    public static class MosaicSkillSwingIconController extends MosaicSkillController2<javax.swing.Icon, SwingIconView<MosaicSkillModel2>> {
+    public static class MosaicSkillSwingIconController extends MosaicSkillController<javax.swing.Icon, SwingIconView<MosaicSkillModel>> {
 
         public MosaicSkillSwingIconController(ESkillLevel skill) {
-            var model = new MosaicSkillModel2(skill);
-            var view = new SwingIconView<>(model, g -> MosaicSkillImg2.draw(g, model, getBurgerModel()));
+            var model = new MosaicSkillModel(skill);
+            var view = new SwingIconView<>(model, g -> MosaicSkillImg.draw(g, model, getBurgerModel()));
             init(model, view);
         }
 
     }
 
     /** MosaicSkill image controller implementation for {@link java.awt.Image} */
-    public static class MosaicSkillAwtImageController extends MosaicSkillController2<java.awt.Image, AwtImageView<MosaicSkillModel2>> {
+    public static class MosaicSkillAwtImageController extends MosaicSkillController<java.awt.Image, AwtImageView<MosaicSkillModel>> {
 
         public MosaicSkillAwtImageController(ESkillLevel skill) {
-            var model = new MosaicSkillModel2(skill);
-            var view = new AwtImageView<>(model, g -> MosaicSkillImg2.draw(g, model, getBurgerModel()));
+            var model = new MosaicSkillModel(skill);
+            var view = new AwtImageView<>(model, g -> MosaicSkillImg.draw(g, model, getBurgerModel()));
             init(model, view);
         }
 

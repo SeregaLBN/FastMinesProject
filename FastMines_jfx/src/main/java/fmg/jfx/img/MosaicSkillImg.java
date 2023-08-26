@@ -9,17 +9,17 @@ import javafx.scene.canvas.GraphicsContext;
 import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
-import fmg.core.img.BurgerMenuModel2;
-import fmg.core.img.MosaicSkillController2;
-import fmg.core.img.MosaicSkillModel2;
+import fmg.core.img.BurgerMenuModel;
+import fmg.core.img.MosaicSkillController;
+import fmg.core.img.MosaicSkillModel;
 import fmg.core.types.ESkillLevel;
 import fmg.jfx.utils.Cast;
 
 /** Representable {@link fmg.core.types.ESkillLevel} as image */
-public final class MosaicSkillImg2 {
-    private MosaicSkillImg2() {}
+public final class MosaicSkillImg {
+    private MosaicSkillImg() {}
 
-    private static void draw(GraphicsContext g, MosaicSkillModel2 m, BurgerMenuModel2 bm) {
+    private static void draw(GraphicsContext g, MosaicSkillModel m, BurgerMenuModel bm) {
         var size = m.getSize();
         { // fill background
             Color bkClr = m.getBackgroundColor();
@@ -64,22 +64,22 @@ public final class MosaicSkillImg2 {
     }
 
     /** MosaicSkill image controller implementation for {@link javafx.scene.canvas.Canvas} */
-    public static class MosaicSkillJfxCanvasController extends MosaicSkillController2<javafx.scene.canvas.Canvas, JfxCanvasView<MosaicSkillModel2>> {
+    public static class MosaicSkillJfxCanvasController extends MosaicSkillController<javafx.scene.canvas.Canvas, JfxCanvasView<MosaicSkillModel>> {
 
         public MosaicSkillJfxCanvasController(ESkillLevel skill) {
-            var model = new MosaicSkillModel2(skill);
-            var view = new JfxCanvasView<>(model, g -> MosaicSkillImg2.draw(g, model, getBurgerModel()));
+            var model = new MosaicSkillModel(skill);
+            var view = new JfxCanvasView<>(model, g -> MosaicSkillImg.draw(g, model, getBurgerModel()));
             init(model, view);
         }
 
     }
 
     /** MosaicSkill image controller implementation for {@link javafx.scene.image.Image} */
-    public static class MosaicSkillJfxImageController extends MosaicSkillController2<javafx.scene.image.Image, JfxImageView<MosaicSkillModel2>> {
+    public static class MosaicSkillJfxImageController extends MosaicSkillController<javafx.scene.image.Image, JfxImageView<MosaicSkillModel>> {
 
         public MosaicSkillJfxImageController(ESkillLevel skill) {
-            var model = new MosaicSkillModel2(skill);
-            var view = new JfxImageView<>(model, g -> MosaicSkillImg2.draw(g, model, getBurgerModel()));
+            var model = new MosaicSkillModel(skill);
+            var view = new JfxImageView<>(model, g -> MosaicSkillImg.draw(g, model, getBurgerModel()));
             init(model, view);
         }
 

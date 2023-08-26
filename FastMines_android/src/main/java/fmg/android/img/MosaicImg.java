@@ -17,18 +17,18 @@ import fmg.common.geom.RectDouble;
 import fmg.common.geom.RegionDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.MosaicDrawContext;
-import fmg.core.img.MosaicImageController2;
-import fmg.core.img.MosaicImageModel2;
-import fmg.core.mosaic.MosaicModel2;
+import fmg.core.img.MosaicImageController;
+import fmg.core.img.MosaicImageModel;
+import fmg.core.mosaic.MosaicModel;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
 import fmg.core.types.EState;
-import fmg.core.types.draw.PenBorder2;
+import fmg.core.types.draw.PenBorder;
 
 /** Representable {@link fmg.core.types.EMosaic} as image */
-public final class MosaicImg2 {
-    private MosaicImg2() {}
+public final class MosaicImg {
+    private MosaicImg() {}
 
     private static final Paint textPaint;
 
@@ -37,8 +37,8 @@ public final class MosaicImg2 {
         textPaint.setStyle(Paint.Style.FILL);
     }
 
-    private static void draw(Canvas g, MosaicImageModel2 m) {
-        MosaicImageController2.<Void>draw(m, ctx -> draw(g, ctx));
+    private static void draw(Canvas g, MosaicImageModel m) {
+        MosaicImageController.<Void>draw(m, ctx -> draw(g, ctx));
     }
 
     public static <T> void draw(Canvas g, MosaicDrawContext<T> drawContext) {
@@ -78,7 +78,7 @@ public final class MosaicImg2 {
         }
 
         // 2. paint cells
-        PenBorder2 pen = m.getPenBorder();
+        PenBorder pen = m.getPenBorder();
         paintStroke.setStrokeWidth((float)pen.getWidth());
         SizeDouble offset = m.getMosaicOffset();
         boolean isSimpleDraw = pen.getColorLight().equals(pen.getColorShadow());
@@ -191,7 +191,7 @@ public final class MosaicImg2 {
         g.restore();
     }
 
-    private static RectDouble getStringBounds(MosaicModel2 m, String text) {
+    private static RectDouble getStringBounds(MosaicModel m, String text) {
         // variant 1
         Rect r2 = new Rect();
         textPaint.getTextBounds(text, 0, text.length(), r2);
@@ -202,7 +202,7 @@ public final class MosaicImg2 {
 //        return new RectDouble(textWidth, m.getFontInfo().getSize());
     }
 
-    private static void drawText(Canvas g, MosaicModel2 m, String text, RectDouble rc) {
+    private static void drawText(Canvas g, MosaicModel m, String text, RectDouble rc) {
         if ((text == null) || text.trim().isEmpty())
             return;
 
@@ -213,11 +213,11 @@ public final class MosaicImg2 {
 
 
     /** Mosaic image controller implementation for {@link android.graphics.Bitmap} */
-    public static class MosaicAndroidBitmapController extends MosaicImageController2<Bitmap, AndroidBitmapView<MosaicImageModel2>> {
+    public static class MosaicAndroidBitmapController extends MosaicImageController<Bitmap, AndroidBitmapView<MosaicImageModel>> {
 
         public MosaicAndroidBitmapController() {
-            var model = new MosaicImageModel2();
-            var view = new AndroidBitmapView<>(model, g -> MosaicImg2.draw(g, model));
+            var model = new MosaicImageModel();
+            var view = new AndroidBitmapView<>(model, g -> MosaicImg.draw(g, model));
             init(model, view);
         }
 

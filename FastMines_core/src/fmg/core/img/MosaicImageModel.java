@@ -15,12 +15,12 @@ import java.util.stream.Collectors;
 
 import fmg.common.geom.*;
 import fmg.common.geom.util.FigureHelper;
-import fmg.core.mosaic.MosaicModel2;
+import fmg.core.mosaic.MosaicModel;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.shape.BaseShape;
 
 /** Representable {@link fmg.core.types.EMosaic} as animated image */
-public class MosaicImageModel2 extends MosaicModel2 {
+public class MosaicImageModel extends MosaicModel {
 
     /** Mosaic rotate mode */
     public enum ERotateMode {
@@ -43,7 +43,7 @@ public class MosaicImageModel2 extends MosaicModel2 {
     private final List<RotatedCellContext> rotatedElements = new ArrayList<>();
 
 
-    public MosaicImageModel2() {
+    public MosaicImageModel() {
         super(false);
 
         var pen = getPenBorder();

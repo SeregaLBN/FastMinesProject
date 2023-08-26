@@ -11,17 +11,17 @@ import fmg.common.Color;
 import fmg.common.HSV;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
-import fmg.core.img.BurgerMenuModel2;
-import fmg.core.img.MosaicGroupController2;
-import fmg.core.img.MosaicGroupModel2;
+import fmg.core.img.BurgerMenuModel;
+import fmg.core.img.MosaicGroupController;
+import fmg.core.img.MosaicGroupModel;
 import fmg.core.types.EMosaicGroup;
 import fmg.swing.utils.Cast;
 
 /** Representable {@link fmg.core.types.EMosaicGroup} as image */
-public final class MosaicGroupImg2 {
-    private MosaicGroupImg2() {}
+public final class MosaicGroupImg {
+    private MosaicGroupImg() {}
 
-    private static void draw(Graphics2D g, MosaicGroupModel2 m, BurgerMenuModel2 bm) {
+    private static void draw(Graphics2D g, MosaicGroupModel m, BurgerMenuModel bm) {
         var size = m.getSize();
         { // fill background
             g.setComposite(AlphaComposite.Src);
@@ -62,22 +62,22 @@ public final class MosaicGroupImg2 {
     }
 
     /** MosaicGroup image controller implementation for {@link javax.swing.Icon} */
-    public static class MosaicGroupSwingIconController extends MosaicGroupController2<javax.swing.Icon, SwingIconView<MosaicGroupModel2>> {
+    public static class MosaicGroupSwingIconController extends MosaicGroupController<javax.swing.Icon, SwingIconView<MosaicGroupModel>> {
 
         public MosaicGroupSwingIconController(EMosaicGroup group) {
-            var model = new MosaicGroupModel2(group);
-            var view = new SwingIconView<>(model, g -> MosaicGroupImg2.draw(g, model, getBurgerModel()));
+            var model = new MosaicGroupModel(group);
+            var view = new SwingIconView<>(model, g -> MosaicGroupImg.draw(g, model, getBurgerModel()));
             init(model, view);
         }
 
     }
 
     /** MosaicGroup image controller implementation for {@link java.awt.Image} */
-    public static class MosaicGroupAwtImageController extends MosaicGroupController2<java.awt.Image, AwtImageView<MosaicGroupModel2>> {
+    public static class MosaicGroupAwtImageController extends MosaicGroupController<java.awt.Image, AwtImageView<MosaicGroupModel>> {
 
         public MosaicGroupAwtImageController(EMosaicGroup group) {
-            var model = new MosaicGroupModel2(group);
-            var view = new AwtImageView<>(model, g -> MosaicGroupImg2.draw(g, model, getBurgerModel()));
+            var model = new MosaicGroupModel(group);
+            var view = new AwtImageView<>(model, g -> MosaicGroupImg.draw(g, model, getBurgerModel()));
             init(model, view);
         }
 

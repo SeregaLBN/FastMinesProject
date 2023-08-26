@@ -19,16 +19,16 @@ import fmg.common.Pair;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
-import fmg.core.img.BurgerMenuModel2;
-import fmg.core.img.MosaicSkillController2;
-import fmg.core.img.MosaicSkillModel2;
+import fmg.core.img.BurgerMenuModel;
+import fmg.core.img.MosaicSkillController;
+import fmg.core.img.MosaicSkillModel;
 import fmg.core.types.ESkillLevel;
 
 /** Representable {@link ESkillLevel} as image */
-public final class MosaicSkillImg2 {
-    private MosaicSkillImg2() {}
+public final class MosaicSkillImg {
+    private MosaicSkillImg() {}
 
-    private static void draw(Canvas g, MosaicSkillModel2 m, BurgerMenuModel2 bm) {
+    private static void draw(Canvas g, MosaicSkillModel m, BurgerMenuModel bm) {
         var size = m.getSize();
         { // fill background
             var bkClr = new HSV(m.getBackgroundColor()).addHue(m.getBackgroundAngle()).toColor();
@@ -80,7 +80,7 @@ public final class MosaicSkillImg2 {
         // draw burger menu
         if (m.getMosaicSkill() != null)
             return;
-        List<BurgerMenuModel2.LineInfo> coords = bm.getCoords().collect(Collectors.toList());
+        List<BurgerMenuModel.LineInfo> coords = bm.getCoords().collect(Collectors.toList());
         if (!coords.isEmpty()) {
             boolean simple = false;
             if (simple) {
@@ -96,7 +96,7 @@ public final class MosaicSkillImg2 {
                 Bitmap bmpBurger = Bitmap.createBitmap((int)width, (int)height, Bitmap.Config.ARGB_8888);
                 Canvas canvasBurger = new Canvas(bmpBurger);
                 double penWidth = 0;
-                for (BurgerMenuModel2.LineInfo li : coords) {
+                for (BurgerMenuModel.LineInfo li : coords) {
                     penWidth = li.penWidht;
                     li.from.move(-pad.left, -pad.top);
                     li.to  .move(-pad.left, -pad.top);
@@ -122,11 +122,11 @@ public final class MosaicSkillImg2 {
     }
 
     /** MosaicSkill image controller implementation for {@link Bitmap} */
-    public static class MosaicSkillAndroidBitmapController extends MosaicSkillController2<Bitmap, AndroidBitmapView<MosaicSkillModel2>> {
+    public static class MosaicSkillAndroidBitmapController extends MosaicSkillController<Bitmap, AndroidBitmapView<MosaicSkillModel>> {
 
         public MosaicSkillAndroidBitmapController(ESkillLevel group) {
-            var model = new MosaicSkillModel2(group);
-            var view = new AndroidBitmapView<>(model, g -> MosaicSkillImg2.draw(g, model, getBurgerModel()));
+            var model = new MosaicSkillModel(group);
+            var view = new AndroidBitmapView<>(model, g -> MosaicSkillImg.draw(g, model, getBurgerModel()));
             init(model, view);
         }
 

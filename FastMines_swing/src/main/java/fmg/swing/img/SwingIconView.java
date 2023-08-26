@@ -7,11 +7,11 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.function.Consumer;
 
-import fmg.core.img.IImageModel2;
-import fmg.core.img.IImageView2;
+import fmg.core.img.IImageModel;
+import fmg.core.img.IImageView;
 
 /** Image view implementation over {@link javax.swing.Icon} */
-public class SwingIconView<TModel extends IImageModel2> implements IImageView2<javax.swing.Icon> {
+public class SwingIconView<TModel extends IImageModel> implements IImageView<javax.swing.Icon> {
 
     private final TModel model;
     private final Consumer<Graphics2D> draw;

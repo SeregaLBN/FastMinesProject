@@ -13,26 +13,26 @@ import javax.swing.event.MouseInputListener;
 
 import fmg.common.Logger;
 import fmg.common.geom.SizeDouble;
-import fmg.core.mosaic.MosaicController2;
-import fmg.core.mosaic.MosaicModel2;
-import fmg.swing.img.Flag2;
-import fmg.swing.img.Logo2;
+import fmg.core.mosaic.MosaicController;
+import fmg.core.mosaic.MosaicModel;
+import fmg.swing.img.Flag;
+import fmg.swing.img.Logo;
 import fmg.swing.utils.Cast;
 
 /** MVC: controller. SWING implementation */
-public class MosaicJPanelController2 extends MosaicController2<JPanel, MosaicJPanelView2> {
+public class MosaicJPanelController extends MosaicController<JPanel, MosaicJPanelView> {
 
-    private final Flag2.FlagSwingIconController imgFlag;
-    private final Logo2.LogoSwingIconController imgMine;
+    private final Flag.FlagSwingIconController imgFlag;
+    private final Logo.LogoSwingIconController imgMine;
     private MosaicMouseListener mosaicMouseListener;
 
-    public MosaicJPanelController2() {
-        imgFlag = new Flag2.FlagSwingIconController();
-        imgMine = new Logo2.LogoSwingIconController();
+    public MosaicJPanelController() {
+        imgFlag = new Flag.FlagSwingIconController();
+        imgMine = new Logo.LogoSwingIconController();
         imgMine.asMine();
 
-        var m = new MosaicModel2(true);
-        var v = new MosaicJPanelView2(m, imgFlag, imgMine);
+        var m = new MosaicModel(true);
+        var v = new MosaicJPanelView(m, imgFlag, imgMine);
         init(m, v);
     }
 
@@ -48,10 +48,10 @@ public class MosaicJPanelController2 extends MosaicController2<JPanel, MosaicJPa
         @Override
         public void mousePressed(MouseEvent e) {
             if (SwingUtilities.isLeftMouseButton(e)) {
-                MosaicJPanelController2.this.mousePressed(Cast.toPointDouble(e.getPoint()), true);
+                MosaicJPanelController.this.mousePressed(Cast.toPointDouble(e.getPoint()), true);
             } else
             if (SwingUtilities.isRightMouseButton(e)) {
-                MosaicJPanelController2.this.mousePressed(Cast.toPointDouble(e.getPoint()), false);
+                MosaicJPanelController.this.mousePressed(Cast.toPointDouble(e.getPoint()), false);
             }
         }
 
@@ -67,10 +67,10 @@ public class MosaicJPanelController2 extends MosaicController2<JPanel, MosaicJPa
             }
 
             if (SwingUtilities.isLeftMouseButton(e)) {
-                MosaicJPanelController2.this.mouseReleased(Cast.toPointDouble(e.getPoint()), true);
+                MosaicJPanelController.this.mouseReleased(Cast.toPointDouble(e.getPoint()), true);
             } else
             if (SwingUtilities.isRightMouseButton(e)) {
-                MosaicJPanelController2.this.mouseReleased(Cast.toPointDouble(e.getPoint()), false);
+                MosaicJPanelController.this.mouseReleased(Cast.toPointDouble(e.getPoint()), false);
             }
         }
 
@@ -85,7 +85,7 @@ public class MosaicJPanelController2 extends MosaicController2<JPanel, MosaicJPa
         @Override
         public void focusLost(FocusEvent e) {
             //Logger.info("Mosaic::MosaicMouseListeners::focusLost: " + e);
-            MosaicJPanelController2.this.mouseFocusLost();
+            MosaicJPanelController.this.mouseFocusLost();
         }
         @Override
         public void focusGained(FocusEvent e) {}

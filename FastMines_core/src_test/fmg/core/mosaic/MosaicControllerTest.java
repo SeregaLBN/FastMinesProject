@@ -24,7 +24,7 @@ public class MosaicControllerTest {
     static final int TEST_SIZE_W = MosaicModelTest.TEST_SIZE_W;
     static final int TEST_SIZE_H = MosaicModelTest.TEST_SIZE_H;
 
-    class MosaicTestView implements IMosaicView2<Object> {
+    class MosaicTestView implements IMosaicView<Object> {
         private boolean valid;
         private Object img;
         private int drawCount;
@@ -59,9 +59,9 @@ public class MosaicControllerTest {
         }
     }
 
-    class MosaicTestController extends MosaicController2<Object, MosaicTestView> {
+    class MosaicTestController extends MosaicController<Object, MosaicTestView> {
 
-        private final MosaicModel2 model = new MosaicModel2(true);
+        private final MosaicModel model = new MosaicModel(true);
         private final MosaicTestView view = new MosaicTestView();
 
         MosaicTestController() {

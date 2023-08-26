@@ -11,7 +11,7 @@ import fmg.common.Color;
 import fmg.common.geom.DoubleExt;
 
 /** Характеристики кисти у рамки ячейки */
-public class PenBorder2 {
+public class PenBorder {
 
     /** may be changed */
     public static double DefaultWidth = 3;
@@ -22,11 +22,11 @@ public class PenBorder2 {
 
     private Consumer<String> changedCallback;
 
-    public PenBorder2() {
+    public PenBorder() {
         this(Color.Black(), Color.White(), DefaultWidth);
     }
 
-    public PenBorder2(
+    public PenBorder(
         Color colorShadow,
         Color colorLight,
         double iWidth)
@@ -96,7 +96,7 @@ public class PenBorder2 {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        PenBorder2 other = (PenBorder2)obj;
+        PenBorder other = (PenBorder)obj;
         return Objects.equals(colorLight, other.colorLight)
             && Objects.equals(colorShadow, other.colorShadow)
             && (Double.doubleToLongBits(width) == Double.doubleToLongBits(other.width));

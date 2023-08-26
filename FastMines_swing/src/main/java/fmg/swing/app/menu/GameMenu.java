@@ -13,11 +13,11 @@ import javax.swing.*;
 import fmg.common.Color;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
-import fmg.core.img.MosaicSkillModel2;
+import fmg.core.img.MosaicSkillModel;
 import fmg.core.types.ESkillLevel;
 import fmg.swing.app.FastMinesApp;
 import fmg.swing.app.KeyCombo;
-import fmg.swing.img.MosaicSkillImg2;
+import fmg.swing.img.MosaicSkillImg;
 
 public class GameMenu implements AutoCloseable {
 
@@ -25,7 +25,7 @@ public class GameMenu implements AutoCloseable {
     private final JMenu menu = new JMenu("Game");
     private JMenuItem anew;
     private Map<ESkillLevel, JRadioButtonMenuItem> skillLevel;
-    private List<MosaicSkillImg2.MosaicSkillSwingIconController> skillLevelImages;
+    private List<MosaicSkillImg.MosaicSkillSwingIconController> skillLevelImages;
     private JMenuItem playerManage;
     private JMenuItem exit;
 
@@ -100,8 +100,8 @@ public class GameMenu implements AutoCloseable {
                 menuItem.setAccelerator(KeyCombo.getKeyStroke_SkillLevel(val));
                 menuItem.addActionListener(app.getHandlers().getSkillLevelAction(val));
 
-                var img = new MosaicSkillImg2.MosaicSkillSwingIconController(val);
-                MosaicSkillModel2 imgModel = img.getModel();
+                var img = new MosaicSkillImg.MosaicSkillSwingIconController(val);
+                MosaicSkillModel imgModel = img.getModel();
                 double sq = MainMenu.MENU_HEIGHT_WITH_ICON * MainMenu.ZOOM_QUALITY_FACTOR;
                 imgModel.setSize(new SizeDouble(sq, sq));
                 skillLevelImages.add(img);

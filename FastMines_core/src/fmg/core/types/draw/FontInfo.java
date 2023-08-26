@@ -11,7 +11,7 @@ import fmg.common.Logger;
 import fmg.common.geom.DoubleExt;
 
 /** Minimal font descripton */
-public class FontInfo2 {
+public class FontInfo {
 
     /** font name */
     private String name = "SansSerif"; // Arial
@@ -24,8 +24,8 @@ public class FontInfo2 {
 
     private Consumer<String> changedCallback;
 
-    public FontInfo2() { }
-    public FontInfo2(String fontName, boolean isBold, double fontSize) {
+    public FontInfo() { }
+    public FontInfo(String fontName, boolean isBold, double fontSize) {
         this.name = fontName;
         this.bold = isBold;
         this.size = fontSize;
@@ -83,7 +83,7 @@ public class FontInfo2 {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        FontInfo2 other = (FontInfo2)obj;
+        FontInfo other = (FontInfo)obj;
         return (bold == other.bold)
             && Objects.equals(name, other.name)
             && (Double.doubleToLongBits(size) == Double.doubleToLongBits(other.size));

@@ -13,7 +13,7 @@ import java.util.function.Consumer;
  * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
  * @param <TView> image view
  * @param <TModel> image model */
-public class ImageController2<TImage, TView extends IImageView2<TImage>, TModel extends IImageModel2> implements IImageController2<TImage, TModel> {
+public class ImageController<TImage, TView extends IImageView<TImage>, TModel extends IImageModel> implements IImageController<TImage, TModel> {
 
     protected TModel model;
     protected TView view;

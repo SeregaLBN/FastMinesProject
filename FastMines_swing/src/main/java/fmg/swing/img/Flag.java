@@ -9,16 +9,16 @@ import java.awt.geom.Point2D;
 
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.FlagModel2;
-import fmg.core.img.ImageController2;
+import fmg.core.img.FlagModel;
+import fmg.core.img.ImageController;
 
 /** Flag image */
-public final class Flag2 {
-    private Flag2() {}
+public final class Flag {
+    private Flag() {}
 
     private static final Color TRANSPARENT = new Color(0xFF, 0xFF, 0xFF, 0);
 
-    private static void draw(Graphics2D g, FlagModel2 model) {
+    private static void draw(Graphics2D g, FlagModel model) {
         SizeDouble size = model.getSize();
         BoundDouble padding = model.getPadding();
 
@@ -76,22 +76,22 @@ public final class Flag2 {
     }
 
     /** Flag image controller implementation for {@link javax.swing.Icon} */
-    public static class FlagSwingIconController extends ImageController2<javax.swing.Icon, SwingIconView<FlagModel2>, FlagModel2> {
+    public static class FlagSwingIconController extends ImageController<javax.swing.Icon, SwingIconView<FlagModel>, FlagModel> {
 
         public FlagSwingIconController() {
-            var model = new FlagModel2();
-            var view = new SwingIconView<>(model, g -> Flag2.draw(g, model));
+            var model = new FlagModel();
+            var view = new SwingIconView<>(model, g -> Flag.draw(g, model));
             init(model, view);
         }
 
     }
 
     /** Flag image controller implementation for {@link java.awt.Image} */
-    public static class FlagAwtImageController extends ImageController2<java.awt.Image, AwtImageView<FlagModel2>, FlagModel2> {
+    public static class FlagAwtImageController extends ImageController<java.awt.Image, AwtImageView<FlagModel>, FlagModel> {
 
         public FlagAwtImageController() {
-            var model = new FlagModel2();
-            var view = new AwtImageView<>(model, g -> Flag2.draw(g, model));
+            var model = new FlagModel();
+            var view = new AwtImageView<>(model, g -> Flag.draw(g, model));
             init(model, view);
         }
 

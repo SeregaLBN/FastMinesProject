@@ -6,14 +6,14 @@ import javafx.scene.paint.Color;
 
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.FlagModel2;
-import fmg.core.img.ImageController2;
+import fmg.core.img.FlagModel;
+import fmg.core.img.ImageController;
 
 /** Flag image */
-public final class Flag2 {
-    private Flag2() {}
+public final class Flag {
+    private Flag() {}
 
-    private static void draw(GraphicsContext g, FlagModel2 model) {
+    private static void draw(GraphicsContext g, FlagModel model) {
         SizeDouble size = model.getSize();
         BoundDouble padding = model.getPadding();
 
@@ -63,22 +63,22 @@ public final class Flag2 {
     }
 
     /** Flag image controller implementation for {@link javafx.scene.canvas.Canvas} */
-    public static class FlagJfxCanvasController extends ImageController2<javafx.scene.canvas.Canvas, JfxCanvasView<FlagModel2>, FlagModel2> {
+    public static class FlagJfxCanvasController extends ImageController<javafx.scene.canvas.Canvas, JfxCanvasView<FlagModel>, FlagModel> {
 
         public FlagJfxCanvasController() {
-            var model = new FlagModel2();
-            var view = new JfxCanvasView<>(model, g -> Flag2.draw(g, model));
+            var model = new FlagModel();
+            var view = new JfxCanvasView<>(model, g -> Flag.draw(g, model));
             init(model, view);
         }
 
     }
 
     /** Flag image controller implementation for {@link javafx.scene.image.Image} */
-    public static class FlagJfxImageController extends ImageController2<javafx.scene.image.Image, JfxImageView<FlagModel2>, FlagModel2> {
+    public static class FlagJfxImageController extends ImageController<javafx.scene.image.Image, JfxImageView<FlagModel>, FlagModel> {
 
         public FlagJfxImageController() {
-            var model = new FlagModel2();
-            var view = new JfxImageView<>(model, g -> Flag2.draw(g, model));
+            var model = new FlagModel();
+            var view = new JfxImageView<>(model, g -> Flag.draw(g, model));
             init(model, view);
         }
 

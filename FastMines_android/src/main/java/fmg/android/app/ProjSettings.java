@@ -11,8 +11,8 @@ import fmg.common.Color;
 import fmg.common.Logger;
 import fmg.common.ui.UiInvoker;
 import fmg.core.app.AProjSettings;
-import fmg.core.mosaic.MosaicModel2;
-import fmg.core.types.draw.PenBorder2;
+import fmg.core.mosaic.MosaicModel;
+import fmg.core.types.draw.PenBorder;
 
 public final class ProjSettings extends AProjSettings {
     private ProjSettings() {}
@@ -31,11 +31,11 @@ public final class ProjSettings extends AProjSettings {
         UiInvoker.Animator = Animator::getSingleton;
         UiInvoker.TimeCreator = Timer::new;
 
-        PenBorder2.DefaultWidth = Cast.dpToPx(2.25f);
+        PenBorder.DefaultWidth = Cast.dpToPx(2.25f);
 
         // various background colors: #E6FFFFFF #FFEEEEEE #FFFAFAFA
 //      MosaicDrawModel.DefaultBkColor   = new Color(0xFFFAFAFA);
-        MosaicModel2   .DefaultCellColor = new Color(0xFFEEEEEE);
+        MosaicModel    .DefaultCellColor = new Color(0xFFEEEEEE);
         BaseDataSource .DefaultBkColor   = new Color(0xFFEEEEEE);
 
         IS_MOBILE = true;

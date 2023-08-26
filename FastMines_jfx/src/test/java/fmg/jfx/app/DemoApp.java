@@ -34,17 +34,17 @@ import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
-import fmg.core.img.IImageController2;
-import fmg.core.img.MosaicGroupController2;
-import fmg.core.img.MosaicImageController2;
-import fmg.core.img.SmileModel2.EFaceType;
-import fmg.core.img.TestDrawing2;
-import fmg.core.img.TestDrawing2.CellTilingInfo;
+import fmg.core.img.IImageController;
+import fmg.core.img.MosaicGroupController;
+import fmg.core.img.MosaicImageController;
+import fmg.core.img.SmileModel.EFaceType;
+import fmg.core.img.TestDrawing;
+import fmg.core.img.TestDrawing.CellTilingInfo;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.core.types.ESkillLevel;
 import fmg.jfx.img.*;
-import fmg.jfx.mosaic.MosaicCanvasController2;
+import fmg.jfx.mosaic.MosaicCanvasController;
 import fmg.jfx.utils.Cast;
 
 /** live UI test application
@@ -54,11 +54,11 @@ import fmg.jfx.utils.Cast;
   gradle :FastMines_jfx:runDemoApp
 
  */
-public final class DemoApp2 extends Application {
+public final class DemoApp extends Application {
 
     static final int MARGIN = 10;
 
-    private TestDrawing2 td;
+    private TestDrawing td;
     private Stage primaryStage;
     private Pane pane;
     private Canvas canvas;
@@ -69,7 +69,7 @@ public final class DemoApp2 extends Application {
     // #region images Fabrica
     public void testMosaicControl() {
         testApp(() -> {
-            MosaicCanvasController2 ctrllr = new MosaicCanvasController2();
+            MosaicCanvasController ctrllr = new MosaicCanvasController();
             if (ThreadLocalRandom.current().nextBoolean()) {
                 // unmodified controller test
             } else {
@@ -94,9 +94,9 @@ public final class DemoApp2 extends Application {
             // test all
             Stream.of(EMosaic.values())
                 .map(e -> {
-                        MosaicImageController2<?, ?> ctrlr = ThreadLocalRandom.current().nextBoolean()
-                                ? new MosaicImg2.MosaicJfxCanvasController()
-                                : new MosaicImg2.MosaicJfxImageController();
+                        MosaicImageController<?, ?> ctrlr = ThreadLocalRandom.current().nextBoolean()
+                                ? new MosaicImg.MosaicJfxCanvasController()
+                                : new MosaicImg.MosaicJfxImageController();
                         ctrlr.getModel().setMosaicType(e);
                         return ctrlr;
                     })
@@ -106,8 +106,8 @@ public final class DemoApp2 extends Application {
         testApp(() ->
             Stream.concat(Stream.of((EMosaicGroup)null),
                           Stream.of(EMosaicGroup.values()))
-                .map(e -> new Pair<>((MosaicGroupController2<?,?>)new MosaicGroupImg2.MosaicGroupJfxCanvasController(e),
-                                     (MosaicGroupController2<?,?>)new MosaicGroupImg2.MosaicGroupJfxImageController (e)))
+                .map(e -> new Pair<>((MosaicGroupController<?,?>)new MosaicGroupImg.MosaicGroupJfxCanvasController(e),
+                                     (MosaicGroupController<?,?>)new MosaicGroupImg.MosaicGroupJfxImageController (e)))
                 .flatMap(x -> Stream.of(x.first, x.second))
         );
     }
@@ -115,27 +115,27 @@ public final class DemoApp2 extends Application {
         testApp(() ->
             Stream.concat(Stream.of((ESkillLevel)null),
                           Stream.of(ESkillLevel.values()))
-                .map(e -> new Pair<>(new MosaicSkillImg2.MosaicSkillJfxCanvasController(e),
-                                     new MosaicSkillImg2.MosaicSkillJfxImageController (e)))
+                .map(e -> new Pair<>(new MosaicSkillImg.MosaicSkillJfxCanvasController(e),
+                                     new MosaicSkillImg.MosaicSkillJfxImageController (e)))
                 .flatMap(x -> Stream.of(x.first, x.second))
         );
     }
     public void testLogo() {
-        testApp(() -> Stream.of(new Logo2.LogoJfxImageController()
-                              , new Logo2.LogoJfxCanvasController()
-                              , new Logo2.LogoJfxImageController()
-                              , new Logo2.LogoJfxCanvasController()
-                              , new Logo2.LogoJfxImageController().asMine()
-                              , new Logo2.LogoJfxCanvasController().asMine()));
+        testApp(() -> Stream.of(new Logo.LogoJfxImageController()
+                              , new Logo.LogoJfxCanvasController()
+                              , new Logo.LogoJfxImageController()
+                              , new Logo.LogoJfxCanvasController()
+                              , new Logo.LogoJfxImageController().asMine()
+                              , new Logo.LogoJfxCanvasController().asMine()));
     }
     public void testFlag() {
-        testApp(() -> Stream.of(new Flag2.FlagJfxCanvasController()
-                              , new Flag2.FlagJfxImageController()));
+        testApp(() -> Stream.of(new Flag.FlagJfxCanvasController()
+                              , new Flag.FlagJfxImageController()));
     }
     public void testSmile() {
         testApp(() -> Stream.of(EFaceType.values())
-                    .map(e -> Stream.of(new Smile2.SmileJfxCanvasController(e),
-                                        new Smile2.SmileJfxImageController(e)))
+                    .map(e -> Stream.of(new Smile.SmileJfxCanvasController(e),
+                                        new Smile.SmileJfxImageController(e)))
                     .flatMap(x -> x));
     }
     // #endregion
@@ -145,7 +145,7 @@ public final class DemoApp2 extends Application {
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
 
-        td = new TestDrawing2("JFX");
+        td = new TestDrawing("JFX");
 
         onCreateImages = new Runnable[] {
             this::testMosaicControl,
@@ -215,8 +215,8 @@ public final class DemoApp2 extends Application {
         void apply(boolean t1, boolean t2, boolean t3);
     }
 
-    void testApp(Supplier<Stream<IImageController2<?,?>>> funcGetImages) {
-        List<IImageController2<?,?>> images = funcGetImages.get().collect(Collectors.toList());
+    void testApp(Supplier<Stream<IImageController<?,?>>> funcGetImages) {
+        List<IImageController<?,?>> images = funcGetImages.get().collect(Collectors.toList());
         primaryStage.setTitle(td.getTitle(images));
         pane.getChildren().remove(1, pane.getChildren().size());
 
@@ -241,7 +241,7 @@ public final class DemoApp2 extends Application {
             double sizeH = canvas.getHeight();
             RectDouble rc = new RectDouble(MARGIN, MARGIN, sizeW - MARGIN * 2, sizeH - MARGIN * 2); // inner rect where drawing images as tiles
 
-            TestDrawing2.CellTilingResult2 ctr = td.cellTiling(rc, images, testTransparent[0]);
+            TestDrawing.CellTilingResult2 ctr = td.cellTiling(rc, images, testTransparent[0]);
             SizeDouble imgSize = ctr.imageSize;
             if (imgSize.width <= 0 || imgSize.height <= 0)
                 return;
@@ -270,7 +270,7 @@ public final class DemoApp2 extends Application {
                   //gc.setLineWidth(1);
                     gc.strokeRect(rc.x, rc.y, rc.width, rc.height);
 
-                    Function<IImageController2<?,?>, CellTilingInfo> callback = ctr.itemCallback;
+                    Function<IImageController<?,?>, CellTilingInfo> callback = ctr.itemCallback;
                     images.forEach(imgController -> {
                         CellTilingInfo cti = callback.apply(imgController);
                         PointDouble offset = cti.imageOffset;
@@ -290,9 +290,9 @@ public final class DemoApp2 extends Application {
             };
             timer[0].start();
 
-            Function<IImageController2<?,?>, CellTilingInfo> callback = ctr.itemCallback;
-            for (IImageController2<?,?> imgObj : images) {
-                TestDrawing2.CellTilingInfo cti = callback.apply(imgObj);
+            Function<IImageController<?,?>, CellTilingInfo> callback = ctr.itemCallback;
+            for (IImageController<?,?> imgObj : images) {
+                TestDrawing.CellTilingInfo cti = callback.apply(imgObj);
                 PointDouble offset = cti.imageOffset;
 
                 if (createImgControls) {
@@ -361,7 +361,7 @@ public final class DemoApp2 extends Application {
             pane. widthProperty().removeListener(onSizeWListener);
             pane.heightProperty().removeListener(onSizeHListener);
             canvas.removeEventFilter(MouseEvent.MOUSE_PRESSED, mouseHandler);
-            images.forEach(IImageController2::close);
+            images.forEach(IImageController::close);
             //images.clear(); // unmodifiable list
             //images = null; // not final
         };

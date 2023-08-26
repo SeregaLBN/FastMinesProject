@@ -7,17 +7,17 @@ import java.util.List;
 
 import fmg.common.HSV;
 import fmg.common.geom.PointDouble;
-import fmg.core.img.LogoController2;
-import fmg.core.img.LogoModel2;
+import fmg.core.img.LogoController;
+import fmg.core.img.LogoModel;
 import fmg.swing.utils.Cast;
 
 /** Main logo image */
-public final class Logo2 {
-    private Logo2() {}
+public final class Logo {
+    private Logo() {}
 
     private static final Color TRANSPARENT = new Color(0xFF, 0xFF, 0xFF, 0);
 
-    private static void draw(Graphics2D g, LogoModel2 lm) {
+    private static void draw(Graphics2D g, LogoModel lm) {
         var size = lm.getSize();
 
         { // fill background
@@ -115,22 +115,22 @@ public final class Logo2 {
 
 
     /** Logo image controller implementation for {@link javax.swing.Icon} */
-    public static class LogoSwingIconController extends LogoController2<javax.swing.Icon, SwingIconView<LogoModel2>> {
+    public static class LogoSwingIconController extends LogoController<javax.swing.Icon, SwingIconView<LogoModel>> {
 
         public LogoSwingIconController() {
-            var model = new LogoModel2();
-            var view = new SwingIconView<>(model, g -> Logo2.draw(g, model));
+            var model = new LogoModel();
+            var view = new SwingIconView<>(model, g -> Logo.draw(g, model));
             init(model, view);
         }
 
     }
 
     /** Logo image controller implementation for {@link java.awt.Image} */
-    public static class LogoAwtImageController extends LogoController2<java.awt.Image, AwtImageView<LogoModel2>> {
+    public static class LogoAwtImageController extends LogoController<java.awt.Image, AwtImageView<LogoModel>> {
 
         public LogoAwtImageController() {
-            var model = new LogoModel2();
-            var view = new AwtImageView<>(model, g -> Logo2.draw(g, model));
+            var model = new LogoModel();
+            var view = new AwtImageView<>(model, g -> Logo.draw(g, model));
             init(model, view);
         }
 

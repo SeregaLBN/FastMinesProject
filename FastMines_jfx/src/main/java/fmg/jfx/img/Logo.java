@@ -13,15 +13,15 @@ import javafx.scene.shape.StrokeLineCap;
 
 import fmg.common.HSV;
 import fmg.common.geom.PointDouble;
-import fmg.core.img.LogoController2;
-import fmg.core.img.LogoModel2;
+import fmg.core.img.LogoController;
+import fmg.core.img.LogoModel;
 import fmg.jfx.utils.Cast;
 
 /** Main logo image */
-public final class Logo2 {
-    private Logo2() {}
+public final class Logo {
+    private Logo() {}
 
-    private static void draw(GraphicsContext g, LogoModel2 lm) {
+    private static void draw(GraphicsContext g, LogoModel lm) {
         var size = lm.getSize();
         // fill background
         g.clearRect(0, 0, size.width, size.height);
@@ -125,22 +125,22 @@ public final class Logo2 {
 
 
     /** Logo image controller implementation for {@link javafx.scene.canvas.Canvas} */
-    public static class LogoJfxCanvasController extends LogoController2<javafx.scene.canvas.Canvas, JfxCanvasView<LogoModel2>> {
+    public static class LogoJfxCanvasController extends LogoController<javafx.scene.canvas.Canvas, JfxCanvasView<LogoModel>> {
 
         public LogoJfxCanvasController() {
-            var model = new LogoModel2();
-            var view = new JfxCanvasView<>(model, g -> Logo2.draw(g, model));
+            var model = new LogoModel();
+            var view = new JfxCanvasView<>(model, g -> Logo.draw(g, model));
             init(model, view);
         }
 
     }
 
     /** Logo image controller implementation for {@link javafx.scene.image.Image} */
-    public static class LogoJfxImageController extends LogoController2<javafx.scene.image.Image, JfxImageView<LogoModel2>> {
+    public static class LogoJfxImageController extends LogoController<javafx.scene.image.Image, JfxImageView<LogoModel>> {
 
         public LogoJfxImageController() {
-            var model = new LogoModel2();
-            var view = new JfxImageView<>(model, g -> Logo2.draw(g, model));
+            var model = new LogoModel();
+            var view = new JfxImageView<>(model, g -> Logo.draw(g, model));
             init(model, view);
         }
 

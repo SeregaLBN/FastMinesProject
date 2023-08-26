@@ -15,10 +15,10 @@ import fmg.common.Logger;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
-import fmg.core.img.LogoModel2;
-import fmg.core.img.SmileModel2;
-import fmg.swing.img.Logo2;
-import fmg.swing.img.Smile2;
+import fmg.core.img.LogoModel;
+import fmg.core.img.SmileModel;
+import fmg.swing.img.Logo;
+import fmg.swing.img.Smile;
 import fmg.swing.utils.GuiTools;
 import fmg.swing.utils.ImgUtils;
 
@@ -31,8 +31,8 @@ public class AboutDlg implements AutoCloseable {
     private static final String HTML_A_HREF = "'><a href='";
 
     private final JDialog dialog;
-    private Logo2.LogoSwingIconController logo;
-    private Smile2.SmileSwingIconController smile;
+    private Logo.LogoSwingIconController logo;
+    private Smile.SmileSwingIconController smile;
     private JButton btnLogo;
 
     public AboutDlg(JFrame parent, boolean modal) {
@@ -128,8 +128,8 @@ public class AboutDlg implements AutoCloseable {
 
         int icoSize = ICON_SIZE * IMAGE_ZOOM_QUALITY;
         if (logo == null)
-            logo = new Logo2.LogoSwingIconController();
-        LogoModel2 lm = logo.getModel();
+            logo = new Logo.LogoSwingIconController();
+        LogoModel lm = logo.getModel();
         lm.setUseGradient(true);
         lm.setSize(new SizeDouble(icoSize, icoSize));
         lm.setPadding(new BoundDouble(1));
@@ -139,7 +139,7 @@ public class AboutDlg implements AutoCloseable {
         btnLogo = new JButton(ImgUtils.zoom(logo.getImage(), ICON_SIZE, ICON_SIZE));
         logo.setListener(this::onLogoPropertyChanged);
 
-        smile = new Smile2.SmileSwingIconController(SmileModel2.EFaceType.Face_Disappointed);
+        smile = new Smile.SmileSwingIconController(SmileModel.EFaceType.Face_Disappointed);
         smile.getModel().setSize(new SizeDouble(icoSize, icoSize));
         btnLogo.setPressedIcon(ImgUtils.zoom(smile.getImage(), ICON_SIZE, ICON_SIZE));
         btnLogo.setFocusable(false);

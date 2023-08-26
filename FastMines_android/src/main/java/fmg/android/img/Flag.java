@@ -8,14 +8,14 @@ import android.graphics.Path;
 import android.graphics.PointF;
 
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.FlagModel2;
-import fmg.core.img.ImageController2;
+import fmg.core.img.FlagModel;
+import fmg.core.img.ImageController;
 
 /** Flag image */
-public final class Flag2 {
-    private Flag2() {}
+public final class Flag {
+    private Flag() {}
 
-    private static void draw(Canvas g, FlagModel2 fm) {
+    private static void draw(Canvas g, FlagModel fm) {
         SizeDouble size = fm.getSize();
         float h = (float)(size.height / 100.0);
         float w = (float)(size.width  / 100.0);
@@ -53,11 +53,11 @@ public final class Flag2 {
     }
 
     /** Flag image controller implementation for {@link android.graphics.Bitmap} */
-    public static class FlagAndroidBitmapController extends ImageController2<Bitmap, AndroidBitmapView<FlagModel2>, FlagModel2> {
+    public static class FlagAndroidBitmapController extends ImageController<Bitmap, AndroidBitmapView<FlagModel>, FlagModel> {
 
         public FlagAndroidBitmapController() {
-            var model = new FlagModel2();
-            var view = new AndroidBitmapView<>(model, g -> Flag2.draw(g, model));
+            var model = new FlagModel();
+            var view = new AndroidBitmapView<>(model, g -> Flag.draw(g, model));
             init(model, view);
         }
 

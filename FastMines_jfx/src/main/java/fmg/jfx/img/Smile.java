@@ -8,17 +8,17 @@ import javafx.scene.shape.*;
 
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.ImageController2;
-import fmg.core.img.SmileModel2;
-import fmg.core.img.SmileModel2.EFaceType;
+import fmg.core.img.ImageController;
+import fmg.core.img.SmileModel;
+import fmg.core.img.SmileModel.EFaceType;
 import fmg.jfx.utils.Cast;
 import fmg.jfx.utils.ShapeConverter;
 
 /** Smile images */
-public final class Smile2 {
-    private Smile2() {}
+public final class Smile {
+    private Smile() {}
 
-    private static void draw(GraphicsContext g, SmileModel2 sm) {
+    private static void draw(GraphicsContext g, SmileModel sm) {
         // save
         Paint oldFill = g.getFill();
         Paint oldStroke = g.getStroke();
@@ -35,8 +35,8 @@ public final class Smile2 {
         g.setStroke(oldStroke);
     }
 
-    private static void drawBody(GraphicsContext g, SmileModel2 sm) {
-        SmileModel2.EFaceType type = sm.getFaceType();
+    private static void drawBody(GraphicsContext g, SmileModel sm) {
+        SmileModel.EFaceType type = sm.getFaceType();
         if (type == EFaceType.Eyes_OpenDisabled || type == EFaceType.Eyes_ClosedDisabled)
             return;
 
@@ -92,8 +92,8 @@ public final class Smile2 {
         }
     }
 
-    private static void drawEyes(GraphicsContext g, SmileModel2 sm) {
-        SmileModel2.EFaceType type = sm.getFaceType();
+    private static void drawEyes(GraphicsContext g, SmileModel sm) {
+        SmileModel.EFaceType type = sm.getFaceType();
         double width  = sm.getSize().width;
         double height = sm.getSize().height;
 
@@ -240,8 +240,8 @@ public final class Smile2 {
         g.setFill(fillOld);
     }
 
-    private static void drawMouth(GraphicsContext g, SmileModel2 sm) {
-        SmileModel2.EFaceType type = sm.getFaceType();
+    private static void drawMouth(GraphicsContext g, SmileModel sm) {
+        SmileModel.EFaceType type = sm.getFaceType();
         double width  = sm.getSize().width;
         double height = sm.getSize().height;
 
@@ -355,7 +355,7 @@ public final class Smile2 {
         g.setFill(fillOld);
     }
 
-    private static void eyeOpened(GraphicsContext g, boolean right, boolean disabled, SmileModel2 sm) {
+    private static void eyeOpened(GraphicsContext g, boolean right, boolean disabled, SmileModel sm) {
         double width  = sm.getSize().width;
         double height = sm.getSize().height;
 
@@ -406,7 +406,7 @@ public final class Smile2 {
         }
     }
 
-    private static void eyeClosed(GraphicsContext g, boolean right, boolean disabled, SmileModel2 sm) {
+    private static void eyeClosed(GraphicsContext g, boolean right, boolean disabled, SmileModel sm) {
         double width  = sm.getSize().width;
         double height = sm.getSize().height;
 
@@ -447,22 +447,22 @@ public final class Smile2 {
     }
 
     /** Smile image controller implementation for {@link javafx.scene.canvas.Canvas} */
-    public static class SmileJfxCanvasController extends ImageController2<javafx.scene.canvas.Canvas, JfxCanvasView<SmileModel2>, SmileModel2> {
+    public static class SmileJfxCanvasController extends ImageController<javafx.scene.canvas.Canvas, JfxCanvasView<SmileModel>, SmileModel> {
 
         public SmileJfxCanvasController(EFaceType faceType) {
-            var model = new SmileModel2(faceType);
-            var view = new JfxCanvasView<>(model, g -> Smile2.draw(g, model));
+            var model = new SmileModel(faceType);
+            var view = new JfxCanvasView<>(model, g -> Smile.draw(g, model));
             init(model, view);
         }
 
     }
 
     /** Smile image controller implementation for {@link javafx.scene.image.Image} */
-    public static class SmileJfxImageController extends ImageController2<javafx.scene.image.Image, JfxImageView<SmileModel2>, SmileModel2> {
+    public static class SmileJfxImageController extends ImageController<javafx.scene.image.Image, JfxImageView<SmileModel>, SmileModel> {
 
         public SmileJfxImageController(EFaceType faceType) {
-            var model = new SmileModel2(faceType);
-            var view = new JfxImageView<>(model, g -> Smile2.draw(g, model));
+            var model = new SmileModel(faceType);
+            var view = new JfxImageView<>(model, g -> Smile.draw(g, model));
             init(model, view);
         }
 

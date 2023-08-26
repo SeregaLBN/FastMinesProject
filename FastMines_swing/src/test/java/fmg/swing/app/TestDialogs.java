@@ -21,7 +21,7 @@ import fmg.swing.app.dialog.*;
 import fmg.swing.app.serializers.ChampionsSwingSerializer;
 import fmg.swing.app.serializers.PlayersSwingSerializer;
 import fmg.swing.img.Animator;
-import fmg.swing.mosaic.MosaicJPanelController2;
+import fmg.swing.mosaic.MosaicJPanelController;
 
 /** dialogs test
  * <p>run from command line
@@ -33,7 +33,7 @@ import fmg.swing.mosaic.MosaicJPanelController2;
 public class TestDialogs {
 
     private static void testMosaicJPanelController() {
-        MosaicJPanelController2 ctrllr = new MosaicJPanelController2();
+        MosaicJPanelController ctrllr = new MosaicJPanelController();
 
         JFrame frame = new JFrame();
         frame.setContentPane(ctrllr.getViewPanel());
@@ -45,7 +45,7 @@ public class TestDialogs {
             }
         });
 
-        frame.setTitle("SWING: Demo " + MosaicJPanelController2.class.getSimpleName());
+        frame.setTitle("SWING: Demo " + MosaicJPanelController.class.getSimpleName());
         frame.pack();
         frame.setVisible(true);
     }

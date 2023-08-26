@@ -2,7 +2,7 @@ package fmg.jfx.app;
 
 import fmg.common.ui.UiInvoker;
 import fmg.core.app.AProjSettings;
-import fmg.core.types.draw.PenBorder2;
+import fmg.core.types.draw.PenBorder;
 import fmg.jfx.img.Animator;
 import fmg.jfx.utils.Cast;
 import fmg.jfx.utils.Timer;
@@ -27,7 +27,7 @@ public final class ProjSettings extends AProjSettings {
 //            fmg.core.mosaic.MosaicDrawModel.DefaultBkColor = fmg.common.Color.Gray().brighter();
 //        }
 
-        PenBorder2.DefaultWidth = Cast.dpToPx(2.25);
+        PenBorder.DefaultWidth = Cast.dpToPx(2.25);
     }
 
     public static void init() {

@@ -6,16 +6,16 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import fmg.android.app.BR;
 import fmg.android.img.AndroidBitmapView;
-import fmg.android.img.MosaicSkillImg2;
+import fmg.android.img.MosaicSkillImg;
 import fmg.common.geom.BoundDouble;
 import fmg.common.ui.UiInvoker;
-import fmg.core.img.MosaicSkillModel2;
+import fmg.core.img.MosaicSkillModel;
 import fmg.core.types.ESkillLevel;
 
 import static fmg.core.img.PropertyConst.PROPERTY_SKILL_LEVEL;
 
 /** Mosaic skill level item for data model */
-public class MosaicSkillDataItem extends BaseDataItem<ESkillLevel, MosaicSkillModel2, AndroidBitmapView<MosaicSkillModel2>, MosaicSkillImg2.MosaicSkillAndroidBitmapController> {
+public class MosaicSkillDataItem extends BaseDataItem<ESkillLevel, MosaicSkillModel, AndroidBitmapView<MosaicSkillModel>, MosaicSkillImg.MosaicSkillAndroidBitmapController> {
 
     private static final String PROPERTY_BURGER_DOT = MosaicGroupDataItem.PROPERTY_BURGER_DOT;
     private static final String PROPERTY_PADDING_BURGER = MosaicGroupDataItem.PROPERTY_PADDING_BURGER;
@@ -33,9 +33,9 @@ public class MosaicSkillDataItem extends BaseDataItem<ESkillLevel, MosaicSkillMo
     public String getUnicodeChar() { return getSkillLevel() == null ? null : Character.toString(getSkillLevel().unicodeChar()); }
 
     @Override
-    public MosaicSkillImg2.MosaicSkillAndroidBitmapController getEntity() {
+    public MosaicSkillImg.MosaicSkillAndroidBitmapController getEntity() {
         if (this.entity == null) {
-            var tmp = new MosaicSkillImg2.MosaicSkillAndroidBitmapController(getSkillLevel());
+            var tmp = new MosaicSkillImg.MosaicSkillAndroidBitmapController(getSkillLevel());
             var m = tmp.getModel();
             m.setBorderWidth(2);
             m.setRotateAngle(ThreadLocalRandom.current().nextInt(90));

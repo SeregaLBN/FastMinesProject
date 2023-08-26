@@ -4,12 +4,12 @@ import java.util.Collection;
 import java.util.function.Supplier;
 
 import fmg.common.Color;
-import fmg.core.mosaic.MosaicModel2;
+import fmg.core.mosaic.MosaicModel;
 import fmg.core.mosaic.cells.BaseCell;
 
 public class MosaicDrawContext<T> {
 
-    public final MosaicModel2 model;
+    public final MosaicModel model;
     public final boolean drawBackground;
     public final Supplier<Color> getBackgroundColor;
     public final Supplier<Collection<BaseCell>> drawCells;
@@ -17,7 +17,7 @@ public class MosaicDrawContext<T> {
     public final Supplier<T> flagImage;
 
     public MosaicDrawContext(
-        MosaicModel2 model,
+        MosaicModel model,
         boolean drawBackground,
         Supplier<Color> getBackgroundColor,
         Supplier<Collection<BaseCell>> drawCells,

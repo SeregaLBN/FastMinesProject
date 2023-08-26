@@ -59,7 +59,7 @@ public class MosaicModelTest {
     public void mosaicGameModelPropertyChangedTest() {
         Logger.info("> MosaicModelTest::mosaicGameModelPropertyChangedTest");
 
-        var model = new MosaicModel2(false);
+        var model = new MosaicModel(false);
 
         var modifiedProperties = new HashMap<String, Integer>();
         model.setListener(name -> modifiedProperties.compute(name, (k,v) -> v==null ? 1 : ++v));
@@ -88,7 +88,7 @@ public class MosaicModelTest {
     public void mosaicDrawModelPropertyChangedTest() {
         Logger.info("> MosaicModelTest::mosaicDrawModelPropertyChangedTest");
 
-        var model = new MosaicModel2(false);
+        var model = new MosaicModel(false);
 
         var modifiedProperties = new HashMap<String, Integer>();
         model.setListener(name -> modifiedProperties.compute(name, (k,v) -> v==null ? 1 : ++v));
@@ -118,7 +118,7 @@ public class MosaicModelTest {
     public void mosaicDrawModelAsIsTest() {
         Logger.info("> MosaicModelTest::mosaicDrawModelAsIsTest");
 
-        var model = new MosaicModel2(false);
+        var model = new MosaicModel(false);
         Assert.assertEquals(EMosaic.eMosaicSquare1, model.getMosaicType());
         Assert.assertEquals(new Matrisize(10, 10), model.getSizeField());
         Assert.assertEquals(model.getShape().getSize(model.getSizeField()), model.getSize());
@@ -128,7 +128,7 @@ public class MosaicModelTest {
     public void imageModeCheckAffectsToPaddingTest() {
         Logger.info("> MosaicModelTest::autoFitTrueCheckAffectsToPaddingTest");
 
-        var model = new MosaicModel2(false);
+        var model = new MosaicModel(false);
         model.setSize(new SizeDouble(1000, 1000));
         model.setPadding(new BoundDouble(100));
 
@@ -146,8 +146,8 @@ public class MosaicModelTest {
     public void controlModeCheckAffectsTest() {
         Logger.info("> MosaicModelTest::autoFitTrueCheckAffectsTest");
 
-        Supplier<MosaicModel2> createTestModel = () -> {
-            var model = new MosaicModel2(true);
+        Supplier<MosaicModel> createTestModel = () -> {
+            var model = new MosaicModel(true);
             model.setSize(new SizeDouble(1000, 1000));
 
             // default check
@@ -396,8 +396,8 @@ public class MosaicModelTest {
     public void imageModeCheckAffectsTest() {
         Logger.info("> MosaicModelTest::autoFitFalseCheckAffectsTest");
 
-        Supplier<MosaicModel2> createTestModel = () -> {
-            var model = new MosaicModel2(false);
+        Supplier<MosaicModel> createTestModel = () -> {
+            var model = new MosaicModel(false);
             model.setSize(new SizeDouble(1000, 1000));
 
             // default check
@@ -599,7 +599,7 @@ public class MosaicModelTest {
         Assert.assertEquals( 25, padding.bottom, P);
     }
 
-    static void changeModel(MosaicModel2 m) {
+    static void changeModel(MosaicModel m) {
         m.setMosaicType(EMosaic.eMosaicQuadrangle1);
         m.setSizeField(new Matrisize(22, 33));
         m.setSize(new SizeDouble(TEST_SIZE_W, TEST_SIZE_H));
@@ -617,7 +617,7 @@ public class MosaicModelTest {
         Logger.info("> MosaicModelTest::mosaicNoChangedTest");
 
         Consumer<Boolean> func = isControlMode -> {
-            var model = new MosaicModel2(isControlMode);
+            var model = new MosaicModel(isControlMode);
 
             var modifiedProperties = new HashMap<String, Integer>();
             model.setListener(name -> modifiedProperties.compute(name, (k,v) -> v==null ? 1 : ++v));
@@ -637,7 +637,7 @@ public class MosaicModelTest {
     @Test
     public void noChangeOffsetTest() {
         Consumer<Boolean> func = isControlMode -> {
-            var model = new MosaicModel2(isControlMode);
+            var model = new MosaicModel(isControlMode);
 
             // change property
             SizeDouble size = new SizeDouble(model.getSize());

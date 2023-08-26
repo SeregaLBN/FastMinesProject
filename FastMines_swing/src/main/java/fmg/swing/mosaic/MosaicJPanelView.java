@@ -16,13 +16,13 @@ import javax.swing.Timer;
 import fmg.common.geom.SizeDouble;
 import fmg.core.app.model.MosaicInitData;
 import fmg.core.img.MosaicDrawContext;
-import fmg.core.mosaic.IMosaicView2;
+import fmg.core.mosaic.IMosaicView;
 import fmg.core.mosaic.MosaicHelper;
-import fmg.core.mosaic.MosaicModel2;
+import fmg.core.mosaic.MosaicModel;
 import fmg.core.mosaic.cells.BaseCell;
-import fmg.swing.img.Flag2;
-import fmg.swing.img.Logo2;
-import fmg.swing.img.MosaicImg2;
+import fmg.swing.img.Flag;
+import fmg.swing.img.Logo;
+import fmg.swing.img.MosaicImg;
 import fmg.swing.utils.Cast;
 
 /*
@@ -32,11 +32,11 @@ import fmg.swing.utils.Cast;
  */
 
 /** MVC: view. SWING implementation over control {@link JPanel} */
-public class MosaicJPanelView2 implements IMosaicView2<JPanel>, AutoCloseable {
+public class MosaicJPanelView implements IMosaicView<JPanel>, AutoCloseable {
 
-    private final MosaicModel2 model;
-    private final Flag2.FlagSwingIconController imgFlag;
-    private final Logo2.LogoSwingIconController imgMine;
+    private final MosaicModel model;
+    private final Flag.FlagSwingIconController imgFlag;
+    private final Logo.LogoSwingIconController imgMine;
     private JPanel control;
     private final Collection<BaseCell> modifiedCells = new HashSet<>();
     private boolean valid = false;
@@ -51,10 +51,10 @@ public class MosaicJPanelView2 implements IMosaicView2<JPanel>, AutoCloseable {
     private SizeDouble lastImgMosaicSize;
     private SizeDouble lastImgMosaicOffset;
 
-    public MosaicJPanelView2(
-        MosaicModel2 model,
-        Flag2.FlagSwingIconController imgFlag,
-        Logo2.LogoSwingIconController imgMine)
+    public MosaicJPanelView(
+        MosaicModel model,
+        Flag.FlagSwingIconController imgFlag,
+        Logo.LogoSwingIconController imgMine)
     {
         this.model = model;
         this.imgFlag = imgFlag;
@@ -105,13 +105,13 @@ public class MosaicJPanelView2 implements IMosaicView2<JPanel>, AutoCloseable {
                 @Override
                 protected void paintComponent(Graphics g) {
                     //super.paintComponent(g);
-                    MosaicJPanelView2.this.draw((Graphics2D)g);
+                    MosaicJPanelView.this.draw((Graphics2D)g);
                 }
 
                 @Override
                 public void setBounds(int x, int y, int width, int height) {
                     if ((width > 0) && (height > 0))
-                        MosaicJPanelView2.this.setSize(new SizeDouble(width, height));
+                        MosaicJPanelView.this.setSize(new SizeDouble(width, height));
                     super.setBounds(x, y, width, height);
                 }
 
@@ -210,7 +210,7 @@ public class MosaicJPanelView2 implements IMosaicView2<JPanel>, AutoCloseable {
             gImg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             gImg.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
-            MosaicImg2.draw(gImg, drawContext);
+            MosaicImg.draw(gImg, drawContext);
             g.drawImage(lastImg, 0, 0, null);
             lastImgMosaicSize   = model.getSizeMosaic();
             lastImgMosaicOffset = model.getMosaicOffset();

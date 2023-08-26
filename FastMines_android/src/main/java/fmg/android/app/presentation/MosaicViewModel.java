@@ -7,32 +7,32 @@ import androidx.databinding.Bindable;
 import androidx.lifecycle.ViewModel;
 
 import fmg.android.app.BR;
-import fmg.android.img.Smile2;
-import fmg.android.mosaic.MosaicViewController2;
+import fmg.android.img.Smile;
+import fmg.android.mosaic.MosaicViewController;
 import fmg.android.utils.Cast;
 import fmg.common.Logger;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.ITimer;
-import fmg.core.img.SmileModel2;
+import fmg.core.img.SmileModel;
 import fmg.core.types.EGameStatus;
 
 /** ViewModel for {@link fmg.android.app.MosaicActivity} */
 public class MosaicViewModel extends ViewModel {
 
-    private final MosaicViewController2 mosaicController;
+    private final MosaicViewController mosaicController;
     private final TopPanel topPanel;
     private long time;
-    private Smile2.SmileAndroidBitmapController btnNewGameImage;
+    private Smile.SmileAndroidBitmapController btnNewGameImage;
 
     public MosaicViewModel() {
-        mosaicController = new MosaicViewController2(null);
+        mosaicController = new MosaicViewController(null);
         topPanel = new TopPanel();
-        btnNewGameImage = new Smile2.SmileAndroidBitmapController(SmileModel2.EFaceType.Face_WhiteSmiling);
+        btnNewGameImage = new Smile.SmileAndroidBitmapController(SmileModel.EFaceType.Face_WhiteSmiling);
         float size = Cast.dpToPx(25);
         btnNewGameImage.getModel().setSize(new SizeDouble(size, size));
     }
 
-    public MosaicViewController2 getMosaicController() {
+    public MosaicViewController getMosaicController() {
         return mosaicController;
     }
     public TopPanel getTopPanel() {
@@ -57,7 +57,7 @@ public class MosaicViewModel extends ViewModel {
         topPanel.notifyPropertyChanged(BR.timeLeft);
     }
 
-    public void setBtnNewGameFaceType(SmileModel2.EFaceType faceType) {
+    public void setBtnNewGameFaceType(SmileModel.EFaceType faceType) {
         btnNewGameImage.getModel().setFaceType(faceType);
         // reload UI
         topPanel.notifyPropertyChanged(BR.btnNewGameImg);

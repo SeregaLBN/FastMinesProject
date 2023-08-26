@@ -1,6 +1,5 @@
 package fmg.android.mosaic;
 
-import static fmg.core.img.PropertyConst.*;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,8 +19,8 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import fmg.android.app.DrawableView;
-import fmg.android.img.Flag2;
-import fmg.android.img.Logo2;
+import fmg.android.img.Flag;
+import fmg.android.img.Logo;
 import fmg.android.utils.AsyncRunner;
 import fmg.android.utils.Cast;
 import fmg.common.Logger;
@@ -31,10 +30,9 @@ import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.ui.UiInvoker;
 import fmg.core.app.model.MosaicInitData;
-import fmg.core.img.ImageHelper;
-import fmg.core.mosaic.MosaicController2;
+import fmg.core.mosaic.MosaicController;
 import fmg.core.mosaic.MosaicHelper;
-import fmg.core.mosaic.MosaicModel2;
+import fmg.core.mosaic.MosaicModel;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.ClickResult;
 import fmg.core.types.EGameStatus;
@@ -43,11 +41,14 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
-/** MVC: controller. Android implementation */
-public class MosaicViewController2 extends MosaicController2<DrawableView, MosaicViewView2> {
+import static fmg.core.img.PropertyConst.PROPERTY_AREA;
+import static fmg.core.img.PropertyConst.PROPERTY_SIZE;
 
-    private final Flag2.FlagAndroidBitmapController imgFlag;
-    private final Logo2.LogoAndroidBitmapController imgMine;
+/** MVC: controller. Android implementation */
+public class MosaicViewController extends MosaicController<DrawableView, MosaicViewView> {
+
+    private final Flag.FlagAndroidBitmapController imgFlag;
+    private final Logo.LogoAndroidBitmapController imgMine;
     private Context context;
     private final LastClickInfo clickInfo = new LastClickInfo();
     /** <li>true : bind Control.SizeProperty to Model.Size
@@ -86,17 +87,17 @@ public class MosaicViewController2 extends MosaicController2<DrawableView, Mosai
 
         @Override
         public boolean onScaleBegin(ScaleGestureDetector detector) {
-            return MosaicViewController2.this.onGestureScaleBegin();
+            return MosaicViewController.this.onGestureScaleBegin();
         }
 
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            return MosaicViewController2.this.onGestureScale();
+            return MosaicViewController.this.onGestureScale();
         }
 
         @Override
         public void onScaleEnd(ScaleGestureDetector detector) {
-            MosaicViewController2.this.onGestureScaleEnd();
+            MosaicViewController.this.onGestureScaleEnd();
         }
     };
 
@@ -105,17 +106,17 @@ public class MosaicViewController2 extends MosaicController2<DrawableView, Mosai
         /// interface OnGestureListener
         @Override
         public boolean onDown(MotionEvent ev) {
-            return MosaicViewController2.this.onGestureDown(ev);
+            return MosaicViewController.this.onGestureDown(ev);
         }
 
         @Override
         public void onShowPress(MotionEvent ev) {
-            MosaicViewController2.this.onGestureShowPress(ev);
+            MosaicViewController.this.onGestureShowPress(ev);
         }
 
         @Override
         public boolean onSingleTapUp(MotionEvent ev) {
-            return MosaicViewController2.this.onGestureSingleTapUp(ev);
+            return MosaicViewController.this.onGestureSingleTapUp(ev);
         }
 
         @Override
@@ -123,12 +124,12 @@ public class MosaicViewController2 extends MosaicController2<DrawableView, Mosai
             if (!extendedManipulation)
                 return false;
 
-            return MosaicViewController2.this.onGestureScroll(ev1, ev2, distanceX, distanceY);
+            return MosaicViewController.this.onGestureScroll(ev1, ev2, distanceX, distanceY);
         }
 
         @Override
         public void onLongPress(MotionEvent ev) {
-            MosaicViewController2.this.onGestureLongPress(ev);
+            MosaicViewController.this.onGestureLongPress(ev);
         }
 
         @Override
@@ -136,30 +137,30 @@ public class MosaicViewController2 extends MosaicController2<DrawableView, Mosai
             if (!extendedManipulation)
                 return false;
 
-            return MosaicViewController2.this.onGestureFling(ev1, ev2, velocityX, velocityY);
+            return MosaicViewController.this.onGestureFling(ev1, ev2, velocityX, velocityY);
         }
 
         /// interface OnDoubleTapListener
 
         @Override
         public boolean onSingleTapConfirmed(MotionEvent ev) {
-            return MosaicViewController2.this.onGestureSingleTapConfirmed(ev);
+            return MosaicViewController.this.onGestureSingleTapConfirmed(ev);
         }
 
         @Override
         public boolean onDoubleTap(MotionEvent ev) {
-            return MosaicViewController2.this.onGestureDoubleTap(ev);
+            return MosaicViewController.this.onGestureDoubleTap(ev);
         }
 
         @Override
         public boolean onDoubleTapEvent(MotionEvent ev) {
-            return MosaicViewController2.this.onGestureDoubleTapEvent(ev);
+            return MosaicViewController.this.onGestureDoubleTapEvent(ev);
         }
 
         // interface OnContextClickListener
         @Override
         public boolean onContextClick(MotionEvent ev) {
-            return MosaicViewController2.this.onGestureContextClick(ev);
+            return MosaicViewController.this.onGestureContextClick(ev);
         }
     };
 
@@ -172,13 +173,13 @@ public class MosaicViewController2 extends MosaicController2<DrawableView, Mosai
     private ZoomStartInfo zoomStartInfo;
     // #endregion
 
-    public MosaicViewController2(Context context) {
-        imgFlag = new Flag2.FlagAndroidBitmapController();
-        imgMine = new Logo2.LogoAndroidBitmapController();
+    public MosaicViewController(Context context) {
+        imgFlag = new Flag.FlagAndroidBitmapController();
+        imgMine = new Logo.LogoAndroidBitmapController();
         imgMine.asMine();
 
-        var m = new MosaicModel2(true);
-        var v = new MosaicViewView2(context, m, imgFlag, imgMine);
+        var m = new MosaicModel(true);
+        var v = new MosaicViewView(context, m, imgFlag, imgMine);
         init(m, v);
 
         if (context == null) {

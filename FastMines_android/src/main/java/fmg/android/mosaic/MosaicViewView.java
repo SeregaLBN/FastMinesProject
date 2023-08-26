@@ -15,14 +15,14 @@ import fmg.android.img.MosaicImg;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.MosaicDrawContext;
 import fmg.core.img.PropertyConst;
-import fmg.core.mosaic.IMosaicView2;
-import fmg.core.mosaic.MosaicModel2;
+import fmg.core.mosaic.IMosaicView;
+import fmg.core.mosaic.MosaicModel;
 import fmg.core.mosaic.cells.BaseCell;
 
 /** MVC: view. Android implementation over control {@link DrawableView} */
-public class MosaicViewView2 implements IMosaicView2<DrawableView>, AutoCloseable {
+public class MosaicViewView implements IMosaicView<DrawableView>, AutoCloseable {
 
-    private final MosaicModel2 model;
+    private final MosaicModel model;
     private final Flag.FlagAndroidBitmapController imgFlag;
     private final Logo.LogoAndroidBitmapController imgMine;
     private Context context;
@@ -33,10 +33,10 @@ public class MosaicViewView2 implements IMosaicView2<DrawableView>, AutoCloseabl
     private Bitmap lastImg;
     private Canvas lastCanvas;
 
-    public MosaicViewView2(Context context,
-                           MosaicModel2 model,
-                           Flag.FlagAndroidBitmapController imgFlag,
-                           Logo.LogoAndroidBitmapController imgMine)
+    public MosaicViewView(Context context,
+                          MosaicModel model,
+                          Flag.FlagAndroidBitmapController imgFlag,
+                          Logo.LogoAndroidBitmapController imgMine)
     {
         this.context = context;
         this.model = model;

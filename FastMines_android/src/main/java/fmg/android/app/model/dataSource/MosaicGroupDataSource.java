@@ -9,16 +9,16 @@ import java.util.stream.Stream;
 import fmg.android.app.BR;
 import fmg.android.app.model.items.MosaicGroupDataItem;
 import fmg.android.img.AndroidBitmapView;
-import fmg.android.img.MosaicGroupImg2;
+import fmg.android.img.MosaicGroupImg;
 import fmg.common.Color;
 import fmg.common.geom.BoundDouble;
 import fmg.core.img.ImageHelper;
-import fmg.core.img.MosaicGroupModel2;
+import fmg.core.img.MosaicGroupModel;
 import fmg.core.types.EMosaicGroup;
 
 public class MosaicGroupDataSource extends BaseDataSource<
-        MosaicGroupDataItem, EMosaicGroup, MosaicGroupModel2, AndroidBitmapView<MosaicGroupModel2>, MosaicGroupImg2.MosaicGroupAndroidBitmapController,
-        MosaicGroupDataItem, EMosaicGroup, MosaicGroupModel2, AndroidBitmapView<MosaicGroupModel2>, MosaicGroupImg2.MosaicGroupAndroidBitmapController>
+        MosaicGroupDataItem, EMosaicGroup, MosaicGroupModel, AndroidBitmapView<MosaicGroupModel>, MosaicGroupImg.MosaicGroupAndroidBitmapController,
+        MosaicGroupDataItem, EMosaicGroup, MosaicGroupModel, AndroidBitmapView<MosaicGroupModel>, MosaicGroupImg.MosaicGroupAndroidBitmapController>
 {
 
     public static final String PROPERTY_UNICODE_CHARS = "UnicodeChars";

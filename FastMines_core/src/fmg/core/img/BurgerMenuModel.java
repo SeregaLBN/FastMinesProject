@@ -15,7 +15,7 @@ import fmg.common.HSV;
 import fmg.common.geom.*;
 
 /** MVC: model of representable menu as horizontal or vertical lines */
-public final class BurgerMenuModel2 implements IImageModel2 {
+public final class BurgerMenuModel implements IImageModel {
 
     private final SizeDouble size = new SizeDouble(ImageHelper.DEFAULT_IMAGE_SIZE, ImageHelper.DEFAULT_IMAGE_SIZE);
     private final BoundDouble pad = new BoundDouble(ImageHelper.DEFAULT_IMAGE_SIZE / 2.,

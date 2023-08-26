@@ -6,9 +6,9 @@ import fmg.common.ui.UiInvoker;
 /** MVC controller of logo image
  * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
  * @param <TView> MVC view  */
-public class LogoController2<TImage,
-                            TView extends IImageView2<TImage>>
-    extends ImageController2<TImage, TView, LogoModel2>
+public class LogoController<TImage,
+                            TView extends IImageView<TImage>>
+    extends ImageController<TImage, TView, LogoModel>
 {
 
     /** Overall animation period (in milliseconds) */
@@ -29,7 +29,7 @@ public class LogoController2<TImage,
     private boolean clockwise = true;
 
     @Override
-    protected void init(LogoModel2 model, TView view) {
+    protected void init(LogoModel model, TView view) {
         super.init(model, view);
         if (isAnimated())
             startAnimation();
@@ -116,7 +116,7 @@ public class LogoController2<TImage,
         super.close();
     }
 
-    public LogoController2<TImage,TView> asMine() {
+    public LogoController<TImage,TView> asMine() {
         for (HSV item : model.getPalette())
             item.grayscale();
         return this;

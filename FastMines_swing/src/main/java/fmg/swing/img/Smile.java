@@ -5,18 +5,18 @@ import java.awt.geom.*;
 import java.util.function.Consumer;
 
 import fmg.common.geom.PointDouble;
-import fmg.core.img.ImageController2;
-import fmg.core.img.SmileModel2;
-import fmg.core.img.SmileModel2.EFaceType;
+import fmg.core.img.ImageController;
+import fmg.core.img.SmileModel;
+import fmg.core.img.SmileModel.EFaceType;
 import fmg.swing.utils.Cast;
 
 /** Smile images */
-public final class Smile2 {
-    private Smile2() {}
+public final class Smile {
+    private Smile() {}
 
 //    private static final Color TRANSPARENT = new Color(0xFF, 0xFF, 0xFF, 0);
 
-    private static void draw(Graphics2D g, SmileModel2 sm) {
+    private static void draw(Graphics2D g, SmileModel sm) {
 //        g.setComposite(AlphaComposite.Src);
 //        g.setColor(TRANSPARENT);
 //        g.fillRect(0, 0, (int)sm.getSize().width, (int)sm.getSize().height);
@@ -35,7 +35,7 @@ public final class Smile2 {
         g.setClip(oldClip);
     }
 
-    private static void drawBody(Graphics2D g, SmileModel2 sm) {
+    private static void drawBody(Graphics2D g, SmileModel sm) {
         EFaceType type = sm.getFaceType();
         double width  = sm.getSize().width;
         double height = sm.getSize().height;
@@ -85,7 +85,7 @@ public final class Smile2 {
         }
     }
 
-    private static void drawEyes(Graphics2D g, SmileModel2 sm) {
+    private static void drawEyes(Graphics2D g, SmileModel sm) {
         EFaceType type = sm.getFaceType();
         double width  = sm.getSize().width;
         double height = sm.getSize().height;
@@ -194,7 +194,7 @@ public final class Smile2 {
         g.setStroke(strokeOld);
     }
 
-    private static void drawMouth(Graphics2D g, SmileModel2 sm) {
+    private static void drawMouth(Graphics2D g, SmileModel sm) {
         EFaceType type = sm.getFaceType();
         double width  = sm.getSize().width;
         double height = sm.getSize().height;
@@ -289,7 +289,7 @@ public final class Smile2 {
         g.setStroke(strokeOld);
     }
 
-    private static void eyeOpened(Graphics2D g, SmileModel2 sm, boolean right, boolean disabled) {
+    private static void eyeOpened(Graphics2D g, SmileModel sm, boolean right, boolean disabled) {
         double width  = sm.getSize().width;
         double height = sm.getSize().height;
 
@@ -330,7 +330,7 @@ public final class Smile2 {
         }
     }
 
-    private static void eyeClosed(Graphics2D g, SmileModel2 sm, boolean right, boolean disabled) {
+    private static void eyeClosed(Graphics2D g, SmileModel sm, boolean right, boolean disabled) {
         double width  = sm.getSize().width;
         double height = sm.getSize().height;
 
@@ -373,22 +373,22 @@ public final class Smile2 {
     }
 
     /** Smile image controller implementation for {@link javax.swing.Icon} */
-    public static class SmileSwingIconController extends ImageController2<javax.swing.Icon, SwingIconView<SmileModel2>, SmileModel2> {
+    public static class SmileSwingIconController extends ImageController<javax.swing.Icon, SwingIconView<SmileModel>, SmileModel> {
 
         public SmileSwingIconController(EFaceType faceType) {
-            var model = new SmileModel2(faceType);
-            var view = new SwingIconView<>(model, g -> Smile2.draw(g, model));
+            var model = new SmileModel(faceType);
+            var view = new SwingIconView<>(model, g -> Smile.draw(g, model));
             init(model, view);
         }
 
     }
 
     /** Smile image controller implementation for {@link java.awt.Image} */
-    public static class SmileAwtImageController extends ImageController2<java.awt.Image, AwtImageView<SmileModel2>, SmileModel2> {
+    public static class SmileAwtImageController extends ImageController<java.awt.Image, AwtImageView<SmileModel>, SmileModel> {
 
         public SmileAwtImageController(EFaceType faceType) {
-            var model = new SmileModel2(faceType);
-            var view = new AwtImageView<>(model, g -> Smile2.draw(g, model));
+            var model = new SmileModel(faceType);
+            var view = new AwtImageView<>(model, g -> Smile.draw(g, model));
             init(model, view);
         }
 

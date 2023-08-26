@@ -9,7 +9,7 @@ import fmg.common.geom.BoundDouble;
 import fmg.common.geom.SizeDouble;
 
 /** Model of the smile/face image */
-public class SmileModel2 implements IImageModel2 {
+public class SmileModel implements IImageModel {
 
     /** @see <a href="https://unicode-table.com/blocks/emoticons/">Emoticons (Emoji)</a>
         * <br>  <a href="https://unicode-table.com/blocks/miscellaneous-symbols-and-pictographs/">Miscellaneous Symbols and Pictographs</a>
@@ -54,7 +54,7 @@ public class SmileModel2 implements IImageModel2 {
     private final BoundDouble pad = new BoundDouble(ImageHelper.DEFAULT_PADDING);
     private Consumer<String> changedCallback;
 
-    public SmileModel2(EFaceType faceType) {
+    public SmileModel(EFaceType faceType) {
         this.faceType = faceType;
     }
 
