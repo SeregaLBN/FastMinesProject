@@ -66,7 +66,7 @@ public final class MosaicSkillImg {
 
         public MosaicSkillSwingIconController(ESkillLevel skill) {
             var model = new MosaicSkillModel(skill);
-            var view = new SwingIconView<>(model, g -> MosaicSkillImg.draw(g, model, getBurgerModel()));
+            var view = new SwingIconView<>(model, g -> MosaicSkillImg.draw(g, model, getBurgerMenuModel()));
             init(model, view);
         }
 
@@ -77,7 +77,7 @@ public final class MosaicSkillImg {
 
         public MosaicSkillAwtImageController(ESkillLevel skill) {
             var model = new MosaicSkillModel(skill);
-            var view = new AwtImageView<>(model, g -> MosaicSkillImg.draw(g, model, getBurgerModel()));
+            var view = new AwtImageView<>(model, g -> MosaicSkillImg.draw(g, model, getBurgerMenuModel()));
             init(model, view);
         }
 

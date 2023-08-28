@@ -126,7 +126,7 @@ public final class MosaicSkillImg {
 
         public MosaicSkillAndroidBitmapController(ESkillLevel group) {
             var model = new MosaicSkillModel(group);
-            var view = new AndroidBitmapView<>(model, g -> MosaicSkillImg.draw(g, model, getBurgerModel()));
+            var view = new AndroidBitmapView<>(model, g -> MosaicSkillImg.draw(g, model, getBurgerMenuModel()));
             init(model, view);
         }
 

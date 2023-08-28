@@ -66,7 +66,7 @@ public final class MosaicGroupImg {
 
         public MosaicGroupSwingIconController(EMosaicGroup group) {
             var model = new MosaicGroupModel(group);
-            var view = new SwingIconView<>(model, g -> MosaicGroupImg.draw(g, model, getBurgerModel()));
+            var view = new SwingIconView<>(model, g -> MosaicGroupImg.draw(g, model, getBurgerMenuModel()));
             init(model, view);
         }
 
@@ -77,7 +77,7 @@ public final class MosaicGroupImg {
 
         public MosaicGroupAwtImageController(EMosaicGroup group) {
             var model = new MosaicGroupModel(group);
-            var view = new AwtImageView<>(model, g -> MosaicGroupImg.draw(g, model, getBurgerModel()));
+            var view = new AwtImageView<>(model, g -> MosaicGroupImg.draw(g, model, getBurgerMenuModel()));
             init(model, view);
         }
 

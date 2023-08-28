@@ -13,19 +13,19 @@ public class LogoDataItem extends BaseDataItem<Void, LogoModel, AndroidBitmapVie
     }
 
     @Override
-    public Logo.LogoAndroidBitmapController getEntity() {
-        if (this.entity == null) {
-            var tmp = new Logo.LogoAndroidBitmapController();
-            var m = tmp.getModel();
+    public Logo.LogoAndroidBitmapController getController() {
+        if (this.controller == null) {
+            var ctrl = new Logo.LogoAndroidBitmapController();
+            var m = ctrl.getModel();
             m.setBorderWidth(3);
 
             // TODO m.setRotateMode(LogoModel.ERotateMode.color);
             m.setRotateAngle(10);
             m.setUseGradient(true);
 
-            setEntity(tmp);
+            setController(ctrl);
         }
-        return this.entity;
+        return this.controller;
     }
 
 }

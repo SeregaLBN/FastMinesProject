@@ -37,7 +37,7 @@ public class MosaicDataSource extends BaseDataSource<
         if (header == null) {
             header = new LogoDataItem();
 
-            var ctrlr = header.getEntity();
+            var ctrlr = header.getController();
             var model = ctrlr.getModel();
             model.setPadding(new BoundDouble(3));
             ctrlr.setPolarLights(true);
@@ -124,7 +124,7 @@ public class MosaicDataSource extends BaseDataSource<
         ESkillLevel skill = getSkillLevel();
         if (skill != null)
             mi.setSkillLevel(skill);
-        var ctrlr = mi.getEntity();
+        var ctrlr = mi.getController();
         var model = ctrlr.getModel();
         model.getPenBorder().setWidth(1);
         ctrlr.setAnimatePeriod(2500);
@@ -142,7 +142,7 @@ public class MosaicDataSource extends BaseDataSource<
     /** for one selected item - start animate; for all other - stop animate */
     private void applySelection(MosaicDataItem item) {
         boolean selected = item == getCurrentItem(); // check by reference
-        var ctrlr = item.getEntity();
+        var ctrlr = item.getController();
         var model = ctrlr.getModel();
         ctrlr.setRotateImage(selected);
         model.getPenBorder().setColorLight (selected ? Color.White() : Color.Black());

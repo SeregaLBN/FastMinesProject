@@ -70,7 +70,7 @@ public class SelectMosaicFragment extends Fragment {
         binding.rvMosaicItems.setLayoutManager(gridLayoutManager);
 
         { // setup header
-            var logoController = viewModel.getMosaicDS().getHeader().getEntity();
+            var logoController = viewModel.getMosaicDS().getHeader().getController();
             logoController.setPolarLights(true);
             var logoModel = logoController.getModel();
             logoController.setRotateImage(true);

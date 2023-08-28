@@ -24,7 +24,7 @@ public class MosaicSkillDataSource extends BaseDataSource<
         if (header == null) {
             header = new MosaicSkillDataItem(null);
 
-            var ctrlr = header.getEntity();
+            var ctrlr = header.getController();
             var model = ctrlr.getModel();
             model.setPadding(new BoundDouble(3));
             model.setBackgroundColor(Color.Transparent());
@@ -46,7 +46,7 @@ public class MosaicSkillDataSource extends BaseDataSource<
                     )
                     .map(MosaicSkillDataItem::new)
                     .peek(item -> {
-                        var ctrlr = item.getEntity();
+                        var ctrlr = item.getController();
                         ctrlr.setFps(20);
                         ctrlr.setAnimatePeriod(3600);
                         applySelection(item);
@@ -66,7 +66,7 @@ public class MosaicSkillDataSource extends BaseDataSource<
     /** for one selected item - start animate; for all other - stop animate */
     private void applySelection(MosaicSkillDataItem item) {
         boolean selected = (item.getUniqueId().ordinal() == currentItemPos);
-        var ctrlr = item.getEntity();
+        var ctrlr = item.getController();
         var model = ctrlr.getModel();
         ctrlr.setPolarLightsForeground(selected);
         model.setBorderColor(selected ? Color.LawnGreen() : Color.IndianRed());

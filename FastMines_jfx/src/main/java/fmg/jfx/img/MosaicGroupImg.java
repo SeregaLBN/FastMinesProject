@@ -68,7 +68,7 @@ public final class MosaicGroupImg {
 
         public MosaicGroupJfxCanvasController(EMosaicGroup group) {
             var model = new MosaicGroupModel(group);
-            var view = new JfxCanvasView<>(model, g -> MosaicGroupImg.draw(g, model, getBurgerModel()));
+            var view = new JfxCanvasView<>(model, g -> MosaicGroupImg.draw(g, model, getBurgerMenuModel()));
             init(model, view);
         }
 
@@ -79,7 +79,7 @@ public final class MosaicGroupImg {
 
         public MosaicGroupJfxImageController(EMosaicGroup group) {
             var model = new MosaicGroupModel(group);
-            var view = new JfxImageView<>(model, g -> MosaicGroupImg.draw(g, model, getBurgerModel()));
+            var view = new JfxImageView<>(model, g -> MosaicGroupImg.draw(g, model, getBurgerMenuModel()));
             init(model, view);
         }
 

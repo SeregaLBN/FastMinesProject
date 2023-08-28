@@ -95,14 +95,14 @@ public class MainActivity extends AppCompatActivity {
         binding.rvMenuMosaicGroupItems.setLayoutManager(new LinearLayoutManager(this));
         binding.rvMenuMosaicSkillItems.setLayoutManager(new LinearLayoutManager(this));
 
-        viewModel.getMosaicGroupDS().getHeader().getEntity().getBurgerModel().setHorizontal(viewModel.getSplitViewPane().isOpen());
+        viewModel.getMosaicGroupDS().getHeader().getController().getBurgerMenuModel().setHorizontal(viewModel.getSplitViewPane().isOpen());
 
         viewModel.getMosaicGroupDS().setCurrentItem(viewModel.getMosaicGroupDS().getDataSource().stream().filter(x -> x.getMosaicGroup() == getInitData().getMosaicType().getGroup()).findFirst().get());
         viewModel.getMosaicSkillDS().setCurrentItem(viewModel.getMosaicSkillDS().getDataSource().stream().filter(x -> x.getSkillLevel()  == getInitData().getSkillLevel()           ).findFirst().get());
 
         Color bkHeaderColor = getBackgroundHeaderColor();
-        viewModel.getMosaicGroupDS().getHeader().getEntity().getModel().setBackgroundColor(bkHeaderColor);
-        viewModel.getMosaicSkillDS().getHeader().getEntity().getModel().setBackgroundColor(bkHeaderColor);
+        viewModel.getMosaicGroupDS().getHeader().getController().getModel().setBackgroundColor(bkHeaderColor);
+        viewModel.getMosaicSkillDS().getHeader().getController().getModel().setBackgroundColor(bkHeaderColor);
         binding.panelMenuMosaicGroupHeader.setBackgroundColor(Cast.toColor(bkHeaderColor));
         binding.panelMenuMosaicSkillHeader.setBackgroundColor(Cast.toColor(bkHeaderColor));
 
@@ -214,17 +214,17 @@ public class MainActivity extends AppCompatActivity {
         if (isFailedStatus("onMenuMosaicGroupHeaderClick"))
             return;
 
-        SmoothHelper.runColorSmoothTransition(viewModel.getMosaicGroupDS().getHeader().getEntity().getModel());
+        SmoothHelper.runColorSmoothTransition(viewModel.getMosaicGroupDS().getHeader().getController().getModel());
 
         if (binding.rvMenuMosaicGroupItems.getVisibility() == View.GONE) {
             SmoothHelper.applySmoothVisibilityOverScale(binding.rvMenuMosaicGroupItems, true, this::getLvGroupHeight, null);
-            viewModel.getMosaicGroupDS().getHeader().getEntity().getBurgerModel().setHorizontal(false);
+            viewModel.getMosaicGroupDS().getHeader().getController().getBurgerMenuModel().setHorizontal(false);
         } else {
             boolean isSplitPaneOpen = !viewModel.getSplitViewPane().isOpen();
             getMenuSettings().setSplitPaneOpen(isSplitPaneOpen);
             viewModel.getSplitViewPane().setOpen(isSplitPaneOpen);
-            viewModel.getMosaicGroupDS().getHeader().getEntity().setClockwise(
-                    !viewModel.getMosaicGroupDS().getHeader().getEntity().isClockwise());
+            viewModel.getMosaicGroupDS().getHeader().getController().setClockwise(
+                    !viewModel.getMosaicGroupDS().getHeader().getController().isClockwise());
         }
     }
 
@@ -235,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
         if (isFailedStatus("onMenuMosaicSkillHeaderClick"))
             return;
 
-        SmoothHelper.runColorSmoothTransition(viewModel.getMosaicSkillDS().getHeader().getEntity().getModel());
+        SmoothHelper.runColorSmoothTransition(viewModel.getMosaicSkillDS().getHeader().getController().getModel());
 
         Supplier<Boolean> isVisibleScrollerFunc = () -> {
             int viewHeight = binding.menuScroller.getMeasuredHeight();
@@ -255,16 +255,16 @@ public class MainActivity extends AppCompatActivity {
                                 SmoothHelper.applySmoothVisibilityOverScale(binding.rvMenuMosaicGroupItems, false, this::getLvGroupHeight, null);
                         });
             }
-            viewModel.getMosaicSkillDS().getHeader().getEntity().setClockwise(
-                    !viewModel.getMosaicSkillDS().getHeader().getEntity().isClockwise());
+            viewModel.getMosaicSkillDS().getHeader().getController().setClockwise(
+                    !viewModel.getMosaicSkillDS().getHeader().getController().isClockwise());
         } else {
             if (isVisibleScroller && (binding.rvMenuMosaicGroupItems.getVisibility() == View.VISIBLE)) {
                 SmoothHelper.applySmoothVisibilityOverScale(binding.rvMenuMosaicGroupItems, false, this::getLvGroupHeight, null);
-                viewModel.getMosaicGroupDS().getHeader().getEntity().getBurgerModel().setHorizontal(true);
+                viewModel.getMosaicGroupDS().getHeader().getController().getBurgerMenuModel().setHorizontal(true);
             } else {
                 SmoothHelper.applySmoothVisibilityOverScale(binding.rvMenuMosaicSkillItems, false, this::getLvSkillHeight, null);
-                viewModel.getMosaicSkillDS().getHeader().getEntity().setClockwise(
-                        !viewModel.getMosaicSkillDS().getHeader().getEntity().isClockwise());
+                viewModel.getMosaicSkillDS().getHeader().getController().setClockwise(
+                        !viewModel.getMosaicSkillDS().getHeader().getController().isClockwise());
             }
         }
     }

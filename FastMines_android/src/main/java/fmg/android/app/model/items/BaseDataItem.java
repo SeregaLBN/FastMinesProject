@@ -16,6 +16,7 @@ import fmg.common.ui.UiInvoker;
 import fmg.core.img.IImageModel;
 import fmg.core.img.IImageView;
 import fmg.core.img.ImageController;
+import fmg.core.img.PropertyConst;
 
 import static fmg.core.img.PropertyConst.PROPERTY_IMAGE;
 import static fmg.core.img.PropertyConst.PROPERTY_PADDING;
@@ -30,12 +31,12 @@ public abstract class BaseDataItem<T,
     implements AutoCloseable
 {
 
-    public static final String PROPERTY_UNIQUE_ID = "UniqueId";
-    public static final String PROPERTY_TITLE     = "Title";
-    public static final String PROPERTY_ENTITY    = "Entity";
+    public static final String PROPERTY_UNIQUE_ID  = "UniqueId";
+    public static final String PROPERTY_TITLE      = "Title";
+    public static final String PROPERTY_CONTROLLER = PropertyConst.PROPERTY_CONTROLLER;
 
     private T uniqueId;
-    protected TImageCtrlr entity;
+    protected TImageCtrlr controller;
     private String title = "";
     private boolean disposed;
 
@@ -66,22 +67,22 @@ public abstract class BaseDataItem<T,
     protected double getZoom() { return 1; }
 
     @Bindable
-    public abstract TImageCtrlr getEntity();
-    protected void setEntity(TImageCtrlr entity) {
-        TImageCtrlr old = this.entity;
-        if (Objects.equals(this.entity, entity))
+    public abstract TImageCtrlr getController();
+    protected void setController(TImageCtrlr controller) {
+        TImageCtrlr old = this.controller;
+        if (Objects.equals(this.controller, controller))
             return;
 
-        this.entity = entity;
+        this.controller = controller;
 
         if (old != null) {
             old.setListener(null);
             old.close();
         }
-        if (entity != null)
-            entity.setListener(this::onControllerPropertyChanged);
+        if (controller != null)
+            controller.setListener(this::onControllerPropertyChanged);
 
-        firePropertyChanged(PROPERTY_ENTITY);
+        firePropertyChanged(PROPERTY_CONTROLLER);
     }
 
     @Bindable
@@ -90,27 +91,27 @@ public abstract class BaseDataItem<T,
             Logger.error("Object already disposed! Return faked image...");
             return android.graphics.Bitmap.createBitmap(1, 1, android.graphics.Bitmap.Config.RGB_565);
         }
-        return getEntity().getImage();
+        return getController().getImage();
     }
 
     @Bindable
     public SizeDouble getSize() {
-        SizeDouble size = getEntity().getModel().getSize();
+        SizeDouble size = getController().getModel().getSize();
         double zoom = getZoom();
         return new SizeDouble(size.width / zoom, size.height / zoom);
     }
     public void setSize(SizeDouble size) {
-        getEntity().getModel().setSize(zoomSize(size));
+        getController().getModel().setSize(zoomSize(size));
     }
 
     @Bindable
     public BoundDouble getPadding() {
-        BoundDouble pad = getEntity().getModel().getPadding();
+        BoundDouble pad = getController().getModel().getPadding();
         double zoom = getZoom();
         return new BoundDouble (pad.left / zoom, pad.top / zoom, pad.right / zoom, pad.bottom / zoom);
     }
     public void setPadding(BoundDouble pad) {
-        getEntity().getModel().setPadding(zoomPadding(pad));
+        getController().getModel().setPadding(zoomPadding(pad));
     }
 
     SizeDouble zoomSize(SizeDouble size) {
@@ -137,7 +138,7 @@ public abstract class BaseDataItem<T,
             return;
 
         if (changedCallback != null) {
-            changedCallback.accept(PROPERTY_ENTITY);
+            changedCallback.accept(PROPERTY_CONTROLLER);
 
             switch (propertyName) {
             case PROPERTY_IMAGE:
@@ -157,12 +158,12 @@ public abstract class BaseDataItem<T,
 
         // refire as android data binding event
         switch (propertyName) {
-        case PROPERTY_UNIQUE_ID: notifyPropertyChanged(BR.uniqueId); break;
-        case PROPERTY_TITLE    : notifyPropertyChanged(BR.title   ); break;
-        case PROPERTY_ENTITY   : notifyPropertyChanged(BR.entity  ); break;
-        case PROPERTY_IMAGE    : notifyPropertyChanged(BR.image   ); break;
-        case PROPERTY_SIZE     : notifyPropertyChanged(BR.size    ); break;
-        case PROPERTY_PADDING  : notifyPropertyChanged(BR.padding ); break;
+        case PROPERTY_UNIQUE_ID : notifyPropertyChanged(BR.uniqueId  ); break;
+        case PROPERTY_TITLE     : notifyPropertyChanged(BR.title     ); break;
+        case PROPERTY_CONTROLLER: notifyPropertyChanged(BR.controller); break;
+        case PROPERTY_IMAGE     : notifyPropertyChanged(BR.image     ); break;
+        case PROPERTY_SIZE      : notifyPropertyChanged(BR.size      ); break;
+        case PROPERTY_PADDING   : notifyPropertyChanged(BR.padding   ); break;
         }
     }
 
@@ -187,7 +188,7 @@ public abstract class BaseDataItem<T,
     public void close() {
         disposed = true;
         changedCallback = null;
-        setEntity(null);
+        setController(null);
     }
 
 }

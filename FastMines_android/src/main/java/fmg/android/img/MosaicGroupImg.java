@@ -126,7 +126,7 @@ public final class MosaicGroupImg {
 
         public MosaicGroupAndroidBitmapController(EMosaicGroup group) {
             var model = new MosaicGroupModel(group);
-            var view = new AndroidBitmapView<>(model, g -> MosaicGroupImg.draw(g, model, getBurgerModel()));
+            var view = new AndroidBitmapView<>(model, g -> MosaicGroupImg.draw(g, model, getBurgerMenuModel()));
             init(model, view);
         }
 

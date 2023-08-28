@@ -68,7 +68,7 @@ public final class MosaicSkillImg {
 
         public MosaicSkillJfxCanvasController(ESkillLevel skill) {
             var model = new MosaicSkillModel(skill);
-            var view = new JfxCanvasView<>(model, g -> MosaicSkillImg.draw(g, model, getBurgerModel()));
+            var view = new JfxCanvasView<>(model, g -> MosaicSkillImg.draw(g, model, getBurgerMenuModel()));
             init(model, view);
         }
 
@@ -79,7 +79,7 @@ public final class MosaicSkillImg {
 
         public MosaicSkillJfxImageController(ESkillLevel skill) {
             var model = new MosaicSkillModel(skill);
-            var view = new JfxImageView<>(model, g -> MosaicSkillImg.draw(g, model, getBurgerModel()));
+            var view = new JfxImageView<>(model, g -> MosaicSkillImg.draw(g, model, getBurgerMenuModel()));
             init(model, view);
         }
 

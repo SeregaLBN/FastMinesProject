@@ -28,7 +28,7 @@ public class MosaicGroupDataSource extends BaseDataSource<
         if (header == null) {
             header = new MosaicGroupDataItem(null);
 
-            var ctrlr = header.getEntity();
+            var ctrlr = header.getController();
             var model = ctrlr.getModel();
             model.setPadding(new BoundDouble(3));
             model.setBackgroundColor(Color.Transparent());
@@ -47,7 +47,7 @@ public class MosaicGroupDataSource extends BaseDataSource<
             dataSource = Stream.of(EMosaicGroup.values())
                 .map(MosaicGroupDataItem::new)
                 .peek(item -> {
-                    var ctrlr = item.getEntity();
+                    var ctrlr = item.getController();
                     ctrlr.setFps(20);
                     ctrlr.setAnimatePeriod(18000);
                     applySelection(item);
@@ -67,7 +67,7 @@ public class MosaicGroupDataSource extends BaseDataSource<
     /** for one selected item - start animate; for all other - stop animate */
     private void applySelection(MosaicGroupDataItem item) {
         boolean selected = (item.getUniqueId().ordinal() == currentItemPos);
-        var ctrlr = item.getEntity();
+        var ctrlr = item.getController();
         var model = ctrlr.getModel();
         ctrlr.setPolarLightsForeground(selected);
         model.setBorderColor(selected ? Color.LawnGreen() : Color.IndianRed());

@@ -46,11 +46,11 @@ public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicImageModel, Andr
     }
 
     @Override
-    public MosaicImg.MosaicAndroidBitmapController getEntity() {
-        if (this.entity == null) {
+    public MosaicImg.MosaicAndroidBitmapController getController() {
+        if (this.controller == null) {
             Matrisize sizeField = getSkillLevel().sizeTileField(getMosaicType());
-            var tmp = new MosaicImg.MosaicAndroidBitmapController();
-            var m = tmp.getModel();
+            var ctrl = new MosaicImg.MosaicAndroidBitmapController();
+            var m = ctrl.getModel();
             m.setMosaicType(getMosaicType());
             m.setSizeField(sizeField);
             m.setPadding(new BoundDouble(5 * getZoom()));
@@ -59,12 +59,12 @@ public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicImageModel, Andr
             m.getPenBorder().setWidth(3 * getZoom());
 //            m.setRotateAngle(45 * ThreadLocalRandom.current().nextInt(7));
 
-//            android.graphics.BitmapView bmp = tmp.getImage();
+//            android.graphics.BitmapView bmp = ctrl.getImage();
 //            assert (bmp.getWidth()  == (int)(getSize().width * getZoom()));
 //            assert (bmp.getHeight() == (int)(getSize().height * getZoom()));
-            setEntity(tmp);
+            setController(ctrl);
         }
-        return this.entity;
+        return this.controller;
     }
 
     @Override
@@ -79,12 +79,12 @@ public class MosaicDataItem extends BaseDataItem<EMosaic, MosaicImageModel, Andr
             super.firePropertyChanged(PROPERTY_TITLE);
             break;
         case PROPERTY_UNIQUE_ID:
-            getEntity().getModel().setMosaicType(getMosaicType());
-            getEntity().getModel().setSizeField(calcSizeField(getSkillLevel()));
+            getController().getModel().setMosaicType(getMosaicType());
+            getController().getModel().setSizeField(calcSizeField(getSkillLevel()));
             setTitle(fixTitle(getMosaicType()));
             break;
         case PROPERTY_SKILL_LEVEL:
-            getEntity().getModel().setSizeField(calcSizeField(getSkillLevel()));
+            getController().getModel().setSizeField(calcSizeField(getSkillLevel()));
             break;
         case PROPERTY_MOSAIC_TYPE:
             super.firePropertyChanged(PROPERTY_UNIQUE_ID);

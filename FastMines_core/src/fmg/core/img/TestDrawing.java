@@ -52,7 +52,7 @@ public class TestDrawing {
         } else
         if (ctrller instanceof MosaicGroupController) {
             var c = (MosaicGroupController<?, ?>)ctrller;
-            changeSettings(c.getBurgerModel(), testTransparent);
+            changeSettings(c.getBurgerMenuModel(), testTransparent);
             c.setAnimatePeriod(2000L + r(7000));
             c.setFps(30 + r(30));
             c.setClockwise(bl());
@@ -62,7 +62,7 @@ public class TestDrawing {
         } else
         if (ctrller instanceof MosaicSkillController) {
             var c = (MosaicSkillController<?, ?>)ctrller;
-            changeSettings(c.getBurgerModel(), testTransparent);
+            changeSettings(c.getBurgerMenuModel(), testTransparent);
             c.setAnimatePeriod(2000L + r(7000));
             c.setFps(30 + r(30));
             c.setClockwise(bl());

@@ -8,19 +8,14 @@ import fmg.android.app.BR;
 import fmg.android.img.AndroidBitmapView;
 import fmg.android.img.MosaicGroupImg;
 import fmg.common.geom.BoundDouble;
-import fmg.common.ui.UiInvoker;
 import fmg.core.img.MosaicGroupModel;
 import fmg.core.types.EMosaicGroup;
 
-import static fmg.core.img.PropertyConst.PROPERTY_BURGER;
+import static fmg.core.img.PropertyConst.PROPERTY_MODEL_BURGER_MENU_PADDING;
 import static fmg.core.img.PropertyConst.PROPERTY_MOSAIC_GROUP;
-import static fmg.core.img.PropertyConst.PROPERTY_PADDING;
 
 /** Mosaic group item for data model */
 public class MosaicGroupDataItem extends BaseDataItem<EMosaicGroup, MosaicGroupModel, AndroidBitmapView<MosaicGroupModel>, MosaicGroupImg.MosaicGroupAndroidBitmapController> {
-
-    static final String PROPERTY_BURGER_DOT = PROPERTY_BURGER + ".";
-    static final String PROPERTY_PADDING_BURGER = PROPERTY_BURGER_DOT + PROPERTY_PADDING;
 
     public MosaicGroupDataItem(EMosaicGroup eMosaicGroup) {
         super(eMosaicGroup);
@@ -35,27 +30,26 @@ public class MosaicGroupDataItem extends BaseDataItem<EMosaicGroup, MosaicGroupM
     public String getUnicodeChar() { return getMosaicGroup() == null ? null : Character.toString(getMosaicGroup().unicodeChar(false)); }
 
     @Override
-    public MosaicGroupImg.MosaicGroupAndroidBitmapController getEntity() {
-        if (this.entity == null) {
-            var tmp = new MosaicGroupImg.MosaicGroupAndroidBitmapController(getUniqueId());
-            var m = tmp.getModel();
+    public MosaicGroupImg.MosaicGroupAndroidBitmapController getController() {
+        if (this.controller == null) {
+            var ctrl = new MosaicGroupImg.MosaicGroupAndroidBitmapController(getUniqueId());
+            var m = ctrl.getModel();
             m.setBorderWidth(3);
             m.setRotateAngle(ThreadLocalRandom.current().nextInt(90));
-            tmp.getBurgerModel().setListener(this::onBurgerModelPropertyChanged);
-            setEntity(tmp);
+            setController(ctrl);
         }
-        return this.entity;
+        return this.controller;
     }
 
     @Bindable
     public BoundDouble getPaddingBurgerMenu() {
-        BoundDouble pad = getEntity().getBurgerModel().getPadding();
+        BoundDouble pad = getController().getBurgerMenuModel().getPadding();
         double zoom = getZoom();
         return new BoundDouble(pad.left / zoom, pad.top / zoom, pad.right / zoom, pad.bottom / zoom);
     }
 
     public void setPaddingBurgerMenu(BoundDouble paddingBurgerMenu) {
-        getEntity().getBurgerModel().setPadding(zoomPadding(paddingBurgerMenu));
+        getController().getBurgerMenuModel().setPadding(zoomPadding(paddingBurgerMenu));
     }
 
     @Bindable
@@ -72,7 +66,7 @@ public class MosaicGroupDataItem extends BaseDataItem<EMosaicGroup, MosaicGroupM
 
         switch (propertyName) {
         case PROPERTY_UNIQUE_ID:
-            getEntity().getModel().setMosaicGroup(getMosaicGroup());
+            getController().getModel().setMosaicGroup(getMosaicGroup());
             break;
         case PROPERTY_MOSAIC_GROUP:
             super.firePropertyChanged(PROPERTY_UNIQUE_ID);
@@ -89,19 +83,14 @@ public class MosaicGroupDataItem extends BaseDataItem<EMosaicGroup, MosaicGroupM
 
         // refire as android data binding event
         switch (propertyName) {
-        case PROPERTY_MOSAIC_GROUP  : notifyPropertyChanged(BR.mosaicGroup      ); break;
-        case PROPERTY_PADDING_BURGER: notifyPropertyChanged(BR.paddingBurgerMenu); break;
+        case PROPERTY_MOSAIC_GROUP             : notifyPropertyChanged(BR.mosaicGroup      ); break;
+        case PROPERTY_MODEL_BURGER_MENU_PADDING: notifyPropertyChanged(BR.paddingBurgerMenu); break;
         }
-    }
-
-    private void onBurgerModelPropertyChanged(String propertyName) {
-        if (!isDisposed())
-            UiInvoker.Deferred.accept(() -> firePropertyChanged(PROPERTY_BURGER_DOT + propertyName));
     }
 
     @Override
     public void close() {
-        getEntity().getBurgerModel().setListener(null);
+        getController().getBurgerMenuModel().setListener(null);
         super.close();
     }
 

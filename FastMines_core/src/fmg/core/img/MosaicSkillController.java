@@ -3,6 +3,9 @@ package fmg.core.img;
 import fmg.common.ui.UiInvoker;
 import fmg.core.types.ESkillLevel;
 
+import static fmg.core.img.PropertyConst.PROPERTY_BURGER_MENU_DOT;
+import static fmg.core.img.PropertyConst.PROPERTY_SIZE;
+
 /** MVC controller of {@link ESkillLevel} image
  * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
  * @param <TView> MVC view */
@@ -31,17 +34,17 @@ public abstract class MosaicSkillController<TImage,
     /** animation direction (example: clockwise or counterclockwise for simple rotation) */
     private boolean clockwise = true;
 
-    private BurgerMenuModel burgerModel;
+    private BurgerMenuModel burgerMenuModel;
 
-    public BurgerMenuModel getBurgerModel() {
-        return burgerModel;
+    public BurgerMenuModel getBurgerMenuModel() {
+        return burgerMenuModel;
     }
 
     @Override
     protected void init(MosaicSkillModel model, TView view) {
         super.init(model, view);
-        burgerModel = new BurgerMenuModel();
-        burgerModel.setListener(this::onModelChanged);
+        burgerMenuModel = new BurgerMenuModel();
+        burgerMenuModel.setListener(this::onBurgerMenuModelChanged);
         if (isAnimated())
             startAnimation();
     }
@@ -126,7 +129,7 @@ public abstract class MosaicSkillController<TImage,
         // rotate
         if (rotateImage) {
             model.setRotateAngle(angle);
-            burgerModel.setRotateAngle(angle);
+            burgerMenuModel.setRotateAngle(angle);
         }
 
         // polar light transform
@@ -136,16 +139,16 @@ public abstract class MosaicSkillController<TImage,
             model.setBackgroundAngle(angle);
     }
 
-    private boolean lock = false;
     @Override
     protected void onModelChanged(String property) {
-        if (!lock && PropertyConst.PROPERTY_SIZE.equals(property)) try {
-            lock = true;
-            burgerModel.setSize(model.getSize());
-        } finally {
-            lock = false;
-        }
+        if (PROPERTY_SIZE.equals(property))
+            burgerMenuModel.setSize(model.getSize());
+
         super.onModelChanged(property);
+    }
+
+    private void onBurgerMenuModelChanged(String property) {
+        super.onModelChanged(PROPERTY_BURGER_MENU_DOT + property);
     }
 
     @Override
