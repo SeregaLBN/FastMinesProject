@@ -1260,12 +1260,12 @@ public class FastMinesApp {
 
 
     /** /
-    static void ViewAllEvents() {
+    static void viewAllEvents() {
         EventQueue eq = Toolkit.getDefaultToolkit().getSystemEventQueue();
         EventQueue eq2 = new EventQueue() {
             @Override
             protected void dispatchEvent(AWTEvent event) {
-                Logger.info(event);
+                Logger.info("{0}", event);
                 super.dispatchEvent(event);
             }
         };
@@ -1280,7 +1280,7 @@ public class FastMinesApp {
 
     public static void main(String[] args) {
         ProjSettings.init();
-        //ViewAllEvents();
+        //viewAllEvents();
         SwingUtilities.invokeLater(() ->
             new FastMinesApp().getFrame().setVisible(true)
         );
